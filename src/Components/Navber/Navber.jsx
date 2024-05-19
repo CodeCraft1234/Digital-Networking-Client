@@ -27,8 +27,9 @@ const NavBar = () => {
     }
   };
   return (
-    <div className="navbar  bg-indigo-700 text-white bg-opacity-50 backdrop-blur-lg p-5 rounded-md shadow-lg  lg:px-28 md:px-10 px-5  fixed z-50 top-0 border-b">
-      <div className="navbar-start">    
+    <div className="">
+      <div className="navbar bg-indigo-700 text-white bg-opacity-50 backdrop-blur-lg p-1 rounded-md shadow-lg  lg:px-28 md:px-10 px-5  fixed z-50 top-0 border-b">
+      <div className="navbar-start"> 
         <div className="dropdown">
           <label tabIndex={0} className="btn btn-ghost lg:hidden">
           
@@ -52,13 +53,16 @@ const NavBar = () => {
 
             className="menu menu-sm dropdown-content  bg-violet-950 mt-3 z-[1] p-2 shadow  rounded-box w-52 "
           >
-          <li>
 
-    <NavLink to={"/"}> <img className="h-8 w-8" src="https://i.ibb.co/hL4n8S1/10473299.png" alt="" />Home </NavLink>
-  </li>
-  <li>
-    <NavLink to={"/profile"}><img className="h-10 w-10" src="https://i.ibb.co/kBSCBxv/4652486.webp" alt="" />Profile  </NavLink>
-  </li>
+       <li>
+         <NavLink to={"/"}> <img className="h-8 w-8" src="https://i.ibb.co/hL4n8S1/10473299.png" alt="" />Home </NavLink>
+      </li>
+       <li>
+         <NavLink to={"/adAccountTable"}> Ad Account Table </NavLink>
+      </li>
+       <li>
+          <NavLink to={"/profile"}><img className="h-10 w-10" src="https://i.ibb.co/kBSCBxv/4652486.webp" alt="" />Profile  </NavLink>
+       </li>
           </ul>
         </div>
         <div className="flex justify-center items-center">
@@ -71,10 +75,13 @@ const NavBar = () => {
         <ul className="menu menu-horizontal items-center px-1 flex gap-4">
         <li>
             <NavLink to={"/"}> <img className="h-6 w-6" src="https://i.ibb.co/hL4n8S1/10473299.png" alt="" />Home </NavLink>
-          </li>
-          <li>
+        </li>
+        <li>
+               <NavLink to={"/adAccountTable"}> Ad Account Table </NavLink>
+        </li>
+        <li>
             <NavLink to={"/profile"}><img className="h-8 w-8" src="https://i.ibb.co/kBSCBxv/4652486.webp" alt="" />Profile  </NavLink>
-          </li>
+        </li>
         </ul>
       </div>
       <div className="navbar-end">
@@ -161,6 +168,7 @@ const NavBar = () => {
           )}
         </div>
       </div>
+    </div>
     </div>
   );
 };

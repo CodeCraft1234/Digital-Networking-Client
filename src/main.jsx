@@ -8,12 +8,16 @@ import {
 import "./index.css";
 import Root from "./Root";
 import Home from "./Pages/Home/Home";
+<<<<<<< HEAD
 import Login from "./Security/Login";
 import AuthProvider from "./Security/AuthProvider";
 import PrivateRoute from "./Security/PrivateRoute";
 import Register from "./Security/Register";
 import Profile from "./Pages/Profile/Profile";
 
+=======
+import AdAccountTable from "./Pages/Home/AdAccountTable";
+>>>>>>> 7d71186e59fcf05180af6e295010c5e4af72c265
 
 const router = createBrowserRouter([
   {
@@ -25,6 +29,7 @@ const router = createBrowserRouter([
         element:<Home></Home>
       },
       {
+<<<<<<< HEAD
         path: "/profile",
         element: (
           <PrivateRoute>
@@ -39,6 +44,10 @@ const router = createBrowserRouter([
       {
         path: "/signup",
         element: <Register></Register>
+=======
+        path:'/adAccountTable',
+        element:<AdAccountTable></AdAccountTable>
+>>>>>>> 7d71186e59fcf05180af6e295010c5e4af72c265
       },
     ]
   },
