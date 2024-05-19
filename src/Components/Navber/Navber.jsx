@@ -47,40 +47,20 @@ const NavBar = () => {
     <NavLink to={"/"}> <img className="h-8 w-8" src="https://i.ibb.co/hL4n8S1/10473299.png" alt="" />Home </NavLink>
   </li>
   <li>
-    <NavLink to={"/features"}><img className="h-8 w-8" src="https://i.ibb.co/wKjbW5s/feature-3d-render-icon-illustration-png.png" alt="" />Features </NavLink>
-  </li>
-
-
-
-  <li>
-    <NavLink to={"/blog"}> <img className="h-8 w-8" src="https://i.ibb.co/1sSTpBy/4729296.webp" alt="" />Blogs</NavLink>
-  </li>
-  <li>
     <NavLink to={"/profile"}><img className="h-10 w-10" src="https://i.ibb.co/kBSCBxv/4652486.webp" alt="" />Profile  </NavLink>
   </li>
-
           </ul>
         </div>
         <div className="flex justify-center items-center">
-       
           <Link to={"/"}>
-         
-             
-           <h1>Canteen Management</h1>
+           <img className="h-20 rounded-full w-20" src="https://i.ibb.co/Cnvg0RS/Digital-Network-Logo.png" alt="" />
           </Link>
         </div>
       </div>
       <div className="navbar-center hidden lg:flex">
-
         <ul className="menu menu-horizontal items-center px-1 flex gap-4">
         <li>
             <NavLink to={"/"}> <img className="h-6 w-6" src="https://i.ibb.co/hL4n8S1/10473299.png" alt="" />Home </NavLink>
-          </li>
-          <li>
-            <NavLink to={"/features"}><img className="h-6 w-6" src="https://i.ibb.co/wKjbW5s/feature-3d-render-icon-illustration-png.png" alt="" />Features </NavLink>
-          </li>
-          <li>
-            <NavLink to={"/blog"}> <img className="h-6 w-6" src="https://i.ibb.co/1sSTpBy/4729296.webp" alt="" />Blogs</NavLink>
           </li>
           <li>
             <NavLink to={"/profile"}><img className="h-8 w-8" src="https://i.ibb.co/kBSCBxv/4652486.webp" alt="" />Profile  </NavLink>
