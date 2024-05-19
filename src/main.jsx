@@ -8,6 +8,7 @@ import {
 import "./index.css";
 import Root from "./Root";
 import Home from "./Pages/Home/Home";
+import AdAccountTable from "./Pages/Home/AdAccountTable";
 
 const router = createBrowserRouter([
   {
@@ -17,7 +18,11 @@ const router = createBrowserRouter([
       {
         path:'/',
         element:<Home></Home>
-      }
+      },
+      {
+        path:'/adAccountTable',
+        element:<AdAccountTable></AdAccountTable>
+      },
     ]
   },
 ]);
