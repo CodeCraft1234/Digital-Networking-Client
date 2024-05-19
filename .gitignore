@@ -7,16 +7,14 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-#node_modules
-
-package-lock.json
-
-
-
-nod
+node_modules
 dist
 dist-ssr
+
 *.local
+
+# Optional: Exclude the package-lock.json file
+package-lock.json
 
 # Editor directories and files
 .vscode/*
@@ -28,3 +26,4 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
