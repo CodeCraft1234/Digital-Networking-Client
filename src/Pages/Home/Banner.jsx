@@ -1,6 +1,48 @@
+import { useEffect, useState } from "react";
+import useUsers from "../../Hook/useUsers";
 
 
 const Banner = () => {
+  const [users] = useUsers(); 
+  const [bkashMarcentTotal, setBkashMarcentTotal] = useState(0); 
+  const [bkashPersonalTotal, setBkashPersonalTotal] = useState(0); 
+  const [nagadPersonalTotal, setnagadMarcentTotal] = useState(0); 
+  const [rocketPersonalTotal, setrocketMarcentTotal] = useState(0); 
+  const [payoneerTotal, setPayoneerTotal] = useState(0); 
+  const [totalBDT, setTotalBDT] = useState(0); 
+
+  useEffect(() => {
+    const total = users.reduce((acc, user) => acc + (user.bkashMarcent || 0), 0); 
+    setBkashMarcentTotal(total);
+  }, [users]); 
+
+  useEffect(() => {
+    const total = users.reduce((acc, user) => acc + (user.bkashPersonal || 0), 0); 
+    setBkashPersonalTotal(total);
+  }, [users]); 
+
+  useEffect(() => {
+    const total = users.reduce((acc, user) => acc + (user.nagadPersonal || 0), 0); 
+    setnagadMarcentTotal(total);
+  }, [users]); 
+
+  useEffect(() => {
+    const total = users.reduce((acc, user) => acc + (user.rocketPersonal || 0), 0); 
+    setrocketMarcentTotal(total);
+  }, [users]); 
+
+  useEffect(() => {
+    const total = users.reduce((acc, user) => acc + (user.payoneer || 0), 0); 
+    setPayoneerTotal(total);
+  }, [users]); 
+
+  useEffect(() => {
+    const total = users.reduce((acc, user) => acc + (user.totalBDT || 0), 0); 
+    setTotalBDT(total);
+  }, [users]); 
+
+  console.log(users)
+
     return (
         <div className="mt-24">
              <div className="p-2 sm:p-4 dark:text-gray-100">
@@ -17,32 +59,34 @@ const Banner = () => {
                 <th className="p-3 text-center"><img  className="w-20 h-10 mx-auto" src="https://i.ibb.co/520Py6s/bkash-1.png" alt="" /></th>
                 <th className="p-3 text-center"><img  className="w-20 h-10 mx-auto" src="https://i.ibb.co/JQBQBcF/nagad-marchant.png" alt="" /></th>
                 <th className="p-3 text-center"><img  className="w-20 h-10 mx-auto" src=" https://i.ibb.co/QkTM4M3/rocket.png" alt="" /></th>
-                <th className="p-3 text-center"><img  className="w-20 h-10 mx-auto" src=" https://i.ibb.co/w0D08gS/Payoneer-Logo-wine.png" alt="" /></th>
+                <th className="p-3 text-center"><img  className="w-28 h-6 mx-auto" src=" https://i.ibb.co/3WVZGdz/PAYO-BIG-aa26e6e0.png" alt="" /></th>
                 <th className="p-3 text-center">Total-BDT</th>
               </tr>
             </thead>
-            <tbody>
-              <tr className="border-b border-opacity-20 dark:border-gray-700 dark:bg-gray-900">
-                <td className="p-3 text-center"> <img className="w-10 h-10 mx-auto rounded-full" src="https://i.ibb.co/YBfyP2W/S-bris.jpg" alt="" /> </td>
-                <td className="p-3 text-center">Raisa jaman</td>
-                <td className="p-3 text-center">৳0.00</td>
-                <td className="p-3 text-center">৳0.00</td>
-                <td className="p-3 text-center">৳0.00</td>
-                <td className="p-3 text-center">৳0.00</td>
-                <td className="p-3 text-center">$0.00</td>
-                <td className="p-3 text-center">৳0.00</td>
-              </tr>
-              <tr className="border-b border-opacity-20 bg-lime-700">
-                <td className="p-3 text-center"></td>
+            {
+              users.map(user=><tbody key={user._id}>
+                <tr className="border-b border-opacity-20 dark:border-gray-700 dark:bg-gray-900">
+                  <td className="p-3 text-center"> <img className="w-10 h-10 mx-auto rounded-full" src={user.photo} alt="" /> </td>
+                  <td className="p-3 text-center">{user.name}</td>
+                  <td className="p-3 text-center">৳ {user.bkashMarcent}</td>
+                  <td className="p-3 text-center">৳ {user.bkashPersonal}</td>
+                  <td className="p-3 text-center">৳ {user.nagadPersonal}</td>
+                  <td className="p-3 text-center">৳ {user.rocketPersonal}</td>
+                  <td className="p-3 text-center">$ {user.payoneer}</td>
+                  <td className="p-3 text-center">৳ {user.totalBDT}</td>
+                </tr>
+              </tbody>)
+            }
+            <tr className="border-b border-opacity-20 bg-lime-700">
                 <td className="p-3 text-center"></td>
                 <td className="p-3 text-center">Total BDT</td>
-                <td className="p-3 text-center">৳0.00</td>
-                <td className="p-3 text-center">৳0.00</td>
-                <td className="p-3 text-center">৳0.00</td>
-                <td className="p-3 text-center">$0.00</td>
-                <td className="p-3 text-center">৳0.00</td>
+                <td className="p-3 text-center">৳ {bkashMarcentTotal}</td>
+                <td className="p-3 text-center">৳ {bkashPersonalTotal}</td>
+                <td className="p-3 text-center">৳ {nagadPersonalTotal}</td>
+                <td className="p-3 text-center">৳ {rocketPersonalTotal}</td>
+                <td className="p-3 text-center">$ {payoneerTotal}</td>
+                <td className="p-3 text-center">৳ {totalBDT}</td>
               </tr>
-            </tbody>
           </table>
         </div>
       </div>
