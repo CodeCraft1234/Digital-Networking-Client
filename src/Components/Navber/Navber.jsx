@@ -83,6 +83,9 @@ const NavBar = () => {
                <NavLink to={"/adAccountTable"}> Ad Account Table </NavLink>
         </li>
         <li>
+               <NavLink to={"/allEmployee"}> All Employee </NavLink>
+        </li>
+        <li>
             <NavLink to={"/profile"}><img className="h-8 w-8" src="https://i.ibb.co/kBSCBxv/4652486.webp" alt="" />Profile  </NavLink>
         </li>
         <li>
