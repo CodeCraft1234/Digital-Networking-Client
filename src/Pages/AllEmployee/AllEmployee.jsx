@@ -95,6 +95,14 @@ const AllEmployee = () => {
     closeModal();
   };
 
+
+  const handleupdate =(e)=>{
+    e.preventDefault();
+    const bkashMrchent=e.target.bkashMarcent.value 
+    console.log(bkashMrchent)
+  }
+
+
   return (
     <div className="mt-36">
       <h6 className="text-center text-4xl font-bold text-green-600 mb-10">
@@ -153,6 +161,7 @@ const AllEmployee = () => {
 
       {isModalOpen && (
         <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center z-50">
+          <form onSubmit={handleupdate}>
           <div className="bg-white shadow-md rounded-lg p-6 w-full max-w-md">
             <h6 className="text-center text-2xl font-bold text-green-600 mb-6">
               Edit {selectedUser.name}
@@ -232,6 +241,7 @@ const AllEmployee = () => {
               </button>
             </div>
           </div>
+          </form>
         </div>
       )}
     </div>

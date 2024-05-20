@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import useUsers from "../../Hook/useUsers";
+import { Link } from "react-router-dom";
 
 
 const Banner = () => {
@@ -65,9 +66,15 @@ const Banner = () => {
             </thead>
             {
               users.map(user=><tbody key={user._id}>
+            
                 <tr className="border-b border-opacity-20 dark:border-gray-700 dark:bg-gray-900">
-                  <td className="p-3 text-center"> <img className="w-10 h-10 mx-auto rounded-full" src={user.photo} alt="" /> </td>
-                  <td className="p-3 text-center">{user.name}</td>
+                  <td className="p-3 text-center">     <Link to={`/userInfo/${user._id}`}>
+                    <img  className="w-10 h-10 mx-auto rounded-full" src={user.photo} alt="" />
+                                                       </Link>
+                  </td>
+                  <td className="p-3 text-center">
+                  <Link to={`/userInfo/${user._id}`}>{user.name} </Link>
+                  </td>
                   <td className="p-3 text-center">৳ {user.bkashMarcent}</td>
                   <td className="p-3 text-center">৳ {user.bkashPersonal}</td>
                   <td className="p-3 text-center">৳ {user.nagadPersonal}</td>
