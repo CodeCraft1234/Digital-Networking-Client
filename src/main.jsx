@@ -16,6 +16,7 @@ import Profile from "./Pages/Profile/Profile";
 
 import AdAccountTable from "./Pages/Home/AdAccountTable";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import UpdateProfile from "./Pages/Profile/UpdateProfile";
 
 const router = createBrowserRouter([
   {
@@ -43,6 +44,10 @@ const router = createBrowserRouter([
       {
         path:'/adAccountTable',
         element:<AdAccountTable></AdAccountTable>
+      },
+      {
+        path:'/updateProfile',
+        element:<UpdateProfile></UpdateProfile>
       },
     ]
   },
