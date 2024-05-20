@@ -17,6 +17,7 @@ import Profile from "./Pages/Profile/Profile";
 import AdAccountTable from "./Pages/Home/AdAccountTable";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import UpdateProfile from "./Pages/Profile/UpdateProfile";
+import NavBar from "./Components/Navber/Navber";
 
 const router = createBrowserRouter([
   {
@@ -27,12 +28,13 @@ const router = createBrowserRouter([
         path:'/',
         element:<Home></Home>
       },
+
       {
-        path: "/profile",
-        element: (
-            <Profile />
-        ),
+        path: "/gk",
+        element: <NavBar></NavBar>,
+        loader: ({ params }) => fetch(`http://localhost:5000/users/${params.email}`)
       },
+
       {
         path: '/login',
         element: <Login></Login>

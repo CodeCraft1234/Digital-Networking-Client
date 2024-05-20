@@ -67,62 +67,18 @@ const AuthProvider = ({ children }) => {
     setLoading(true);
     return signOut(auth);
   };
-///////////////////////////////////////////////////////////////////////////////////////////////////////
-useEffect(() => {
-  const unsubscribe = onAuthStateChanged(auth, currentUser => {
-      setUser(currentUser);
-      console.log('current user', currentUser);
 
-      // get and set token
-      if(currentUser){
-          axios.post('http://localhost:5000/jwt', {email: currentUser.email})
-          .then(data =>{
-              localStorage.setItem('access-token', data.data.token)
-              setLoading(false);
-          })
-      }
-      else{
-          localStorage.removeItem('access-token')
-      }
-
-      
-  });
-  return () => {
-      return unsubscribe();
-  }
-}, [])
-
-////////////////////////////////////////////////////////////////////////////////////////////////////
-  // observing the user state
-  // useEffect(() => {
-  //   const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-  //     const userEmail = currentUser?.email;
-  //     const loggeduser = { email: userEmail };
-  //     setUser(currentUser);
-  //     console.log("user on the auth state changed", currentUser);
-  //     setLoading(false);
-
-  //     if (currentUser) {
-  //       AxiosSecure.post("/jwt", loggeduser, { withCredentials: true }).then(
-  //         (res) => {
-  //           console.log(res.data);
-  //         }
-  //       );
-  //       setLoading(false);
-  //     } else {
-  //       AxiosSecure.post("/logout", loggeduser, {
-  //         withCredentials: true,
-  //       }).then((res) => {
-  //         console.log(res.data);
-  //       });
-  //       setLoading(false);
-  //     }
-  //   });
-
-  //   return () => {
-  //     unsubscribe();
-  //   };
-  // }, []);
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, currentUser => {
+        setUser(currentUser);
+        console.log('current user', currentUser);
+  
+        
+    });
+    return () => {
+        return unsubscribe();
+    }
+  }, [])
 
   const authInfo = {
     user,
