@@ -63,6 +63,9 @@ const NavBar = () => {
        <li>
           <NavLink to={"/profile"}><img className="h-10 w-10" src="https://i.ibb.co/kBSCBxv/4652486.webp" alt="" />Profile  </NavLink>
        </li>
+       <li>
+          <NavLink to={"/updateProfile"}><img className="h-10 w-10" src="https://i.ibb.co/kBSCBxv/4652486.webp" alt="" />Profile  </NavLink>
+       </li>
           </ul>
         </div>
         <div className="flex justify-center items-center">
@@ -82,6 +85,9 @@ const NavBar = () => {
         <li>
             <NavLink to={"/profile"}><img className="h-8 w-8" src="https://i.ibb.co/kBSCBxv/4652486.webp" alt="" />Profile  </NavLink>
         </li>
+        <li>
+          <NavLink to={"/updateProfile"}>Update profile  </NavLink>
+       </li>
         </ul>
       </div>
       <div className="navbar-end">
@@ -139,6 +145,7 @@ const NavBar = () => {
                     </figure>
                     <div className="card-body ">
                       <hr />
+                      
 
                       <NavLink
                         onClick={handleLogOut}
