@@ -1,8 +1,11 @@
 import {  useContext, useEffect, useState } from "react";
-import { Link, NavLink, useNavigate  } from "react-router-dom";
+import { Link, NavLink, useLoaderData, useNavigate  } from "react-router-dom";
 import { AuthContext } from "../../Security/AuthProvider";
+import { IoMdArrowDropdown } from "react-icons/io";
 const NavBar = () => {
   const { user, logOut } = useContext(AuthContext);
+  const userr=useLoaderData()
+  console.log(userr)
   const navigate = useNavigate();
   console.log(user);
   // sign out a user
@@ -28,7 +31,7 @@ const NavBar = () => {
   };
   return (
     <div className="">
-      <div className="navbar bg-indigo-700 text-white bg-opacity-50 backdrop-blur-lg p-1 rounded-md shadow-lg  lg:px-28 md:px-10 px-5  fixed z-50 top-0 border-b">
+      <div className="navbar bg-white text-black bg-opacity-50 backdrop-blur-lg p-1 rounded-md shadow-lg  lg:px-28 md:px-10 px-5  fixed z-50 top-0 border-b">
       <div className="navbar-start"> 
         <div className="dropdown">
           <label tabIndex={0} className="btn btn-ghost lg:hidden">
@@ -60,12 +63,6 @@ const NavBar = () => {
        <li>
          <NavLink to={"/adAccountTable"}> Ad Account Table </NavLink>
       </li>
-       <li>
-          <NavLink to={"/profile"}><img className="h-10 w-10" src="https://i.ibb.co/kBSCBxv/4652486.webp" alt="" />Profile  </NavLink>
-       </li>
-       <li>
-          <NavLink to={"/updateProfile"}><img className="h-10 w-10" src="https://i.ibb.co/kBSCBxv/4652486.webp" alt="" />Profile  </NavLink>
-       </li>
           </ul>
         </div>
         <div className="flex justify-center items-center">
@@ -85,12 +82,6 @@ const NavBar = () => {
         <li>
                <NavLink to={"/allEmployee"}> All Employee </NavLink>
         </li>
-        <li>
-            <NavLink to={"/profile"}><img className="h-8 w-8" src="https://i.ibb.co/kBSCBxv/4652486.webp" alt="" />Profile  </NavLink>
-        </li>
-        <li>
-          <NavLink to={"/updateProfile"}>Update profile  </NavLink>
-       </li>
         </ul>
       </div>
       <div className="navbar-end">
@@ -122,12 +113,9 @@ const NavBar = () => {
           {user?.displayName ? (
             <div className="dropdown center">
               <label tabIndex={0}>
-                <div>
-                  <img
-                    className="h-10 w-10 rounded-full"
-                    src={user.photoURL}
-                    alt=""
-                  />
+                <div className="flex justify-center items-center ">
+                <img className="h-8 w-8" src="https://i.ibb.co/kBSCBxv/4652486.webp" alt="" />
+                  <h1 className="">{user?.displayName} <span className="inline-block hover:dropdown"><IoMdArrowDropdown /></span></h1>
                 </div>
               </label>
               <ul
@@ -145,25 +133,38 @@ const NavBar = () => {
                         src={user?.photoURL}
                         alt=""
                       />
+                      
                     </figure>
+                    <div className="text-start text-black space-y-3">
+              <h1 className="text-md font-bold ">
+                Name : {userr?.fullName}
+              </h1>
+              <h1 className="text-md font-bold e">
+                Mobile : {userr?.contctNumber}
+              </h1>
+              <h1 className="text-md font-bold ">
+                Address :{userr?.fullAddress}
+              </h1>
+             
+              <p className="text-md font-bold ">
+                Email: {userr?.email}</p>
+            </div>
                     <div className="card-body ">
                       <hr />
-                      
 
-                      <NavLink
-                        onClick={handleLogOut}
-                        className={({ isActive, isPending }) =>
-                          isPending
-                            ? "pending"
-                            : isActive
-                            ? "underline mr-5 text-blue-700"
-                            : "mr-5 hover:text-gray-100"
-                        }
+
+                      <NavLink to={'/updateProfile'}
                       >
-                        <button className="btn btn-outline border-0 border-[#0165c3] hover:bg-[#0165c3] hover:border-[#0165c3] border-b-4 hover:text-white btn-sm">
-                          LogOut
+                        <button className="font-avenir w-full px-3 py-1 bg-neutral rounded text-white">
+                          Update Info
                         </button>
                       </NavLink>
+                      <button
+                onClick={handleLogOut}
+className="font-avenir w-full px-3 py-1 bg-neutral rounded text-white"
+              >
+                  Logout
+              </button>
                     </div>
                   </div>
                 </div>
