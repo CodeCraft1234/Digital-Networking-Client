@@ -22,8 +22,10 @@ import AllEmployee from "./Pages/AllEmployee/AllEmployee";
 import UpdateProfile from "./Pages/Profile/UpdateProfile";
 import NavBar from "./Components/Navber/Navber";
 import Profile from "./Pages/Profile/Profile";
+
 import ProfileRoot from "./Pages/Profile/ProfileRoot";
 import AddCampaign from "./Pages/AddCampain/AddCampaign";
+
 
 
 const router = createBrowserRouter([
@@ -56,7 +58,7 @@ const router = createBrowserRouter([
       {
 
         path:'/allEmployee',
-        element:<AllEmployee></AllEmployee>
+        element:<AllEmployee></AllEmployee>,
       },
       {
         path:'/updateProfile',
