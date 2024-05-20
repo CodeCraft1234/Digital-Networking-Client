@@ -23,6 +23,9 @@ import UpdateProfile from "./Pages/Profile/UpdateProfile";
 import NavBar from "./Components/Navber/Navber";
 import Profile from "./Pages/Profile/Profile";
 
+import ProfileRoot from "./Pages/Profile/ProfileRoot";
+import AddCampaign from "./Pages/AddCampain/AddCampaign";
+
 
 
 const router = createBrowserRouter([
@@ -65,6 +68,10 @@ const router = createBrowserRouter([
         path:'/userInfo/:id',
         element:<Profile></Profile>,
         loader: ({ params }) => fetch(`http://localhost:5000/users/${params.id}`)
+       },
+       {
+        path:'/addCampaign',
+        element:<AddCampaign></AddCampaign>
        },
     ]
   },
