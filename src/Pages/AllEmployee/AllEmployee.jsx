@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
+
 import useUsers from "../../Hook/useUsers";
-import 'tailwindcss/tailwind.css';
+import "tailwindcss/tailwind.css";
 
 const AllEmployee = () => {
   const [users, setUsers] = useUsers();
@@ -28,11 +29,26 @@ const AllEmployee = () => {
   useEffect(() => {
     const calculateTotals = () => {
       const newTotals = {
-        bkashMarcentTotal: users.reduce((acc, user) => acc + (user.bkashMarcent || 0), 0),
-        bkashPersonalTotal: users.reduce((acc, user) => acc + (user.bkashPersonal || 0), 0),
-        nagadPersonalTotal: users.reduce((acc, user) => acc + (user.nagadPersonal || 0), 0),
-        rocketPersonalTotal: users.reduce((acc, user) => acc + (user.rocketPersonal || 0), 0),
-        payoneerTotal: users.reduce((acc, user) => acc + (user.payoneer || 0), 0),
+        bkashMarcentTotal: users.reduce(
+          (acc, user) => acc + (user.bkashMarcent || 0),
+          0
+        ),
+        bkashPersonalTotal: users.reduce(
+          (acc, user) => acc + (user.bkashPersonal || 0),
+          0
+        ),
+        nagadPersonalTotal: users.reduce(
+          (acc, user) => acc + (user.nagadPersonal || 0),
+          0
+        ),
+        rocketPersonalTotal: users.reduce(
+          (acc, user) => acc + (user.rocketPersonal || 0),
+          0
+        ),
+        payoneerTotal: users.reduce(
+          (acc, user) => acc + (user.payoneer || 0),
+          0
+        ),
         totalBDT: users.reduce((acc, user) => acc + (user.totalBDT || 0), 0),
       };
       setTotals(newTotals);
@@ -73,22 +89,30 @@ const AllEmployee = () => {
   };
 
   const updateUser = () => {
-    setUsers(users.map(user => user._id === selectedUser._id ? selectedUser : user));
+    setUsers(
+      users.map((user) => (user._id === selectedUser._id ? selectedUser : user))
+    );
     closeModal();
   };
 
   return (
     <div className="mt-36">
-      <h6 className="text-center text-4xl font-bold text-green-600 mb-10">All Employee</h6>
+      <h6 className="text-center text-4xl font-bold text-green-600 mb-10">
+        All Employee
+      </h6>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 p-4">
         {users.map((user) => (
           <div
             key={user._id}
             className="bg-white mx-auto shadow-md rounded-lg p-6 transform transition-all hover:scale-105 hover:shadow-xl"
-            style={{ width: '250px', height: '400px' }}
+            style={{ width: "250px", height: "400px" }}
           >
             <div className="text-center">
-              <img className="w-20 h-20 mx-auto rounded-full mb-4" src={user.photo} alt={user.name} />
+              <img
+                className="w-20 h-20 mx-auto rounded-full mb-4"
+                src={user.photo}
+                alt={user.name}
+              />
               <h2 className="text-xl font-semibold mb-4">{user.name}</h2>
             </div>
             <div className="text-left">
@@ -126,12 +150,13 @@ const AllEmployee = () => {
           </div>
         ))}
       </div>
-      
 
       {isModalOpen && (
         <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center z-50">
           <div className="bg-white shadow-md rounded-lg p-6 w-full max-w-md">
-            <h6 className="text-center text-2xl font-bold text-green-600 mb-6">Edit {selectedUser.name}</h6>
+            <h6 className="text-center text-2xl font-bold text-green-600 mb-6">
+              Edit {selectedUser.name}
+            </h6>
             <div className="mb-4">
               <label className="block text-gray-700">Bkash Merchant:</label>
               <input
@@ -193,10 +218,16 @@ const AllEmployee = () => {
               />
             </div>
             <div className="flex justify-end space-x-4">
-              <button onClick={closeModal} className="bg-red-500 text-white py-2 px-4 rounded transform transition-all hover:scale-105 hover:bg-red-600">
+              <button
+                onClick={closeModal}
+                className="bg-red-500 text-white py-2 px-4 rounded transform transition-all hover:scale-105 hover:bg-red-600"
+              >
                 Cancel
               </button>
-              <button onClick={updateUser} className="bg-blue-500 text-white py-2 px-4 rounded transform transition-all hover:scale-105 hover:bg-blue-600">
+              <button
+                onClick={updateUser}
+                className="bg-blue-500 text-white py-2 px-4 rounded transform transition-all hover:scale-105 hover:bg-blue-600"
+              >
                 Update
               </button>
             </div>
