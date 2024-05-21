@@ -27,6 +27,7 @@ const CampaignTable = () => {
 
    const hadleclick=(id)=>{
     console.log(data)
+    
     AxiosPublic.patch(`http://localhost:5000/campaings/${id}`,data)
     .then(res=>{
      console.log(res.data)
