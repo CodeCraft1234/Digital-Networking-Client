@@ -44,6 +44,8 @@ const Banner = () => {
 
   console.log(users)
 
+
+
     return (
         <div className="mt-24">
              <div className="p-2 sm:p-4 dark:text-gray-100">
