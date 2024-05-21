@@ -25,6 +25,7 @@ import Profile from "./Pages/Profile/Profile";
 
 import ProfileRoot from "./Pages/Profile/ProfileRoot";
 import AddCampaign from "./Pages/AddCampain/AddCampaign";
+import PrivateRoute from "./Security/PrivateRoute";
 
 
 
@@ -58,8 +59,21 @@ const router = createBrowserRouter([
       {
 
         path:'/allEmployee',
-        element:<AllEmployee></AllEmployee>,
+        // element:<AllEmployee></AllEmployee>,
+        element: (
+          <PrivateRoute>
+            <AllEmployee/>
+          </PrivateRoute>
+        ),
       },
+      // {
+      //   path: "/allEmployee",
+      //   element: (
+      //     <PrivateRoute>
+      //       <AllEmployee/>
+      //      </PrivateRoute>
+      //   ),
+      // },
       {
         path:'/updateProfile',
         element:<UpdateProfile></UpdateProfile>
