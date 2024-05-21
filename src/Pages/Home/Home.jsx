@@ -1,4 +1,5 @@
 
+import AdAccountTable from "./AdAccountTable";
 import Banner from "./Banner";
 import CampaignTable from "./CampaignTable";
 
@@ -7,6 +8,7 @@ const Home = () => {
         <div>
             <Banner></Banner>
             <CampaignTable></CampaignTable>
+            <AdAccountTable></AdAccountTable>
         </div>
     );
 };
