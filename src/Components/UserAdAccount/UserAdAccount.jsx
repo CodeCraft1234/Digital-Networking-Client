@@ -1,3 +1,4 @@
+import { FaEdit } from "react-icons/fa";
 import useAdAccount from "../../Hook/useAdAccount";
 import useUserAdAccount from "../../Hook/useUserAdAccount";
 
@@ -25,6 +26,7 @@ const UserAdAccount = () => {
               <th className="p-3">Delete Spent</th>
               <th className="p-3">Total Spent</th>
               <th className="p-3">Status</th>
+              <th className="p-3"></th>
             </tr>
           </thead>
           <tbody>
@@ -60,11 +62,14 @@ const UserAdAccount = () => {
                 >
                   {account.status}
                 </td>
+                <td className="p-3">
+                <FaEdit />
+                </td>
               </tr>
             ))}
             <tr className="bg-green-800 text-white font-bold">
-              <td className="p-3 text-center" colSpan="3">
-                Total
+              <td className="p-3 text-right" colSpan="3">
+                Total :
               </td>
               <td className="p-3 text-center">
                 $
@@ -95,7 +100,12 @@ const UserAdAccount = () => {
                   .reduce((sum, account) => sum + account.totalSpent, 0)
                   .toLocaleString()}
               </td>
-              <td className="p-3 text-center"></td>
+              <td className="p-3 text-center">
+              
+              </td>
+              <td className="p-3 text-center">
+              
+              </td>
             </tr>
           </tbody>
         </table>
