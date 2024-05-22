@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import useUsers from "../../Hook/useUsers";
 import { Link } from "react-router-dom";
+import Payment2 from "./Payment2";
+import Payment from "./Payment";
 
 
 const Banner = () => {
@@ -64,6 +66,7 @@ const Banner = () => {
                 <th className="p-3 text-center"><img  className="w-20 h-10 mx-auto" src=" https://i.ibb.co/QkTM4M3/rocket.png" alt="" /></th>
                 <th className="p-3 text-center"><img  className="w-28 h-6 mx-auto" src=" https://i.ibb.co/3WVZGdz/PAYO-BIG-aa26e6e0.png" alt="" /></th>
                 <th className="p-3 text-center">Total-BDT</th>
+                <th className="p-3 text-center">Total-BDT</th>
               </tr>
             </thead>
             {
@@ -83,6 +86,16 @@ const Banner = () => {
                   <td className="p-3 text-center">৳ {user.rocketPersonal}</td>
                   <td className="p-3 text-center">$ {user.payoneer}</td>
                   <td className="p-3 text-center">৳ {user.totalBDT}</td>
+                  <td className="p-3 text-center">
+<button  className="font-avenir px-3 py-1 bg-neutral rounded text-white" onClick={()=>document.getElementById('my_modal_1').showModal()}> Edit</button>
+<dialog id="my_modal_1" className="modal">
+  <Payment></Payment>
+  <form method="dialog">
+        {/* if there is a button in form, it will close the modal */}
+        <button className="btn btn-secondary bg-blue-500 text-white font-bold">Close</button>
+      </form>
+</dialog>
+                    </td>
                 </tr>
               </tbody>)
             }
@@ -95,10 +108,13 @@ const Banner = () => {
                 <td className="p-3 text-center">৳ {rocketPersonalTotal}</td>
                 <td className="p-3 text-center">$ {payoneerTotal}</td>
                 <td className="p-3 text-center">৳ {totalBDT}</td>
+                <td className="p-3 text-center">৳ {totalBDT}</td>
+               
               </tr>
           </table>
         </div>
       </div>
+      
         </div>
     );
 };
