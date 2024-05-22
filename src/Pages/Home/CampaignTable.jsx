@@ -1,4 +1,5 @@
 
+
 import  {  useContext, useEffect, useState } from 'react';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -26,6 +27,7 @@ const CampaignTable = () => {
   const [selectedCampaign, setSelectedCampaign] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const AxiosPublic = UseAxiosPublic();
+
 
   const [totalSpentTotal, setTotalSpentTotal] = useState('');
   const [totalBillTotal, setTotalBillTotal] = useState('');
@@ -96,6 +98,7 @@ console.log(typeof(bkashPersonal));
     const bodyRocketPersonal={rocketPersonal}
     
 
+
     if(method === 'bkashPersonal'){
       AxiosPublic.put(`/users/${email}`,bodyBkashPersonal)
       .then(res=>{
@@ -155,7 +158,12 @@ console.log(selectedCampaign.email)
     
 
    
+
   };
+
+  if (users.role === "admin") {
+    return null;
+  }
 
   return (
     <div>
@@ -390,3 +398,4 @@ console.log(selectedCampaign.email)
 };
 
 export default CampaignTable;
+

@@ -25,6 +25,8 @@ import Profile from "./Pages/Profile/Profile";
 
 import ProfileRoot from "./Pages/Profile/ProfileRoot";
 import AddCampaign from "./Pages/AddCampain/AddCampaign";
+import PrivateRoute from "./Security/PrivateRoute";
+import SalarySheet from "./Components/SalarySheet/SalarySheet";
 
 
 
@@ -58,8 +60,21 @@ const router = createBrowserRouter([
       {
 
         path:'/allEmployee',
-        element:<AllEmployee></AllEmployee>,
+        // element:<AllEmployee></AllEmployee>,
+        element: (
+          <PrivateRoute>
+            <AllEmployee/>
+          </PrivateRoute>
+        ),
       },
+      // {
+      //   path: "/allEmployee",
+      //   element: (
+      //     <PrivateRoute>
+      //       <AllEmployee/>
+      //      </PrivateRoute>
+      //   ),
+      // },
       {
         path:'/updateProfile',
         element:<UpdateProfile></UpdateProfile>
@@ -72,6 +87,11 @@ const router = createBrowserRouter([
        {
         path:'/addCampaign',
         element:<AddCampaign></AddCampaign>
+       },
+       {
+        path:'/salary',
+        element:<SalarySheet></SalarySheet>,
+        // loader: ({ params }) => fetch(`http://localhost:5000/salary/${params.id}`)
        },
     ]
   },
