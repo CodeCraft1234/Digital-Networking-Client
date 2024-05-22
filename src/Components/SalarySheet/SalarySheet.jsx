@@ -3,32 +3,47 @@ import useSalarySheet from "../../Hook/useSalarySheet";
 import UseAxiosPublic from "../../Axios/UseAxiosPublic";
 
 const SalarySheet = () => {
-    const [salary, refetch] = useSalarySheet();
+  const [salary, refetch] = useSalarySheet();
   console.log(salary);
 
-  const [data,setdata]=useState();
-  const AxiosPublic=UseAxiosPublic();
+  const [data, setdata] = useState();
+  const AxiosPublic = UseAxiosPublic();
 
-  const handleSalary=(e)=>{
-    e.preventDefault()
-    const adAccountName=e.target.adAccountName.value
-    const threshold=e.target.threshold.value
-    const spent=e.target.spent.value
-    const status=e.target.status.value
-    const payment=e.target.payment.value
-    const data={adAccountName,threshold,spent,status,payment}
-   console.log(data)
-   setdata(data)
-   }
+  const handleSalary = (e) => {
+    e.preventDefault();
+    const name = e.target.name.value;
+    const totalWork = e.target.threshold.value;
+    const dollarRet = e.target.dollarRet.value;
+    const totalSalary = e.target.totalSalary.value;
+    const paid = e.target.paid.value;
+    const unpaid = e.target.unpaid.value;
+    const bonus = e.target.bonus.value;
+    const status = e.target.status.value;
+    const photo = e.target.photo.value;
+    const data = {
+      name,
+      totalWork,
+      dollarRet,
+      totalSalary,
+      paid,
+      unpaid,
+      bonus,
+      status,
+      photo,
+    };
+    console.log(data);
+    setdata(data);
+  };
 
-   const hadleclick=(id)=>{
-    console.log(data)
-    AxiosPublic.patch(`http://localhost:5000/salary/${id}`,data)
-    .then(res=>{
-     console.log(res.data)
-     refetch()
-    })
-   }
+  const hadleclick = (id) => {
+    console.log(data);
+    AxiosPublic.patch(`http://localhost:5000/salary/${id}`, data).then(
+      (res) => {
+        console.log(res.data);
+        refetch();
+      }
+    );
+  };
 
   const totals = {
     totalWork: 6000,
