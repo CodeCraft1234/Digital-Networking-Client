@@ -66,6 +66,15 @@ const NavBar = () => {
        <li>
          <NavLink to={"/addCampain"}> Add Campaign </NavLink>
       </li>
+       <li>
+         <NavLink to={"/userCampaign"}> User Campaign </NavLink>
+      </li>
+      <li>
+               <NavLink to={"/salary"}> Salary </NavLink>
+        </li>
+        <li>
+               <NavLink to={"/allEmployee"}> All Employee </NavLink>
+        </li>
           </ul>
         </div>
         <div className="flex justify-center items-center">
@@ -84,6 +93,9 @@ const NavBar = () => {
         </li>
         <li>
          <NavLink to={"/addCampaign"}> Add Campaign </NavLink>
+      </li>
+      <li>
+         <NavLink to={"/userCampaign"}> User Campaign </NavLink>
       </li>
         <li>
                <NavLink to={"/salary"}> Salary </NavLink>
