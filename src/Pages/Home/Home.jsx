@@ -7,6 +7,7 @@ import { AuthContext } from "../../Security/AuthProvider";
 import SalarySheet from "../../Components/SalarySheet/SalarySheet";
 import UserAdAccount from "../../Components/UserAdAccount/UserAdAccount";
 import WorkList from "../../Components/WorkList/WorkList";
+import PaymentHistory from "../../Components/PaymentHistory/PaymentHistory";
 
 const Home = () => {
     const {user} = useContext(AuthContext);
@@ -19,6 +20,7 @@ const Home = () => {
             <SalarySheet></SalarySheet>
             <UserAdAccount></UserAdAccount>
             <WorkList></WorkList>
+            <PaymentHistory></PaymentHistory>
             <AdAccountTable></AdAccountTable>
         </div>
     );
