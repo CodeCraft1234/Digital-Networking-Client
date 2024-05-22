@@ -86,6 +86,9 @@ const NavBar = () => {
          <NavLink to={"/addCampaign"}> Add Campaign </NavLink>
       </li>
         <li>
+               <NavLink to={"/salary"}> Salary </NavLink>
+        </li>
+        <li>
                <NavLink to={"/allEmployee"}> All Employee </NavLink>
         </li>
         </ul>
