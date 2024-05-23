@@ -1,5 +1,3 @@
-
-
 import  {  useContext, useEffect, useState } from 'react';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -7,9 +5,6 @@ import useCampaings from '../../Hook/useCampaign';
 import UseAxiosPublic from '../../Axios/UseAxiosPublic';
 import { AuthContext } from '../../Security/AuthProvider';
 import useUsers from '../../Hook/useUsers';
-import Swal from 'sweetalert2';
-import Payment from './Payment';
-import Payment2 from './Payment2';
 
 const CampaignTable = () => {
   const { user } = useContext(AuthContext);
@@ -27,7 +22,6 @@ const CampaignTable = () => {
   const [selectedCampaign, setSelectedCampaign] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const AxiosPublic = UseAxiosPublic();
-
 
   const [totalSpentTotal, setTotalSpentTotal] = useState('');
   const [totalBillTotal, setTotalBillTotal] = useState('');
@@ -66,7 +60,6 @@ const CampaignTable = () => {
     });
   };
 
-
   const handleUpdate = async (e) => {
     e.preventDefault();
     const newSpent=e.target.newSpent.value
@@ -75,74 +68,6 @@ const CampaignTable = () => {
     const tSpent = e.target.tSpent.value;
     const dollerRate = e.target.dollerRate.value;
     const method = e.target.method.value;
-
-    const email = e.target.email.value;
-    const bkashMarcet = e.target.bkashMarcent.value;
-    const bkashPersonl = e.target.bkashPersonal.value;
-    const a=parseInt(bkashPersonl)
-    console.log(typeof(a));
-    const nagadPersonl = e.target.nagadPersonal.value;
-    const rocketPersonl = e.target.rocketPersonal.value;
-
-    const bkashPersonal=parseInt(bkashPersonl) + parseInt(newSpent)
-    const bkashMarcent= parseInt(bkashMarcet) + parseInt(newSpent)
-    const nagadPersonal= parseInt(nagadPersonl) + parseInt(newSpent)
-    const rocketPersonal= parseInt(rocketPersonl) + parseInt(newSpent)
-
-console.log(typeof(bkashPersonal));
-
-
-    const bodyBkashPersonal={bkashPersonal}
-    const bodyBkashMarcent={bkashMarcent}
-    const bodyNagadPersonal={nagadPersonal}
-    const bodyRocketPersonal={rocketPersonal}
-    
-
-
-    if(method === 'bkashPersonal'){
-      AxiosPublic.put(`/users/${email}`,bodyBkashPersonal)
-      .then(res=>{
-        Swal.fire({
-          title: "updated!",
-          text: "This blog has been updated.",
-          icon: "success"
-        });
-        console.log(res.data)      
-        })
-    } if(method === 'bkashMarcent'){
-      AxiosPublic.put(`/users/${email}`,bodyBkashMarcent)
-      .then(res=>{
-        Swal.fire({
-          title: "updated!",
-          text: "This blog has been updated.",
-          icon: "success"
-        });
-        console.log(res.data)      
-        })
-    }
-     if(method === 'nagadPersonal'){
-      AxiosPublic.put(`/users/${email}`,bodyNagadPersonal)
-      .then(res=>{
-        Swal.fire({
-          title: "updated!",
-          text: "This blog has been updated.",
-          icon: "success"
-        });
-        console.log(res.data)      
-        })
-    } if(method === 'rocketPersonal'){
-      AxiosPublic.put(`/users/${email}`,bodyRocketPersonal)
-      .then(res=>{
-        Swal.fire({
-          title: "updated!",
-          text: "This blog has been updated.",
-          icon: "success"
-        });
-        console.log(res.data)      
-        })
-    }
-
-
 
 console.log(selectedCampaign.email)
     const totalSpent=(parseFloat(previousPayment) + parseFloat(newSpent))
@@ -158,12 +83,7 @@ console.log(selectedCampaign.email)
     
 
    
-
   };
-
-  if (users.role === "admin") {
-    return null;
-  }
 
   return (
     <div>
@@ -390,12 +310,9 @@ console.log(selectedCampaign.email)
           </form>
         </div>
       )}
-<Payment></Payment>
       <ToastContainer />
       
     </div>
   );
 };
-
 export default CampaignTable;
-

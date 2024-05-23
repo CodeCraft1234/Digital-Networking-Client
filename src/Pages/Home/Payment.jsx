@@ -6,14 +6,14 @@ import Swal from "sweetalert2";
 import UseAxiosPublic from "../../Axios/UseAxiosPublic";
 import Payment2 from "./Payment2";
 
-const Payment = () => {
+const Payment = ({id}) => {
     const { user } = useContext(AuthContext);
     const [users,refetch] = useUsers();
     const AxiosPublic = UseAxiosPublic();
     const [to, setTo] = useState(null);
 
     useEffect(() => {
-        const finds = users.find(use => use.email === user?.email);
+        const finds = users.find(use => use._id === id);
         setTo(finds || {}); // Ensure 'to' is always an object
     }, [users, user]);
 
@@ -38,7 +38,7 @@ const Payment = () => {
         const body = { bkashPersonal,bkashMarcent,nagadPersonal,rocketPersonal };
 
         try {
-            const response = await AxiosPublic.put(`/users/${user?.email}`, body);
+            const response = await AxiosPublic.put(`/users/${id}`, body);
             refetch()
             console.log(response.data);
         } catch (error) {
