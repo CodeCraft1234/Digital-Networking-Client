@@ -23,10 +23,12 @@ import UpdateProfile from "./Pages/Profile/UpdateProfile";
 import NavBar from "./Components/Navber/Navber";
 import Profile from "./Pages/Profile/Profile";
 
-import ProfileRoot from "./Pages/Profile/ProfileRoot";
+
 import AddCampaign from "./Pages/AddCampain/AddCampaign";
 import PrivateRoute from "./Security/PrivateRoute";
 import SalarySheet from "./Components/SalarySheet/SalarySheet";
+
+import UserCampaign from "./Pages/UserCampain/UserCampain";
 
 
 
@@ -87,6 +89,10 @@ const router = createBrowserRouter([
        {
         path:'/addCampaign',
         element:<AddCampaign></AddCampaign>
+       },
+       {
+        path:'/userCampaign',
+        element:<UserCampaign></UserCampaign>
        },
        {
         path:'/salary',
