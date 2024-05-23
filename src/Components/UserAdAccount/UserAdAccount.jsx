@@ -100,7 +100,7 @@ const UserAdAccount = () => {
                               Payment Date
                             </label>
                             <input
-                              type="text"
+                              type="date"
                               name="date"
                               defaultValue={account.date}
                               className="w-full border rounded p-2 mt-1"
