@@ -73,7 +73,7 @@ const Banner = () => {
               users.map(user=><tbody key={user._id}>
             
                 <tr className="border-b border-opacity-20 dark:border-gray-700 dark:bg-gray-900">
-                  <td className="p-3 text-center">     <Link to={`/userInfo/${user._id}`}>
+                  <td className="p-3 text-center">     <Link to={`/userInfo/${user?.email}`}>
                     <img  className="w-10 h-10 mx-auto rounded-full" src={user.photo} alt="" />
                                                        </Link>
                   </td>

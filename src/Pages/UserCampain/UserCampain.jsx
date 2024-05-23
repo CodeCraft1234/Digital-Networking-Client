@@ -20,7 +20,6 @@ const UserCampaign = () => {
        return (
         <div>
             <section className="p-6 mt-24 dark:text-gray-100">
-               
     <Form onSubmit={handleaddblog} className="container w-full max-w-xl p-8 mx-auto space-y-6 rounded-md shadow dark:bg-gray-900">
     <div>
     <h1 className="text-3xl my-4 font-bold  text-white">Add a Campaign </h1>

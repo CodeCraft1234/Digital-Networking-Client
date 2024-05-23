@@ -5,6 +5,8 @@ import useUsers from "../../Hook/useUsers";
 import { useEffect, useState } from "react";
 import CampaignTable from "../Home/CampaignTable";
 import AdAccountTable from "../Home/AdAccountTable";
+import ShowProfile from "../ShowProfile";
+
 
 
 const Profile = () => {
@@ -60,7 +62,7 @@ const Profile = () => {
       <div >
               <img className="rounded-full mx-auto w-72 h-72" src={userr.photo} alt=""/>
     </div>
-    <CampaignTable></CampaignTable>
+    <CampaignTable ></CampaignTable>
     <AdAccountTable></AdAccountTable>
     </div>
   );

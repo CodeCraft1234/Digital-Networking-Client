@@ -1,58 +1,37 @@
-import React, { useState } from "react";
-import { FaEdit } from "react-icons/fa";
+import { useState } from "react";
 import useSalarySheet from "../../Hook/useSalarySheet";
 import UseAxiosPublic from "../../Axios/UseAxiosPublic";
 
 const SalarySheet = () => {
   const [salary, refetch] = useSalarySheet();
-
   const [data, setData] = useState();
-
-  console.log(salary);
-
-  const [selectedEmployee, setSelectedEmployee] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const AxiosPublic = UseAxiosPublic();
 
-  const handleEditClick = (employee) => {
-    setSelectedEmployee(employee);
-    setIsModalOpen(true);
-  };
-
-  const handleCancel = () => {
-    setIsModalOpen(false);
-    setSelectedEmployee(null);
-  };
-
-  const handleUpdate = (e) => {
+  const handleSalary = (e) => {
     e.preventDefault();
-    const updatedEmployee = {
-      ...selectedEmployee,
-      name: e.target.name.value,
-      totalWork: e.target.totalWork.value,
-      dollarRet: e.target.dollarRet.value,
-      totalSalary: e.target.totalSalary.value,
-      paid: e.target.paid.value,
-      unpaid: e.target.unpaid.value,
-      bonus: e.target.bonus.value,
-      status: e.target.status.value,
-      // photo: e.target.photo.value,
+    const name = e.target.name.value;
+    const totalWork = e.target.threshold.value;
+    const dollarRet = e.target.dollarRet.value;
+    const totalSalary = e.target.totalSalary.value;
+    const paid = e.target.paid.value;
+    const unpaid = e.target.unpaid.value;
+    const bonus = e.target.bonus.value;
+    const status = e.target.status.value;
+    const photo = e.target.photo.value;
+    const data = {
+      name,
+      totalWork,
+      dollarRet,
+      totalSalary,
+      paid,
+      unpaid,
+      bonus,
+      status,
+      photo,
     };
-
     setData(data);
   };
 
-
-
-    AxiosPublic.patch(
-      `http://localhost:5000/salary/${selectedEmployee.id}`,
-      updatedEmployee
-    ).then((res) => {
-      console.log(res.data);
-      refetch();
-      handleCancel();
-    });
-  };
 
   const totals = {
     totalWork: 6000,
@@ -69,11 +48,13 @@ const SalarySheet = () => {
   
     // Parse the input values to floats
     const totalWork = parseFloat(e.target.totalWork.value);
+    const mounth = e.target.mounth.value;
+    const email = e.target.email.value;
     const paid = parseFloat(e.target.paid.value);
     const saleryRate = parseFloat(e.target.saleryRate.value);
     const bonus = parseFloat(e.target.bonus.value);
   
-    const data = { totalWork, paid, saleryRate, bonus };
+    const data = { totalWork, paid,mounth, saleryRate, bonus };
     console.log(data);
   
     // Make the patch request
@@ -85,6 +66,17 @@ const SalarySheet = () => {
       .catch((error) => {
         console.error('Error updating salary:', error);
       });
+
+    const data2 = { totalWork, paid,mounth, saleryRate, bonus, email };
+    AxiosPublic.post(`/ownSelary`, data2)
+      .then((res) => {
+        console.log(res.data);
+      })
+      .catch((error) => {
+        console.error('Error updating salary:', error);
+      });
+
+      
   };
   
 
@@ -108,9 +100,7 @@ const SalarySheet = () => {
               <th className="p-3">Paid</th>
               <th className="p-3">Unpaid</th>
               <th className="p-3">Status</th>
-
               <th className="p-3">Edit</th>
-
             </tr>
           </thead>
           <tbody>
@@ -162,7 +152,46 @@ const SalarySheet = () => {
                   <dialog id={`my_modal_${index}`} className="modal">
                     <div className="flex justify-start items-center text-black bg-indigo-300 p-5 gap-3">
                       <form onSubmit={(e) => handleUpdate(e, employee._id)} className="text-start">
+                      <div className="mb-4 mx-16">
+                <label className="block text-gray-700">Mounth</label>
+                <select
+                  name="mounth"
+                  className="w-full border rounded p-2 mt-1"
+                >
+                  <option value="January">January</option>
+<option value="February">February</option>
+<option value="March">March</option>
+<option value="April">April</option>
+<option value="May">May</option>
+<option value="June">June</option>
+<option value="July">July</option>
+<option value="August">August</option>
+<option value="September">September</option>
+<option value="October">October</option>
+<option value="November">November</option>
+<option value="December">December</option>
+
+                </select>
+                      </div>
+                     <div className="flex justify-center items-center gap-2 ">
+                     
                         <div className="flex ml-5 justify-start items-center">
+                      
+                          <div className="mb-4">
+                            <label className="block text-black font-bold">
+                              Employeer Email
+                            </label>
+                            <input
+                            disabled
+                              type="text"
+                              name="email"
+                              value={employee.email}
+                              className="w-full border rounded p-2 mt-1"
+                            />
+                          </div>
+                        </div>
+                        <div className="flex ml-5 justify-start items-center">
+                      
                           <div className="mb-4">
                             <label className="block text-black font-bold">
                               Total Work
@@ -174,7 +203,27 @@ const SalarySheet = () => {
                             />
                           </div>
                         </div>
-                        <div className="flex gap-5 justify-start items-center text-black bg-indigo-300 p-5">
+
+                        <div className="flex justify-start items-center text-black bg-indigo-300 p-5 gap-3">
+                          <div className="flex justify-start items-center">
+                            <div className="mb-4">
+                              <label className="block text-black font-bold">
+                                Bonus
+                              </label>
+                              <input
+                                type="number"
+                                name="bonus"
+                                defaultValue={0}
+                                className="w-full border rounded p-2 mt-1"
+                              />
+                            </div>
+                          </div>
+                        </div>
+
+
+                     </div>
+                       <div className="flex justify-center items-center gap-2 ">
+                       <div className="flex gap-5 justify-start items-center text-black bg-indigo-300 p-5">
                           <div className="flex justify-start items-center">
                             <div className="mb-4">
                               <label className="block text-black font-bold">
@@ -204,21 +253,8 @@ const SalarySheet = () => {
                             </div>
                           </div>
                         </div>
-                        <div className="flex justify-start items-center text-black bg-indigo-300 p-5 gap-3">
-                          <div className="flex justify-start items-center">
-                            <div className="mb-4">
-                              <label className="block text-black font-bold">
-                                Bonus
-                              </label>
-                              <input
-                                type="number"
-                                name="bonus"
-                                defaultValue={0}
-                                className="w-full border rounded p-2 mt-1"
-                              />
-                            </div>
-                          </div>
-                        </div>
+                       </div>
+                        
                         <button
                           type="submit"
                           className="bg-blue-500 mx-auto flex justify-center text-white py-2 px-4 rounded transform transition-all hover:scale-105 hover:bg-blue-600"
@@ -236,12 +272,6 @@ const SalarySheet = () => {
                     </form>
                   </dialog>
                 </td>
-                <td className="p-3 text-center">
-                  <FaEdit
-                    onClick={() => handleEditClick(employee)}
-                    className="cursor-pointer"
-                  />
-                </td>
               </tr>
             ))}
             <tr className="bg-green-800 text-white">
@@ -258,116 +288,6 @@ const SalarySheet = () => {
           </tbody>
         </table>
       </div>
-
-      {isModalOpen && (
-        <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 z-50">
-          <div className="bg-white p-8 rounded-lg w-11/12 md:w-3/4 lg:w-1/2">
-            <h2 className="text-2xl font-bold mb-4 text-center">
-              Edit Employee Salary
-            </h2>
-            <form onSubmit={handleUpdate}>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-gray-700">Employee Name</label>
-                  <input
-                    type="text"
-                    name="name"
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
-                    defaultValue={selectedEmployee.name}
-                  />
-                </div>
-                <div>
-                  <label className="block text-gray-700">Total Work</label>
-                  <input
-                    type="number"
-                    name="totalWork"
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
-                    defaultValue={selectedEmployee.totalWork}
-                  />
-                </div>
-                <div>
-                  <label className="block text-gray-700">Dollar Ret</label>
-                  <input
-                    type="number"
-                    name="dollarRet"
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
-                    defaultValue={selectedEmployee.dollarRet}
-                  />
-                </div>
-                <div>
-                  <label className="block text-gray-700">Total Salary</label>
-                  <input
-                    type="number"
-                    name="totalSalary"
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
-                    defaultValue={selectedEmployee.totalSalary}
-                  />
-                </div>
-                <div>
-                  <label className="block text-gray-700">Paid</label>
-                  <input
-                    type="number"
-                    name="paid"
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
-                    defaultValue={selectedEmployee.paid}
-                  />
-                </div>
-                <div>
-                  <label className="block text-gray-700">Unpaid</label>
-                  <input
-                    type="number"
-                    name="unpaid"
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
-                    defaultValue={selectedEmployee.unpaid}
-                  />
-                </div>
-                <div>
-                  <label className="block text-gray-700">Bonus</label>
-                  <input
-                    type="number"
-                    name="bonus"
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
-                    defaultValue={selectedEmployee.bonus}
-                  />
-                </div>
-                <div>
-                  <label className="block text-gray-700">Status</label>
-                  <input
-                    type="text"
-                    name="status"
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
-                    defaultValue={selectedEmployee.status}
-                  />
-                </div>
-                {/* <div className="md:col-span-2">
-                  <label className="block text-gray-700">Photo URL</label>
-                  <input
-                    type="text"
-                    name="photo"
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
-                    defaultValue={selectedEmployee.photo}
-                  />
-                </div> */}
-              </div>
-              <div className="flex justify-end mt-6">
-                <button
-                  type="button"
-                  className="mr-4 px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600"
-                  onClick={handleCancel}
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600"
-                >
-                  Update
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
     </div>
   );
 };

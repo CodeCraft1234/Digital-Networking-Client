@@ -29,6 +29,7 @@ import PrivateRoute from "./Security/PrivateRoute";
 import SalarySheet from "./Components/SalarySheet/SalarySheet";
 
 import UserCampaign from "./Pages/UserCampain/UserCampain";
+import ShowProfile from "./Pages/ShowProfile";
 
 
 
@@ -62,7 +63,6 @@ const router = createBrowserRouter([
       {
 
         path:'/allEmployee',
-        // element:<AllEmployee></AllEmployee>,
         element: (
           <PrivateRoute>
             <AllEmployee/>
@@ -89,6 +89,11 @@ const router = createBrowserRouter([
        {
         path:'/addCampaign',
         element:<AddCampaign></AddCampaign>
+       },
+       {
+        path:'/userInfo/:email',
+        element:<ShowProfile></ShowProfile>,
+        loader: ({ params }) => fetch(`http://localhost:5000/users/${params.email}`)
        },
        {
         path:'/userCampaign',

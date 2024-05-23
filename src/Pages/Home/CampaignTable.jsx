@@ -5,6 +5,7 @@ import useCampaings from '../../Hook/useCampaign';
 import UseAxiosPublic from '../../Axios/UseAxiosPublic';
 import { AuthContext } from '../../Security/AuthProvider';
 import useUsers from '../../Hook/useUsers';
+import { split } from 'postcss/lib/list';
 
 const CampaignTable = () => {
   const { user } = useContext(AuthContext);
@@ -87,15 +88,17 @@ console.log(selectedCampaign.email)
 
   return (
     <div>
-      <div className="p-2 mt-24 sm:p-4 dark:text-gray-100">
+      <div className="p-2  sm:p-4 dark:text-gray-100">
         <h2 className="mb-4 text-6xl text-black text-center font-semibold leading-tight">
-          Campaign Table
+         Client Campaign Table
         </h2>
         <div className="overflow-x-auto">
           <table className="min-w-full text-xs">
             <thead className="dark:bg-gray-700">
               <tr>
                 <th className="p-3 text-center">Date</th>
+                <th className="p-3 text-center">Client Name</th>
+                <th className="p-3 text-center">Client Phone</th>
                 <th className="p-3 text-center">Campaign Name/URL</th>
                 <th className="p-3 text-center">Page Name/URL</th>
                 <th className="p-3 text-center">T.Budget</th>
@@ -108,30 +111,35 @@ console.log(selectedCampaign.email)
               </tr>
             </thead>
             <tbody>
-              {campaigns.map((campaign) => (
-                <tr key={campaign._id} className="border-b border-opacity-20 dark:border-gray-700 dark:bg-gray-900">
-                  <td className="p-3 text-center">{campaign.date}</td>
-                  <td className="p-3 text-center">{campaign.campaignName}</td>
-                  <td className="p-3 text-center">{campaign.pageName}</td>
-                  <td className="p-3 text-center">{campaign.tBudget}</td>
-                  <td className="p-3 text-center">{campaign.tSpent}</td>
-                  <td className="p-3 text-center">{campaign.tSpent * campaign.dollerRate}</td>
-                  <td className="p-3 text-center">{campaign.totalSpent}</td>
-                  <td className="p-3 text-center">{campaign.method}</td>
-                  <td className="p-3 text-center">{campaign.status}</td>
-                  <td className="p-3 text-center">
-                    <button
-                      onClick={() => openModal(campaign)}
-                      className="font-avenir px-3 py-1 bg-neutral rounded text-white"
-                    >
-                      Edit
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
+  {campaigns.map((campaign) => (
+    <tr key={campaign._id} className="border-b border-opacity-20 dark:border-gray-700 dark:bg-gray-900">
+      <td className="p-3 text-center">{campaign.date}</td>
+      <td className="p-3 text-center">{campaign.clientName}</td>
+      <td className="p-3 text-center">{campaign.clientPhone}</td>
+      <td className="p-3 text-center">{campaign.campaignName}</td>
+      <td className="p-3 text-center">{campaign.pageName}</td>
+      <td className="p-3 text-center">{campaign.tBudget}</td>
+      <td className="p-3 text-center">{campaign.tSpent}</td>
+      <td className="p-3 text-center">{(campaign.tSpent * campaign.dollerRate).toFixed(2)}</td>
+      <td className="p-3 text-center">{campaign.totalSpent}</td>
+      <td className="p-3 text-center">{campaign.method}</td>
+      <td className="p-3 text-center">{campaign.status}</td>
+      <td className="p-3 text-center">
+        <button
+          onClick={() => openModal(campaign)}
+          className="font-avenir px-3 py-1 bg-neutral rounded text-white"
+        >
+          Edit
+        </button>
+      </td>
+    </tr>
+  ))}
+</tbody>
+
             <tfoot>
               <tr className="border-b border-opacity-20 bg-lime-700">
+                <td className="p-3 text-center"></td>
+                <td className="p-3 text-center"></td>
                 <td className="p-3 text-center"></td>
                 <td className="p-3 text-center"></td>
                 <td className="p-3 text-center"></td>

@@ -2,12 +2,16 @@ import {  useContext, useEffect, useState } from "react";
 import { Link, NavLink, useLoaderData, useNavigate  } from "react-router-dom";
 import { AuthContext } from "../../Security/AuthProvider";
 import { IoMdArrowDropdown } from "react-icons/io";
+import useAdmin from "../../Hook/useAdmin";
 const NavBar = () => {
   const { user, logOut } = useContext(AuthContext);
   const userr=useLoaderData()
+  // const [isAdmin]=useAdmin()
+const isAdmin=user?.email === 'rrobiul@gmail.com'
+  console.log(isAdmin)
   console.log(userr)
   const navigate = useNavigate();
-  console.log(user);
+  console.log(user?.email);
   // sign out a user
   const handleLogOut = () => {
     logOut().then().catch();
@@ -63,9 +67,11 @@ const NavBar = () => {
        <li>
          <NavLink to={"/adAccountTable"}> Ad Account Table </NavLink>
       </li>
-       <li>
-         <NavLink to={"/addCampain"}> Add Campaign </NavLink>
-      </li>
+      {
+          isAdmin && <li>
+          <NavLink to={"/addCampaign"}> Add Campaign </NavLink>
+       </li>
+        }
        <li>
          <NavLink to={"/userCampaign"}> User Campaign </NavLink>
       </li>
@@ -88,21 +94,28 @@ const NavBar = () => {
         <li>
             <NavLink to={"/"}> <img className="h-6 w-6" src="https://i.ibb.co/hL4n8S1/10473299.png" alt="" />Home </NavLink>
         </li>
-        <li>
+
+
+        {
+          user ? <>
+          <li>
                <NavLink to={"/adAccountTable"}> Ad Account Table </NavLink>
         </li>
-        <li>
-         <NavLink to={"/addCampaign"}> Add Campaign </NavLink>
-      </li>
-      <li>
-         <NavLink to={"/userCampaign"}> User Campaign </NavLink>
-      </li>
+        {
+          isAdmin && <li>
+          <NavLink to={"/addCampaign"}> Add A Campaign </NavLink>
+       </li>
+
+        }
+      
         <li>
                <NavLink to={"/salary"}> Salary </NavLink>
         </li>
         <li>
                <NavLink to={"/allEmployee"}> All Employee </NavLink>
         </li>
+          </>:<></>
+        }
         </ul>
       </div>
       <div className="navbar-end">
