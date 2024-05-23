@@ -1,29 +1,41 @@
-import  { useState } from "react";
-import { FaEdit } from "react-icons/fa";
+import { useState } from "react";
 import useUserAdAccount from "../../Hook/useUserAdAccount";
+import UseAxiosPublic from "../../Axios/UseAxiosPublic";
 
 const UserAdAccount = () => {
-  const [userAdAccounts, refetch] = useUserAdAccount();
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [userad, refetch] = useUserAdAccount();
   const [selectedAccount, setSelectedAccount] = useState(null);
+  const [data, setData] = useState();
+  const AxiosPublic = UseAxiosPublic();
 
   const handleEditClick = (account) => {
     setSelectedAccount(account);
-    setIsModalOpen(true);
+    document.getElementById(`my_modal_${account.id}`).showModal();
+    setData(data);
   };
 
-  const handleCancel = () => {
-    setIsModalOpen(false);
-    setSelectedAccount(null);
-  };
+  const handleUpdate = async (e, id) => {
+    e.preventDefault();
+    console.log(id);
+    const date = e.target.date.value;
+    const threshold = parseFloat(e.target.threshold.value);
+    const currentBalance =parseFloat(e.target.currentBalance.value);
+    const totalSpent = parseFloat(e.target.totalSpent.value);
+    const status = e.target.status.value;
 
-  const handleUpdate = () => {
-    // Add your update logic here
-    // For example, you might want to send a request to update the account in the backend
-    // After updating, refetch the data and close the modal
-    refetch();
-    setIsModalOpen(false);
-    setSelectedAccount(null);
+    const data = { date, threshold, currentBalance, totalSpent, status };
+    console.log(data);
+
+     // Make the patch request
+     AxiosPublic.patch(`/userad/${id}`, data)
+     .then((res) => {
+       console.log(res.data);
+       refetch();
+     })
+     .catch((error) => {
+       console.error('Error updating ad account:', error);
+     });
+   
   };
 
   return (
@@ -40,17 +52,15 @@ const UserAdAccount = () => {
               <th className="p-3">Ad Account ID</th>
               <th className="p-3">Threshold</th>
               <th className="p-3">Current Balance</th>
-              <th className="p-3">Active Spent</th>
-              <th className="p-3">Delete Spent</th>
               <th className="p-3">Total Spent</th>
               <th className="p-3">Status</th>
               <th className="p-3"></th>
             </tr>
           </thead>
           <tbody>
-            {userAdAccounts.map((account, index) => (
+            {userad.map((account, index) => (
               <tr
-                key={index}
+                key={account._id}
                 className={`${index % 2 === 0 ? "bg-gray-100" : "bg-white"}`}
               >
                 <td className="p-3 text-center">{account.date}</td>
@@ -61,12 +71,6 @@ const UserAdAccount = () => {
                 </td>
                 <td className="p-3 text-center">
                   ${account.currentBalance.toLocaleString()}
-                </td>
-                <td className="p-3 text-center">
-                  ${account.activeSpent.toLocaleString()}
-                </td>
-                <td className="p-3 text-center">
-                  ${account.deleteSpent.toLocaleString()}
                 </td>
                 <td className="p-3 text-center">
                   ${account.totalSpent.toLocaleString()}
@@ -81,10 +85,97 @@ const UserAdAccount = () => {
                   {account.status}
                 </td>
                 <td className="p-3 text-center">
-                  <FaEdit
+                  <button
+                    className="font-avenir px-3 py-1 bg-neutral rounded text-white"
                     onClick={() => handleEditClick(account)}
-                    className="cursor-pointer"
-                  />
+                  >
+                    Edit
+                  </button>
+                  <dialog id={`my_modal_${account.id}`} className="modal">
+                    <div className="flex justify-start items-center text-black bg-indigo-300 p-5 gap-3">
+                      <form onSubmit={(e) => handleUpdate(e, account._id)} className="text-start">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div>
+                            <label className="block text-black font-bold">
+                              Payment Date
+                            </label>
+                            <input
+                              type="date"
+                              name="date"
+                              defaultValue={account.date}
+                              className="w-full border rounded p-2 mt-1"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-black font-bold">
+                              Threshold
+                            </label>
+                            <input
+                              type="number"
+                              name="threshold"
+                              defaultValue={account.threshold}
+                              className="w-full border rounded p-2 mt-1"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-black font-bold">
+                              Current Balance
+                            </label>
+                            <input
+                              type="number"
+                              name="currentBalance"
+                              defaultValue={account.currentBalance}
+                              className="w-full border rounded p-2 mt-1"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-black font-bold">
+                              Total Spent
+                            </label>
+                            <input
+                              type="number"
+                              name="totalSpent"
+                              defaultValue={0}
+                              className="w-full border rounded p-2 mt-1"
+                            />
+                          </div>
+                          <div className="md:col-span-2">
+                            <label className="block text-black font-bold">
+                              Status
+                            </label>
+                            <select
+                              name="status"
+                              defaultValue={account.status}
+                              className="w-full border rounded p-2 mt-1"
+                            >
+                              <option value="Active">Active</option>
+                              <option value="Deasible">Deasible</option>
+                            </select>
+                          </div>
+                        </div>
+                        <div className="flex justify-end mt-6">
+                          {/* <button
+                            type="button"
+                            className="mr-4 px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600"
+                            onClick={() => document.getElementById(`my_modal_${account.id}`).close()}
+                          >
+                            Close
+                          </button> */}
+                          <button
+                            type="submit"
+                            className="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600"
+                          >
+                            Update
+                          </button>
+                        </div>
+                      </form>
+                    </div>
+                    <form method="dialog">
+                      <button className="btn btn-secondary bg-blue-500 text-white font-bold">
+                        Close
+                      </button>
+                    </form>
+                  </dialog>
                 </td>
               </tr>
             ))}
@@ -94,30 +185,19 @@ const UserAdAccount = () => {
               </td>
               <td className="p-3 text-center">
                 $
-                {userAdAccounts
+                {userad
                   .reduce((sum, account) => sum + account.threshold, 0)
                   .toLocaleString()}
               </td>
               <td className="p-3 text-center">
-                {userAdAccounts
+                $
+                {userad
                   .reduce((sum, account) => sum + account.currentBalance, 0)
                   .toLocaleString()}
               </td>
               <td className="p-3 text-center">
                 $
-                {userAdAccounts
-                  .reduce((sum, account) => sum + account.activeSpent, 0)
-                  .toLocaleString()}
-              </td>
-              <td className="p-3 text-center">
-                $
-                {userAdAccounts
-                  .reduce((sum, account) => sum + account.deleteSpent, 0)
-                  .toLocaleString()}
-              </td>
-              <td className="p-3 text-center">
-                $
-                {userAdAccounts
+                {userad
                   .reduce((sum, account) => sum + account.totalSpent, 0)
                   .toLocaleString()}
               </td>
@@ -127,108 +207,6 @@ const UserAdAccount = () => {
           </tbody>
         </table>
       </div>
-
-      {isModalOpen && (
-        <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 z-50">
-          <div className="bg-white p-8 rounded-lg w-11/12 md:w-3/4 lg:w-1/2">
-            <h2 className="text-2xl font-bold mb-4 text-center">
-              Edit Ad Account
-            </h2>
-            <form>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-gray-700">Payment Date</label>
-                  <input
-                    type="text"
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
-                    defaultValue={selectedAccount.date}
-                  />
-                </div>
-                <div>
-                  <label className="block text-gray-700">Ad Account Name</label>
-                  <input
-                    type="text"
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
-                    defaultValue={selectedAccount.name}
-                  />
-                </div>
-                <div>
-                  <label className="block text-gray-700">Ad Account ID</label>
-                  <input
-                    type="text"
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
-                    defaultValue={selectedAccount.id}
-                  />
-                </div>
-                <div>
-                  <label className="block text-gray-700">Threshold</label>
-                  <input
-                    type="number"
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
-                    defaultValue={selectedAccount.threshold}
-                  />
-                </div>
-                <div>
-                  <label className="block text-gray-700">Current Balance</label>
-                  <input
-                    type="number"
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
-                    defaultValue={selectedAccount.currentBalance}
-                  />
-                </div>
-                <div>
-                  <label className="block text-gray-700">Active Spent</label>
-                  <input
-                    type="number"
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
-                    defaultValue={selectedAccount.activeSpent}
-                  />
-                </div>
-                <div>
-                  <label className="block text-gray-700">Delete Spent</label>
-                  <input
-                    type="number"
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
-                    defaultValue={selectedAccount.deleteSpent}
-                  />
-                </div>
-                <div>
-                  <label className="block text-gray-700">Total Spent</label>
-                  <input
-                    type="number"
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
-                    defaultValue={selectedAccount.totalSpent}
-                  />
-                </div>
-                <div className="md:col-span-2">
-                  <label className="block text-gray-700">Status</label>
-                  <input
-                    type="text"
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
-                    defaultValue={selectedAccount.status}
-                  />
-                </div>
-              </div>
-              <div className="flex justify-end mt-6">
-                <button
-                  type="button"
-                  className="mr-4 px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600"
-                  onClick={handleCancel}
-                >
-                  Cancel
-                </button>
-                <button
-                  type="button"
-                  className="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600"
-                  onClick={handleUpdate}
-                >
-                  Update
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
     </div>
   );
 };
