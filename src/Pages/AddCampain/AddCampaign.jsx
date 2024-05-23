@@ -1,15 +1,18 @@
 import { Form } from "react-router-dom";
 import UseAxiosPublic from "../../Axios/UseAxiosPublic";
-
+import { useContext } from "react";
+import { AuthContext } from "../../Security/AuthProvider";
 
 const AddCampaign = () => {
   const AxiosPublic=UseAxiosPublic()
+  const [user]=useContext(AuthContext)
     const handleaddblog=(e)=>{
         e.preventDefault()
         const campaignName=e.target.campaignName.value
         const pageName=e.target.pageName.value
         const totalBudged=e.target.totalBudged.value
-        const data={campaignName,pageName,totalBudged}
+        const email=user?.email
+        const data={campaignName,pageName,totalBudged,email}
        console.log(data)
        AxiosPublic.post('http://localhost:5000/campaigns',data)
        .then(res=>{

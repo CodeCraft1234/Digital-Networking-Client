@@ -2,6 +2,7 @@ import { useContext, useState } from "react";
 import { AuthContext } from "../../Security/AuthProvider";
 
 import UseAxiosPublic from "../../Axios/UseAxiosPublic";
+import Swal from "sweetalert2";
 
 
 const UpdateProfile = () => {
@@ -40,13 +41,27 @@ const UpdateProfile = () => {
             companyName,
             contctNumber,
             facebookID,
+            bkashPersonal:7484
           };
+
+          const body={bkashPersonal:7484}
+          AxiosPublic.patch(`/users/${user?.email}`,updateData)
+          .then(res=>{
+            Swal.fire({
+              title: "updated!",
+              text: "This blog has been updated.",
+              icon: "success"
+            });
+            console.log(res.data)      
+            })
       
           const response = await AxiosPublic.patch(`http://localhost:5000/users/${user?.email}`, updateData);
           console.log(response.data);
         } catch (error) {
           console.error("Error updating profile:", error);
         }
+
+
       
         setImage(null);
       };
