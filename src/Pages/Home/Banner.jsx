@@ -89,7 +89,7 @@ const Banner = () => {
                   <td className="p-3 text-center">
 <button  className="font-avenir px-3 py-1 bg-neutral rounded text-white" onClick={()=>document.getElementById('my_modal_1').showModal()}> Edit</button>
 <dialog id="my_modal_1" className="modal">
-  <Payment></Payment>
+  <Payment id={user._id} ></Payment>
   <form method="dialog">
         {/* if there is a button in form, it will close the modal */}
         <button className="btn btn-secondary bg-blue-500 text-white font-bold">Close</button>
