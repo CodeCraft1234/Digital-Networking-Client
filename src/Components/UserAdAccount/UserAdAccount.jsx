@@ -40,8 +40,8 @@ const UserAdAccount = () => {
               <th className="p-3">Ad Account ID</th>
               <th className="p-3">Threshold</th>
               <th className="p-3">Current Balance</th>
-              <th className="p-3">Active Spent</th>
-              <th className="p-3">Delete Spent</th>
+              {/* <th className="p-3">Active Spent</th>
+              <th className="p-3">Delete Spent</th> */}
               <th className="p-3">Total Spent</th>
               <th className="p-3">Status</th>
               <th className="p-3"></th>
@@ -62,12 +62,12 @@ const UserAdAccount = () => {
                 <td className="p-3 text-center">
                   ${account.currentBalance.toLocaleString()}
                 </td>
-                <td className="p-3 text-center">
+                {/* <td className="p-3 text-center">
                   ${account.activeSpent.toLocaleString()}
-                </td>
-                <td className="p-3 text-center">
+                </td> */}
+                {/* <td className="p-3 text-center">
                   ${account.deleteSpent.toLocaleString()}
-                </td>
+                </td> */}
                 <td className="p-3 text-center">
                   ${account.totalSpent.toLocaleString()}
                 </td>
@@ -121,8 +121,8 @@ const UserAdAccount = () => {
                   .reduce((sum, account) => sum + account.totalSpent, 0)
                   .toLocaleString()}
               </td>
-              <td className="p-3 text-center"></td>
-              <td className="p-3 text-center"></td>
+              {/* <td className="p-3 text-center"></td> */}
+              {/* <td className="p-3 text-center"></td> */}
             </tr>
           </tbody>
         </table>
@@ -144,22 +144,22 @@ const UserAdAccount = () => {
                     defaultValue={selectedAccount.date}
                   />
                 </div>
-                <div>
+                {/* <div>
                   <label className="block text-gray-700">Ad Account Name</label>
                   <input
                     type="text"
                     className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
                     defaultValue={selectedAccount.name}
                   />
-                </div>
-                <div>
+                </div> */}
+                {/* <div>
                   <label className="block text-gray-700">Ad Account ID</label>
                   <input
                     type="text"
                     className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
                     defaultValue={selectedAccount.id}
                   />
-                </div>
+                </div> */}
                 <div>
                   <label className="block text-gray-700">Threshold</label>
                   <input
@@ -176,22 +176,22 @@ const UserAdAccount = () => {
                     defaultValue={selectedAccount.currentBalance}
                   />
                 </div>
-                <div>
+                {/* <div>
                   <label className="block text-gray-700">Active Spent</label>
                   <input
                     type="number"
                     className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
                     defaultValue={selectedAccount.activeSpent}
                   />
-                </div>
-                <div>
+                </div> */}
+                {/* <div>
                   <label className="block text-gray-700">Delete Spent</label>
                   <input
                     type="number"
                     className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
                     defaultValue={selectedAccount.deleteSpent}
                   />
-                </div>
+                </div> */}
                 <div>
                   <label className="block text-gray-700">Total Spent</label>
                   <input
