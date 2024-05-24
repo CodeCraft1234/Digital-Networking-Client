@@ -81,8 +81,8 @@ const SalarySheet = () => {
   
 
   return (
-    <div className="mt-24 p-4">
-      <h6 className="text-center font-bold text-3xl md:text-5xl text-green-800">
+    <div className="mt-24 p-2 sm:p-4 dark:text-green-600">
+      <h6 className="text-center font-bold text-3xl md:text-5xl text-green-600">
         Employee Monthly Salary Sheet
       </h6>
       <p className="mt-6 text-center text-white p-1 font-bold text-2xl md:text-3xl bg-green-800">
@@ -107,7 +107,7 @@ const SalarySheet = () => {
             {salary.map((employee, index) => (
               <tr
                 key={employee._id}
-                className={`${index % 2 === 0 ? "bg-gray-100" : "bg-white"}`}
+                className={`${index % 2 === 0 ? "text-black border-b border-opacity-20" : "text-black border-b border-opacity-20"}`}
               >
                 <td className="p-3 flex items-center space-x-3">
                   <img
@@ -153,10 +153,10 @@ const SalarySheet = () => {
                     <div className="flex justify-start items-center text-black bg-indigo-300 p-5 gap-3">
                       <form onSubmit={(e) => handleUpdate(e, employee._id)} className="text-start">
                       <div className="mb-4 mx-16">
-                <label className="block text-gray-700">Mounth</label>
+                <label className="block text-black">Mounth</label>
                 <select
                   name="mounth"
-                  className="w-full border rounded p-2 mt-1"
+                  className="w-full border rounded p-2 mt-1 bg-indigo-50 text-black"
                 >
                   <option value="January">January</option>
 <option value="February">February</option>
@@ -186,7 +186,7 @@ const SalarySheet = () => {
                               type="text"
                               name="email"
                               value={employee.email}
-                              className="w-full border rounded p-2 mt-1"
+                              className="w-full border rounded p-2 mt-1 bg-indigo-50 text-black"
                             />
                           </div>
                         </div>
@@ -199,7 +199,7 @@ const SalarySheet = () => {
                             <input
                               type="number"
                               name="totalWork"
-                              className="w-full border rounded p-2 mt-1"
+                              className="w-full border rounded p-2 mt-1 bg-indigo-50 text-black"
                             />
                           </div>
                         </div>
@@ -214,7 +214,7 @@ const SalarySheet = () => {
                                 type="number"
                                 name="bonus"
                                 defaultValue={0}
-                                className="w-full border rounded p-2 mt-1"
+                                className="w-full border rounded p-2 mt-1 bg-indigo-50 text-black"
                               />
                             </div>
                           </div>
@@ -233,7 +233,7 @@ const SalarySheet = () => {
                                 type="number"
                                 name="saleryRate"
                                 defaultValue={5.4}
-                                className="w-full border rounded p-2 mt-1"
+                                className="w-full border rounded p-2 mt-1 bg-indigo-50 text-black"
                               />
                             </div>
                           </div>
@@ -248,7 +248,7 @@ const SalarySheet = () => {
                                 type="number"
                                 name="paid"
                                 defaultValue={0}
-                                className="w-full border rounded p-2 mt-1"
+                                className="w-full border rounded p-2 mt-1 bg-indigo-50 text-black"
                               />
                             </div>
                           </div>
