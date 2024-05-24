@@ -112,7 +112,7 @@ console.log(selectedCampaign.email)
             </thead>
             <tbody>
   {campaigns.map((campaign) => (
-    <tr key={campaign._id} className="border-b border-opacity-20 dark:border-gray-700 dark:bg-gray-900 font-semibold">
+    <tr key={campaign._id} className="border-b border-opacity-50 dark:border-gray-700 dark:bg-gray-900 font-semibold">
       <td className="p-3 text-center">{campaign.date}</td>
       <td className="p-3 text-center">{campaign.clientName}</td>
       <td className="p-3 text-center">{campaign.clientPhone}</td>
