@@ -47,13 +47,13 @@ const PaymentHistory = () => {
   const totalSpent = payments.reduce((sum, payment) => sum + payment.amount, 0);
 
   return (
-    <div className="mt-24 p-4">
-      <h6 className="text-center font-bold text-3xl md:text-5xl text-green-800">
+    <div className="mt-24 p-2 sm:p-4 dark:text-green-600">
+      <h6 className="text-center font-bold text-3xl md:text-5xl text-green-600">
         Payment History
       </h6>
       <div className="overflow-x-auto mt-6">
         <table className="min-w-full bg-white">
-          <thead className="bg-gray-800 text-white">
+          <thead className="bg-green-800 text-white">
             <tr>
               <th className="p-3">Payment Date</th>
               <th className="p-3">Payment Amount</th>
@@ -78,7 +78,7 @@ const PaymentHistory = () => {
                 </td>
               </tr>
             ))}
-            <tr className="bg-gray-800 text-white font-bold">
+            <tr className="bg-green-800 text-white font-bold">
               <td className="p-3 text-center" colSpan="2">
                 Total Spent :
               </td>
