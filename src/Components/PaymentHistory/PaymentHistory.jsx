@@ -7,15 +7,6 @@ const PaymentHistory = () => {
   const [payments, refetch] = usePaymentHistory();
   console.log(payments);
 
-  // const [payments, setPayments] = useState([
-  //   { id: 1, date: "01/01/2024", amount: 1000, method: "bKash Personal" },
-  //   { id: 2, date: "01/01/2024", amount: 900, method: "Nagad Personal" },
-  //   { id: 3, date: "01/01/2024", amount: 800, method: "Roket Personal" },
-  //   { id: 4, date: "01/01/2024", amount: 600, method: "Bank" },
-  //   { id: 5, date: "01/01/2024", amount: 1000, method: "Bank" },
-  //   { id: 6, date: "01/01/2024", amount: 500, method: "Bank" },
-  // ]);
-
   const [selectedPayment, setSelectedPayment] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const AxiosPublic = UseAxiosPublic();

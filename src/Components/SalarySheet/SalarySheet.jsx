@@ -48,11 +48,13 @@ const SalarySheet = () => {
   
     // Parse the input values to floats
     const totalWork = parseFloat(e.target.totalWork.value);
+    const mounth = e.target.mounth.value;
+    const email = e.target.email.value;
     const paid = parseFloat(e.target.paid.value);
     const saleryRate = parseFloat(e.target.saleryRate.value);
     const bonus = parseFloat(e.target.bonus.value);
   
-    const data = { totalWork, paid, saleryRate, bonus };
+    const data = { totalWork, paid,mounth, saleryRate, bonus };
     console.log(data);
   
     // Make the patch request
@@ -64,6 +66,17 @@ const SalarySheet = () => {
       .catch((error) => {
         console.error('Error updating salary:', error);
       });
+
+    const data2 = { totalWork, paid,mounth, saleryRate, bonus, email };
+    AxiosPublic.post(`/ownSelary`, data2)
+      .then((res) => {
+        console.log(res.data);
+      })
+      .catch((error) => {
+        console.error('Error updating salary:', error);
+      });
+
+      
   };
   
 
@@ -139,7 +152,46 @@ const SalarySheet = () => {
                   <dialog id={`my_modal_${index}`} className="modal">
                     <div className="flex justify-start items-center text-black bg-indigo-300 p-5 gap-3">
                       <form onSubmit={(e) => handleUpdate(e, employee._id)} className="text-start">
+                      <div className="mb-4 mx-16">
+                <label className="block text-gray-700">Mounth</label>
+                <select
+                  name="mounth"
+                  className="w-full border rounded p-2 mt-1"
+                >
+                  <option value="January">January</option>
+<option value="February">February</option>
+<option value="March">March</option>
+<option value="April">April</option>
+<option value="May">May</option>
+<option value="June">June</option>
+<option value="July">July</option>
+<option value="August">August</option>
+<option value="September">September</option>
+<option value="October">October</option>
+<option value="November">November</option>
+<option value="December">December</option>
+
+                </select>
+                      </div>
+                     <div className="flex justify-center items-center gap-2 ">
+                     
                         <div className="flex ml-5 justify-start items-center">
+                      
+                          <div className="mb-4">
+                            <label className="block text-black font-bold">
+                              Employeer Email
+                            </label>
+                            <input
+                            disabled
+                              type="text"
+                              name="email"
+                              value={employee.email}
+                              className="w-full border rounded p-2 mt-1"
+                            />
+                          </div>
+                        </div>
+                        <div className="flex ml-5 justify-start items-center">
+                      
                           <div className="mb-4">
                             <label className="block text-black font-bold">
                               Total Work
@@ -151,7 +203,27 @@ const SalarySheet = () => {
                             />
                           </div>
                         </div>
-                        <div className="flex gap-5 justify-start items-center text-black bg-indigo-300 p-5">
+
+                        <div className="flex justify-start items-center text-black bg-indigo-300 p-5 gap-3">
+                          <div className="flex justify-start items-center">
+                            <div className="mb-4">
+                              <label className="block text-black font-bold">
+                                Bonus
+                              </label>
+                              <input
+                                type="number"
+                                name="bonus"
+                                defaultValue={0}
+                                className="w-full border rounded p-2 mt-1"
+                              />
+                            </div>
+                          </div>
+                        </div>
+
+
+                     </div>
+                       <div className="flex justify-center items-center gap-2 ">
+                       <div className="flex gap-5 justify-start items-center text-black bg-indigo-300 p-5">
                           <div className="flex justify-start items-center">
                             <div className="mb-4">
                               <label className="block text-black font-bold">
@@ -181,21 +253,8 @@ const SalarySheet = () => {
                             </div>
                           </div>
                         </div>
-                        <div className="flex justify-start items-center text-black bg-indigo-300 p-5 gap-3">
-                          <div className="flex justify-start items-center">
-                            <div className="mb-4">
-                              <label className="block text-black font-bold">
-                                Bonus
-                              </label>
-                              <input
-                                type="number"
-                                name="bonus"
-                                defaultValue={0}
-                                className="w-full border rounded p-2 mt-1"
-                              />
-                            </div>
-                          </div>
-                        </div>
+                       </div>
+                        
                         <button
                           type="submit"
                           className="bg-blue-500 mx-auto flex justify-center text-white py-2 px-4 rounded transform transition-all hover:scale-105 hover:bg-blue-600"
