@@ -88,13 +88,13 @@ console.log(selectedCampaign.email)
 
   return (
     <div>
-      <div className="p-2  sm:p-4 dark:text-gray-100">
-        <h2 className="mb-4 text-6xl text-black text-center font-semibold leading-tight">
+      <div className="p-2  sm:p-4 dark:text-green-600">
+        <h2 className="mb-4 text-6xl text-green-600 text-center font-semibold leading-tight">
          Client Campaign Table
         </h2>
         <div className="overflow-x-auto">
           <table className="min-w-full text-xs">
-            <thead className="dark:bg-gray-700">
+            <thead className="bg-green-800 text-white">
               <tr>
                 <th className="p-3 text-center">Date</th>
                 <th className="p-3 text-center">Client Name</th>
@@ -112,7 +112,7 @@ console.log(selectedCampaign.email)
             </thead>
             <tbody>
   {campaigns.map((campaign) => (
-    <tr key={campaign._id} className="border-b border-opacity-20 dark:border-gray-700 dark:bg-gray-900">
+    <tr key={campaign._id} className="border-b border-opacity-20 dark:border-gray-700 dark:bg-gray-900 font-semibold">
       <td className="p-3 text-center">{campaign.date}</td>
       <td className="p-3 text-center">{campaign.clientName}</td>
       <td className="p-3 text-center">{campaign.clientPhone}</td>
@@ -137,7 +137,7 @@ console.log(selectedCampaign.email)
 </tbody>
 
             <tfoot>
-              <tr className="border-b border-opacity-20 bg-lime-700">
+              <tr className="border-b border-opacity-20 bg-green-800 text-white">
                 <td className="p-3 text-center"></td>
                 <td className="p-3 text-center"></td>
                 <td className="p-3 text-center"></td>
