@@ -3,15 +3,15 @@ import { useQuery } from "@tanstack/react-query";
 
 const useUserAdAccount = () => {
     const AxiosPublic=UseAxiosPublic()
-    const { refetch, data: useUserAdAccount=[]}=useQuery({
-        queryKey:['useUserAdAccount'],
+    const { refetch, data: userad=[]}=useQuery({
+        queryKey:['userad'],
         queryFn: async () => {
             const res=await AxiosPublic.get(`/userad`)
             return res.data
         }
     })
-        console.log(useUserAdAccount)
-        return [useUserAdAccount,refetch]
+        console.log(userad)
+        return [userad,refetch]
 };
 
 export default useUserAdAccount;
