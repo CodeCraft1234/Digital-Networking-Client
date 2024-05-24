@@ -54,7 +54,7 @@ const UserAdAccount = () => {
               <th className="p-3">Current Balance</th>
               <th className="p-3">Total Spent</th>
               <th className="p-3">Status</th>
-              <th className="p-3"></th>
+              <th className="p-3">Edit</th>
               <th className="p-3"></th>
             </tr>
           </thead>

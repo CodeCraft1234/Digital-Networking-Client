@@ -44,7 +44,7 @@ const WorkList = () => {
               <th className="p-3">Paid</th>
               <th className="p-3">T. Due</th>
               <th className="p-3">Status</th>
-              <th className="p-3"></th>
+              <th className="p-3">Edit</th>
             </tr>
           </thead>
           <tbody>
