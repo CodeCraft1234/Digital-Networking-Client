@@ -39,8 +39,8 @@ const UserAdAccount = () => {
   };
 
   return (
-    <div className="mt-24 p-4">
-      <h6 className="text-center font-bold text-3xl md:text-5xl text-green-800">
+    <div className="mt-24 p-2 sm:p-4 dark:text-green-600">
+      <h6 className="text-center font-bold text-3xl md:text-5xl text-green-600">
         User Ads Account Activities
       </h6>
       <div className="overflow-x-auto mt-6">
@@ -49,11 +49,12 @@ const UserAdAccount = () => {
             <tr>
               <th className="p-3">Payment Date</th>
               <th className="p-3">Ad Account Name</th>
-              <th className="p-3">Ad Account ID</th>
+              {/* <th className="p-3">Ad Account ID</th> */}
               <th className="p-3">Threshold</th>
               <th className="p-3">Current Balance</th>
               <th className="p-3">Total Spent</th>
               <th className="p-3">Status</th>
+              <th className="p-3"></th>
               <th className="p-3"></th>
             </tr>
           </thead>
@@ -61,11 +62,11 @@ const UserAdAccount = () => {
             {userad.map((account, index) => (
               <tr
                 key={account._id}
-                className={`${index % 2 === 0 ? "bg-gray-100" : "bg-white"}`}
+                className={`${index % 2 === 0 ? " text-black border-b border-opacity-20  " : " text-black border-b border-opacity-20 "}`}
               >
                 <td className="p-3 text-center">{account.date}</td>
                 <td className="p-3 text-center">{account.name}</td>
-                <td className="p-3 text-center">{account.id}</td>
+                {/* <td className="p-3 text-center">{account.id}</td> */}
                 <td className="p-3 text-center">
                   ${account.threshold.toLocaleString()}
                 </td>
@@ -92,7 +93,7 @@ const UserAdAccount = () => {
                     Edit
                   </button>
                   <dialog id={`my_modal_${account.id}`} className="modal">
-                    <div className="flex justify-start items-center text-black bg-indigo-300 p-5 gap-3">
+                    <div className="flex justify-start items-center text-gray-400 bg-indigo-300 p-5 gap-3">
                       <form onSubmit={(e) => handleUpdate(e, account._id)} className="text-start">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                           <div>
@@ -180,7 +181,7 @@ const UserAdAccount = () => {
               </tr>
             ))}
             <tr className="bg-green-800 text-white font-bold">
-              <td className="p-3 text-right" colSpan="3">
+              <td className="p-3 text-right" colSpan="2">
                 Total:
               </td>
               <td className="p-3 text-center">
@@ -201,6 +202,7 @@ const UserAdAccount = () => {
                   .reduce((sum, account) => sum + account.totalSpent, 0)
                   .toLocaleString()}
               </td>
+              <td className="p-3 text-center"></td>
               <td className="p-3 text-center"></td>
               <td className="p-3 text-center"></td>
             </tr>
