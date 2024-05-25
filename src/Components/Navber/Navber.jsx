@@ -64,6 +64,9 @@ const isAdmin=user?.email === 'rrobiul@gmail.com'
         {
           user?.email === 'anowarulbd2@gmail.com' ? <>
           <li>
+               <NavLink to={"/adAccountAds"}>Ad Ads Account </NavLink>
+        </li>
+          <li>
                <NavLink to={"/adAccountTable"}>User Ads Account </NavLink>
         </li>
           <li>
@@ -100,6 +103,9 @@ const isAdmin=user?.email === 'rrobiul@gmail.com'
 
         {
           user?.email === 'anowarulbd2@gmail.com' ? <>
+           <li>
+               <NavLink to={"/adAccountAds"}>Ad Ads Account </NavLink>
+        </li>
           <li>
                <NavLink to={"/adAccountTable"}>User Ads Account </NavLink>
         </li>
