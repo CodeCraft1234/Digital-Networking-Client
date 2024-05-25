@@ -16,7 +16,7 @@ const AddAdsAccount = () => {
         const date=e.target.date.value
         const data={campaignName,clientName,pageName,clientPhone,tBudged,email,tSpent,dollerRate,date}
        console.log(data)
-       AxiosPublic.post('http://localhost:5000/campaigns',data)
+       AxiosPublic.post('https://digital-networking-server.vercel.app/campaigns',data)
        .then(res=>{
         console.log(res.data)
        })

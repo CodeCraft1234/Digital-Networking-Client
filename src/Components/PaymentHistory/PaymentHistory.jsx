@@ -32,7 +32,7 @@ const PaymentHistory = () => {
     };
 
     AxiosPublic.patch(
-      `http://localhost:5000/payments/${selectedPayment.id}`,
+      `https://digital-networking-server.vercel.app/payments/${selectedPayment.id}`,
       updatedPayment
     ).then((res) => {
       setPayments((prev) =>

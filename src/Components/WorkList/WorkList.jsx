@@ -27,7 +27,7 @@ const WorkList = () => {
   };
 
   return (
-    <div className="mt-24 p-4">
+    <div className=" p-4">
       <h6 className="text-center font-bold text-3xl md:text-5xl text-green-800">
         Own Work List
       </h6>
@@ -39,12 +39,8 @@ const WorkList = () => {
               <th className="p-3">Page Name & URL</th>
               <th className="p-3">T. Budget</th>
               <th className="p-3">T. Spent</th>
-              <th className="p-3">Dollar Rate</th>
-              <th className="p-3">Total Bill</th>
-              <th className="p-3">Paid</th>
-              <th className="p-3">T. Due</th>
               <th className="p-3">Status</th>
-              <th className="p-3"></th>
+             
             </tr>
           </thead>
           <tbody>
@@ -61,16 +57,7 @@ const WorkList = () => {
                 <td className="p-3 text-center">
                   ${work.spent.toLocaleString()}
                 </td>
-                <td className="p-3 text-center">{work.dollarRate}</td>
-                <td className="p-3 text-center">
-                  ৳ {work.totalBill.toLocaleString()}
-                </td>
-                <td className="p-3 text-center">
-                  ৳ {work.paid.toLocaleString()}
-                </td>
-                <td className="p-3 text-center">
-                  ৳ {work.due.toLocaleString()}
-                </td>
+               
                 <td
                   className={`p-3 text-center ${
                     work.status === "Active" ? "text-green-500" : "text-red-500"
@@ -78,31 +65,17 @@ const WorkList = () => {
                 >
                   {work.status}
                 </td>
-                <td className="p-3 text-center">
-                  <FaEdit
-                    onClick={() => handleEditClick(work)}
-                    className="cursor-pointer"
-                  />
-                </td>
               </tr>
             ))}
             <tr className="bg-green-800 text-white font-bold">
+             
+              <td className="p-3 text-center">
+              
+              </td>
               <td className="p-3 text-right" colSpan="2">
                 Total Spent:
               </td>
-              <td className="p-3 text-center">
-                $
-                {works
-                  .reduce((sum, work) => sum + work.budget, 0)
-                  .toLocaleString()}
-              </td>
-              <td className="p-3 text-center">
-                $
-                {works
-                  .reduce((sum, work) => sum + work.spent, 0)
-                  .toLocaleString()}
-              </td>
-              <td className="p-3 text-center"></td>
+              
               <td className="p-3 text-center">
                 ৳{" "}
                 {works
@@ -110,19 +83,10 @@ const WorkList = () => {
                   .toLocaleString()}
               </td>
               <td className="p-3 text-center">
-                ৳{" "}
-                {works
-                  .reduce((sum, work) => sum + work.paid, 0)
-                  .toLocaleString()}
+             
               </td>
-              <td className="p-3 text-center">
-                ৳{" "}
-                {works
-                  .reduce((sum, work) => sum + work.due, 0)
-                  .toLocaleString()}
-              </td>
-              <td className="p-3 text-center"></td>
-              <td className="p-3 text-center"></td>
+             
+            
             </tr>
           </tbody>
         </table>
