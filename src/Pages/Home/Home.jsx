@@ -15,70 +15,31 @@ import UseAxiosPublic from "../../Axios/UseAxiosPublic";
 import Profile from "../Profile/Profile";
 import MyProfile from "./MyProfile";
 import TransictionCard from "./TransictionCard";
-import UserProfile from "./UserProfile";
 
 const Home = () => {
-    const { user } = useContext(AuthContext);
-    const [users] = useUsers();
-    const [role, setUserr] = useState();
-    const AxiosPublic=UseAxiosPublic()
-  
-    useEffect(() => {
-        AxiosPublic.get(`http://localhost:5000/users/${user?.email}`)
-        .then(res=>{
-            console.log(res.data.role)
-            setUserr(res.data.role)
-        })
-    }, [user, users]);
-  
- 
+    const {user} = useContext(AuthContext);
+    const [users]=useUsers()
+
+    console.log(users)
 
     return (
-        <div> 
+        <div>
+           {
+            user ?  <div>
             {
-            user?.email ? <div>
- {
-                user?.email === "anowarulbd2@gmail.com" ?  <div>
-                <TransictionCard></TransictionCard>
-                <Banner></Banner> 
-                 </div> : 
-                 <>
-                 {
-                    role === "employee" ?   <MyProfile></MyProfile> : <>   <UserProfile></UserProfile></>
-                 }
-                
-                 </>
+                user?.email==="anowarulbd2@gmail.com" ? <div>
+                    <TransictionCard></TransictionCard>
+                <Banner></Banner>
+                </div>
+                :   <div>
+                    <MyProfile></MyProfile>
+                    
+                {/* <WorkList></WorkList>
+            <PaymentHistory></PaymentHistory> */}
+                </div>
             }
-
-            </div> : <Login></Login>     
-            }
-
-            
-
-
-
-            {/* {
-                
-            }
-            <div>
-                {
-                       user?.email==="anowarulbd2@gmail.com" &&   <div>
-                       <TransictionCard></TransictionCard>
-                       <Banner></Banner> 
-                        </div> 
-                }
-
-                {
-                     user?.email === user?.email && 
-                }
-
-            </div> */}
-
-            {/* <div>     
-             
-            </div>
-         
-             */}
+            </div> :  <Login></Login>
+           }
 
 
            
