@@ -18,7 +18,7 @@ const UserProfile = () => {
   console.log(data)
   
       useEffect(()=>{
-        const user=AxiosPublic.get(`https://digital-networking-server.vercel.app/users/${userr.email}`)
+        AxiosPublic.get(`https://digital-networking-server.vercel.app/users/${user?.email}`)
         .then(res=>{
           console.log(res.data)
           setData(res.data)
@@ -36,7 +36,7 @@ const UserProfile = () => {
       const [dataa2,setData2]=useState([])
       console.log(dataa2)
       useEffect(() => {
-       const filtered = campaign.filter(campaign => campaign.clientEmail === userr?.email);
+       const filtered = campaign.filter(campaign => campaign.clientEmail === user?.email);
        console.log(filtered);
        setData2(filtered);
      }, [campaign, user?.email]);
