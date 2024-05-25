@@ -137,13 +137,8 @@ console.log(email)
               </tr>
             </thead>
             <tbody>
-<<<<<<< HEAD
   {filteredCampaigns.map((campaign) => (
     <tr key={campaign._id} className="border-b border-opacity-20 dark:border-gray-700 dark:bg-gray-900">
-=======
-  {campaigns.map((campaign) => (
-    <tr key={campaign._id} className="border-b border-opacity-50 dark:border-gray-700 dark:bg-gray-900 font-semibold">
->>>>>>> c86137092871bbb766fdae03e4fcbb77bb0af431
       <td className="p-3 text-center">{campaign.date}</td>
     
            <Link to={`/client/${campaign.clientEmail}`}>
@@ -168,13 +163,8 @@ console.log(email)
   ))}
 </tbody>
 
-<<<<<<< HEAD
             {/* <tfoot>
               <tr className="border-b border-opacity-20 bg-lime-700">
-=======
-            <tfoot>
-              <tr className="border-b border-opacity-20 bg-green-800 text-white">
->>>>>>> c86137092871bbb766fdae03e4fcbb77bb0af431
                 <td className="p-3 text-center"></td>
                 <td className="p-3 text-center"></td>
                 <td className="p-3 text-center"></td>
