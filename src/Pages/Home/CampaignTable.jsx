@@ -117,13 +117,13 @@ console.log(email)
 
   return (
     <div>
-      <div className="p-2  sm:p-4 dark:text-gray-100">
-        <h2 className="mb-4 text-6xl text-black text-center font-semibold leading-tight">
+      <div className="p-2  sm:p-4 dark:text-green-600">
+        <h2 className="mb-4 text-6xl text-green-600 text-center font-semibold leading-tight">
          Client Campaign Table
         </h2>
         <div className="overflow-x-auto">
           <table className="min-w-full text-xs">
-            <thead className="dark:bg-gray-700">
+            <thead className="bg-green-800 text-white">
               <tr>
                 <th className="p-3 text-center">Date</th>
                 <th className="p-3 text-center">Client Name</th>
@@ -137,8 +137,13 @@ console.log(email)
               </tr>
             </thead>
             <tbody>
+<<<<<<< HEAD
   {filteredCampaigns.map((campaign) => (
     <tr key={campaign._id} className="border-b border-opacity-20 dark:border-gray-700 dark:bg-gray-900">
+=======
+  {campaigns.map((campaign) => (
+    <tr key={campaign._id} className="border-b border-opacity-50 dark:border-gray-700 dark:bg-gray-900 font-semibold">
+>>>>>>> c86137092871bbb766fdae03e4fcbb77bb0af431
       <td className="p-3 text-center">{campaign.date}</td>
     
            <Link to={`/client/${campaign.clientEmail}`}>
@@ -163,8 +168,13 @@ console.log(email)
   ))}
 </tbody>
 
+<<<<<<< HEAD
             {/* <tfoot>
               <tr className="border-b border-opacity-20 bg-lime-700">
+=======
+            <tfoot>
+              <tr className="border-b border-opacity-20 bg-green-800 text-white">
+>>>>>>> c86137092871bbb766fdae03e4fcbb77bb0af431
                 <td className="p-3 text-center"></td>
                 <td className="p-3 text-center"></td>
                 <td className="p-3 text-center"></td>

@@ -27,8 +27,13 @@ const WorkList = () => {
   };
 
   return (
+<<<<<<< HEAD
     <div className=" p-4">
       <h6 className="text-center font-bold text-3xl md:text-5xl text-green-800">
+=======
+    <div className="mt-24 p-2 sm:p-4 dark:text-green-600">
+      <h6 className="text-center font-bold text-3xl md:text-5xl text-green-600">
+>>>>>>> c86137092871bbb766fdae03e4fcbb77bb0af431
         Own Work List
       </h6>
       <div className="overflow-x-auto mt-6">
@@ -40,14 +45,18 @@ const WorkList = () => {
               <th className="p-3">T. Budget</th>
               <th className="p-3">T. Spent</th>
               <th className="p-3">Status</th>
+<<<<<<< HEAD
              
+=======
+              <th className="p-3">Edit</th>
+>>>>>>> c86137092871bbb766fdae03e4fcbb77bb0af431
             </tr>
           </thead>
           <tbody>
             {works.map((work, index) => (
               <tr
                 key={index}
-                className={`${index % 2 === 0 ? "bg-gray-100" : "bg-white"}`}
+                className={`${index % 2 === 0 ? "text-black border-b border-opacity-20" : "text-black border-b border-opacity-20"}`}
               >
                 <td className="p-3 text-center">{work.date}</td>
                 <td className="p-3 text-center">{work.pageName}</td>
@@ -65,6 +74,21 @@ const WorkList = () => {
                 >
                   {work.status}
                 </td>
+<<<<<<< HEAD
+=======
+                <td className="p-3 text-center">
+                  {/* <FaEdit
+                    onClick={() => handleEditClick(work)}
+                    className="cursor-pointer"
+                  /> */}
+                  <button
+                    className="font-avenir px-3 py-1 bg-neutral rounded text-white"
+                    onClick={() => handleEditClick(work)}
+                  >
+                    Edit
+                  </button>
+                </td>
+>>>>>>> c86137092871bbb766fdae03e4fcbb77bb0af431
               </tr>
             ))}
             <tr className="bg-green-800 text-white font-bold">
@@ -95,7 +119,7 @@ const WorkList = () => {
       {isModalOpen && (
         <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 z-50">
           <div className="bg-white p-8 rounded-lg w-11/12 md:w-3/4 lg:w-1/2">
-            <h2 className="text-2xl font-bold mb-4 text-center">Edit Work</h2>
+            <h2 className="text-2xl text-green-600 font-bold mb-4 text-center">Edit Work</h2>
             <form>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
