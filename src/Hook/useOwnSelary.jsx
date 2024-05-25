@@ -5,19 +5,17 @@ import { useContext } from "react";
 import { AuthContext } from "../Security/AuthProvider";
 
 
-const  useOwnSelary = () => {
+const useOwnSelary = () => {
     const AxiosPublic=UseAxiosPublic()
-const { user }=useContext(AuthContext)
-const { refetch, data: ownSelary=[]}=useQuery({
-    queryKey:['/ownSelary',user?.email],
-    queryFn: async () => {
-        const res=await AxiosPublic.get(`/ownSelary?email=${user?.email}`)
-        return res.data
-    }
-})
-
-console.log(ownSelary)
-return [ownSelary,refetch]
+    const { refetch, data: ownSalery=[]}=useQuery({
+        queryKey:['ownSelary'],
+        queryFn: async () => {
+            const res=await AxiosPublic.get(`/ownSelary`)
+            return res.data
+        }
+    })
+console.log(ownSalery)
+return [ownSalery,refetch]
 
 };
 

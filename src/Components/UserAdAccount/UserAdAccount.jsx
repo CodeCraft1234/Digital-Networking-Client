@@ -39,8 +39,13 @@ const UserAdAccount = () => {
   };
 
   return (
+<<<<<<< HEAD
+    <div className="mt-24 p-4">
+      <h6 className="text-center uppercase font-bold text-3xl md:text-5xl text-green-800">
+=======
     <div className="mt-24 p-2 sm:p-4 dark:text-green-600">
       <h6 className="text-center font-bold text-3xl md:text-5xl text-green-600">
+>>>>>>> c86137092871bbb766fdae03e4fcbb77bb0af431
         User Ads Account Activities
       </h6>
       <div className="overflow-x-auto mt-6">
@@ -49,7 +54,10 @@ const UserAdAccount = () => {
             <tr>
               <th className="p-3">Payment Date</th>
               <th className="p-3">Ad Account Name</th>
+<<<<<<< HEAD
+=======
               {/* <th className="p-3">Ad Account ID</th> */}
+>>>>>>> c86137092871bbb766fdae03e4fcbb77bb0af431
               <th className="p-3">Threshold</th>
               <th className="p-3">Current Balance</th>
               <th className="p-3">Total Spent</th>
@@ -66,7 +74,10 @@ const UserAdAccount = () => {
               >
                 <td className="p-3 text-center">{account.date}</td>
                 <td className="p-3 text-center">{account.name}</td>
+<<<<<<< HEAD
+=======
                 {/* <td className="p-3 text-center">{account.id}</td> */}
+>>>>>>> c86137092871bbb766fdae03e4fcbb77bb0af431
                 <td className="p-3 text-center">
                   ${account.threshold.toLocaleString()}
                 </td>
@@ -155,13 +166,6 @@ const UserAdAccount = () => {
                           </div>
                         </div>
                         <div className="flex justify-end mt-6">
-                          {/* <button
-                            type="button"
-                            className="mr-4 px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600"
-                            onClick={() => document.getElementById(`my_modal_${account.id}`).close()}
-                          >
-                            Close
-                          </button> */}
                           <button
                             type="submit"
                             className="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600"

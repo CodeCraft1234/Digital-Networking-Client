@@ -61,26 +61,32 @@ const isAdmin=user?.email === 'rrobiul@gmail.com'
             className="menu menu-sm dropdown-content  bg-violet-950 mt-3 z-[1] p-2 shadow  rounded-box w-52 "
           >
 
-       <li>
-         <NavLink to={"/"}> <img className="h-8 w-8" src="https://i.ibb.co/hL4n8S1/10473299.png" alt="" />Home </NavLink>
-      </li>
-       <li>
-         <NavLink to={"/adAccountTable"}> Ad Account Table </NavLink>
-      </li>
-      {
-          isAdmin && <li>
-          <NavLink to={"/addCampaign"}> Add Campaign </NavLink>
-       </li>
-        }
-       <li>
-         <NavLink to={"/userCampaign"}> User Campaign </NavLink>
-      </li>
-      <li>
-               <NavLink to={"/salary"}> Salary </NavLink>
+        {
+          user?.email === 'anowarulbd2@gmail.com' ? <>
+          <li>
+               <NavLink to={"/adAccountTable"}>User Ads Account </NavLink>
+        </li>
+          <li>
+               <NavLink to={"/monthlyadAccountTable"}>Monthly Ads Account </NavLink>
+        </li>
+          <li>
+        <NavLink to={"/salary"}>Monthly Salary </NavLink>
         </li>
         <li>
-               <NavLink to={"/allEmployee"}> All Employee </NavLink>
+        <NavLink to={"/allEmployee"}>All Employee</NavLink>
         </li>
+          </>:<>
+          <li>
+        <NavLink to={`/userInfo/${user?.email}`}>My Profile</NavLink>
+        </li>
+          <li>
+        <NavLink to={"/addCampaign"}>Add Campaign</NavLink>
+        </li>
+          <li>
+        <NavLink to={"/addClient"}>Add Client</NavLink>
+        </li>
+          </>
+        }
           </ul>
         </div>
         <div className="flex justify-center items-center">
@@ -91,30 +97,32 @@ const isAdmin=user?.email === 'rrobiul@gmail.com'
       </div>
       <div className="navbar-center hidden lg:flex">
         <ul className="menu menu-horizontal items-center px-1 flex gap-4">
-        <li>
-            <NavLink to={"/"}> <img className="h-6 w-6" src="https://i.ibb.co/hL4n8S1/10473299.png" alt="" />Home </NavLink>
-        </li>
-
 
         {
-          user ? <>
+          user?.email === 'anowarulbd2@gmail.com' ? <>
           <li>
-               <NavLink to={"/adAccountTable"}> Ad Account Table </NavLink>
+               <NavLink to={"/adAccountTable"}>User Ads Account </NavLink>
         </li>
-        {
-          isAdmin && <li>
-          <NavLink to={"/addCampaign"}> Add A Campaign </NavLink>
-       </li>
-
-        }
-      
-        <li>
-               <NavLink to={"/salary"}> Salary </NavLink>
+          <li>
+               <NavLink to={"/monthlyadAccountTable"}>Monthly Ads Account </NavLink>
+        </li>
+          <li>
+        <NavLink to={"/salary"}>Monthly Salary </NavLink>
         </li>
         <li>
-               <NavLink to={"/allEmployee"}> All Employee </NavLink>
+        <NavLink to={"/allEmployee"}>All Employee</NavLink>
         </li>
-          </>:<></>
+          </>:<>
+          <li>
+        <NavLink to={`/userInfo/${user?.email}`}>My Profile</NavLink>
+        </li>
+          <li>
+        <NavLink to={"/addCampaign"}>Add Campaign</NavLink>
+        </li>
+        <li>
+        <NavLink to={"/addClient"}>Add Client</NavLink>
+        </li>
+          </>
         }
         </ul>
       </div>

@@ -1,4 +1,3 @@
-
 import * as React from "react";
 import * as ReactDOM from "react-dom/client";
 import {
@@ -10,28 +9,21 @@ import Root from "./Root";
 import Home from "./Pages/Home/Home";
 import Login from "./Security/Login";
 import AuthProvider from "./Security/AuthProvider";
-
 import Register from "./Security/Register";
-
-
 import AdAccountTable from "./Pages/Home/AdAccountTable";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-
 import AllEmployee from "./Pages/AllEmployee/AllEmployee";
-
 import UpdateProfile from "./Pages/Profile/UpdateProfile";
 import NavBar from "./Components/Navber/Navber";
 import Profile from "./Pages/Profile/Profile";
-
-
 import AddCampaign from "./Pages/AddCampain/AddCampaign";
 import PrivateRoute from "./Security/PrivateRoute";
 import SalarySheet from "./Components/SalarySheet/SalarySheet";
-
 import UserCampaign from "./Pages/UserCampain/UserCampain";
-import ShowProfile from "./Pages/ShowProfile";
-
-
+import UserAdAccount from "./Components/UserAdAccount/UserAdAccount";
+import MonthlyAdAccount from "./Pages/Home/MonthlyAddAccount";
+import AddClient from "./Pages/Home/AddClient";
+import UserProfile from "./Pages/Home/UserProfile";
 
 const router = createBrowserRouter([
   {
@@ -41,12 +33,6 @@ const router = createBrowserRouter([
       {
         path:'/',
         element:<Home></Home>
-      },
-
-      {
-        path: "/gk/:email",
-        element: <NavBar></NavBar>,
-        loader: ({ params }) => fetch(`http://localhost:5000/users/${params.email}`)
       },
       {
         path: '/login',
@@ -58,51 +44,37 @@ const router = createBrowserRouter([
       },
       {
         path:'/adAccountTable',
-        element:<AdAccountTable></AdAccountTable>
+        element:<UserAdAccount></UserAdAccount>
       },
       {
-
-        path:'/allEmployee',
-        element: (
-          <PrivateRoute>
-            <AllEmployee/>
-          </PrivateRoute>
-        ),
+        path:'/monthlyadAccountTable',
+        element:<MonthlyAdAccount></MonthlyAdAccount>
       },
-      // {
-      //   path: "/allEmployee",
-      //   element: (
-      //     <PrivateRoute>
-      //       <AllEmployee/>
-      //      </PrivateRoute>
-      //   ),
-      // },
       {
         path:'/updateProfile',
         element:<UpdateProfile></UpdateProfile>
        },
       {
-        path:'/userInfo/:id',
+        path:'/userInfo/:email',
         element:<Profile></Profile>,
-        loader: ({ params }) => fetch(`http://localhost:5000/users/${params.id}`)
+        loader: ({ params }) => fetch(`https://digital-networking-server.vercel.app/users/${params.email}`)
        },
        {
         path:'/addCampaign',
         element:<AddCampaign></AddCampaign>
        },
        {
-        path:'/userInfo/:email',
-        element:<ShowProfile></ShowProfile>,
-        loader: ({ params }) => fetch(`http://localhost:5000/users/${params.email}`)
-       },
-       {
-        path:'/userCampaign',
-        element:<UserCampaign></UserCampaign>
+        path:'/addClient',
+        element:<AddClient></AddClient>
        },
        {
         path:'/salary',
         element:<SalarySheet></SalarySheet>,
-        // loader: ({ params }) => fetch(`http://localhost:5000/salary/${params.id}`)
+       },
+       {
+        path:'/client/:email',
+        element:<UserProfile></UserProfile>,
+        loader: ({ params }) => fetch(`http://localhost:5000/users/${params.email}`)
        },
     ]
   },

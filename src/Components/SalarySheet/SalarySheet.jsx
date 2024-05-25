@@ -81,13 +81,15 @@ const SalarySheet = () => {
   
 
   return (
+<<<<<<< HEAD
+    <div className="mt-24 p-4">
+      <h6 className="text-center uppercase font-bold mb-5 text-3xl md:text-5xl text-green-800">
+=======
     <div className="mt-24 p-2 sm:p-4 dark:text-green-600">
       <h6 className="text-center font-bold text-3xl md:text-5xl text-green-600">
+>>>>>>> c86137092871bbb766fdae03e4fcbb77bb0af431
         Employee Monthly Salary Sheet
       </h6>
-      <p className="mt-6 text-center text-white p-1 font-bold text-2xl md:text-3xl bg-green-800">
-        January
-      </p>
       <div className="overflow-x-auto mt-0">
         <table className="min-w-full text-xs md:text-sm lg:text-base bg-white">
           <thead className="bg-green-800 text-white">

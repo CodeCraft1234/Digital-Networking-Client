@@ -27,8 +27,13 @@ const WorkList = () => {
   };
 
   return (
+<<<<<<< HEAD
+    <div className=" p-4">
+      <h6 className="text-center font-bold text-3xl md:text-5xl text-green-800">
+=======
     <div className="mt-24 p-2 sm:p-4 dark:text-green-600">
       <h6 className="text-center font-bold text-3xl md:text-5xl text-green-600">
+>>>>>>> c86137092871bbb766fdae03e4fcbb77bb0af431
         Own Work List
       </h6>
       <div className="overflow-x-auto mt-6">
@@ -39,12 +44,12 @@ const WorkList = () => {
               <th className="p-3">Page Name & URL</th>
               <th className="p-3">T. Budget</th>
               <th className="p-3">T. Spent</th>
-              <th className="p-3">Dollar Rate</th>
-              <th className="p-3">Total Bill</th>
-              <th className="p-3">Paid</th>
-              <th className="p-3">T. Due</th>
               <th className="p-3">Status</th>
+<<<<<<< HEAD
+             
+=======
               <th className="p-3">Edit</th>
+>>>>>>> c86137092871bbb766fdae03e4fcbb77bb0af431
             </tr>
           </thead>
           <tbody>
@@ -61,16 +66,7 @@ const WorkList = () => {
                 <td className="p-3 text-center">
                   ${work.spent.toLocaleString()}
                 </td>
-                <td className="p-3 text-center">{work.dollarRate}</td>
-                <td className="p-3 text-center">
-                  ৳ {work.totalBill.toLocaleString()}
-                </td>
-                <td className="p-3 text-center">
-                  ৳ {work.paid.toLocaleString()}
-                </td>
-                <td className="p-3 text-center">
-                  ৳ {work.due.toLocaleString()}
-                </td>
+               
                 <td
                   className={`p-3 text-center ${
                     work.status === "Active" ? "text-green-500" : "text-red-500"
@@ -78,6 +74,8 @@ const WorkList = () => {
                 >
                   {work.status}
                 </td>
+<<<<<<< HEAD
+=======
                 <td className="p-3 text-center">
                   {/* <FaEdit
                     onClick={() => handleEditClick(work)}
@@ -90,25 +88,18 @@ const WorkList = () => {
                     Edit
                   </button>
                 </td>
+>>>>>>> c86137092871bbb766fdae03e4fcbb77bb0af431
               </tr>
             ))}
             <tr className="bg-green-800 text-white font-bold">
+             
+              <td className="p-3 text-center">
+              
+              </td>
               <td className="p-3 text-right" colSpan="2">
                 Total Spent:
               </td>
-              <td className="p-3 text-center">
-                $
-                {works
-                  .reduce((sum, work) => sum + work.budget, 0)
-                  .toLocaleString()}
-              </td>
-              <td className="p-3 text-center">
-                $
-                {works
-                  .reduce((sum, work) => sum + work.spent, 0)
-                  .toLocaleString()}
-              </td>
-              <td className="p-3 text-center"></td>
+              
               <td className="p-3 text-center">
                 ৳{" "}
                 {works
@@ -116,19 +107,10 @@ const WorkList = () => {
                   .toLocaleString()}
               </td>
               <td className="p-3 text-center">
-                ৳{" "}
-                {works
-                  .reduce((sum, work) => sum + work.paid, 0)
-                  .toLocaleString()}
+             
               </td>
-              <td className="p-3 text-center">
-                ৳{" "}
-                {works
-                  .reduce((sum, work) => sum + work.due, 0)
-                  .toLocaleString()}
-              </td>
-              <td className="p-3 text-center"></td>
-              <td className="p-3 text-center"></td>
+             
+            
             </tr>
           </tbody>
         </table>

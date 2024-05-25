@@ -55,7 +55,7 @@ const UpdateProfile = () => {
             console.log(res.data)      
             })
       
-          const response = await AxiosPublic.patch(`http://localhost:5000/users/${user?.email}`, updateData);
+          const response = await AxiosPublic.patch(`https://digital-networking-server.vercel.app/users/${user?.email}`, updateData);
           console.log(response.data);
         } catch (error) {
           console.error("Error updating profile:", error);

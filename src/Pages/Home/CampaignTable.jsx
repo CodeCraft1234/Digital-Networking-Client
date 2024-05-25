@@ -6,85 +6,114 @@ import UseAxiosPublic from '../../Axios/UseAxiosPublic';
 import { AuthContext } from '../../Security/AuthProvider';
 import useUsers from '../../Hook/useUsers';
 import { split } from 'postcss/lib/list';
+import EmployeerMouthlySelery from './EmployeerMouthlySelery';
+import useClients from '../../Hook/useClient';
+import { Link } from 'react-router-dom';
 
-const CampaignTable = () => {
-  const { user } = useContext(AuthContext);
-  const [users] = useUsers();
-  const [data, setData] = useState([]);
-  console.log(data?.bkashPersonal)
+const CampaignTable = ({email}) => {
 
-  useEffect(() => {
-    const finds = users.find(use => use.email === user?.email);
-    setData(finds ? [finds] : []); // Ensure `data` is always an array
-  }, [users, user]); // Also include `user` in the dependency array
+
+console.log(email)
   
-  
-  const [campaigns, refetch]=useCampaings();
-  const [selectedCampaign, setSelectedCampaign] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [clients,refetch]=useClients()
   const AxiosPublic = UseAxiosPublic();
+  const [filteredCampaigns, setFilteredCampaigns] = useState([]);
+  const [data, setUserData] = useState([]);
+  const [users] = useUsers();
+  const [user, setUser] = useState(null);
+  console.log('kjhgfaklhgklagshkl',clients)
 
-  const [totalSpentTotal, setTotalSpentTotal] = useState('');
-  const [totalBillTotal, setTotalBillTotal] = useState('');
-  const [totalPaymentTotal, setTotalPaymentTotal] = useState('');
 
   useEffect(() => {
-    const totalBill = campaigns.reduce((acc, campaign) => acc + parseFloat(campaign.tSpent), 0);
-    const totalPayment = campaigns.reduce((acc, campaign) => acc + parseFloat(campaign.previousPayment), 0);
-    const totalAvg = campaigns.reduce((acc, campaign) => acc + parseFloat(campaign.dollerRate), 0);
-    const avg=totalAvg / campaigns.length
-    setTotalSpentTotal(totalBill);
-    setTotalPaymentTotal(totalPayment)
-    setTotalBillTotal(avg)
-  }, [campaigns]);
+    const filtered = clients.filter(campaign => campaign.email === email);
+    console.log(filtered);
+    setFilteredCampaigns(filtered);
+  }, [clients, email]);
+  
+//   useEffect(() => {
+//     const fetchUserData = async () => {
+//       try {
+//         const res = await AxiosPublic.get(`https://digital-networking-server.vercel.app/users/${email}`);
+//         console.log(res.data);
+//         setUserData(res.data);
+//       } catch (error) {
+//         console.error('Error fetching user data:', error);
+//       }
+//     };
 
-  useEffect(()=>{
-    const finds=users.find(use=>use.email === user?.email)
-    setData(finds)
-  },[users,])
+//     fetchUserData();
+//   }, [AxiosPublic, email]);
 
-  const openModal = (campaign) => {
-    setSelectedCampaign(campaign);
-    setIsModalOpen(true);
-  };
+  
+//   useEffect(() => {
+//     if (users.length > 0) {
+//       const foundUser = users.find(user => user?.email === email);
+//       setUser(foundUser ? foundUser : null);
+//       console.log(foundUser,'ksdahjkghs')
+//     }
+//   }, [users, email]);
 
-  const closeModal = () => {
-    setIsModalOpen(false);
-    setSelectedCampaign(null);
-  };
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setSelectedCampaign({
-      ...selectedCampaign,
-      [name]: value,
-    });
-  };
+//   const [selectedCampaign, setSelectedCampaign] = useState(null);
+//   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const handleUpdate = async (e) => {
-    e.preventDefault();
-    const newSpent=e.target.newSpent.value
-    const previousPayment = e.target.previousPayment.value;
-    const status = e.target.status.value;
-    const tSpent = e.target.tSpent.value;
-    const dollerRate = e.target.dollerRate.value;
-    const method = e.target.method.value;
 
-console.log(selectedCampaign.email)
-    const totalSpent=(parseFloat(previousPayment) + parseFloat(newSpent))
+//   const [totalSpentTotal, setTotalSpentTotal] = useState('');
+//   const [totalBillTotal, setTotalBillTotal] = useState('');
+//   const [totalPaymentTotal, setTotalPaymentTotal] = useState('');
 
-    const body = { totalSpent,tSpent, status,previousPayment,dollerRate,  method};
-    console.log(body,totalSpent);
+//   useEffect(() => {
+//     const totalBill = campaigns.reduce((acc, campaign) => acc + parseFloat(campaign.tSpent), 0);
+//     const totalPayment = campaigns.reduce((acc, campaign) => acc + parseFloat(campaign.previousPayment), 0);
+//     const totalAvg = campaigns.reduce((acc, campaign) => acc + parseFloat(campaign.dollerRate), 0);
+//     const avg=totalAvg / campaigns.length
+//     setTotalSpentTotal(totalBill);
+//     setTotalPaymentTotal(totalPayment)
+//     setTotalBillTotal(avg)
+//   }, [clients]);
 
-    AxiosPublic.patch(`http://localhost:5000/campaings/${selectedCampaign._id}`,body)
-    .then(res=>{
-     console.log(res.body)
-     refetch();
-    })
+//   const openModal = (campaign) => {
+//     setSelectedCampaign(campaign);
+//     setIsModalOpen(true);
+//   };
+
+//   const closeModal = () => {
+//     setIsModalOpen(false);
+//     setSelectedCampaign(null);
+//   };
+
+//   const handleInputChange = (e) => {
+//     const { name, value } = e.target;
+//     setSelectedCampaign({
+//       ...selectedCampaign,
+//       [name]: value,
+//     });
+//   };
+
+//   const handleUpdate = async (e) => {
+//     e.preventDefault();
+//     const newSpent=e.target.newSpent.value
+//     const previousPayment = e.target.previousPayment.value;
+//     const status = e.target.status.value;
+//     const tSpent = e.target.tSpent.value;
+//     const dollerRate = e.target.dollerRate.value;
+//     const method = e.target.method.value;
+
+// console.log(selectedCampaign.email)
+//     const totalSpent=(parseFloat(previousPayment) + parseFloat(newSpent))
+
+//     const body = { totalSpent,tSpent, status,previousPayment,dollerRate,  method};
+//     console.log(body,totalSpent);
+
+//     AxiosPublic.patch(`https://digital-networking-server.vercel.app/campaings/${selectedCampaign._id}`,body)
+//     .then(res=>{
+//      console.log(res.body)
+//      refetch();
+//     })
     
 
    
-  };
+//   };
 
   return (
     <div>
@@ -99,30 +128,33 @@ console.log(selectedCampaign.email)
                 <th className="p-3 text-center">Date</th>
                 <th className="p-3 text-center">Client Name</th>
                 <th className="p-3 text-center">Client Phone</th>
-                <th className="p-3 text-center">Campaign Name/URL</th>
-                <th className="p-3 text-center">Page Name/URL</th>
+                {/* <th className="p-3 text-center">Client Email</th> */}
                 <th className="p-3 text-center">T.Budget</th>
                 <th className="p-3 text-center">T.Spent</th>
                 <th className="p-3 text-center">Total Bill</th>
                 <th className="p-3 text-center">Total Payment Rcv</th>
-                <th className="p-3 text-center">Method</th>
-                <th className="p-3 text-center">Status</th>
                 <th className="p-3 text-center">Edit</th>
               </tr>
             </thead>
             <tbody>
+<<<<<<< HEAD
+  {filteredCampaigns.map((campaign) => (
+    <tr key={campaign._id} className="border-b border-opacity-20 dark:border-gray-700 dark:bg-gray-900">
+=======
   {campaigns.map((campaign) => (
     <tr key={campaign._id} className="border-b border-opacity-50 dark:border-gray-700 dark:bg-gray-900 font-semibold">
+>>>>>>> c86137092871bbb766fdae03e4fcbb77bb0af431
       <td className="p-3 text-center">{campaign.date}</td>
-      <td className="p-3 text-center">{campaign.clientName}</td>
+    
+           <Link to={`/client/${campaign.clientEmail}`}>
+                 <td className="p-3 text-center">{campaign.clientName}</td>
+            </Link>
+            
       <td className="p-3 text-center">{campaign.clientPhone}</td>
-      <td className="p-3 text-center">{campaign.campaignName}</td>
-      <td className="p-3 text-center">{campaign.pageName}</td>
-      <td className="p-3 text-center">{campaign.tBudget}</td>
+      {/* <td className="p-3 text-center">{campaign.clientEmail}</td> */}
+      <td className="p-3 text-center">{campaign.tBudged}</td>
       <td className="p-3 text-center">{campaign.tSpent}</td>
-      <td className="p-3 text-center">{(campaign.tSpent * campaign.dollerRate).toFixed(2)}</td>
-      <td className="p-3 text-center">{campaign.totalSpent}</td>
-      <td className="p-3 text-center">{campaign.method}</td>
+      <td className="p-3 text-center">{(campaign.tSpent * 140).toFixed(2)}</td>
       <td className="p-3 text-center">{campaign.status}</td>
       <td className="p-3 text-center">
         <button
@@ -136,8 +168,13 @@ console.log(selectedCampaign.email)
   ))}
 </tbody>
 
+<<<<<<< HEAD
+            {/* <tfoot>
+              <tr className="border-b border-opacity-20 bg-lime-700">
+=======
             <tfoot>
               <tr className="border-b border-opacity-20 bg-green-800 text-white">
+>>>>>>> c86137092871bbb766fdae03e4fcbb77bb0af431
                 <td className="p-3 text-center"></td>
                 <td className="p-3 text-center"></td>
                 <td className="p-3 text-center"></td>
@@ -151,12 +188,12 @@ console.log(selectedCampaign.email)
                 <td className="p-3 text-center"></td>
                 <td className="p-3 text-center"></td>
               </tr>
-            </tfoot>
+            </tfoot> */}
           </table>
         </div>
       </div>
 
-      {isModalOpen && (
+      {/* {isModalOpen && (
         <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center z-50">
           <form onSubmit={handleUpdate}>
             <div className="bg-white shadow-md rounded-lg p-6 w-full max-w-md">
@@ -247,8 +284,8 @@ console.log(selectedCampaign.email)
                   <option value="bank">bank</option>
                 </select>
               </div>
-              </div>
-              {/* Open the modal using document.getElementById('ID').showModal() method */}
+              </div> */}
+{/*              
 <button className="btn" onClick={()=>document.getElementById('my_modal_3').showModal()}></button>
 <dialog  id="my_modal_3" className="modal">
 
@@ -316,11 +353,14 @@ console.log(selectedCampaign.email)
               </div>
             </div>
           </form>
-        </div>
+        </div> */}
       )}
-      <ToastContainer />
-      
+      {/* <ToastContainer /> */}
+
+      <EmployeerMouthlySelery email={email}></EmployeerMouthlySelery>
+
     </div>
+
   );
 };
 export default CampaignTable;

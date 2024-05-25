@@ -11,7 +11,7 @@ const UserCampaign = () => {
         const phonenumber=e.target.phonenumber.value
         const data={userName,email,phonenumber}
        console.log(data)
-       AxiosPublic.post('http://localhost:5000/usercampaigns',data)
+       AxiosPublic.post('https://digital-networking-server.vercel.app/usercampaigns',data)
        .then(res=>{
         console.log(res.data)
        })
