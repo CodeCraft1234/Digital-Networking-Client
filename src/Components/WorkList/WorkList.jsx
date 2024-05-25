@@ -27,13 +27,8 @@ const WorkList = () => {
   };
 
   return (
-<<<<<<< HEAD
     <div className=" p-4">
       <h6 className="text-center font-bold text-3xl md:text-5xl text-green-800">
-=======
-    <div className="mt-24 p-2 sm:p-4 dark:text-green-600">
-      <h6 className="text-center font-bold text-3xl md:text-5xl text-green-600">
->>>>>>> c86137092871bbb766fdae03e4fcbb77bb0af431
         Own Work List
       </h6>
       <div className="overflow-x-auto mt-6">
@@ -45,11 +40,6 @@ const WorkList = () => {
               <th className="p-3">T. Budget</th>
               <th className="p-3">T. Spent</th>
               <th className="p-3">Status</th>
-<<<<<<< HEAD
-             
-=======
-              <th className="p-3">Edit</th>
->>>>>>> c86137092871bbb766fdae03e4fcbb77bb0af431
             </tr>
           </thead>
           <tbody>
@@ -74,21 +64,6 @@ const WorkList = () => {
                 >
                   {work.status}
                 </td>
-<<<<<<< HEAD
-=======
-                <td className="p-3 text-center">
-                  {/* <FaEdit
-                    onClick={() => handleEditClick(work)}
-                    className="cursor-pointer"
-                  /> */}
-                  <button
-                    className="font-avenir px-3 py-1 bg-neutral rounded text-white"
-                    onClick={() => handleEditClick(work)}
-                  >
-                    Edit
-                  </button>
-                </td>
->>>>>>> c86137092871bbb766fdae03e4fcbb77bb0af431
               </tr>
             ))}
             <tr className="bg-green-800 text-white font-bold">
