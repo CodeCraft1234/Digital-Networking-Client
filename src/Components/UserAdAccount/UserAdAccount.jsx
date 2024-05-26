@@ -1,9 +1,11 @@
 import { useState } from "react";
-import useUserAdAccount from "../../Hook/useUserAdAccount";
+// import useUserAdAccount from "../../Hook/useUserAdAccount";
 import UseAxiosPublic from "../../Axios/UseAxiosPublic";
+import useAddAdsAccount from "../../Hook/useAddAdsAccount";
 
 const UserAdAccount = () => {
-  const [userad, refetch] = useUserAdAccount();
+  // const [userad, refetch] = useUserAdAccount();
+  const [useradAdd, refetch] = useAddAdsAccount();
   const [selectedAccount, setSelectedAccount] = useState(null);
   const [data, setData] = useState();
   const AxiosPublic = UseAxiosPublic();
@@ -18,16 +20,18 @@ const UserAdAccount = () => {
     e.preventDefault();
     console.log(id);
     const date = e.target.date.value;
-    const threshold = parseFloat(e.target.threshold.value);
+    const AdAccountName = e.target.AdAccountName.value;
+    const clientName = e.target.clientName.value;
+    const tThreshold = parseFloat(e.target.tThreshold.value);
     const currentBalance =parseFloat(e.target.currentBalance.value);
-    const totalSpent = parseFloat(e.target.totalSpent.value);
-    const status = e.target.status.value;
+    const tSpent = parseFloat(e.target.tSpent.value);
+    const currentStatus = e.target.currentStatus.value;
 
-    const data = { date, threshold, currentBalance, totalSpent, status };
+    const data = { date, AdAccountName, clientName, tThreshold, currentBalance, tSpent, currentStatus };
     console.log(data);
 
      // Make the patch request
-     AxiosPublic.patch(`/userad/${id}`, data)
+     AxiosPublic.patch(`/adAds/${id}`, data)
      .then((res) => {
        console.log(res.data);
        refetch();
@@ -49,6 +53,7 @@ const UserAdAccount = () => {
             <tr>
               <th className="p-3">Payment Date</th>
               <th className="p-3">Ad Account Name</th>
+              <th className="p-3">Employee Name</th>
               <th className="p-3">Threshold</th>
               <th className="p-3">Current Balance</th>
               <th className="p-3">Total Spent</th>
@@ -57,30 +62,31 @@ const UserAdAccount = () => {
             </tr>
           </thead>
           <tbody>
-            {userad.map((account, index) => (
+            {useradAdd.map((account, index) => (
               <tr
                 key={account._id}
                 className={`${index % 2 === 0 ? "bg-gray-100" : "bg-white"}`}
               >
                 <td className="p-3 text-center">{account.date}</td>
-                <td className="p-3 text-center">{account.name}</td>
+                <td className="p-3 text-center">{account.AdAccountName}</td>
+                <td className="p-3 text-center">{account.clientName}</td>
                 <td className="p-3 text-center">
-                  ${account.threshold.toLocaleString()}
+                  ${account.tThreshold}
                 </td>
                 <td className="p-3 text-center">
-                  ${account.currentBalance.toLocaleString()}
+                  ${account.currentBalance}
                 </td>
                 <td className="p-3 text-center">
-                  ${account.totalSpent.toLocaleString()}
+                  ${account.tSpent}
                 </td>
                 <td
                   className={`p-3 text-center ${
-                    account.status === "Active"
+                    account.currentStatus === "Active"
                       ? "text-green-500"
                       : "text-red-500"
                   }`}
                 >
-                  {account.status}
+                  {account.currentStatus}
                 </td>
                 <td className="p-3 text-center">
                   <button
@@ -110,8 +116,8 @@ const UserAdAccount = () => {
                             </label>
                             <input
                               type="number"
-                              name="threshold"
-                              defaultValue={account.threshold}
+                              name="tThreshold"
+                              defaultValue={account.tThreshold}
                               className="w-full border rounded p-2 mt-1"
                             />
                           </div>
@@ -132,8 +138,8 @@ const UserAdAccount = () => {
                             </label>
                             <input
                               type="number"
-                              name="totalSpent"
-                              defaultValue={0}
+                              name="tSpent"
+                              defaultValue={account.tSpent}
                               className="w-full border rounded p-2 mt-1"
                             />
                           </div>
@@ -142,12 +148,12 @@ const UserAdAccount = () => {
                               Status
                             </label>
                             <select
-                              name="status"
-                              defaultValue={account.status}
+                              name="currentStatus"
+                              defaultValue={account.currentStatus}
                               className="w-full border rounded p-2 mt-1"
                             >
                               <option value="Active">Active</option>
-                              <option value="Deasible">Deasible</option>
+                              <option value="Disable">Disable</option>
                             </select>
                           </div>
                         </div>
@@ -171,29 +177,30 @@ const UserAdAccount = () => {
               </tr>
             ))}
             <tr className="bg-green-800 text-white font-bold">
-              <td className="p-3 text-right" colSpan="2">
+              <td className="p-3 text-right" colSpan="3">
                 Total:
               </td>
               <td className="p-3 text-center">
                 $
-                {userad
-                  .reduce((sum, account) => sum + account.threshold, 0)
+                {useradAdd
+                  .reduce((sum, account) => sum + account.tThreshold, 0)
                   .toLocaleString()}
               </td>
               <td className="p-3 text-center">
                 $
-                {userad
+                {useradAdd
                   .reduce((sum, account) => sum + account.currentBalance, 0)
                   .toLocaleString()}
               </td>
               <td className="p-3 text-center">
                 $
-                {userad
-                  .reduce((sum, account) => sum + account.totalSpent, 0)
+                {useradAdd
+                  .reduce((sum, account) => sum + account.tSpent, 0)
                   .toLocaleString()}
               </td>
               <td className="p-3 text-center"></td>
               <td className="p-3 text-center"></td>
+              
             </tr>
           </tbody>
         </table>

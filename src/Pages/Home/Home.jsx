@@ -17,6 +17,7 @@ import MyProfile from "./MyProfile";
 import TransictionCard from "./TransictionCard";
 
 const Home = () => {
+
     const { user } = useContext(AuthContext);
     const [users] = useUsers();
     const [ddd, setDdd] = useState(null);
@@ -51,6 +52,7 @@ const Home = () => {
                     </div>
                 ) : <Login />
             }
+
         </div>
     );
 };

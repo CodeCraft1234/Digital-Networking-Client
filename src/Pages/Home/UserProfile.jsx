@@ -20,6 +20,7 @@ const UserProfile = () => {
     const [Histry, setHistry] = useState([]);
     console.log(totalSpent, totalPaymeent);
 
+
     useEffect(() => {
         AxiosPublic.get(`https://digital-networking-server.vercel.app/users/${userr.email}`)
             .then(res => {
@@ -44,6 +45,7 @@ const UserProfile = () => {
                 toast.error("Failed to fetch payment data");
             });
     }, [userr.email]);
+
 
     useEffect(() => {
         const filtered = campaign.filter(campaign => campaign.clientEmail === userr?.email);
