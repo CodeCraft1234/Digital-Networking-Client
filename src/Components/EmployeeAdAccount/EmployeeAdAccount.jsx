@@ -11,6 +11,8 @@ const EmployeeAdAccount = () => {
       <h6 className="text-center text-green-600 dark:text-green-600 font-bold text-4xl">
         Employee Ad Account
       </h6>
+
+      
       
       <div className="overflow-x-auto mt-6">
         <table className="min-w-full bg-white">
