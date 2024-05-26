@@ -8,6 +8,7 @@ const AddCampaign = () => {
   const AxiosPublic=UseAxiosPublic()
   const {user}=useContext(AuthContext)
   const [clients]=useClients()
+
     const handleaddblog=(e)=>{
         e.preventDefault()
         const campaignName=e.target.campaignName.value
@@ -25,17 +26,9 @@ const AddCampaign = () => {
        .then(res=>{
         console.log(res.data)
        })
-
        }
-    //    const [dataa,setData]=useState([])
-       const [dataa2,setData2]=useState([])
-       console.log(dataa2)
 
-    //    AxiosPublic.get(`http://localhost:5000/clients`)
-    //    .then(res=>{
-    //     console.log(res.data)
-    //     setData(res.data)
-    //    })
+       const [dataa2,setData2]=useState([])
       
 
        useEffect(() => {
@@ -44,7 +37,6 @@ const AddCampaign = () => {
         setData2(filtered);
       }, [clients, user?.email]);
       
-
 
     return (
         <div>
@@ -63,7 +55,7 @@ const AddCampaign = () => {
                
                  <select name="clientEmail"   defaultValue='' className="w-full border text-black rounded p-2 mt-1"  >
                  {
-                    dataa2.map(d=><option value={d.clientEmail}>{d.clientEmail}</option>
+                    dataa2.map(d=><option value={d.clientEmail}>{d.clientName} - {d.clientPhone}</option>
                    )
                  }
             </select>
