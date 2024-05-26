@@ -74,6 +74,9 @@ console.log(ddd?.name);
         {
           ddd?.role === 'admin' ? <>
           <li>
+               <NavLink to={"/adAccountAds"}>Ad Ads Account </NavLink>
+        </li>
+          <li>
                <NavLink to={"/adAccountTable"}>User Ads Account </NavLink>
         </li>
           <li>
@@ -109,7 +112,9 @@ console.log(ddd?.name);
         <ul className="menu menu-horizontal items-center px-1 flex gap-4">
 
         {
+
           ddd?.role === 'admin' ? <>
+
           <li>
                <NavLink to={"/adAccountTable"}>User Ads Account </NavLink>
         </li>

@@ -14,6 +14,7 @@ const UserProfile = () => {
     const [dataa2, setData2] = useState([]);
     const [campaign] = useCampaings();
 
+
     useEffect(() => {
         AxiosPublic.get(`https://digital-networking-server.vercel.app/users/${userr.email}`)
             .then(res => {
@@ -24,6 +25,7 @@ const UserProfile = () => {
                 console.error("Error fetching user data:", error);
             });
     }, [userr.email]);
+
 
     useEffect(() => {
         const filtered = campaign.filter(campaign => campaign.clientEmail === userr?.email);
@@ -38,8 +40,10 @@ const UserProfile = () => {
         const status = e.target.status.value;
         console.log(newSpent, previousSpent, status);
 
+
         // Handle the update logic here
     };
+
 
     return (
         <div>
