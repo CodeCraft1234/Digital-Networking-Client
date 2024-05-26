@@ -2,6 +2,7 @@ import { useState } from "react";
 // import useUserAdAccount from "../../Hook/useUserAdAccount";
 import UseAxiosPublic from "../../Axios/UseAxiosPublic";
 import useAddAdsAccount from "../../Hook/useAddAdsAccount";
+import { NavLink } from "react-router-dom";
 
 const UserAdAccount = () => {
   // const [userad, refetch] = useUserAdAccount();
@@ -69,7 +70,13 @@ const UserAdAccount = () => {
               >
                 <td className="p-3 text-center">{account.date}</td>
                 <td className="p-3 text-center">{account.AdAccountName}</td>
-                <td className="p-3 text-center">{account.clientName}</td>
+                
+                <td className="p-3 text-center">
+                <NavLink to={`/employeeAdAccount/${account.AdAccountName}`}>
+          {account.clientName}
+        </NavLink>
+                </td>
+               
                 <td className="p-3 text-center">
                   ${account.tThreshold}
                 </td>
