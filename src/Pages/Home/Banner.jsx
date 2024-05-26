@@ -49,10 +49,22 @@ const Banner = () => {
 
 const {user}=useContext(AuthContext)
 
+const [ddd, setDdd] = useState(null);
+
+useEffect(() => {
+    if (users && user) {
+        const fff = users.find(u => u.email === user?.email);
+        console.log(fff);
+        setDdd(fff || {}); // Update state with found user or an empty object
+    }
+}, [users, user]);
+
+console.log(ddd?.name);
+
     return (
         <div className="">
              <div className="p-2 sm:p-4 dark:text-gray-100">
-        {user?.email === 'anowarulbd2@gmail.com' ? <h2 className="mb-4 uppercase text-6xl text-black text-center font-semibold leading-tight">Employers Activities
+        {ddd?.role === 'admin' ? <h2 className="mb-4 uppercase text-6xl text-black text-center font-semibold leading-tight">Employers Activities
         </h2>:  <h2 className="mb-4 uppercase text-6xl text-black text-center font-semibold leading-tight">All Employers 
         </h2>} 
        
@@ -63,7 +75,7 @@ const {user}=useContext(AuthContext)
               <tr>
                 <th className="p-3 text-center">Employeer Name</th>
                 {
-                  user?.email === 'anowarulbd2@gmail.com' ? <>
+                  ddd?.role === 'admin' ? <>
                   <th className="p-3 text-center"><img  className="w-28 h-6 mx-auto" src=" https://i.ibb.co/3WVZGdz/PAYO-BIG-aa26e6e0.png" alt="" /></th>
                 <th  className="p-3  text-center"><img  className="w-20 h-10 mx-auto" src="https://i.ibb.co/bHMLyvM/b-Kash-Merchant.png" alt="" /></th>
                 <th className="p-3 text-center"><img  className="w-20 h-10 mx-auto" src="https://i.ibb.co/520Py6s/bkash-1.png" alt="" /></th>
@@ -86,7 +98,7 @@ const {user}=useContext(AuthContext)
                          <Link to={`/userInfo/${userr?.email}`}>{userr.name} </Link>
                   </td>
                   {
-                    user?.email === 'anowarulbd2@gmail.com' ? <> 
+                    ddd?.role === 'admin' ? <> 
                      <td className="p-3 text-center">$ {userr.payoneer}</td>
                   <td className="p-3 text-center">৳ {userr.bkashMarcent}</td>
                   <td className="p-3 text-center">৳ {userr.bkashPersonal}</td>
@@ -98,7 +110,7 @@ const {user}=useContext(AuthContext)
 <dialog id="my_modal_1" className="modal">
   <Payment id={userr._id} ></Payment>
   <form method="dialog">
-        {/* if there is a button in form, it will close the modal */}
+
         <button className="btn btn-secondary bg-blue-500  text-white font-bold">Close</button>
       </form>
 </dialog>
@@ -113,7 +125,7 @@ const {user}=useContext(AuthContext)
 
             <tr className="border-b border-opacity-20 bg-green-800 font-bold p-5">
                 {
-                   user?.email === 'anowarulbd2@gmail.com' ? <>
+                   ddd?.role === 'admin' ? <>
                 <td className="p-3 text-center">Total BDT</td>
                 <td className="p-3 text-center">$ {payoneerTotal}</td>
                 <td className="p-3 text-center">৳ {bkashMarcentTotal}</td>
