@@ -15,85 +15,42 @@ import UseAxiosPublic from "../../Axios/UseAxiosPublic";
 import Profile from "../Profile/Profile";
 import MyProfile from "./MyProfile";
 import TransictionCard from "./TransictionCard";
-import UserProfile from "./UserProfile";
 
 const Home = () => {
     const { user } = useContext(AuthContext);
     const [users] = useUsers();
-    const [role, setUserr] = useState();
-    const AxiosPublic=UseAxiosPublic()
-  
+    const [ddd, setDdd] = useState(null);
+
     useEffect(() => {
-        AxiosPublic.get(`http://localhost:5000/users/${user?.email}`)
-        .then(res=>{
-            console.log(res.data.role)
-            setUserr(res.data.role)
-        })
-    }, [user, users]);
-  
- 
+        if (users && user) {
+            const fff = users.find(u => u.email === user?.email);
+            console.log(fff);
+            setDdd(fff || {}); // Update state with found user or an empty object
+        }
+    }, [users, user]);
+
+    console.log(ddd?.name);
 
     return (
-        <div> 
+        <div>
             {
-            user?.email ? <div>
- {
-                user?.email === "anowarulbd2@gmail.com" ?  <div>
-                <TransictionCard></TransictionCard>
-                <Banner></Banner> 
-                 </div> : 
-                 <>
-                 {
-                    role === "employee" ?   <MyProfile></MyProfile> : <>   <UserProfile></UserProfile></>
-                 }
-                
-                 </>
+                user ? (
+                    <div>
+                        {
+                            ddd?.role === "admin" ? (
+                                <div>
+                                    <TransictionCard />
+                                    <Banner />
+                                </div>
+                            ) : (
+                                <div>
+                                    <MyProfile />
+                                </div>
+                            )
+                        }
+                    </div>
+                ) : <Login />
             }
-
-            </div> : <Login></Login>     
-            }
-
-            
-
-
-
-            {/* {
-                
-            }
-            <div>
-                {
-                       user?.email==="anowarulbd2@gmail.com" &&   <div>
-                       <TransictionCard></TransictionCard>
-                       <Banner></Banner> 
-                        </div> 
-                }
-
-                {
-                     user?.email === user?.email && 
-                }
-
-            </div> */}
-
-            {/* <div>     
-             
-            </div>
-         
-             */}
-
-
-           
-
-            {/* {
-                user.role === 'client' && <div>
-                     <WorkList></WorkList>
-            <PaymentHistory></PaymentHistory>
-                </div>
-            } */}
-          
-          
-            
-           
-            
         </div>
     );
 };

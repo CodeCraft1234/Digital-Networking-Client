@@ -3,21 +3,18 @@ import { Link, NavLink, useLoaderData, useNavigate  } from "react-router-dom";
 import { AuthContext } from "../../Security/AuthProvider";
 import { IoMdArrowDropdown } from "react-icons/io";
 import useAdmin from "../../Hook/useAdmin";
+import useUsers from "../../Hook/useUsers";
 const NavBar = () => {
   const { user, logOut } = useContext(AuthContext);
+  const [users]=useUsers()
   const userr=useLoaderData()
-  // const [isAdmin]=useAdmin()
 const isAdmin=user?.email === 'rrobiul@gmail.com'
-  console.log(isAdmin)
-  console.log(userr)
   const navigate = useNavigate();
-  console.log(user?.email);
-  // sign out a user
+
   const handleLogOut = () => {
     logOut().then().catch();
     navigate("/");
   };
-
   const [theme, setTheme] = useState(
     localStorage.getItem("theme") ? localStorage.getItem("theme") : "light"
   );
@@ -33,6 +30,19 @@ const isAdmin=user?.email === 'rrobiul@gmail.com'
       setTheme("light");
     }
   };
+
+
+const [ddd, setDdd] = useState(null);
+
+useEffect(() => {
+    if (users && user) {
+        const fff = users.find(u => u.email === user?.email);
+        console.log(fff);
+        setDdd(fff || {}); // Update state with found user or an empty object
+    }
+}, [users, user]);
+
+console.log(ddd?.name);
   return (
     <div className="">
       <div className="navbar bg-white text-black bg-opacity-50 backdrop-blur-lg p-1 rounded-md shadow-lg  lg:px-28 md:px-10 px-5  fixed z-50 top-0 border-b">
@@ -62,7 +72,7 @@ const isAdmin=user?.email === 'rrobiul@gmail.com'
           >
 
         {
-          user?.email === 'anowarulbd2@gmail.com' ? <>
+          ddd?.role === 'admin' ? <>
           <li>
                <NavLink to={"/adAccountTable"}>User Ads Account </NavLink>
         </li>
@@ -99,7 +109,7 @@ const isAdmin=user?.email === 'rrobiul@gmail.com'
         <ul className="menu menu-horizontal items-center px-1 flex gap-4">
 
         {
-          user?.email === 'anowarulbd2@gmail.com' ? <>
+          ddd?.role === 'admin' ? <>
           <li>
                <NavLink to={"/adAccountTable"}>User Ads Account </NavLink>
         </li>
