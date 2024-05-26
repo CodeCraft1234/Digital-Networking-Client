@@ -17,44 +17,42 @@ import MyProfile from "./MyProfile";
 import TransictionCard from "./TransictionCard";
 
 const Home = () => {
-    const {user} = useContext(AuthContext);
-    const [users]=useUsers()
 
-    console.log(users)
+    const { user } = useContext(AuthContext);
+    const [users] = useUsers();
+    const [ddd, setDdd] = useState(null);
+
+    useEffect(() => {
+        if (users && user) {
+            const fff = users.find(u => u.email === user?.email);
+            console.log(fff);
+            setDdd(fff || {}); // Update state with found user or an empty object
+        }
+    }, [users, user]);
+
+    console.log(ddd?.name);
 
     return (
         <div>
-           {
-            user ?  <div>
             {
-                user?.email==="anowarulbd2@gmail.com" ? <div>
-                    <TransictionCard></TransictionCard>
-                <Banner></Banner>
-                </div>
-                :   <div>
-                    <MyProfile></MyProfile>
-                    
-                {/* <WorkList></WorkList>
-            <PaymentHistory></PaymentHistory> */}
-                </div>
+                user ? (
+                    <div>
+                        {
+                            ddd?.role === "admin" ? (
+                                <div>
+                                    <TransictionCard />
+                                    <Banner />
+                                </div>
+                            ) : (
+                                <div>
+                                    <MyProfile />
+                                </div>
+                            )
+                        }
+                    </div>
+                ) : <Login />
             }
-            </div> :  <Login></Login>
-           }
 
-
-           
-
-            {/* {
-                user.role === 'client' && <div>
-                     <WorkList></WorkList>
-            <PaymentHistory></PaymentHistory>
-                </div>
-            } */}
-          
-          
-            
-           
-            
         </div>
     );
 };

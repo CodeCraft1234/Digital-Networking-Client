@@ -49,7 +49,7 @@ const WorkList = () => {
                 className={`${index % 2 === 0 ? "text-black border-b border-opacity-20" : "text-black border-b border-opacity-20"}`}
               >
                 <td className="p-3 text-center">{work.date}</td>
-                <td className="p-3 text-center">{work.pageName}</td>
+                <td className="p-3 text-center">{work.campaignName}</td>
                 <td className="p-3 text-center">
                   ${work.budget.toLocaleString()}
                 </td>
