@@ -195,7 +195,7 @@ const AddAdsAccount = () => {
             <div className="flex justify-left items-center gap-1">
               <div>
                 <label htmlFor="clientEmail" className="block mb-1 ml-1">Employee Email</label>
-                <input 
+                {/* <input 
                   id="clientEmail" 
                   name="clientEmail" 
                   type="email" 
@@ -203,7 +203,7 @@ const AddAdsAccount = () => {
                   onChange={handleInputChange} 
                   required 
                   className="block w-full p-2 rounded focus:outline-none focus:ring dark:bg-gray-800" 
-                />
+                /> */}
                  <select name="clientEmail"   defaultValue='' className="w-full border text-black rounded p-2 mt-1"  >
                  {
                    clients?.map(d=><option value={d.clientEmail}>{d.clientEmail}</option>
