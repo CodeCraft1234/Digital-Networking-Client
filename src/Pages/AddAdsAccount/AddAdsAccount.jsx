@@ -80,10 +80,12 @@
 import React, { useContext, useState, useEffect } from "react";
 import UseAxiosPublic from "../../Axios/UseAxiosPublic";
 import { AuthContext } from "../../Security/AuthProvider";
+import useClients from "../../Hook/useClient";
 
 const AddAdsAccount = () => {
   const AxiosPublic = UseAxiosPublic();
   const { user } = useContext(AuthContext);
+  const [clients]=useClients();
   
   // State for form data
   const [formData, setFormData] = useState({
@@ -124,6 +126,14 @@ const AddAdsAccount = () => {
     });
   };
 
+    // user role is employee filtering
+
+    useEffect(() => {
+      const filtered = clients.filter(campaign => campaign.email === user?.role === "employee");
+      console.log(filtered);
+      setFormData(filtered);
+    }, [clients, user?.role]);
+
   // Handle form submission
   const handleAddBlog = (e) => {
     e.preventDefault();
@@ -134,6 +144,8 @@ const AddAdsAccount = () => {
       .catch(error => {
         console.error("Error adding campaign:", error);
       });
+
+    
   };
 
   return (
@@ -141,7 +153,7 @@ const AddAdsAccount = () => {
       <section className="p-6 mt-24 dark:text-gray-100">
         <form onSubmit={handleAddBlog} className="container w-full max-w-xl p-8 mx-auto space-y-6 rounded-md shadow dark:bg-gray-900">
           <div>
-            <h1 className="text-3xl my-4 text-center font-bold text-white">Add a Campaign</h1>
+            <h1 className="text-3xl my-4 text-center font-bold text-gray-600">Create Ads Account</h1>
             <div className="flex justify-center items-center gap-3">
               <div>
                 <label htmlFor="date" className="block mb-1 ml-1">Date</label>
@@ -156,7 +168,7 @@ const AddAdsAccount = () => {
                 />
               </div>
               <div>
-                <label htmlFor="clientName" className="block mb-1 ml-1">Client Name</label>
+                <label htmlFor="clientName" className="block mb-1 ml-1">Employee Name</label>
                 <input 
                   id="clientName" 
                   name="clientName" 
@@ -182,7 +194,7 @@ const AddAdsAccount = () => {
             </div>
             <div className="flex justify-left items-center gap-1">
               <div>
-                <label htmlFor="clientEmail" className="block mb-1 ml-1">Client Email</label>
+                <label htmlFor="clientEmail" className="block mb-1 ml-1">Employee Email</label>
                 <input 
                   id="clientEmail" 
                   name="clientEmail" 
@@ -192,6 +204,12 @@ const AddAdsAccount = () => {
                   required 
                   className="block w-full p-2 rounded focus:outline-none focus:ring dark:bg-gray-800" 
                 />
+                 <select name="clientEmail"   defaultValue='' className="w-full border text-black rounded p-2 mt-1"  >
+                 {
+                   clients?.map(d=><option value={d.clientEmail}>{d.clientEmail}</option>
+                   )
+                 }
+            </select>
               </div>
               <div>
                 <label htmlFor="currentStatus" className="block mb-1 ml-1">Current Status</label>
