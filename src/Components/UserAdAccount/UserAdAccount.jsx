@@ -131,7 +131,7 @@ const UserAdAccount = () => {
                               type="date"
                               name="date"
                               defaultValue={account.date}
-                              className="w-full border rounded p-2 mt-1"
+                              className="w-full border rounded p-2 mt-1 text-gray-600 border-gray-300"
                             />
                           </div>
                           <div>
@@ -142,7 +142,7 @@ const UserAdAccount = () => {
                               type="number"
                               name="tThreshold"
                               defaultValue={account.tThreshold}
-                              className="w-full border rounded p-2 mt-1"
+                              className="w-full border rounded p-2 mt-1 text-gray-600 border-gray-300"
                             />
                           </div>
                           <div>
@@ -153,7 +153,7 @@ const UserAdAccount = () => {
                               type="number"
                               name="currentBalance"
                               defaultValue={account.currentBalance}
-                              className="w-full border rounded p-2 mt-1"
+                              className="w-full border rounded p-2 mt-1 text-gray-600 border-gray-300"
                             />
                           </div>
                           <div>
@@ -164,7 +164,7 @@ const UserAdAccount = () => {
                               type="number"
                               name="tSpent"
                               defaultValue={account.tSpent}
-                              className="w-full border rounded p-2 mt-1"
+                              className="w-full border rounded p-2 mt-1 text-gray-600 border-gray-300"
                             />
                           </div>
                           <div className="md:col-span-2">
@@ -174,7 +174,7 @@ const UserAdAccount = () => {
                             <select
                               name="currentStatus"
                               defaultValue={account.currentStatus}
-                              className="w-full border rounded p-2 mt-1"
+                              className="w-full border rounded p-2 mt-1 text-gray-600 border-gray-300"
                             >
                               <option value="Active">Active</option>
                               <option value="Disable">Disable</option>
