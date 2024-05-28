@@ -1,6 +1,7 @@
 import  { useState } from "react";
 import { FaEdit } from "react-icons/fa";
 import useUserAdAccount from "../../Hook/useUserAdAccount";
+import { NavLink } from "react-router-dom";
 
 const MonthlyAdAccount = () => {
   const [userAdAccounts, refetch] = useUserAdAccount();
@@ -27,13 +28,25 @@ const MonthlyAdAccount = () => {
   };
 
   return (
-    <div className="mt-24 p-4">
-      <h6 className="text-center font-bold text-3xl md:text-5xl text-green-800">
-        Mothly Ads Account Activities
+    <div className="mt-24 p-2  sm:p-4 dark:bg-green-800">
+      <h6 className="text-center font-bold text-3xl md:text-5xl bg-green-800 text-white">
+        Monthly Ads Account Activities
       </h6>
       <div className="overflow-x-auto mt-6">
-        <table className="min-w-full bg-white">
-          <thead className="bg-green-800 text-white">
+      <div className="flex justify-start items-start gap-4 mx-8">
+          <NavLink to={"/adAccountAds"}>
+            <button className="font-avenir px-4 py-1 rounded-lg bg-green-800 text-white">
+              Add Ads Account
+            </button>
+          </NavLink>
+          <NavLink to={"/addCampaign"}>
+            <button className="font-avenir px-4 py-1 rounded-lg bg-green-800 text-white">
+              Add Campaign
+            </button>
+          </NavLink>
+        </div>
+        <table className="min-w-full bg-white mt-2">
+          <thead className="bg-red-800 text-white">
             <tr>
               <th className="p-3">Payment Date</th>
               <th className="p-3">Ad Account Name</th>

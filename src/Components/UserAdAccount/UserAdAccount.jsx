@@ -3,6 +3,7 @@ import { useState } from "react";
 import UseAxiosPublic from "../../Axios/UseAxiosPublic";
 import useAddAdsAccount from "../../Hook/useAddAdsAccount";
 import { NavLink } from "react-router-dom";
+import { FaEdit } from "react-icons/fa";
 
 const UserAdAccount = () => {
   // const [userad, refetch] = useUserAdAccount();
@@ -24,33 +25,52 @@ const UserAdAccount = () => {
     const AdAccountName = e.target.AdAccountName.value;
     const clientName = e.target.clientName.value;
     const tThreshold = parseFloat(e.target.tThreshold.value);
-    const currentBalance =parseFloat(e.target.currentBalance.value);
+    const currentBalance = parseFloat(e.target.currentBalance.value);
     const tSpent = parseFloat(e.target.tSpent.value);
     const currentStatus = e.target.currentStatus.value;
 
-    const data = { date, AdAccountName, clientName, tThreshold, currentBalance, tSpent, currentStatus };
+    const data = {
+      date,
+      AdAccountName,
+      clientName,
+      tThreshold,
+      currentBalance,
+      tSpent,
+      currentStatus,
+    };
     console.log(data);
 
-     // Make the patch request
-     AxiosPublic.patch(`/adAds/${id}`, data)
-     .then((res) => {
-       console.log(res.data);
-       refetch();
-     })
-     .catch((error) => {
-       console.error('Error updating ad account:', error);
-     });
-   
+    // Make the patch request
+    AxiosPublic.patch(`/adAds/${id}`, data)
+      .then((res) => {
+        console.log(res.data);
+        refetch();
+      })
+      .catch((error) => {
+        console.error("Error updating ad account:", error);
+      });
   };
 
   return (
-    <div className="mt-24 p-4">
-      <h6 className="text-center uppercase font-bold text-3xl md:text-5xl text-green-800">
+    <div className="mt-24 p-2  sm:p-4 dark:bg-green-800">
+      <h6 className="text-center uppercase font-bold text-3xl md:text-5xl text-white bg-green-800">
         User Ads Account Activities
       </h6>
       <div className="overflow-x-auto mt-6">
-        <table className="min-w-full bg-white">
-          <thead className="bg-green-800 text-white">
+        <div className="flex justify-start items-start gap-4 mx-8">
+          <NavLink to={"/adAccountAds"}>
+            <button className="font-avenir px-4 py-1 rounded-lg bg-green-800 text-white">
+              Add Ads Account
+            </button>
+          </NavLink>
+          <NavLink to={"/addCampaign"}>
+            <button className="font-avenir px-4 py-1 rounded-lg bg-green-800 text-white">
+              Add Campaign
+            </button>
+          </NavLink>
+        </div>
+        <table className="min-w-full bg-white mt-2">
+          <thead className="bg-red-800 text-white">
             <tr>
               <th className="p-3">Payment Date</th>
               <th className="p-3">Ad Account Name</th>
@@ -70,22 +90,16 @@ const UserAdAccount = () => {
               >
                 <td className="p-3 text-center">{account.date}</td>
                 <td className="p-3 text-center">{account.AdAccountName}</td>
-                
+
                 <td className="p-3 text-center">
-                <NavLink to={`/employeeAdAccount/${account.AdAccountName}`}>
-          {account.clientName}
-        </NavLink>
+                  <NavLink to={`/employeeAdAccount/${account.AdAccountName}`}>
+                    {account.clientName}
+                  </NavLink>
                 </td>
-               
-                <td className="p-3 text-center">
-                  ${account.tThreshold}
-                </td>
-                <td className="p-3 text-center">
-                  ${account.currentBalance}
-                </td>
-                <td className="p-3 text-center">
-                  ${account.tSpent}
-                </td>
+
+                <td className="p-3 text-center">${account.tThreshold}</td>
+                <td className="p-3 text-center">${account.currentBalance}</td>
+                <td className="p-3 text-center">${account.tSpent}</td>
                 <td
                   className={`p-3 text-center ${
                     account.currentStatus === "Active"
@@ -96,15 +110,18 @@ const UserAdAccount = () => {
                   {account.currentStatus}
                 </td>
                 <td className="p-3 text-center">
-                  <button
-                    className="font-avenir px-3 py-1 bg-neutral rounded text-white"
+                  <FaEdit
+                    className="cursor-pointer"
                     onClick={() => handleEditClick(account)}
                   >
                     Edit
-                  </button>
+                  </FaEdit>
                   <dialog id={`my_modal_${account.id}`} className="modal">
                     <div className="flex justify-start items-center text-black bg-indigo-300 p-5 gap-3">
-                      <form onSubmit={(e) => handleUpdate(e, account._id)} className="text-start">
+                      <form
+                        onSubmit={(e) => handleUpdate(e, account._id)}
+                        className="text-start"
+                      >
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                           <div>
                             <label className="block text-black font-bold">
@@ -207,7 +224,6 @@ const UserAdAccount = () => {
               </td>
               <td className="p-3 text-center"></td>
               <td className="p-3 text-center"></td>
-              
             </tr>
           </tbody>
         </table>
