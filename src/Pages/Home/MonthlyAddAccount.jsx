@@ -57,7 +57,7 @@ const MonthlyAdAccount = () => {
               <th className="p-3">Delete Spent</th>
               <th className="p-3">Total Spent</th>
               <th className="p-3">Status</th>
-              <th className="p-3"></th>
+              <th className="p-3">Edit</th>
             </tr>
           </thead>
           <tbody>
@@ -96,7 +96,7 @@ const MonthlyAdAccount = () => {
                 <td className="p-3 text-center">
                   <FaEdit
                     onClick={() => handleEditClick(account)}
-                    className="cursor-pointer"
+                    className="cursor-pointer ml-2"
                   />
                 </td>
               </tr>
