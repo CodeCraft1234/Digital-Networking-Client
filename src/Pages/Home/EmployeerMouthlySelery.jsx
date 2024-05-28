@@ -16,13 +16,13 @@ const EmployeerMouthlySelery = ({ email }) => {
   }, [ownSelary, email]);
 
   return (
-    <div className="mt-5 p-4">
-      <h6 className="text-center mb-5 font-bold text-3xl md:text-5xl text-green-800">
+    <div className="mt-5 p-4 dark:bg-green-800">
+      <h6 className="text-center mb-5 font-bold text-4xl p-1 bg-green-800 text-white">
         Employees Own Monthly Salary Sheet
       </h6>
       <div className="overflow-x-auto mt-0">
-        <table className="min-w-full text-xs md:text-sm lg:text-base bg-white">
-          <thead className="bg-green-800 text-white">
+        <table className="min-w-full text-xs md:text-sm lg:text-base bg-gray-250">
+          <thead className="bg-red-800 text-white">
             <tr>
               <th className="p-3">Employee Name</th>
               <th className="p-3">Total Work</th>
@@ -32,15 +32,16 @@ const EmployeerMouthlySelery = ({ email }) => {
               <th className="p-3">Paid</th>
               <th className="p-3">Unpaid</th>
               <th className="p-3">Status</th>
+              <th className="p-3"></th>
             </tr>
           </thead>
           <tbody>
             {filteredSelary.map((employee, index) => (
               <tr
                 key={employee._id}
-                className={`${index % 2 === 0 ? "bg-gray-100" : "bg-white"}`}
+                className={`${index % 2 === 0 ? "border-b border-opacity-20 dark:border-gray-700 dark:bg-gray-900" : "border-b border-opacity-20 dark:border-gray-700 dark:bg-gray-900"}`}
               >
-                <td className="p-3 flex items-center space-x-3">
+                <td className="p-3 text-center space-x-3">
                   <span>{employee.mounth}</span>
                 </td>
                 <td className="p-3 text-center">{employee.totalWork}</td>

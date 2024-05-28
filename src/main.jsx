@@ -25,6 +25,7 @@ import MonthlyAdAccount from "./Pages/Home/MonthlyAddAccount";
 import AddClient from "./Pages/Home/AddClient";
 import UserProfile from "./Pages/Home/UserProfile";
 import AddAdsAccount from "./Pages/AddAdsAccount/AddAdsAccount";
+import EmployeeAdAccount from "./Components/EmployeeAdAccount/EmployeeAdAccount";
 
 const router = createBrowserRouter([
   {
@@ -46,6 +47,10 @@ const router = createBrowserRouter([
       {
         path:'/adAccountAds',
         element:<AddAdsAccount></AddAdsAccount>
+      },
+      {
+        path:'/employeeAdAccount/:id',
+        element:<EmployeeAdAccount></EmployeeAdAccount>
       },
       {
         path:'/adAccountTable',

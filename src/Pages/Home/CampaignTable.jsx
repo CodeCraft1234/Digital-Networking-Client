@@ -1,4 +1,4 @@
-import  {  useContext, useEffect, useState } from 'react';
+import  {  useContext, useEffect, useState, } from 'react';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import useCampaings from '../../Hook/useCampaign';
@@ -8,7 +8,7 @@ import useUsers from '../../Hook/useUsers';
 import { split } from 'postcss/lib/list';
 import EmployeerMouthlySelery from './EmployeerMouthlySelery';
 import useClients from '../../Hook/useClient';
-import { Link } from 'react-router-dom';
+import { Link,  NavLink } from 'react-router-dom';
 
 const CampaignTable = ({email}) => {
 
@@ -117,13 +117,29 @@ console.log(email)
 
   return (
     <div>
-      <div className="p-2  sm:p-4 dark:text-green-600">
-        <h2 className="mb-4 text-6xl text-green-600 text-center font-semibold leading-tight">
+      <div className="p-2  sm:p-4 dark:bg-green-800">
+        <h2 className="mb-4 text-4xl bg-green-800 text-white text-center font-semibold leading-tight">
          Client Campaign Table
         </h2>
-        <div className="overflow-x-auto">
-          <table className="min-w-full text-xs">
-            <thead className="bg-green-800 text-white">
+        <div className="overflow-x-auto mt-1">
+       <div className='flex justify-start items-start gap-4 mx-8'>
+       <NavLink to={"/addClient"}>
+       <button
+          className="font-avenir px-4 py-1 rounded-lg bg-green-800 text-white"
+        >
+          Add Client
+        </button>
+       </NavLink>
+       <NavLink to={"/addCampaign"}>
+       <button
+          className="font-avenir px-4 py-1 rounded-lg bg-green-800 text-white"
+        >
+          Add Campaign
+        </button>
+       </NavLink>
+       </div>
+          <table className="min-w-full text-xs mt-2">
+            <thead className="bg-red-800 text-white">
               <tr>
                 <th className="p-3 text-center">Date</th>
                 <th className="p-3 text-center">Client Name</th>
@@ -136,7 +152,7 @@ console.log(email)
                 <th className="p-3 text-center">Edit</th>
               </tr>
             </thead>
-            <tbody>
+            <tbody className='text-gray-250'>
   {filteredCampaigns.map((campaign) => (
     <tr key={campaign._id} className="border-b border-opacity-20 dark:border-gray-700 dark:bg-gray-900">
       <td className="p-3 text-center">{campaign.date}</td>
@@ -344,7 +360,7 @@ console.log(email)
             </div>
           </form>
         </div> */}
-      )}
+     
       {/* <ToastContainer /> */}
 
       <EmployeerMouthlySelery email={email}></EmployeerMouthlySelery>
