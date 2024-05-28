@@ -44,13 +44,13 @@ const AddCampaign = () => {
                
     <Form onSubmit={handleaddblog} className="container w-full max-w-xl p-8 mx-auto space-y-6 rounded-md shadow dark:bg-gray-900">
     <div>
-    <h1 className="text-3xl my-4 text-center font-bold  text-white">Add a Campaign </h1>
+    <h1 className="text-3xl my-4 text-center font-bold  text-gray-350">Add a Campaign </h1>
         <div className="flex justify-center  items-center gap-10">
         <div>
-			<label for="date" className="block mb-1 ">Date</label>
+			<label htmlFor="date" className="block mb-1 ">Date</label>
 			<input id="date" name="date" type="date" placeholder="type...." required="" className="block w-full p-2 rounded focus:outline-none focus:ring focus:ri focus:ri dark:bg-gray-800" />
 		</div>
-        <div className="md:col-span-2">
+        <div className="md:col-span-2 text-gray-250">
              <label className="block  font-bold">  My Client Email </label>
                
                  <select name="clientEmail"   defaultValue='' className="w-full border text-black rounded p-2 mt-1"  >
@@ -65,21 +65,21 @@ const AddCampaign = () => {
         <div className="flex justify-center items-center gap-3">
         
         <div>
-			<label for="name" className="block mb-1 ml-1">Campaign Name</label>
+			<label htmlFor="name" className="block mb-1 ml-1">Campaign Name</label>
 			<input id="name" name="campaignName" type="text" placeholder="type...." required="" className="block w-full p-2 rounded focus:outline-none focus:ring focus:ri focus:ri dark:bg-gray-800" />
 		</div>
         <div>
-			<label for="name" className="block mb-1 ml-1">Page Name</label>
+			<label htmlFor="name" className="block mb-1 ml-1">Page Name</label>
 			<input id="name" name="pageName" type="text" placeholder="type...." required="" className="block w-full p-2 rounded focus:outline-none focus:ring focus:ri focus:ri dark:bg-gray-800" />
 		</div>
         </div>
         <div className="flex justify-center items-center gap-3">
         <div>
-			<label for="name" className="block mb-1 ml-1">Page URL</label>
+			<label htmlFor="name" className="block mb-1 ml-1">Page URL</label>
 			<input id="name" name="pageURL" type="text" placeholder="type...." required="" className="block w-full p-2 rounded focus:outline-none focus:ring focus:ri focus:ri dark:bg-gray-800" />
 		</div>
         <div>
-			<label for="name" className="block mb-1 ml-1">Total Budged</label>
+			<label htmlFor="name" className="block mb-1 ml-1">Total Budged</label>
 			<input id="name" name="totalBudged" type="number" placeholder="type...." required="" className="block w-full p-2 rounded focus:outline-none focus:ring focus:ri focus:ri dark:bg-gray-800" />
 		</div>
         </div>

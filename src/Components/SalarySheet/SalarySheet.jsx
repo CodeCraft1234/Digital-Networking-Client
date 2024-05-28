@@ -1,6 +1,7 @@
 import { useState } from "react";
 import useSalarySheet from "../../Hook/useSalarySheet";
 import UseAxiosPublic from "../../Axios/UseAxiosPublic";
+import { FaEdit } from "react-icons/fa";
 
 const SalarySheet = () => {
   const [salary, refetch] = useSalarySheet();
@@ -81,13 +82,13 @@ const SalarySheet = () => {
   
 
   return (
-    <div className="mt-24 p-4">
-      <h6 className="text-center uppercase font-bold mb-5 text-3xl md:text-5xl text-green-800">
+    <div className="mt-24 p-2  sm:p-4 dark:bg-green-800">
+      <h6 className="text-center uppercase font-bold mb-5 text-3xl md:text-5xl bg-green-800 text-white">
         Employee Monthly Salary Sheet
       </h6>
       <div className="overflow-x-auto mt-0">
         <table className="min-w-full text-xs md:text-sm lg:text-base bg-white">
-          <thead className="bg-green-800 text-white">
+          <thead className="bg-red-800 text-white">
             <tr>
               <th className="p-3">Employee Name</th>
               <th className="p-3">Total Work</th>
@@ -138,14 +139,14 @@ const SalarySheet = () => {
                   )}
                 </td>
                 <td className="p-3 text-center">
-                  <button
-                    className="font-avenir px-3 py-1 bg-neutral rounded text-white"
+                  <FaEdit
+                    className="cursor-pointer ml-3"
                     onClick={() =>
                       document.getElementById(`my_modal_${index}`).showModal()
                     }
                   >
                     Edit
-                  </button>
+                  </FaEdit>
                   <dialog id={`my_modal_${index}`} className="modal">
                     <div className="flex justify-start items-center text-black bg-indigo-300 p-5 gap-3">
                       <form onSubmit={(e) => handleUpdate(e, employee._id)} className="text-start">

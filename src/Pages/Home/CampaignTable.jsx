@@ -1,5 +1,7 @@
+
 import  {  useContext, useEffect, useState } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
+
 import 'react-toastify/dist/ReactToastify.css';
 import useCampaings from '../../Hook/useCampaign';
 import UseAxiosPublic from '../../Axios/UseAxiosPublic';
@@ -8,8 +10,10 @@ import useUsers from '../../Hook/useUsers';
 import { split } from 'postcss/lib/list';
 import EmployeerMouthlySelery from './EmployeerMouthlySelery';
 import useClients from '../../Hook/useClient';
+
 import { Link } from 'react-router-dom';
 import useAdsAccount from '../../Hook/useAdAccount';
+
 
 const CampaignTable = ({email}) => {
 
@@ -89,6 +93,7 @@ console.log(email)
 
   return (
     <div>
+
 
 <div className="  grid px-24 lg:grid-cols-6 items-center gap-5 justify-center mt-24">
       <div className=" p-5 py-12 bg-white shadow-2xl  rounded-lg">
@@ -188,11 +193,28 @@ console.log(email)
    
       <div className="p-2  sm:p-4 dark:text-green-600">
         <h2 className="mb-4 text-6xl text-green-600 text-center font-semibold leading-tight">
+
          Client Campaign Table
         </h2>
-        <div className="overflow-x-auto">
-          <table className="min-w-full text-xs">
-            <thead className="bg-green-800 text-white">
+        <div className="overflow-x-auto mt-1">
+       <div className='flex justify-start items-start gap-4 mx-8'>
+       <NavLink to={"/addClient"}>
+       <button
+          className="font-avenir px-4 py-1 rounded-lg bg-green-800 text-white"
+        >
+          Add Client
+        </button>
+       </NavLink>
+       <NavLink to={"/addCampaign"}>
+       <button
+          className="font-avenir px-4 py-1 rounded-lg bg-green-800 text-white"
+        >
+          Add Campaign
+        </button>
+       </NavLink>
+       </div>
+          <table className="min-w-full text-xs mt-2">
+            <thead className="bg-red-800 text-white">
               <tr>
                 <th className="p-3 text-center">Date</th>
                 <th className="p-3 text-center">Client Name</th>
@@ -204,7 +226,7 @@ console.log(email)
                 <th className="p-3 text-center">Total Payment Rcv</th>
               </tr>
             </thead>
-            <tbody>
+            <tbody className='text-gray-250'>
   {filteredCampaigns.map((campaign) => (
     <tr key={campaign._id} className="border-b border-opacity-20 dark:border-gray-700 dark:bg-gray-900">
       <td className="p-3 text-center">{campaign.date}</td>
@@ -231,6 +253,7 @@ console.log(email)
           </table>
         </div>
       </div>
+
       {/* //////////////////////////////////////////////////////////// */}
       <div className="mt-24 p-4">
       <h6 className="text-center uppercase font-bold text-3xl md:text-5xl text-green-800">
@@ -315,6 +338,7 @@ console.log(email)
       </div>
     </div>
       {/* //////////////////////////////////////////////////////////// */}
+
       <EmployeerMouthlySelery email={email}></EmployeerMouthlySelery>
     </div>
 
