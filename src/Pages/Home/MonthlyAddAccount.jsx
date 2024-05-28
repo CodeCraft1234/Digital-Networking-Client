@@ -29,7 +29,7 @@ const MonthlyAdAccount = () => {
 
   return (
     <div className="mt-24 p-2  sm:p-4 dark:bg-green-800">
-      <h6 className="text-center font-bold text-3xl md:text-5xl bg-green-800 text-white">
+      <h6 className="text-center font-bold uppercase text-3xl md:text-5xl bg-green-800 text-white p-3 sm:p-3">
         Monthly Ads Account Activities
       </h6>
       <div className="overflow-x-auto mt-6">

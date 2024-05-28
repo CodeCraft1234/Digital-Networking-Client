@@ -53,7 +53,7 @@ const UserAdAccount = () => {
 
   return (
     <div className="mt-24 p-2  sm:p-4 dark:bg-green-800">
-      <h6 className="text-center uppercase font-bold text-3xl md:text-5xl text-white bg-green-800">
+      <h6 className="text-center uppercase font-bold text-3xl md:text-5xl text-white bg-green-800 p-3 sm:p-3">
         User Ads Account Activities
       </h6>
       <div className="overflow-x-auto mt-6">

@@ -4,6 +4,7 @@ import { AuthContext } from "../../Security/AuthProvider";
 import { IoMdArrowDropdown } from "react-icons/io";
 import useAdmin from "../../Hook/useAdmin";
 import useUsers from "../../Hook/useUsers";
+
 const NavBar = () => {
   const { user, logOut } = useContext(AuthContext);
   const [users] = useUsers();
@@ -15,6 +16,7 @@ const NavBar = () => {
     logOut().then().catch();
     navigate("/");
   };
+
   const [theme, setTheme] = useState(
     localStorage.getItem("theme") ? localStorage.getItem("theme") : "light"
   );
@@ -23,6 +25,7 @@ const NavBar = () => {
     const localTheme = localStorage.getItem("theme");
     document.querySelector("html").setAttribute("data-theme", localTheme);
   }, [theme]);
+  
   const handleToggle = (e) => {
     if (e.target.checked) {
       setTheme("dark");
@@ -42,9 +45,10 @@ const NavBar = () => {
   }, [users, user]);
 
   console.log(ddd?.name);
+
   return (
     <div className="">
-      <div className="navbar bg-white text-black bg-opacity-50 backdrop-blur-lg p-1 rounded-md shadow-lg  lg:px-28 md:px-10 px-5  fixed z-50 top-0 border-b">
+      <div className="navbar bg-white text-black bg-opacity-50 backdrop-blur-lg p-1 rounded-md shadow-lg lg:px-28 md:px-10 px-5 fixed z-50 top-0 border-b">
         <div className="navbar-start">
           <div className="dropdown">
             <label tabIndex={0} className="btn btn-ghost lg:hidden">
@@ -65,50 +69,91 @@ const NavBar = () => {
             </label>
             <ul
               tabIndex={0}
-              className="menu menu-sm dropdown-content  bg-violet-950 mt-3 z-[1] p-2   rounded-box w-52  "
+              className="menu menu-sm dropdown-content bg-violet-950 mt-3 z-[1] p-2 rounded-box w-52"
             >
               {ddd?.role === "admin" ? (
                 <>
                   <li>
-                    <NavLink to={"/"}>Home</NavLink>
-                  </li>
-                  <li>
-                    <NavLink to={"/adAccountAds"}>Ad Account </NavLink>
-                  </li>
-                  <li>
-                    <NavLink to={"/adAccountTable"}>User Ads Account </NavLink>
-                  </li>
-                  <li>
-                    <NavLink to={"/monthlyadAccountTable"}>
-                      Monthly Ads Account{" "}
+                    <NavLink
+                      to="/"
+                      className="text-white bg-red-800 hover:bg-blue-500"
+                      activeClassName="bg-blue-500"
+                    >
+                      Home
                     </NavLink>
                   </li>
                   <li>
-                    <NavLink to={"/salary"}>Monthly Salary </NavLink>
+                    <NavLink
+                      to="/adAccountAds"
+                      className="text-white bg-red-800 hover:bg-blue-500"
+                      activeClassName="bg-blue-500"
+                    >
+                      Ad Account
+                    </NavLink>
                   </li>
-                  {/* <li>
-                    <NavLink to={"/allEmployee"}>All Employee</NavLink>
-                  </li> */}
+                  <li>
+                    <NavLink
+                      to="/adAccountTable"
+                      className="text-white bg-red-800 hover:bg-blue-500"
+                      activeClassName="bg-blue-500"
+                    >
+                      User Ads Account
+                    </NavLink>
+                  </li>
+                  <li>
+                    <NavLink
+                      to="/monthlyadAccountTable"
+                      className="text-white bg-red-800 hover:bg-blue-500"
+                      activeClassName="bg-blue-500"
+                    >
+                      Monthly Ads Account
+                    </NavLink>
+                  </li>
+                  <li>
+                    <NavLink
+                      to="/salary"
+                      className="text-white bg-red-800 hover:bg-blue-500"
+                      activeClassName="bg-blue-500"
+                    >
+                      Monthly Salary
+                    </NavLink>
+                  </li>
                 </>
               ) : (
                 <>
                   <li>
-                    <NavLink to={`/userInfo/${user?.email}`}>
+                    <NavLink
+                      to={`/userInfo/${user?.email}`}
+                      className="text-white bg-red-800 hover:bg-blue-500"
+                      activeClassName="bg-blue-500"
+                    >
                       My Profile
                     </NavLink>
                   </li>
-                  {/* <li>
-                    <NavLink to={"/addCampaign"}>Add Campaign</NavLink>
-                  </li> */}
-                  {/* <li>
-                    <NavLink to={"/addClient"}>Add Client</NavLink>
-                  </li> */}
+                  <li>
+                    <NavLink
+                      to="/addCampaign"
+                      className="text-white bg-red-800 hover:bg-blue-500"
+                      activeClassName="bg-blue-500"
+                    >
+                      Add Campaign
+                    </NavLink>
+                  </li>
+                  <li>
+                    <NavLink
+                      to="/addClient"
+                      className="text-white bg-red-800 hover:bg-blue-500"
+                      activeClassName="bg-blue-500"
+                    >
+                      Add Client
+                    </NavLink>
+                  </li>
                 </>
               )}
             </ul>
           </div>
           <div className="flex justify-center items-center">
-            <Link to={"/"}>
+            <Link to="/">
               <img
                 className="h-20 rounded-full w-20"
                 src="https://i.ibb.co/Cnvg0RS/Digital-Network-Logo.png"
@@ -122,36 +167,79 @@ const NavBar = () => {
             {ddd?.role === "admin" ? (
               <>
                 <li>
-                  <NavLink to={"/"}>Home</NavLink>
-                </li>
-                {/* <li>
-                  <NavLink to={"/adAccountAds"}>Ad Account </NavLink>
-                </li> */}
-                <li>
-                  <NavLink to={"/adAccountTable"}>User Ads Account </NavLink>
-                </li>
-                <li>
-                  <NavLink to={"/monthlyadAccountTable"}>
-                    Monthly Ads Account{" "}
+                  <NavLink
+                    to="/"
+                    className="text-white bg-red-800 hover:bg-blue-500"
+                    activeClassName="bg-blue-500"
+                  >
+                    Home
                   </NavLink>
                 </li>
                 <li>
-                  <NavLink to={"/salary"}>Monthly Salary </NavLink>
+                  <NavLink
+                    to="/adAccountAds"
+                    className="text-white bg-red-800 hover:bg-blue-500"
+                    activeClassName="bg-blue-500"
+                  >
+                    Ad Account
+                  </NavLink>
                 </li>
-                {/* <li>
-                  <NavLink to={"/allEmployee"}>All Employee</NavLink>
-                </li> */}
+                <li>
+                  <NavLink
+                    to="/adAccountTable"
+                    className="text-white bg-red-800 hover:bg-blue-500"
+                    activeClassName="bg-blue-500"
+                  >
+                    User Ads Account
+                  </NavLink>
+                </li>
+                <li>
+                  <NavLink
+                    to="/monthlyadAccountTable"
+                    className="text-white bg-red-800 hover:bg-blue-500"
+                    activeClassName="bg-blue-500"
+                  >
+                    Monthly Ads Account
+                  </NavLink>
+                </li>
+                <li>
+                  <NavLink
+                    to="/salary"
+                    className="text-white bg-red-800 hover:bg-blue-500"
+                    activeClassName="bg-blue-500"
+                  >
+                    Monthly Salary
+                  </NavLink>
+                </li>
               </>
             ) : (
               <>
                 <li>
-                  <NavLink to={`/userInfo/${user?.email}`}>My Profile</NavLink>
+                  <NavLink
+                    to={`/userInfo/${user?.email}`}
+                    className="text-white bg-red-800 hover:bg-blue-500"
+                    activeClassName="bg-blue-500"
+                  >
+                    My Profile
+                  </NavLink>
                 </li>
                 <li>
-                  <NavLink to={"/addCampaign"}>Add Campaign</NavLink>
+                  <NavLink
+                    to="/addCampaign"
+                    className="text-white bg-red-800 hover:bg-blue-500"
+                    activeClassName="bg-blue-500"
+                  >
+                    Add Campaign
+                  </NavLink>
                 </li>
                 <li>
-                  <NavLink to={"/addClient"}>Add Client</NavLink>
+                  <NavLink
+                    to="/addClient"
+                    className="text-white bg-red-800 hover:bg-blue-500"
+                    activeClassName="bg-blue-500"
+                  >
+                    Add Client
+                  </NavLink>
                 </li>
               </>
             )}
@@ -162,7 +250,7 @@ const NavBar = () => {
             <input
               type="checkbox"
               onChange={handleToggle}
-              checked={theme == "light" ? false : true}
+              checked={theme === "light" ? false : true}
             />
             <svg
               className="swap-on fill-current lg:w-10 md:w-10 w-8 lg:h-10 md:h-10 h-8"
@@ -185,7 +273,7 @@ const NavBar = () => {
             {user?.displayName ? (
               <div className="dropdown center">
                 <label tabIndex={0}>
-                  <div className="flex justify-center items-center ">
+                  <div className="flex justify-center items-center">
                     <img
                       className="h-8 w-8"
                       src="https://i.ibb.co/kBSCBxv/4652486.webp"
@@ -201,9 +289,9 @@ const NavBar = () => {
                 </label>
                 <ul
                   tabIndex={0}
-                  className="menu menu-lg dropdown-content mt-3  right-1  z-[1] p-2  rounded-box w-52"
+                  className="menu menu-lg dropdown-content mt-3 right-1 z-[1] p-2 rounded-box w-52"
                 >
-                  <div className="dropdown ">
+                  <div className="dropdown">
                     <div
                       tabIndex={0}
                       className="dropdown-content z-[50] card card-compact w-44 p-2 shadow bg-base-100 border text-black"
@@ -216,24 +304,22 @@ const NavBar = () => {
                         />
                       </figure>
                       <div className="text-start text-black space-y-3">
-                        <h1 className="text-md font-bold ">
-                          Name : {userr?.fullName}
+                        <h1 className="text-md font-bold">
+                          Name: {userr?.fullName}
                         </h1>
-                        <h1 className="text-md font-bold e">
-                          Mobile : {userr?.contctNumber}
+                        <h1 className="text-md font-bold">
+                          Mobile: {userr?.contctNumber}
                         </h1>
-                        <h1 className="text-md font-bold ">
-                          Address :{userr?.fullAddress}
+                        <h1 className="text-md font-bold">
+                          Address: {userr?.fullAddress}
                         </h1>
-
-                        <p className="text-md font-bold ">
+                        <p className="text-md font-bold">
                           Email: {userr?.email}
                         </p>
                       </div>
-                      <div className="card-body ">
+                      <div className="card-body">
                         <hr />
-
-                        <NavLink to={"/updateProfile"}>
+                        <NavLink to="/updateProfile">
                           <button className="font-avenir w-full px-3 py-1 bg-neutral rounded text-white">
                             Update Info
                           </button>
@@ -251,7 +337,7 @@ const NavBar = () => {
               </div>
             ) : (
               <Link to="/login">
-                <button className="font-avenir  px-3 py-1 bg-neutral rounded text-white">
+                <button className="font-avenir px-3 py-1 bg-neutral rounded text-white">
                   Login
                 </button>
               </Link>
@@ -262,4 +348,5 @@ const NavBar = () => {
     </div>
   );
 };
+
 export default NavBar;
