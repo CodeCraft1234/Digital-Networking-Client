@@ -161,7 +161,7 @@ const MonthlyAdAccount = () => {
                   <label className="block text-gray-700">Ad Account Name</label>
                   <input
                     type="text"
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
+                    className="mt-1 block w-full rounded-md border-gray-300 text-gray-700 shadow-sm"
                     defaultValue={selectedAccount.name}
                   />
                 </div>
