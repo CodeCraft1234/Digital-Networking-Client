@@ -1,6 +1,7 @@
 import  { useState } from "react";
 import { FaEdit } from "react-icons/fa";
 import useUserAdAccount from "../../Hook/useUserAdAccount";
+import { NavLink } from "react-router-dom";
 
 const MonthlyAdAccount = () => {
   const [userAdAccounts, refetch] = useUserAdAccount();
@@ -27,13 +28,25 @@ const MonthlyAdAccount = () => {
   };
 
   return (
-    <div className="mt-24 p-4">
-      <h6 className="text-center font-bold text-3xl md:text-5xl text-green-800">
-        Mothly Ads Account Activities
+    <div className="mt-24 p-2  sm:p-4 dark:bg-green-800">
+      <h6 className="text-center font-bold text-3xl md:text-5xl bg-green-800 text-white">
+        Monthly Ads Account Activities
       </h6>
       <div className="overflow-x-auto mt-6">
-        <table className="min-w-full bg-white">
-          <thead className="bg-green-800 text-white">
+      <div className="flex justify-start items-start gap-4 mx-8">
+          <NavLink to={"/adAccountAds"}>
+            <button className="font-avenir px-4 py-1 rounded-lg bg-green-800 text-white">
+              Add Ads Account
+            </button>
+          </NavLink>
+          <NavLink to={"/addCampaign"}>
+            <button className="font-avenir px-4 py-1 rounded-lg bg-green-800 text-white">
+              Add Campaign
+            </button>
+          </NavLink>
+        </div>
+        <table className="min-w-full bg-white mt-2">
+          <thead className="bg-red-800 text-white">
             <tr>
               <th className="p-3">Payment Date</th>
               <th className="p-3">Ad Account Name</th>
@@ -44,14 +57,14 @@ const MonthlyAdAccount = () => {
               <th className="p-3">Delete Spent</th>
               <th className="p-3">Total Spent</th>
               <th className="p-3">Status</th>
-              <th className="p-3"></th>
+              <th className="p-3">Edit</th>
             </tr>
           </thead>
           <tbody>
             {userAdAccounts.map((account, index) => (
               <tr
                 key={index}
-                className={`${index % 2 === 0 ? "bg-gray-100" : "bg-white"}`}
+                className={`${index % 2 === 0 ? "text-black border-b border-opacity-20" : "text-black border-b border-opacity-20"}`}
               >
                 <td className="p-3 text-center">{account.date}</td>
                 <td className="p-3 text-center">{account.name}</td>
@@ -83,7 +96,7 @@ const MonthlyAdAccount = () => {
                 <td className="p-3 text-center">
                   <FaEdit
                     onClick={() => handleEditClick(account)}
-                    className="cursor-pointer"
+                    className="cursor-pointer ml-2"
                   />
                 </td>
               </tr>
@@ -148,7 +161,7 @@ const MonthlyAdAccount = () => {
                   <label className="block text-gray-700">Ad Account Name</label>
                   <input
                     type="text"
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
+                    className="mt-1 block w-full rounded-md border-gray-300 text-gray-700 shadow-sm"
                     defaultValue={selectedAccount.name}
                   />
                 </div>
