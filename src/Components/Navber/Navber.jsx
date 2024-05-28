@@ -65,10 +65,13 @@ const NavBar = () => {
             </label>
             <ul
               tabIndex={0}
-              className="menu menu-sm dropdown-content  bg-violet-950 mt-3 z-[1] p-2 shadow  rounded-box w-52  "
+              className="menu menu-sm dropdown-content  bg-violet-950 mt-3 z-[1] p-2   rounded-box w-52  "
             >
               {ddd?.role === "admin" ? (
                 <>
+                  <li>
+                    <NavLink to={"/"}>Home</NavLink>
+                  </li>
                   <li>
                     <NavLink to={"/adAccountAds"}>Ad Account </NavLink>
                   </li>
@@ -119,8 +122,11 @@ const NavBar = () => {
             {ddd?.role === "admin" ? (
               <>
                 <li>
-                  <NavLink to={"/adAccountAds"}>Ad Account </NavLink>
+                  <NavLink to={"/"}>Home</NavLink>
                 </li>
+                {/* <li>
+                  <NavLink to={"/adAccountAds"}>Ad Account </NavLink>
+                </li> */}
                 <li>
                   <NavLink to={"/adAccountTable"}>User Ads Account </NavLink>
                 </li>
@@ -141,12 +147,12 @@ const NavBar = () => {
                 <li>
                   <NavLink to={`/userInfo/${user?.email}`}>My Profile</NavLink>
                 </li>
-                {/* <li>
+                <li>
                   <NavLink to={"/addCampaign"}>Add Campaign</NavLink>
-                </li> */}
-                {/* <li>
+                </li>
+                <li>
                   <NavLink to={"/addClient"}>Add Client</NavLink>
-                </li> */}
+                </li>
               </>
             )}
           </ul>
