@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from "react";
 import PaymentHistory from "../../Components/PaymentHistory/PaymentHistory";
 import { AuthContext } from "../../Security/AuthProvider";
-import { Form, useLoaderData } from "react-router-dom";
+import { Form, useLoaderData, useNavigate } from "react-router-dom";
 import UseAxiosPublic from "../../Axios/UseAxiosPublic";
 import useCampaings from "../../Hook/useCampaign";
 import { ToastContainer, toast } from 'react-toastify';
@@ -15,10 +15,13 @@ const UserProfile = () => {
     const [data, setData] = useState({});
     const [dataa2, setData2] = useState([]);
     const [campaign, refetch] = useCampaings();
+
     const [totalSpent, setTotalSpent] = useState(0);
+    const [dollerRate, setDollerRate] = useState(0);
+    const [totalBudged, setTotalBudged] = useState(0);
     const [totalPaymeent, setTotalPayment] = useState([]);
     const [Histry, setHistry] = useState([]);
-    console.log(totalSpent, totalPaymeent);
+    console.log(totalSpent, totalPaymeent,dollerRate);
 
 
     useEffect(() => {
@@ -54,6 +57,14 @@ const UserProfile = () => {
 
         const totalBill = filtered.reduce((acc, campaign) => acc + parseFloat(campaign.tSpent), 0);
         setTotalSpent(totalBill);
+
+        const dollerRate = filtered.reduce((acc, campaign) => acc + parseFloat(campaign.dollerRate), 0);
+        const vag=dollerRate/filtered.length
+        setDollerRate(vag);
+
+        const total = filtered.reduce((acc, campaign) => acc + parseFloat(campaign.tBudged), 0);
+        setTotalBudged(total);
+
     }, [campaign, userr?.email]);
 
     const handleUpdate = (e, id) => {
@@ -61,10 +72,11 @@ const UserProfile = () => {
         const newSpent = e.target.newSpent.value;
         const previousSpent = e.target.previousSpent.value;
         const status = e.target.status.value;
+        const dollerRate = e.target.dollerRate.value;
         console.log(newSpent, previousSpent, status);
 
         const tSpent = (parseFloat(previousSpent) + parseFloat(newSpent));
-        const body = { tSpent, status };
+        const body = { tSpent, status,dollerRate };
 
         AxiosPublic.patch(`http://localhost:5000/campaings/${id}`, body)
             .then(res => {
@@ -83,10 +95,11 @@ const UserProfile = () => {
         const paymentMethod = e.target.paymentMethod.value;
         const amount = e.target.amount.value;
         const date = e.target.date.value;
+        const previousReceived = e.target.previousReceived.value;
         const email = userr?.email;
         console.log(paymentMethod, amount);
         const body = { paymentMethod, amount, email, date };
-
+        
         AxiosPublic.post(`http://localhost:5000/MPayment`, body)
             .then(res => {
                 console.log(res.data);
@@ -96,6 +109,11 @@ const UserProfile = () => {
                 console.error("Error processing payment:", error);
                 toast.error("Failed to process payment");
             });
+
+
+
+
+           
     };
 
 
@@ -130,6 +148,28 @@ const UserProfile = () => {
         setData22(filtered);
       }, [clients, user?.email]);
 
+const navigate=useNavigate()
+const handleRefresh = () => {
+    const tSpent = totalSpent;
+    const tBill = totalSpent * dollerRate;
+    const tPayment = totalPaymeent; // Ensure this variable is defined and correct
+    const tBudged = totalBudged;
+
+    const data = { tSpent, tBill, tPayment, tBudged };
+
+    AxiosPublic.patch(`http://localhost:5000/clients/${userr?.email}`, data)
+        .then(res => {
+            console.log(res.data);
+            refetch(); // Ensure this function is defined and correct
+            toast.success("Campaign updated successfully");
+            // window.location.reload(); // Generally better to avoid reloading the page
+        })
+        .catch(error => {
+            console.error("Error updating campaign:", error);
+            toast.error("Failed to update campaign");
+        });
+};
+
     return (
         <div>
             <div className="mt-24">
@@ -140,7 +180,29 @@ const UserProfile = () => {
                 <div className="px-24 py-16 rounded-2xl bg-green-400 shadow-lg text-center">
                     <h2 className="text-4xl font-bold">Total Spent</h2>
                     <p className="text-xl">Balance: $ {totalSpent}</p>
-                    <button className="font-avenir px-3 mt-3 mx-auto py-1 bg-neutral rounded text-white" onClick={() => document.getElementById('my_modal_2').showModal()}>Add Campaign</button>
+                    
+                </div>
+
+                <div className="px-24 py-16 rounded-2xl bg-green-400 shadow-lg text-center">
+                    <h2 className="text-4xl font-bold">Total Bill</h2>
+                    <p className="text-xl">Balance: ৳ {totalSpent * dollerRate}</p>
+                </div>
+
+                <div className="px-24 py-16 rounded-2xl bg-green-400 shadow-lg text-center">
+                    <h2 className="text-4xl font-bold">Total Paid</h2>
+                    <p className="text-xl">Balance: ৳{totalPaymeent}</p>
+
+                </div>
+
+                <div className="px-24 py-16 rounded-2xl bg-green-400 shadow-lg text-center">
+                    <h2 className="text-4xl font-bold">Total DUE</h2>
+                    <p className="text-2xl">Balance: ৳{totalSpent * dollerRate - totalPaymeent}</p>
+                </div>
+            </div>
+
+<div className="flex ml-10 text-start justify-start items-center gap-3">
+<div>
+<button className="font-avenir px-3  mx-auto py-1 bg-neutral rounded text-white" onClick={() => document.getElementById('my_modal_2').showModal()}>Add Campaign</button>
                     <dialog id="my_modal_2" className="modal">
                         <div className="modal-box">
                             
@@ -197,24 +259,22 @@ const UserProfile = () => {
                             </div>
                         </div>
                     </dialog>
-                </div>
-
-                <div className="px-24 py-16 rounded-2xl bg-green-400 shadow-lg text-center">
-                    <h2 className="text-4xl font-bold">Total Bill</h2>
-                    <p className="text-xl">Balance: ৳ {totalSpent * 140}</p>
-                </div>
-
-                <div className="px-24 py-16 rounded-2xl bg-green-400 shadow-lg text-center">
-                    <h2 className="text-4xl font-bold">Total Paid</h2>
-                    <p className="text-xl">Balance: ৳{totalPaymeent}</p>
-                    <button className="font-avenir px-3 mx-auto py-1 bg-neutral rounded text-white" onClick={() => document.getElementById('my_modal_1').showModal()}>Pay Now</button>
+</div>
+<div>
+<button className="font-avenir px-3 mx-auto py-1 bg-neutral rounded text-white" onClick={() => document.getElementById('my_modal_1').showModal()}>Pay Now</button>
                     <dialog id="my_modal_1" className="modal">
                         <div className="modal-box">
                             <form onSubmit={(e) => handlePayment(e)}>
+                               <div className="flex justify-center items-center gap-3">
+                               <div className="mb-4">
+                                    <label className="block text-gray-700">Previous Received</label>
+                                    <input type="number" disabled name="previousReceived" defaultValue={totalPaymeent} className="w-full border rounded p-2 mt-1" />
+                                </div>
                                 <div className="mb-4">
-                                    <label className="block text-gray-700">Amount</label>
+                                    <label className="block text-gray-700">New Amount</label>
                                     <input type="number" name="amount" defaultValue={0} className="w-full border rounded p-2 mt-1" />
                                 </div>
+                               </div>
                                 <div className="flex justify-center items-center gap-4">
                                     <div className="mb-4">
                                         <label className="block text-gray-700">Payment Method</label>
@@ -239,14 +299,11 @@ const UserProfile = () => {
                             </div>
                         </div>
                     </dialog>
-                </div>
-
-                <div className="px-24 py-16 rounded-2xl bg-green-400 shadow-lg text-center">
-                    <h2 className="text-4xl font-bold">Total DUE</h2>
-                    <p className="text-2xl">Balance: ৳{totalSpent * 140 - totalPaymeent}</p>
-                </div>
-            </div>
-
+</div>
+<div>
+ <button onClick={handleRefresh} className="w-full px-4 py-2 font-bold rounded shadow focus:outline-none focus:ring hover:ring focus:ri dark:bg-violet-400 focus:ri hover:ri dark:text-gray-900">Refresh</button>
+</div>
+</div>
             <div className="p-4">
                 <h6 className="text-center font-bold text-3xl md:text-5xl text-green-800">Own Work List</h6>
                 <div className="overflow-x-auto mt-6">
@@ -257,6 +314,7 @@ const UserProfile = () => {
                                 <th className="p-3">Page Name & URL</th>
                                 <th className="p-3">T. Budget</th>
                                 <th className="p-3">T. Spent</th>
+                                <th className="p-3">Dollers Rate</th>
                                 <th className="p-3">Status</th>
                                 <th className="p-3">Action</th>
                             </tr>
@@ -268,6 +326,7 @@ const UserProfile = () => {
                                     <td className="p-3 text-center">{work.campaignName}</td>
                                     <td className="p-3 text-center">{work.tBudged}</td>
                                     <td className="p-3 text-center">{work.tSpent}</td>
+                                    <td className="p-3 text-center">{work.dollerRate}</td>
                                     <td className={`p-3 text-center ${work.status === "Active" ? "text-green-500" : "text-red-500"}`}>{work.status}</td>
                                     <td className="p-3 text-center">
                                         <button className="font-avenir px-3 mx-auto py-1 bg-neutral rounded text-white" onClick={() => document.getElementById(`modal_${index}`).showModal()}>Edit</button>
@@ -277,13 +336,18 @@ const UserProfile = () => {
                                                     <div className="flex justify-center items-center gap-3">
                                                         <div className="mb-4">
                                                             <label className="block text-gray-700">Previous Spent</label>
-                                                            <input type="number" name="previousSpent" defaultValue={work.tSpent} className="w-full border rounded p-2 mt-1" />
+                                                            <input type="number" disabled name="previousSpent" defaultValue={work.tSpent} className="w-full border rounded p-2 mt-1" />
                                                         </div>
                                                         <div className="mb-4">
                                                             <label className="block text-gray-700">New Spent</label>
                                                             <input type="number" name="newSpent" defaultValue={0} className="w-full border rounded p-2 mt-1" />
                                                         </div>
                                                     </div>
+                                                    <div className="flex justify-center items-center gap-3">
+                                                    <div className="mb-4">
+                                                            <label className="block text-gray-700">Dollers Rate</label>
+                                                            <input type="number" name="dollerRate" defaultValue={140} className="w-full border rounded p-2 mt-1" />
+                                                        </div>
                                                     <div className="mb-4">
                                                         <label className="block text-gray-700">Status</label>
                                                         <select name="status" className="w-full border rounded p-2 mt-1">
@@ -292,6 +356,8 @@ const UserProfile = () => {
                                                             <option value="Complete">Complete</option>
                                                         </select>
                                                     </div>
+                                                    </div>
+                                                   
                                                     <button type="submit" className="font-avenir px-3 mx-auto py-1 bg-neutral rounded text-white">Update</button>
                                                 </form>
                                                 <div className="modal-action">
@@ -306,6 +372,7 @@ const UserProfile = () => {
                                 <td className="p-3 text-center"></td>
                                 <td className="p-3 text-right" colSpan="2">Total Spent:</td>
                                 <td className="p-3 text-center"> {totalSpent}</td>
+                                <td className="p-3 text-center"></td>
                                 <td className="p-3 text-center"></td>
                                 <td className="p-3 text-center"></td>
                             </tr>

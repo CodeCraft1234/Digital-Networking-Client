@@ -40,7 +40,7 @@ const Home = () => {
                         {
                             ddd?.role === "admin" ? (
                                 <div>
-                                    <TransictionCard />
+                                    {/* <TransictionCard /> */}
                                     <Banner />
                                 </div>
                             ) : (
