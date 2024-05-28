@@ -64,7 +64,7 @@ const MonthlyAdAccount = () => {
             {userAdAccounts.map((account, index) => (
               <tr
                 key={index}
-                className={`${index % 2 === 0 ? "bg-gray-100" : "bg-white"}`}
+                className={`${index % 2 === 0 ? "text-black border-b border-opacity-20" : "text-black border-b border-opacity-20"}`}
               >
                 <td className="p-3 text-center">{account.date}</td>
                 <td className="p-3 text-center">{account.name}</td>
