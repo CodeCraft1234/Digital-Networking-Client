@@ -1,5 +1,5 @@
 import  {  useContext, useEffect, useState } from 'react';
-import { ToastContainer } from 'react-toastify';
+import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import useCampaings from '../../Hook/useCampaign';
 import UseAxiosPublic from '../../Axios/UseAxiosPublic';
@@ -9,114 +9,183 @@ import { split } from 'postcss/lib/list';
 import EmployeerMouthlySelery from './EmployeerMouthlySelery';
 import useClients from '../../Hook/useClient';
 import { Link } from 'react-router-dom';
+import useAdsAccount from '../../Hook/useAdAccount';
 
 const CampaignTable = ({email}) => {
 
-
 console.log(email)
-  
   const [clients,refetch]=useClients()
+  const [adsAccount]=useAdsAccount()
   const AxiosPublic = UseAxiosPublic();
   const [filteredCampaigns, setFilteredCampaigns] = useState([]);
   const [data, setUserData] = useState([]);
   const [users] = useUsers();
   const [user, setUser] = useState(null);
-  console.log('kjhgfaklhgklagshkl',clients)
+  console.log('kjhgfaklhgklagshkl',clients,adsAccount)
 
+
+
+  const [totalSpent, setTotalSpent] = useState(0);
+  const [totalBudged, setTotalBudged] = useState(0);
+  const [totalRCV, setTotalRCV] = useState(0);
+  const [totalbill, setTotalBill] = useState(0);
+
+  console.log(totalSpent,totalBudged,totalRCV,totalbill)
 
   useEffect(() => {
     const filtered = clients.filter(campaign => campaign.email === email);
     console.log(filtered);
+
+    const totalRcv = filtered.reduce((acc, campaign) => {
+      const payment = parseFloat(campaign.tPayment);
+      return acc + (isNaN(payment) ? 0 : payment);
+
+
+    }, 0);
+    setTotalRCV(totalRcv);
+
+        const tspent = filtered.reduce((acc, campaign) => acc + parseFloat(campaign.tSpent), 0);
+        setTotalSpent(tspent);
+
+        const total = filtered.reduce((acc, campaign) => acc + parseFloat(campaign.tBudged), 0);
+        setTotalBudged(total);
+
+        const totalBill = filtered.reduce((acc, campaign) => acc + parseFloat(campaign.tBill), 0);
+        setTotalBill(totalBill);
+
+
+
     setFilteredCampaigns(filtered);
   }, [clients, email]);
+
+  const [adsAccounts, setAdsAccounts] = useState([]);
+ 
+  useEffect(() => {
+    const filterdata = adsAccount.filter(m => m.employeeEmail === email);
+    console.log(filterdata);
+    setAdsAccounts(filterdata);
+  }, [adsAccount, email]);
+
+  const handlePayment=(e)=>{
+
+  }
+
+  const handleAddAdsAcount=(e)=>{
+    e.preventDefault() 
+    const accountName=e.target.accountName.value
+    const issueDate=e.target.issueDate.value 
+    console.log(accountName,issueDate) 
+    const employeeEmail=email 
+    const data={accountName,issueDate,employeeEmail} 
+
+    AxiosPublic.post('http://localhost:5000/adsAccount',data)
+    .then(res=>{
+     console.log(res.data)
+     toast.success("add successful");
+    })
+
+  }
   
-//   useEffect(() => {
-//     const fetchUserData = async () => {
-//       try {
-//         const res = await AxiosPublic.get(`https://digital-networking-server.vercel.app/users/${email}`);
-//         console.log(res.data);
-//         setUserData(res.data);
-//       } catch (error) {
-//         console.error('Error fetching user data:', error);
-//       }
-//     };
-
-//     fetchUserData();
-//   }, [AxiosPublic, email]);
-
-  
-//   useEffect(() => {
-//     if (users.length > 0) {
-//       const foundUser = users.find(user => user?.email === email);
-//       setUser(foundUser ? foundUser : null);
-//       console.log(foundUser,'ksdahjkghs')
-//     }
-//   }, [users, email]);
-
-
-//   const [selectedCampaign, setSelectedCampaign] = useState(null);
-//   const [isModalOpen, setIsModalOpen] = useState(false);
-
-
-//   const [totalSpentTotal, setTotalSpentTotal] = useState('');
-//   const [totalBillTotal, setTotalBillTotal] = useState('');
-//   const [totalPaymentTotal, setTotalPaymentTotal] = useState('');
-
-//   useEffect(() => {
-//     const totalBill = campaigns.reduce((acc, campaign) => acc + parseFloat(campaign.tSpent), 0);
-//     const totalPayment = campaigns.reduce((acc, campaign) => acc + parseFloat(campaign.previousPayment), 0);
-//     const totalAvg = campaigns.reduce((acc, campaign) => acc + parseFloat(campaign.dollerRate), 0);
-//     const avg=totalAvg / campaigns.length
-//     setTotalSpentTotal(totalBill);
-//     setTotalPaymentTotal(totalPayment)
-//     setTotalBillTotal(avg)
-//   }, [clients]);
-
-//   const openModal = (campaign) => {
-//     setSelectedCampaign(campaign);
-//     setIsModalOpen(true);
-//   };
-
-//   const closeModal = () => {
-//     setIsModalOpen(false);
-//     setSelectedCampaign(null);
-//   };
-
-//   const handleInputChange = (e) => {
-//     const { name, value } = e.target;
-//     setSelectedCampaign({
-//       ...selectedCampaign,
-//       [name]: value,
-//     });
-//   };
-
-//   const handleUpdate = async (e) => {
-//     e.preventDefault();
-//     const newSpent=e.target.newSpent.value
-//     const previousPayment = e.target.previousPayment.value;
-//     const status = e.target.status.value;
-//     const tSpent = e.target.tSpent.value;
-//     const dollerRate = e.target.dollerRate.value;
-//     const method = e.target.method.value;
-
-// console.log(selectedCampaign.email)
-//     const totalSpent=(parseFloat(previousPayment) + parseFloat(newSpent))
-
-//     const body = { totalSpent,tSpent, status,previousPayment,dollerRate,  method};
-//     console.log(body,totalSpent);
-
-//     AxiosPublic.patch(`https://digital-networking-server.vercel.app/campaings/${selectedCampaign._id}`,body)
-//     .then(res=>{
-//      console.log(res.body)
-//      refetch();
-//     })
-    
-
-   
-//   };
 
   return (
     <div>
+
+<div className="  grid px-24 lg:grid-cols-6 items-center gap-5 justify-center mt-24">
+      <div className=" p-5 py-12 bg-white shadow-2xl  rounded-lg">
+        <img className='h-14 mx-auto text-center w-44 ' src="https://i.ibb.co/bHMLyvM/b-Kash-Merchant.png" alt="bKash" />
+        <p className='text-xl text-center mt-5 font-bold'>Balance : ৳ 44,000</p>
+      </div>
+      <div className=" p-5 py-12 bg-white shadow-2xl  rounded-lg">
+        <img className='h-14 mx-auto text-center w-44' src="https://i.ibb.co/520Py6s/bkash-1.png" alt="bKash" />
+        <p className='text-xl text-center mt-5 font-bold'>Balance : ৳ 44,000</p>
+      </div>
+      <div className=" p-5 py-12 bg-white shadow-2xl  rounded-lg">
+        <img className='h-14  mx-auto text-center w-44' src="https://i.ibb.co/JQBQBcF/nagad-marchant.png" alt="Nagad" />
+        <p className='text-xl text-center mt-5 font-bold'>Balance : $ 1000.00</p>
+      </div>
+      <div className=" p-5 py-12 bg-white shadow-2xl  rounded-lg">
+        <img className='h-14 mx-auto text-center w-44' src="https://i.ibb.co/QkTM4M3/rocket.png" alt="Rocket" />
+        <p className='text-xl text-center mt-5 font-bold'>Balance : ৳ 1000</p>
+      </div>
+      <div className=" p-5 py-12 bg-white shadow-2xl  rounded-lg">
+        <img className='h-8 mx-auto text-center w-72' src="https://i.ibb.co/3WVZGdz/PAYO-BIG-aa26e6e0.png" alt="Payoneer" />
+        <p className='text-xl mt-5 text-center font-bold'>T.USD : $4000</p>
+        <p className='text-xl text-center font-bold'>T.Spent: ${totalSpent}</p>
+      </div>
+      <div className=" px-10 py-3 bg-white shadow-2xl  rounded-lg">
+        <p className='text-xl text-center font-bold'> T.Balance: ৳ 1000</p>
+        <p className='text-xl text-center font-bold'>T.Received: ৳ {totalRCV}</p>
+        <p className='text-xl text-center font-bold'>T.Cash Out: ৳ 10000</p>
+      </div>
+    </div>
+    <div className='flex justify-start items-center gap-3'>
+    <div>
+<button className="font-avenir px-3 mt-10 mx-auto py-1 bg-neutral ml-10 rounded text-white" onClick={() => document.getElementById('my_modal_1').showModal()}>Add Ads Account</button>
+                    <dialog id="my_modal_1" className="modal">
+                        <div className="modal-box">
+                            <form onSubmit={(e) => handleAddAdsAcount(e)}>
+                               <div className="flex justify-center items-center gap-3">
+                               <div className="mb-4">
+                                    <label className="block text-gray-700">Account Name</label>
+                                    <input type="type" name="accountName" placeholder='type here...' className="w-full border rounded p-2 mt-1" />
+                                </div>
+                                <div className="mb-4">
+                                    <label className="block text-gray-700">Issue Date</label>
+                                    <input type="date" name="issueDate" defaultValue={0} className="w-full border rounded p-2 mt-1" />
+                                </div>
+                               </div>
+                                <button type="submit" className="font-avenir px-3 mx-auto py-1 bg-neutral rounded flex justify-center text-white">Send</button>
+                            </form>
+                            <div className="modal-action">
+                                <form method="dialog">
+                                    <button className="btn">Close</button>
+                                </form>
+                            </div>
+                        </div>
+                    </dialog>
+    </div>
+    <div>
+              <button className="font-avenir px-3 mt-10 mx-auto py-1 bg-neutral ml-10 rounded text-white" onClick={() => document.getElementById('my_modal_1').showModal()}>Cashout</button>
+                    <dialog id="my_modal_1" className="modal">
+                        <div className="modal-box">
+                            <form onSubmit={(e) => handlePayment(e)}>
+                               <div className="flex justify-center items-center gap-3">
+                               <div className="mb-4">
+                                    <label className="block text-gray-700">Previous Received</label>
+                                    <input type="number" disabled name="previousReceived" defaultValue={56345623} className="w-full border rounded p-2 mt-1" />
+                                </div>
+                                <div className="mb-4">
+                                    <label className="block text-gray-700">Pay Amount</label>
+                                    <input type="number" name="payAmount" defaultValue={0} className="w-full border rounded p-2 mt-1" />
+                                </div>
+                               </div>
+                                <div className="flex justify-center items-center gap-4">
+                                    <div className="mb-4">
+                                        <label className="block text-gray-700">Payment Method</label>
+                                        <select name="paymentMethod" className="w-full border rounded p-2 mt-1">
+                                            <option value="bkashMarchent">Bkash Marchent</option>
+                                            <option value="rocketPersonal">Bkash Personal</option>
+                                            <option value="rocketPersonal">Nagad Personal</option>
+                                            <option value="rocketPersonal">Rocket Personal</option>
+                                        </select>
+                                    </div>
+                                    <div className="mb-4">
+                                        <label className="block text-gray-700">Date</label>
+                                        <input type="date" name="date" defaultValue={0} className="w-full border rounded p-2 mt-1" />
+                                    </div>
+                                </div>
+                                <button type="submit" className="font-avenir px-3 mx-auto py-1 bg-neutral rounded flex justify-center text-white">Send</button>
+                            </form>
+                            <div className="modal-action">
+                                <form method="dialog">
+                                    <button className="btn">Close</button>
+                                </form>
+                            </div>
+                        </div>
+                    </dialog>
+    </div>
+    </div>
+   
       <div className="p-2  sm:p-4 dark:text-green-600">
         <h2 className="mb-4 text-6xl text-green-600 text-center font-semibold leading-tight">
          Client Campaign Table
@@ -133,7 +202,6 @@ console.log(email)
                 <th className="p-3 text-center">T.Spent</th>
                 <th className="p-3 text-center">Total Bill</th>
                 <th className="p-3 text-center">Total Payment Rcv</th>
-                <th className="p-3 text-center">Edit</th>
               </tr>
             </thead>
             <tbody>
@@ -143,212 +211,111 @@ console.log(email)
     
            <Link to={`/client/${campaign.clientEmail}`}>
                  <td className="p-3 text-center">{campaign.clientName}</td>
-            </Link>
-            
+          </Link>
       <td className="p-3 text-center">{campaign.clientPhone}</td>
-      {/* <td className="p-3 text-center">{campaign.clientEmail}</td> */}
       <td className="p-3 text-center">{campaign.tBudged}</td>
       <td className="p-3 text-center">{campaign.tSpent}</td>
-      <td className="p-3 text-center">{(campaign.tSpent * 140).toFixed(2)}</td>
-      <td className="p-3 text-center">{campaign.status}</td>
-      <td className="p-3 text-center">
-        <button
-          onClick={() => openModal(campaign)}
-          className="font-avenir px-3 py-1 bg-neutral rounded text-white"
-        >
-          Edit
-        </button>
-      </td>
-    </tr>
-  ))}
-</tbody>
-
-            {/* <tfoot>
-              <tr className="border-b border-opacity-20 bg-lime-700">
-                <td className="p-3 text-center"></td>
-                <td className="p-3 text-center"></td>
-                <td className="p-3 text-center"></td>
-                <td className="p-3 text-center"></td>
-                <td className="p-3 text-center"></td>
-                <td className="p-3 text-center">Total :</td>
-                <td className="p-3 text-center">{totalSpentTotal}</td>
-                <td className="p-3 text-center">{totalBillTotal * totalSpentTotal}</td>
-                <td className="p-3 text-center">{totalPaymentTotal}</td>
-                <td className="p-3 text-center">Total Due : {totalBillTotal * totalSpentTotal - totalPaymentTotal}</td>
-                <td className="p-3 text-center"></td>
-                <td className="p-3 text-center"></td>
-              </tr>
-            </tfoot> */}
+      <td className="p-3 text-center">{campaign.tBill}</td>
+      <td className="p-3 text-center">{campaign.tPayment}</td>
+          </tr>
+         ))}
+         <tr className="bg-green-800 text-white font-bold">
+                                <td className="p-3 text-center"></td>
+                                <td className="p-3 text-right" colSpan="2">Total :</td>
+                                <td className="p-3 text-center">{totalBudged}</td>
+                                <td className="p-3 text-center"> {totalSpent}</td>
+                                <td className="p-3 text-center">{totalbill}</td>
+                                <td className="p-3 text-center">{totalRCV}</td>
+                            </tr>
+            </tbody>
           </table>
         </div>
       </div>
-
-      {/* {isModalOpen && (
-        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center z-50">
-          <form onSubmit={handleUpdate}>
-            <div className="bg-white shadow-md rounded-lg p-6 w-full max-w-md">
-              <h6 className="text-center text-2xl font-bold text-green-600 mb-6">
-                Edit Campaign 
-              </h6>
-              <div className="mb-4">
-                <input
-                disabled
-                  type="text"
-                  name="email"
-                  value={data?.email}
-                  className="w-full border rounded p-2 mt-1"
-                />
-              </div>
-              <div className='grid grid-cols-2'>
-              
-              <div className="mb-4">
-                <label className="block text-gray-700">New Payment</label>
-                <input
-                  type="number"
-                  name="newSpent"
-                  defaultValue={0}
-                  onChange={handleInputChange}
-                  className="w-full border rounded p-2 mt-1"
-                />
-              </div>
-              <div className="mb-4">
-                <label className="block text-gray-700">Previous Payment</label>
-                <input
-                
-                  type="number"
-                  name="previousPayment"
-                  value={selectedCampaign.totalSpent}
-                  onChange={handleInputChange}
-                  className="w-full border rounded p-2 mt-1"
-                />
-              </div>
-              </div>
-              <div  className='grid grid-cols-2'>
-              <div className="mb-4">
-                <label className="block text-gray-700">Status</label>
-                <select
-                  name="status"
-                  value={selectedCampaign.status}
-                  onChange={handleInputChange}
-                  className="w-full border rounded p-2 mt-1"
-                >
-                  <option value="In Review">In Review</option>
-                  <option value="Active">Active</option>
-                  <option value="Complete">Complete</option>
-                </select>
-              </div>
-              <div className="mb-4">
-                <label className="block text-gray-700">Total Spent</label>
-                <input
-                  type="number"
-                  name="tSpent"
-                  value={selectedCampaign.tSpent}
-                  onChange={handleInputChange}
-                  className="w-full border rounded p-2 mt-1"
-                />
-              </div>
-              </div>
-              <div  className='grid grid-cols-2'>
-              <div className="mb-4">
-                <label className="block text-gray-700">Doller Rate</label>
-                <input
-                  type="number"
-                  name="dollerRate"
-                  defaultValue={140}
-                  onChange={handleInputChange}
-                  className="w-full border rounded p-2 mt-1"
-                />
-              </div>
-              <div className="mb-4">
-                <label className="block text-gray-700">Method</label>
-                <select
-                  name="method"
-                  value={selectedCampaign.method}
-                  onChange={handleInputChange}
-                  className="w-full border rounded p-2 mt-1"
-                >
-                  <option value="bkashPersonal">bkashPersonal</option>
-                  <option value="bkashMarcent">bkashMarcent</option>
-                  <option value="nagadPersonal">nagadPersonal</option>
-                  <option value="rocketPersonal">rocketPersonal</option>
-                  <option value="bank">bank</option>
-                </select>
-              </div>
-              </div> */}
-{/*              
-<button className="btn" onClick={()=>document.getElementById('my_modal_3').showModal()}></button>
-<dialog  id="my_modal_3" className="modal">
-
-              <div className="mb-4">
-                <label className="block text-gray-700">Bkash Marcent</label>
-                <input
-                disabled
-                  type="number"
-                  name="bkashMarcent"
-                  value={data.bkashMarcent}
-                  
-                  className="w-full border rounded p-2 mt-1"
-                />
-              </div>
-              <div className="mb-4">
-                <label className="block text-gray-700">Bkash Personal</label>
-                <input
-                disabled
-                  type="number"
-                  name="bkashPersonal"
-                  value={data.bkashPersonal}
-                  
-                  className="w-full border rounded p-2 mt-1"
-                />
-              </div>
-              <div className="mb-4">
-                <label className="block text-gray-700">Nagad Personal</label>
-                <input
-                disabled
-                  type="number"
-                  name="nagadPersonal"
-                  value={data.nagadPersonal}
-                  
-                  className="w-full border rounded p-2 mt-1"
-                />
-              </div>
-              <div className="mb-4">
-                <label className="block text-gray-700">Rocket Personal</label>
-                <input
-                disabled
-                  type="number"
-                  name="rocketPersonal"
-                  value={data.rocketPersonal}
-                  
-                  className="w-full border rounded p-2 mt-1"
-                />
-              </div>
-  <form method="dialog" className="modal-backdrop">
-    <button>close</button>
-  </form>
-</dialog>
-              <div className="flex justify-end space-x-4">
-                <button
-                  onClick={closeModal}
-                  className="bg-red-500 text-white py-2 px-4 rounded transform transition-all hover:scale-105 hover:bg-red-600"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="bg-blue-500 text-white py-2 px-4 rounded transform transition-all hover:scale-105 hover:bg-blue-600"
-                >
-                  Update
-                </button>
-              </div>
-            </div>
-          </form>
-        </div> */}
-      )}
-      {/* <ToastContainer /> */}
-
+      {/* //////////////////////////////////////////////////////////// */}
+      <div className="mt-24 p-4">
+      <h6 className="text-center uppercase font-bold text-3xl md:text-5xl text-green-800">
+        User Ads Account Activities
+      </h6>
+      <div className="overflow-x-auto mt-6">
+        <table className="min-w-full bg-white">
+          <thead className="bg-green-800 text-white">
+            <tr>
+              <th className="p-3">Payment Date</th>
+              <th className="p-3">Ad Account Name</th>
+              <th className="p-3">Current Balance</th>
+              <th className="p-3">Threshold</th>
+              <th className="p-3">Total Spent</th>
+              <th className="p-3">Status</th>
+              <th className="p-3">Action</th>
+              <th className="p-3"></th>
+            </tr>
+          </thead>
+          <tbody>
+            {adsAccounts.map((account, index) => (
+              <tr
+                key={account._id}
+                className={`${index % 2 === 0 ? "bg-gray-100" : "bg-white"}`}
+              >
+                <td className="p-3 text-center">{account.issueDate}</td>
+                <td className="p-3 text-center">{account.accountName}</td>
+                <td className="p-3 text-center">
+                 00
+                </td>
+                <td className="p-3 text-center">
+                 00
+                </td>
+                <td className="p-3 text-center">
+                00
+                </td>
+                <td className="p-3 text-center">
+                active
+                </td>
+                <td className="p-3 text-center">
+                                        <button className="font-avenir px-3 mx-auto py-1 bg-neutral rounded text-white" onClick={() => document.getElementById(`modal_${index}`).showModal()}>Edit</button>
+                                        <dialog id={`modal_${index}`} className="modal">
+                                            <div className="modal-box">
+                                                <form >
+                                                    <div className="flex justify-center items-center gap-3">
+                                                        <div className="mb-4">
+                                                            <label className="block text-gray-700">Previous Spent</label>
+                                                            <input type="number" disabled name="previousSpent" className="w-full border rounded p-2 mt-1" />
+                                                        </div>
+                                                        <div className="mb-4">
+                                                            <label className="block text-gray-700">New Spent</label>
+                                                            <input type="number" name="newSpent" defaultValue={0} className="w-full border rounded p-2 mt-1" />
+                                                        </div>
+                                                    </div>
+                                                    <div className="flex justify-center items-center gap-3">
+                                                    <div className="mb-4">
+                                                            <label className="block text-gray-700">Dollers Rate</label>
+                                                            <input type="number" name="dollerRate" defaultValue={140} className="w-full border rounded p-2 mt-1" />
+                                                        </div>
+                                                    <div className="mb-4">
+                                                        <label className="block text-gray-700">Status</label>
+                                                        <select name="status" className="w-full border rounded p-2 mt-1">
+                                                            <option value="In Review">In Review</option>
+                                                            <option value="Active">Active</option>
+                                                            <option value="Complete">Complete</option>
+                                                        </select>
+                                                    </div>
+                                                    </div>
+                                                   
+                                                    <button type="submit" className="font-avenir px-3 mx-auto py-1 bg-neutral rounded text-white">Update</button>
+                                                </form>
+                                                <div className="modal-action">
+                                                    <button className="btn" onClick={() => document.getElementById(`modal_${index}`).close()}>Close</button>
+                                                </div>
+                                            </div>
+                                        </dialog>
+                                    </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+      {/* //////////////////////////////////////////////////////////// */}
       <EmployeerMouthlySelery email={email}></EmployeerMouthlySelery>
-
     </div>
 
   );

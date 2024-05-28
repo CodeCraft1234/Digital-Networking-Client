@@ -36,7 +36,6 @@ console.log(data)
       <div >
               <img className="rounded-full mx-auto w-72 h-72" src={userr.photo} alt=""/>
     </div>
-    <TransictionCard></TransictionCard>
     <CampaignTable email={userr?.email}></CampaignTable>
     </div>
   );
