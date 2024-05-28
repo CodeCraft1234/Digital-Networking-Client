@@ -65,7 +65,7 @@ const NavBar = () => {
             </label>
             <ul
               tabIndex={0}
-              className="menu menu-sm dropdown-content  bg-violet-950 mt-3 z-[1] p-2 shadow  rounded-box w-52 "
+              className="menu menu-sm dropdown-content  bg-violet-950 mt-3 z-[1] p-2 shadow  rounded-box w-52  "
             >
               {ddd?.role === "admin" ? (
                 <>
@@ -94,12 +94,12 @@ const NavBar = () => {
                       My Profile
                     </NavLink>
                   </li>
-                  <li>
+                  {/* <li>
                     <NavLink to={"/addCampaign"}>Add Campaign</NavLink>
-                  </li>
-                  <li>
+                  </li> */}
+                  {/* <li>
                     <NavLink to={"/addClient"}>Add Client</NavLink>
-                  </li>
+                  </li> */}
                 </>
               )}
             </ul>
@@ -141,12 +141,12 @@ const NavBar = () => {
                 <li>
                   <NavLink to={`/userInfo/${user?.email}`}>My Profile</NavLink>
                 </li>
-                <li>
+                {/* <li>
                   <NavLink to={"/addCampaign"}>Add Campaign</NavLink>
-                </li>
-                <li>
+                </li> */}
+                {/* <li>
                   <NavLink to={"/addClient"}>Add Client</NavLink>
-                </li>
+                </li> */}
               </>
             )}
           </ul>
