@@ -62,7 +62,7 @@ const router = createBrowserRouter([
       {
         path:'/userInfo/:email',
         element:<Profile></Profile>,
-        loader: ({ params }) => fetch(`https://digital-networking-server.vercel.app/users/${params.email}`)
+        loader: ({ params }) => fetch(`http://localhost:5000/users/${params.email}`)
        },
        {
         path:'/addCampaign',

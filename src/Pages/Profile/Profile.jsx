@@ -33,9 +33,9 @@ console.log(data)
   return (
     <div className="mt-24   ">
       
-      <div >
+       <div >
               <img className="rounded-full mx-auto w-72 h-72" src={userr.photo} alt=""/>
-    </div>
+      </div>
     <CampaignTable email={userr?.email}></CampaignTable>
     </div>
   );

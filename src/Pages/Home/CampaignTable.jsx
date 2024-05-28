@@ -8,7 +8,7 @@ import useUsers from '../../Hook/useUsers';
 import { split } from 'postcss/lib/list';
 import EmployeerMouthlySelery from './EmployeerMouthlySelery';
 import useClients from '../../Hook/useClient';
-import { Link } from 'react-router-dom';
+import { Form, Link } from 'react-router-dom';
 import useAdsAccount from '../../Hook/useAdAccount';
 
 const CampaignTable = ({email}) => {
@@ -33,7 +33,7 @@ console.log(email)
   console.log(totalSpent,totalBudged,totalRCV,totalbill)
 
   useEffect(() => {
-    const filtered = clients.filter(campaign => campaign.email === email);
+    const filtered = clients.filter(campaign => campaign.employeeEmail === email);
     console.log(filtered);
 
     const totalRcv = filtered.reduce((acc, campaign) => {
@@ -86,6 +86,28 @@ console.log(email)
 
   }
   
+
+    const handleaddblog=(e)=>{
+        e.preventDefault()
+        const clientName=e.target.clientName.value
+        const clientPhone=e.target.clientPhone.value
+        const clientEmail=e.target.clientEmail.value
+        const employeeEmail=email
+        const tBudged=0
+        const tSpent=0
+        const tBill=0
+        const tDue=0
+        const tPaid=0
+        const date=e.target.date.value
+        const data={clientName,clientEmail,clientPhone,tBudged,employeeEmail,tSpent,tBill,date, tDue,tPaid}
+       console.log(data)
+
+       AxiosPublic.post('http://localhost:5000/clients',data)
+       .then(res=>{
+        console.log(res.data)
+       })
+
+       }
 
   return (
     <div>
@@ -144,6 +166,52 @@ console.log(email)
                         </div>
                     </dialog>
     </div>
+
+    <div>
+              <button className="font-avenir px-3 mt-10 mx-auto py-1 bg-neutral ml-10 rounded text-white" onClick={() => document.getElementById('my_modal_2').showModal()}>Add Client</button>
+                    <dialog id="my_modal_2" className="modal">
+                        <div className="modal-box">
+                        <section className="p-6 mt-24 dark:text-gray-100">
+               
+               <Form onSubmit={handleaddblog} className="container w-full max-w-xl p-8 mx-auto space-y-6 rounded-md shadow dark:bg-gray-900">
+               <div>
+               <h1 className="text-3xl my-4 text-center font-bold  text-white">Add a Client </h1>
+                   <div className="flex justify-center items-center gap-3">
+                   <div>
+                 <label for="date" className="block mb-1 ml-1">Date</label>
+                 <input id="date" name="date" type="date" placeholder="type...." required="" className="block w-full p-2 rounded focus:outline-none focus:ring focus:ri focus:ri dark:bg-gray-800" />
+               </div>
+                   <div>
+                 <label for="name" className="block mb-1 ml-1">Client Name</label>
+                 <input id="name" name="clientName" type="text" placeholder="type...." required="" className="block w-full p-2 rounded focus:outline-none focus:ring focus:ri focus:ri dark:bg-gray-800" />
+               </div>
+                  
+                  
+                   </div>
+                   <div className="flex justify-center items-center gap-3">
+                   <div>
+                 <label for="name" className="block mb-1 ml-1">Client Phone</label>
+                 <input id="name" name="clientPhone" type="number" placeholder="type...." required="" className="block w-full p-2 rounded focus:outline-none focus:ring focus:ri focus:ri dark:bg-gray-800" />
+               </div>
+                   <div>
+                 <label for="name" className="block mb-1 ml-1">Client Email</label>
+                 <input id="name" name="clientEmail" type="text" placeholder="type...." required="" className="block w-full p-2 rounded focus:outline-none focus:ring focus:ri focus:ri dark:bg-gray-800" />
+               </div>
+               
+                   </div>
+                </div>
+                  <button  className="w-full px-4 py-2 font-bold rounded shadow focus:outline-none focus:ring hover:ring focus:ri dark:bg-violet-400 focus:ri hover:ri dark:text-gray-900">Submit</button>
+                 </Form>
+                         </section>
+                            <div className="modal-action">
+                                <form method="dialog">
+                                    <button className="btn">Close</button>
+                                </form>
+                            </div>
+                        </div>
+                    </dialog>
+    </div>
+    
     <div>
               <button className="font-avenir px-3 mt-10 mx-auto py-1 bg-neutral ml-10 rounded text-white" onClick={() => document.getElementById('my_modal_1').showModal()}>Cashout</button>
                     <dialog id="my_modal_1" className="modal">
@@ -184,6 +252,7 @@ console.log(email)
                         </div>
                     </dialog>
     </div>
+
     </div>
    
       <div className="p-2  sm:p-4 dark:text-green-600">
