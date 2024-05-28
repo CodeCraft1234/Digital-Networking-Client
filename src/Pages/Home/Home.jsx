@@ -15,6 +15,7 @@ import UseAxiosPublic from "../../Axios/UseAxiosPublic";
 import Profile from "../Profile/Profile";
 import MyProfile from "./MyProfile";
 import TransictionCard from "./TransictionCard";
+import ClientProfile from "./ClientProfile";
 
 const Home = () => {
 
@@ -45,8 +46,14 @@ const Home = () => {
                                 </div>
                             ) : (
                                 <div>
-                                    <MyProfile />
+                                     {
+                                    ddd?.role === 'employee' ? <MyProfile />   : <ClientProfile></ClientProfile>
+                                }
                                 </div>
+                               
+                                // <div>
+                                //     <MyProfile />
+                                // </div>
                             )
                         }
                     </div>

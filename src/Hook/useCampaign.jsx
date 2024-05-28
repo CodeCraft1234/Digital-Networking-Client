@@ -1,8 +1,7 @@
 //
 import { useQuery } from "@tanstack/react-query";
 import UseAxiosPublic from "../Axios/UseAxiosPublic";
-import { useContext } from "react";
-import { AuthContext } from "../Security/AuthProvider";
+
 
 
 const useCampaings = () => {

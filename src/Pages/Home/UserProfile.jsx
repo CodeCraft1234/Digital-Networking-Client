@@ -1,7 +1,6 @@
 import { useContext, useEffect, useState } from "react";
-import PaymentHistory from "../../Components/PaymentHistory/PaymentHistory";
 import { AuthContext } from "../../Security/AuthProvider";
-import { Form, useLoaderData, useNavigate } from "react-router-dom";
+import { Form, useLoaderData,  } from "react-router-dom";
 import UseAxiosPublic from "../../Axios/UseAxiosPublic";
 import useCampaings from "../../Hook/useCampaign";
 import { ToastContainer, toast } from 'react-toastify';
@@ -15,7 +14,6 @@ const UserProfile = () => {
     const [data, setData] = useState({});
     const [dataa2, setData2] = useState([]);
     const [campaign, refetch] = useCampaings();
-
     const [totalSpent, setTotalSpent] = useState(0);
     const [dollerRate, setDollerRate] = useState(0);
     const [totalBudged, setTotalBudged] = useState(0);
@@ -25,7 +23,7 @@ const UserProfile = () => {
 
 
     useEffect(() => {
-        AxiosPublic.get(`https://digital-networking-server.vercel.app/users/${userr.email}`)
+        AxiosPublic.get(`http://localhost:5000/users/${userr.email}`)
             .then(res => {
                 console.log(res.data);
                 setData(res.data);
@@ -132,7 +130,7 @@ const UserProfile = () => {
         const data={campaignName,clientEmail,pageName,tBudged,email,tSpent,dollerRate,date}
        console.log(data)
        
-       AxiosPublic.post('https://digital-networking-server.vercel.app/campaigns',data)
+       AxiosPublic.post('http://localhost:5000/campaigns',data)
        .then(res=>{
         console.log(res.data)
         toast.success("add successful");
@@ -148,7 +146,6 @@ const UserProfile = () => {
         setData22(filtered);
       }, [clients, user?.email]);
 
-const navigate=useNavigate()
 const handleRefresh = () => {
     const tSpent = totalSpent;
     const tBill = totalSpent * dollerRate;

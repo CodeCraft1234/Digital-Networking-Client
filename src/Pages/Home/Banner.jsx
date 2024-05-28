@@ -1,13 +1,15 @@
 import { useContext, useEffect, useState } from "react";
 import useUsers from "../../Hook/useUsers";
 import { Link } from "react-router-dom";
-import Payment2 from "./Payment2";
 import Payment from "./Payment";
 import { AuthContext } from "../../Security/AuthProvider";
-
+import UseAxiosPublic from "../../Axios/UseAxiosPublic";
+import { toast } from "react-toastify";
 
 const Banner = () => {
   const [users] = useUsers(); 
+
+
   const [bkashMarcentTotal, setBkashMarcentTotal] = useState(0); 
   const [bkashPersonalTotal, setBkashPersonalTotal] = useState(0); 
   const [nagadPersonalTotal, setnagadMarcentTotal] = useState(0); 
@@ -44,11 +46,9 @@ const Banner = () => {
     const total = users.reduce((acc, user) => acc + (user.totalBDT || 0), 0); 
     setTotalBDT(total);
   }, [users]); 
-
-  console.log(users)
+console.log(users)
 
 const {user}=useContext(AuthContext)
-
 const [ddd, setDdd] = useState(null);
 
 useEffect(() => {
@@ -61,14 +61,27 @@ useEffect(() => {
 
 console.log(ddd?.name);
 
-    return (
-        <div className="">
-             <div className="p-2 sm:p-4 dark:text-gray-100">
-        {ddd?.role === 'admin' ? <h2 className="mb-4 uppercase text-6xl text-black text-center font-semibold leading-tight">Employers Activities
-        </h2>:  <h2 className="mb-4 uppercase text-6xl text-black text-center font-semibold leading-tight">All Employers 
-        </h2>} 
+const [employee,setEmployee]=useState([])
+useEffect(() => {
+    if (users && user) {
+        const fff = users.filter(u => u.role === 'employee');
+        console.log(fff);
+        setEmployee(fff || {}); // Update state with found user or an empty object
+    }
+}, [users, user]);
+
+console.log(ddd?.name);
+
+
+return (
+        <div className="mt-24">
+
+
+         <div className="p-2 sm:p-4 dark:text-gray-100">
+         {ddd?.role === 'admin' ? <h2 className="mb-4 uppercase text-6xl text-black text-center font-semibold leading-tight">Employers Activities
+         </h2>:  <h2 className="mb-4 uppercase text-6xl text-black text-center font-semibold leading-tight">All Employers 
+         </h2>} 
        
-        
         <div className="overflow-x-auto">
           <table className="min-w-full text-xs">
             <thead className="bg-green-500 text-black font-bold text-xl">
@@ -88,7 +101,7 @@ console.log(ddd?.name);
               </tr>
             </thead>
             {
-              users.map((userr,index)=><tbody className="text-black  text-xl"  key={userr._id}> 
+              employee.map((userr,index)=><tbody className="text-black  text-xl"  key={userr._id}> 
             
                 <tr  className={`${index % 2 === 0 ? "bg-gray-100" : "bg-white"}`}>
 
