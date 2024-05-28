@@ -82,7 +82,7 @@ const NavBar = () => {
                       Home
                     </NavLink>
                   </li>
-                  <li>
+                  {/* <li>
                     <NavLink
                       to="/adAccountAds"
                       className="text-white bg-red-800 hover:bg-blue-500"
@@ -90,7 +90,7 @@ const NavBar = () => {
                     >
                       Ad Account
                     </NavLink>
-                  </li>
+                  </li> */}
                   <li>
                     <NavLink
                       to="/adAccountTable"
@@ -175,7 +175,7 @@ const NavBar = () => {
                     Home
                   </NavLink>
                 </li>
-                <li>
+                {/* <li>
                   <NavLink
                     to="/adAccountAds"
                     className="text-white bg-red-800 hover:bg-blue-500"
@@ -183,7 +183,7 @@ const NavBar = () => {
                   >
                     Ad Account
                   </NavLink>
-                </li>
+                </li> */}
                 <li>
                   <NavLink
                     to="/adAccountTable"
