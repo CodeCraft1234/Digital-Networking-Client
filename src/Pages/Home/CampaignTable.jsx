@@ -262,7 +262,7 @@ console.log(email)
       <div className="p-2  sm:p-4 dark:text-green-600">
         <h2 className="mb-4 text-6xl text-green-600 text-center font-semibold leading-tight">
 
-         Client Campaign Table
+         Client Table
         </h2>
         <div className="overflow-x-auto mt-1">
        <div className='flex justify-start items-start gap-4 mx-8'>
