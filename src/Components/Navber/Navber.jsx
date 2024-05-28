@@ -70,7 +70,7 @@ const NavBar = () => {
               {ddd?.role === "admin" ? (
                 <>
                   <li>
-                    <NavLink to={"/adAccountAds"}>Ad Ads Account </NavLink>
+                    <NavLink to={"/adAccountAds"}>Ad Account </NavLink>
                   </li>
                   <li>
                     <NavLink to={"/adAccountTable"}>User Ads Account </NavLink>
@@ -83,9 +83,9 @@ const NavBar = () => {
                   <li>
                     <NavLink to={"/salary"}>Monthly Salary </NavLink>
                   </li>
-                  <li>
+                  {/* <li>
                     <NavLink to={"/allEmployee"}>All Employee</NavLink>
-                  </li>
+                  </li> */}
                 </>
               ) : (
                 <>
@@ -119,7 +119,7 @@ const NavBar = () => {
             {ddd?.role === "admin" ? (
               <>
                 <li>
-                  <NavLink to={"/adAccountAds"}>Ad Ads Account </NavLink>
+                  <NavLink to={"/adAccountAds"}>Ad Account </NavLink>
                 </li>
                 <li>
                   <NavLink to={"/adAccountTable"}>User Ads Account </NavLink>
@@ -132,9 +132,9 @@ const NavBar = () => {
                 <li>
                   <NavLink to={"/salary"}>Monthly Salary </NavLink>
                 </li>
-                <li>
+                {/* <li>
                   <NavLink to={"/allEmployee"}>All Employee</NavLink>
-                </li>
+                </li> */}
               </>
             ) : (
               <>

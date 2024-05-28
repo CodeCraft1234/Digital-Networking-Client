@@ -153,7 +153,7 @@ const AddAdsAccount = () => {
       <section className="p-6 mt-24 dark:text-gray-100">
         <form onSubmit={handleAddBlog} className="container w-full max-w-xl p-8 mx-auto space-y-6 rounded-md shadow dark:bg-gray-900">
           <div>
-            <h1 className="text-3xl my-4 text-center font-bold text-gray-600">Create Ads Account</h1>
+            <h1 className="text-3xl my-4 text-center font-bold text-gray-350">Create Ads Account</h1>
             <div className="flex justify-center items-center gap-3">
               <div>
                 <label htmlFor="date" className="block mb-1 ml-1">Date</label>
@@ -204,7 +204,7 @@ const AddAdsAccount = () => {
                   required 
                   className="block w-full p-2 rounded focus:outline-none focus:ring dark:bg-gray-800" 
                 /> */}
-                 <select name="clientEmail"   defaultValue='' className="w-full border text-black rounded p-2 mt-1"  >
+                 <select name="clientEmail"   defaultValue='' className="w-full border text-gray-250 rounded p-2 mt-1"  >
                  {
                    clients?.map(d=><option value={d.clientEmail}>{d.clientEmail}</option>
                    )
