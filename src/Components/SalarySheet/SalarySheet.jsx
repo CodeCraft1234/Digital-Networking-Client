@@ -140,7 +140,7 @@ const SalarySheet = () => {
                 </td>
                 <td className="p-3 text-center">
                   <FaEdit
-                    className="cursor-pointer mx-2"
+                    className="cursor-pointer ml-3"
                     onClick={() =>
                       document.getElementById(`my_modal_${index}`).showModal()
                     }

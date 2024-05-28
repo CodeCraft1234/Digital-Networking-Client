@@ -79,7 +79,7 @@ const UserAdAccount = () => {
               <th className="p-3">Current Balance</th>
               <th className="p-3">Total Spent</th>
               <th className="p-3">Status</th>
-              <th className="p-3"></th>
+              <th className="p-3">Edit</th>
             </tr>
           </thead>
           <tbody>
@@ -111,7 +111,7 @@ const UserAdAccount = () => {
                 </td>
                 <td className="p-3 text-center">
                   <FaEdit
-                    className="cursor-pointer"
+                    className="cursor-pointer ml-6"
                     onClick={() => handleEditClick(account)}
                   >
                     Edit
