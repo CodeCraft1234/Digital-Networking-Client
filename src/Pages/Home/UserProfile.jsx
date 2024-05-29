@@ -6,6 +6,7 @@ import useCampaings from "../../Hook/useCampaign";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import useClients from "../../Hook/useClient";
+import { Axios } from "axios";
 
 const UserProfile = () => {
     const { user } = useContext(AuthContext);
@@ -36,7 +37,7 @@ const UserProfile = () => {
         AxiosPublic.get(`http://localhost:5000/MPayment`)
             .then(res => {
                 const mdata = res.data;
-                const realdata = mdata.filter(m => m.email === userr?.email);
+                const realdata = mdata.filter(m => m.clientEmail === userr?.email);
                 setHistry(realdata);
                 const totalBill = realdata.reduce((acc, campaign) => acc + parseFloat(campaign.amount), 0);
                 setTotalPayment(totalBill);
@@ -88,32 +89,31 @@ const UserProfile = () => {
             });
     };
 
-    const handlePayment = (e) => {
+   
+
+
+    
+    const handlePayment = async (e) => {
         e.preventDefault();
         const paymentMethod = e.target.paymentMethod.value;
-        const amount = e.target.amount.value;
+        const amount = parseFloat(e.target.amount.value);
         const date = e.target.date.value;
-        const previousReceived = e.target.previousReceived.value;
-        const email = userr?.email;
+        const clientEmail = userr?.email;
+        const employeeEmail = user?.email;
         console.log(paymentMethod, amount);
-        const body = { paymentMethod, amount, email, date };
-        
-        AxiosPublic.post(`http://localhost:5000/MPayment`, body)
-            .then(res => {
-                console.log(res.data);
-                toast.success("Payment successful");
-            })
-            .catch(error => {
-                console.error("Error processing payment:", error);
-                toast.error("Failed to process payment");
-            });
-
-
-
-
-           
-    };
-
+      
+        const body = { paymentMethod, amount, clientEmail, employeeEmail, date };
+        try {
+          const paymentResponse = await AxiosPublic.post(`http://localhost:5000/MPayment`, body);
+          console.log(paymentResponse.data);
+          toast.success("Payment successful");
+        } catch (error) {
+          console.error("Error processing payment:", error);
+          toast.error("Failed to process payment");
+          return;
+        }
+      
+      };
 
     const [clients]=useClients()
 
@@ -277,8 +277,8 @@ const handleRefresh = () => {
                                         <label className="block text-gray-700">Payment Method</label>
                                         <select name="paymentMethod" className="w-full border rounded p-2 mt-1">
                                             <option value="bkashMarchent">Bkash Marchent</option>
-                                            <option value="rocketPersonal">Bkash Personal</option>
-                                            <option value="rocketPersonal">Nagad Personal</option>
+                                            <option value="bkashPersonal">Bkash Personal</option>
+                                            <option value="nagadPersonal">Nagad Personal</option>
                                             <option value="rocketPersonal">Rocket Personal</option>
                                         </select>
                                     </div>
