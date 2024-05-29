@@ -134,7 +134,7 @@ const CampaignTable = ({ email }) => {
 
 
   return (
-    <div className="my-24">
+    <div className="my-24 mb-24">
       <div className="  grid px-24 lg:grid-cols-3 items-center gap-5 justify-center mt-24">
         <div className=" p-5 py-8 bg-white text-black shadow-2xl  rounded-lg">
           <img
@@ -197,7 +197,7 @@ const CampaignTable = ({ email }) => {
         </div>
       </div>
       
-      <h2 className="mb-4 text-3xl md:text-5xl py-5 bg-green-800 text-white text-center font-semibold uppercase leading-tight p-2 sm:p-2">
+      <h2 className="mt-24 mb-4 text-3xl md:text-5xl py-5 bg-green-800 text-white text-center font-semibold uppercase leading-tight p-2 sm:p-2">
           Client Table
         </h2>
       <div className=" p-2  sm:p-4 dark:bg-green-800">
@@ -308,7 +308,7 @@ const CampaignTable = ({ email }) => {
               <form onSubmit={(e) => handlePayment(e)}>
                 <div className="flex justify-center items-center gap-3">
                   <div className="mb-4">
-                    <label className="block text-gray-700">
+                    <label className="block text-gray-250">
                       Previous Received
                     </label>
                     <input
@@ -320,7 +320,7 @@ const CampaignTable = ({ email }) => {
                     />
                   </div>
                   <div className="mb-4">
-                    <label className="block text-gray-700">Pay Amount</label>
+                    <label className="block text-gray-250">Pay Amount</label>
                     <input
                       type="number"
                       name="payAmount"
@@ -331,7 +331,7 @@ const CampaignTable = ({ email }) => {
                 </div>
                 <div className="flex justify-center items-center gap-4">
                   <div className="mb-4">
-                    <label className="block text-gray-700">
+                    <label className="block text-gray-250">
                       Payment Method
                     </label>
                     <select
@@ -345,7 +345,7 @@ const CampaignTable = ({ email }) => {
                     </select>
                   </div>
                   <div className="mb-4">
-                    <label className="block text-gray-700">Date</label>
+                    <label className="block text-gray-250">Date</label>
                     <input
                       type="date"
                       name="date"

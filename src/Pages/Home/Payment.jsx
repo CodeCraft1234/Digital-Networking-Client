@@ -75,7 +75,7 @@ const Payment = ({id}) => {
                                 type="number"
                                 name="cashIn"
                                 defaultValue={0}
-                                className="w-full border rounded p-2 mt-1"
+                                className="w-full border rounded p-2 mt-1 text-gray-500"
                             />
                         </div>
                         <button type="submit" className="font-avenir  px-5 py-2 mt-1 bg-neutral rounded text-white">Send</button>
@@ -99,7 +99,7 @@ const Payment = ({id}) => {
                                 type="number"
                                 name="cashIn2"
                                 defaultValue={0}
-                                className="w-full border rounded p-2 mt-1"
+                                className="w-full border rounded p-2 mt-1 text-gray-500"
                             />
                         </div>
                         <button type="submit" className="font-avenir  px-5 py-2 mt-1 bg-neutral rounded text-white">Send</button>
@@ -125,7 +125,7 @@ const Payment = ({id}) => {
                                 type="number"
                                 name="cashIn3"
                                 defaultValue={0}
-                                className="w-full border rounded p-2 mt-1"
+                                className="w-full border rounded p-2 mt-1 text-gray-500"
                             />
                         </div>
                         <button type="submit" className="font-avenir  px-5 py-2 mt-1 bg-neutral rounded text-white">Send</button>
@@ -151,7 +151,7 @@ const Payment = ({id}) => {
                                 type="number"
                                 name="cashIn4"
                                 defaultValue={0}
-                                className="w-full border rounded p-2 mt-1"
+                                className="w-full border rounded p-2 mt-1 text-gray-500"
                             />
                         </div>
                         <button type="submit" className="font-avenir  px-5 py-2 mt-1 bg-neutral rounded text-white">Send</button>

@@ -84,7 +84,7 @@ const AxiosPublic=UseAxiosPublic()
               <form onSubmit={(e) => handleAddAdsAcount(e)}>
                 <div className="flex justify-center items-center gap-3">
                   <div className="mb-4">
-                    <label className="block text-gray-700">Account Name</label>
+                    <label className="block text-gray-250">Account Name</label>
                     <input
                       type="type"
                       name="accountName"
@@ -93,7 +93,7 @@ const AxiosPublic=UseAxiosPublic()
                     />
                   </div>
                   <div className="mb-4">
-                    <label className="block text-gray-700">Issue Date</label>
+                    <label className="block text-gray-250">Issue Date</label>
                     <input
                       type="date"
                       name="issueDate"
