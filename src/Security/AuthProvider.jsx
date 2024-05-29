@@ -69,6 +69,13 @@ const AuthProvider = ({ children }) => {
   };
 
   useEffect(() => {
+    // Simulate a data fetching
+    setTimeout(() => {
+      setLoading(false);
+    }, 5000); // 5 seconds delay
+  }, []);
+
+  useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, currentUser => {
         setUser(currentUser);
         console.log('current user', currentUser);

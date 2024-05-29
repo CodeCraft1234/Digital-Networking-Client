@@ -68,6 +68,10 @@ const router = createBrowserRouter([
         element:<UpdateProfile></UpdateProfile>
        },
       {
+        path:'/allEmployee',
+        element:<AllEmployee></AllEmployee>
+       },
+      {
         path:'/userInfo/:email',
         element:<Profile></Profile>,
         loader: ({ params }) => fetch(`http://localhost:5000/users/${params.email}`)
