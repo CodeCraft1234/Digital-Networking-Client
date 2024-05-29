@@ -161,44 +161,44 @@ const AxiosPublic=UseAxiosPublic()
                     <form onSubmit={(e) => handleUpdate(e, account._id)}>
                       <div className="flex justify-center items-center gap-3">
                         <div className="mb-4">
-                          <label className="block text-gray-700">
+                          <label className="block text-gray-500">
                             Current Ballence
                           </label>
                           <input
                             type="number"
                             name="currentBallence"
-                            className="w-full border rounded p-2 mt-1"
+                            className="w-full border rounded p-2 mt-1 text-gray-500"
                           />
                         </div>
                         <div className="mb-4">
-                          <label className="block text-gray-700">
+                          <label className="block text-gray-500">
                             Threshold
                           </label>
                           <input
                             type="number"
                             name="threshold"
-                            className="w-full border rounded p-2 mt-1"
+                            className="w-full border rounded p-2 mt-1 text-gray-500"
                           />
                         </div>
                       </div>
                       <div className="flex justify-center items-center gap-3">
                         <div className="mb-4">
-                          <label className="block text-gray-700">
+                          <label className="block text-gray-500">
                            TotaL Spent
                           </label>
                           <input
                             type="number"
                             name="totalSpent"
-                            className="w-full border rounded p-2 mt-1"
+                            className="w-full border rounded p-2 mt-1 text-gray-500"
                           />
                         </div>
                         <div className="mb-4">
-                          <label className="block text-gray-700">
+                          <label className="block text-gray-500">
                             Status
                           </label>
                           <select
                             name="status"
-                            className="w-full border rounded p-2 mt-1"
+                            className="w-full border rounded p-2 mt-1 text-gray-500"
                           >
                             <option value="Active">Active</option>
                             <option value="Disable">Disable</option>
