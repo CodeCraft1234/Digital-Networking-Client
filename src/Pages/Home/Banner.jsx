@@ -3,8 +3,7 @@ import useUsers from "../../Hook/useUsers";
 import { Link } from "react-router-dom";
 import Payment from "./Payment";
 import { AuthContext } from "../../Security/AuthProvider";
-import UseAxiosPublic from "../../Axios/UseAxiosPublic";
-import { toast } from "react-toastify";
+
 
 const Banner = () => {
   const [users] = useUsers(); 

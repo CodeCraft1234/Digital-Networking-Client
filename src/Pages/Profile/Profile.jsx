@@ -1,20 +1,28 @@
 
 import "./profile.css";
-import { Link, NavLink, useLoaderData } from "react-router-dom";
+import { useLoaderData } from "react-router-dom";
 import useUsers from "../../Hook/useUsers";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import CampaignTable from "../Home/CampaignTable";
-import AdAccountTable from "../Home/AdAccountTable";
-import ShowProfile from "../ShowProfile";
 import UseAxiosPublic from "../../Axios/UseAxiosPublic";
-import TransictionCard from "../Home/TransictionCard";
+import { AuthContext } from "../../Security/AuthProvider";
+
 
 
 
 const Profile = () => {
 
   const [users] = useUsers(); 
+  const {user}=useContext(AuthContext)
   console.log(users)
+
+  const [userss,setUser]=useState([])
+  console.log(userss?.email)
+  useEffect(()=>{
+    const filtered=users.find(e=>e.email === user?.email) 
+    console.log('sdahjgj',filtered)
+    setUser(filtered)
+  },[users,user])
 
   const userr=useLoaderData()
   console.log(userr)
@@ -23,7 +31,7 @@ const [data,setData]=useState([])
 console.log(data)
 
     useEffect(()=>{
-      const user=AxiosPublic.get(`https://digital-networking-server.vercel.app/users/${userr.email}`)
+      AxiosPublic.get(`https://digital-networking-server.vercel.app/users/${userr.email}`)
       .then(res=>{
         console.log(res.data)
         setData(res.data)

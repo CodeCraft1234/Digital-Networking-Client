@@ -8,6 +8,18 @@ const EmployeerMouthlySelery = ({ email }) => {
   console.log(filteredSelary);
   console.log(ownSelary);
 
+  // const [users] = useUsers(); 
+  // const {user}=useContext(AuthContext)
+  // console.log(users)
+
+  // const [userss,setUser]=useState([])
+  // console.log(userss?.email)
+  // useEffect(()=>{
+  //   const filtered=users.find(e=>e.email === user?.email) 
+  //   console.log('sdahjgj',filtered)
+  //   setUser(filtered)
+  // },[users,user])
+
   useEffect(() => {
     if (ownSelary.length > 0) {
       const filtered = ownSelary.filter(salary => salary.email === email);

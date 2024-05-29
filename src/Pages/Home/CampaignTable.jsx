@@ -11,6 +11,7 @@ import EmployeerMouthlySelery from "./EmployeerMouthlySelery";
 import useClients from "../../Hook/useClient";
 import { Form, Link, NavLink } from "react-router-dom";
 import useAdsAccount from "../../Hook/useAdAccount";
+import UserAdAccount from "../../Components/UserAdAccount/UserAdAccount";
 
 const CampaignTable = ({ email }) => {
   console.log(email);
@@ -63,13 +64,6 @@ const CampaignTable = ({ email }) => {
     setFilteredCampaigns(filtered);
   }, [clients, email]);
 
-  const [adsAccounts, setAdsAccounts] = useState([]);
-
-  useEffect(() => {
-    const filterdata = adsAccount.filter((m) => m.employeeEmail === email);
-    console.log(filterdata);
-    setAdsAccounts(filterdata);
-  }, [adsAccount, email]);
 
   const handlePayment = (e) => {};
 
@@ -118,6 +112,44 @@ const CampaignTable = ({ email }) => {
     });
   };
 
+
+  const [bkashMarcent,setBkashMarcentTotal]=useState(0)
+  const [nagadPersonal,setNagadPersonalTotal]=useState(0)
+  const [bkashPersonal,setBkashPersonalTotal]=useState(0)
+  const [rocketPersonal,setRocketPersonalTotal]=useState(0)
+  console.log(bkashMarcent,rocketPersonal,nagadPersonal,bkashPersonal)
+
+
+  useEffect(()=>{
+      AxiosPublic.get(`http://localhost:5000/Mpayment`)
+      .then(res => {
+          console.log('sdjkhagjijkhgjkhdsajljkhgdsjkajkjkfjldfgjkgjkgd',res.data);
+          const da=res.data
+          const filtered=da.filter(f=> f.employeeEmail === email) 
+
+          const filter2=filtered.filter(d=>d.paymentMethod === 'bkashMarchent')
+          const total = filter2.reduce((acc, datas) => acc + parseFloat(datas.amount),0);
+          setBkashMarcentTotal(total)
+
+          const filter3=filtered.filter(d=>d.paymentMethod === 'nagadPersonal')
+          const total3 = filter3.reduce((acc, datas) => acc + parseFloat(datas.amount),0);
+          setNagadPersonalTotal(total3)
+
+          const filter4=filtered.filter(d=>d.paymentMethod === 'bkashPersonal')
+          const total4 = filter4.reduce((acc, datas) => acc + parseFloat(datas.amount),0);
+          setBkashPersonalTotal(total4)
+
+          const filter5=filtered.filter(d=>d.paymentMethod === 'rocketPersonal')
+          const total5 = filter5.reduce((acc, datas) => acc + parseFloat(datas.amount),0);
+          setRocketPersonalTotal(total5)
+         
+      })
+  },[email])
+
+
+
+
+
   return (
     <div>
       <div className="  grid px-24 lg:grid-cols-3 items-center gap-5 justify-center mt-24">
@@ -128,7 +160,7 @@ const CampaignTable = ({ email }) => {
             alt="bKash"
           />
           <p className="text-xl text-center mt-5 font-bold">
-            Balance : ৳ 44,000
+            Balance : ৳ {bkashMarcent}
           </p>
         </div>
         <div className=" p-5 py-8 bg-white text-black shadow-2xl  rounded-lg">
@@ -138,7 +170,7 @@ const CampaignTable = ({ email }) => {
             alt="bKash"
           />
           <p className="text-xl text-center mt-5 font-bold">
-            Balance : ৳ 44,000
+            Balance : ৳ {bkashPersonal}
           </p>
         </div>
         <div className=" p-5 py-8 bg-white text-black shadow-2xl  rounded-lg">
@@ -148,7 +180,7 @@ const CampaignTable = ({ email }) => {
             alt="Nagad"
           />
           <p className="text-xl text-center mt-5 font-bold">
-            Balance : $ 1000.00
+            Balance : $ {nagadPersonal}
           </p>
         </div>
         <div className=" p-5 py-8 bg-white text-black shadow-2xl  rounded-lg">
@@ -157,7 +189,7 @@ const CampaignTable = ({ email }) => {
             src="https://i.ibb.co/QkTM4M3/rocket.png"
             alt="Rocket"
           />
-          <p className="text-xl text-center mt-5 font-bold">Balance : ৳ 1000</p>
+          <p className="text-xl text-center mt-5 font-bold">Balance : ৳ {rocketPersonal}</p>
         </div>
         <div className=" p-5 py-7 bg-white text-black shadow-2xl  rounded-lg">
           <img
@@ -460,132 +492,8 @@ const CampaignTable = ({ email }) => {
         </div>
       </div>
 
-      {/* //////////////////////////////////////////////////////////// */}
-      <div className="mt-24 p-4 dark:text-green-800">
-        <h6 className="text-center text-white uppercase font-bold text-3xl md:text-5xl bg-green-800 p-2 sm:p-2">
-          User Ads Account Activities
-        </h6>
-        <div className="overflow-x-auto mt-6">
-          <table className="min-w-full bg-white">
-            <thead className="bg-red-800 text-white">
-              <tr>
-                <th className="p-3">Payment Date</th>
-                <th className="p-3">Ad Account Name</th>
-                <th className="p-3">Current Balance</th>
-                <th className="p-3">Threshold</th>
-                <th className="p-3">Total Spent</th>
-                <th className="p-3">Status</th>
-                <th className="p-3">Action</th>
-                <th className="p-3"></th>
-              </tr>
-            </thead>
-            <tbody>
-              {adsAccounts.map((account, index) => (
-                <tr
-                  key={account._id}
-                  className={`${
-                    index % 2 === 0
-                      ? "text-black border-b border-opacity-20"
-                      : "text-black border-b border-opacity-20"
-                  }`}
-                >
-                  <td className="p-3 text-center">{account.issueDate}</td>
-                  <td className="p-3 text-center">{account.accountName}</td>
-                  <td className="p-3 text-center">00</td>
-                  <td className="p-3 text-center">00</td>
-                  <td className="p-3 text-center">00</td>
-                  <td className="p-3 text-center">active</td>
-                  <td className="p-3 text-center">
-                    <button
-                      className="font-avenir px-3 mx-auto py-1 bg-neutral rounded text-white"
-                      onClick={() =>
-                        document.getElementById(`modal_${index}`).showModal()
-                      }
-                    >
-                      Edit
-                    </button>
-                    <dialog id={`modal_${index}`} className="modal">
-                      <div className="modal-box">
-                        <form>
-                          <div className="flex justify-center items-center gap-3">
-                            <div className="mb-4">
-                              <label className="block text-gray-700">
-                                Previous Spent
-                              </label>
-                              <input
-                                type="number"
-                                disabled
-                                name="previousSpent"
-                                className="w-full border rounded p-2 mt-1"
-                              />
-                            </div>
-                            <div className="mb-4">
-                              <label className="block text-gray-700">
-                                New Spent
-                              </label>
-                              <input
-                                type="number"
-                                name="newSpent"
-                                defaultValue={0}
-                                className="w-full border rounded p-2 mt-1"
-                              />
-                            </div>
-                          </div>
-                          <div className="flex justify-center items-center gap-3">
-                            <div className="mb-4">
-                              <label className="block text-gray-700">
-                                Dollers Rate
-                              </label>
-                              <input
-                                type="number"
-                                name="dollerRate"
-                                defaultValue={140}
-                                className="w-full border rounded p-2 mt-1"
-                              />
-                            </div>
-                            <div className="mb-4">
-                              <label className="block text-gray-700">
-                                Status
-                              </label>
-                              <select
-                                name="status"
-                                className="w-full border rounded p-2 mt-1"
-                              >
-                                <option value="In Review">In Review</option>
-                                <option value="Active">Active</option>
-                                <option value="Complete">Complete</option>
-                              </select>
-                            </div>
-                          </div>
-
-                          <button
-                            type="submit"
-                            className="font-avenir px-3 mx-auto py-1 bg-neutral rounded text-white"
-                          >
-                            Update
-                          </button>
-                        </form>
-                        <div className="modal-action">
-                          <button
-                            className="btn"
-                            onClick={() =>
-                              document.getElementById(`modal_${index}`).close()
-                            }
-                          >
-                            Close
-                          </button>
-                        </div>
-                      </div>
-                    </dialog>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
-      {/* //////////////////////////////////////////////////////////// */}
-
+      
+      <UserAdAccount email={email}></UserAdAccount>
       <EmployeerMouthlySelery email={email}></EmployeerMouthlySelery>
     </div>
   );

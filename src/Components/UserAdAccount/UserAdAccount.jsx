@@ -1,234 +1,157 @@
-import { useState } from "react";
-// import useUserAdAccount from "../../Hook/useUserAdAccount";
-import UseAxiosPublic from "../../Axios/UseAxiosPublic";
-import useAddAdsAccount from "../../Hook/useAddAdsAccount";
-import { NavLink } from "react-router-dom";
-import { FaEdit } from "react-icons/fa";
+import { useEffect, useState } from "react";
+import useAdsAccount from "../../Hook/useAdAccount";
 
-const UserAdAccount = () => {
-  // const [userad, refetch] = useUserAdAccount();
-  const [useradAdd, refetch] = useAddAdsAccount();
-  const [selectedAccount, setSelectedAccount] = useState(null);
-  const [data, setData] = useState();
-  const AxiosPublic = UseAxiosPublic();
+const UserAdAccount = ({email}) => {
 
-  const handleEditClick = (account) => {
-    setSelectedAccount(account);
-    document.getElementById(`my_modal_${account.id}`).showModal();
-    setData(data);
-  };
 
-  const handleUpdate = async (e, id) => {
-    e.preventDefault();
-    console.log(id);
-    const date = e.target.date.value;
-    const AdAccountName = e.target.AdAccountName.value;
-    const clientName = e.target.clientName.value;
-    const tThreshold = parseFloat(e.target.tThreshold.value);
-    const currentBalance = parseFloat(e.target.currentBalance.value);
-    const tSpent = parseFloat(e.target.tSpent.value);
-    const currentStatus = e.target.currentStatus.value;
+  // const [users] = useUsers(); 
+  // const {user}=useContext(AuthContext)
+  // console.log(users)
 
-    const data = {
-      date,
-      AdAccountName,
-      clientName,
-      tThreshold,
-      currentBalance,
-      tSpent,
-      currentStatus,
-    };
-    console.log(data);
+  // const [userss,setUser]=useState([])
+  // console.log(userss?.email)
+  // useEffect(()=>{
+  //   const filtered=users.find(e=>e.email === user?.email) 
+  //   console.log('sdahjgj',filtered)
+  //   setUser(filtered)
+  // },[users,user])
 
-    // Make the patch request
-    AxiosPublic.patch(`/adAds/${id}`, data)
-      .then((res) => {
-        console.log(res.data);
-        refetch();
-      })
-      .catch((error) => {
-        console.error("Error updating ad account:", error);
-      });
-  };
+
+  
+  const [adsAccount] = useAdsAccount();
+  const [adsAccounts, setAdsAccounts] = useState([]);
+
+  useEffect(() => {
+    const filterdata = adsAccount.filter((m) => m.employeeEmail === email);
+    console.log(filterdata);
+    setAdsAccounts(filterdata);
+  }, [adsAccount, email]);
+
 
   return (
-    <div className="mt-24 p-2  sm:p-4 dark:bg-green-800">
-      <h6 className="text-center uppercase font-bold text-3xl md:text-5xl text-white bg-green-800 p-3 sm:p-3">
-        User Ads Account Activities
-      </h6>
-      <div className="overflow-x-auto mt-6">
-        <div className="flex justify-start items-start gap-4 mx-8">
-          <NavLink to={"/adAccountAds"}>
-            <button className="font-avenir px-4 py-1 rounded-lg bg-green-800 text-white">
-              Add Ads Account
-            </button>
-          </NavLink>
-          <NavLink to={"/addCampaign"}>
-            <button className="font-avenir px-4 py-1 rounded-lg bg-green-800 text-white">
-              Add Campaign
-            </button>
-          </NavLink>
-        </div>
-        <table className="min-w-full bg-white mt-2">
-          <thead className="bg-red-800 text-white">
-            <tr>
-              <th className="p-3">Payment Date</th>
-              <th className="p-3">Ad Account Name</th>
-              <th className="p-3">Employee Name</th>
-              <th className="p-3">Threshold</th>
-              <th className="p-3">Current Balance</th>
-              <th className="p-3">Total Spent</th>
-              <th className="p-3">Status</th>
-              <th className="p-3">Edit</th>
-            </tr>
-          </thead>
-          <tbody>
-            {useradAdd.map((account, index) => (
-              <tr
-                key={account._id}
-                className={`${index % 2 === 0 ? "text-black border-b border-opacity-20" : "text-black border-b border-opacity-20"}`}
-              >
-                <td className="p-3 text-center">{account.date}</td>
-                <td className="p-3 text-center">{account.AdAccountName}</td>
-
-                <td className="p-3 text-center">
-                  <NavLink to={`/employeeAdAccount/${account.AdAccountName}`}>
-                    {account.clientName}
-                  </NavLink>
-                </td>
-
-                <td className="p-3 text-center">${account.tThreshold}</td>
-                <td className="p-3 text-center">${account.currentBalance}</td>
-                <td className="p-3 text-center">${account.tSpent}</td>
-                <td
-                  className={`p-3 text-center ${
-                    account.currentStatus === "Active"
-                      ? "text-green-500"
-                      : "text-red-500"
-                  }`}
+    <div className="mt-24 p-4 dark:text-green-800">
+    <h6 className="text-center text-white uppercase font-bold text-3xl md:text-5xl bg-green-800 p-2 sm:p-2">
+      User Ads Account Activities
+    </h6>
+    <div className="overflow-x-auto mt-6">
+      <table className="min-w-full bg-white">
+        <thead className="bg-red-800 text-white">
+          <tr>
+            <th className="p-3">Payment Date</th>
+            <th className="p-3">Ad Account Name</th>
+            <th className="p-3">Current Balance</th>
+            <th className="p-3">Threshold</th>
+            <th className="p-3">Total Spent</th>
+            <th className="p-3">Status</th>
+            <th className="p-3">Action</th>
+            <th className="p-3"></th>
+          </tr>
+        </thead>
+        <tbody>
+          {adsAccounts.map((account, index) => (
+            <tr
+              key={account._id}
+              className={`${
+                index % 2 === 0
+                  ? "text-black border-b border-opacity-20"
+                  : "text-black border-b border-opacity-20"
+              }`}
+            >
+              <td className="p-3 text-center">{account.issueDate}</td>
+              <td className="p-3 text-center">{account.accountName}</td>
+              <td className="p-3 text-center">00</td>
+              <td className="p-3 text-center">00</td>
+              <td className="p-3 text-center">00</td>
+              <td className="p-3 text-center">active</td>
+              <td className="p-3 text-center">
+                <button
+                  className="font-avenir px-3 mx-auto py-1 bg-neutral rounded text-white"
+                  onClick={() =>
+                    document.getElementById(`modal_${index}`).showModal()
+                  }
                 >
-                  {account.currentStatus}
-                </td>
-                <td className="p-3 text-center">
-                  <FaEdit
-                    className="cursor-pointer ml-6"
-                    onClick={() => handleEditClick(account)}
-                  >
-                    Edit
-                  </FaEdit>
-                  <dialog id={`my_modal_${account.id}`} className="modal">
-                    <div className="flex justify-start items-center text-black bg-indigo-300 p-5 gap-3">
-                      <form
-                        onSubmit={(e) => handleUpdate(e, account._id)}
-                        className="text-start"
-                      >
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                          <div>
-                            <label className="block text-black font-bold">
-                              Payment Date
-                            </label>
-                            <input
-                              type="date"
-                              name="date"
-                              defaultValue={account.date}
-                              className="w-full border rounded p-2 mt-1 text-gray-600 border-gray-300"
-                            />
-                          </div>
-                          <div>
-                            <label className="block text-black font-bold">
-                              Threshold
-                            </label>
-                            <input
-                              type="number"
-                              name="tThreshold"
-                              defaultValue={account.tThreshold}
-                              className="w-full border rounded p-2 mt-1 text-gray-600 border-gray-300"
-                            />
-                          </div>
-                          <div>
-                            <label className="block text-black font-bold">
-                              Current Balance
-                            </label>
-                            <input
-                              type="number"
-                              name="currentBalance"
-                              defaultValue={account.currentBalance}
-                              className="w-full border rounded p-2 mt-1 text-gray-600 border-gray-300"
-                            />
-                          </div>
-                          <div>
-                            <label className="block text-black font-bold">
-                              Total Spent
-                            </label>
-                            <input
-                              type="number"
-                              name="tSpent"
-                              defaultValue={account.tSpent}
-                              className="w-full border rounded p-2 mt-1 text-gray-600 border-gray-300"
-                            />
-                          </div>
-                          <div className="md:col-span-2">
-                            <label className="block text-black font-bold">
-                              Status
-                            </label>
-                            <select
-                              name="currentStatus"
-                              defaultValue={account.currentStatus}
-                              className="w-full border rounded p-2 mt-1 text-gray-600 border-gray-300"
-                            >
-                              <option value="Active">Active</option>
-                              <option value="Disable">Disable</option>
-                            </select>
-                          </div>
+                  Edit
+                </button>
+                <dialog id={`modal_${index}`} className="modal">
+                  <div className="modal-box">
+                    <form>
+                      <div className="flex justify-center items-center gap-3">
+                        <div className="mb-4">
+                          <label className="block text-gray-700">
+                            Previous Spent
+                          </label>
+                          <input
+                            type="number"
+                            disabled
+                            name="previousSpent"
+                            className="w-full border rounded p-2 mt-1"
+                          />
                         </div>
-                        <div className="flex justify-end mt-6">
-                          <button
-                            type="submit"
-                            className="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600"
+                        <div className="mb-4">
+                          <label className="block text-gray-700">
+                            New Spent
+                          </label>
+                          <input
+                            type="number"
+                            name="newSpent"
+                            defaultValue={0}
+                            className="w-full border rounded p-2 mt-1"
+                          />
+                        </div>
+                      </div>
+                      <div className="flex justify-center items-center gap-3">
+                        <div className="mb-4">
+                          <label className="block text-gray-700">
+                            Dollers Rate
+                          </label>
+                          <input
+                            type="number"
+                            name="dollerRate"
+                            defaultValue={140}
+                            className="w-full border rounded p-2 mt-1"
+                          />
+                        </div>
+                        <div className="mb-4">
+                          <label className="block text-gray-700">
+                            Status
+                          </label>
+                          <select
+                            name="status"
+                            className="w-full border rounded p-2 mt-1"
                           >
-                            Update
-                          </button>
+                            <option value="In Review">In Review</option>
+                            <option value="Active">Active</option>
+                            <option value="Complete">Complete</option>
+                          </select>
                         </div>
-                      </form>
-                    </div>
-                    <form method="dialog">
-                      <button className="btn btn-secondary bg-blue-500 text-white font-bold">
-                        Close
+                      </div>
+
+                      <button
+                        type="submit"
+                        className="font-avenir px-3 mx-auto py-1 bg-neutral rounded text-white"
+                      >
+                        Update
                       </button>
                     </form>
-                  </dialog>
-                </td>
-              </tr>
-            ))}
-            <tr className="bg-green-800 text-white font-bold">
-              <td className="p-3 text-right" colSpan="3">
-                Total:
+                    <div className="modal-action">
+                      <button
+                        className="btn"
+                        onClick={() =>
+                          document.getElementById(`modal_${index}`).close()
+                        }
+                      >
+                        Close
+                      </button>
+                    </div>
+                  </div>
+                </dialog>
               </td>
-              <td className="p-3 text-center">
-                $
-                {useradAdd
-                  .reduce((sum, account) => sum + account.tThreshold, 0)
-                  .toLocaleString()}
-              </td>
-              <td className="p-3 text-center">
-                $
-                {useradAdd
-                  .reduce((sum, account) => sum + account.currentBalance, 0)
-                  .toLocaleString()}
-              </td>
-              <td className="p-3 text-center">
-                $
-                {useradAdd
-                  .reduce((sum, account) => sum + account.tSpent, 0)
-                  .toLocaleString()}
-              </td>
-              <td className="p-3 text-center"></td>
-              <td className="p-3 text-center"></td>
             </tr>
-          </tbody>
-        </table>
-      </div>
+          ))}
+        </tbody>
+      </table>
     </div>
+  </div>
   );
 };
 
