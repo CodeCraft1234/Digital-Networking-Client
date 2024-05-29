@@ -118,6 +118,15 @@ const NavBar = () => {
                       Monthly Salary
                     </NavLink>
                   </li>
+                  <li>
+                  <NavLink
+                    to="/allEmployee"
+                    className="text-white bg-red-800 hover:bg-blue-500"
+                    activeClassName="bg-blue-500"
+                  >
+                    All Employee
+                  </NavLink>
+                </li>
                 </>
               ) : (
                 <>
@@ -209,6 +218,15 @@ const NavBar = () => {
                     activeClassName="bg-blue-500"
                   >
                     Monthly Salary
+                  </NavLink>
+                </li>
+                <li>
+                  <NavLink
+                    to="/allEmployee"
+                    className="text-white bg-red-800 hover:bg-blue-500"
+                    activeClassName="bg-blue-500"
+                  >
+                    All Employee
                   </NavLink>
                 </li>
               </>
