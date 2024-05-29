@@ -26,6 +26,9 @@ import AddClient from "./Pages/Home/AddClient";
 import UserProfile from "./Pages/Home/UserProfile";
 import AddAdsAccount from "./Pages/AddAdsAccount/AddAdsAccount";
 import EmployeeAdAccount from "./Components/EmployeeAdAccount/EmployeeAdAccount";
+import Profile1 from "./Pages/Home/Profile1";
+import Profile2 from "./Pages/Home/Profile2";
+import Profile3 from "./Pages/Home/Profile3";
 
 const router = createBrowserRouter([
   {
@@ -78,8 +81,22 @@ const router = createBrowserRouter([
         element:<AddClient></AddClient>
        },
        {
-        path:'/salary',
-        element:<SalarySheet></SalarySheet>,
+        path:'/selary/:email',
+        element:<Profile1></Profile1>,
+        loader: ({ params }) => fetch(`http://localhost:5000/users/${params.email}`)
+
+       },
+       {
+        path:'/adsAccount/:email',
+        element:<Profile2></Profile2>,
+        loader: ({ params }) => fetch(`http://localhost:5000/users/${params.email}`)
+
+       },
+       {
+        path:'/myProfile/:email',
+        element:<Profile3></Profile3>,
+        loader: ({ params }) => fetch(`http://localhost:5000/users/${params.email}`)
+
        },
        {
         path:'/client/:email',
