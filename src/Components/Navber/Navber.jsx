@@ -111,7 +111,7 @@ const NavBar = () => {
                   </li>
                   <li>
                     <NavLink
-                      to="/salary"
+                      to={`/userInfo/${user?.email}`}
                       className="text-white bg-red-800 hover:bg-blue-500"
                       activeClassName="bg-blue-500"
                     >
@@ -154,7 +154,7 @@ const NavBar = () => {
                       className="text-white bg-red-800 hover:bg-blue-500"
                       activeClassName="bg-blue-500"
                     >
-                     Selary
+                     Salary
                     </NavLink>
                   </li>
                   <li>
@@ -232,7 +232,7 @@ const NavBar = () => {
                 </li>
                 <li>
                   <NavLink
-                    to="/salary"
+                    to={`/userInfo/${user?.email}`}
                     className="text-white bg-red-800 hover:bg-blue-500"
                     activeClassName="bg-blue-500"
                   >
@@ -284,7 +284,7 @@ const NavBar = () => {
                       className="text-white bg-red-800 hover:bg-blue-500"
                       activeClassName="bg-blue-500"
                     >
-                     Selary
+                     Salary
                     </NavLink>
                   </li>
                 <li>

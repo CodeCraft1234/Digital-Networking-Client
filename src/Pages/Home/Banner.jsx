@@ -102,7 +102,7 @@ return (
             {
               employee.map((userr,index)=><tbody className="text-black  text-xl"  key={userr._id}> 
             
-                <tr  className={`${index % 2 === 0 ? "text-black border-b border-opacity-20" : "text-black border-b border-opacity-20"}`}>
+                <tr  className={`${index % 2 === 0 ? "text-gray-500 border-b border-opacity-20" : "text-gray-500 border-b border-opacity-20"}`}>
 
               <td className="p-3 flex justify-start text-center  ml-10  items-center gap-2 "> <Link     to={`/userInfo/${userr?.email}`}>
                     <img  className="w-10 h-10 mx-auto rounded-full" src={userr?.photo} alt="" />
