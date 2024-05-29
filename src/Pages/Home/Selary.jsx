@@ -489,7 +489,7 @@ const Selary = ({ email }) => {
         </div>
       </div> */}
 
-      {/* <UserAdAccount email={email}></UserAdAccount> */} */
+      {/* <UserAdAccount email={email}></UserAdAccount> */} 
       <EmployeerMouthlySelery email={email}></EmployeerMouthlySelery>
     </div>
   );
