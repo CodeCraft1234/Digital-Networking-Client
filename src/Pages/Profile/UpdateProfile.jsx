@@ -17,7 +17,7 @@ const UpdateProfile = () => {
 
     console.log(fullName,fullAddress,companyName,contctNumber,facebookID)
 
-    const [image, setImage] = useState(null);
+    const [image, setImage] = useState("");
     const image_hosting_key = "6fbc3358bbb1a92b78e2dee0f5ca1b94";
     const image_hosting_api = `https://api.imgbb.com/1/upload?key=${image_hosting_key}`;
   
