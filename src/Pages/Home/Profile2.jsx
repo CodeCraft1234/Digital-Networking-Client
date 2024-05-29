@@ -1,18 +1,19 @@
 
-import "./profile.css";
+
 import { useLoaderData } from "react-router-dom";
 import useUsers from "../../Hook/useUsers";
 import { useContext, useEffect, useState } from "react";
 import CampaignTable from "../Home/CampaignTable";
 import UseAxiosPublic from "../../Axios/UseAxiosPublic";
 import { AuthContext } from "../../Security/AuthProvider";
+import Selary from "./Selary";
+import EmployeerMouthlySelery from "./EmployeerMouthlySelery";
 import UserAdAccount from "../../Components/UserAdAccount/UserAdAccount";
-import EmployeerMouthlySelery from "../Home/EmployeerMouthlySelery";
 
 
 
 
-const Profile = () => {
+const Profile2 = () => {
 
   const [users] = useUsers(); 
   const {user}=useContext(AuthContext)
@@ -43,14 +44,14 @@ console.log(data)
   return (
     <div className="mt-24   ">
       
-       <div >
+       {/* <div >
             <img className="rounded-full mx-auto w-72 h-72" src={userr.photo} alt=""/>
-      </div>
-    <CampaignTable email={userr?.email}></CampaignTable> 
-     <UserAdAccount email={userr?.email}></UserAdAccount>
-      <EmployeerMouthlySelery email={userr?.email}></EmployeerMouthlySelery>
+      </div> */}
+    {/* <CampaignTable email={userr?.email}></CampaignTable> */}
+    {/* <Selary email={userr?.email}> </Selary> */}
+    <UserAdAccount email={userr?.email}></UserAdAccount>
     </div>
   );
 };
 
-export default Profile;
+export default Profile2;

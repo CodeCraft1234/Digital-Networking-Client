@@ -10,7 +10,7 @@ import { Form, Link, NavLink } from "react-router-dom";
 import useAdsAccount from "../../Hook/useAdAccount";
 import UserAdAccount from "../../Components/UserAdAccount/UserAdAccount";
 
-const CampaignTable = ({ email }) => {
+const Selary = ({ email }) => {
   console.log(email);
   const [clients, refetch] = useClients();
   const [adsAccount] = useAdsAccount();
@@ -63,6 +63,20 @@ const CampaignTable = ({ email }) => {
 
 
   const handlePayment = (e) => {};
+
+  const handleAddAdsAcount = (e) => {
+    e.preventDefault();
+    const accountName = e.target.accountName.value;
+    const issueDate = e.target.issueDate.value;
+    console.log(accountName, issueDate);
+    const employeeEmail = email;
+    const data = { accountName, issueDate, employeeEmail };
+
+    AxiosPublic.post("http://localhost:5000/adsAccount", data).then((res) => {
+      console.log(res.data);
+      toast.success("add successful");
+    });
+  };
 
   const handleaddblog = (e) => {
     e.preventDefault();
@@ -134,8 +148,8 @@ const CampaignTable = ({ email }) => {
 
 
   return (
-    <div className="my-24">
-      <div className="  grid px-24 lg:grid-cols-3 items-center gap-5 justify-center mt-24">
+    <div>
+      {/* <div className="  grid px-24 lg:grid-cols-3 items-center gap-5 justify-center mt-24">
         <div className=" p-5 py-8 bg-white text-black shadow-2xl  rounded-lg">
           <img
             className="h-14 mx-auto text-center w-44 "
@@ -196,17 +210,53 @@ const CampaignTable = ({ email }) => {
           <p className="text-xl text-center font-bold">T.Cash Out: ৳ 10000</p>
         </div>
       </div>
-      
-      <h2 className="mb-4 text-3xl md:text-5xl py-5 bg-green-800 text-white text-center font-semibold uppercase leading-tight p-2 sm:p-2">
-          Client Table
-        </h2>
-      <div className=" p-2  sm:p-4 dark:bg-green-800">
-       
-        <div className="overflow-x-auto mt-1">
-        <div className="flex justify-start mb-5 items-center gap-3">
-{/* ///////////////////////////////////////////////// */}
-      
-{/* //////////////////////////////////////////// */}
+      <div className="flex justify-start items-center gap-3">
+        <div>
+          <button
+            className="font-avenir px-3 mt-10 mx-auto py-1 bg-neutral ml-10 rounded text-white"
+            onClick={() => document.getElementById("my_modal_1").showModal()}
+          >
+            Add Ads Account
+          </button>
+          <dialog id="my_modal_1" className="modal">
+            <div className="modal-box">
+              <form onSubmit={(e) => handleAddAdsAcount(e)}>
+                <div className="flex justify-center items-center gap-3">
+                  <div className="mb-4">
+                    <label className="block text-gray-700">Account Name</label>
+                    <input
+                      type="type"
+                      name="accountName"
+                      placeholder="type here..."
+                      className="w-full border rounded p-2 mt-1"
+                    />
+                  </div>
+                  <div className="mb-4">
+                    <label className="block text-gray-700">Issue Date</label>
+                    <input
+                      type="date"
+                      name="issueDate"
+                      defaultValue={0}
+                      className="w-full border rounded p-2 mt-1"
+                    />
+                  </div>
+                </div>
+                <button
+                  type="submit"
+                  className="font-avenir px-3 mx-auto py-1 bg-neutral rounded flex justify-center text-white"
+                >
+                  Send
+                </button>
+              </form>
+              <div className="modal-action">
+                <form method="dialog">
+                  <button className="btn">Close</button>
+                </form>
+              </div>
+            </div>
+          </dialog>
+        </div>
+
         <div>
           <button
             className="font-avenir px-3 mt-10 mx-auto py-1 bg-neutral ml-10 rounded text-white"
@@ -369,22 +419,43 @@ const CampaignTable = ({ email }) => {
             </div>
           </dialog>
         </div>
-
       </div>
 
+      <div className="mt-24 p-2  sm:p-4 dark:bg-green-800">
+        <h2 className="mb-4 text-3xl md:text-5xl bg-green-800 text-white text-center font-semibold uppercase leading-tight p-2 sm:p-2">
+          Client Table
+        </h2>
+        <div className="overflow-x-auto mt-1">
+          <div className="flex justify-start items-start gap-4 mx-8">
+            <NavLink to={"/addClient"}>
+              <button className="font-avenir px-4 py-1 rounded-lg bg-green-800 text-white">
+                Add Client
+              </button>
+            </NavLink>
+            <NavLink to={"/adAccountAds"}>
+              <button className="font-avenir px-4 py-1 rounded-lg bg-green-800 text-white">
+                Add Ad Account
+              </button>
+            </NavLink>
+            <NavLink to={"/"}>
+              <button className="font-avenir px-4 py-1 rounded-lg bg-green-800 text-white">
+                Cashout
+              </button>
+            </NavLink>
+          </div>
           <table className="min-w-full text-sm mt-2">
             <thead className="bg-red-800 text-white">
               <tr>
                 <th className="p-3 text-center">Date</th>
                 <th className="p-3 text-center">Client Name</th>
                 <th className="p-3 text-center">Client Phone</th>
-                {/* <th className="p-3 text-center">Client Email</th> */}
-                <th className="p-3 text-center">T.Budget</th>
+                {/* <th className="p-3 text-center">Client Email</th> */
+                /* <th className="p-3 text-center">T.Budget</th>
                 <th className="p-3 text-center">T.Spent</th>
                 <th className="p-3 text-center">Total Bill</th>
                 <th className="p-3 text-center">Total Payment Rcv</th>
-              </tr>
-            </thead>
+              </tr> */
+            /* </thead>
             <tbody className="text-gray-250">
               {filteredCampaigns.map((campaign) => (
                 <tr
@@ -416,9 +487,11 @@ const CampaignTable = ({ email }) => {
             </tbody>
           </table>
         </div>
-      </div>
-     
+      </div> */}
+
+      {/* <UserAdAccount email={email}></UserAdAccount> */} */
+      <EmployeerMouthlySelery email={email}></EmployeerMouthlySelery>
     </div>
   );
 };
-export default CampaignTable;
+export default Selary;

@@ -141,6 +141,24 @@ const NavBar = () => {
                   </li>
                   <li>
                     <NavLink
+                      to={`/userInfo/${user?.email}`}
+                      className="text-white bg-red-800 hover:bg-blue-500"
+                      activeClassName="bg-blue-500"
+                    >
+                      Ads Account
+                    </NavLink>
+                  </li>
+                  <li>
+                    <NavLink
+                      to={`/userInfo/${user?.email}`}
+                      className="text-white bg-red-800 hover:bg-blue-500"
+                      activeClassName="bg-blue-500"
+                    >
+                     Selary
+                    </NavLink>
+                  </li>
+                  <li>
+                    <NavLink
                       to="/addCampaign"
                       className="text-white bg-red-800 hover:bg-blue-500"
                       activeClassName="bg-blue-500"
@@ -157,6 +175,7 @@ const NavBar = () => {
                       Add Client
                     </NavLink>
                   </li>
+
                 </>
               )}
             </ul>
@@ -241,6 +260,33 @@ const NavBar = () => {
                     My Profile
                   </NavLink>
                 </li>
+                <li>
+                  <NavLink
+                    to={`/myProfile/${user?.email}`}
+                    className="text-white bg-red-800 hover:bg-blue-500"
+                    activeClassName="bg-blue-500"
+                  >
+                    My Clients
+                  </NavLink>
+                </li>
+                <li>
+                    <NavLink
+                      to={`/adsAccount/${user?.email}`}
+                      className="text-white bg-red-800 hover:bg-blue-500"
+                      activeClassName="bg-blue-500"
+                    >
+                      Ads Account
+                    </NavLink>
+                  </li>
+                  <li>
+                    <NavLink
+                      to={`/selary/${user?.email}`}
+                      className="text-white bg-red-800 hover:bg-blue-500"
+                      activeClassName="bg-blue-500"
+                    >
+                     Selary
+                    </NavLink>
+                  </li>
                 <li>
                   <NavLink
                     to="/addCampaign"
