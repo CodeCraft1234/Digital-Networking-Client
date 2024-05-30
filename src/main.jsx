@@ -29,6 +29,9 @@ import EmployeeAdAccount from "./Components/EmployeeAdAccount/EmployeeAdAccount"
 import Profile1 from "./Pages/Home/Profile1";
 import Profile2 from "./Pages/Home/Profile2";
 import Profile3 from "./Pages/Home/Profile3";
+import AllClients from "./Pages/Home/AllClients";
+import AllAdsAccount from "./Pages/Home/AllAdsAccount";
+import EmployeeMonthlySalary from "./Pages/Home/EmployeerMouthlySelery";
 
 const router = createBrowserRouter([
   {
@@ -56,12 +59,12 @@ const router = createBrowserRouter([
         element:<EmployeeAdAccount></EmployeeAdAccount>
       },
       {
-        path:'/adAccountTable',
-        element:<UserAdAccount></UserAdAccount>
+        path:'/allAdSAccount',
+        element:<AllAdsAccount></AllAdsAccount>
       },
       {
-        path:'/monthlyadAccountTable',
-        element:<MonthlyAdAccount></MonthlyAdAccount>
+        path:'/allClients',
+        element:<AllClients></AllClients>
       },
       {
         path:'/updateProfile',
@@ -87,6 +90,10 @@ const router = createBrowserRouter([
        {
         path:'/salerySheet',
         element:<SalarySheet></SalarySheet>
+       },
+       {
+        path:'/employeeMonthlySelary',
+        element:<EmployeeMonthlySalary></EmployeeMonthlySalary>
        },
        {
         path:'/selary/:email',

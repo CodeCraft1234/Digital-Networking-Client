@@ -102,13 +102,19 @@ return (
             {
               employee.map((userr,index)=><tbody className="text-black  text-xl"  key={userr._id}> 
             
+            <Link to={`/userInfo/${userr?.email}`}>
+              
+            </Link>
                 <tr  className={`${index % 2 === 0 ? "text-gray-500 border-b border-opacity-20" : "text-gray-500 border-b border-opacity-20"}`}>
 
-              <td className="p-3 flex justify-start text-center  ml-10  items-center gap-2 "> <Link     to={`/userInfo/${userr?.email}`}>
+              <Link to={`/userInfo/${userr?.email}`}>
+              <td className="p-3 hover:bg-gray-200 hover:text-blue-600 font-bold hover:text-2xl flex justify-start text-center  ml-10  items-center gap-2 "> <Link     to={`/userInfo/${userr?.email}`}>
                     <img  className="w-10 h-10 mx-auto rounded-full" src={userr?.photo} alt="" />
                            </Link>
                          <Link to={`/userInfo/${userr?.email}`}>{userr.name} </Link>
                   </td>
+              </Link>
+              
                   {
                     ddd?.role === 'admin' ? <> 
                      <td className="p-3 text-center">$ {userr.payoneer}</td>
