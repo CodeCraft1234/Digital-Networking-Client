@@ -1,16 +1,18 @@
-import { Outlet } from "react-router-dom";
+import { Outlet, useLocation } from "react-router-dom";
 import NavBar from "./Components/Navber/Navber";
 import Footer from "./Components/Footer/Footer";
 
 
 const Root = () => {
+    const location = useLocation();
+    const noheaderfooter = location.pathname.includes("/login");
     return (
         <div>
-            <NavBar></NavBar>
+            {noheaderfooter || <NavBar></NavBar>}
            <div className="min-h-screen">
            <Outlet></Outlet>
            </div>
-            <Footer></Footer>
+           {noheaderfooter || <Footer></Footer>}
         </div>
     );
 };

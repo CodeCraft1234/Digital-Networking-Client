@@ -150,6 +150,7 @@ const CampaignTable = ({ email }) => {
 
   return (
     <div className="my-24 mb-24">
+      
        <div className="balance-cards-container">
       <div className="balance-card">
         <img className="balance-card-img" src="https://i.ibb.co/bHMLyvM/b-Kash-Merchant.png" alt="bKash" />

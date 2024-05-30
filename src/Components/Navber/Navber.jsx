@@ -71,54 +71,45 @@ const NavBar = () => {
               tabIndex={0}
               className="menu menu-sm dropdown-content bg-violet-950 mt-3 z-[1] p-2 rounded-box w-52"
             >
-              {ddd?.role === "admin" ? (
-                <>
-                  <li>
-                    <NavLink
-                      to="/"
-                      className="text-white bg-red-800 hover:bg-blue-500"
-                      activeClassName="bg-blue-500"
-                    >
-                      Home
-                    </NavLink>
-                  </li>
-                  {/* <li>
-                    <NavLink
-                      to="/adAccountAds"
-                      className="text-white bg-red-800 hover:bg-blue-500"
-                      activeClassName="bg-blue-500"
-                    >
-                      Ad Account
-                    </NavLink>
-                  </li> */}
-                  <li>
-                    <NavLink
-                      to="/adAccountTable"
-                      className="text-white bg-red-800 hover:bg-blue-500"
-                      activeClassName="bg-blue-500"
-                    >
-                      User Ads Account
-                    </NavLink>
-                  </li>
-                  <li>
-                    <NavLink
-                      to="/monthlyadAccountTable"
-                      className="text-white bg-red-800 hover:bg-blue-500"
-                      activeClassName="bg-blue-500"
-                    >
-                      Monthly Ads Account
-                    </NavLink>
-                  </li>
-                  <li>
-                    <NavLink
-                      to={`/userInfo/${user?.email}`}
-                      className="text-white bg-red-800 hover:bg-blue-500"
-                      activeClassName="bg-blue-500"
-                    >
-                      Monthly Salary
-                    </NavLink>
-                  </li>
-                  <li>
+            {ddd?.role === "admin" ? (
+              <>
+                <li>
+                  <NavLink
+                    to="/"
+                    className="text-white bg-red-800 hover:bg-blue-500"
+                    activeClassName="bg-blue-500"
+                  >
+                    Home
+                  </NavLink>
+                </li>
+                <li>
+                  <NavLink
+                    to="/allAdSAccount"
+                    className="text-white bg-red-800 hover:bg-blue-500"
+                    activeClassName="bg-blue-500"
+                  >
+                    All Ads Account
+                  </NavLink>
+                </li>
+                <li>
+                  <NavLink
+                    to="/allClients"
+                    className="text-white bg-red-800 hover:bg-blue-500"
+                    activeClassName="bg-blue-500"
+                  >
+                    All Clients
+                  </NavLink>
+                </li>
+                <li>
+                  <NavLink
+                    to={`/employeeMonthlySelary`}
+                    className="text-white bg-red-800 hover:bg-blue-500"
+                    activeClassName="bg-blue-500"
+                  >
+                    Monthly Salary
+                  </NavLink>
+                </li>
+                <li>
                   <NavLink
                     to="/allEmployee"
                     className="text-white bg-red-800 hover:bg-blue-500"
@@ -127,21 +118,30 @@ const NavBar = () => {
                     All Employee
                   </NavLink>
                 </li>
-                </>
-              ) : (
-                <>
-                  <li>
+              </>
+            ) : (
+              <>
+                <li>
+                  <NavLink
+                    to={`/userInfo/${user?.email}`}
+                    className="text-white bg-red-800 hover:bg-blue-500"
+                    activeClassName="bg-blue-500"
+                  >
+                    My Profile
+                  </NavLink>
+                </li>
+                <li>
+                  <NavLink
+                    to={`/myProfile/${user?.email}`}
+                    className="text-white bg-red-800 hover:bg-blue-500"
+                    activeClassName="bg-blue-500"
+                  >
+                    My Clients
+                  </NavLink>
+                </li>
+                <li>
                     <NavLink
-                      to={`/userInfo/${user?.email}`}
-                      className="text-white bg-red-800 hover:bg-blue-500"
-                      activeClassName="bg-blue-500"
-                    >
-                      My Profile
-                    </NavLink>
-                  </li>
-                  <li>
-                    <NavLink
-                      to={`/userInfo/${user?.email}`}
+                      to={`/adsAccount/${user?.email}`}
                       className="text-white bg-red-800 hover:bg-blue-500"
                       activeClassName="bg-blue-500"
                     >
@@ -150,34 +150,33 @@ const NavBar = () => {
                   </li>
                   <li>
                     <NavLink
-                      to={`/userInfo/${user?.email}`}
+                      to={`/selary/${user?.email}`}
                       className="text-white bg-red-800 hover:bg-blue-500"
                       activeClassName="bg-blue-500"
                     >
                      Salary
                     </NavLink>
                   </li>
-                  <li>
-                    <NavLink
-                      to="/addCampaign"
-                      className="text-white bg-red-800 hover:bg-blue-500"
-                      activeClassName="bg-blue-500"
-                    >
-                      Add Campaign
-                    </NavLink>
-                  </li>
-                  <li>
-                    <NavLink
-                      to="/addClient"
-                      className="text-white bg-red-800 hover:bg-blue-500"
-                      activeClassName="bg-blue-500"
-                    >
-                      Add Client
-                    </NavLink>
-                  </li>
-
-                </>
-              )}
+                <li>
+                  <NavLink
+                    to="/addCampaign"
+                    className="text-white bg-red-800 hover:bg-blue-500"
+                    activeClassName="bg-blue-500"
+                  >
+                    Add Campaign
+                  </NavLink>
+                </li>
+                <li>
+                  <NavLink
+                    to="/addClient"
+                    className="text-white bg-red-800 hover:bg-blue-500"
+                    activeClassName="bg-blue-500"
+                  >
+                    Add Client
+                  </NavLink>
+                </li>
+              </>
+            )}
             </ul>
           </div>
           <div className="flex justify-center items-center">
@@ -203,15 +202,6 @@ const NavBar = () => {
                     Home
                   </NavLink>
                 </li>
-                {/* <li>
-                  <NavLink
-                    to="/adAccountAds"
-                    className="text-white bg-red-800 hover:bg-blue-500"
-                    activeClassName="bg-blue-500"
-                  >
-                    Ad Account
-                  </NavLink>
-                </li> */}
                 <li>
                   <NavLink
                     to="/allAdSAccount"
