@@ -37,7 +37,7 @@ const router = createBrowserRouter([
     children:[
       {
         path:'/',
-        element:<Home></Home>
+        element:<PrivateRoute><Home></Home></PrivateRoute>
       },
       {
         path: '/login',
@@ -74,7 +74,7 @@ const router = createBrowserRouter([
       {
         path:'/userInfo/:email',
         element:<Profile></Profile>,
-        loader: ({ params }) => fetch(`http://localhost:5000/users/${params.email}`)
+        loader: ({ params }) => fetch(`https://digital-networking-server.vercel.app/users/${params.email}`)
        },
        {
         path:'/addCampaign',
@@ -85,27 +85,31 @@ const router = createBrowserRouter([
         element:<AddClient></AddClient>
        },
        {
+        path:'/salerySheet',
+        element:<SalarySheet></SalarySheet>
+       },
+       {
         path:'/selary/:email',
         element:<Profile1></Profile1>,
-        loader: ({ params }) => fetch(`http://localhost:5000/users/${params.email}`)
+        loader: ({ params }) => fetch(`https://digital-networking-server.vercel.app/users/${params.email}`)
 
        },
        {
         path:'/adsAccount/:email',
         element:<Profile2></Profile2>,
-        loader: ({ params }) => fetch(`http://localhost:5000/users/${params.email}`)
+        loader: ({ params }) => fetch(`https://digital-networking-server.vercel.app/users/${params.email}`)
 
        },
        {
         path:'/myProfile/:email',
         element:<Profile3></Profile3>,
-        loader: ({ params }) => fetch(`http://localhost:5000/users/${params.email}`)
+        loader: ({ params }) => fetch(`https://digital-networking-server.vercel.app/users/${params.email}`)
 
        },
        {
         path:'/client/:email',
         element:<UserProfile></UserProfile>,
-        loader: ({ params }) => fetch(`http://localhost:5000/users/${params.email}`)
+        loader: ({ params }) => fetch(`https://digital-networking-server.vercel.app/users/${params.email}`)
        },
     ]
   },

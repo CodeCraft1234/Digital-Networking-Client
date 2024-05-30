@@ -21,7 +21,7 @@ const AddClient = () => {
         const date=e.target.date.value
         const data={clientName,clientEmail,clientPhone,tBudged,email,tSpent,tBill,date, tDue,tPaid}
        console.log(data)
-       AxiosPublic.post('http://localhost:5000/clients',data)
+       AxiosPublic.post('https://digital-networking-server.vercel.appclients',data)
        .then(res=>{
         console.log(res.data)
        })
