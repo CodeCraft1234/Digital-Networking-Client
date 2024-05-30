@@ -9,17 +9,21 @@ import useClients from "../../Hook/useClient";
 import { Form, Link, NavLink } from "react-router-dom";
 import useAdsAccount from "../../Hook/useAdAccount";
 import UserAdAccount from "../../Components/UserAdAccount/UserAdAccount";
+import { AuthContext } from "../../Security/AuthProvider";
 
 const CampaignTable = ({ email }) => {
+
+
+
+
+
   console.log(email);
   const [clients, refetch] = useClients();
   const [adsAccount] = useAdsAccount();
   const AxiosPublic = UseAxiosPublic();
   const [filteredCampaigns, setFilteredCampaigns] = useState([]);
   const [data, setUserData] = useState([]);
-  const [users] = useUsers();
-  const [user, setUser] = useState(null);
-  console.log("kjhgfaklhgklagshkl", clients, adsAccount);
+
 
   const [totalSpent, setTotalSpent] = useState(0);
   const [totalBudged, setTotalBudged] = useState(0);
@@ -27,6 +31,22 @@ const CampaignTable = ({ email }) => {
   const [totalbill, setTotalBill] = useState(0);
 
   console.log(totalSpent, totalBudged, totalRCV, totalbill);
+
+  const [users] = useUsers();
+
+  const {user}=useContext(AuthContext)
+
+  const [ddd, setDdd] = useState(null);
+
+  useEffect(() => {
+      if (users && user) {
+          const fff = users.find(u => u.email === user?.email);
+          console.log(fff);
+          setDdd(fff || {}); // Update state with found user or an empty object
+      }
+  }, [users, user]);
+
+  console.log(ddd?.role);
 
   useEffect(() => {
     const filtered = clients.filter(
@@ -204,7 +224,10 @@ const CampaignTable = ({ email }) => {
       <div className=" p-2  sm:p-4 ">
        
         <div className="overflow-x-auto  ">
-        <div className="flex justify-start mb-5 border-b border-gray-500 mx-2 pb-1 items-center gap-3">
+
+
+      {
+        ddd?.role === 'admin' ? <></> : <div className="flex justify-start mb-5 border-b border-gray-500 mx-2 pb-1 items-center gap-3">
 
         <div >
           <button
@@ -369,7 +392,11 @@ const CampaignTable = ({ email }) => {
           </dialog>
         </div>
 
-      </div>
+      </div> 
+      }
+         
+
+
 
       <table className="min-w-full bg-white">
   <thead className="bg-red-800 text-white">
