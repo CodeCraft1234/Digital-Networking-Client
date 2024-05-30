@@ -1,5 +1,5 @@
 
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { FcGoogle } from "react-icons/fc";
 import {  FaGithub } from "react-icons/fa";
@@ -7,6 +7,7 @@ import toast from "react-hot-toast";
 import { AuthContext } from "./AuthProvider";
 import "./Login.css";
 import { FaSquareFacebook } from "react-icons/fa6";
+import useUsers from "../Hook/useUsers";
 
 const Login = () => {
   const { signIn, googleSignIn, facebookSignin, githubLogin } =
@@ -74,6 +75,20 @@ const handleFacebook = () => {
       });
   };
 
+  const { user } = useContext(AuthContext);
+  const [users] = useUsers();
+  const [ddd, setDdd] = useState(null);
+
+  useEffect(() => {
+      if (users && user) {
+          const fff = users.find(u => u.email === user?.email);
+          console.log(fff);
+          setDdd(fff || {}); // Update state with found user or an empty object
+      }
+  }, [users, user]);
+
+  console.log(ddd?.name);
+
   return (
     <div className="mt-32 flex justify-center items-center mx-auto lg:pb-0 md:pb-0 pb-8">
       <div className="box mt-10">
@@ -105,6 +120,7 @@ const handleFacebook = () => {
               <Link className="text-[#F75B5F] " to="/forgetPassword">
                 Forgot Password?
               </Link>
+
               <Link to="/signup">Sign up</Link>
             </div>
             <div className="flex justify-center space-x-4">
