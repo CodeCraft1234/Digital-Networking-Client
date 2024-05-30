@@ -50,9 +50,9 @@ const AllAdsAccount = () => {
   return (
     <div>
       <div className="mt-24 p-4 dark:text-green-800">
-        <h6 className="text-center py-4 text-white uppercase font-bold text-3xl md:text-5xl bg-green-800 ">
+        {/* <h6 className="text-center py-4 text-white uppercase font-bold text-3xl md:text-5xl bg-green-800 ">
           Ads Account Activities
-        </h6>
+        </h6> */}
 
         <form className="flex justify-center items-center" onSubmit={handleFilter}>
           <div className="mb-4 ml-10 mx-auto">

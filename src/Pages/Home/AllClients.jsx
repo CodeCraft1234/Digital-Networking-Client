@@ -34,9 +34,9 @@ const AllClients = () => {
   return (
    
      <div className="mt-24 p-4 dark:text-green-800">
-        <h6 className="text-center py-4 text-white uppercase font-bold text-3xl md:text-5xl bg-green-800 ">
+        {/* <h6 className="text-center py-4 text-white uppercase font-bold text-3xl md:text-5xl bg-green-800 ">
           All Client Table
-        </h6>
+        </h6> */}
       <form className="flex justify-center items-center" onSubmit={handleSort}>
         <div className="mb-4 ml-10 mx-auto">
           <label className="block text-gray-500 font-bold">Sort By Employee</label>

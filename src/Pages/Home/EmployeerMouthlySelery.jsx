@@ -29,9 +29,9 @@ const EmployeerMouthlySelery = ({ email }) => {
 
   return (
     <div className="my-10 p-4 dark:bg-green-800 mt-24">
-      <h6 className="text-center mb-5 font-bold uppercase text-3xl md:text-5xl mx-4 py-4 bg-green-800 text-white">
+      {/* <h6 className="text-center mb-5 font-bold uppercase text-3xl md:text-5xl mx-4 py-4 bg-green-800 text-white">
         Employees Own Monthly Salary Sheet
-      </h6>
+      </h6> */}
       <div className="overflow-x-auto mt-0">
         <table className="min-w-full text-xs md:text-sm lg:text-base bg-gray-250">
           <thead className="bg-red-800 text-white">

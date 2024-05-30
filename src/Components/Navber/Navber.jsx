@@ -4,6 +4,12 @@ import { AuthContext } from "../../Security/AuthProvider";
 import { IoMdArrowDropdown } from "react-icons/io";
 import useAdmin from "../../Hook/useAdmin";
 import useUsers from "../../Hook/useUsers";
+import { FaHome, FaUserCheck, FaUserCog } from "react-icons/fa";
+import { MdAccountCircle, MdCampaign } from "react-icons/md";
+import { IoPeopleSharp } from "react-icons/io5";
+import { FaPeopleGroup, FaSackDollar } from "react-icons/fa6";
+import { SlPeople } from "react-icons/sl";
+import { CgProfile } from "react-icons/cg";
 
 const NavBar = () => {
   const { user, logOut } = useContext(AuthContext);
@@ -74,12 +80,13 @@ const NavBar = () => {
               {ddd?.role === "admin" ? (
                 <>
                   <li>
+                  
                     <NavLink
                       to="/"
                       className="text-white bg-red-800 hover:bg-blue-500"
                       activeClassName="bg-blue-500"
                     >
-                      Home
+                     <FaHome className="w-6 h-6" /> Home
                     </NavLink>
                   </li>
                   {/* <li>
@@ -97,7 +104,7 @@ const NavBar = () => {
                       className="text-white bg-red-800 hover:bg-blue-500"
                       activeClassName="bg-blue-500"
                     >
-                      User Ads Account
+                     <FaUserCog className="w-6 h-6" /> User Ads Account
                     </NavLink>
                   </li>
                   <li>
@@ -106,7 +113,7 @@ const NavBar = () => {
                       className="text-white bg-red-800 hover:bg-blue-500"
                       activeClassName="bg-blue-500"
                     >
-                      Monthly Ads Account
+                     <FaUserCheck className="w-6 h-6" /> Monthly Ads Account
                     </NavLink>
                   </li>
                   <li>
@@ -115,7 +122,7 @@ const NavBar = () => {
                       className="text-white bg-red-800 hover:bg-blue-500"
                       activeClassName="bg-blue-500"
                     >
-                      Monthly Salary
+                      <FaSackDollar className="w-5 h-5" /> Salary
                     </NavLink>
                   </li>
                   <li>
@@ -124,7 +131,7 @@ const NavBar = () => {
                     className="text-white bg-red-800 hover:bg-blue-500"
                     activeClassName="bg-blue-500"
                   >
-                    All Employee
+                   <SlPeople className="w-6 h-6" /> Employees
                   </NavLink>
                 </li>
                 </>
@@ -136,7 +143,7 @@ const NavBar = () => {
                       className="text-white bg-red-800 hover:bg-blue-500"
                       activeClassName="bg-blue-500"
                     >
-                      My Profile
+                     <CgProfile className="w-6 h-6" /> My Profile
                     </NavLink>
                   </li>
                   <li>
@@ -145,7 +152,7 @@ const NavBar = () => {
                       className="text-white bg-red-800 hover:bg-blue-500"
                       activeClassName="bg-blue-500"
                     >
-                      Ads Account
+                      <MdAccountCircle className="w-6 h-6" /> Ads Account
                     </NavLink>
                   </li>
                   <li>
@@ -154,7 +161,7 @@ const NavBar = () => {
                       className="text-white bg-red-800 hover:bg-blue-500"
                       activeClassName="bg-blue-500"
                     >
-                     Salary
+                     <FaSackDollar className="w-5 h-5" /> Salary
                     </NavLink>
                   </li>
                   <li>
@@ -163,7 +170,7 @@ const NavBar = () => {
                       className="text-white bg-red-800 hover:bg-blue-500"
                       activeClassName="bg-blue-500"
                     >
-                      Add Campaign
+                      <MdCampaign className="w-6 h-6" /> Add Campaign
                     </NavLink>
                   </li>
                   <li>
@@ -172,7 +179,7 @@ const NavBar = () => {
                       className="text-white bg-red-800 hover:bg-blue-500"
                       activeClassName="bg-blue-500"
                     >
-                      Add Client
+                     <IoPeopleSharp className="w-6 h-6" /> Add Client
                     </NavLink>
                   </li>
 
@@ -195,12 +202,13 @@ const NavBar = () => {
             {ddd?.role === "admin" ? (
               <>
                 <li>
+                   
                   <NavLink
                     to="/"
                     className="text-white bg-red-800 hover:bg-blue-500"
                     activeClassName="bg-blue-500"
                   >
-                    Home
+                   <FaHome className="w-6 h-6" /> Home
                   </NavLink>
                 </li>
                 {/* <li>
@@ -218,7 +226,7 @@ const NavBar = () => {
                     className="text-white bg-red-800 hover:bg-blue-500"
                     activeClassName="bg-blue-500"
                   >
-                    All Ads Account
+                   <MdAccountCircle className="w-6 h-6" /> Ads Account
                   </NavLink>
                 </li>
                 <li>
@@ -227,7 +235,7 @@ const NavBar = () => {
                     className="text-white bg-red-800 hover:bg-blue-500"
                     activeClassName="bg-blue-500"
                   >
-                    All Clients
+                    <IoPeopleSharp className="w-6 h-6" /> Clients
                   </NavLink>
                 </li>
                 <li>
@@ -236,7 +244,7 @@ const NavBar = () => {
                     className="text-white bg-red-800 hover:bg-blue-500"
                     activeClassName="bg-blue-500"
                   >
-                    Monthly Salary
+                   <FaSackDollar className="w-5 h-5" /> Salary
                   </NavLink>
                 </li>
                 <li>
@@ -245,7 +253,7 @@ const NavBar = () => {
                     className="text-white bg-red-800 hover:bg-blue-500"
                     activeClassName="bg-blue-500"
                   >
-                    All Employee
+                   <FaPeopleGroup className="w-6 h-6" /> Employees
                   </NavLink>
                 </li>
               </>
@@ -257,7 +265,7 @@ const NavBar = () => {
                     className="text-white bg-red-800 hover:bg-blue-500"
                     activeClassName="bg-blue-500"
                   >
-                    My Profile
+                    <CgProfile className="w-6 h-6" /> My Profile
                   </NavLink>
                 </li>
                 <li>
@@ -266,7 +274,7 @@ const NavBar = () => {
                     className="text-white bg-red-800 hover:bg-blue-500"
                     activeClassName="bg-blue-500"
                   >
-                    My Clients
+                    <IoPeopleSharp className="w-6 h-6"/> My Clients
                   </NavLink>
                 </li>
                 <li>
@@ -275,7 +283,7 @@ const NavBar = () => {
                       className="text-white bg-red-800 hover:bg-blue-500"
                       activeClassName="bg-blue-500"
                     >
-                      Ads Account
+                      <MdAccountCircle className="w-6 h-6" /> Ads Account
                     </NavLink>
                   </li>
                   <li>
@@ -284,7 +292,7 @@ const NavBar = () => {
                       className="text-white bg-red-800 hover:bg-blue-500"
                       activeClassName="bg-blue-500"
                     >
-                     Salary
+                     <FaSackDollar className="w-5 h-5" /> Salary
                     </NavLink>
                   </li>
                 <li>
@@ -293,7 +301,7 @@ const NavBar = () => {
                     className="text-white bg-red-800 hover:bg-blue-500"
                     activeClassName="bg-blue-500"
                   >
-                    Add Campaign
+                   <MdCampaign className="w-6 h-6" /> Add Campaign
                   </NavLink>
                 </li>
                 <li>
@@ -302,7 +310,7 @@ const NavBar = () => {
                     className="text-white bg-red-800 hover:bg-blue-500"
                     activeClassName="bg-blue-500"
                   >
-                    Add Client
+                    <IoPeopleSharp className="w-6 h-6" /> Add Client
                   </NavLink>
                 </li>
               </>

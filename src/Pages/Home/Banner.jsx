@@ -77,9 +77,9 @@ return (
 
 
          <div className=" ">
-         {ddd?.role === 'admin' ? <h2 className="text-center mx-4 py-4 text-white uppercase font-bold text-3xl md:text-5xl bg-green-800 dark:text-green-800">Employers Activities
+         {/* {ddd?.role === 'admin' ? <h2 className="text-center mx-4 py-4 text-white uppercase font-bold text-3xl md:text-5xl bg-green-800 dark:text-green-800">Employers Activities
          </h2>:  <h2 className="text-center mx-4 py-4 text-white uppercase font-bold text-3xl md:text-5xl bg-green-800 dark:text-green-800">All Employers 
-         </h2>} 
+         </h2>}  */}
        
         <div className="overflow-x-auto mt-6">
           <table className="min-w-full text-xs">

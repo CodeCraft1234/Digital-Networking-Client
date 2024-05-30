@@ -3,6 +3,8 @@ import { useContext, useEffect, useState } from "react";
 import useUsers from "../../Hook/useUsers";
 import "tailwindcss/tailwind.css";
 import { AuthContext } from "../../Security/AuthProvider";
+import { Link } from "react-router-dom";
+import Payment from "../Home/Payment";
 
 const AllEmployee = () => {
   const [users, setUsers] = useUsers();
@@ -31,15 +33,17 @@ const AllEmployee = () => {
 
   return (
     <div className="mt-24 p-4 dark:text-green-800">
-      <h6 className="text-center mx-4 py-4 text-white uppercase font-bold text-3xl md:text-5xl bg-green-800 mb-6">
+      {/* <h6 className="text-center mx-4 py-4 text-white uppercase font-bold text-3xl md:text-5xl bg-green-800 mb-6">
         All Employee
-      </h6>
+      </h6> */}
 
-      {ddd?.role === "employee" && (
+      {/* {ddd?.role === "employee" && (
         <h2 className="mb-4 text-center mx-4 py-4 text-white uppercase font-bold text-3xl md:text-5xl bg-green-800">
           All Employers
         </h2>
-      )}
+      )} */}
+
+
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-10 p-4">
         {employee?.map((em) => (
