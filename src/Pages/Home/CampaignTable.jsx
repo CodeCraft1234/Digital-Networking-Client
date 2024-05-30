@@ -10,6 +10,7 @@ import { Form, Link, NavLink } from "react-router-dom";
 import useAdsAccount from "../../Hook/useAdAccount";
 import UserAdAccount from "../../Components/UserAdAccount/UserAdAccount";
 import { AuthContext } from "../../Security/AuthProvider";
+import { IoIosSearch } from "react-icons/io";
 
 const CampaignTable = ({ email }) => {
 
@@ -112,6 +113,7 @@ const CampaignTable = ({ email }) => {
 
     AxiosPublic.post("https://digital-networking-server.vercel.app/clients", data)
     .then((res) => {
+      toast.success("Client Added successfully");
       console.log(res.data);
     });
   };
@@ -150,8 +152,18 @@ const CampaignTable = ({ email }) => {
       })
   },[email])
 
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("");
 
+  const filteredItems = filteredCampaigns.filter((item) =>
+    item.clientPhone.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
+  const filteredByCategory = selectedCategory
+    ? filteredItems.filter(
+        (item) => item.category.toLowerCase() === selectedCategory.toLowerCase()
+      )
+    : filteredItems;
 
 
   return (
@@ -225,12 +237,13 @@ const CampaignTable = ({ email }) => {
        
         <div className="overflow-x-auto  ">
 
-
-      {
+       
+<div className="flex justify-between items-center">
+<div>
+     {
         ddd?.role === 'admin' ? <></> : <div className="flex justify-start mb-5 border-b border-gray-500 mx-2 pb-1 items-center gap-3">
-
-        <div >
-          <button
+         <div>
+<button
             className="font-avenir px-3  mx-auto py-1 bg-neutral ml-10 rounded text-white"
             onClick={() => document.getElementById("my_modal_2").showModal()}
           >
@@ -317,7 +330,6 @@ const CampaignTable = ({ email }) => {
             </div>
           </dialog>
         </div>
-
         <div>
           <button
             className="font-avenir px-3  mx-auto py-1 bg-neutral ml-10 rounded text-white"
@@ -391,9 +403,26 @@ const CampaignTable = ({ email }) => {
             </div>
           </dialog>
         </div>
-
       </div> 
       }
+     </div>
+     <div className="flex justify-end ">
+                <input
+                  type="text"
+                  placeholder=" Client Phone Number"
+                  className=" rounded-l-lg w-20 placeholder-black border-2 border-black p-2 font-bold text-black sm:w-2/3 text-sm bg-blue-300"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                />
+                <button
+                  type="button"
+                  className=" w-10 p-2 font-semibold rounded-r-lg sm:w-1/3 bg-[#FF9F0D] dark:bg-[#FF9F0D] text-white"
+                >
+                  <IoIosSearch className="mx-auto font-bold w-6 h-6" />
+                </button>
+      </div>
+</div>
+     
          
 
 
@@ -413,7 +442,7 @@ const CampaignTable = ({ email }) => {
     </tr>
   </thead>
   <tbody>
-    {filteredCampaigns.map((campaign, index) => (
+    {filteredByCategory.map((campaign, index) => (
       <tr
         key={campaign._id}
         className={`${

@@ -16,7 +16,7 @@ const UserProfile = () => {
 
     const AxiosPublic = UseAxiosPublic();
     const [data, setData] = useState({});
-    const [dataa2, setData2] = useState([]);
+
     const [campaign, refetch] = useCampaings();
     const [totalSpent, setTotalSpent] = useState(0);
     const [dollerRate, setDollerRate] = useState(0);
@@ -68,10 +68,30 @@ const UserProfile = () => {
             });
     }, [param?.email]);
 
+    const handlePayment = async (e) => {
+        e.preventDefault();
+        const paymentMethod = e.target.paymentMethod.value;
+        const amount = parseFloat(e.target.amount.value);
+        const date = e.target.date.value;
+        const clientEmail = param?.email;
+        const employeeEmail = user?.email;
+    
+        const body = { paymentMethod, amount, clientEmail, employeeEmail, date };
+        try {
+            await AxiosPublic.post(`https://digital-networking-server.vercel.app/MPayment`, body);
+            toast.success("Payment successful");
+            refetch(); // Automatically refetch after successful payment
+        } catch (error) {
+            console.error("Error processing payment:", error);
+            toast.error("Failed to process payment");
+        }
+    };
 
+    const [dataa2, setData2] = useState([]);
+    console.log(param?.email)
     useEffect(() => {
-        const filtered = campaign.filter(campaign => campaign.clientEmail === userr?.email);
-        console.log(filtered);
+        const filtered = campaign.filter(campaign => campaign.clientEmail === param?.email);
+        console.log('hdjklhgsfdakg',filtered);
         setData2(filtered);
 
         const totalBill = filtered.reduce((acc, campaign) => acc + parseFloat(campaign.tSpent), 0);
@@ -84,7 +104,7 @@ const UserProfile = () => {
         const total = filtered.reduce((acc, campaign) => acc + parseFloat(campaign.tBudged), 0);
         setTotalBudged(total);
 
-    }, [campaign, userr?.email]);
+    }, [campaign, param?.email]);
 
     const handleUpdate = (e, id) => {
         e.preventDefault();
@@ -113,34 +133,14 @@ const UserProfile = () => {
 
 
     
-    const handlePayment = async (e) => {
-        e.preventDefault();
-        const paymentMethod = e.target.paymentMethod.value;
-        const amount = parseFloat(e.target.amount.value);
-        const date = e.target.date.value;
-        const clientEmail = param?.email;
-        const employeeEmail = user?.email;
-        console.log(paymentMethod, amount);
-      
-        const body = { paymentMethod, amount, clientEmail, employeeEmail, date };
-        try {
-          const paymentResponse = await AxiosPublic.post(`https://digital-networking-server.vercel.app/MPayment`, body);
-          console.log(paymentResponse.data);
-          toast.success("Payment successful");
-        } catch (error) {
-          console.error("Error processing payment:", error);
-          toast.error("Failed to process payment");
-          return;
-        }
-      
-      };
+    
 
     const [clients]=useClients()
 
     const handleaddblog=(e)=>{
         e.preventDefault()
         const campaignName=e.target.campaignName.value
-        const clientEmail=e?.email
+        const clientEmail=param?.email
         const pageName=e.target.pageName.value
         const tBudged=e.target.totalBudged.value
         const email=user?.email
@@ -297,6 +297,7 @@ const handleRefresh = () => {
                                                              <option value="bkashPersonal">Bkash Personal</option>
                                                              <option value="nagadPersonal">Nagad Personal</option>
                                                              <option value="rocketPersonal">Rocket Personal</option>
+                                                             <option value="bank">Bank</option>
                                                          </select>
                                                      </div>
                                                      <div className="mb-4">
@@ -315,7 +316,7 @@ const handleRefresh = () => {
                                      </dialog>
                  </div>
                  <div>
-                  <button onClick={handleRefresh} className="w-full px-4 py-2 font-bold rounded shadow focus:outline-none focus:ring hover:ring focus:ri dark:bg-violet-400 focus:ri hover:ri dark:text-gray-900">Refresh</button>
+                  <button onClick={handleRefresh} className="w-full px-4 py-2 font-bold rounded shadow focus:outline-none focus:ring hover:ring focus:ri dark:bg-violet-400 focus:ri hover:ri dark:text-gray-900">Pay To Employee</button>
                  </div>
                                </div> 
             }
@@ -420,7 +421,7 @@ const handleRefresh = () => {
                                 <th className="p-3">Payment Date</th>
                                 <th className="p-3">Payment Amount</th>
                                 <th className="p-3">Payment Method</th>
-                                <th className="p-3"></th>
+                               
                             </tr>
                         </thead>
                         <tbody>
@@ -431,7 +432,21 @@ const handleRefresh = () => {
                                 >
                                     <td className="p-3 text-center">{payment.date}</td>
                                     <td className="p-3 text-center">৳ {payment.amount}</td>
-                                    <td className="p-3 text-center">{payment.paymentMethod}</td>
+                                    <td className="p-3 text-center">
+
+
+                                    <th className="p-3 text-center"><img  className="w-28 h-6 mx-auto" src=" " alt="" /></th>
+                                        {payment.paymentMethod === 'bkashMarchent' && <img className="h-10 w-24 flex mx-auto my-auto items-center justify-center" src='https://i.ibb.co/bHMLyvM/b-Kash-Merchant.png' alt="" />
+                                        }
+                                        {payment.paymentMethod === 'bkashPersonal' && <img className="h-10 w-24 flex my-auto items-center mx-auto justify-center" src='https://i.ibb.co/520Py6s/bkash-1.png' alt="" />
+                                        }
+                                        {payment.paymentMethod === 'rocketPersonal' && <img className="h-10 w-24 flex my-auto items-center mx-auto justify-center" src='https://i.ibb.co/QkTM4M3/rocket.png' alt="" />
+                                        }
+                                        {payment.paymentMethod === 'nagadPersonal' && <img className="h-10 w-24 flex my-auto items-center mx-auto justify-center" src='https://i.ibb.co/JQBQBcF/nagad-marchant.png' alt="" /> 
+                                        }
+                                        {payment.paymentMethod === 'bank' && <img className="h-10 w-24 flex my-auto items-center mx-auto justify-center" src='https://i.ibb.co/3WVZGdz/PAYO-BIG-aa26e6e0.png' alt="" />
+                                        }
+                                        </td>
                                 </tr>
                             ))}
                             <tr className="bg-green-800 text-white font-bold">
@@ -440,6 +455,7 @@ const handleRefresh = () => {
                                 </td>
                                 <td className="p-3 text-center">৳ {totalPaymeent}</td>
                                 <td className="p-3 text-center"></td>
+                               
                             </tr>
                         </tbody>
                     </table>
