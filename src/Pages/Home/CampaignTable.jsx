@@ -90,7 +90,8 @@ const CampaignTable = ({ email }) => {
     };
     console.log(data);
 
-    AxiosPublic.post("http://localhost:5000/clients", data).then((res) => {
+    AxiosPublic.post("https://digital-networking-server.vercel.app/clients", data)
+    .then((res) => {
       console.log(res.data);
     });
   };
@@ -104,7 +105,7 @@ const CampaignTable = ({ email }) => {
 
 
   useEffect(()=>{
-      AxiosPublic.get(`http://localhost:5000/Mpayment`)
+      AxiosPublic.get(`https://digital-networking-server.vercel.app/Mpayment`)
       .then(res => {
           console.log('sdjkhagjijkhgjkhdsajljkhgdsjkajkjkfjldfgjkgjkgd',res.data);
           const da=res.data
@@ -197,19 +198,17 @@ const CampaignTable = ({ email }) => {
         </div>
       </div>
       
-      <h2 className="mt-24 mb-4 text-3xl md:text-5xl py-5 bg-green-800 text-white text-center font-semibold uppercase leading-tight p-2 sm:p-2">
+      <h2 className="text-center mx-4 mt-10 py-4 text-white uppercase font-bold text-3xl md:text-5xl bg-green-800">
           Client Table
         </h2>
-      <div className=" p-2  sm:p-4 dark:bg-green-800">
+      <div className=" p-2  sm:p-4 ">
        
-        <div className="overflow-x-auto mt-1">
-        <div className="flex justify-start mb-5 items-center gap-3">
-{/* ///////////////////////////////////////////////// */}
-      
-{/* //////////////////////////////////////////// */}
-        <div>
+        <div className="overflow-x-auto  ">
+        <div className="flex justify-start mb-5 border-b border-gray-500 mx-2 pb-1 items-center gap-3">
+
+        <div >
           <button
-            className="font-avenir px-3 mt-10 mx-auto py-1 bg-neutral ml-10 rounded text-white"
+            className="font-avenir px-3  mx-auto py-1 bg-neutral ml-10 rounded text-white"
             onClick={() => document.getElementById("my_modal_2").showModal()}
           >
             Add Client
@@ -222,7 +221,7 @@ const CampaignTable = ({ email }) => {
                   className="container w-full max-w-xl p-8 mx-auto space-y-6 rounded-md shadow dark:bg-gray-900"
                 >
                   <div>
-                    <h1 className="text-3xl my-4 text-center font-bold  text-white">
+                    <h1 className="text-3xl  text-center font-bold  text-white">
                       Add a Client{" "}
                     </h1>
                     <div className="flex justify-center items-center gap-3">
@@ -298,7 +297,7 @@ const CampaignTable = ({ email }) => {
 
         <div>
           <button
-            className="font-avenir px-3 mt-10 mx-auto py-1 bg-neutral ml-10 rounded text-white"
+            className="font-avenir px-3  mx-auto py-1 bg-neutral ml-10 rounded text-white"
             onClick={() => document.getElementById("my_modal_1").showModal()}
           >
             Cashout
@@ -372,49 +371,56 @@ const CampaignTable = ({ email }) => {
 
       </div>
 
-          <table className="min-w-full text-sm mt-2">
-            <thead className="bg-red-800 text-white">
-              <tr>
-                <th className="p-3 text-center">Date</th>
-                <th className="p-3 text-center">Client Name</th>
-                <th className="p-3 text-center">Client Phone</th>
-                {/* <th className="p-3 text-center">Client Email</th> */}
-                <th className="p-3 text-center">T.Budget</th>
-                <th className="p-3 text-center">T.Spent</th>
-                <th className="p-3 text-center">Total Bill</th>
-                <th className="p-3 text-center">Total Payment Rcv</th>
-              </tr>
-            </thead>
-            <tbody className="text-gray-250">
-              {filteredCampaigns.map((campaign) => (
-                <tr
-                  key={campaign._id}
-                  className="border-b border-opacity-20 dark:border-gray-700 dark:bg-gray-900"
-                >
-                  <td className="p-3 text-center">{campaign.date}</td>
+      <table className="min-w-full bg-white">
+  <thead className="bg-red-800 text-white">
+    <tr>
+      <th className="p-3 text-center">Date</th>
+      <th className="p-3 text-center">Client Name</th>
+      <th className="p-3 text-center">Client Phone</th>
+      {/* <th className="p-3 text-center">Client Email</th> */}
+      <th className="p-3 text-center">T.Budget</th>
+      <th className="p-3 text-center">T.Spent</th>
+      <th className="p-3 text-center">Total Bill</th>
+      <th className="p-3 text-center">Total Payment Rcv</th>
+      <th className="p-3"></th>
+    </tr>
+  </thead>
+  <tbody>
+    {filteredCampaigns.map((campaign, index) => (
+      <tr
+        key={campaign._id}
+        className={`${
+          index % 2 === 0
+            ? "text-black border-b border-opacity-20"
+            : "text-black border-b border-opacity-20"
+        }`}
+      >
+        <td className="p-3 text-center">{campaign.date}</td>
+        <Link to={`/client/${campaign.clientEmail}`}>
+          <td className="p-3 flex justify-center text-center">{campaign.clientName}</td>
+        </Link>
+        <td className="p-3 text-center">{campaign.clientPhone}</td>
+        <td className="p-3 text-center">{campaign.tBudged}</td>
+        <td className="p-3 text-center">{campaign.tSpent}</td>
+        <td className="p-3 text-center">{campaign.tBill}</td>
+        <td className="p-3 text-center">{campaign.tPayment}</td>
+        <td className="p-3"></td>
+      </tr>
+    ))}
+    <tr className="bg-green-800 text-sm text-white font-bold">
+      <td className="p-3 text-center"></td>
+      <td className="p-3 text-right" colSpan="2">
+        Total :
+      </td>
+      <td className="p-3 text-center">{totalBudged}</td>
+      <td className="p-3 text-center"> {totalSpent}</td>
+      <td className="p-3 text-center">{totalbill}</td>
+      <td className="p-3 text-center">{totalRCV}</td>
+      <td className="p-3"></td>
+    </tr>
+  </tbody>
+</table>
 
-                  <Link to={`/client/${campaign.clientEmail}`}>
-                    <td className="p-3 text-center">{campaign.clientName}</td>
-                  </Link>
-                  <td className="p-3 text-center">{campaign.clientPhone}</td>
-                  <td className="p-3 text-center">{campaign.tBudged}</td>
-                  <td className="p-3 text-center">{campaign.tSpent}</td>
-                  <td className="p-3 text-center">{campaign.tBill}</td>
-                  <td className="p-3 text-center">{campaign.tPayment}</td>
-                </tr>
-              ))}
-              <tr className="bg-green-800 text-sm text-white font-bold">
-                <td className="p-3 text-center"></td>
-                <td className="p-3 text-right" colSpan="2">
-                  Total :
-                </td>
-                <td className="p-3 text-center">{totalBudged}</td>
-                <td className="p-3 text-center"> {totalSpent}</td>
-                <td className="p-3 text-center">{totalbill}</td>
-                <td className="p-3 text-center">{totalRCV}</td>
-              </tr>
-            </tbody>
-          </table>
         </div>
       </div>
      

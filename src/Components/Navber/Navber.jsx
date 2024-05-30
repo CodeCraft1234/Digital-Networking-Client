@@ -232,7 +232,7 @@ const NavBar = () => {
                 </li>
                 <li>
                   <NavLink
-                    to={`/userInfo/${user?.email}`}
+                    to={`/salerySheet`}
                     className="text-white bg-red-800 hover:bg-blue-500"
                     activeClassName="bg-blue-500"
                   >

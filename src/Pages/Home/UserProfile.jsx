@@ -1,16 +1,18 @@
 import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../../Security/AuthProvider";
-import { Form, useLoaderData,  } from "react-router-dom";
+import { Form, useLoaderData, useParams,  } from "react-router-dom";
 import UseAxiosPublic from "../../Axios/UseAxiosPublic";
 import useCampaings from "../../Hook/useCampaign";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import useClients from "../../Hook/useClient";
-import { Axios } from "axios";
 
 const UserProfile = () => {
     const { user } = useContext(AuthContext);
     const userr = useLoaderData();
+    const param=useParams()
+    console.log(param?.email)
+
     const AxiosPublic = UseAxiosPublic();
     const [data, setData] = useState({});
     const [dataa2, setData2] = useState([]);
@@ -20,11 +22,11 @@ const UserProfile = () => {
     const [totalBudged, setTotalBudged] = useState(0);
     const [totalPaymeent, setTotalPayment] = useState([]);
     const [Histry, setHistry] = useState([]);
-    console.log(totalSpent, totalPaymeent,dollerRate);
+    console.log(Histry);
 
 
     useEffect(() => {
-        AxiosPublic.get(`http://localhost:5000/users/${userr.email}`)
+        AxiosPublic.get(`https://digital-networking-server.vercel.app/users/${userr.email}`)
             .then(res => {
                 console.log(res.data);
                 setData(res.data);
@@ -34,10 +36,12 @@ const UserProfile = () => {
                 toast.error("Failed to fetch user data");
             });
 
-        AxiosPublic.get(`http://localhost:5000/MPayment`)
+        AxiosPublic.get(`https://digital-networking-server.vercel.app/MPayment`)
             .then(res => {
                 const mdata = res.data;
-                const realdata = mdata.filter(m => m.clientEmail === userr?.email);
+                console.log(mdata)
+
+                const realdata = mdata.filter(m => m.clientEmail === param?.email);
                 setHistry(realdata);
                 const totalBill = realdata.reduce((acc, campaign) => acc + parseFloat(campaign.amount), 0);
                 setTotalPayment(totalBill);
@@ -46,7 +50,7 @@ const UserProfile = () => {
                 console.error("Error fetching payment data:", error);
                 toast.error("Failed to fetch payment data");
             });
-    }, [userr.email]);
+    }, [param?.email]);
 
 
     useEffect(() => {
@@ -75,9 +79,9 @@ const UserProfile = () => {
         console.log(newSpent, previousSpent, status);
 
         const tSpent = (parseFloat(previousSpent) + parseFloat(newSpent));
-        const body = { tSpent, status,dollerRate };
+        const body = { tSpent, status,dollerRate }
 
-        AxiosPublic.patch(`http://localhost:5000/campaings/${id}`, body)
+        AxiosPublic.patch(`https://digital-networking-server.vercel.app/campaings/${id}`, body)
             .then(res => {
                 console.log(res.data);
                 refetch();
@@ -98,13 +102,13 @@ const UserProfile = () => {
         const paymentMethod = e.target.paymentMethod.value;
         const amount = parseFloat(e.target.amount.value);
         const date = e.target.date.value;
-        const clientEmail = userr?.email;
+        const clientEmail = param?.email;
         const employeeEmail = user?.email;
         console.log(paymentMethod, amount);
       
         const body = { paymentMethod, amount, clientEmail, employeeEmail, date };
         try {
-          const paymentResponse = await AxiosPublic.post(`http://localhost:5000/MPayment`, body);
+          const paymentResponse = await AxiosPublic.post(`https://digital-networking-server.vercel.app/MPayment`, body);
           console.log(paymentResponse.data);
           toast.success("Payment successful");
         } catch (error) {
@@ -120,7 +124,7 @@ const UserProfile = () => {
     const handleaddblog=(e)=>{
         e.preventDefault()
         const campaignName=e.target.campaignName.value
-        const clientEmail=userr?.email
+        const clientEmail=e?.email
         const pageName=e.target.pageName.value
         const tBudged=e.target.totalBudged.value
         const email=user?.email
@@ -130,7 +134,7 @@ const UserProfile = () => {
         const data={campaignName,clientEmail,pageName,tBudged,email,tSpent,dollerRate,date}
        console.log(data)
        
-       AxiosPublic.post('http://localhost:5000/campaigns',data)
+       AxiosPublic.post('https://digital-networking-server.vercel.app/campaigns',data)
        .then(res=>{
         console.log(res.data)
         toast.success("add successful");
@@ -154,7 +158,7 @@ const handleRefresh = () => {
 
     const data = { tSpent, tBill, tPayment, tBudged };
 
-    AxiosPublic.patch(`http://localhost:5000/clients/${userr?.email}`, data)
+    AxiosPublic.patch(`https://digital-networking-server.vercel.app/clients/${param?.email}`, data)
         .then(res => {
             console.log(res.data);
             refetch(); // Ensure this function is defined and correct
@@ -168,11 +172,7 @@ const handleRefresh = () => {
 };
 
     return (
-        <div>
-            <div className="mt-24">
-                <img className="rounded-full mx-auto w-72 h-72" src={data?.photo} alt="User Profile" />
-            </div>
-
+        <div className="mt-24">
             <div className="flex flex-wrap justify-around p-5">
                 <div className="px-24 py-16 rounded-2xl bg-green-400 shadow-lg text-center">
                     <h2 className="text-4xl font-bold">Total Spent</h2>
@@ -201,8 +201,7 @@ const handleRefresh = () => {
 <div>
 <button className="font-avenir px-3  mx-auto py-1 bg-neutral rounded text-white" onClick={() => document.getElementById('my_modal_2').showModal()}>Add Campaign</button>
                     <dialog id="my_modal_2" className="modal">
-                        <div className="modal-box">
-                            
+                        <div className="modal-box">        
                         <section className="p-6 mt-24 dark:text-gray-100">
                
                <Form onSubmit={handleaddblog} className="container w-full max-w-xl p-8 mx-auto space-y-6 rounded-md shadow dark:bg-gray-900">
