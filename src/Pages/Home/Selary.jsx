@@ -72,7 +72,7 @@ const Selary = ({ email }) => {
     const employeeEmail = email;
     const data = { accountName, issueDate, employeeEmail };
 
-    AxiosPublic.post("http://localhost:5000/adsAccount", data).then((res) => {
+    AxiosPublic.post("https://digital-networking-server.vercel.appadsAccount", data).then((res) => {
       console.log(res.data);
       toast.success("add successful");
     });
@@ -104,7 +104,7 @@ const Selary = ({ email }) => {
     };
     console.log(data);
 
-    AxiosPublic.post("http://localhost:5000/clients", data).then((res) => {
+    AxiosPublic.post("https://digital-networking-server.vercel.appclients", data).then((res) => {
       console.log(res.data);
     });
   };
@@ -118,7 +118,7 @@ const Selary = ({ email }) => {
 
 
   useEffect(()=>{
-      AxiosPublic.get(`http://localhost:5000/Mpayment`)
+      AxiosPublic.get(`https://digital-networking-server.vercel.appMpayment`)
       .then(res => {
           console.log('sdjkhagjijkhgjkhdsajljkhgdsjkajkjkfjldfgjkgjkgd',res.data);
           const da=res.data

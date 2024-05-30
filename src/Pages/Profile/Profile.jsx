@@ -46,6 +46,7 @@ console.log(data)
        <div >
             <img className="rounded-full mx-auto w-72 h-72" src={userr.photo} alt=""/>
       </div>
+      
     <CampaignTable email={userr?.email}></CampaignTable> 
      <UserAdAccount email={userr?.email}></UserAdAccount>
       <EmployeerMouthlySelery email={userr?.email}></EmployeerMouthlySelery>
