@@ -214,25 +214,25 @@ const NavBar = () => {
                 </li> */}
                 <li>
                   <NavLink
-                    to="/adAccountTable"
+                    to="/allAdSAccount"
                     className="text-white bg-red-800 hover:bg-blue-500"
                     activeClassName="bg-blue-500"
                   >
-                    User Ads Account
+                    All Ads Account
                   </NavLink>
                 </li>
                 <li>
                   <NavLink
-                    to="/monthlyadAccountTable"
+                    to="/allClients"
                     className="text-white bg-red-800 hover:bg-blue-500"
                     activeClassName="bg-blue-500"
                   >
-                    Monthly Ads Account
+                    All Clients
                   </NavLink>
                 </li>
                 <li>
                   <NavLink
-                    to={`/salerySheet`}
+                    to={`/employeeMonthlySelary`}
                     className="text-white bg-red-800 hover:bg-blue-500"
                     activeClassName="bg-blue-500"
                   >
