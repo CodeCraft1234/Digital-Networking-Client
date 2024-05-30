@@ -47,12 +47,21 @@ const AllClients = () => {
     : filteredItems;
 
   return (
+
+   
+     <div className="mt-24 p-4 dark:text-green-800">
+        {/* <h6 className="text-center py-4 text-white uppercase font-bold text-3xl md:text-5xl bg-green-800 ">
+          All Client Table
+        </h6> */}
+      <form className="flex justify-center items-center" onSubmit={handleSort}>
+
     <div>
       <h2 className="text-center mx-4 mt-24 py-4 text-white uppercase font-bold text-3xl md:text-5xl bg-green-800">
         All Client Table
       </h2>
 <div className="flex justify-between items-center ">
 <form className="flex justify-center items-center" onSubmit={handleSort}>
+
         <div className="mb-4 ml-10 mx-auto">
           <label className="block text-gray-700">Sort By Employee</label>
           <select name="email" className="border rounded p-2 mt-1">
@@ -124,6 +133,8 @@ const AllClients = () => {
           </table>
         </div>
       </div>
+    </div>
+    </form>
     </div>
   );
 };
