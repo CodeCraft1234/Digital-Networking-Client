@@ -73,15 +73,15 @@ console.log(ddd?.name);
 
 
 return (
-        <div className="mt-24">
+        <div className="mt-24 p-4 dark:text-green-800">
 
 
-         <div className="p-2 sm:p-4 dark:text-gray-100">
-         {ddd?.role === 'admin' ? <h2 className="mb-4 uppercase text-4xl  text-center font-semibold leading-tight text-white bg-green-800 p-1 sm:p-1">Employers Activities
-         </h2>:  <h2 className="mb-4 uppercase text-4xl text-black text-center font-semibold leading-tight bg-green-800 p-1 sm:p-1">All Employers 
+         <div className=" ">
+         {ddd?.role === 'admin' ? <h2 className="text-center mx-4 py-4 text-white uppercase font-bold text-3xl md:text-5xl bg-green-800 dark:text-green-800">Employers Activities
+         </h2>:  <h2 className="text-center mx-4 py-4 text-white uppercase font-bold text-3xl md:text-5xl bg-green-800 dark:text-green-800">All Employers 
          </h2>} 
        
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto mt-6">
           <table className="min-w-full text-xs">
             <thead className="bg-green-600 text-white font-bold text-xl">
               <tr>
@@ -102,7 +102,7 @@ return (
             {
               employee.map((userr,index)=><tbody className="text-black  text-xl"  key={userr._id}> 
             
-                <tr  className={`${index % 2 === 0 ? "text-gray-500 border-b border-opacity-20" : "text-gray-500 border-b border-opacity-20"}`}>
+                <tr  className={`${index % 2 === 0 ? "text-gray-500 border-b border-opacity-20 hover:text-blue-600" : "text-gray-500 border-b border-opacity-20 hover:text-blue-600"}`}>
 
               <td className="p-3 flex justify-start text-center  ml-10  items-center gap-2 "> <Link     to={`/userInfo/${userr?.email}`}>
                     <img  className="w-10 h-10 mx-auto rounded-full" src={userr?.photo} alt="" />

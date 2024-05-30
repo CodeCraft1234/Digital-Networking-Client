@@ -103,7 +103,7 @@ const AddAdsAccount = () => {
   // Fetch default values (example: from an API)
   useEffect(() => {
     // Example API call to fetch default values
-    AxiosPublic.get('http://localhost:5000/adAds')
+    AxiosPublic.get('https://digital-networking-server.vercel.appadAds')
       .then(response => {
         const defaultValues = response.data;
         setFormData({
@@ -137,7 +137,7 @@ const AddAdsAccount = () => {
   // Handle form submission
   const handleAddBlog = (e) => {
     e.preventDefault();
-    AxiosPublic.post('http://localhost:5000/adAds', formData)
+    AxiosPublic.post('https://digital-networking-server.vercel.appadAds', formData)
       .then(res => {
         console.log(res.data);
       })
@@ -227,7 +227,7 @@ const AddAdsAccount = () => {
           </div>
           <button 
             type="submit" 
-            className="w-full px-4 py-2 font-bold rounded shadow focus:outline-none focus:ring hover:ring dark:bg-violet-400 dark:text-gray-900"
+            className="w-full px-4 py-2 font-bold rounded shadow focus:outline-none focus:ring hover:ring bg-green-800 text-white"
           >
             Submit
           </button>

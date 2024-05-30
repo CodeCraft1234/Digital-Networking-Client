@@ -9,6 +9,7 @@ import useClients from "../../Hook/useClient";
 import { Form, Link, NavLink } from "react-router-dom";
 import useAdsAccount from "../../Hook/useAdAccount";
 import UserAdAccount from "../../Components/UserAdAccount/UserAdAccount";
+import './BalanceCards.css';
 
 const CampaignTable = ({ email }) => {
   console.log(email);
@@ -90,7 +91,8 @@ const CampaignTable = ({ email }) => {
     };
     console.log(data);
 
-    AxiosPublic.post("http://localhost:5000/clients", data).then((res) => {
+    AxiosPublic.post("https://digital-networking-server.vercel.app/clients", data)
+    .then((res) => {
       console.log(res.data);
     });
   };
@@ -104,7 +106,7 @@ const CampaignTable = ({ email }) => {
 
 
   useEffect(()=>{
-      AxiosPublic.get(`http://localhost:5000/Mpayment`)
+      AxiosPublic.get(`https://digital-networking-server.vercel.app/Mpayment`)
       .then(res => {
           console.log('sdjkhagjijkhgjkhdsajljkhgdsjkajkjkfjldfgjkgjkgd',res.data);
           const da=res.data
@@ -135,81 +137,46 @@ const CampaignTable = ({ email }) => {
 
   return (
     <div className="my-24 mb-24">
-      <div className="  grid px-24 lg:grid-cols-3 items-center gap-5 justify-center mt-24">
-        <div className=" p-5 py-8 bg-white text-black shadow-2xl  rounded-lg">
-          <img
-            className="h-14 mx-auto text-center w-44 "
-            src="https://i.ibb.co/bHMLyvM/b-Kash-Merchant.png"
-            alt="bKash"
-          />
-          <p className="text-xl text-center mt-5 font-bold">
-            Balance : ৳ {bkashMarcent}
-          </p>
-        </div>
-        <div className=" p-5 py-8 bg-white text-black shadow-2xl  rounded-lg">
-          <img
-            className="h-14 mx-auto text-center w-44"
-            src="https://i.ibb.co/520Py6s/bkash-1.png"
-            alt="bKash"
-          />
-          <p className="text-xl text-center mt-5 font-bold">
-            Balance : ৳ {bkashPersonal}
-          </p>
-        </div>
-        <div className=" p-5 py-8 bg-white text-black shadow-2xl  rounded-lg">
-          <img
-            className="h-14  mx-auto text-center w-44"
-            src="https://i.ibb.co/JQBQBcF/nagad-marchant.png"
-            alt="Nagad"
-          />
-          <p className="text-xl text-center mt-5 font-bold">
-            Balance : $ {nagadPersonal}
-          </p>
-        </div>
-        <div className=" p-5 py-8 bg-white text-black shadow-2xl  rounded-lg">
-          <img
-            className="h-14 mx-auto text-center w-44"
-            src="https://i.ibb.co/QkTM4M3/rocket.png"
-            alt="Rocket"
-          />
-          <p className="text-xl text-center mt-5 font-bold">Balance : ৳ {rocketPersonal}</p>
-        </div>
-        <div className=" p-5 py-7 bg-white text-black shadow-2xl  rounded-lg">
-          <img
-            className="h-8 mx-auto text-center w-72"
-            src="https://i.ibb.co/3WVZGdz/PAYO-BIG-aa26e6e0.png"
-            alt="Payoneer"
-          />
-          <p className="text-xl mt-5 text-center font-bold">T.USD : $4000</p>
-          <p className="text-xl text-center font-bold">
-            T.Spent: ${totalSpent}
-          </p>
-        </div>
-        <div className="  p-5 py-10 bg-white text-black shadow-2xl  rounded-lg">
-          <p className="text-xl text-center font-bold mr-6">
-            {" "}
-            T.Balance: ৳ 1000
-          </p>
-          <p className="text-xl text-center font-bold">
-            T.Received: ৳ {totalRCV}
-          </p>
-          <p className="text-xl text-center font-bold">T.Cash Out: ৳ 10000</p>
-        </div>
+       <div className="balance-cards-container">
+      <div className="balance-card">
+        <img className="balance-card-img" src="https://i.ibb.co/bHMLyvM/b-Kash-Merchant.png" alt="bKash" />
+        <p className="balance-card-text">Balance: ৳ {bkashMarcent}</p>
       </div>
+      <div className="balance-card">
+        <img className="balance-card-img" src="https://i.ibb.co/520Py6s/bkash-1.png" alt="bKash" />
+        <p className="balance-card-text">Balance: ৳ {bkashPersonal}</p>
+      </div>
+      <div className="balance-card">
+        <img className="balance-card-img" src="https://i.ibb.co/JQBQBcF/nagad-marchant.png" alt="Nagad" />
+        <p className="balance-card-text">Balance: ৳ {nagadPersonal}</p>
+      </div>
+      <div className="balance-card">
+        <img className="balance-card-img" src="https://i.ibb.co/QkTM4M3/rocket.png" alt="Rocket" />
+        <p className="balance-card-text">Balance: ৳ {rocketPersonal}</p>
+      </div>
+      <div className="balance-card">
+        <img className="balance-card-img" src="https://i.ibb.co/3WVZGdz/PAYO-BIG-aa26e6e0.png" alt="Payoneer" />
+        <p className="balance-card-text">Total USD: $4000</p>
+        <p className="balance-card-text">Total Spent: ${totalSpent}</p>
+      </div>
+      <div className="balance-card summary-card">
+        <p className="balance-card-text">Total Balance: ৳ 1000</p>
+        <p className="balance-card-text">Total Received: ৳ {totalRCV}</p>
+        <p className="balance-card-text">Total Cash Out: ৳ 10000</p>
+      </div>
+    </div>
       
-      <h2 className="mt-24 mb-4 text-3xl md:text-5xl py-5 bg-green-800 text-white text-center font-semibold uppercase leading-tight p-2 sm:p-2">
+      <h2 className="text-center mx-4 mt-10 py-4 text-white uppercase font-bold text-3xl md:text-5xl bg-green-800">
           Client Table
         </h2>
-      <div className=" p-2  sm:p-4 dark:bg-green-800">
+      <div className=" p-2  sm:p-4 ">
        
-        <div className="overflow-x-auto mt-1">
-        <div className="flex justify-start mb-5 items-center gap-3">
-{/* ///////////////////////////////////////////////// */}
-      
-{/* //////////////////////////////////////////// */}
-        <div>
+        <div className="overflow-x-auto  ">
+        <div className="flex justify-start mb-5 text-gray-500 border-b border-opacity-20 mx-2 pb-1 items-center gap-3">
+
+        <div >
           <button
-            className="font-avenir px-3 mt-10 mx-auto py-1 bg-neutral ml-10 rounded text-white"
+            className="font-avenir px-3  mx-auto py-1 bg-green-800 ml-10 rounded-lg text-white"
             onClick={() => document.getElementById("my_modal_2").showModal()}
           >
             Add Client
@@ -222,10 +189,10 @@ const CampaignTable = ({ email }) => {
                   className="container w-full max-w-xl p-8 mx-auto space-y-6 rounded-md shadow dark:bg-gray-900"
                 >
                   <div>
-                    <h1 className="text-3xl my-4 text-center font-bold  text-white">
+                    <h1 className="text-3xl  text-center font-bold  text-gray-500">
                       Add a Client{" "}
                     </h1>
-                    <div className="flex justify-center items-center gap-3">
+                    <div className="flex justify-center items-center gap-3 mt-2">
                       <div>
                         <label for="date" className="block mb-1 ml-1">
                           Date
@@ -282,14 +249,14 @@ const CampaignTable = ({ email }) => {
                       </div>
                     </div>
                   </div>
-                  <button className="w-full px-4 py-2 font-bold rounded shadow focus:outline-none focus:ring hover:ring focus:ri dark:bg-violet-400 focus:ri hover:ri dark:text-gray-900">
+                  <button className="w-full px-4 py-2 font-bold rounded-lg shadow focus:outline-none focus:ring hover:ring focus:ri bg-green-800 focus:ri hover:ri text-white">
                     Submit
                   </button>
                 </Form>
               </section>
               <div className="modal-action">
                 <form method="dialog">
-                  <button className="btn">Close</button>
+                  <button className="p-2 rounded-lg bg-red-600 text-white text-center">Close</button>
                 </form>
               </div>
             </div>
@@ -298,7 +265,7 @@ const CampaignTable = ({ email }) => {
 
         <div>
           <button
-            className="font-avenir px-3 mt-10 mx-auto py-1 bg-neutral ml-10 rounded text-white"
+            className="font-avenir px-3  mx-auto py-1 bg-green-800 ml-10 rounded-lg text-white"
             onClick={() => document.getElementById("my_modal_1").showModal()}
           >
             Cashout
@@ -356,14 +323,14 @@ const CampaignTable = ({ email }) => {
                 </div>
                 <button
                   type="submit"
-                  className="font-avenir px-3 mx-auto py-1 bg-neutral rounded flex justify-center text-white"
+                  className="font-avenir px-3 mx-auto py-1 rounded-lg flex justify-center text-white bg-green-800"
                 >
                   Send
                 </button>
               </form>
               <div className="modal-action">
                 <form method="dialog">
-                  <button className="btn">Close</button>
+                  <button className="p-2 rounded-lg bg-red-600 text-white text-center">Close</button>
                 </form>
               </div>
             </div>
@@ -372,49 +339,56 @@ const CampaignTable = ({ email }) => {
 
       </div>
 
-          <table className="min-w-full text-sm mt-2">
-            <thead className="bg-red-800 text-white">
-              <tr>
-                <th className="p-3 text-center">Date</th>
-                <th className="p-3 text-center">Client Name</th>
-                <th className="p-3 text-center">Client Phone</th>
-                {/* <th className="p-3 text-center">Client Email</th> */}
-                <th className="p-3 text-center">T.Budget</th>
-                <th className="p-3 text-center">T.Spent</th>
-                <th className="p-3 text-center">Total Bill</th>
-                <th className="p-3 text-center">Total Payment Rcv</th>
-              </tr>
-            </thead>
-            <tbody className="text-gray-250">
-              {filteredCampaigns.map((campaign) => (
-                <tr
-                  key={campaign._id}
-                  className="border-b border-opacity-20 dark:border-gray-700 dark:bg-gray-900"
-                >
-                  <td className="p-3 text-center">{campaign.date}</td>
+      <table className="min-w-full bg-white">
+  <thead className="bg-red-800 text-white">
+    <tr>
+      <th className="p-3 text-center">Date</th>
+      <th className="p-3 text-center">Client Name</th>
+      <th className="p-3 text-center">Client Phone</th>
+      {/* <th className="p-3 text-center">Client Email</th> */}
+      <th className="p-3 text-center">T.Budget</th>
+      <th className="p-3 text-center">T.Spent</th>
+      <th className="p-3 text-center">Total Bill</th>
+      <th className="p-3 text-center">Total Payment Rcv</th>
+      <th className="p-3"></th>
+    </tr>
+  </thead>
+  <tbody>
+    {filteredCampaigns.map((campaign, index) => (
+      <tr
+        key={campaign._id}
+        className={`${
+          index % 2 === 0
+            ? "text-gray-500 border-b border-opacity-20 hover:text-blue-600"
+            : "text-gray-500 border-b border-opacity-20 hover:text-blue-600"
+        }`}
+      >
+        <td className="p-3 text-center">{campaign.date}</td>
+        <Link to={`/client/${campaign.clientEmail}`}>
+          <td className="p-3 flex justify-center text-center">{campaign.clientName}</td>
+        </Link>
+        <td className="p-3 text-center">{campaign.clientPhone}</td>
+        <td className="p-3 text-center">{campaign.tBudged}</td>
+        <td className="p-3 text-center">{campaign.tSpent}</td>
+        <td className="p-3 text-center">{campaign.tBill}</td>
+        <td className="p-3 text-center">{campaign.tPayment}</td>
+        <td className="p-3"></td>
+      </tr>
+    ))}
+    <tr className="bg-green-800 text-sm text-white font-bold">
+      <td className="p-3 text-center"></td>
+      <td className="p-3 text-right" colSpan="2">
+        Total :
+      </td>
+      <td className="p-3 text-center">{totalBudged}</td>
+      <td className="p-3 text-center"> {totalSpent}</td>
+      <td className="p-3 text-center">{totalbill}</td>
+      <td className="p-3 text-center">{totalRCV}</td>
+      <td className="p-3"></td>
+    </tr>
+  </tbody>
+</table>
 
-                  <Link to={`/client/${campaign.clientEmail}`}>
-                    <td className="p-3 text-center">{campaign.clientName}</td>
-                  </Link>
-                  <td className="p-3 text-center">{campaign.clientPhone}</td>
-                  <td className="p-3 text-center">{campaign.tBudged}</td>
-                  <td className="p-3 text-center">{campaign.tSpent}</td>
-                  <td className="p-3 text-center">{campaign.tBill}</td>
-                  <td className="p-3 text-center">{campaign.tPayment}</td>
-                </tr>
-              ))}
-              <tr className="bg-green-800 text-sm text-white font-bold">
-                <td className="p-3 text-center"></td>
-                <td className="p-3 text-right" colSpan="2">
-                  Total :
-                </td>
-                <td className="p-3 text-center">{totalBudged}</td>
-                <td className="p-3 text-center"> {totalSpent}</td>
-                <td className="p-3 text-center">{totalbill}</td>
-                <td className="p-3 text-center">{totalRCV}</td>
-              </tr>
-            </tbody>
-          </table>
         </div>
       </div>
      

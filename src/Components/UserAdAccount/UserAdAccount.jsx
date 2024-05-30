@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import useAdsAccount from "../../Hook/useAdAccount";
 import UseAxiosPublic from "../../Axios/UseAxiosPublic";
+import { toast } from "react-toastify";
 
 const UserAdAccount = ({email}) => {
 
@@ -37,7 +38,7 @@ const UserAdAccount = ({email}) => {
     const employeeEmail = email;
     const data = { accountName, issueDate, employeeEmail };
 
-    AxiosPublic.post("http://localhost:5000/adsAccount", data).then((res) => {
+    AxiosPublic.post("https://digital-networking-server.vercel.app/adsAccount", data).then((res) => {
       console.log(res.data);
       toast.success("add successful");
     });
@@ -54,7 +55,7 @@ const AxiosPublic=UseAxiosPublic()
 
     const body = { currentBallence,threshold, totalSpent, status };
 
-    AxiosPublic.patch(`http://localhost:5000/adsAccount/${id}`, body)
+    AxiosPublic.patch(`https://digital-networking-server.vercel.appadsAccount/${id}`, body)
         .then(res => {
             console.log(res.data);
             refetch();
@@ -68,18 +69,18 @@ const AxiosPublic=UseAxiosPublic()
 
   return (
     <div className="mt-24 p-4 dark:text-green-800">
-    <h6 className="text-center text-white uppercase font-bold text-3xl md:text-5xl bg-green-800 p-2 sm:p-2">
-      User Ads Account Activities
+    <h6 className="text-center mx-4 py-4 text-white uppercase font-bold text-3xl md:text-5xl bg-green-800 ">
+       Ads Account Activities
     </h6>
 
-    <div>
+    <div className="flex justify-start mb-5 text-gray-500 border-b border-opacity-20 mx-2 pb-1 items-center gap-3">
           <button
-            className="font-avenir px-3 mt-10 mx-auto py-1 bg-neutral ml-10 rounded text-white"
-            onClick={() => document.getElementById("my_modal_1").showModal()}
+            className="font-avenir px-3 mt-5 mx-auto py-1 ml-10 rounded-lg text-white bg-green-800"
+            onClick={() => document.getElementById("my_modal_3").showModal()}
           >
             Add Ads Account
           </button>
-          <dialog id="my_modal_1" className="modal">
+          <dialog id="my_modal_3" className="modal">
             <div className="modal-box">
               <form onSubmit={(e) => handleAddAdsAcount(e)}>
                 <div className="flex justify-center items-center gap-3">
@@ -104,14 +105,14 @@ const AxiosPublic=UseAxiosPublic()
                 </div>
                 <button
                   type="submit"
-                  className="font-avenir px-3 mx-auto py-1 bg-neutral rounded flex justify-center text-white"
+                  className="font-avenir px-3 mx-auto py-1 rounded-lg flex justify-center text-white bg-green-800"
                 >
                   Send
                 </button>
               </form>
               <div className="modal-action">
                 <form method="dialog">
-                  <button className="btn">Close</button>
+                  <button className="p-2 rounded-lg bg-red-600 text-white text-center">Close</button>
                 </form>
               </div>
             </div>
@@ -137,8 +138,8 @@ const AxiosPublic=UseAxiosPublic()
               key={account._id}
               className={`${
                 index % 2 === 0
-                  ? "text-black border-b border-opacity-20"
-                  : "text-black border-b border-opacity-20"
+                  ? "text-gray-500 border-b border-opacity-20 hover:text-blue-600"
+                  : "text-gray-500 border-b border-opacity-20 hover:text-blue-600"
               }`}
             >
               <td className="p-3 text-center">{account.issueDate}</td>
@@ -208,14 +209,14 @@ const AxiosPublic=UseAxiosPublic()
 
                       <button
                         type="submit"
-                        className="font-avenir px-3 mx-auto py-1 bg-neutral rounded text-white"
+                        className="font-avenir px-3 mx-auto py-1 bg-green-800 rounded-lg text-white"
                       >
                         Update
                       </button>
                     </form>
                     <div className="modal-action">
                       <button
-                        className="btn"
+                        className="p-2 rounded-lg bg-red-600 text-white text-center"
                         onClick={() =>
                           document.getElementById(`modal_${index}`).close()
                         }

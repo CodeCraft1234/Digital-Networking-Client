@@ -28,8 +28,8 @@ const MonthlyAdAccount = () => {
   };
 
   return (
-    <div className="mt-24 p-2  sm:p-4 dark:bg-green-800">
-      <h6 className="text-center font-bold uppercase text-3xl md:text-5xl bg-green-800 text-white p-3 sm:p-3">
+    <div className="mt-24 p-4 dark:text-green-800">
+      <h6 className="text-center mx-4 py-4 text-white uppercase font-bold text-3xl md:text-5xl bg-green-800">
         Monthly Ads Account Activities
       </h6>
       <div className="overflow-x-auto mt-6">
@@ -64,7 +64,7 @@ const MonthlyAdAccount = () => {
             {userAdAccounts.map((account, index) => (
               <tr
                 key={index}
-                className={`${index % 2 === 0 ? "text-black border-b border-opacity-20" : "text-black border-b border-opacity-20"}`}
+                className={`${index % 2 === 0 ? "text-gray-500 border-b border-opacity-20 hover:text-blue-600" : "text-gray-500 border-b border-opacity-20 hover:text-blue-600"}`}
               >
                 <td className="p-3 text-center">{account.date}</td>
                 <td className="p-3 text-center">{account.name}</td>
@@ -232,7 +232,7 @@ const MonthlyAdAccount = () => {
                 </button>
                 <button
                   type="button"
-                  className="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600"
+                  className="px-4 py-2 bg-green-800 text-white rounded-md hover:bg-green-600"
                   onClick={handleUpdate}
                 >
                   Update

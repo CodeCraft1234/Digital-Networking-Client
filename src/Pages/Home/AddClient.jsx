@@ -21,7 +21,7 @@ const AddClient = () => {
         const date=e.target.date.value
         const data={clientName,clientEmail,clientPhone,tBudged,email,tSpent,tBill,date, tDue,tPaid}
        console.log(data)
-       AxiosPublic.post('http://localhost:5000/clients',data)
+       AxiosPublic.post('https://digital-networking-server.vercel.appclients',data)
        .then(res=>{
         console.log(res.data)
        })
@@ -60,7 +60,7 @@ const AddClient = () => {
     
         </div>
      </div>
-       <button  className="w-full px-4 py-2 font-bold rounded shadow focus:outline-none focus:ring hover:ring focus:ri dark:bg-violet-400 focus:ri hover:ri dark:text-gray-900">Submit</button>
+       <button  className="w-full px-4 py-2 font-bold rounded shadow focus:outline-none focus:ring hover:ring focus:ri bg-green-800 focus:ri hover:ri text-white">Submit</button>
       </Form>
               </section>
         </div>
