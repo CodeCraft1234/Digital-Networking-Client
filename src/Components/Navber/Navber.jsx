@@ -367,7 +367,7 @@ const NavBar = () => {
                           alt=""
                         />
                       </figure>
-                      <div className="text-start text-black space-y-3">
+                      <div className="text-start text-gray-500 space-y-3">
                         <h1 className="text-md font-bold">
                           Name: {userr?.fullName}
                         </h1>

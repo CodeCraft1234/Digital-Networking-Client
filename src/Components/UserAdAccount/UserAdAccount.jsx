@@ -54,13 +54,13 @@ const AxiosPublic=UseAxiosPublic()
 
   return (
     <div className="mt-24 p-4 dark:text-green-800">
-    <h6 className="text-center py-4 text-white uppercase font-bold text-3xl md:text-5xl bg-green-800 ">
+    <h6 className="text-center mx-4 py-4 text-white uppercase font-bold text-3xl md:text-5xl bg-green-800 ">
        Ads Account Activities
     </h6>
 
-    <div className="flex justify-start mb-5 border-b border-gray-500 mx-2 pb-1 items-center gap-3">
+    <div className="flex justify-start mb-5 text-gray-500 border-b border-opacity-20 mx-2 pb-1 items-center gap-3">
           <button
-            className="font-avenir px-3 mt-5 mx-auto py-1 bg-neutral ml-10 rounded text-white"
+            className="font-avenir px-3 mt-5 mx-auto py-1 ml-10 rounded-lg text-white bg-green-800"
             onClick={() => document.getElementById("my_modal_3").showModal()}
           >
             Add Ads Account
@@ -90,14 +90,14 @@ const AxiosPublic=UseAxiosPublic()
                 </div>
                 <button
                   type="submit"
-                  className="font-avenir px-3 mx-auto py-1 bg-neutral rounded flex justify-center text-white"
+                  className="font-avenir px-3 mx-auto py-1 rounded-lg flex justify-center text-white bg-green-800"
                 >
                   Send
                 </button>
               </form>
               <div className="modal-action">
                 <form method="dialog">
-                  <button className="btn">Close</button>
+                  <button className="p-2 rounded-lg bg-red-600 text-white text-center">Close</button>
                 </form>
               </div>
             </div>
@@ -123,8 +123,8 @@ const AxiosPublic=UseAxiosPublic()
               key={account._id}
               className={`${
                 index % 2 === 0
-                  ? "text-black border-b border-opacity-20"
-                  : "text-black border-b border-opacity-20"
+                  ? "text-gray-500 border-b border-opacity-20 hover:text-blue-600"
+                  : "text-gray-500 border-b border-opacity-20 hover:text-blue-600"
               }`}
             >
               <td className="p-3 text-center">{account.issueDate}</td>
@@ -194,14 +194,14 @@ const AxiosPublic=UseAxiosPublic()
 
                       <button
                         type="submit"
-                        className="font-avenir px-3 mx-auto py-1 bg-neutral rounded text-white"
+                        className="font-avenir px-3 mx-auto py-1 bg-green-800 rounded-lg text-white"
                       >
                         Update
                       </button>
                     </form>
                     <div className="modal-action">
                       <button
-                        className="btn"
+                        className="p-2 rounded-lg bg-red-600 text-white text-center"
                         onClick={() =>
                           document.getElementById(`modal_${index}`).close()
                         }

@@ -28,8 +28,10 @@ const EmployeerMouthlySelery = ({ email }) => {
   }, [ownSelary, email]);
 
   return (
-    <div className="my-10 mt-24 p-4 dark:bg-green-800">
-      <h6 className="text-center mb-5 font-bold uppercase text-4xl p-2 sm:p-2 bg-green-800 text-white">
+
+    <div className="my-10 p-4 dark:bg-green-800 mt-24">
+      <h6 className="text-center mb-5 font-bold uppercase text-3xl md:text-5xl mx-4 py-4 bg-green-800 text-white">
+
         Employees Own Monthly Salary Sheet
       </h6>
       <div className="overflow-x-auto mt-0">
@@ -51,7 +53,7 @@ const EmployeerMouthlySelery = ({ email }) => {
             {filteredSelary.map((employee, index) => (
               <tr
                 key={employee._id}
-                className={`${index % 2 === 0 ? "border-b border-opacity-20 dark:border-gray-700 dark:bg-gray-900" : "border-b border-opacity-20 dark:border-gray-700 dark:bg-gray-900"}`}
+                className={`${index % 2 === 0 ? "text-gray-500 border-b border-opacity-20 hover:text-blue-600" : "text-gray-500 border-b border-opacity-20 hover:text-blue-600"}`}
               >
                 <td className="p-3 text-center space-x-3">
                   <span>{employee.mounth}</span>

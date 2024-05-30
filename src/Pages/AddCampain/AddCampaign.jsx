@@ -86,7 +86,7 @@ const AddCampaign = () => {
        
         
      </div>
-       <button  className="w-full px-4 py-2 font-bold rounded shadow focus:outline-none focus:ring hover:ring focus:ri dark:bg-violet-400 focus:ri hover:ri dark:text-gray-900">Submit</button>
+       <button  className="w-full px-4 py-2 font-bold rounded shadow focus:outline-none focus:ring hover:ring focus:ri text-white focus:ri hover:ri bg-green-800">Submit</button>
       </Form>
               </section>
         </div>

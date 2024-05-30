@@ -227,7 +227,7 @@ const AddAdsAccount = () => {
           </div>
           <button 
             type="submit" 
-            className="w-full px-4 py-2 font-bold rounded shadow focus:outline-none focus:ring hover:ring dark:bg-violet-400 dark:text-gray-900"
+            className="w-full px-4 py-2 font-bold rounded shadow focus:outline-none focus:ring hover:ring bg-green-800 text-white"
           >
             Submit
           </button>

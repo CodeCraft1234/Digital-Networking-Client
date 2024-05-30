@@ -9,22 +9,20 @@ import useClients from "../../Hook/useClient";
 import { Form, Link, NavLink } from "react-router-dom";
 import useAdsAccount from "../../Hook/useAdAccount";
 import UserAdAccount from "../../Components/UserAdAccount/UserAdAccount";
-import { AuthContext } from "../../Security/AuthProvider";
-import { IoIosSearch } from "react-icons/io";
+
+import './BalanceCards.css';
+
 
 const CampaignTable = ({ email }) => {
-
-
-
-
-
   console.log(email);
   const [clients, refetch] = useClients();
   const [adsAccount] = useAdsAccount();
   const AxiosPublic = UseAxiosPublic();
   const [filteredCampaigns, setFilteredCampaigns] = useState([]);
   const [data, setUserData] = useState([]);
-
+  const [users] = useUsers();
+  const [user, setUser] = useState(null);
+  console.log("kjhgfaklhgklagshkl", clients, adsAccount);
 
   const [totalSpent, setTotalSpent] = useState(0);
   const [totalBudged, setTotalBudged] = useState(0);
@@ -32,22 +30,6 @@ const CampaignTable = ({ email }) => {
   const [totalbill, setTotalBill] = useState(0);
 
   console.log(totalSpent, totalBudged, totalRCV, totalbill);
-
-  const [users] = useUsers();
-
-  const {user}=useContext(AuthContext)
-
-  const [ddd, setDdd] = useState(null);
-
-  useEffect(() => {
-      if (users && user) {
-          const fff = users.find(u => u.email === user?.email);
-          console.log(fff);
-          setDdd(fff || {}); // Update state with found user or an empty object
-      }
-  }, [users, user]);
-
-  console.log(ddd?.role);
 
   useEffect(() => {
     const filtered = clients.filter(
@@ -168,67 +150,34 @@ const CampaignTable = ({ email }) => {
 
   return (
     <div className="my-24 mb-24">
-      <div className="  grid px-24 lg:grid-cols-3 items-center gap-5 justify-center mt-24">
-        <div className=" p-5 py-8 bg-white text-black shadow-2xl  rounded-lg">
-          <img
-            className="h-14 mx-auto text-center w-44 "
-            src="https://i.ibb.co/bHMLyvM/b-Kash-Merchant.png"
-            alt="bKash"
-          />
-          <p className="text-xl text-center mt-5 font-bold">
-            Balance : ৳ {bkashMarcent}
-          </p>
-        </div>
-        <div className=" p-5 py-8 bg-white text-black shadow-2xl  rounded-lg">
-          <img
-            className="h-14 mx-auto text-center w-44"
-            src="https://i.ibb.co/520Py6s/bkash-1.png"
-            alt="bKash"
-          />
-          <p className="text-xl text-center mt-5 font-bold">
-            Balance : ৳ {bkashPersonal}
-          </p>
-        </div>
-        <div className=" p-5 py-8 bg-white text-black shadow-2xl  rounded-lg">
-          <img
-            className="h-14  mx-auto text-center w-44"
-            src="https://i.ibb.co/JQBQBcF/nagad-marchant.png"
-            alt="Nagad"
-          />
-          <p className="text-xl text-center mt-5 font-bold">
-            Balance : $ {nagadPersonal}
-          </p>
-        </div>
-        <div className=" p-5 py-8 bg-white text-black shadow-2xl  rounded-lg">
-          <img
-            className="h-14 mx-auto text-center w-44"
-            src="https://i.ibb.co/QkTM4M3/rocket.png"
-            alt="Rocket"
-          />
-          <p className="text-xl text-center mt-5 font-bold">Balance : ৳ {rocketPersonal}</p>
-        </div>
-        <div className=" p-5 py-7 bg-white text-black shadow-2xl  rounded-lg">
-          <img
-            className="h-8 mx-auto text-center w-72"
-            src="https://i.ibb.co/3WVZGdz/PAYO-BIG-aa26e6e0.png"
-            alt="Payoneer"
-          />
-          <p className="text-xl mt-5 text-center font-bold">T.USD : $4000</p>
-          <p className="text-xl text-center font-bold">
-            T.Spent: ${totalSpent}
-          </p>
-        </div>
-        <div className="  p-5 py-10 bg-white text-black shadow-2xl  rounded-lg">
-          <p className="text-xl text-center font-bold mr-6">
-            {" "}
-            T.Balance: ৳ 1000
-          </p>
-          <p className="text-xl text-center font-bold">
-            T.Received: ৳ {totalRCV}
-          </p>
-          <p className="text-xl text-center font-bold">T.Cash Out: ৳ 10000</p>
-        </div>
+       <div className="balance-cards-container">
+      <div className="balance-card">
+        <img className="balance-card-img" src="https://i.ibb.co/bHMLyvM/b-Kash-Merchant.png" alt="bKash" />
+        <p className="balance-card-text">Balance: ৳ {bkashMarcent}</p>
       </div>
+      <div className="balance-card">
+        <img className="balance-card-img" src="https://i.ibb.co/520Py6s/bkash-1.png" alt="bKash" />
+        <p className="balance-card-text">Balance: ৳ {bkashPersonal}</p>
+      </div>
+      <div className="balance-card">
+        <img className="balance-card-img" src="https://i.ibb.co/JQBQBcF/nagad-marchant.png" alt="Nagad" />
+        <p className="balance-card-text">Balance: ৳ {nagadPersonal}</p>
+      </div>
+      <div className="balance-card">
+        <img className="balance-card-img" src="https://i.ibb.co/QkTM4M3/rocket.png" alt="Rocket" />
+        <p className="balance-card-text">Balance: ৳ {rocketPersonal}</p>
+      </div>
+      <div className="balance-card">
+        <img className="balance-card-img" src="https://i.ibb.co/3WVZGdz/PAYO-BIG-aa26e6e0.png" alt="Payoneer" />
+        <p className="balance-card-text">Total USD: $4000</p>
+        <p className="balance-card-text">Total Spent: ${totalSpent}</p>
+      </div>
+      <div className="balance-card summary-card">
+        <p className="balance-card-text">Total Balance: ৳ 1000</p>
+        <p className="balance-card-text">Total Received: ৳ {totalRCV}</p>
+        <p className="balance-card-text">Total Cash Out: ৳ 10000</p>
+      </div>
+    </div>
       
       <h2 className="text-center mx-4 mt-10 py-4 text-white uppercase font-bold text-3xl md:text-5xl bg-green-800">
           Client Table
@@ -237,14 +186,12 @@ const CampaignTable = ({ email }) => {
        
         <div className="overflow-x-auto  ">
 
-       
-<div className="flex justify-between items-center">
-<div>
-     {
-        ddd?.role === 'admin' ? <></> : <div className="flex justify-start mb-5 border-b border-gray-500 mx-2 pb-1 items-center gap-3">
-         <div>
-<button
-            className="font-avenir px-3  mx-auto py-1 bg-neutral ml-10 rounded text-white"
+        <div className="flex justify-start mb-5 text-gray-500 border-b border-opacity-20 mx-2 pb-1 items-center gap-3">
+
+        <div >
+          <button
+            className="font-avenir px-3  mx-auto py-1 bg-green-800 ml-10 rounded-lg text-white"
+
             onClick={() => document.getElementById("my_modal_2").showModal()}
           >
             Add Client
@@ -257,10 +204,10 @@ const CampaignTable = ({ email }) => {
                   className="container w-full max-w-xl p-8 mx-auto space-y-6 rounded-md shadow dark:bg-gray-900"
                 >
                   <div>
-                    <h1 className="text-3xl  text-center font-bold  text-white">
+                    <h1 className="text-3xl  text-center font-bold  text-gray-500">
                       Add a Client{" "}
                     </h1>
-                    <div className="flex justify-center items-center gap-3">
+                    <div className="flex justify-center items-center gap-3 mt-2">
                       <div>
                         <label for="date" className="block mb-1 ml-1">
                           Date
@@ -317,14 +264,14 @@ const CampaignTable = ({ email }) => {
                       </div>
                     </div>
                   </div>
-                  <button className="w-full px-4 py-2 font-bold rounded shadow focus:outline-none focus:ring hover:ring focus:ri dark:bg-violet-400 focus:ri hover:ri dark:text-gray-900">
+                  <button className="w-full px-4 py-2 font-bold rounded-lg shadow focus:outline-none focus:ring hover:ring focus:ri bg-green-800 focus:ri hover:ri text-white">
                     Submit
                   </button>
                 </Form>
               </section>
               <div className="modal-action">
                 <form method="dialog">
-                  <button className="btn">Close</button>
+                  <button className="p-2 rounded-lg bg-red-600 text-white text-center">Close</button>
                 </form>
               </div>
             </div>
@@ -332,7 +279,7 @@ const CampaignTable = ({ email }) => {
         </div>
         <div>
           <button
-            className="font-avenir px-3  mx-auto py-1 bg-neutral ml-10 rounded text-white"
+            className="font-avenir px-3  mx-auto py-1 bg-green-800 ml-10 rounded-lg text-white"
             onClick={() => document.getElementById("my_modal_1").showModal()}
           >
             Cashout
@@ -390,41 +337,22 @@ const CampaignTable = ({ email }) => {
                 </div>
                 <button
                   type="submit"
-                  className="font-avenir px-3 mx-auto py-1 bg-neutral rounded flex justify-center text-white"
+                  className="font-avenir px-3 mx-auto py-1 rounded-lg flex justify-center text-white bg-green-800"
                 >
                   Send
                 </button>
               </form>
               <div className="modal-action">
                 <form method="dialog">
-                  <button className="btn">Close</button>
+                  <button className="p-2 rounded-lg bg-red-600 text-white text-center">Close</button>
                 </form>
               </div>
             </div>
           </dialog>
         </div>
-      </div> 
-      }
-     </div>
-     <div className="flex justify-end ">
-                <input
-                  type="text"
-                  placeholder=" Client Phone Number"
-                  className=" rounded-l-lg w-20 placeholder-black border-2 border-black p-2 font-bold text-black sm:w-2/3 text-sm bg-blue-300"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                />
-                <button
-                  type="button"
-                  className=" w-10 p-2 font-semibold rounded-r-lg sm:w-1/3 bg-[#FF9F0D] dark:bg-[#FF9F0D] text-white"
-                >
-                  <IoIosSearch className="mx-auto font-bold w-6 h-6" />
-                </button>
-      </div>
-</div>
-     
-         
 
+
+      </div>
 
 
       <table className="min-w-full bg-white">
@@ -447,8 +375,8 @@ const CampaignTable = ({ email }) => {
         key={campaign._id}
         className={`${
           index % 2 === 0
-            ? "text-black border-b border-opacity-20"
-            : "text-black border-b border-opacity-20"
+            ? "text-gray-500 border-b border-opacity-20 hover:text-blue-600"
+            : "text-gray-500 border-b border-opacity-20 hover:text-blue-600"
         }`}
       >
         <td className="p-3 text-center">{campaign.date}</td>

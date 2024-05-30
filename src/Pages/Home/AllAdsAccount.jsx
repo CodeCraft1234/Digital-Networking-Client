@@ -56,7 +56,7 @@ const AllAdsAccount = () => {
 
         <form className="flex justify-center items-center" onSubmit={handleFilter}>
           <div className="mb-4 ml-10 mx-auto">
-            <label className="block text-gray-700">Sort By Employee</label>
+            <label className="block text-gray-500 font-bold">Sort By Employee</label>
             <select
               name="email"
               value={selectedEmail}
@@ -68,7 +68,7 @@ const AllAdsAccount = () => {
                 <option key={user._id} value={user.email}>{user.name}</option>
               ))}
             </select>
-            <button className="font-avenir px-3 mx-auto py-1 bg-neutral rounded text-white">
+            <button className="ml-2 font-avenir px-3 mx-auto py-2 rounded-lg text-white bg-green-800">
               Search
             </button>
           </div>
@@ -94,8 +94,8 @@ const AllAdsAccount = () => {
                   key={account._id}
                   className={`${
                     index % 2 === 0
-                      ? "text-black border-b border-opacity-20"
-                      : "text-black border-b border-opacity-20"
+                      ? "text-gray-500 border-b border-opacity-20"
+                      : "text-gray-500 border-b border-opacity-20"
                   }`}
                 >
                   <td className="p-3 text-center">{account.issueDate}</td>
@@ -168,13 +168,13 @@ const AllAdsAccount = () => {
 
               <button
                 type="submit"
-                className="font-avenir px-3 mx-auto py-1 bg-neutral rounded text-white"
+                className="font-avenir px-3 mx-auto py-1 rounded-lg text-white bg-green-800"
               >
                 Update
               </button>
             </form>
             <div className="modal-action">
-              <button className="btn" onClick={() => setModalData(null)}>
+              <button className="p-2 rounded-lg bg-red-600 text-white text-center" onClick={() => setModalData(null)}>
                 Close
               </button>
             </div>

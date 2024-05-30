@@ -33,7 +33,6 @@ const SalarySheet = () => {
     setData(data);
   };
 
-
   const totals = {
     totalWork: 6000,
     dollarRet: 42,
@@ -46,7 +45,7 @@ const SalarySheet = () => {
   const handleUpdate = async (e, id) => {
     e.preventDefault();
     console.log(id);
-  
+
     // Parse the input values to floats
     const totalWork = parseFloat(e.target.totalWork.value);
     const mounth = e.target.mounth.value;
@@ -54,10 +53,10 @@ const SalarySheet = () => {
     const paid = parseFloat(e.target.paid.value);
     const saleryRate = parseFloat(e.target.saleryRate.value);
     const bonus = parseFloat(e.target.bonus.value);
-  
-    const data = { totalWork, paid,mounth, saleryRate, bonus };
+
+    const data = { totalWork, paid, mounth, saleryRate, bonus };
     console.log(data);
-  
+
     // Make the patch request
     AxiosPublic.patch(`/salary/${id}`, data)
       .then((res) => {
@@ -65,28 +64,25 @@ const SalarySheet = () => {
         refetch();
       })
       .catch((error) => {
-        console.error('Error updating salary:', error);
+        console.error("Error updating salary:", error);
       });
 
-    const data2 = { totalWork, paid,mounth, saleryRate, bonus, email };
+    const data2 = { totalWork, paid, mounth, saleryRate, bonus, email };
     AxiosPublic.post(`/ownSelary`, data2)
       .then((res) => {
         console.log(res.data);
       })
       .catch((error) => {
-        console.error('Error updating salary:', error);
+        console.error("Error updating salary:", error);
       });
-
-      
   };
-  
 
   return (
-    <div className="mt-24 p-2  sm:p-4 dark:bg-green-800">
-      <h6 className="text-center uppercase font-bold mb-5 text-3xl md:text-5xl bg-green-800 text-white p-3 sm:p-3">
+    <div className="mt-24 p-4 dark:text-green-800">
+      <h6 className="text-center mx-4 py-4 text-white uppercase font-bold text-3xl md:text-5xl bg-green-800">
         Employee Monthly Salary Sheet
       </h6>
-      <div className="overflow-x-auto mt-0">
+      <div className="overflow-x-auto mt-6">
         <table className="min-w-full text-xs md:text-sm lg:text-base bg-white">
           <thead className="bg-red-800 text-white">
             <tr>
@@ -105,7 +101,11 @@ const SalarySheet = () => {
             {salary.map((employee, index) => (
               <tr
                 key={employee._id}
-                className={`${index % 2 === 0 ? "text-black border-b border-opacity-20" : "text-black border-b border-opacity-20"}`}
+                className={`${
+                  index % 2 === 0
+                    ? "text-gray-500 border-b border-opacity-20 hover:text-blue-600"
+                    : "text-gray-500 border-b border-opacity-20 hover:text-blue-600"
+                }`}
               >
                 <td className="p-3 flex items-center space-x-3">
                   <img
@@ -125,14 +125,25 @@ const SalarySheet = () => {
                 </td>
                 <td className="p-3 text-center">৳ {employee.paid}</td>
                 <td className="p-3 text-center">
-                  ৳ {(employee.totalWork * 5.4) / 100 + employee.bonus - employee.paid}
+                  ৳{" "}
+                  {(employee.totalWork * 5.4) / 100 +
+                    employee.bonus -
+                    employee.paid}
                 </td>
                 <td
                   className={`p-3 text-center ${
-                    (employee.totalWork * 5.4) / 100 + employee.bonus - employee.paid  <= 0 ? 'text-blue-500'   : "text-red-500"
+                    (employee.totalWork * 5.4) / 100 +
+                      employee.bonus -
+                      employee.paid <=
+                    0
+                      ? "text-blue-500"
+                      : "text-red-500"
                   }`}
                 >
-                  {(employee.totalWork * 5.4) / 100 + employee.bonus - employee.paid  <= 0 ? (
+                  {(employee.totalWork * 5.4) / 100 +
+                    employee.bonus -
+                    employee.paid <=
+                  0 ? (
                     <p>Paid</p>
                   ) : (
                     <p>UnPaid</p>
@@ -149,113 +160,110 @@ const SalarySheet = () => {
                   </FaEdit>
                   <dialog id={`my_modal_${index}`} className="modal">
                     <div className="flex justify-start items-center text-black bg-indigo-300 p-5 gap-3">
-                      <form onSubmit={(e) => handleUpdate(e, employee._id)} className="text-start">
-                      <div className="mb-4 mx-16">
-                <label className="block text-black">Mounth</label>
-                <select
-                  name="mounth"
-                  className="w-full border rounded p-2 mt-1 bg-indigo-50 text-black"
-                >
-                  <option value="January">January</option>
-<option value="February">February</option>
-<option value="March">March</option>
-<option value="April">April</option>
-<option value="May">May</option>
-<option value="June">June</option>
-<option value="July">July</option>
-<option value="August">August</option>
-<option value="September">September</option>
-<option value="October">October</option>
-<option value="November">November</option>
-<option value="December">December</option>
-
-                </select>
-                      </div>
-                     <div className="flex justify-center items-center gap-2 ">
-                     
-                        <div className="flex ml-5 justify-start items-center">
-                      
-                          <div className="mb-4">
-                            <label className="block text-black font-bold">
-                              Employeer Email
-                            </label>
-                            <input
-                            disabled
-                              type="text"
-                              name="email"
-                              value={employee.email}
-                              className="w-full border rounded p-2 mt-1 bg-indigo-50 text-black"
-                            />
-                          </div>
+                      <form
+                        onSubmit={(e) => handleUpdate(e, employee._id)}
+                        className="text-start"
+                      >
+                        <div className="mb-4 mx-16">
+                          <label className="block text-black">Mounth</label>
+                          <select
+                            name="mounth"
+                            className="w-full border rounded p-2 mt-1 bg-indigo-50 text-black"
+                          >
+                            <option value="January">January</option>
+                            <option value="February">February</option>
+                            <option value="March">March</option>
+                            <option value="April">April</option>
+                            <option value="May">May</option>
+                            <option value="June">June</option>
+                            <option value="July">July</option>
+                            <option value="August">August</option>
+                            <option value="September">September</option>
+                            <option value="October">October</option>
+                            <option value="November">November</option>
+                            <option value="December">December</option>
+                          </select>
                         </div>
-                        <div className="flex ml-5 justify-start items-center">
-                      
-                          <div className="mb-4">
-                            <label className="block text-black font-bold">
-                              Total Work
-                            </label>
-                            <input
-                              type="number"
-                              name="totalWork"
-                              className="w-full border rounded p-2 mt-1 bg-indigo-50 text-black"
-                            />
-                          </div>
-                        </div>
-
-                        <div className="flex justify-start items-center text-black bg-indigo-300 p-5 gap-3">
-                          <div className="flex justify-start items-center">
+                        <div className="flex justify-center items-center gap-2 ">
+                          <div className="flex ml-5 justify-start items-center">
                             <div className="mb-4">
                               <label className="block text-black font-bold">
-                                Bonus
+                                Employeer Email
                               </label>
                               <input
-                                type="number"
-                                name="bonus"
-                                defaultValue={0}
+                                disabled
+                                type="text"
+                                name="email"
+                                value={employee.email}
                                 className="w-full border rounded p-2 mt-1 bg-indigo-50 text-black"
                               />
                             </div>
                           </div>
-                        </div>
-
-
-                     </div>
-                       <div className="flex justify-center items-center gap-2 ">
-                       <div className="flex gap-5 justify-start items-center text-black bg-indigo-300 p-5">
-                          <div className="flex justify-start items-center">
+                          <div className="flex ml-5 justify-start items-center">
                             <div className="mb-4">
                               <label className="block text-black font-bold">
-                                Salary Rate
+                                Total Work
                               </label>
                               <input
                                 type="number"
-                                name="saleryRate"
-                                defaultValue={5.4}
+                                name="totalWork"
                                 className="w-full border rounded p-2 mt-1 bg-indigo-50 text-black"
                               />
                             </div>
                           </div>
-                        </div>
-                        <div className="flex justify-start items-center text-black bg-indigo-300 p-5 gap-3">
-                          <div className="flex justify-start items-center">
-                            <div className="mb-4">
-                              <label className="block text-black font-bold">
-                                Paid
-                              </label>
-                              <input
-                                type="number"
-                                name="paid"
-                                defaultValue={0}
-                                className="w-full border rounded p-2 mt-1 bg-indigo-50 text-black"
-                              />
+
+                          <div className="flex justify-start items-center text-black bg-indigo-300 p-5 gap-3">
+                            <div className="flex justify-start items-center">
+                              <div className="mb-4">
+                                <label className="block text-black font-bold">
+                                  Bonus
+                                </label>
+                                <input
+                                  type="number"
+                                  name="bonus"
+                                  defaultValue={0}
+                                  className="w-full border rounded p-2 mt-1 bg-indigo-50 text-black"
+                                />
+                              </div>
                             </div>
                           </div>
                         </div>
-                       </div>
-                        
+                        <div className="flex justify-center items-center gap-2 ">
+                          <div className="flex gap-5 justify-start items-center text-black bg-indigo-300 p-5">
+                            <div className="flex justify-start items-center">
+                              <div className="mb-4">
+                                <label className="block text-black font-bold">
+                                  Salary Rate
+                                </label>
+                                <input
+                                  type="number"
+                                  name="saleryRate"
+                                  defaultValue={5.4}
+                                  className="w-full border rounded p-2 mt-1 bg-indigo-50 text-black"
+                                />
+                              </div>
+                            </div>
+                          </div>
+                          <div className="flex justify-start items-center text-black bg-indigo-300 p-5 gap-3">
+                            <div className="flex justify-start items-center">
+                              <div className="mb-4">
+                                <label className="block text-black font-bold">
+                                  Paid
+                                </label>
+                                <input
+                                  type="number"
+                                  name="paid"
+                                  defaultValue={0}
+                                  className="w-full border rounded p-2 mt-1 bg-indigo-50 text-black"
+                                />
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
                         <button
                           type="submit"
-                          className="bg-blue-500 mx-auto flex justify-center text-white py-2 px-4 rounded transform transition-all hover:scale-105 hover:bg-blue-600"
+                          className="bg-green-800 mx-auto flex justify-center text-white py-2 px-4 rounded transform transition-all hover:scale-105"
                         >
                           Update
                         </button>
@@ -264,7 +272,7 @@ const SalarySheet = () => {
 
                     <form method="dialog">
                       {/* if there is a button in form, it will close the modal */}
-                      <button className="btn btn-secondary bg-blue-500 text-white font-bold">
+                      <button className="p-3 rounded-lg bg-red-600 text-white text-center font-bold">
                         Close
                       </button>
                     </form>
@@ -275,8 +283,12 @@ const SalarySheet = () => {
             <tr className="bg-green-800 text-white">
               <td className="p-3 text-center font-bold">Total BDT</td>
               <td className="p-3 text-center font-bold">${totals.totalWork}</td>
-              <td className="p-3 text-center font-bold">৳ {totals.dollarRet}</td>
-              <td className="p-3 text-center font-bold">৳ {totals.totalSalary}</td>
+              <td className="p-3 text-center font-bold">
+                ৳ {totals.dollarRet}
+              </td>
+              <td className="p-3 text-center font-bold">
+                ৳ {totals.totalSalary}
+              </td>
               <td className="p-3 text-center font-bold">৳ {totals.paid}</td>
               <td className="p-3 text-center font-bold">৳ {totals.unpaid}</td>
               <td className="p-3 text-center font-bold">৳ {totals.bonus}</td>
