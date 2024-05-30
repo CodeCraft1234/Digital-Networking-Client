@@ -74,11 +74,55 @@ console.log(ddd?.name);
 
 return (
         <div className="mt-24 p-4 dark:text-green-800">
+ <div className="grid lg:grid-cols-4 gap-6  ">
+      <div className="balance-card p-10 shadow-2xl">
+        <img className="balance-card-img" src="https://i.ibb.co/bHMLyvM/b-Kash-Merchant.png" alt="bKash" />
+        <p className="balance-card-text text-4xl"><span className="text-4xl font-extrabold"> ৳</span> 10000</p>
+      </div>
+      <div className="balance-card p-10 shadow-2xl">
+        <img className="balance-card-img" src="https://i.ibb.co/520Py6s/bkash-1.png" alt="bKash" />
+        <p className="balance-card-text text-4xl"><span className="text-4xl font-extrabold"> ৳</span> 10000</p>
+      </div>
+      <div className="balance-card p-10 shadow-2xl">
+        <img className="balance-card-img" src="https://i.ibb.co/JQBQBcF/nagad-marchant.png" alt="Nagad" />
+        <p className="balance-card-text text-4xl"> <span className="text-4xl font-extrabold"> ৳</span> 10000</p>
+      </div>
+      <div className="balance-card p-10 shadow-2xl">
+        <img className="balance-card-img" src="https://i.ibb.co/QkTM4M3/rocket.png" alt="Rocket" />
+        <p className="balance-card-text text-4xl"> <span className="text-4xl font-extrabold"> ৳</span> 10000</p>
+      </div>
 
+    </div>
+    <div className="grid mt-6 lg:grid-cols-4 gap-6  ">
+    <div className="balance-card p-10 shadow-2xl">
+        <img className="balance-card-img" src="https://i.ibb.co/3WVZGdz/PAYO-BIG-aa26e6e0.png" alt="Payoneer" />
+        <div className="flex justify-center gap-3 items-center">
+        <p className="balance-card-text text-4xl"><span className="text-4xl text-red-400 font-extrabold"> $</span>  4000 </p> /
+        <p className="balance-card-text text-4xl"><span className="text-4xl text-blue-400 font-extrabold"> $</span>  4000</p>
+        </div>
+      </div>
+      <div className="balance-card summary-card p-10 shadow-2xl">
+      <p className="balance-card-text text-4xl"> Mobile Banking</p>
+        <p className="balance-card-text text-4xl"><span className="text-4xl font-extrabold"> ৳</span> 10000</p>
+      </div>
+    <div className="balance-card summary-card p-10 shadow-2xl">
+        <p className="balance-card-text text-4xl">Total Received</p>
+        <p className="balance-card-text text-4xl"><span className="text-4xl font-extrabold"> ৳</span> 10000</p>
+      </div>
+      <div className="balance-card summary-card p-10 shadow-2xl">
+        <p className="balance-card-text text-4xl">Admin Balance</p>
+        <p className="balance-card-text text-4xl"><span className="text-4xl font-extrabold"> ৳</span> 10000</p>
+      </div>
+    </div>
 
          <div className=" ">
+
          {/* {ddd?.role === 'admin' ? <h2 className="text-center mx-4 py-4 text-white uppercase font-bold text-3xl md:text-5xl bg-green-800 dark:text-green-800">Employers Activities
          </h2>:  <h2 className="text-center mx-4 py-4 text-white uppercase font-bold text-3xl md:text-5xl bg-green-800 dark:text-green-800">All Employers 
+
+         {/* {ddd?.role === 'admin' ? <h2 className="text-center mx-4 py-4 text-white uppercase font-bold text-3xl md:text-5xl bg-green-800 ">Employers Activities
+         </h2>:  <h2 className="text-center mx-4 sm:px-5 py-4 text-white uppercase font-bold text-3xl md:text-5xl bg-green-800 dark:text-green-800">All Employers 
+
          </h2>}  */}
        
         <div className="overflow-x-auto mt-6">
@@ -113,7 +157,7 @@ return (
                            </Link>
                          <Link to={`/userInfo/${userr?.email}`}>{userr.name} </Link>
                   </td>
-              </Link>
+                    </Link>
               
                   {
                     ddd?.role === 'admin' ? <> 
@@ -151,7 +195,7 @@ return (
                 <td className="p-3 text-center">৳ {nagadPersonalTotal}</td>
                 <td className="p-3 text-center">৳ {rocketPersonalTotal}</td>
                 <td className="p-3 text-center">৳ {totalBDT}</td>
-                <td className="p-3 text-center">৳ {totalBDT}</td>
+                <td className="p-3 text-center"></td>
                    </> : <></>
                 }
               

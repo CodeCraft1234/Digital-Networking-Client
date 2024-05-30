@@ -134,10 +134,28 @@ const NavBar = () => {
                    <SlPeople className="w-6 h-6" /> Employees
                   </NavLink>
                 </li>
-                </>
-              ) : (
-                <>
-                  <li>
+              </>
+            ) : (
+              <>
+                <li>
+                  <NavLink
+                    to={`/userInfo/${user?.email}`}
+                    className="text-white bg-red-800 hover:bg-blue-500"
+                    activeClassName="bg-blue-500"
+                  >
+                    My Profile
+                  </NavLink>
+                </li>
+                <li>
+                  <NavLink
+                    to={`/myProfile/${user?.email}`}
+                    className="text-white bg-red-800 hover:bg-blue-500"
+                    activeClassName="bg-blue-500"
+                  >
+                    My Clients
+                  </NavLink>
+                </li>
+                <li>
                     <NavLink
                       to={`/userInfo/${user?.email}`}
                       className="text-white bg-red-800 hover:bg-blue-500"
@@ -157,7 +175,7 @@ const NavBar = () => {
                   </li>
                   <li>
                     <NavLink
-                      to={`/userInfo/${user?.email}`}
+                      to={`/selary/${user?.email}`}
                       className="text-white bg-red-800 hover:bg-blue-500"
                       activeClassName="bg-blue-500"
                     >
@@ -211,15 +229,6 @@ const NavBar = () => {
                    <FaHome className="w-6 h-6" /> Home
                   </NavLink>
                 </li>
-                {/* <li>
-                  <NavLink
-                    to="/adAccountAds"
-                    className="text-white bg-red-800 hover:bg-blue-500"
-                    activeClassName="bg-blue-500"
-                  >
-                    Ad Account
-                  </NavLink>
-                </li> */}
                 <li>
                   <NavLink
                     to="/allAdSAccount"
