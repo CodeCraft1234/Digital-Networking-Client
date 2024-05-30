@@ -3,6 +3,7 @@ import useClients from "../../Hook/useClient";
 import useUsers from "../../Hook/useUsers";
 import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../../Security/AuthProvider";
+import { IoIosSearch } from "react-icons/io";
 
 const AllClients = () => {
   const [users] = useUsers();
@@ -31,12 +32,27 @@ const AllClients = () => {
     setFilteredClients(filtered);
   };
 
+
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("");
+
+  const filteredItems = filteredClients.filter((item) =>
+    item.clientPhone.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const filteredByCategory = selectedCategory
+    ? filteredItems.filter(
+        (item) => item.category.toLowerCase() === selectedCategory.toLowerCase()
+      )
+    : filteredItems;
+
   return (
     <div>
       <h2 className="text-center mx-4 mt-24 py-4 text-white uppercase font-bold text-3xl md:text-5xl bg-green-800">
         All Client Table
       </h2>
-      <form className="flex justify-center items-center" onSubmit={handleSort}>
+<div className="flex justify-between items-center ">
+<form className="flex justify-center items-center" onSubmit={handleSort}>
         <div className="mb-4 ml-10 mx-auto">
           <label className="block text-gray-700">Sort By Employee</label>
           <select name="email" className="border rounded p-2 mt-1">
@@ -47,6 +63,26 @@ const AllClients = () => {
           </button>
         </div>
       </form>
+      <div className="flex justify-end ">
+                <input
+                  type="text"
+                  placeholder=" Client Phone Number"
+                  className=" rounded-l-lg w-20 placeholder-black border-2 border-black p-2 font-bold text-black sm:w-2/3 text-sm bg-blue-300"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                />
+                <button
+                  type="button"
+                  className=" w-10 p-2 font-semibold rounded-r-lg sm:w-1/3 bg-[#FF9F0D] dark:bg-[#FF9F0D] text-white"
+                >
+                  <IoIosSearch className="mx-auto font-bold w-6 h-6" />
+                </button>
+      </div>
+</div>
+
+
+
+
       <div className="p-2 sm:p-4">
         <div className="overflow-x-auto">
           <table className="min-w-full bg-white">
@@ -63,7 +99,7 @@ const AllClients = () => {
               </tr>
             </thead>
             <tbody>
-              {filteredClients.map((campaign, index) => (
+              {filteredByCategory.map((campaign, index) => (
                 <tr
                   key={campaign._id}
                   className={`${

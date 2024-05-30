@@ -28,7 +28,7 @@ const EmployeerMouthlySelery = ({ email }) => {
   }, [ownSelary, email]);
 
   return (
-    <div className="my-10 p-4 dark:bg-green-800">
+    <div className="my-10 mt-24 p-4 dark:bg-green-800">
       <h6 className="text-center mb-5 font-bold uppercase text-4xl p-2 sm:p-2 bg-green-800 text-white">
         Employees Own Monthly Salary Sheet
       </h6>
