@@ -5,21 +5,6 @@ import { toast } from "react-toastify";
 
 const UserAdAccount = ({email}) => {
 
-
-  // const [users] = useUsers(); 
-  // const {user}=useContext(AuthContext)
-  // console.log(users)
-
-  // const [userss,setUser]=useState([])
-  // console.log(userss?.email)
-  // useEffect(()=>{
-  //   const filtered=users.find(e=>e.email === user?.email) 
-  //   console.log('sdahjgj',filtered)
-  //   setUser(filtered)
-  // },[users,user])
-
-
-  
   const [adsAccount] = useAdsAccount();
   const [adsAccounts, setAdsAccounts] = useState([]);
 
@@ -55,7 +40,7 @@ const AxiosPublic=UseAxiosPublic()
 
     const body = { currentBallence,threshold, totalSpent, status };
 
-    AxiosPublic.patch(`https://digital-networking-server.vercel.appadsAccount/${id}`, body)
+    AxiosPublic.patch(`https://digital-networking-server.vercel.app/adsAccount/${id}`, body)
         .then(res => {
             console.log(res.data);
             refetch();

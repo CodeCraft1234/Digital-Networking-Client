@@ -9,7 +9,9 @@ import useClients from "../../Hook/useClient";
 import { Form, Link, NavLink } from "react-router-dom";
 import useAdsAccount from "../../Hook/useAdAccount";
 import UserAdAccount from "../../Components/UserAdAccount/UserAdAccount";
+
 import './BalanceCards.css';
+
 
 const CampaignTable = ({ email }) => {
   console.log(email);
@@ -93,6 +95,7 @@ const CampaignTable = ({ email }) => {
 
     AxiosPublic.post("https://digital-networking-server.vercel.app/clients", data)
     .then((res) => {
+      toast.success("Client Added successfully");
       console.log(res.data);
     });
   };
@@ -131,8 +134,18 @@ const CampaignTable = ({ email }) => {
       })
   },[email])
 
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("");
 
+  const filteredItems = filteredCampaigns.filter((item) =>
+    item.clientPhone.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
+  const filteredByCategory = selectedCategory
+    ? filteredItems.filter(
+        (item) => item.category.toLowerCase() === selectedCategory.toLowerCase()
+      )
+    : filteredItems;
 
 
   return (
@@ -172,11 +185,13 @@ const CampaignTable = ({ email }) => {
       <div className=" p-2  sm:p-4 ">
        
         <div className="overflow-x-auto  ">
+
         <div className="flex justify-start mb-5 text-gray-500 border-b border-opacity-20 mx-2 pb-1 items-center gap-3">
 
         <div >
           <button
             className="font-avenir px-3  mx-auto py-1 bg-green-800 ml-10 rounded-lg text-white"
+
             onClick={() => document.getElementById("my_modal_2").showModal()}
           >
             Add Client
@@ -262,7 +277,6 @@ const CampaignTable = ({ email }) => {
             </div>
           </dialog>
         </div>
-
         <div>
           <button
             className="font-avenir px-3  mx-auto py-1 bg-green-800 ml-10 rounded-lg text-white"
@@ -337,7 +351,9 @@ const CampaignTable = ({ email }) => {
           </dialog>
         </div>
 
+
       </div>
+
 
       <table className="min-w-full bg-white">
   <thead className="bg-red-800 text-white">
@@ -354,7 +370,7 @@ const CampaignTable = ({ email }) => {
     </tr>
   </thead>
   <tbody>
-    {filteredCampaigns.map((campaign, index) => (
+    {filteredByCategory.map((campaign, index) => (
       <tr
         key={campaign._id}
         className={`${

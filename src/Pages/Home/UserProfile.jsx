@@ -16,7 +16,7 @@ const UserProfile = () => {
 
     const AxiosPublic = UseAxiosPublic();
     const [data, setData] = useState({});
-    const [dataa2, setData2] = useState([]);
+
     const [campaign, refetch] = useCampaings();
     const [totalSpent, setTotalSpent] = useState(0);
     const [dollerRate, setDollerRate] = useState(0);
@@ -70,6 +70,7 @@ const UserProfile = () => {
       0
     );
     setTotalSpent(totalBill);
+
 
     const dollerRate = filtered.reduce(
       (acc, campaign) => acc + parseFloat(campaign.dollerRate),
@@ -156,6 +157,7 @@ const UserProfile = () => {
       tSpent,
       dollerRate,
       date,
+
     };
     console.log(data);
 
@@ -179,7 +181,9 @@ const UserProfile = () => {
     setData22(filtered);
   }, [clients, user?.email]);
 
+
   const handleRefresh = () => {
+
     const tSpent = totalSpent;
     const tBill = totalSpent * dollerRate;
     const tPayment = totalPaymeent; // Ensure this variable is defined and correct
@@ -320,6 +324,7 @@ const UserProfile = () => {
                                         <label className="block text-gray-500">Date</label>
                                         <input type="date" name="date" defaultValue={0} className="w-full border rounded p-2 mt-1" />
                                     </div>
+
                                 </div>
                                 <button type="submit" className="font-avenir px-4 mx-auto py-1 bg-green-800 rounded text-white">Pay</button>
                             </form>
@@ -336,6 +341,7 @@ const UserProfile = () => {
 </div>
 </div>
                 <div className="overflow-x-auto mt-4">
+
                     <table className="min-w-full bg-white">
                         <thead className="bg-red-800 text-white">
                             <tr>
@@ -403,7 +409,10 @@ const UserProfile = () => {
                                 <td className="p-3 text-center"> {totalSpent}</td>
                                 <td className="p-3 text-center"></td>
                                 <td className="p-3 text-center"></td>
+
+
                                 <td className="p-3 text-center"></td>
+                               
                             </tr>
                         </tbody>
                     </table>

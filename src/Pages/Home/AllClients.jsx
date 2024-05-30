@@ -3,6 +3,7 @@ import useClients from "../../Hook/useClient";
 import useUsers from "../../Hook/useUsers";
 import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../../Security/AuthProvider";
+import { IoIosSearch } from "react-icons/io";
 
 const AllClients = () => {
   const [users] = useUsers();
@@ -31,13 +32,29 @@ const AllClients = () => {
     setFilteredClients(filtered);
   };
 
+
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("");
+
+  const filteredItems = filteredClients.filter((item) =>
+    item.clientPhone.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const filteredByCategory = selectedCategory
+    ? filteredItems.filter(
+        (item) => item.category.toLowerCase() === selectedCategory.toLowerCase()
+      )
+    : filteredItems;
+
   return (
+
    
      <div className="mt-24 p-4 dark:text-green-800">
         <h6 className="text-center py-4 text-white uppercase font-bold text-3xl md:text-5xl bg-green-800 ">
           All Client Table
         </h6>
       <form className="flex justify-center items-center" onSubmit={handleSort}>
+
         <div className="mb-4 ml-10 mx-auto">
           <label className="block text-gray-500 font-bold">Sort By Employee</label>
           <select name="email" className="border rounded p-2 mt-1">
@@ -48,6 +65,8 @@ const AllClients = () => {
           </button>
         </div>
       </form>
+
+
 
       <div className="p-2 sm:p-4">
         <div className="overflow-x-auto">
@@ -65,7 +84,7 @@ const AllClients = () => {
               </tr>
             </thead>
             <tbody>
-              {filteredClients.map((campaign, index) => (
+              {filteredByCategory.map((campaign, index) => (
                 <tr
                   key={campaign._id}
                   className={`${
