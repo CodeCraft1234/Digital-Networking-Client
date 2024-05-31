@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
 import useAdsAccount from "../../Hook/useAdAccount";
 import UseAxiosPublic from "../../Axios/UseAxiosPublic";
-import { toast } from "react-toastify";
+// import { toast } from "react-toastify";
+import Swal from 'sweetalert2'
 
 const UserAdAccount = ({email}) => {
 
-  const [adsAccount] = useAdsAccount();
+  const [adsAccount, refetch] = useAdsAccount();
   const [adsAccounts, setAdsAccounts] = useState([]);
 
   useEffect(() => {
@@ -25,30 +26,49 @@ const UserAdAccount = ({email}) => {
 
     AxiosPublic.post("https://digital-networking-server.vercel.app/adsAccount", data).then((res) => {
       console.log(res.data);
-      toast.success("add successful");
+      // toast.success("add successful");
+      Swal.fire({
+        title: "Good job!",
+        text: "add successful!",
+        icon: "success"
+      });
+ 
     });
   };
 
 const AxiosPublic=UseAxiosPublic()
   const handleUpdate = (e, id) => {
     e.preventDefault();
+    const accountName = e.target.accountName.value;
     const currentBallence = e.target.currentBallence.value;
     const threshold = e.target.threshold.value;
     const totalSpent = e.target.totalSpent.value;
     const status = e.target.status.value;
-    console.log(currentBallence,threshold, totalSpent, status);
+    console.log(accountName, currentBallence,threshold, totalSpent, status);
 
-    const body = { currentBallence,threshold, totalSpent, status };
+    const body = { accountName, currentBallence,threshold, totalSpent, status };
 
     AxiosPublic.patch(`https://digital-networking-server.vercel.app/adsAccount/${id}`, body)
         .then(res => {
             console.log(res.data);
             refetch();
-            toast.success("Campaign updated successfully");
+            // toast.success("Campaign updated successfully");
+            Swal.fire({
+              title: "Good job!",
+              text: "Campaign update success!",
+              icon: "success"
+            });
+            
         })
         .catch(error => {
             console.error("Error updating campaign:", error);
-            toast.error("Failed to update campaign");
+            // toast.error("Failed to update campaign");
+            Swal.fire({
+              icon: "error",
+              title: "Oops...",
+              text: "Failed to update campaign!",
+              
+            });
         });
 };
 
@@ -72,7 +92,7 @@ const AxiosPublic=UseAxiosPublic()
                   <div className="mb-4">
                     <label className="block text-gray-250">Account Name</label>
                     <input
-                      type="type"
+                      type="text required"
                       name="accountName"
                       placeholder="type here..."
                       className="w-full border rounded p-2 mt-1"
@@ -81,7 +101,7 @@ const AxiosPublic=UseAxiosPublic()
                   <div className="mb-4">
                     <label className="block text-gray-250">Issue Date</label>
                     <input
-                      type="date"
+                      type="date required"
                       name="issueDate"
                       defaultValue={0}
                       className="w-full border rounded p-2 mt-1"
@@ -123,15 +143,15 @@ const AxiosPublic=UseAxiosPublic()
               key={account._id}
               className={`${
                 index % 2 === 0
-                  ? "text-gray-500 border-b border-opacity-20 hover:text-blue-600"
-                  : "text-gray-500 border-b border-opacity-20 hover:text-blue-600"
+                  ? "text-gray-500 border-b border-opacity-20 "
+                  : "text-gray-500 border-b border-opacity-20 "
               }`}
             >
               <td className="p-3 text-center">{account.issueDate}</td>
               <td className="p-3 text-center">{account.accountName}</td>
-              <td className="p-3 text-center">{account.currentBallence}</td>
-              <td className="p-3 text-center">{account.threshold}</td>
-              <td className="p-3 text-center">{account.totalSpent}</td>
+              <td className="p-3 text-center">$ {account.currentBallence}</td>
+              <td className="p-3 text-center">$ {account.threshold}</td>
+              <td className="p-3 text-center">$ {account.totalSpent}</td>
               <td className="p-3 text-center">{account.status}</td>
               <td className="p-3 text-center">
                 <button
@@ -148,11 +168,23 @@ const AxiosPublic=UseAxiosPublic()
                       <div className="flex justify-center items-center gap-3">
                         <div className="mb-4">
                           <label className="block text-gray-500">
+                          Account Name
+                          </label>
+                          <input
+                            type="text required"
+                            name="accountName"
+                            defaultValue={account.accountName}
+                            className="w-full border rounded p-2 mt-1 text-gray-500"
+                          />
+                        </div>
+                        <div className="mb-4">
+                          <label className="block text-gray-500">
                             Current Ballence
                           </label>
                           <input
-                            type="number"
+                            type="number required"
                             name="currentBallence"
+                            defaultValue={account.currentBallence}
                             className="w-full border rounded p-2 mt-1 text-gray-500"
                           />
                         </div>
@@ -161,8 +193,9 @@ const AxiosPublic=UseAxiosPublic()
                             Threshold
                           </label>
                           <input
-                            type="number"
+                            type="number required"
                             name="threshold"
+                            defaultValue={account.threshold}
                             className="w-full border rounded p-2 mt-1 text-gray-500"
                           />
                         </div>
@@ -173,8 +206,9 @@ const AxiosPublic=UseAxiosPublic()
                            TotaL Spent
                           </label>
                           <input
-                            type="number"
+                            type="number required"
                             name="totalSpent"
+                            defaultValue={account.totalSpent}
                             className="w-full border rounded p-2 mt-1 text-gray-500"
                           />
                         </div>
@@ -183,23 +217,27 @@ const AxiosPublic=UseAxiosPublic()
                             Status
                           </label>
                           <select
+                          type="text required"
                             name="status"
-                            className="w-full border rounded p-2 mt-1 text-gray-500"
+                            defaultValue={account.status}
+                            className="w-full border rounded p-2 mt-1"
                           >
-                            <option value="Active">Active</option>
-                            <option value="Disable">Disable</option>
+                            <option className="text-green-800" value="Active">Active</option>
+                            <option className="text-red-800" value="Disable">Disable</option>
                           </select>
                         </div>
                       </div>
 
-                      <button
+                      <button onClick={() =>
+                          document.getElementById(`modal_${index}`).close()
+                        }
                         type="submit"
                         className="font-avenir px-3 mx-auto py-1 bg-green-800 rounded-lg text-white"
                       >
                         Update
                       </button>
                     </form>
-                    <div className="modal-action">
+                    {/* <div className="modal-action">
                       <button
                         className="p-2 rounded-lg bg-red-600 text-white text-center"
                         onClick={() =>
@@ -208,7 +246,7 @@ const AxiosPublic=UseAxiosPublic()
                       >
                         Close
                       </button>
-                    </div>
+                    </div> */}
                   </div>
                 </dialog>
               </td>
