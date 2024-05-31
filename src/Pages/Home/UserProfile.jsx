@@ -280,8 +280,8 @@ const handleRefresh = () => {
                                      </dialog>
                  </div>
                  <div>
-                 <button className="font-avenir px-3  mx-auto py-1 bg-green-800 ml-10 rounded-lg text-white" onClick={() => document.getElementById('my_modal_1').showModal()}>Pay Now</button>
-                                     <dialog id="my_modal_1" className="modal">
+                 <button className="font-avenir px-3  mx-auto py-1 bg-green-800 ml-10 rounded-lg text-white" onClick={() => document.getElementById('my_modal_8').showModal()}>Pay Now</button>
+                                     <dialog id="my_modal_8" className="modal">
                                          <div className="modal-box">
                                              <form onSubmit={(e) => handlePayment(e)}>
                                                 <div className="flex justify-center items-center gap-3">

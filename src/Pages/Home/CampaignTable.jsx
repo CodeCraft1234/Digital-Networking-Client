@@ -9,7 +9,7 @@ import useClients from "../../Hook/useClient";
 import { Form, Link, NavLink } from "react-router-dom";
 import useAdsAccount from "../../Hook/useAdAccount";
 import UserAdAccount from "../../Components/UserAdAccount/UserAdAccount";
-
+import Swal from 'sweetalert2'
 import './BalanceCards.css';
 
 
@@ -95,9 +95,26 @@ const CampaignTable = ({ email }) => {
 
     AxiosPublic.post("https://digital-networking-server.vercel.app/clients", data)
     .then((res) => {
-      toast.success("Client Added successfully");
+      // toast.success("Client Added successfully");
       console.log(res.data);
-    });
+      Swal.fire({
+        title: "Good job!",
+        text: "Client add success!",
+        icon: "success"
+      });
+      
+  })
+  .catch(error => {
+      console.error("Error adding client:", error);
+      // toast.error("Failed to update campaign");
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: "Failed to add client!",
+      });
+ 
+   })
+   
   };
 
 
@@ -220,6 +237,7 @@ const CampaignTable = ({ email }) => {
             className="font-avenir px-3  mx-auto py-1 bg-green-800 ml-10 rounded-lg text-white"
 
             onClick={() => document.getElementById("my_modal_2").showModal()}
+            
           >
             Add Client
           </button>

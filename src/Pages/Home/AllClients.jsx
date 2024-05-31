@@ -120,8 +120,10 @@ const AllClients = () => {
               ))}
             </tbody>
           </table>
+          
         </div>
       </div>
+      
     </div>
   );
 };

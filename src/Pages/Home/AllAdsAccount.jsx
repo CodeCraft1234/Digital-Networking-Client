@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import useAdsAccount from "../../Hook/useAdAccount";
 import UseAxiosPublic from "../../Axios/UseAxiosPublic";
-import { toast } from "react-toastify";
+// import { toast } from "react-toastify";
 import useUsers from "../../Hook/useUsers";
+import Swal from 'sweetalert2'
 
 const AllAdsAccount = () => {
   const [adsAccount, refetch] = useAdsAccount();
@@ -31,13 +32,31 @@ const AllAdsAccount = () => {
 
     AxiosPublic.patch(`https://digital-networking-server.vercel.app/adsAccount/${id}`, body)
       .then((res) => {
+        console.log(res.body);
         refetch();
-        toast.success("Campaign updated successfully");
+        // toast.success("Campaign updated successfully");
+        Swal.fire({
+          title: "Good job!",
+          text: "Add Account success!",
+          icon: "success"
+        });
+        
+  
         setModalData(null); // Close the modal
       })
-      .catch((error) => {
-        console.error("Error updating campaign:", error);
-        toast.error("Failed to update campaign");
+      // .catch((error) => {
+      //   console.error("Error updating campaign:", error);
+        // toast.error("Failed to update campaign");
+        .catch(error => {
+          console.error("Error adding account:", error);
+          // toast.error("Failed to update campaign");
+          Swal.fire({
+            icon: "error",
+            title: "Oops...",
+            text: "Failed to add account!",
+          });
+     
+      
       });
   };
 
@@ -164,7 +183,7 @@ const AllAdsAccount = () => {
                 </div>
               </div>
 
-              <button
+              <button 
                 type="submit"
                 className="font-avenir px-3 mx-auto py-1 rounded-lg text-white bg-green-800"
               >
