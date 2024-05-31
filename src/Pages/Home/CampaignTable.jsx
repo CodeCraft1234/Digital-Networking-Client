@@ -155,7 +155,7 @@ const CampaignTable = ({ email }) => {
       const clientPhone = e.target.clientPhone.value;
       const data = { clientName, clientPhone };
     
-      AxiosPublic.patch(`http://localhost:5000/clients/${id}`, data)
+      AxiosPublic.patch(`https://digital-networking-server.vercel.app/clients/${id}`, data)
         .then(res => {
           console.log(res.data);
           refetch(); // Ensure this function is defined and correct
