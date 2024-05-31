@@ -2,6 +2,7 @@ import { Form } from "react-router-dom";
 import UseAxiosPublic from "../../Axios/UseAxiosPublic";
 import { useContext } from "react";
 import { AuthContext } from "../../Security/AuthProvider";
+import Swal from 'sweetalert2'
 
 const AddClient = () => {
   const AxiosPublic=UseAxiosPublic()
@@ -21,9 +22,25 @@ const AddClient = () => {
         const date=e.target.date.value
         const data={clientName,clientEmail,clientPhone,tBudged,email,tSpent,tBill,date, tDue,tPaid}
        console.log(data)
-       AxiosPublic.post('https://digital-networking-server.vercel.appclients',data)
+       AxiosPublic.post('https://digital-networking-server.vercel.app/clients',data)
        .then(res=>{
         console.log(res.data)
+        Swal.fire({
+            title: "Good job!",
+            text: "Client add success!",
+            icon: "success"
+          });
+          
+      })
+      .catch(error => {
+          console.error("Error adding client:", error);
+          // toast.error("Failed to update campaign");
+          Swal.fire({
+            icon: "error",
+            title: "Oops...",
+            text: "Failed to add client!",
+          });
+     
        })
 
        }

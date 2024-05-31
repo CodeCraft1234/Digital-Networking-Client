@@ -53,12 +53,12 @@ const AllClients = () => {
         {/* <h6 className="text-center py-4 text-white uppercase font-bold text-3xl md:text-5xl bg-green-800 ">
           All Client Table
         </h6> */}
-      <form className="flex justify-center items-center" onSubmit={handleSort}>
+   
 
     <div>
-      <h2 className="text-center mx-4 mt-24 py-4 text-white uppercase font-bold text-3xl md:text-5xl bg-green-800">
+      {/* <h2 className="text-center mx-4 mt-24 py-4 text-white uppercase font-bold text-3xl md:text-5xl bg-green-800">
         All Client Table
-      </h2>
+      </h2> */}
 <div className="flex justify-between items-center ">
 <form className="flex justify-center items-center" onSubmit={handleSort}>
 
@@ -131,10 +131,12 @@ const AllClients = () => {
               ))}
             </tbody>
           </table>
+          
         </div>
       </div>
+      
     </div>
-    </form>
+   
     </div>
   );
 };
