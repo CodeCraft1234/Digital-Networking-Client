@@ -50,9 +50,7 @@ const AllAdsAccount = () => {
   return (
     <div>
       <div className="mt-24 p-4 dark:text-green-800">
-        {/* <h6 className="text-center py-4 text-white uppercase font-bold text-3xl md:text-5xl bg-green-800 ">
-          Ads Account Activities
-        </h6> */}
+      
 
         <form className="flex justify-center items-center" onSubmit={handleFilter}>
           <div className="mb-4 ml-10 mx-auto">
@@ -63,7 +61,7 @@ const AllAdsAccount = () => {
               onChange={(e) => setSelectedEmail(e.target.value)}
               className="border rounded p-2 mt-1"
             >
-              <option value="">Select an Employee</option>
+              <option disabled value="">All Employee</option>
               {users?.filter(u => u.role === 'employee').map((user) => (
                 <option key={user._id} value={user.email}>{user.name}</option>
               ))}

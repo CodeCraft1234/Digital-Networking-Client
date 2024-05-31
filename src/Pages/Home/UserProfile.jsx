@@ -108,13 +108,11 @@ const UserProfile = () => {
 
     const handleUpdate = (e, id) => {
         e.preventDefault();
-        const newSpent = e.target.newSpent.value;
-        const previousSpent = e.target.previousSpent.value;
+        const tSpent = e.target.totalSpent.value;
         const status = e.target.status.value;
         const dollerRate = e.target.dollerRate.value;
-        console.log(newSpent, previousSpent, status);
+       
 
-        const tSpent = (parseFloat(previousSpent) + parseFloat(newSpent));
         const body = { tSpent, status,dollerRate }
 
         AxiosPublic.patch(`https://digital-networking-server.vercel.app/campaings/${id}`, body)
@@ -287,10 +285,7 @@ const handleRefresh = () => {
                                          <div className="modal-box">
                                              <form onSubmit={(e) => handlePayment(e)}>
                                                 <div className="flex justify-center items-center gap-3">
-                                                <div className="mb-4">
-                                                     <label className="block text-gray-700">Previous Received</label>
-                                                     <input required type="number" disabled name="previousReceived" defaultValue={totalPaymeent} className="w-full border rounded p-2 mt-1" />
-                                                 </div>
+                                                
                                                  <div className="mb-4">
                                                      <label className="block text-gray-700">New Amount</label>
                                                      <input required type="number" name="amount"  className="w-full border rounded p-2 mt-1" />
@@ -365,8 +360,8 @@ const handleRefresh = () => {
                                                               <input type="number" disabled name="previousSpent" defaultValue={work.tSpent} className="w-full border rounded p-2 mt-1" />
                                                           </div>
                                                           <div className="mb-4">
-                                                              <label className="block text-gray-700">New Spent</label>
-                                                              <input type="number" name="newSpent" defaultValue={0} className="w-full border rounded p-2 mt-1" />
+                                                              <label className="block text-gray-700">Total Spent</label>
+                                                              <input type="number" name="totalSpent" defaultValue={0} className="w-full border rounded p-2 mt-1" />
                                                           </div>
                                                       </div>
                                                       <div className="flex justify-center items-center gap-3">

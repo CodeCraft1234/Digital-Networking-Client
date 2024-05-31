@@ -148,41 +148,67 @@ const CampaignTable = ({ email }) => {
     : filteredItems;
 
 
+    const handleUpdate = (e, id) => {
+      e.preventDefault();
+    
+      const clientName = e.target.clientName.value;
+      const clientPhone = e.target.clientPhone.value;
+      const data = { clientName, clientPhone };
+    
+      AxiosPublic.patch(`http://localhost:5000/clients/${id}`, data)
+        .then(res => {
+          console.log(res.data);
+          refetch(); // Ensure this function is defined and correct
+          toast.success("Client updated successfully");
+        })
+        .catch(error => {
+          console.error("Error updating client:", error);
+          toast.error("Failed to update client");
+        });
+    };
+    
   return (
     <div className="my-24 mb-24">
-      
-       <div className="balance-cards-container">
-      <div className="balance-card">
+       <div className="grid lg:grid-cols-3 gap-6 m-12">
+      <div className="balance-card shadow-4xl">
         <img className="balance-card-img" src="https://i.ibb.co/bHMLyvM/b-Kash-Merchant.png" alt="bKash" />
-        <p className="balance-card-text">Balance: ৳ {bkashMarcent}</p>
+        <p className="balance-card-text text-4xl"> <span className="text-4xl font-extrabold">৳</span> {bkashMarcent}</p>
       </div>
-      <div className="balance-card">
+      <div className="balance-card shadow-4xl">
         <img className="balance-card-img" src="https://i.ibb.co/520Py6s/bkash-1.png" alt="bKash" />
-        <p className="balance-card-text">Balance: ৳ {bkashPersonal}</p>
+        <p className="balance-card-text text-4xl"> <span className="text-4xl font-extrabold"> ৳</span> {bkashPersonal}</p>
       </div>
-      <div className="balance-card">
+      <div className="balance-card shadow-4xl">
         <img className="balance-card-img" src="https://i.ibb.co/JQBQBcF/nagad-marchant.png" alt="Nagad" />
-        <p className="balance-card-text">Balance: ৳ {nagadPersonal}</p>
+        <p className="balance-card-text text-4xl"><span className="text-4xl font-extrabold">৳</span> {nagadPersonal}</p>
       </div>
-      <div className="balance-card">
+      <div className="balance-card shadow-4xl">
         <img className="balance-card-img" src="https://i.ibb.co/QkTM4M3/rocket.png" alt="Rocket" />
-        <p className="balance-card-text">Balance: ৳ {rocketPersonal}</p>
+        <p className="balance-card-text text-4xl"><span className="text-4xl font-extrabold">৳</span> {rocketPersonal}</p>
       </div>
-      <div className="balance-card">
-        <img className="balance-card-img" src="https://i.ibb.co/3WVZGdz/PAYO-BIG-aa26e6e0.png" alt="Payoneer" />
-        <p className="balance-card-text">Total USD: $4000</p>
-        <p className="balance-card-text">Total Spent: ${totalSpent}</p>
+
+      <div className="balance-card summary-card shadow-4xl">
+        <p className="balance-card-text text-3xl">Total BDT: <span className="text-3xl font-extrabold">৳</span> {totalRCV}</p>
+        <p className="balance-card-text text-3xl">Total RCV: <span className="text-3xl font-extrabold">৳</span> {totalRCV}</p>
+        <p className="balance-card-text text-3xl">Total Pay: <span className="text-3xl font-extrabold">৳</span> {totalRCV}</p>
       </div>
-      <div className="balance-card summary-card">
-        <p className="balance-card-text">Total Balance: ৳ 1000</p>
-        <p className="balance-card-text">Total Received: ৳ {totalRCV}</p>
-        <p className="balance-card-text">Total Cash Out: ৳ 10000</p>
+
+      <div className="balance-card shadow-4xl">
+        <div>
+          <img className="balance-card-img" src="https://i.ibb.co/3WVZGdz/PAYO-BIG-aa26e6e0.png" alt="Payoneer" />
+          <span className="balance-card-text text-4xl flex items-center justify-center gap-4">
+          <p className="balance-card-text text-4xl"> <span className="text-4xl font-extrabold text-red-600">$</span> 4000</p>
+          <p className="balance-card-text text-4xl"> <span className="text-4xl font-extrabold text-red-600">/</span></p>
+          <p className="balance-card-text text-4xl"> <span className="text-4xl font-extrabold text-green-800">$</span> {totalSpent}</p>
+          </span>
+        
+        
+        </div>
       </div>
+     
     </div>
       
-      <h2 className="text-center mx-4 mt-10 py-4 text-white uppercase font-bold text-3xl md:text-5xl bg-green-800">
-          Client Table
-        </h2>
+     
       <div className=" p-2  sm:p-4 ">
        
         <div className="overflow-x-auto  ">
@@ -367,7 +393,7 @@ const CampaignTable = ({ email }) => {
       <th className="p-3 text-center">T.Spent</th>
       <th className="p-3 text-center">Total Bill</th>
       <th className="p-3 text-center">Total Payment Rcv</th>
-      <th className="p-3"></th>
+      <th className="p-3">Edit</th>
     </tr>
   </thead>
   <tbody>
@@ -389,7 +415,56 @@ const CampaignTable = ({ email }) => {
         <td className="p-3 text-center">{campaign.tSpent}</td>
         <td className="p-3 text-center">{campaign.tBill}</td>
         <td className="p-3 text-center">{campaign.tPayment}</td>
-        <td className="p-3"></td>
+        <td className="p-3">
+
+        <button
+            className="font-avenir px-3  mx-auto py-1 bg-green-800 ml-10 rounded-lg text-white"
+            onClick={() => document.getElementById("my_modal_7").showModal()}
+          >
+            Edit
+          </button>
+          <dialog id="my_modal_7" className="modal">
+            <div className="modal-box">
+              <form onSubmit={(e) => handleUpdate(e, campaign._id)}>
+                <div className="flex justify-center items-center gap-3">
+                  <div className="mb-4">
+                    <label className="block text-gray-250">
+                      Client Name
+                    </label>
+                    <input
+                      type="text"
+                      defaultValue={campaign.clientName}
+                      name="clientName"
+                      placeholder="type here...."
+                      className="w-full border rounded p-2 mt-1"
+                    />
+                  </div>
+                  <div className="mb-4">
+                    <label className="block text-gray-250">Client Phone</label>
+                    <input
+                      type="number"
+                      name="clientPhone"
+                      defaultValue={campaign.clientPhone}
+                      placeholder="type here...."
+                      className="w-full border rounded p-2 mt-1"
+                    />
+                  </div>
+                </div>
+                <button
+                  type="submit"
+                  className="font-avenir px-3 mx-auto py-1 rounded-lg flex justify-center text-white bg-green-800"
+                >
+                  Update
+                </button>
+              </form>
+              <div className="modal-action">
+                <form method="dialog">
+                  <button className="p-2 rounded-lg bg-red-600 text-white text-center">Close</button>
+                </form>
+              </div>
+            </div>
+          </dialog>
+        </td>
       </tr>
     ))}
     <tr className="bg-green-800 text-sm text-white font-bold">

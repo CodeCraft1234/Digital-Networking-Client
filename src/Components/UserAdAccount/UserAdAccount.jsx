@@ -54,7 +54,7 @@ const AxiosPublic=UseAxiosPublic()
 
   return (
     <div className="mt-24 p-4 dark:text-green-800">
-    <h6 className="text-center mx-4 py-4 text-white uppercase font-bold text-3xl md:text-5xl bg-green-800 ">
+    <h6 className="text-center  py-4 text-white uppercase font-bold text-3xl md:text-5xl bg-green-800 ">
        Ads Account Activities
     </h6>
 

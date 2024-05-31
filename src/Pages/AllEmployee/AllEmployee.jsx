@@ -3,6 +3,8 @@ import { useContext, useEffect, useState } from "react";
 import useUsers from "../../Hook/useUsers";
 import "tailwindcss/tailwind.css";
 import { AuthContext } from "../../Security/AuthProvider";
+import { Link } from "react-router-dom";
+import Payment from "../Home/Payment";
 
 const AllEmployee = () => {
   const [users, setUsers] = useUsers();
@@ -31,21 +33,23 @@ const AllEmployee = () => {
 
   return (
     <div className="mt-24 p-4 dark:text-green-800">
-      <h6 className="text-center mx-4 py-4 text-white uppercase font-bold text-3xl md:text-5xl bg-green-800 mb-6">
+      {/* <h6 className="text-center mx-4 py-4 text-white uppercase font-bold text-3xl md:text-5xl bg-green-800 mb-6">
         All Employee
-      </h6>
+      </h6> */}
 
-      {ddd?.role === "employee" && (
+      {/* {ddd?.role === "employee" && (
         <h2 className="mb-4 text-center mx-4 py-4 text-white uppercase font-bold text-3xl md:text-5xl bg-green-800">
           All Employers
         </h2>
-      )}
+      )} */}
+
+
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-10 p-4">
         {employee?.map((em) => (
           <div
             key={em._id}
-            className="bg-white hover:bg-blue-600 mx-auto shadow-md rounded-lg p-6 transform transition-all hover:scale-105 hover:shadow-xl"
+            className="bg-white border-2 border-black hover:bg-blue-600 mx-auto shadow-md rounded-lg p-6 transform transition-all hover:scale-105 hover:shadow-xl"
             style={{ width: "300px", height: "400px" }}
           >
             <div className="text-center text-black hover:text-blue-100">
@@ -65,7 +69,7 @@ const AllEmployee = () => {
                 <span>Email: </span>
                 <span>{em.email}</span>
               </div>
-              <div className="flex items-center justify-start mb-2 gap-2">
+              <div className="flex overflow-hidden items-center justify-start mb-2 gap-2">
                 <span>Facebook: </span>
                 <span>{em.facebookID}</span>
               </div>
