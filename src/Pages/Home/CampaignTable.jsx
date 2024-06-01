@@ -245,7 +245,15 @@ const CampaignTable = ({ email }) => {
                     <MdCampaign className="w-6 h-6" /> Campaigns
                   </NavLink>
                 </li>
-                
+                <li>
+                  <NavLink
+                    to={`/employeeMonthlySelary`}
+                    className="text-white bg-red-800 hover:bg-green-300 hover:text-black"
+                    activeClassName="bg-green-300"
+                  >
+                    <FaSackDollar className="w-5 h-5" /> Salary
+                  </NavLink>
+                </li>
               
               </>
             ) : (
@@ -275,6 +283,16 @@ const CampaignTable = ({ email }) => {
                     activeClassName="bg-green-300"
                   >
                     <MdAccountCircle className="w-6 h-6" /> Ads Accounts
+                  </NavLink>
+                </li>
+
+                <li>
+                  <NavLink
+                    to={`/selary/${user?.email}`}
+                    className="text-white bg-red-800 hover:bg-green-300 hover:text-black"
+                    activeClassName="bg-green-300"
+                  >
+                    <FaSackDollar className="w-5 h-5" /> Salary
                   </NavLink>
                 </li>
                 
