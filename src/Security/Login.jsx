@@ -15,11 +15,29 @@ const Login = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
+
+  const { user } = useContext(AuthContext);
+  const [users] = useUsers();
+  const [ddd, setDdd] = useState(null);
+
+  useEffect(() => {
+      if (users && user) {
+          const fff = users.find(u => u.email === user?.email);
+          console.log(fff);
+          setDdd(fff || {}); // Update state with found user or an empty object
+      }
+  }, [users, user]);
+
+  console.log(ddd?.name);
+
   const handleGoogleLogin = () => {
     googleSignIn()
       .then((result) => {
         console.log(result.user);
-        navigate(location?.state ? location.state : "/");
+        {
+          ddd?.role === 'employee' ?  navigate(location?.state ? location.state : `/userInfo/${ddd?.email}`) :  navigate(location?.state ? location.state : "/");
+        }
+       
         toast.success("Google login successful");
       })
       .catch((error) => {
@@ -66,7 +84,9 @@ const handleFacebook = () => {
     signIn(email, password)
       .then((result) => {
         console.log(result.user);
-        navigate(location?.state ? location.state : "/");
+        {
+          ddd?.role === 'admin' ?  navigate(location?.state ? location.state : "/") :  navigate(location?.state ? location.state : `/myProfile/${ddd?.email}`)
+        }
         toast.success("User login successful");
       })
       .catch((error) => {
@@ -75,19 +95,7 @@ const handleFacebook = () => {
       });
   };
 
-  const { user } = useContext(AuthContext);
-  const [users] = useUsers();
-  const [ddd, setDdd] = useState(null);
-
-  useEffect(() => {
-      if (users && user) {
-          const fff = users.find(u => u.email === user?.email);
-          console.log(fff);
-          setDdd(fff || {}); // Update state with found user or an empty object
-      }
-  }, [users, user]);
-
-  console.log(ddd?.name);
+ 
 
   return (
     <div className="mt-32 flex justify-center items-center mx-auto lg:pb-0 md:pb-0 pb-8">

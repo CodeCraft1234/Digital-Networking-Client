@@ -11,6 +11,7 @@ import useAdsAccount from "../../Hook/useAdAccount";
 import UserAdAccount from "../../Components/UserAdAccount/UserAdAccount";
 import Swal from 'sweetalert2'
 import './BalanceCards.css';
+import { AuthContext } from "../../Security/AuthProvider";
 
 
 const CampaignTable = ({ email }) => {
@@ -20,9 +21,23 @@ const CampaignTable = ({ email }) => {
   const AxiosPublic = UseAxiosPublic();
   const [filteredCampaigns, setFilteredCampaigns] = useState([]);
   const [data, setUserData] = useState([]);
-  const [users] = useUsers();
-  const [user, setUser] = useState(null);
+
   console.log("kjhgfaklhgklagshkl", clients, adsAccount);
+
+
+  const { user } = useContext(AuthContext);
+    const [users] = useUsers();
+    const [ddd, setDdd] = useState(null);
+
+    useEffect(() => {
+        if (users && user) {
+            const fff = users.find(u => u.email === user?.email);
+            console.log(fff);
+            setDdd(fff || {}); // Update state with found user or an empty object
+        }
+    }, [users, user]);
+
+    console.log(ddd?.name);
 
   const [totalSpent, setTotalSpent] = useState(0);
   const [totalBudged, setTotalBudged] = useState(0);
@@ -97,6 +112,7 @@ const CampaignTable = ({ email }) => {
     .then((res) => {
       // toast.success("Client Added successfully");
       console.log(res.data);
+      refetch();
       Swal.fire({
         title: "Good job!",
         text: "Client add success!",
@@ -232,96 +248,80 @@ const CampaignTable = ({ email }) => {
 
         <div className="flex justify-start mb-5 text-gray-500 border-b border-opacity-20 mx-2 pb-1 items-center gap-3">
 
-        <div >
-          <button
-            className="font-avenir px-3  mx-auto py-1 bg-green-800 ml-10 rounded-lg text-white"
 
-            onClick={() => document.getElementById("my_modal_2").showModal()}
-            
-          >
-            Add Client
-          </button>
-          <dialog id="my_modal_2" className="modal">
-            <div className="modal-box">
-              <section className="p-6 mt-24 dark:text-gray-100">
-                <Form
-                  onSubmit={handleaddblog}
-                  className="container w-full max-w-xl p-8 mx-auto space-y-6 rounded-md shadow dark:bg-gray-900"
-                >
-                  <div>
-                    <h1 className="text-3xl  text-center font-bold  text-gray-500">
-                      Add a Client{" "}
-                    </h1>
-                    <div className="flex justify-center items-center gap-3 mt-2">
-                      <div>
-                        <label for="date" className="block mb-1 ml-1">
-                          Date
-                        </label>
-                        <input
-                          id="date"
-                          name="date"
-                          type="date"
-                          placeholder="type...."
-                          required=""
-                          className="block w-full p-2 rounded focus:outline-none focus:ring focus:ri focus:ri dark:bg-gray-800"
-                        />
-                      </div>
-                      <div>
-                        <label for="name" className="block mb-1 ml-1">
-                          Client Name
-                        </label>
-                        <input
-                          id="name"
-                          name="clientName"
-                          type="text"
-                          placeholder="type...."
-                          required=""
-                          className="block w-full p-2 rounded focus:outline-none focus:ring focus:ri focus:ri dark:bg-gray-800"
-                        />
-                      </div>
-                    </div>
-                    <div className="flex justify-center items-center gap-3">
-                      <div>
-                        <label for="name" className="block mb-1 ml-1">
-                          Client Phone
-                        </label>
-                        <input
-                          id="name"
-                          name="clientPhone"
-                          type="number"
-                          placeholder="type...."
-                          required=""
-                          className="block w-full p-2 rounded focus:outline-none focus:ring focus:ri focus:ri dark:bg-gray-800"
-                        />
-                      </div>
-                      <div>
-                        <label for="name" className="block mb-1 ml-1">
-                          Client Email
-                        </label>
-                        <input
-                          id="name"
-                          name="clientEmail"
-                          type="text"
-                          placeholder="type...."
-                          required=""
-                          className="block w-full p-2 rounded focus:outline-none focus:ring focus:ri focus:ri dark:bg-gray-800"
-                        />
-                      </div>
-                    </div>
-                  </div>
-                  <button className="w-full px-4 py-2 font-bold rounded-lg shadow focus:outline-none focus:ring hover:ring focus:ri bg-green-800 focus:ri hover:ri text-white">
-                    Submit
-                  </button>
-                </Form>
-              </section>
-              <div className="modal-action">
-                <form method="dialog">
-                  <button className="p-2 rounded-lg bg-red-600 text-white text-center">Close</button>
-                </form>
+      {
+        ddd?.role === 'admin' ? <></> : <div>
+        <button
+          className="font-avenir px-3 mx-auto py-1 bg-green-800 ml-10 rounded-lg text-white"
+          onClick={() => document.getElementById("my_modal_2").showModal()}
+        >
+          Add Client
+        </button>
+        <dialog id="my_modal_2" className="modal">
+          <div className="modal-box">
+            <form onSubmit={handleaddblog}>
+              <div className="flex justify-center items-center gap-3">
+                <div className="mb-4">
+                  <label className="block text-gray-700">Date</label>
+                  <input
+                    id="date"
+                    name="date"
+                    type="date"
+                    required
+                    className="w-full border rounded p-2 mt-1 dark:bg-gray-800"
+                  />
+                </div>
+                <div className="mb-4">
+                  <label className="block text-gray-700">Client Name</label>
+                  <input
+                    id="name"
+                    name="clientName"
+                    type="text"
+                    required
+                    className="w-full border rounded p-2 mt-1 dark:bg-gray-800"
+                  />
+                </div>
               </div>
+              <div className="flex justify-center items-center gap-3">
+                <div className="mb-4">
+                  <label className="block text-gray-700">Client Phone</label>
+                  <input
+                    id="clientPhone"
+                    name="clientPhone"
+                    type="number"
+                    required
+                    className="w-full border rounded p-2 mt-1 dark:bg-gray-800"
+                  />
+                </div>
+                <div className="mb-4">
+                  <label className="block text-gray-700">Client Email</label>
+                  <input
+                    id="clientEmail"
+                    name="clientEmail"
+                    type="email"
+                    required
+                    className="w-full border rounded p-2 mt-1 dark:bg-gray-800"
+                  />
+                </div>
+              </div>
+              <button type="submit" className="font-avenir flex justify-center px-3 mx-auto py-1 bg-green-800 rounded text-white">
+                Submit
+              </button>
+            </form>
+            <div className="modal-action flex justify-center">
+              <form method="dialog">
+                <button className="btn btn-primary">Close</button>
+              </form>
             </div>
-          </dialog>
-        </div>
+          </div>
+        </dialog>
+      </div>
+      
+      }
+       
+
+
+
         <div>
           <button
             className="font-avenir px-3  mx-auto py-1 bg-green-800 ml-10 rounded-lg text-white"
@@ -450,6 +450,7 @@ const CampaignTable = ({ email }) => {
                       Client Name
                     </label>
                     <input
+                      required
                       type="text"
                       defaultValue={campaign.clientName}
                       name="clientName"
@@ -460,6 +461,7 @@ const CampaignTable = ({ email }) => {
                   <div className="mb-4">
                     <label className="block text-gray-250">Client Phone</label>
                     <input
+                    required
                       type="number"
                       name="clientPhone"
                       defaultValue={campaign.clientPhone}

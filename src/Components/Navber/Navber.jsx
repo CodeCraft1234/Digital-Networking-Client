@@ -184,11 +184,11 @@ const NavBar = () => {
                   </li>
                   <li>
                     <NavLink
-                      to="/addCampaign"
+                      to="/allCampaign"
                       className="text-white bg-red-800 hover:bg-blue-500"
                       activeClassName="bg-blue-500"
                     >
-                      <MdCampaign className="w-6 h-6" /> Add Campaign
+                      <MdCampaign className="w-6 h-6" /> All Campaign
                     </NavLink>
                   </li>
                   <li>
@@ -235,7 +235,7 @@ const NavBar = () => {
                     className="text-white bg-red-800 hover:bg-blue-500"
                     activeClassName="bg-blue-500"
                   >
-                   <MdAccountCircle className="w-6 h-6" /> Ads Account
+                   <MdAccountCircle className="w-6 h-6" /> Ads Accounts
                   </NavLink>
                 </li>
                 <li>
@@ -245,6 +245,15 @@ const NavBar = () => {
                     activeClassName="bg-blue-500"
                   >
                     <IoPeopleSharp className="w-6 h-6" /> Clients
+                  </NavLink>
+                </li>
+                <li>
+                  <NavLink
+                    to="/allCampaign"
+                    className="text-white bg-red-800 hover:bg-blue-500"
+                    activeClassName="bg-blue-500"
+                  >
+                   <MdCampaign className="w-6 h-6" /> Campaigns
                   </NavLink>
                 </li>
                 <li>
@@ -292,7 +301,7 @@ const NavBar = () => {
                       className="text-white bg-red-800 hover:bg-blue-500"
                       activeClassName="bg-blue-500"
                     >
-                      <MdAccountCircle className="w-6 h-6" /> Ads Account
+                      <MdAccountCircle className="w-6 h-6" /> Ads Accounts
                     </NavLink>
                   </li>
                   <li>
@@ -306,11 +315,11 @@ const NavBar = () => {
                   </li>
                 <li>
                   <NavLink
-                    to="/addCampaign"
+                    to="/allCampaign"
                     className="text-white bg-red-800 hover:bg-blue-500"
                     activeClassName="bg-blue-500"
                   >
-                   <MdCampaign className="w-6 h-6" /> Add Campaign
+                   <MdCampaign className="w-6 h-6" /> Campaigns
                   </NavLink>
                 </li>
                 <li>
@@ -384,20 +393,7 @@ const NavBar = () => {
                           alt=""
                         />
                       </figure>
-                      <div className="text-start text-gray-500 space-y-3">
-                        <h1 className="text-md font-bold">
-                          Name: {userr?.fullName}
-                        </h1>
-                        <h1 className="text-md font-bold">
-                          Mobile: {userr?.contctNumber}
-                        </h1>
-                        <h1 className="text-md font-bold">
-                          Address: {userr?.fullAddress}
-                        </h1>
-                        <p className="text-md font-bold">
-                          Email: {userr?.email}
-                        </p>
-                      </div>
+                     
                       <div className="card-body">
                         <hr />
                         <NavLink to="/updateProfile">

@@ -32,6 +32,7 @@ import Profile3 from "./Pages/Home/Profile3";
 import AllClients from "./Pages/Home/AllClients";
 import AllAdsAccount from "./Pages/Home/AllAdsAccount";
 import EmployeeMonthlySalary from "./Pages/Home/EmployeerMouthlySelery";
+import AllCampaign from "./Pages/Home/AllCampaign";
 
 const router = createBrowserRouter([
   {
@@ -80,8 +81,8 @@ const router = createBrowserRouter([
         loader: ({ params }) => fetch(`https://digital-networking-server.vercel.app/users/${params.email}`)
        },
        {
-        path:'/addCampaign',
-        element:<AddCampaign></AddCampaign>
+        path:'/allCampaign',
+        element:<AllCampaign></AllCampaign>
        },
        {
         path:'/addClient',

@@ -130,6 +130,7 @@ return (
             <thead className="bg-green-600 text-white font-bold text-xl">
               <tr>
                 <th className="p-3 text-center">Employeer Name</th>
+                <th className="p-3 text-center">Company Name</th>
                 {
                   ddd?.role === 'admin' ? <>
                   <th className="p-3 text-center"><img  className="w-28 h-6 mx-auto" src=" https://i.ibb.co/3WVZGdz/PAYO-BIG-aa26e6e0.png" alt="" /></th>
@@ -156,11 +157,15 @@ return (
                     <img  className="w-10 h-10 mx-auto rounded-full" src={userr?.photo} alt="" />
                            </Link>
                          <Link to={`/userInfo/${userr?.email}`}>{userr.name} </Link>
-                  </td>
+                </td>
+              <td className="p-3 hover:bg-gray-200 hover:text-blue-600 font-bold hover:text-2xl flex justify-center ma-auto text-center  ml-10   items-center gap-2 "> 
+             
+                </td>
                     </Link>
-              
+
                   {
                     ddd?.role === 'admin' ? <> 
+                      <td className="p-3 text-center">{userr.fullName}</td> 
                      <td className="p-3 text-center">$ {userr.payoneer}</td>
                   <td className="p-3 text-center">৳ {userr.bkashMarcent}</td>
                   <td className="p-3 text-center">৳ {userr.bkashPersonal}</td>
@@ -188,6 +193,7 @@ return (
             <tr className="border-b border-opacity-20 bg-green-800 font-bold p-5 text-white text-lg">
                 {
                    ddd?.role === 'admin' ? <>
+                      <td className="p-3 text-center"></td>
                 <td className="p-3 text-center">Total BDT</td>
                 <td className="p-3 text-center">$ {payoneerTotal}</td>
                 <td className="p-3 text-center">৳ {bkashMarcentTotal}</td>
@@ -196,6 +202,7 @@ return (
                 <td className="p-3 text-center">৳ {rocketPersonalTotal}</td>
                 <td className="p-3 text-center">৳ {totalBDT}</td>
                 <td className="p-3 text-center"></td>
+             
                    </> : <></>
                 }
               

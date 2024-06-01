@@ -4,12 +4,14 @@ import useUsers from "../../Hook/useUsers";
 import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../../Security/AuthProvider";
 import { IoIosSearch } from "react-icons/io";
+import useCampaings from "../../Hook/useCampaign";
 
-const AllClients = () => {
+const Campaigns = () => {
   const [users] = useUsers();
   const { user } = useContext(AuthContext);
   const [ddd, setDdd] = useState([]);
   const [clients, refetch] = useClients();
+  const [campaigns]=useCampaings()
   const [filteredClients, setFilteredClients] = useState([]);
 
   useEffect(() => {
@@ -20,15 +22,15 @@ const AllClients = () => {
   }, [users, user]);
 
   useEffect(() => {
-    if (clients) {
-      setFilteredClients(clients);
+    if (campaigns) {
+      setFilteredClients(campaigns);
     }
-  }, [clients]);
+  }, [campaigns]);
 
   const handleSort = (e) => {
     e.preventDefault();
     const email = e.target.email.value;
-    const filtered = clients.filter(c => c.employeeEmail === email);
+    const filtered = campaigns.filter(c => c.employeeEmail === email);
     setFilteredClients(filtered);
   };
 
@@ -37,7 +39,7 @@ const AllClients = () => {
   const [selectedCategory, setSelectedCategory] = useState("");
 
   const filteredItems = filteredClients.filter((item) =>
-    item.clientPhone.toLowerCase().includes(searchQuery.toLowerCase())
+    item.tBudged.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   const filteredByCategory = selectedCategory
@@ -124,13 +126,10 @@ const AllClients = () => {
             <thead className="bg-red-800 text-white">
               <tr>
                 <th className="p-3 text-center">Date</th>
-                <th className="p-3 text-center">Client Name</th>
-                <th className="p-3 text-center">Client Phone</th>
-                <th className="p-3 text-center">T.Budget</th>
-                <th className="p-3 text-center">T.Spent</th>
-                <th className="p-3 text-center">Total Bill</th>
-                <th className="p-3 text-center">Total Payment Rcv</th>
-              
+                <th className="p-3 text-center">Campaign Name</th>
+                <th className="p-3 text-center">Total Budged</th>
+                <th className="p-3 text-center">Total spent</th>
+                <th className="p-3 text-center">Status</th>
               </tr>
             </thead>
             <tbody>
@@ -146,26 +145,24 @@ const AllClients = () => {
       <td className="p-3 border-l-2 border-r-2 border-gray-300 text-center">{campaign.date}</td>
       <td className="p-3 border-r-2 border-gray-300 text-center">
         <Link to={`/client/${campaign.clientEmail}`} className="flex justify-center">
-          {campaign.clientName}
+        {campaign.campaignName}
         </Link>
       </td>
-      <td className="p-3 border-r-2 border-gray-300 text-center">{campaign.clientPhone}</td>
       <td className="p-3 border-r-2 border-gray-300 text-center">$ {campaign.tBudged}</td>
       <td className="p-3 border-r-2 border-gray-300 text-center">$ {campaign.tSpent}</td>
-      <td className="p-3 border-r-2 border-gray-300 text-center">৳ {campaign.tBill}</td>
-      <td className="p-3 border-r-2 border-gray-300 text-center">৳ {campaign.tPayment}</td>
+      <td className="p-3 border-r-2 border-gray-300 text-center">{campaign.status}</td>
+
       
     </tr>
   ))}
   <tr className="bg-green-800 text-sm text-white font-bold">
-    <td className="p-3 border-2 border-black text-right" colSpan="3">
+    <td className="p-3 border-2 border-black text-right" colSpan="2">
       Total :
     </td>
     <td className="p-3 border-2 border-black text-center">$ {totalBudged}</td>
-    <td className="p-3 border-2 border-black text-center">$ {totalSpent}</td>
-    <td className="p-3 border-2 border-black text-center">৳ {totalbill}</td>
-    <td className="p-3 border-2 border-black text-center">৳ {totalRCV}</td>
-   
+    <td className="p-3 border-2 border-black text-center">$ {totalSpent}</td> 
+    <td className="p-3 border-2 border-black text-center"></td> 
+
   </tr>
 </tbody>
 
@@ -178,4 +175,4 @@ const AllClients = () => {
   );
 };
 
-export default AllClients;
+export default Campaigns;
