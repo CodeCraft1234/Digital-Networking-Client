@@ -75,7 +75,7 @@ console.log(ddd?.name);
 return (
 
         <div className="mt-20 p-4 dark:text-green-800">
-  <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 mb-3  lg:grid-cols-4 gap-8 ">
+  <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-5 mb-3  lg:grid-cols-5 gap-8 ">
 
       <div className="balance-card bg-white rounded-2xl p-5 text-center shadow-2xl transition-transform transform hover:scale-105 border-0 ">
         <img className="balance-card-img h-14 mx-auto " src="https://i.ibb.co/bHMLyvM/b-Kash-Merchant.png" alt="bKash" />
@@ -102,11 +102,9 @@ return (
           <span className="text-lg lg:text-2xl font-extrabold">৳</span>10000
         </p>
       </div>
-    </div>
-    
-    <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-8 mt-7">
-    <div className=" bg-white rounded-2xl p-5 text-center shadow-2xl transition-transform transform hover:scale-105 border-0 gap-4">
-        <img className="balance-card-img h-14 mx-auto mb-4" src="https://i.ibb.co/3WVZGdz/PAYO-BIG-aa26e6e0.png" alt="Payoneer" />
+
+      <div className=" bg-white rounded-2xl p-5 text-center shadow-2xl transition-transform transform hover:scale-105 border-0 gap-4">
+        <img className="balance-card-img h-10 mx-auto mb-4" src="https://i.ibb.co/3WVZGdz/PAYO-BIG-aa26e6e0.png" alt="Payoneer" />
         {/* <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"> Payoneer</p> */}
         <div className="flex justify-center  gap-3 items-center">
         <p className=" balance-card-text text-lg lg:text-2xl font-bold text-gray-700"><span className="text-lg lg:text-2xl"> $</span>  4000 </p>
@@ -114,7 +112,7 @@ return (
         </div>
       </div>
       <div className="balance-card bg-white rounded-2xl p-5 text-center shadow-2xl transition-transform transform hover:scale-105 border-0 ">
-      <p className="balance-card-text text-lg mt-5 lg:text-2xl font-bold text-gray-700"> Mobile Banking</p>
+      <p className="balance-card-text text-lg mt-5 lg:text-2xl font-bold text-gray-700"> Total Balance</p>
         <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"><span className="text-lg lg:text-2xl font-extrabold"> ৳</span> 10000</p>
       </div>
     <div className="balance-card bg-white rounded-2xl p-5 text-center shadow-2xl transition-transform transform hover:scale-105 border-0">
@@ -125,7 +123,20 @@ return (
         <p className="balance-card-text text-lg mt-5 lg:text-2xl font-bold text-gray-700">Admin Balance</p>
         <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"><span className="text-lg lg:text-2xl font-extrabold"> ৳</span> 10000</p>
       </div>
+      <div className="balance-card bg-white rounded-2xl p-5 text-center shadow-2xl transition-transform transform hover:scale-105 border-0">
+        <p className="balance-card-text text-lg mt-5 lg:text-2xl font-bold text-gray-700">Admin Balance</p>
+        <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"><span className="text-lg lg:text-2xl font-extrabold"> ৳</span> 10000</p>
+      </div>
+      <div className="balance-card bg-white rounded-2xl p-5 text-center shadow-2xl transition-transform transform hover:scale-105 border-0">
+        <p className="balance-card-text text-lg mt-5 lg:text-2xl font-bold text-gray-700">Admin Balance</p>
+        <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"><span className="text-lg lg:text-2xl font-extrabold"> ৳</span> 10000</p>
+      </div>
     </div>
+    
+    {/* <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-8 mt-7">
+    
+      
+    </div> */}
 
          <div className=" ">
 
@@ -329,22 +340,22 @@ return (
         {employee.map((userr, index) => (
           <tbody className="text-black text-sm md:text-xl" key={userr._id}>
             <tr className={`${index % 2 === 0 ? "bg-gray-100" : "bg-white"} border-b border-opacity-20`}>
-              <td className="p-3 hover:bg-gradient-to-r from-gray-100 via-gray-300 to-gray-100 rounded-xl hover:text-blue-600 font-bold hover:text-lg md:hover:text-base flex flex-col md:flex-row justify-start text-center ml-2 md:ml-10 items-center gap-2">
+              <td className="p-3 hover:bg-gradient-to-r from-gray-100 via-gray-300 to-gray-100 rounded-xl hover:text-blue-600 font-bold hover:text-lg md:hover:text-base flex flex-col md:flex-row justify-start text-center ml-2 md:ml-10 items-center gap-2 border-l-2 border-r-2 border-gray-300">
                 <Link to={`/userInfo/${userr?.email}`}>
                   <img className="w-10 h-10 rounded-full" src={userr?.photo} alt="" />
                 </Link>
                 <Link to={`/userInfo/${userr?.email}`}>{userr.name}</Link>
               </td>
-              <td className="p-3 text-center">{userr.fullName}</td>
+              <td className="p-3 text-center  border-r-2 border-gray-300">{userr.fullName}</td>
               {ddd?.role === 'admin' && (
                 <>
-                  <td className="p-3 text-center">$ {userr.payoneer}</td>
-                  <td className="p-3 text-center">৳ {userr.bkashMarcent}</td>
-                  <td className="p-3 text-center">৳ {userr.bkashPersonal}</td>
-                  <td className="p-3 text-center">৳ {userr.nagadPersonal}</td>
-                  <td className="p-3 text-center">৳ {userr.rocketPersonal}</td>
-                  <td className="p-3 text-center">৳ {userr.totalBDT}</td>
-                  <td className="p-3 text-center">
+                  <td className="p-3 text-center  border-r-2 border-gray-300">$ {userr.payoneer}</td>
+                  <td className="p-3 text-center  border-r-2 border-gray-300">৳ {userr.bkashMarcent}</td>
+                  <td className="p-3 text-center  border-r-2 border-gray-300">৳ {userr.bkashPersonal}</td>
+                  <td className="p-3 text-center  border-r-2 border-gray-300">৳ {userr.nagadPersonal}</td>
+                  <td className="p-3 text-center  border-r-2 border-gray-300">৳ {userr.rocketPersonal}</td>
+                  <td className="p-3 text-center  border-r-2 border-gray-300">৳ {userr.totalBDT}</td>
+                  <td className="p-3 text-center  border-r-2 border-gray-300">
                     <button className="px-3 py-1 bg-neutral-600 rounded text-white" onClick={() => document.getElementById(`modal_${userr._id}`).showModal()}>Edit</button>
                     <dialog id={`modal_${userr._id}`} className="modal">
                       <Payment id={userr._id}></Payment>
