@@ -91,9 +91,7 @@ const AxiosPublic=UseAxiosPublic()
 
   return (
     <div className="mt-24 p-4 dark:text-green-800">
-    <h6 className="text-center  py-4 text-white uppercase font-bold text-3xl md:text-5xl bg-green-800 ">
-       Ads Account Activities
-    </h6>
+
 
      <div className="flex justify-start mb-5 text-gray-500 border-b border-opacity-20 mx-2 pb-1 items-center gap-3">
       <button

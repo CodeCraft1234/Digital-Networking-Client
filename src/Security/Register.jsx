@@ -105,7 +105,7 @@ const Register = () => {
                     maxLength: 20,
                     minLength: 6,
                   })}
-                  type="password"
+                  type="text"
                   placeholder="Enter your password"
                   className="input input-bordered text-black text-xs font-normal my-5"
                   required

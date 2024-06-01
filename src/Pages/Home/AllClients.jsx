@@ -4,6 +4,8 @@ import useUsers from "../../Hook/useUsers";
 import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../../Security/AuthProvider";
 import { IoIosSearch } from "react-icons/io";
+import Swal from "sweetalert2";
+import UseAxiosPublic from "../../Axios/UseAxiosPublic";
 
 const AllClients = () => {
   const [users] = useUsers();
@@ -83,6 +85,33 @@ const AllClients = () => {
 
   }, [filteredByCategory]);
 
+const AxiosPublic =UseAxiosPublic()
+  const handledelete = (id) => {
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You want to delete this Blog!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete blog",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        AxiosPublic.delete(`/clients/${id}`)
+        .then((res) => {
+          refetch();
+          if (res.data.deletedCount > 0) {
+            Swal.fire({
+              title: "Deleted!",
+              text: "Your blog has been deleted.",
+              icon: "success",
+            });
+          }
+        });
+      }
+    });
+  };
+
   return (
     <div className="mt-24">
 <div className="flex justify-between items-center ">
@@ -130,6 +159,7 @@ const AllClients = () => {
                 <th className="p-3 text-center">T.Spent</th>
                 <th className="p-3 text-center">Total Bill</th>
                 <th className="p-3 text-center">Total Payment Rcv</th>
+                <th className="p-3 text-center">Action</th>
               
               </tr>
             </thead>
@@ -154,6 +184,7 @@ const AllClients = () => {
       <td className="p-3 border-r-2 border-gray-300 text-center">$ {campaign.tSpent}</td>
       <td className="p-3 border-r-2 border-gray-300 text-center">৳ {campaign.tBill}</td>
       <td className="p-3 border-r-2 border-gray-300 text-center">৳ {campaign.tPayment}</td>
+      <td className="p-3 border-r-2 border-gray-300 text-center"><button  className="font-avenir px-3 mx-auto py-1 rounded-lg flex justify-center text-white bg-green-800" onClick={() => handledelete(campaign._id)}>Delete</button></td>
       
     </tr>
   ))}
@@ -165,6 +196,7 @@ const AllClients = () => {
     <td className="p-3 border-2 border-black text-center">$ {totalSpent}</td>
     <td className="p-3 border-2 border-black text-center">৳ {totalbill}</td>
     <td className="p-3 border-2 border-black text-center">৳ {totalRCV}</td>
+    <td className="p-3 border-2 border-black text-center"></td>
    
   </tr>
 </tbody>

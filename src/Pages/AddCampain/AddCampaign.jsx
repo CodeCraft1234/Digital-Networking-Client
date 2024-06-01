@@ -3,7 +3,7 @@ import UseAxiosPublic from "../../Axios/UseAxiosPublic";
 import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../../Security/AuthProvider";
 import useClients from "../../Hook/useClient";
-import Swal from "sweetalert2";
+import Swal from 'sweetalert2'
 
 const AddCampaign = () => {
   const AxiosPublic=UseAxiosPublic()
@@ -31,8 +31,21 @@ const AddCampaign = () => {
             text: "Campaign add success!",
             icon: "success"
           });
+          
+      })
+      .catch(error => {
+          console.error("Error adding campaign:", error);
+          // toast.error("Failed to update campaign");
+          Swal.fire({
+            icon: "error",
+            title: "Oops...",
+            text: "Failed to add campaign!",
+          });
+     
        })
+
        }
+      
 
        const [dataa2,setData2]=useState([])
       
