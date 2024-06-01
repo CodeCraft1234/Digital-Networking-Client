@@ -73,11 +73,13 @@ console.log(ddd?.name);
 
 
 return (
+
         <div className="mt-20 p-4 dark:text-green-800">
   <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 mb-3  lg:grid-cols-4 gap-8 ">
 
       <div className="balance-card bg-white rounded-2xl p-5 text-center shadow-2xl transition-transform transform hover:scale-105 border-0 ">
         <img className="balance-card-img h-14 mx-auto " src="https://i.ibb.co/bHMLyvM/b-Kash-Merchant.png" alt="bKash" />
+
         <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700">
           <span className="text-lg lg:text-2xl font-extrabold">৳</span>10000
         </p>

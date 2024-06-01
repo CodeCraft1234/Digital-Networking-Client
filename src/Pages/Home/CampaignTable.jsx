@@ -201,6 +201,7 @@ const CampaignTable = ({ email }) => {
     };
     
   return (
+
     <div className="my-24 mb-24">
     <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-8 mt-4 p-4">
    <div className="balance-card bg-white rounded-2xl shadow-2xl p-5 text-center  transition-transform transform hover:scale-105 border-0">
@@ -228,6 +229,7 @@ const CampaignTable = ({ email }) => {
        <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"> <span className="text-lg lg:text-2xl font-extrabold text-blue-600">/</span></p>
        <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"> <span className="text-lg lg:text-2xl font-extrabold text-green-600">$</span> {totalSpent}</p>
        </span>
+
      
      
      </div>
