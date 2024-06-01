@@ -166,43 +166,53 @@ const CampaignTable = ({ email }) => {
 
 
   return (
-    <div className="my-24 mb-24">
-       <div className="grid lg:grid-cols-3 gap-6 m-12">
-      <div className="balance-card shadow-4xl">
+    <div className="my-8 mb-24 mx-8">
+       <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-8 mt-4 p-4">
+      <div className="balance-card bg-white rounded-lg p-5 text-center shadow-lg transition-transform transform hover:scale-105 border-0">
         <img className="balance-card-img" src="https://i.ibb.co/bHMLyvM/b-Kash-Merchant.png" alt="bKash" />
-        <p className="balance-card-text text-4xl"> <span className="text-4xl font-extrabold">৳</span> {bkashMarcent}</p>
+        <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"> <span className="text-lg lg:text-2xl font-extrabold">৳</span> {bkashMarcent}</p>
       </div>
-      <div className="balance-card shadow-4xl">
+      <div className="balance-card bg-white rounded-lg p-5 text-center shadow-lg transition-transform transform hover:scale-105 border-0">
         <img className="balance-card-img" src="https://i.ibb.co/520Py6s/bkash-1.png" alt="bKash" />
-        <p className="balance-card-text text-4xl"> <span className="text-4xl font-extrabold"> ৳</span> {bkashPersonal}</p>
+        <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"> <span className="text-lg lg:text-2xl font-extrabold"> ৳</span> {bkashPersonal}</p>
       </div>
-      <div className="balance-card shadow-4xl">
+      <div className="balance-card bg-white rounded-lg p-5 text-center shadow-lg transition-transform transform hover:scale-105 border-0">
         <img className="balance-card-img" src="https://i.ibb.co/JQBQBcF/nagad-marchant.png" alt="Nagad" />
-        <p className="balance-card-text text-4xl"><span className="text-4xl font-extrabold">৳</span> {nagadPersonal}</p>
+        <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"><span className="text-lg lg:text-2xl font-extrabold">৳</span> {nagadPersonal}</p>
       </div>
-      <div className="balance-card shadow-4xl">
+      <div className="balance-card bg-white rounded-lg p-5 text-center shadow-lg transition-transform transform hover:scale-105 border-0">
         <img className="balance-card-img" src="https://i.ibb.co/QkTM4M3/rocket.png" alt="Rocket" />
-        <p className="balance-card-text text-4xl"><span className="text-4xl font-extrabold">৳</span> {rocketPersonal}</p>
+        <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"><span className="text-lg lg:text-2xl font-extrabold">৳</span> {rocketPersonal}</p>
       </div>
 
-      <div className="balance-card summary-card shadow-4xl">
-        <p className="balance-card-text text-3xl">Total BDT: <span className="text-3xl font-extrabold">৳</span> {totalRCV}</p>
-        <p className="balance-card-text text-3xl">Total RCV: <span className="text-3xl font-extrabold">৳</span> {totalRCV}</p>
-        <p className="balance-card-text text-3xl">Total Pay: <span className="text-3xl font-extrabold">৳</span> {totalRCV}</p>
-      </div>
-
-      <div className="balance-card shadow-4xl">
+      <div className="balance-card bg-white rounded-lg p-5 text-center shadow-lg transition-transform transform hover:scale-105 border-0">
         <div>
           <img className="balance-card-img" src="https://i.ibb.co/3WVZGdz/PAYO-BIG-aa26e6e0.png" alt="Payoneer" />
           <span className="balance-card-text text-4xl flex items-center justify-center gap-4">
-          <p className="balance-card-text text-4xl"> <span className="text-4xl font-extrabold text-red-600">$</span> 4000</p>
-          <p className="balance-card-text text-4xl"> <span className="text-4xl font-extrabold text-red-600">/</span></p>
-          <p className="balance-card-text text-4xl"> <span className="text-4xl font-extrabold text-green-800">$</span> {totalSpent}</p>
+          <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"> <span className="text-lg lg:text-2xl font-extrabold text-red-600">$</span> 4000</p>
+          <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"> <span className="text-lg lg:text-2xl font-extrabold text-blue-600">/</span></p>
+          <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"> <span className="text-lg lg:text-2xl font-extrabold text-green-600">$</span> {totalSpent}</p>
           </span>
         
         
         </div>
       </div>
+
+      <div className="balance-card bg-white rounded-lg p-5 text-center shadow-lg transition-transform transform hover:scale-105 border-0">
+        <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700">Total BDT: <span className="text-lg lg:text-2xl font-extrabold">৳</span> {totalRCV}</p>
+       
+      </div>
+      <div className="balance-card bg-white rounded-lg p-5 text-center shadow-lg transition-transform transform hover:scale-105 border-0">
+        
+        <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700">Total RCV: <span className="text-lg lg:text-2xl font-extrabold">৳</span> {totalRCV}</p>
+       
+      </div>
+      <div className="balance-card bg-white rounded-lg p-5 text-center shadow-lg transition-transform transform hover:scale-105 border-0">
+       
+        <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700">Total Pay: <span className="text-lg lg:text-2xl font-extrabold">৳</span> {totalRCV}</p>
+      </div>
+
+
       {/* <div className="balance-card summary-card shadow-4xl">
         <p className="balance-card-text text-4xl"><span className="text-4xl font-extrabold">RCV</span></p>
         <p className="balance-card-text text-4xl">Amount:<span className="text-4xl font-extrabold">$</span> {totalRCV}</p>

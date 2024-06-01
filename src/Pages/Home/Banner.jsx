@@ -73,7 +73,7 @@ console.log(ddd?.name);
 
 
 return (
-        <div className="mt-16 p-4 dark:text-green-800">
+        <div className="mt-16 p-4 dark:text-green-800 my-8 mb-24 mx-8">
   <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-8 mt-4 p-4">
       <div className="balance-card bg-white rounded-lg p-5 text-center shadow-lg transition-transform transform hover:scale-105 border-0 ">
         <img className="balance-card-img h-14 mx-auto mb-4" src="https://i.ibb.co/bHMLyvM/b-Kash-Merchant.png" alt="bKash" />
