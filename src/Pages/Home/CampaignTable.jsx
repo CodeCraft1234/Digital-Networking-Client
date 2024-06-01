@@ -14,6 +14,14 @@ import './BalanceCards.css';
 import { AuthContext } from "../../Security/AuthProvider";
 
 
+import { FaHome, FaUserCheck, FaUserCog } from "react-icons/fa";
+import { MdAccountCircle, MdCampaign } from "react-icons/md";
+import { IoPeopleSharp } from "react-icons/io5";
+import { FaPeopleGroup, FaSackDollar } from "react-icons/fa6";
+import { SlPeople } from "react-icons/sl";
+import { CgProfile } from "react-icons/cg";
+
+
 const CampaignTable = ({ email }) => {
   console.log(email);
   const [clients, refetch] = useClients();
@@ -203,6 +211,96 @@ const CampaignTable = ({ email }) => {
   return (
 
     <div className="my-24 mb-24">
+      {/* all navlinks */}
+     
+        <div className="navbar-center mt-0 lg:flex mx-6 my-6">
+          <ul className="menu menu-horizontal items-center px-1 flex gap-4 justify-between mx-auto">
+            {ddd?.role === "admin" ? (
+              <>
+             
+                <li>
+                  <NavLink
+                    to="/allAdSAccount"
+                    className="text-white bg-red-800 hover:bg-green-300 hover:text-black"
+                    activeClassName="bg-green-300"
+                  >
+                    <MdAccountCircle className="w-6 h-6" /> Ads Accounts
+                  </NavLink>
+                </li>
+                <li>
+                  <NavLink
+                    to="/allClients"
+                    className="text-white bg-red-800 hover:bg-green-300 hover:text-black"
+                    activeClassName="bg-green-300"
+                  >
+                    <IoPeopleSharp className="w-6 h-6" /> Clients
+                  </NavLink>
+                </li>
+                <li>
+                  <NavLink
+                    to="/allCampaign"
+                    className="text-white bg-red-800 hover:bg-green-300 hover:text-black"
+                    activeClassName="bg-green-300"
+                  >
+                    <MdCampaign className="w-6 h-6" /> Campaigns
+                  </NavLink>
+                </li>
+                
+              
+              </>
+            ) : (
+              <>
+                <li>
+                  <NavLink
+                    to={`/userInfo/${user?.email}`}
+                    className="text-white bg-red-800 hover:bg-green-300 hover:text-black"
+                    activeClassName="bg-green-300"
+                  >
+                    <CgProfile className="w-6 h-6" /> My Profile
+                  </NavLink>
+                </li>
+                <li>
+                  <NavLink
+                    to={`/myProfile/${user?.email}`}
+                    className="text-white bg-red-800 hover:bg-green-300 hover:text-black"
+                    activeClassName="bg-green-300"
+                  >
+                    <IoPeopleSharp className="w-6 h-6" /> My Clients
+                  </NavLink>
+                </li>
+                <li>
+                  <NavLink
+                    to={`/adsAccount/${user?.email}`}
+                    className="text-white bg-red-800 hover:bg-green-300 hover:text-black"
+                    activeClassName="bg-green-300"
+                  >
+                    <MdAccountCircle className="w-6 h-6" /> Ads Accounts
+                  </NavLink>
+                </li>
+                
+                <li>
+                  <NavLink
+                    to="/allCampaign"
+                    className="text-white bg-red-800 hover:bg-green-300 hover:text-black"
+                    activeClassName="bg-green-300"
+                  >
+                    <MdCampaign className="w-6 h-6" /> Campaigns
+                  </NavLink>
+                </li>
+                <li>
+                  <NavLink
+                    to="/addClient"
+                    className="text-white bg-red-800 hover:bg-green-300 hover:text-black"
+                    activeClassName="bg-green-300"
+                  >
+                    <IoPeopleSharp className="w-6 h-6" /> Add Client
+                  </NavLink>
+                </li>
+              </>
+            )}
+          </ul>
+        </div>
+
     <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-8 mt-4 p-4">
    <div className="balance-card bg-white rounded-2xl shadow-2xl p-5 text-center  transition-transform transform hover:scale-105 border-0">
      <img className="balance-card-img" src="https://i.ibb.co/bHMLyvM/b-Kash-Merchant.png" alt="bKash" />
