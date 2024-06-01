@@ -8,18 +8,18 @@
   
   .balance-card {
     background-color: white;
-    border: 2px solid black;
-    border-radius: 8px;
+    border: 0px solid black;
+    border-radius: 20px;
     padding: 20px;
     text-align: center;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     transition: transform 0.3s ease;
   }
   
-  .balance-card:hover {
+  /* .balance-card:hover {
     transform: scale(1.05);
     border: 2px solid blue;
-  }
+  } */
   
   .balance-card-img {
     height: 56px;
@@ -45,5 +45,7 @@
     .balance-card {
       width: 100%;
     }
+
+    
   }
   
