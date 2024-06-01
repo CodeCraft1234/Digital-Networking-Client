@@ -137,7 +137,7 @@ return (
 
          </h2>}  */}
        
-        <div className="overflow-x-auto mt-6">
+        {/* <div className="overflow-x-auto mt-6">
           <table className="min-w-full text-xs">
             <thead className="bg-green-600 text-white font-bold text-xl">
               <tr>
@@ -217,7 +217,164 @@ return (
               
               </tr>
           </table>
-        </div>
+        </div> */}
+        {/* employee table */}
+        {/* <div className="overflow-x-auto mt-6">
+      <table className="min-w-full text-xs md:text-base">
+        <thead className="bg-green-600 text-white font-bold text-sm md:text-xl">
+          <tr>
+            <th className="p-3 text-center">Employee Name</th>
+            <th className="p-3 text-center">Company Name</th>
+            {ddd?.role === 'admin' && (
+              <>
+                <th className="p-3 text-center">
+                  <img className="w-28 h-6 mx-auto" src="https://i.ibb.co/3WVZGdz/PAYO-BIG-aa26e6e0.png" alt="Payoneer" />
+                </th>
+                <th className="p-3 text-center">
+                  <img className="w-20 h-10 mx-auto" src="https://i.ibb.co/bHMLyvM/b-Kash-Merchant.png" alt="bKash Merchant" />
+                </th>
+                <th className="p-3 text-center">
+                  <img className="w-20 h-10 mx-auto" src="https://i.ibb.co/520Py6s/bkash-1.png" alt="bKash Personal" />
+                </th>
+                <th className="p-3 text-center">
+                  <img className="w-20 h-10 mx-auto" src="https://i.ibb.co/JQBQBcF/nagad-marchant.png" alt="Nagad Personal" />
+                </th>
+                <th className="p-3 text-center">
+                  <img className="w-20 h-10 mx-auto" src="https://i.ibb.co/QkTM4M3/rocket.png" alt="Rocket Personal" />
+                </th>
+                <th className="p-3 text-center">Total BDT</th>
+                <th className="p-3 text-center">Action</th>
+              </>
+            )}
+          </tr>
+        </thead>
+        {employee.map((userr, index) => (
+          <tbody className="text-black text-sm md:text-xl" key={userr._id}>
+            <tr className={`${index % 2 === 0 ? "bg-gray-100" : "bg-white"} border-b border-opacity-20`}>
+              <td className="p-3 hover:bg-gradient-to-r from-gray-100 via-gray-300 to-gray-100 rounded-xl hover:text-blue-600 font-bold hover:text-lg md:hover:text-2xl flex justify-start text-center ml-2 md:ml-10 items-center gap-2">
+                <Link to={`/userInfo/${userr?.email}`}>
+                  <img className="w-10 h-10 rounded-full" src={userr?.photo} alt="" />
+                </Link>
+                <Link to={`/userInfo/${userr?.email}`}>{userr.name}</Link>
+              </td>
+              <td className="p-3 text-center">{userr.fullName}</td>
+              {ddd?.role === 'admin' && (
+                <>
+                  <td className="p-3 text-center">$ {userr.payoneer}</td>
+                  <td className="p-3 text-center">৳ {userr.bkashMarcent}</td>
+                  <td className="p-3 text-center">৳ {userr.bkashPersonal}</td>
+                  <td className="p-3 text-center">৳ {userr.nagadPersonal}</td>
+                  <td className="p-3 text-center">৳ {userr.rocketPersonal}</td>
+                  <td className="p-3 text-center">৳ {userr.totalBDT}</td>
+                  <td className="p-3 text-center">
+                    <button className="px-3 py-1 bg-neutral-600 rounded text-white" onClick={() => document.getElementById(`modal_${userr._id}`).showModal()}>Edit</button>
+                    <dialog id={`modal_${userr._id}`} className="modal">
+                      <Payment id={userr._id}></Payment>
+                      <form method="dialog">
+                        <button className="p-3 bg-red-600 rounded-lg text-white font-bold">Close</button>
+                      </form>
+                    </dialog>
+                  </td>
+                </>
+              )}
+            </tr>
+          </tbody>
+        ))}
+        <tfoot>
+          {ddd?.role === 'admin' && (
+            <tr className="border-b border-opacity-20 bg-green-800 font-bold p-5 text-white text-sm md:text-lg">
+              <td className="p-3 text-center"></td>
+              <td className="p-3 text-center">Total BDT</td>
+              <td className="p-3 text-center">$ {payoneerTotal}</td>
+              <td className="p-3 text-center">৳ {bkashMarcentTotal}</td>
+              <td className="p-3 text-center">৳ {bkashPersonalTotal}</td>
+              <td className="p-3 text-center">৳ {nagadPersonalTotal}</td>
+              <td className="p-3 text-center">৳ {rocketPersonalTotal}</td>
+              <td className="p-3 text-center">৳ {totalBDT}</td>
+              <td className="p-3 text-center"></td>
+            </tr>
+          )}
+        </tfoot>
+      </table>
+    </div> */}
+     <div className="overflow-x-auto mt-6">
+      <table className="min-w-full text-xs md:text-base">
+        <thead className="bg-[#5db646] text-white font-bold text-sm md:text-xl">
+          <tr>
+            <th className="p-3 text-center">Employee Name</th>
+            <th className="p-3 text-center">Company Name</th>
+            {ddd?.role === 'admin' && (
+              <>
+                <th className="p-3 text-center">
+                  <img className="w-28 h-6 mx-auto" src="https://i.ibb.co/3WVZGdz/PAYO-BIG-aa26e6e0.png" alt="Payoneer" />
+                </th>
+                <th className="p-3 text-center">
+                  <img className="w-18 h-9 mx-auto" src="https://i.ibb.co/bHMLyvM/b-Kash-Merchant.png" alt="bKash Merchant" />
+                </th>
+                <th className="p-3 text-center">
+                  <img className="w-18 h-9 mx-auto" src="https://i.ibb.co/520Py6s/bkash-1.png" alt="bKash Personal" />
+                </th>
+                <th className="p-3 text-center">
+                  <img className="w-18 h-9 mx-auto" src="https://i.ibb.co/JQBQBcF/nagad-marchant.png" alt="Nagad Personal" />
+                </th>
+                <th className="p-3 text-center">
+                  <img className="w-18 h-9 mx-auto" src="https://i.ibb.co/QkTM4M3/rocket.png" alt="Rocket Personal" />
+                </th>
+                <th className="p-3 text-center">Total</th>
+                <th className="p-3 text-center">Action</th>
+              </>
+            )}
+          </tr>
+        </thead>
+        {employee.map((userr, index) => (
+          <tbody className="text-black text-sm md:text-xl" key={userr._id}>
+            <tr className={`${index % 2 === 0 ? "bg-gray-100" : "bg-white"} border-b border-opacity-20`}>
+              <td className="p-3 hover:bg-gradient-to-r from-gray-100 via-gray-300 to-gray-100 rounded-xl hover:text-blue-600 font-bold hover:text-lg md:hover:text-base flex flex-col md:flex-row justify-start text-center ml-2 md:ml-10 items-center gap-2">
+                <Link to={`/userInfo/${userr?.email}`}>
+                  <img className="w-10 h-10 rounded-full" src={userr?.photo} alt="" />
+                </Link>
+                <Link to={`/userInfo/${userr?.email}`}>{userr.name}</Link>
+              </td>
+              <td className="p-3 text-center">{userr.fullName}</td>
+              {ddd?.role === 'admin' && (
+                <>
+                  <td className="p-3 text-center">$ {userr.payoneer}</td>
+                  <td className="p-3 text-center">৳ {userr.bkashMarcent}</td>
+                  <td className="p-3 text-center">৳ {userr.bkashPersonal}</td>
+                  <td className="p-3 text-center">৳ {userr.nagadPersonal}</td>
+                  <td className="p-3 text-center">৳ {userr.rocketPersonal}</td>
+                  <td className="p-3 text-center">৳ {userr.totalBDT}</td>
+                  <td className="p-3 text-center">
+                    <button className="px-3 py-1 bg-neutral-600 rounded text-white" onClick={() => document.getElementById(`modal_${userr._id}`).showModal()}>Edit</button>
+                    <dialog id={`modal_${userr._id}`} className="modal">
+                      <Payment id={userr._id}></Payment>
+                      <form method="dialog">
+                        <button className="p-3 bg-red-600 rounded-lg text-white font-bold">Close</button>
+                      </form>
+                    </dialog>
+                  </td>
+                </>
+              )}
+            </tr>
+          </tbody>
+        ))}
+        <tfoot>
+          {ddd?.role === 'admin' && (
+            <tr className="border-b border-opacity-20 bg-green-800 font-bold p-5 text-white text-sm md:text-lg">
+              <td className="p-3 text-center"></td>
+              <td className="p-3 text-center">Total BDT</td>
+              <td className="p-3 text-center">$ {payoneerTotal}</td>
+              <td className="p-3 text-center">৳ {bkashMarcentTotal}</td>
+              <td className="p-3 text-center">৳ {bkashPersonalTotal}</td>
+              <td className="p-3 text-center">৳ {nagadPersonalTotal}</td>
+              <td className="p-3 text-center">৳ {rocketPersonalTotal}</td>
+              <td className="p-3 text-center">৳ {totalBDT}</td>
+              <td className="p-3 text-center"></td>
+            </tr>
+          )}
+        </tfoot>
+      </table>
+    </div>
       </div>
       
         </div>
