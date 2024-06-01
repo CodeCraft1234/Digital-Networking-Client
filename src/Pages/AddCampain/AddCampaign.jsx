@@ -70,15 +70,8 @@ const AddCampaign = () => {
 			<input id="date" name="date" type="date" placeholder="type...." required="" className="block w-full p-2 rounded focus:outline-none focus:ring focus:ri focus:ri dark:bg-gray-800" />
 		</div>
         <div className="md:col-span-2 text-gray-250">
-             <label className="block  font-bold">  My Client Email </label>
-               
-                 <select name="clientEmail"   defaultValue='' className="w-full border text-black rounded p-2 mt-1"  >
-                 {
-                    dataa2.map(d=><option value={d.clientEmail}>{d.clientName} - {d.clientPhone}</option>
-                   )
-                 }
-            </select>
-               
+        <label htmlFor="email" className="block mb-1 ">Email</label>
+			<input required id="date" name="clientEmail" type="email" placeholder="type...." className="block w-full p-2 rounded focus:outline-none focus:ring focus:ri focus:ri dark:bg-gray-800" />  
         </div>
         </div>
         <div className="flex justify-center items-center gap-3">

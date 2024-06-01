@@ -1,13 +1,16 @@
 
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { FcGoogle } from "react-icons/fc";
-import {  FaGithub } from "react-icons/fa";
+import {  FaEye, FaEyeSlash, FaGithub } from "react-icons/fa";
 import toast from "react-hot-toast";
 import { AuthContext } from "./AuthProvider";
 import "./Login.css";
 import { FaSquareFacebook } from "react-icons/fa6";
 import useUsers from "../Hook/useUsers";
+import { sendPasswordResetEmail } from "firebase/auth";
+import auth from "../Components/firebase/firebase.config";
+import Swal from "sweetalert2";
 
 const Login = () => {
   const { signIn, googleSignIn, facebookSignin, githubLogin } =
@@ -15,11 +18,31 @@ const Login = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
+  const emailRef=useRef(null)
+
+
+  const { user } = useContext(AuthContext);
+  const [users] = useUsers();
+  const [ddd, setDdd] = useState(null);
+
+  useEffect(() => {
+      if (users && user) {
+          const fff = users.find(u => u.email === user?.email);
+          console.log(fff);
+          setDdd(fff || {}); // Update state with found user or an empty object
+      }
+  }, [users, user]);
+
+  console.log(ddd?.name);
+
   const handleGoogleLogin = () => {
     googleSignIn()
       .then((result) => {
         console.log(result.user);
-        navigate(location?.state ? location.state : "/");
+        {
+          ddd?.role === 'employee' ?  navigate(location?.state ? location.state : `/userInfo/${ddd?.email}`) :  navigate(location?.state ? location.state : "/");
+        }
+       
         toast.success("Google login successful");
       })
       .catch((error) => {
@@ -66,29 +89,52 @@ const handleFacebook = () => {
     signIn(email, password)
       .then((result) => {
         console.log(result.user);
-        navigate(location?.state ? location.state : "/");
-        toast.success("User login successful");
+        navigate(location?.state ? location.state : "/")
+        Swal.fire({
+          title: "successfully login!",
+          text: "login!",
+          icon: "success"
+        });
       })
       .catch((error) => {
         console.log(error);
-        toast.error("User login failed");
+        Swal.fire({
+          title: "error",
+          text: "wrong password",
+          icon: "error"
+        });
       });
   };
 
-  const { user } = useContext(AuthContext);
-  const [users] = useUsers();
-  const [ddd, setDdd] = useState(null);
+ const handleForgetPassword=(e)=>{
+  const email=emailRef.current.value
+  if(!email){
+    console.log('reset email or password',emailRef.current.value)
+    Swal.fire({
+      title: "Good job!",
+      text: "You clicked the button!",
+      icon: "success"
+    });
+    return;
+  }
+  sendPasswordResetEmail(auth, email)
+  .then(() => {
+    Swal.fire({
+      title: "check your email",
+      text: "check!",
+      icon: "success"
+    });
+   
+  })
+  .catch((error) => {
+    const errorCode = error.code;
+    const errorMessage = error.message;
+    // ..
+  });
+  console.log('kladshijkg',emailRef.current.value)
+ }
 
-  useEffect(() => {
-      if (users && user) {
-          const fff = users.find(u => u.email === user?.email);
-          console.log(fff);
-          setDdd(fff || {}); // Update state with found user or an empty object
-      }
-  }, [users, user]);
-
-  console.log(ddd?.name);
-
+ const [show,setShow]=useState(false)
   return (
     <div className="mt-32 flex justify-center items-center mx-auto lg:pb-0 md:pb-0 pb-8">
       <div className="box mt-10">
@@ -100,26 +146,33 @@ const handleFacebook = () => {
             </h2>
             <form onSubmit={handleLogin}>
               <input
-                type="text"
+                type="email"
                 name="email"
-                placeholder="Username"
+                ref={emailRef}
+                placeholder="Type your email"
                 className="mb-5"
                 required
               />
              
-              <input
-                type="password"
+            <div className="relative w-full">
+            <input
+                type={show ? "text":"password"}
                 name="password"
                 placeholder="Enter your password"
-                className="input input-bordered text-[#9F9F9F] text-xs font-normal mb-5"
+                className="input w-full input-bordered text-[#9F9F9F] text-xs font-normal mb-5"
                 required
               />
+              <span className="absolute mt-4 right-3" onClick={()=>setShow(!show)}>{
+                show ? <FaEyeSlash  /> : <FaEye />
+              }</span>
+            </div>
+              
               <input type="submit" value="Sign in" />
             </form>
             <div className="group">
-              <Link className="text-[#F75B5F] " to="/forgetPassword">
+              <btn onClick={handleForgetPassword} className="text-[#F75B5F] " >
                 Forgot Password?
-              </Link>
+              </btn>
 
               <Link to="/signup">Sign up</Link>
             </div>

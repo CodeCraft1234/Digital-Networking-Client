@@ -2,6 +2,7 @@ import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../../Security/AuthProvider";
 import { Link } from "react-router-dom";
 import useUsers from "../../Hook/useUsers";
+import Profile3 from "./Profile3";
 
 
 const MyProfile = () => {
@@ -19,6 +20,7 @@ const MyProfile = () => {
             <img className="h-96 w-96 rounded-full mx-auto" src={user?.photoURL} alt="" />
             <h1 className="text-center mx-auto font-bold text-7xl">My Profile</h1>
             </Link>
+          
         </div>
     );
 };
