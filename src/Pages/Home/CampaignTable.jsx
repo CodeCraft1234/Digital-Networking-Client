@@ -210,107 +210,10 @@ const CampaignTable = ({ email }) => {
     
   return (
 
-    <div className="my-24 mb-24">
+    <div className="my-4 mb-24">
      
       
-        <div className="navbar-center mt-0 lg:flex mx-6 my-6">
-          <ul className="menu menu-horizontal items-center px-1 flex gap-4 justify-between mx-auto">
-            {ddd?.role === "admin" ? (
-              <>
-             
-                <li>
-                  <NavLink
-                    to="/allAdSAccount"
-                    className="text-white bg-green-800 hover:bg-blue-800 hover:text-white "
-                  >
-                    <MdAccountCircle className="w-6 h-6" /> Ads Accounts
-                  </NavLink>
-                </li>
-                <li>
-                  <NavLink
-                    to="/allClients"
-                    className="text-white bg-green-800 hover:bg-blue-800 hover:text-white "
-                  >
-                    <IoPeopleSharp className="w-6 h-6" /> Clients
-                  </NavLink>
-                </li>
-                <li>
-                  <NavLink
-                    to="/allCampaign"
-                    className="text-white bg-green-800 hover:bg-blue-800 hover:text-white "
-                  >
-                    <MdCampaign className="w-6 h-6" /> Campaigns
-                  </NavLink>
-                </li>
-                <li>
-                  <NavLink
-                    to={`/employeeMonthlySelary`}
-                    className="text-white bg-green-800 hover:bg-blue-800 hover:text-white "
-                  >
-                    <FaSackDollar className="w-5 h-5" /> Salary
-                  </NavLink>
-                </li>
-              
-              </>
-            ) : (
-              <>
-                <li>
-                  <NavLink
-                    to={`/userInfo/${user?.email}`}
-                    className="text-white bg-green-800 hover:bg-blue-800 hover:text-white "
-                    
-                  >
-                    <CgProfile className="w-6 h-6" /> My Profile
-                  </NavLink>
-                </li>
-                <li>
-                  <NavLink
-                    to={`/myProfile/${user?.email}`}
-                    className="text-white bg-green-800 hover:bg-blue-800 hover:text-white "
-                    
-                  >
-                    <IoPeopleSharp className="w-6 h-6" /> My Clients
-                  </NavLink>
-                </li>
-                <li>
-                  <NavLink
-                    to={`/adsAccount/${user?.email}`}
-                    className="text-white bg-green-800 hover:bg-blue-800 hover:text-white "
-                    
-                  >
-                    <MdAccountCircle className="w-6 h-6" /> Ads Accounts
-                  </NavLink>
-                </li>
 
-                <li>
-                  <NavLink
-                    to={`/selary/${user?.email}`}
-                    className="text-white bg-green-800 hover:bg-blue-800 hover:text-white "
-                  >
-                    <FaSackDollar className="w-5 h-5" /> Salary
-                  </NavLink>
-                </li>
-                
-                <li>
-                  <NavLink
-                    to="/allCampaign"
-                    className="text-white bg-green-800 hover:bg-blue-800 hover:text-white "
-                  >
-                    <MdCampaign className="w-6 h-6" /> Campaigns
-                  </NavLink>
-                </li>
-                <li>
-                  <NavLink
-                    to="/addClient"
-                    className="text-white bg-green-800 hover:bg-blue-800 hover:text-white "
-                  >
-                    <IoPeopleSharp className="w-6 h-6" /> Add Client
-                  </NavLink>
-                </li>
-              </>
-            )}
-          </ul>
-        </div>
 
     <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-8 mt-4 p-4">
    <div className="balance-card bg-white rounded-2xl shadow-2xl p-5 text-center  transition-transform transform hover:scale-105 border-0">
@@ -522,6 +425,7 @@ const CampaignTable = ({ email }) => {
       <table className="min-w-full bg-white">
   <thead className="bg-red-800 text-white">
     <tr>
+      <th className="p-3 text-center">SL</th>
       <th className="p-3 text-center">Date</th>
       <th className="p-3 text-center">Client Name</th>
       <th className="p-3 text-center">Client Phone</th>
@@ -543,6 +447,7 @@ const CampaignTable = ({ email }) => {
             : "text-gray-500 border-b border-opacity-20 hover:text-blue-600"
         }`}
       >
+        <td className="p-3 text-center">{index + 1}</td>
         <td className="p-3 text-center">{campaign.date}</td>
         <Link to={`/client/${campaign.clientEmail}`}>
           <td className="p-3 flex justify-center text-center">{campaign.clientName}</td>
@@ -607,6 +512,7 @@ const CampaignTable = ({ email }) => {
       </tr>
     ))}
     <tr className="bg-green-800 text-sm text-white font-bold">
+      <td className="p-3 text-center"></td>
       <td className="p-3 text-center"></td>
       <td className="p-3 text-right" colSpan="2">
         Total :

@@ -7,6 +7,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import useClients from "../../Hook/useClient";
 import useUsers from "../../Hook/useUsers";
+import useAdsAccount from "../../Hook/useAdAccount";
 
 const UserProfile = () => {
     const { user } = useContext(AuthContext);
@@ -73,10 +74,11 @@ const UserProfile = () => {
         const paymentMethod = e.target.paymentMethod.value;
         const amount = parseFloat(e.target.amount.value);
         const date = e.target.date.value;
+        const note = e.target.note.value;
         const clientEmail = param?.email;
         const employeeEmail = user?.email;
     
-        const body = { paymentMethod, amount, clientEmail, employeeEmail, date };
+        const body = { paymentMethod, amount,note, clientEmail, employeeEmail, date };
         try {
             await AxiosPublic.post(`https://digital-networking-server.vercel.app/MPayment`, body);
             toast.success("Payment successful");
@@ -111,9 +113,11 @@ const UserProfile = () => {
         const tSpent = e.target.totalSpent.value;
         const status = e.target.status.value;
         const dollerRate = e.target.dollerRate.value;
+        const tBudged = e.target.tBudged.value;
+
        
 
-        const body = { tSpent, status,dollerRate }
+        const body = { tSpent, status,dollerRate,tBudged }
 
         AxiosPublic.patch(`https://digital-networking-server.vercel.app/campaings/${id}`, body)
             .then(res => {
@@ -134,18 +138,19 @@ const UserProfile = () => {
     
 
     const [clients]=useClients()
-
     const handleaddblog=(e)=>{
         e.preventDefault()
         const campaignName=e.target.campaignName.value
         const clientEmail=param?.email
         const pageName=e.target.pageName.value
         const tBudged=e.target.totalBudged.value
+        const adsAccount=e.target.adsAccount.value
         const email=user?.email
         const tSpent=0
         const dollerRate=140
+        const status='In Review'
         const date=e.target.date.value
-        const data={campaignName,clientEmail,pageName,tBudged,email,tSpent,dollerRate,date}
+        const data={campaignName,clientEmail,pageName,adsAccount,status,tBudged,email,tSpent,dollerRate,date}
        console.log(data)
        
        AxiosPublic.post('https://digital-networking-server.vercel.app/campaigns',data)
@@ -185,6 +190,38 @@ const handleRefresh = () => {
         });
 };
 
+    const handleUpdatePayment=(e, id)=>{
+        e.preventDefault();
+        const amount = e.target.amount.value;
+        const date = e.target.date.value;
+        const note = e.target.note.value;
+        const method = e.target.method.value;
+        const body = { note,amount,date,method }
+
+        AxiosPublic.patch(`https://digital-networking-server.vercel.app/Mpayment/${id}`, body)
+            .then(res => {
+                console.log(res.data);
+                refetch();
+                toast.success("Campaign updated successfully");
+            })
+            .catch(error => {
+                console.error("Error updating campaign:", error);
+                toast.error("Failed to update campaign");
+            });
+     }
+
+
+     const [adsAccount, refetchh] = useAdsAccount();
+     const [adsAccounts, setAdsAccounts] = useState([]);
+     console.log(adsAccounts)
+   
+     useEffect(() => {
+       const filterdata = adsAccount.filter((m) => m.employeeEmail === user?.email);
+       console.log(filterdata);
+       setAdsAccounts(filterdata);
+   
+     }, [adsAccount, user?.email]);
+
     return (
         <div className="mt-24">
             <div className="flex flex-wrap justify-around p-5">
@@ -218,12 +255,26 @@ const handleRefresh = () => {
 
 
             <div className="p-4">
-                <h6 className="text-center font-bold text-3xl md:text-5xl text-green-800">Own Work List</h6>
+                <h6 className="text-center font-bold text-3xl md:text-5xl text-green-800">Campaign List </h6>
                 {
                  ddd?.role === 'admin' ? <></> :  <div className="flex ml-10 text-start justify-start items-center ">
                  <div>
-                 <button className="font-avenir px-3  mx-auto py-1 bg-green-800 ml-10 rounded-lg text-white" onClick={() => document.getElementById('my_modal_2').showModal()}>Add Campaign</button>
-                                     <dialog id="my_modal_2" className="modal">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                 <button className="font-avenir px-3 mx-auto py-1 bg-neutral rounded text-white" onClick={() => document.getElementById(`modal_4`).showModal()}>Add Campaign</button>
+                                     <dialog id="my_modal_4" className="modal">
                                          <div className="modal-box">        
                                          <section className=" dark:text-gray-100">
                                 
@@ -233,49 +284,51 @@ const handleRefresh = () => {
                                     <div className="flex justify-center  items-center gap-10">
                                     <div>
                                         <label for="date" className="block mb-1 ">Date</label>
-                                        <input id="date" name="date" type="date" placeholder="type...." required="" className="block w-full p-2 rounded focus:outline-none focus:ring focus:ri focus:ri dark:bg-gray-800" />
+                                        <input id="date" name="date" type="date" placeholder="type...." required className="block w-full p-2 rounded focus:outline-none focus:ring focus:ri focus:ri dark:bg-gray-800" />
                                     </div>
+                                    <div className="">
+                                            <label className="block  text-white">Ads Account</label>
+                                            <select required  name="adsAccount" className="w-full border rounded p-2 mt-1 dark:bg-gray-800">
+                                            <option className="text-white" value="">All Ads Account</option>
+                                            {
+                                            adsAccounts.map(ads=> <option  key={ads._id} value={ads?.accountName}>{ads?.accountName}</option>)
+                                            } 
+                                            </select>
+                                        </div>
                                     </div>
                                     <div className="flex justify-center items-center gap-3">
                                     
                                     <div>
                                         <label for="name" className="block mb-1 ml-1">Campaign Name</label>
-                                        <input id="name" name="campaignName" type="text" placeholder="type...." required="" className="block w-full p-2 rounded focus:outline-none focus:ring focus:ri focus:ri dark:bg-gray-800" />
+                                        <input id="name" name="campaignName" type="text" placeholder="type...." required className="block w-full p-2 rounded focus:outline-none focus:ring focus:ri focus:ri dark:bg-gray-800" />
                                     </div>
+
+                                   
+                                   
+                                       
+                                        
+                                    
                                     <div>
                                         <label for="name" className="block mb-1 ml-1">Page Name</label>
-                                        <input id="name" name="pageName" type="text" placeholder="type...." required="" className="block w-full p-2 rounded focus:outline-none focus:ring focus:ri focus:ri dark:bg-gray-800" />
+                                        <input id="name" name="pageName" type="text" placeholder="type...." required className="block w-full p-2 rounded focus:outline-none focus:ring focus:ri focus:ri dark:bg-gray-800" />
                                     </div>
                                     </div>
                                     <div className="flex justify-center items-center gap-3">
                                     <div>
                                         <label for="name" className="block mb-1 ml-1">Page URL</label>
-                                        <input id="name" name="pageURL" type="text" placeholder="type...." required="" className="block w-full p-2 rounded focus:outline-none focus:ring focus:ri focus:ri dark:bg-gray-800" />
+                                        <input id="name" name="pageURL" type="text" placeholder="type...." required className="block w-full p-2 rounded focus:outline-none focus:ring focus:ri focus:ri dark:bg-gray-800" />
                                     </div>
                                     <div>
                                         <label for="name" className="block mb-1 ml-1">Total Budged</label>
-                                        <input id="name" name="totalBudged" type="number" placeholder="type...." required="" className="block w-full p-2 rounded focus:outline-none focus:ring focus:ri focus:ri dark:bg-gray-800" />
+                                        <input id="name" name="totalBudged" type="number" placeholder="type...." required className="block w-full p-2 rounded focus:outline-none focus:ring focus:ri focus:ri dark:bg-gray-800" />
                                     </div>
                                     </div>
                                    
                                     
                                  </div>
-                                   <button  className="w-full px-4 py-2 font-bold rounded shadow focus:outline-none focus:ring hover:ring focus:ri dark:bg-violet-400 focus:ri hover:ri dark:text-gray-900">Submit</button>
+                                   <button  onClick={() => document.getElementById(`modal_${index}`).close()} type="submit" className="font-avenir px-3 mx-auto py-1 bg-neutral rounded text-white">Submit</button>
                                   </Form>
                                           </section>
-                 
-                 
-                 
-                 
-                 
-                 
-                 
-                 
-                                             <div className="modal-action flex justify-center">
-                                                 <form method="dialog">
-                                                     <button className="btn btn-primary">Close</button>
-                                                 </form>
-                                             </div>
                                          </div>
                                      </dialog>
                  </div>
@@ -289,6 +342,10 @@ const handleRefresh = () => {
                                                  <div className="mb-4">
                                                      <label className="block text-gray-700">New Amount</label>
                                                      <input required type="number" name="amount"  className="w-full border rounded p-2 mt-1" />
+                                                 </div>
+                                                 <div className="mb-4">
+                                                     <label className="block text-gray-700">Note</label>
+                                                     <input required type="text" name="note"  className="w-full border rounded p-2 mt-1" />
                                                  </div>
                                                 </div>
                                                  <div className="flex justify-center items-center gap-4">
@@ -327,14 +384,16 @@ const handleRefresh = () => {
                     <table className="min-w-full bg-white">
                         <thead className="bg-green-800 text-white">
                             <tr>
+                                <th className="p-3">ID</th>
                                 <th className="p-3">Date</th>
-                                <th className="p-3">Page Name & URL</th>
+                                <th className="p-3">Campaign Name</th>
+                                
                                 <th className="p-3">T. Budget</th>
                                 <th className="p-3">T. Spent</th>
-                                <th className="p-3">Dollers Rate</th>
+                                <th className="p-3">Total Bill</th>
                                 <th className="p-3">Status</th>
                                 {
-                                     ddd?.role === 'admin' ? <></> :  <th className="p-3">Action</th>
+                                     ddd?.role === 'admin' ? <></> :  <th className="p-3">Edit</th>
                                 }
                                
                             </tr>
@@ -342,26 +401,28 @@ const handleRefresh = () => {
                         <tbody>
                             {dataa2.map((work, index) => (
                                 <tr key={index} className={`${index % 2 === 0 ? "bg-gray-100" : "bg-white"}`}>
-                                    <td className="p-3 text-center">{work.date}</td>
-                                    <td className="p-3 text-center">{work.campaignName}</td>
-                                    <td className="p-3 text-center">{work.tBudged}</td>
-                                    <td className="p-3 text-center">{work.tSpent}</td>
-                                    <td className="p-3 text-center">{work.dollerRate}</td>
-                                    <td className={`p-3 text-center ${work.status === "Active" ? "text-green-500" : "text-red-500"}`}>{work.status}</td>
+                                    <td className="p-3 border-r-2 border-l-2 border-gray-200 text-center">{work._id.slice(-5)}</td>
+                                    <td className="p-3 border-r-2 border-gray-200 text-center">{work.date}</td>
+                                    <td className="p-3 border-r-2 border-gray-200 text-center">{work.campaignName}</td>
+                                    
+                                    <td className="p-3 border-r-2 border-gray-200 text-center">$ {work.tBudged}</td>
+                                    <td className="p-3 border-r-2 border-gray-200 text-center">$ {work.tSpent}</td>
+                                    <td className="p-3 border-r-2 border-gray-200 text-center">৳ {work.tSpent * work.dollerRate}</td>
+                                    <td className={`p-3 text-center border-r-2 border-gray-200 ${work.status === "Active" ? "text-green-500" : "text-red-500"}`}>{work.status}</td>
                                     {
-                                          ddd?.role === 'admin' ? <></> :    <td className="p-3 text-center">
+                                          ddd?.role === 'admin' ? <></> :    <td className="p-3 text-center border-r-2 border-gray-200">
                                           <button className="font-avenir px-3 mx-auto py-1 bg-neutral rounded text-white" onClick={() => document.getElementById(`modal_${index}`).showModal()}>Edit</button>
                                           <dialog id={`modal_${index}`} className="modal">
                                               <div className="modal-box">
                                                   <form onSubmit={(e) => handleUpdate(e, work._id)}>
                                                       <div className="flex justify-center items-center gap-3">
                                                           <div className="mb-4">
-                                                              <label className="block text-gray-700">Previous Spent</label>
-                                                              <input type="number" disabled name="previousSpent" defaultValue={work.tSpent} className="w-full border rounded p-2 mt-1" />
+                                                              <label className="block text-gray-700">Total Budged</label>
+                                                              <input type="number" name="tBudged" defaultValue={work.tBudged} className="w-full border rounded p-2 mt-1" />
                                                           </div>
                                                           <div className="mb-4">
                                                               <label className="block text-gray-700">Total Spent</label>
-                                                              <input type="number" name="totalSpent" defaultValue={0} className="w-full border rounded p-2 mt-1" />
+                                                              <input type="number" name="totalSpent" defaultValue={work.tSpent} className="w-full border rounded p-2 mt-1" />
                                                           </div>
                                                       </div>
                                                       <div className="flex justify-center items-center gap-3">
@@ -379,11 +440,11 @@ const handleRefresh = () => {
                                                       </div>
                                                       </div>
                                                      
-                                                      <button type="submit" className="font-avenir px-3 mx-auto py-1 bg-neutral rounded text-white">Update</button>
+                                                      <button onClick={() => document.getElementById(`modal_${index}`).close()} type="submit" className="font-avenir px-3 mx-auto py-1 bg-neutral rounded text-white">Update</button>
                                                   </form>
-                                                  <div className="modal-action">
+                                                  {/* <div className="modal-action">
                                                       <button className="btn" onClick={() => document.getElementById(`modal_${index}`).close()}>Close</button>
-                                                  </div>
+                                                  </div> */}
                                               </div>
                                           </dialog>
                                       </td>
@@ -392,10 +453,12 @@ const handleRefresh = () => {
                                 </tr>
                             ))}
                             <tr className="bg-green-800 text-white font-bold">
+                                <td className="p-3  text-center"></td>
+                               
                                 <td className="p-3 text-center"></td>
                                 <td className="p-3 text-right" colSpan="2">Total Spent:</td>
-                                <td className="p-3 text-center"> {totalSpent}</td>
-                                <td className="p-3 text-center"></td>
+                                <td className="p-3 text-center">$ {totalSpent}</td>
+                                <td className="p-3 text-center">৳ {totalSpent * dollerRate}</td>
                                 <td className="p-3 text-center"></td>
                                 {
                                      ddd?.role === 'admin' ? <></> :  <td className="p-3 text-center"></td>
@@ -415,10 +478,12 @@ const handleRefresh = () => {
                     <table className="min-w-full bg-white">
                         <thead className="bg-green-800 text-white">
                             <tr>
+                                <th className="p-3 ">SL</th>
                                 <th className="p-3">Payment Date</th>
                                 <th className="p-3">Payment Amount</th>
                                 <th className="p-3">Payment Method</th>
-                               
+                                <th className="p-3"> Note</th>
+                                <th className="p-3">Edit</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -427,12 +492,14 @@ const handleRefresh = () => {
                                     key={index}
                                     className={`${index % 2 === 0 ? "bg-gray-100" : "bg-white"}`}
                                 >
-                                    <td className="p-3 text-center">{payment.date}</td>
-                                    <td className="p-3 text-center">৳ {payment.amount}</td>
-                                    <td className="p-3 text-center">
+                                    <td className="p-3  border-r-2 border-l-2 border-gray-200 text-center">{index + 1}</td>
+                                    <td className="p-3 border-r-2 border-gray-200 text-center">{payment.date}</td>
+                                    <td className="p-3 border-r-2 border-gray-200 text-center">৳ {payment.amount}</td>
+                                  
+                                    <td className="p-3 border-r-2 border-gray-200 text-center">
 
 
-                                    <th className="p-3 text-center"><img  className="w-28 h-6 mx-auto" src=" " alt="" /></th>
+                                    
                                         {payment.paymentMethod === 'bkashMarchent' && <img className="h-10 w-24 flex mx-auto my-auto items-center justify-center" src='https://i.ibb.co/bHMLyvM/b-Kash-Merchant.png' alt="" />
                                         }
                                         {payment.paymentMethod === 'bkashPersonal' && <img className="h-10 w-24 flex my-auto items-center mx-auto justify-center" src='https://i.ibb.co/520Py6s/bkash-1.png' alt="" />
@@ -441,16 +508,66 @@ const handleRefresh = () => {
                                         }
                                         {payment.paymentMethod === 'nagadPersonal' && <img className="h-10 w-24 flex my-auto items-center mx-auto justify-center" src='https://i.ibb.co/JQBQBcF/nagad-marchant.png' alt="" /> 
                                         }
-                                        {payment.paymentMethod === 'bank' && <img className="h-10 w-24 flex my-auto items-center mx-auto justify-center" src='https://i.ibb.co/3WVZGdz/PAYO-BIG-aa26e6e0.png' alt="" />
+                                        {payment.paymentMethod === 'bank' && <img className="h-12 w-13 flex my-auto items-center mx-auto justify-center" src='https://i.ibb.co/kS0jD01/bank-3d-render-icon-illustration-png.webp' alt="" />
                                         }
                                         </td>
+                                        <td className="p-3 border-r-2 border-gray-200 text-center"> {payment.note}</td>
+                                           <td className="p-3 border-r-2 border-gray-200 text-center">
+
+                                           <button className="font-avenir px-3 mx-auto py-1 bg-neutral rounded text-white" onClick={() => document.getElementById(`modal_${payment._id}`).showModal()}>
+                                            Edit
+                                            </button>
+
+                                          <dialog id={`modal_${payment._id}`} className="modal">
+                                              <div className="modal-box">
+                                                  <form onSubmit={(e) => handleUpdatePayment(e, payment._id)}>
+                                                      <div className="flex justify-center items-center gap-3">
+                                                      <div className="mb-4">
+                                                              <label className="block text-gray-700"> Date</label>
+                                                              <input type="date" defaultValue={payment.date} name='date'  className="w-full border rounded p-2 mt-1" />
+                                                          </div>
+                                                          <div className="mb-4">
+                                                              <label className="block text-gray-700"> Amount</label>
+                                                              <input type="number" name="amount"   defaultValue={payment.amount} className="w-full border rounded p-2 mt-1" />
+                                                          </div>
+                                                          
+                                                      </div>
+                                                      <div className="flex justify-center items-center gap-3">
+                                                      <div className="mb-4">
+                                                              <label className="block text-gray-700">Note</label>
+                                                              <input type="text" name="note" defaultValue={payment?.note} className="w-full border rounded p-2 mt-1" />
+                                                          </div>
+                                                      <div className="mb-4">
+                                                          <label className="block text-gray-700">Method</label>
+                                                          <select name="method" defaultValue={payment.paymentMethod} className="w-full border rounded p-2 mt-1">
+                                                          <option value="bkashMarchent">Bkash Marchent</option>
+                                                             <option value="bkashPersonal">Bkash Personal</option>
+                                                             <option value="nagadPersonal">Nagad Personal</option>
+                                                             <option value="rocketPersonal">Rocket Personal</option>
+                                                             <option value="bank">Bank</option>
+                                                          </select>
+                                                      </div>
+                                                      </div>
+                                                     
+                                                      <button onClick={() => document.getElementById(`modal_${payment._id}`).close()} type="submit" className="font-avenir px-3 mx-auto py-1 bg-neutral rounded text-white">Update</button>
+                                                  </form>
+                                                  {/* <div className="modal-action">
+                                                      <button className="btn" onClick={() => document.getElementById(`modal_${payment._id}`).close()}>Close</button>
+                                                  </div> */}
+                                              </div>
+                                          </dialog>
+                                      </td>
+                                    
+                                     
                                 </tr>
                             ))}
                             <tr className="bg-green-800 text-white font-bold">
-                                <td className="p-3 text-center" colSpan="1">
+                                <td className="p-3 text-center" colSpan="2">
                                     Total Amount =
                                 </td>
                                 <td className="p-3 text-center">৳ {totalPaymeent}</td>
+                                <td className="p-3 text-center"></td>
+                                <td className="p-3 text-center"></td>
                                 <td className="p-3 text-center"></td>
                                
                             </tr>

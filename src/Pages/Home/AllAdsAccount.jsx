@@ -5,6 +5,7 @@ import UseAxiosPublic from "../../Axios/UseAxiosPublic";
 import useUsers from "../../Hook/useUsers";
 import Swal from 'sweetalert2'
 import { IoIosSearch } from "react-icons/io";
+import { Helmet } from "react-helmet-async";
 
 const AllAdsAccount = () => {
   const [adsAccount, refetch] = useAdsAccount();
@@ -117,6 +118,10 @@ const AllAdsAccount = () => {
 
   return (
     <div>
+       <Helmet>
+              <title> Digital Network | Ads Account</title>
+              <link rel="canonical" href="https://www.tacobell.com/" />
+               </Helmet>
       <div className="mt-24 p-4 dark:text-green-800">
       
 

@@ -32,7 +32,7 @@ const Campaigns = () => {
   const handleSort = (e) => {
     e.preventDefault();
     const email = e.target.email.value;
-    const filtered = campaigns.filter(c => c.employeeEmail === email);
+    const filtered = campaigns.filter(c => c.status === email);
     setFilteredClients(filtered);
   };
 
@@ -41,7 +41,7 @@ const Campaigns = () => {
   const [selectedCategory, setSelectedCategory] = useState("");
 
   const filteredItems = filteredClients.filter((item) =>
-    item.tBudged.toLowerCase().includes(searchQuery.toLowerCase())
+    item.clientEmail.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   const filteredByCategory = selectedCategory
@@ -120,10 +120,12 @@ const Campaigns = () => {
 <div className="flex justify-between items-center ">
 <form className="flex justify-center items-center" onSubmit={handleSort}>
         <div className="mb-4 ml-10 mx-auto">
-          <label className="block text-gray-700">Sort By Employee</label>
+          <label className="block text-gray-700">Sort By Status</label>
           <select name="email" className="border rounded p-2 mt-1">
-          <option value="">All Employee</option>
-            {ddd.map(d => <option key={d._id} value={d.email}>{d.name}</option>)}
+          <option disabled value="">Status</option>
+            <option  value='Active'>Active</option>
+            <option  value='Complete'>Complete</option>
+            <option  value='In Review'>In Review</option>
           </select>
           <button type="submit" className="ml-2 px-4 py-2 bg-blue-500 text-white rounded">
             Search

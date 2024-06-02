@@ -6,6 +6,7 @@ import { AuthContext } from "../../Security/AuthProvider";
 import { IoIosSearch } from "react-icons/io";
 import Swal from "sweetalert2";
 import UseAxiosPublic from "../../Axios/UseAxiosPublic";
+import { Helmet } from "react-helmet-async";
 
 const AllClients = () => {
   const [users] = useUsers();
@@ -114,6 +115,10 @@ const AxiosPublic =UseAxiosPublic()
 
   return (
     <div className="mt-24">
+       <Helmet>
+              <title> Digital Network | Clients</title>
+              <link rel="canonical" href="https://www.tacobell.com/" />
+               </Helmet>
 <div className="flex justify-between items-center ">
 <form className="flex justify-center items-center" onSubmit={handleSort}>
         <div className="mb-4 ml-10 mx-auto">
