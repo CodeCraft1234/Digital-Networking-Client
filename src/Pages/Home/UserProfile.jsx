@@ -138,6 +138,7 @@ const UserProfile = () => {
     
 
     const [clients]=useClients()
+
     const handleaddblog=(e)=>{
         e.preventDefault()
         const campaignName=e.target.campaignName.value
@@ -259,22 +260,8 @@ const handleRefresh = () => {
                 {
                  ddd?.role === 'admin' ? <></> :  <div className="flex ml-10 text-start justify-start items-center ">
                  <div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-                 <button className="font-avenir px-3 mx-auto py-1 bg-neutral rounded text-white" onClick={() => document.getElementById(`modal_4`).showModal()}>Add Campaign</button>
-                                     <dialog id="my_modal_4" className="modal">
+                 <button className="font-avenir px-3  mx-auto py-1 bg-green-800 ml-10 rounded-lg text-white" onClick={() => document.getElementById('my_modal_2').showModal()}>Add Campaign</button>
+                                     <dialog id="my_modal_2" className="modal">
                                          <div className="modal-box">        
                                          <section className=" dark:text-gray-100">
                                 
@@ -286,6 +273,16 @@ const handleRefresh = () => {
                                         <label for="date" className="block mb-1 ">Date</label>
                                         <input id="date" name="date" type="date" placeholder="type...." required className="block w-full p-2 rounded focus:outline-none focus:ring focus:ri focus:ri dark:bg-gray-800" />
                                     </div>
+                                    
+                                    </div>
+                                    <div>
+                                        <label for="name" className="block mb-1 ml-1">Campaign Name</label>
+                                        <input id="name" name="campaignName" type="text" placeholder="type...." required className="block w-full p-2 rounded focus:outline-none focus:ring focus:ri focus:ri dark:bg-gray-800" />
+                                    </div>
+                                    <div className="flex justify-center items-center gap-3">
+                                    
+                                   
+
                                     <div className="">
                                             <label className="block  text-white">Ads Account</label>
                                             <select required  name="adsAccount" className="w-full border rounded p-2 mt-1 dark:bg-gray-800">
@@ -295,29 +292,25 @@ const handleRefresh = () => {
                                             } 
                                             </select>
                                         </div>
-                                    </div>
-                                    <div className="flex justify-center items-center gap-3">
-                                    
-                                    <div>
-                                        <label for="name" className="block mb-1 ml-1">Campaign Name</label>
-                                        <input id="name" name="campaignName" type="text" placeholder="type...." required className="block w-full p-2 rounded focus:outline-none focus:ring focus:ri focus:ri dark:bg-gray-800" />
-                                    </div>
-
-                                   
                                    
                                        
                                         
-                                    
-                                    <div>
-                                        <label for="name" className="block mb-1 ml-1">Page Name</label>
-                                        <input id="name" name="pageName" type="text" placeholder="type...." required className="block w-full p-2 rounded focus:outline-none focus:ring focus:ri focus:ri dark:bg-gray-800" />
-                                    </div>
-                                    </div>
-                                    <div className="flex justify-center items-center gap-3">
                                     <div>
                                         <label for="name" className="block mb-1 ml-1">Page URL</label>
                                         <input id="name" name="pageURL" type="text" placeholder="type...." required className="block w-full p-2 rounded focus:outline-none focus:ring focus:ri focus:ri dark:bg-gray-800" />
                                     </div>
+                                    </div>
+                                    <div className="flex justify-center items-center gap-3">
+
+
+                                    <div>
+                                        <label for="name" className="block mb-1 ml-1">Page Name</label>
+                                        <input id="name" name="pageName" type="text" placeholder="type...." required className="block w-full p-2 rounded focus:outline-none focus:ring focus:ri focus:ri dark:bg-gray-800" />
+                                    </div>
+
+
+
+                                  
                                     <div>
                                         <label for="name" className="block mb-1 ml-1">Total Budged</label>
                                         <input id="name" name="totalBudged" type="number" placeholder="type...." required className="block w-full p-2 rounded focus:outline-none focus:ring focus:ri focus:ri dark:bg-gray-800" />
@@ -326,55 +319,18 @@ const handleRefresh = () => {
                                    
                                     
                                  </div>
-                                   <button  onClick={() => document.getElementById(`modal_${index}`).close()} type="submit" className="font-avenir px-3 mx-auto py-1 bg-neutral rounded text-white">Submit</button>
+                                   <button method="dialog"  className="font-avenir px-3 flex justify-center  mx-auto py-1 bg-green-800 ml-10 rounded-lg text-white">Submit</button>
                                   </Form>
                                           </section>
-                                         </div>
-                                     </dialog>
-                 </div>
-                 <div>
-                 <button className="font-avenir px-3  mx-auto py-1 bg-green-800 ml-10 rounded-lg text-white" onClick={() => document.getElementById('my_modal_8').showModal()}>Pay Now</button>
-                                     <dialog id="my_modal_8" className="modal">
-                                         <div className="modal-box">
-                                             <form onSubmit={(e) => handlePayment(e)}>
-                                                <div className="flex justify-center items-center gap-3">
-                                                
-                                                 <div className="mb-4">
-                                                     <label className="block text-gray-700">New Amount</label>
-                                                     <input required type="number" name="amount"  className="w-full border rounded p-2 mt-1" />
-                                                 </div>
-                                                 <div className="mb-4">
-                                                     <label className="block text-gray-700">Note</label>
-                                                     <input required type="text" name="note"  className="w-full border rounded p-2 mt-1" />
-                                                 </div>
-                                                </div>
-                                                 <div className="flex justify-center items-center gap-4">
-                                                     <div className="mb-4">
-                                                         <label className="block text-gray-700">Payment Method</label>
-                                                         <select  name="paymentMethod" className="w-full border rounded p-2 mt-1">
-                                                         <option disabled value="">Select an Method</option>
-                                                             <option value="bkashMarchent">Bkash Marchent</option>
-                                                             <option value="bkashPersonal">Bkash Personal</option>
-                                                             <option value="nagadPersonal">Nagad Personal</option>
-                                                             <option value="rocketPersonal">Rocket Personal</option>
-                                                             <option value="bank">Bank</option>
-                                                         </select>
-                                                     </div>
-                                                     <div className="mb-4">
-                                                         <label className="block text-gray-700">Date</label>
-                                                         <input required type="date" name="date" defaultValue={0} className="w-full border rounded p-2 mt-1" />
-                                                     </div>
-                                                 </div>
-                                                 <button type="submit" className="font-avenir flex justify-center  px-3 mx-auto py-1 bg-neutral rounded text-white">Pay Now</button>
-                                             </form>
-                                             <div className="modal-action lex justify-center">
+                                             <div className="modal-action flex justify-center">
                                                  <form method="dialog">
-                                                     <button className="btn btn-primary">Close</button>
+                                                     <button className="font-avenir flex justify-center  px-3 mx-auto py-1 bg-neutral rounded text-white">Close</button>
                                                  </form>
                                              </div>
                                          </div>
                                      </dialog>
                  </div>
+                
                  <div>
                   <button onClick={handleRefresh} className="font-avenir px-3  mx-auto py-1 bg-green-800 ml-10 rounded-lg text-white">Pay To Employee</button>
                  </div>
@@ -387,6 +343,7 @@ const handleRefresh = () => {
                                 <th className="p-3">ID</th>
                                 <th className="p-3">Date</th>
                                 <th className="p-3">Campaign Name</th>
+                                <th className="p-3">Ads Account</th>
                                 
                                 <th className="p-3">T. Budget</th>
                                 <th className="p-3">T. Spent</th>
@@ -404,6 +361,7 @@ const handleRefresh = () => {
                                     <td className="p-3 border-r-2 border-l-2 border-gray-200 text-center">{work._id.slice(-5)}</td>
                                     <td className="p-3 border-r-2 border-gray-200 text-center">{work.date}</td>
                                     <td className="p-3 border-r-2 border-gray-200 text-center">{work.campaignName}</td>
+                                    <td className="p-3 border-r-2 border-gray-200 text-center">{work.adsAccount}</td>
                                     
                                     <td className="p-3 border-r-2 border-gray-200 text-center">$ {work.tBudged}</td>
                                     <td className="p-3 border-r-2 border-gray-200 text-center">$ {work.tSpent}</td>
@@ -456,6 +414,7 @@ const handleRefresh = () => {
                                 <td className="p-3  text-center"></td>
                                
                                 <td className="p-3 text-center"></td>
+                                <td className="p-3 text-center"></td>
                                 <td className="p-3 text-right" colSpan="2">Total Spent:</td>
                                 <td className="p-3 text-center">$ {totalSpent}</td>
                                 <td className="p-3 text-center">৳ {totalSpent * dollerRate}</td>
@@ -470,10 +429,55 @@ const handleRefresh = () => {
                 </div>
             </div>
 
-            <div className="mt-24 p-2 sm:p-4 dark:text-green-600">
+ 
+
+            <div className=" p-2 sm:p-4 dark:text-green-600">
                 <h6 className="text-center font-bold text-3xl md:text-5xl text-green-600">
                     Payment History
                 </h6>
+                <div>
+                 <button className="font-avenir px-3  mx-auto py-1 bg-green-800 ml-10 rounded-lg text-white" onClick={() => document.getElementById('my_modal_8').showModal()}>Pay Now</button>
+                                     <dialog id="my_modal_8" className="modal">
+                                         <div className="modal-box">
+                                             <form onSubmit={(e) => handlePayment(e)}>
+                                                <div className="flex justify-center items-center gap-3">
+                                                
+                                                 <div className="mb-4">
+                                                     <label className="block text-gray-700">New Amount</label>
+                                                     <input required type="number" name="amount"  className="w-full border rounded p-2 mt-1" />
+                                                 </div>
+                                                 <div className="mb-4">
+                                                     <label className="block text-gray-700">Note</label>
+                                                     <input required type="text" name="note"  className="w-full border rounded p-2 mt-1" />
+                                                 </div>
+                                                </div>
+                                                 <div className="flex justify-center items-center gap-4">
+                                                     <div className="mb-4">
+                                                         <label className="block text-gray-700">Payment Method</label>
+                                                         <select  name="paymentMethod" className="w-full border rounded p-2 mt-1">
+                                                         <option disabled value="">Select an Method</option>
+                                                             <option value="bkashMarchent">Bkash Marchent</option>
+                                                             <option value="bkashPersonal">Bkash Personal</option>
+                                                             <option value="nagadPersonal">Nagad Personal</option>
+                                                             <option value="rocketPersonal">Rocket Personal</option>
+                                                             <option value="bank">Bank</option>
+                                                         </select>
+                                                     </div>
+                                                     <div className="mb-4">
+                                                         <label className="block text-gray-700">Date</label>
+                                                         <input required type="date" name="date" defaultValue={0} className="w-full border rounded p-2 mt-1" />
+                                                     </div>
+                                                 </div>
+                                                 <button type="submit" className="font-avenir flex justify-center  px-3 mx-auto py-1 bg-neutral rounded text-white">Pay Now</button>
+                                             </form>
+                                             <div className="modal-action lex justify-center">
+                                                 <form method="dialog">
+                                                     <button className="btn btn-primary">Close</button>
+                                                 </form>
+                                             </div>
+                                         </div>
+                                     </dialog>
+                 </div>
                 <div className="overflow-x-auto mt-6">
                     <table className="min-w-full bg-white">
                         <thead className="bg-green-800 text-white">
