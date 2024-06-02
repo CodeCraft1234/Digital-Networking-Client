@@ -20,7 +20,7 @@ const UpdateProfile = () => {
     const [youtubeID, setYoutubeID] = useState("");
     const [whatsappID, setWhatsappID] = useState("");
 
-    console.log(fullName,fullAddress,companyName,contctNumber,facebookID)
+    console.log(fullName,fullAddress,companyName,contctNumber,facebookID,instagramID, linkedinID, twitterID, youtubeID, whatsappID)
 
     const [image, setImage] = useState("");
     const image_hosting_key = "6fbc3358bbb1a92b78e2dee0f5ca1b94";
@@ -214,7 +214,7 @@ const UpdateProfile = () => {
            <label className="block">
 				<span className="mb-1">WhatsApp</span>
 				<input
-                  type="text"
+                  type="number"
                   id="fullName"
                   name="whatsappID"
                   placeholder="WhatsApp ID"
