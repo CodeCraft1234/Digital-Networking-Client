@@ -7,6 +7,7 @@ import { IoIosSearch } from "react-icons/io";
 import useCampaings from "../../Hook/useCampaign";
 import UseAxiosPublic from "../../Axios/UseAxiosPublic";
 import Swal from "sweetalert2";
+import { Helmet } from "react-helmet-async";
 
 const Campaigns = () => {
   const [users] = useUsers();
@@ -51,7 +52,7 @@ const Campaigns = () => {
     : filteredItems;
 
 
-    const [totalSpent, setTotalSpent] = useState(0);
+  const [totalSpent, setTotalSpent] = useState(0);
   const [totalBudged, setTotalBudged] = useState(0);
   const [totalRCV, setTotalRCV] = useState(0);
   const [totalbill, setTotalBill] = useState(0);
@@ -117,6 +118,10 @@ const Campaigns = () => {
 
   return (
     <div className="mt-24">
+      <Helmet>
+              <title> Digital Network | All Campaign</title>
+              <link rel="canonical" href="https://www.tacobell.com/" />
+               </Helmet>
 <div className="flex justify-between items-center ">
 <form className="flex justify-center items-center" onSubmit={handleSort}>
         <div className="mb-4 ml-10 mx-auto">

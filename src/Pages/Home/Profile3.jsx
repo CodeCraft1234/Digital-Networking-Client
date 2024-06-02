@@ -6,6 +6,7 @@ import { useContext, useEffect, useState } from "react";
 import CampaignTable from "../Home/CampaignTable";
 import UseAxiosPublic from "../../Axios/UseAxiosPublic";
 import { AuthContext } from "../../Security/AuthProvider";
+import { Helmet } from "react-helmet-async";
 
 
 
@@ -41,6 +42,10 @@ console.log(data)
 
   return (
     <div className="mt-24   ">
+      <Helmet>
+              <title> Digital Network | Employee Clients</title>
+              <link rel="canonical" href="https://www.tacobell.com/" />
+               </Helmet>
       
        {/* <div >
             <img className="rounded-full mx-auto w-72 h-72" src={userr.photo} alt=""/>

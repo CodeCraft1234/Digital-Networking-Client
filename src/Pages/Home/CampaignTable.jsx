@@ -212,10 +212,106 @@ const CampaignTable = ({ email }) => {
 
     <div className="my-4 mb-24">
      
-      
+        {/* <div className="navbar-center mt-0 lg:flex mx-6 my-6">
+          <ul className="menu menu-horizontal items-center px-1 flex gap-4 justify-between mx-auto">
+            {ddd?.role === "admin" ? (
+              <>
+             
+                <li>
+                  <NavLink
+                    to="/allAdSAccount"
+                    className="text-white bg-green-800 hover:bg-blue-800 hover:text-white "
+                  >
+                    <MdAccountCircle className="w-6 h-6" /> Ads Accounts
+                  </NavLink>
+                </li>
+                <li>
+                  <NavLink
+                    to="/allClients"
+                    className="text-white bg-green-800 hover:bg-blue-800 hover:text-white "
+                  >
+                    <IoPeopleSharp className="w-6 h-6" /> Clients
+                  </NavLink>
+                </li>
+                <li>
+                  <NavLink
+                    to="/allCampaign"
+                    className="text-white bg-green-800 hover:bg-blue-800 hover:text-white "
+                  >
+                    <MdCampaign className="w-6 h-6" /> Campaigns
+                  </NavLink>
+                </li>
+                <li>
+                  <NavLink
+                    to={`/employeeMonthlySelary`}
+                    className="text-white bg-green-800 hover:bg-blue-800 hover:text-white "
+                  >
+                    <FaSackDollar className="w-5 h-5" /> Salary
+                  </NavLink>
+                </li>
+              
+              </>
+            ) : (
+              <>
+                <li>
+                  <NavLink
+                    to={`/userInfo/${user?.email}`}
+                    className="text-white bg-green-800 hover:bg-blue-800 hover:text-white "
+                    
+                  >
+                    <CgProfile className="w-6 h-6" /> My Profile
+                  </NavLink>
+                </li>
+                <li>
+                  <NavLink
+                    to={`/myProfile/${user?.email}`}
+                    className="text-white bg-green-800 hover:bg-blue-800 hover:text-white "
+                    
+                  >
+                    <IoPeopleSharp className="w-6 h-6" /> My Clients
+                  </NavLink>
+                </li>
+                <li>
+                  <NavLink
+                    to={`/adsAccount/${user?.email}`}
+                    className="text-white bg-green-800 hover:bg-blue-800 hover:text-white "
+                    
+                  >
+                    <MdAccountCircle className="w-6 h-6" /> Ads Accounts
+                  </NavLink>
+                </li>
 
+                <li>
+                  <NavLink
+                    to={`/selary/${user?.email}`}
+                    className="text-white bg-green-800 hover:bg-blue-800 hover:text-white "
+                  >
+                    <FaSackDollar className="w-5 h-5" /> Salary
+                  </NavLink>
+                </li>
+                
+                <li>
+                  <NavLink
+                    to="/allCampaign"
+                    className="text-white bg-green-800 hover:bg-blue-800 hover:text-white "
+                  >
+                    <MdCampaign className="w-6 h-6" /> Campaigns
+                  </NavLink>
+                </li>
+                <li>
+                  <NavLink
+                    to="/addClient"
+                    className="text-white bg-green-800 hover:bg-blue-800 hover:text-white "
+                  >
+                    <IoPeopleSharp className="w-6 h-6" /> Add Client
+                  </NavLink>
+                </li>
+              </>
+            )}
+          </ul>
+        </div> */}
 
-    <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-8 mt-4 p-4">
+    <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 mb-3  lg:grid-cols-6 gap-8 mt-4 p-4">
    <div className="balance-card bg-white rounded-2xl shadow-2xl p-5 text-center  transition-transform transform hover:scale-105 border-0">
      <img className="balance-card-img" src="https://i.ibb.co/bHMLyvM/b-Kash-Merchant.png" alt="bKash" />
      <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"> <span className="text-lg lg:text-2xl font-extrabold">৳</span> {bkashMarcent}</p>
@@ -235,11 +331,11 @@ const CampaignTable = ({ email }) => {
 
    <div className="balance-card bg-white rounded-2xl shadow-2xl p-5 text-center transition-transform transform hover:scale-105 border-0">
      <div>
-       <img className="balance-card-img" src="https://i.ibb.co/3WVZGdz/PAYO-BIG-aa26e6e0.png" alt="Payoneer" />
-       <span className="balance-card-text text-4xl flex items-center justify-center gap-4">
-       <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"> <span className="text-lg lg:text-2xl font-extrabold text-red-600">$</span> 4000</p>
+       <img className="balance-card-img w-56 h-auto " src="https://i.ibb.co/3WVZGdz/PAYO-BIG-aa26e6e0.png" alt="Payoneer" />
+       <span className="balance-card-text text-4xl flex items-center justify-center gap-2">
+       <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"> <span className="text-lg lg:text-2xl font-extrabold text-red-600">$</span>4000</p>
        <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"> <span className="text-lg lg:text-2xl font-extrabold text-blue-600">/</span></p>
-       <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"> <span className="text-lg lg:text-2xl font-extrabold text-green-600">$</span> {totalSpent}</p>
+       <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"> <span className="text-lg lg:text-2xl font-extrabold text-green-600">$</span>{totalSpent}</p>
        </span>
 
      
@@ -251,15 +347,15 @@ const CampaignTable = ({ email }) => {
      <p className="balance-card-text text-lg lg:text-2xl mt-8 font-bold text-gray-700">Total BDT: <span className="text-lg lg:text-2xl font-extrabold">৳</span> {totalRCV}</p>
     
    </div>
-   <div className="balance-card bg-white rounded-2xl shadow-2xl p-5 text-center transition-transform transform hover:scale-105 border-0">
+   {/* <div className="balance-card bg-white rounded-2xl shadow-2xl p-5 text-center transition-transform transform hover:scale-105 border-0">
      
      <p className="balance-card-text text-lg lg:text-2xl mt-8 font-bold text-gray-700">Total RCV: <span className="text-lg lg:text-2xl font-extrabold">৳</span> {totalRCV}</p>
     
-   </div>
-   <div className="balance-card bg-white rounded-2xl  shadow-2xl p-5 text-center transition-transform transform hover:scale-105 border-0">
+   </div> */}
+   {/* <div className="balance-card bg-white rounded-2xl  shadow-2xl p-5 text-center transition-transform transform hover:scale-105 border-0">
     
      <p className="balance-card-text text-lg lg:text-2xl mt-8 items-center font-bold text-gray-700">Total Pay: <span className="text-lg lg:text-2xl font-extrabold">৳</span> {totalRCV}</p>
-   </div>
+   </div> */}
   
  </div>
       

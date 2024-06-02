@@ -75,62 +75,70 @@ console.log(ddd?.name);
 return (
 
         <div className="mt-20 p-4 dark:text-green-800">
-  <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-5 mb-3  lg:grid-cols-5 gap-8 ">
+  <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 mb-3  lg:grid-cols-6 gap-8 mt-4 p-4 ">
 
       <div className="balance-card bg-white rounded-2xl p-5 text-center shadow-2xl transition-transform transform hover:scale-105 border-0 ">
-        <img className="balance-card-img h-14 mx-auto " src="https://i.ibb.co/bHMLyvM/b-Kash-Merchant.png" alt="bKash" />
+        <img className="balance-card-img   " src="https://i.ibb.co/bHMLyvM/b-Kash-Merchant.png" alt="bKash" />
 
         <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700">
           <span className="text-lg lg:text-2xl font-extrabold">৳</span>10000
         </p>
       </div>
       <div className="balance-card items-center bg-white rounded-2xl p-5 text-center shadow-2xl transition-transform transform hover:scale-105 border-0 ">
-        <img className="balance-card-img h-14 mx-auto" src="https://i.ibb.co/520Py6s/bkash-1.png" alt="bKash" />
+        <img className="balance-card-img  " src="https://i.ibb.co/520Py6s/bkash-1.png" alt="bKash" />
         <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700">
           <span className="text-lg lg:text-2xl font-extrabold">৳</span>10000
         </p>
       </div>
       <div className="balance-card bg-white rounded-2xl p-5 text-center shadow-2xl transition-transform transform hover:scale-105 border-0 ">
-        <img className="balance-card-img h-14 mx-auto " src="https://i.ibb.co/JQBQBcF/nagad-marchant.png" alt="Nagad" />
+        <img className="balance-card-img   " src="https://i.ibb.co/JQBQBcF/nagad-marchant.png" alt="Nagad" />
         <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700">
           <span className="text-lg lg:text-2xl font-extrabold">৳</span>10000
         </p>
       </div>
       <div className="balance-card bg-white rounded-2xl p-5 text-center shadow-2xl transition-transform transform hover:scale-105 border-0 ">
-        <img className="balance-card-img h-14 mx-auto " src="https://i.ibb.co/QkTM4M3/rocket.png" alt="Rocket" />
+        <img className="balance-card-img   " src="https://i.ibb.co/QkTM4M3/rocket.png" alt="Rocket" />
         <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700">
           <span className="text-lg lg:text-2xl font-extrabold">৳</span>10000
         </p>
       </div>
 
-      <div className=" bg-white rounded-2xl p-5 text-center shadow-2xl transition-transform transform hover:scale-105 border-0 gap-4">
-        <img className="balance-card-img h-10 mx-auto mb-4" src="https://i.ibb.co/3WVZGdz/PAYO-BIG-aa26e6e0.png" alt="Payoneer" />
-        {/* <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"> Payoneer</p> */}
-        <div className="flex justify-center  gap-3 items-center">
-        <p className=" balance-card-text text-lg lg:text-2xl font-bold text-gray-700"><span className="text-lg lg:text-2xl"> $</span>  4000 </p>
-        {/* <p className="balance-card-text text-3xl lg:text-4xl"><span className="text-lg lg:text-2xl font-extrabold"> $</span>  4000</p> */}
-        </div>
+      <div className=" bg-white rounded-2xl p-5 text-center shadow-2xl transition-transform transform hover:scale-105 border-0 gap-4 ">
+      <div>
+       <img className="balance-card-img w-56 h-auto mt-6" src="https://i.ibb.co/3WVZGdz/PAYO-BIG-aa26e6e0.png" alt="Payoneer" />
+       <span className="balance-card-text text-4xl flex items-center justify-center gap-2">
+       <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"> <span className="text-lg lg:text-2xl font-extrabold text-red-600">$</span>4000</p>
+       <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"> <span className="text-lg lg:text-2xl font-extrabold text-blue-600">/</span></p>
+       <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"> <span className="text-lg lg:text-2xl font-extrabold text-green-600">$</span>6000</p>
+       </span>
+
+     
+     
+     </div>
       </div>
-      <div className="balance-card bg-white rounded-2xl p-5 text-center shadow-2xl transition-transform transform hover:scale-105 border-0 ">
-      <p className="balance-card-text text-lg mt-5 lg:text-2xl font-bold text-gray-700"> Total Balance</p>
-        <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"><span className="text-lg lg:text-2xl font-extrabold"> ৳</span> 10000</p>
+
+      <div className="balance-card bg-white rounded-2xl shadow-2xl p-5 text-center transition-transform transform hover:scale-105 border-0">
+      <p className="balance-card-text text-lg mt-5 lg:text-xl font-bold text-gray-700">Total: <span className="text-lg lg:text-xl font-extrabold">৳10000</span></p>
+        {/* <p className="balance-card-text text-lg lg:text-sm font-bold text-gray-700"><span className="text-lg lg:text-sm font-extrabold">৳</span>10000</p> */}
+      <p className="balance-card-text text-lg mt-2 lg:text-xl font-bold text-gray-700">DUE: <span className="text-lg lg:text-xl font-extrabold text-gray-700">৳10000</span></p>
+        {/* <p className="balance-card-text text-lg lg:text-sm font-bold text-gray-700"><span className="text-lg lg:text-sm font-extrabold text-gray-700">৳</span>10000</p> */}
       </div>
-    <div className="balance-card bg-white rounded-2xl p-5 text-center shadow-2xl transition-transform transform hover:scale-105 border-0">
+    {/* <div className="balance-card bg-white rounded-2xl p-5 text-center shadow-2xl transition-transform transform hover:scale-105 border-0">
         <p className="balance-card-text text-lg mt-5 lg:text-2xl font-bold text-gray-700">Total Received</p>
         <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"><span className="text-lg lg:text-2xl font-extrabold"> ৳</span> 10000</p>
-      </div>
-      <div className="balance-card bg-white rounded-2xl p-5 text-center shadow-2xl transition-transform transform hover:scale-105 border-0">
+      </div> */}
+      {/* <div className="balance-card bg-white rounded-2xl p-5 text-center shadow-2xl transition-transform transform hover:scale-105 border-0">
         <p className="balance-card-text text-lg mt-5 lg:text-2xl font-bold text-gray-700">Admin Balance</p>
         <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"><span className="text-lg lg:text-2xl font-extrabold"> ৳</span> 10000</p>
-      </div>
-      <div className="balance-card bg-white rounded-2xl p-5 text-center shadow-2xl transition-transform transform hover:scale-105 border-0">
+      </div> */}
+      {/* <div className="balance-card bg-white rounded-2xl p-5 text-center shadow-2xl transition-transform transform hover:scale-105 border-0">
         <p className="balance-card-text text-lg mt-5 lg:text-2xl font-bold text-gray-700">Admin Balance</p>
         <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"><span className="text-lg lg:text-2xl font-extrabold"> ৳</span> 10000</p>
-      </div>
-      <div className="balance-card bg-white rounded-2xl p-5 text-center shadow-2xl transition-transform transform hover:scale-105 border-0">
+      </div> */}
+      {/* <div className="balance-card bg-white rounded-2xl p-5 text-center shadow-2xl transition-transform transform hover:scale-105 border-0">
         <p className="balance-card-text text-lg mt-5 lg:text-2xl font-bold text-gray-700">Admin Balance</p>
         <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"><span className="text-lg lg:text-2xl font-extrabold"> ৳</span> 10000</p>
-      </div>
+      </div> */}
     </div>
     
     {/* <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-8 mt-7">
@@ -340,7 +348,7 @@ return (
         {employee.map((userr, index) => (
           <tbody className="text-black text-sm md:text-xl" key={userr._id}>
             <tr className={`${index % 2 === 0 ? "bg-gray-100" : "bg-white"} border-b border-opacity-20`}>
-              <td className="p-3 hover:bg-gradient-to-r from-gray-100 via-gray-300 to-gray-100 hover:text-blue-600 font-bold hover:text-sm md:hover:text-sm sm:hover:text-sm flex flex-col md:flex-row justify-start text-center ml-2 md:ml-10 items-center gap-2 border-l-2 border-r-2 border-gray-300">
+              <td className="p-3 hover:bg-gradient-to-r from-gray-100 via-gray-300 to-gray-100 hover:text-blue-600 font-bold hover:text-sm md:hover:text-sm sm:hover:text-sm flex flex-col md:flex-row justify-start text-center ml-2 md:ml-10 items-center gap-2  border-r-2 border-gray-300">
                 <Link to={`/userInfo/${userr?.email}`}>
                   <img className="w-10 h-10 rounded-full" src={userr?.photo} alt="" />
                 </Link>

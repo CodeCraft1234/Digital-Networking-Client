@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import UseAxiosPublic from "../../Axios/UseAxiosPublic";
 import useOwnSelary from "../../Hook/useOwnSelary";
+import { Helmet } from "react-helmet-async";
 
 const EmployeerMouthlySelery = ({ email }) => {
   const [ownSelary] = useOwnSelary();
@@ -30,6 +31,10 @@ const EmployeerMouthlySelery = ({ email }) => {
   return (
 
     <div className="my-10 p-4 dark:bg-green-800 mt-24">
+      <Helmet>
+              <title> Digital Network | Monthy Salary</title>
+              <link rel="canonical" href="https://www.tacobell.com/" />
+               </Helmet>
 
       {/* <h6 className="text-center mb-5 font-bold uppercase text-3xl md:text-5xl mx-4 py-4 bg-green-800 text-white">
 
