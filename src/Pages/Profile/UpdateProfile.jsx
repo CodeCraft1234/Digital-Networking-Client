@@ -1,13 +1,34 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../../Security/AuthProvider";
 
 import UseAxiosPublic from "../../Axios/UseAxiosPublic";
 import Swal from "sweetalert2";
+import { SiNamemc } from "react-icons/si";
+import useUsers from "../../Hook/useUsers";
+import { FaFacebook, FaInstagram, FaLinkedin, FaTwitter, FaWhatsapp, FaYoutube } from "react-icons/fa";
+import { Link } from "react-router-dom";
 
 
 const UpdateProfile = () => {
     const { user } = useContext(AuthContext);
     const AxiosPublic=UseAxiosPublic()
+
+
+
+
+    const [users, setUsers] = useUsers();
+    const [ddd, setDdd] = useState(null);
+  console.log(ddd)
+    useEffect(() => {
+      if (users && user) {
+        const fff = users.find((u) => u.email === user?.email);
+        console.log(fff);
+        setDdd(fff || {}); // Update state with found user or an empty object
+      }
+    }, [users, user]);
+
+
+
 
     const [fullName, setFullName] = useState("");
     const [fullAddress, setfullAddress] = useState("");
@@ -87,26 +108,85 @@ const UpdateProfile = () => {
             <section className="py-6 dark:bg-gray-800 dark:text-gray-50">
 	<div className="grid max-w-6xl grid-cols-1 items-baseline px-6 mx-auto lg:px-8 md:grid-cols-2 md:divide-x">
 		<div className="py-6 mx-auto md:py-0 md:px-6">
-                 <p className="flex items-center">
-					<img className="h-20 w-20 mx-auto rounded-full" src={user?.photoURL} alt="" />
-				</p>
 			<h1 className="text-4xl font-bold">Update Your Info</h1>
 			<p className="pt-2 pb-4">Fill in the form to start a conversation</p>
-			<div className="space-y-4">
-				<p className="flex items-center">
-					<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-5 h-5 mr-2 sm:mr-6">
-						<path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"></path>
-					</svg>
-					<span>{user?.displayName}</span>
-				</p>
-				<p className="flex items-center">
-					<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-5 h-5 mr-2 sm:mr-6">
-						<path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"></path>
-						<path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"></path>
-					</svg>
-					<span>{user?.email}</span>
-				</p>
-			</div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-10 p-4">
+      
+          <div
+            key={ddd?._id}
+            className="bg-white  border border-black mx-auto shadow-md rounded-lg p-6 transform transition-all hover:shadow-xl"
+            style={{ width: "300px", height: "400px" }}
+          >
+            <div className="text-center text-black  overflow-hidden">
+              <img
+                className="w-20 h-20 mx-auto rounded-full mb-4"
+                src={ddd?.photo}
+                alt={ddd?.name}
+              />
+
+              <h2 className="text-base font-semibold mb-4 text-red-600">
+                {ddd?.name}
+              </h2>
+            </div>
+            <div className="text-left text-black ">
+              <div className="flex items-center justify-start mb-2 gap-2 overflow-hidden">
+                <span className="font-bold ">Full Name: </span>
+                <span className="text-sm text-gray-600">{ddd?.fullName}</span>
+              </div>
+              {/* <div className="flex items-center justify-start mb-2 gap-2">
+                <span>Company Name: </span>
+                <span>{em.companyName}</span>
+              </div> */}
+              <div className="flex items-center justify-start mb-2 gap-2">
+                <span className="font-bold">Email: </span>
+                <span className="text-sm text-gray-600">{ddd?.email}</span>
+              </div>
+              <div className="flex items-center justify-start mb-2 gap-2 overflow-hidden">
+                <span className="font-bold ">Mob:</span>
+                <span className="text-sm text-gray-600">{ddd?.contctNumber}</span>
+              </div>
+
+              <div className="flex items-center justify-start mb-2 gap-2 overflow-hidden">
+                <span className="font-bold ">Address: </span>
+                <span className="text-sm text-gray-600">{ddd?.fullAddress}</span>
+              </div>
+
+              <div className="flex items-center justify-center mb-2 gap-0 overflow-hidden ">
+                {/* <span className=" font-bold">Facebook: </span> */}
+                <button className=" text-blue-600 rounded-lg  border-gray-600 p-3">
+                  <Link to={ddd?.facebookID}>
+                    <FaFacebook className="w-5 h-5"></FaFacebook>
+                  </Link>
+                </button>
+                <button className=" text-red-600 rounded-lg  border-gray-600 p-3">
+                  <Link to={ddd?.instagramID}>
+                    <FaInstagram className="w-5 h-5"></FaInstagram>
+                  </Link>
+                </button>
+                <button className=" text-[#0072B9] rounded-lg  border-gray-600 p-3">
+                  <Link to={ddd?.linkedinID}>
+                    <FaLinkedin className="w-5 h-5"></FaLinkedin>
+                  </Link>
+                </button>
+                <button className=" text-[#00A2FD] rounded-lg  border-gray-600 p-3">
+                  <Link to={ddd?.twitterID}>
+                    <FaTwitter className="w-5 h-5"></FaTwitter>
+                  </Link>
+                </button>
+                <button className=" text-[#FF211F] rounded-lg  border-gray-600 p-3">
+                  <Link to={ddd?.youtubeID}>
+                    <FaYoutube className="w-5 h-5"></FaYoutube>
+                  </Link>
+                </button>
+                <button className=" text-[#00CE6C] rounded-lg  border-gray-600 p-3">
+                  <Link to={ddd?.whatsappID}>
+                    <FaWhatsapp className="w-5 h-5"></FaWhatsapp>
+                  </Link>
+                </button>
+              </div>
+            </div>
+          </div>
+      </div>
 		</div>
 
         <form onSubmit={handleSubmit} className="flex flex-col py-6 space-y-6 md:py-0 md:px-6" action="#" method="post">

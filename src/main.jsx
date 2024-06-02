@@ -33,6 +33,8 @@ import AllClients from "./Pages/Home/AllClients";
 import AllAdsAccount from "./Pages/Home/AllAdsAccount";
 import EmployeeMonthlySalary from "./Pages/Home/EmployeerMouthlySelery";
 import AllCampaign from "./Pages/Home/AllCampaign";
+import MyCampaigns from "./Pages/Home/Mycampaigns";
+import { HelmetProvider } from "react-helmet-async";
 
 const router = createBrowserRouter([
   {
@@ -85,6 +87,10 @@ const router = createBrowserRouter([
         element:<AllCampaign></AllCampaign>
        },
        {
+        path:'/myCampaigns',
+        element:<MyCampaigns></MyCampaigns>
+       },
+       {
         path:'/addClient',
         element:<AddClient></AddClient>
        },
@@ -127,9 +133,11 @@ const queryClient = new QueryClient();
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <QueryClientProvider client={queryClient}>
-        <AuthProvider>
+    <HelmetProvider>
+    <AuthProvider>
           <RouterProvider router={router} />
         </AuthProvider>
+    </HelmetProvider> 
     </QueryClientProvider>
   </React.StrictMode>
 );

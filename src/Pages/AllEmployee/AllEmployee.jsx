@@ -18,7 +18,7 @@ const AllEmployee = () => {
   const [users, setUsers] = useUsers();
   const { user } = useContext(AuthContext);
   const [ddd, setDdd] = useState(null);
-
+console.log(ddd)
   useEffect(() => {
     if (users && user) {
       const fff = users.find((u) => u.email === user?.email);
