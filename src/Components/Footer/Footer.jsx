@@ -30,24 +30,24 @@ const Footer = () => {
               <ul className="space-y-1">
                 <li>
                   <a rel="noopener noreferrer" href="#">
-                    Front End Development
+                    Digital Marketing
                   </a>
                 </li>
                 <li>
                   <a rel="noopener noreferrer" href="#">
-                    Back End Development
+                    Graphics Design
                   </a>
                 </li>
                 <li>
                   <a rel="noopener noreferrer" href="#">
-                    JSON WEB TOKEN
+                    Web Design
                   </a>
                 </li>
-                <li>
+                {/* <li>
                   <a rel="noopener noreferrer" href="#">
-                    React Webside
+                    Landing Page Design
                   </a>
-                </li>
+                </li> */}
                 <li>
                   <a rel="noopener noreferrer" href="#">
                     Web Development
@@ -113,7 +113,7 @@ const Footer = () => {
             <div className="space-y-3">
               <div className="uppercase dark:text-gray-50">Social media</div>
               <div className="flex text-2xl justify-start space-x-3">
-                <a href="#">
+                <a href="https://www.linkedin.com/hellodigitalNetwork">
                   {" "}
                   <FaLinkedin />
                 </a>
@@ -121,7 +121,7 @@ const Footer = () => {
                   {" "}
                   <FaFacebookSquare />
                 </a>
-                <a href="#">
+                <a href="https://www.instagram.com/hellodigitalNetwork">
                   {" "}
                   <FaInstagramSquare />
                 </a>
