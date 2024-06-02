@@ -118,9 +118,9 @@ return (
       </div>
 
       <div className="balance-card bg-white rounded-2xl shadow-2xl p-5 text-center transition-transform transform hover:scale-105 border-0">
-      <p className="balance-card-text text-lg mt-5 lg:text-xl font-bold text-gray-700">Total:<span className="text-lg lg:text-xl font-extrabold">৳ 10000</span></p>
+      <p className="balance-card-text text-lg mt-5 lg:text-xl font-bold text-gray-700">Total: <span className="text-lg lg:text-xl font-extrabold">৳10000</span></p>
         {/* <p className="balance-card-text text-lg lg:text-sm font-bold text-gray-700"><span className="text-lg lg:text-sm font-extrabold">৳</span>10000</p> */}
-      <p className="balance-card-text text-lg mt-2 lg:text-xl font-bold text-gray-700">DUE:<span className="text-lg lg:text-xl font-extrabold text-gray-700">৳ 10000</span></p>
+      <p className="balance-card-text text-lg mt-2 lg:text-xl font-bold text-gray-700">DUE: <span className="text-lg lg:text-xl font-extrabold text-gray-700">৳10000</span></p>
         {/* <p className="balance-card-text text-lg lg:text-sm font-bold text-gray-700"><span className="text-lg lg:text-sm font-extrabold text-gray-700">৳</span>10000</p> */}
       </div>
     {/* <div className="balance-card bg-white rounded-2xl p-5 text-center shadow-2xl transition-transform transform hover:scale-105 border-0">
@@ -348,7 +348,7 @@ return (
         {employee.map((userr, index) => (
           <tbody className="text-black text-sm md:text-xl" key={userr._id}>
             <tr className={`${index % 2 === 0 ? "bg-gray-100" : "bg-white"} border-b border-opacity-20`}>
-              <td className="p-3 hover:bg-gradient-to-r from-gray-100 via-gray-300 to-gray-100 hover:text-blue-600 font-bold hover:text-sm md:hover:text-sm sm:hover:text-sm flex flex-col md:flex-row justify-start text-center ml-2 md:ml-10 items-center gap-2 border-l-2 border-r-2 border-gray-300">
+              <td className="p-3 hover:bg-gradient-to-r from-gray-100 via-gray-300 to-gray-100 hover:text-blue-600 font-bold hover:text-sm md:hover:text-sm sm:hover:text-sm flex flex-col md:flex-row justify-start text-center ml-2 md:ml-10 items-center gap-2  border-r-2 border-gray-300">
                 <Link to={`/userInfo/${userr?.email}`}>
                   <img className="w-10 h-10 rounded-full" src={userr?.photo} alt="" />
                 </Link>
