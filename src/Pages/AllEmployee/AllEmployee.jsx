@@ -5,6 +5,14 @@ import "tailwindcss/tailwind.css";
 import { AuthContext } from "../../Security/AuthProvider";
 import { Link } from "react-router-dom";
 import Payment from "../Home/Payment";
+import {
+  FaFacebook,
+  FaInstagram,
+  FaLinkedin,
+  FaWhatsapp,
+  FaYoutube,
+} from "react-icons/fa";
+import { FaTwitter } from "react-icons/fa6";
 
 const AllEmployee = () => {
   const [users, setUsers] = useUsers();
@@ -29,7 +37,6 @@ const AllEmployee = () => {
   }, [users, user]);
 
   console.log(ddd?.name);
- 
 
   return (
     <div className="mt-24 p-4 dark:text-green-800">
@@ -43,43 +50,79 @@ const AllEmployee = () => {
         </h2>
       )} */}
 
-
-
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-10 p-4">
         {employee?.map((em) => (
           <div
             key={em._id}
-            className="bg-white hover:bg-blue-600 border border-black mx-auto shadow-md rounded-lg p-6 transform transition-all hover:scale-105 hover:shadow-xl"
+            className="bg-white  border border-black mx-auto shadow-md rounded-lg p-6 transform transition-all hover:shadow-xl"
             style={{ width: "300px", height: "400px" }}
           >
-            <div className="text-center text-black hover:text-blue-100 overflow-hidden">
+            <div className="text-center text-black  overflow-hidden">
               <img
                 className="w-20 h-20 mx-auto rounded-full mb-4"
-                src={em.photo}
+                src={em.companyLogo}
                 alt={em.name}
               />
-              <h2 className="text-xl font-semibold mb-4">{em.name}</h2>
+
+              <h2 className="text-base font-semibold mb-4 text-red-600">
+                {em.name}
+              </h2>
             </div>
-            <div className="text-left text-black hover:text-blue-100">
-              <div className="flex items-center justify-start mb-2 gap-2">
-                <span>Full Name: </span>
-                <span>{em.fullName}</span>
+            <div className="text-left text-black ">
+              <div className="flex items-center justify-start mb-2 gap-2 overflow-hidden">
+                <span className="font-bold ">Full Name: </span>
+                <span className="text-sm text-gray-600">{em.fullName}</span>
               </div>
+              {/* <div className="flex items-center justify-start mb-2 gap-2">
+                <span>Company Name: </span>
+                <span>{em.companyName}</span>
+              </div> */}
               <div className="flex items-center justify-start mb-2 gap-2">
-                <span>Email: </span>
-                <span>{em.email}</span>
+                <span className="font-bold">Email: </span>
+                <span className="text-sm text-gray-600">{em.email}</span>
               </div>
               <div className="flex items-center justify-start mb-2 gap-2 overflow-hidden">
-                <span>Facebook: </span>
-                <span>{em.facebookID}</span>
+                <span className="font-bold ">Mob:</span>
+                <span className="text-sm text-gray-600">{em.contctNumber}</span>
               </div>
-              <div className="flex items-center justify-start mb-2 gap-2">
-                <span>Address: </span>
-                <span>{em.fullAddress}</span>
+
+              <div className="flex items-center justify-start mb-2 gap-2 overflow-hidden">
+                <span className="font-bold ">Address: </span>
+                <span className="text-sm text-gray-600">{em.fullAddress}</span>
               </div>
-              <div className="flex items-center justify-start mb-2 gap-2">
-                <span>Contact Number:</span>
-                <span>{em.contctNumber}</span>
+
+              <div className="flex items-center justify-center mb-2 gap-0 overflow-hidden ">
+                {/* <span className=" font-bold">Facebook: </span> */}
+                <button className=" text-blue-600 rounded-lg  border-gray-600 p-3">
+                  <Link to={em.facebookID}>
+                    <FaFacebook className="w-5 h-5"></FaFacebook>
+                  </Link>
+                </button>
+                <button className=" text-red-600 rounded-lg  border-gray-600 p-3">
+                  <Link to={em.instagramID}>
+                    <FaInstagram className="w-5 h-5"></FaInstagram>
+                  </Link>
+                </button>
+                <button className=" text-[#0072B9] rounded-lg  border-gray-600 p-3">
+                  <Link to={em.linkedinID}>
+                    <FaLinkedin className="w-5 h-5"></FaLinkedin>
+                  </Link>
+                </button>
+                <button className=" text-[#00A2FD] rounded-lg  border-gray-600 p-3">
+                  <Link to={em.twitterID}>
+                    <FaTwitter className="w-5 h-5"></FaTwitter>
+                  </Link>
+                </button>
+                <button className=" text-[#FF211F] rounded-lg  border-gray-600 p-3">
+                  <Link to={em.youtubeID}>
+                    <FaYoutube className="w-5 h-5"></FaYoutube>
+                  </Link>
+                </button>
+                <button className=" text-[#00CE6C] rounded-lg  border-gray-600 p-3">
+                  <Link to={em.whatsappID}>
+                    <FaWhatsapp className="w-5 h-5"></FaWhatsapp>
+                  </Link>
+                </button>
               </div>
             </div>
           </div>

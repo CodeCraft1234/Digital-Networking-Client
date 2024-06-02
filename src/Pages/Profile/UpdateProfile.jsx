@@ -14,8 +14,13 @@ const UpdateProfile = () => {
     const [companyName, setCompanyName] = useState("");
     const [contctNumber, setContctNumber] = useState("");
     const [facebookID, setfacebookID] = useState("");
+    const [instagramID, setInstagramID] = useState("");
+    const [linkedinID, setLinkedinID] = useState("");
+    const [twitterID, setTwitterID] = useState("");
+    const [youtubeID, setYoutubeID] = useState("");
+    const [whatsappID, setWhatsappID] = useState("");
 
-    console.log(fullName,fullAddress,companyName,contctNumber,facebookID)
+    console.log(fullName,fullAddress,companyName,contctNumber,facebookID,instagramID, linkedinID, twitterID, youtubeID, whatsappID)
 
     const [image, setImage] = useState("");
     const image_hosting_key = "6fbc3358bbb1a92b78e2dee0f5ca1b94";
@@ -41,6 +46,11 @@ const UpdateProfile = () => {
             companyName,
             contctNumber,
             facebookID,
+            instagramID,
+            linkedinID,
+            twitterID,
+            youtubeID,
+            whatsappID,
             bkashPersonal:7484
           };
 
@@ -147,7 +157,73 @@ const UpdateProfile = () => {
                  
                   onChange={(e) => setfacebookID(e.target.value)}
                 />
-			</label>     
+			</label>
+           {/* instagram */}
+           <label className="block">
+				<span className="mb-1">Instagram</span>
+				<input
+                  type="text"
+                  id="fullName"
+                  name="instagramID"
+                  placeholder="Instagram ID"
+                  className="block bg-white py-3 px-3 border border-white w-full rounded-md shadow-sm focus:ring focus:ri focus:ri dark:bg-gray-800"
+                 
+                  onChange={(e) => setInstagramID(e.target.value)}
+                />
+			</label>
+           {/* linkedin */}
+           <label className="block">
+				<span className="mb-1">LinkedIn</span>
+				<input
+                  type="text"
+                  id="fullName"
+                  name="linkedinID"
+                  placeholder="Linkedin ID"
+                  className="block bg-white py-3 px-3 border border-white w-full rounded-md shadow-sm focus:ring focus:ri focus:ri dark:bg-gray-800"
+                 
+                  onChange={(e) => setLinkedinID(e.target.value)}
+                />
+			</label>
+           {/* twitter */}
+           <label className="block">
+				<span className="mb-1">Twitter</span>
+				<input
+                  type="text"
+                  id="fullName"
+                  name="twitterID"
+                  placeholder="Twitter ID"
+                  className="block bg-white py-3 px-3 border border-white w-full rounded-md shadow-sm focus:ring focus:ri focus:ri dark:bg-gray-800"
+                 
+                  onChange={(e) => setTwitterID(e.target.value)}
+                />
+			</label>
+           {/* youtube */}
+           <label className="block">
+				<span className="mb-1">YouTube</span>
+				<input
+                  type="text"
+                  id="fullName"
+                  name="youtubeID"
+                  placeholder="YouTube ID"
+                  className="block bg-white py-3 px-3 border border-white w-full rounded-md shadow-sm focus:ring focus:ri focus:ri dark:bg-gray-800"
+                 
+                  onChange={(e) => setYoutubeID(e.target.value)}
+                />
+			</label>
+           {/* whatsapp */}
+           <label className="block">
+				<span className="mb-1">WhatsApp</span>
+				<input
+                  type="number"
+                  id="fullName"
+                  name="whatsappID"
+                  placeholder="WhatsApp ID"
+                  className="block bg-white py-3 px-3 border border-white w-full rounded-md shadow-sm focus:ring focus:ri focus:ri dark:bg-gray-800"
+                 
+                  onChange={(e) => setWhatsappID(e.target.value)}
+                />
+			</label>
+
             <label className="block">
 				<span className="mb-1">Contact Number</span>
 				<input
