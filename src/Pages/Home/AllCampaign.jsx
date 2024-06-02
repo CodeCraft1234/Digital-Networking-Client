@@ -51,7 +51,7 @@ const Campaigns = () => {
     : filteredItems;
 
 
-    const [totalSpent, setTotalSpent] = useState(0);
+  const [totalSpent, setTotalSpent] = useState(0);
   const [totalBudged, setTotalBudged] = useState(0);
   const [totalRCV, setTotalRCV] = useState(0);
   const [totalbill, setTotalBill] = useState(0);

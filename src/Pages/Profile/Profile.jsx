@@ -45,6 +45,7 @@ console.log(data)
       
        <div >
             <img className="rounded-full mx-auto w-72 h-72" src={userr.photo} alt=""/>
+            <h6 className="text-center font-bold">{userr.fullName}</h6>
       </div>
       
       
