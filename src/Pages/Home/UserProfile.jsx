@@ -87,13 +87,32 @@ const UserProfile = () => {
             console.error("Error processing payment:", error);
             toast.error("Failed to process payment");
         }
+
+        const tSpent = totalSpent;
+        const tBill = totalSpent * dollerRate;
+        const tPayment = totalPaymeent + amount; // Ensure this variable is defined and correct
+        const tBudged = totalBudged;
+    
+        const data = { tSpent, tBill, tPayment, tBudged };
+    
+        AxiosPublic.patch(`https://digital-networking-server.vercel.app/clients/${param?.email}`, data)
+            .then(res => {
+                console.log(res.data);
+                refetch(); // Ensure this function is defined and correct
+                toast.success("Campaign updated successfully");
+                // window.location.reload(); // Generally better to avoid reloading the page
+            })
+            .catch(error => {
+                console.error("Error updating campaign:", error);
+                toast.error("Failed to update campaign");
+            });
     };
 
     const [dataa2, setData2] = useState([]);
     console.log(param?.email)
     useEffect(() => {
         const filtered = campaign.filter(campaign => campaign.clientEmail === param?.email);
-        console.log('hdjklhgsfdakg',filtered);
+        console.log('hdjklhgsfdakgDSAOPJGIOJFDJGJHJFD',filtered);
         setData2(filtered);
 
         const totalBill = filtered.reduce((acc, campaign) => acc + parseFloat(campaign.tSpent), 0);
@@ -144,6 +163,7 @@ const UserProfile = () => {
         const campaignName=e.target.campaignName.value
         const clientEmail=param?.email
         const pageName=e.target.pageName.value
+        const pageURL=e.target.pageURL.value
         const tBudged=e.target.totalBudged.value
         const adsAccount=e.target.adsAccount.value
         const email=user?.email
@@ -151,7 +171,7 @@ const UserProfile = () => {
         const dollerRate=140
         const status='In Review'
         const date=e.target.date.value
-        const data={campaignName,clientEmail,pageName,adsAccount,status,tBudged,email,tSpent,dollerRate,date}
+        const data={campaignName,clientEmail,pageURL,pageName,adsAccount,status,tBudged,email,tSpent,dollerRate,date}
        console.log(data)
        
        AxiosPublic.post('https://digital-networking-server.vercel.app/campaigns',data)
@@ -171,24 +191,7 @@ const UserProfile = () => {
       }, [clients, user?.email]);
 
 const handleRefresh = () => {
-    const tSpent = totalSpent;
-    const tBill = totalSpent * dollerRate;
-    const tPayment = totalPaymeent; // Ensure this variable is defined and correct
-    const tBudged = totalBudged;
-
-    const data = { tSpent, tBill, tPayment, tBudged };
-
-    AxiosPublic.patch(`https://digital-networking-server.vercel.app/clients/${param?.email}`, data)
-        .then(res => {
-            console.log(res.data);
-            refetch(); // Ensure this function is defined and correct
-            toast.success("Campaign updated successfully");
-            // window.location.reload(); // Generally better to avoid reloading the page
-        })
-        .catch(error => {
-            console.error("Error updating campaign:", error);
-            toast.error("Failed to update campaign");
-        });
+   
 };
 
     const handleUpdatePayment=(e, id)=>{
@@ -331,9 +334,6 @@ const handleRefresh = () => {
                                      </dialog>
                  </div>
                 
-                 <div>
-                  <button onClick={handleRefresh} className="font-avenir px-3  mx-auto py-1 bg-green-800 ml-10 rounded-lg text-white">Pay To Employee</button>
-                 </div>
                                </div> 
             }
                 <div className="overflow-x-auto mt-6">

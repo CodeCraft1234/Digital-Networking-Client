@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from "react";
 import { Link, NavLink, useLoaderData, useNavigate } from "react-router-dom";
 import { AuthContext } from "../../Security/AuthProvider";
-import { IoMdArrowDropdown } from "react-icons/io";
+import { IoIosPeople, IoMdArrowDropdown } from "react-icons/io";
 import useAdmin from "../../Hook/useAdmin";
 import useUsers from "../../Hook/useUsers";
 import { FaHome, FaUserCheck, FaUserCog } from "react-icons/fa";
@@ -88,15 +88,7 @@ const NavBar = () => {
                       <FaHome className="w-6 h-6" /> Home
                     </NavLink>
                   </li>
-                  {/* <li>
-                    <NavLink
-                      to="/adAccountAds"
-                      className="text-white bg-red-800 hover:bg-blue-500"
-                      activeClassName="bg-blue-500"
-                    >
-                      Ad Account
-                    </NavLink>
-                  </li> */}
+                  
                   <li>
                     <NavLink
                       to="/adAccountTable"
@@ -136,33 +128,36 @@ const NavBar = () => {
                 </>
               ) : (
                 <>
-                  <li>
-                    <NavLink
-                      to={`/userInfo/${user?.email}`}
-                      className="text-white bg-red-800 hover:bg-green-300 hover:text-black"
-                      activeClassName="bg-green-300"
-                    >
-                      My Profile
-                    </NavLink>
-                  </li>
-                  <li>
-                    <NavLink
-                      to={`/myProfile/${user?.email}`}
-                      className="text-white bg-red-800 hover:bg-green-300 hover:text-black"
-                      activeClassName="bg-green-300"
-                    >
-                      My Clients
-                    </NavLink>
-                  </li>
-                  <li>
-                    <NavLink
-                      to={`/userInfo/${user?.email}`}
-                      className="text-white bg-red-800 hover:bg-green-300 hover:text-black"
-                      activeClassName="bg-green-300"
-                    >
-                      <CgProfile className="w-6 h-6" /> My Profile
-                    </NavLink>
-                  </li>
+                   <li>
+                  <NavLink
+                   to={`/`}
+                    className="text-white bg-red-800 hover:bg-green-300 hover:text-black"
+                    activeClassName="bg-green-300"
+                  >
+                    <FaHome className="w-6 h-6" /> Home
+                  </NavLink>
+                </li>
+
+                <li>
+                  <NavLink
+                    to="/myCampaigns"
+                    className="text-white bg-red-800 hover:bg-green-300 hover:text-black"
+                    activeClassName="bg-green-300"
+                  >
+                    <MdCampaign className="w-6 h-6" /> Campaigns
+                  </NavLink>
+                </li>
+                   <li>
+                  <NavLink
+                   to={`/myClient`}
+                    className="text-white bg-red-800 hover:bg-green-300 hover:text-black"
+                    activeClassName="bg-green-300"
+                  >
+                    <IoIosPeople className="w-6 h-6" /> My Client
+                  </NavLink>
+                </li>
+                  
+
                   <li>
                     <NavLink
                       to={`/userInfo/${user?.email}`}
@@ -219,7 +214,7 @@ const NavBar = () => {
               <>
                 <li>
                   <NavLink
-                    to="/"
+                    to={`/`}
                     className="text-white bg-red-800 hover:bg-green-300 hover:text-black"
                     activeClassName="bg-green-300"
                   >
@@ -276,7 +271,7 @@ const NavBar = () => {
               <>
               <li>
                   <NavLink
-                    to="/"
+                   to={`/`}
                     className="text-white bg-red-800 hover:bg-green-300 hover:text-black"
                     activeClassName="bg-green-300"
                   >
@@ -285,22 +280,23 @@ const NavBar = () => {
                 </li>
                 <li>
                   <NavLink
-                    to={`/userInfo/${user?.email}`}
+                    to="/myCampaigns"
                     className="text-white bg-red-800 hover:bg-green-300 hover:text-black"
                     activeClassName="bg-green-300"
                   >
-                    <CgProfile className="w-6 h-6" /> My Profile
+                    <MdCampaign className="w-6 h-6" /> Campaigns
                   </NavLink>
                 </li>
                 <li>
                   <NavLink
-                    to={`/myProfile/${user?.email}`}
+                   to={`/myClient`}
                     className="text-white bg-red-800 hover:bg-green-300 hover:text-black"
                     activeClassName="bg-green-300"
                   >
-                    <IoPeopleSharp className="w-6 h-6" /> My Clients
+                    <IoIosPeople className="w-6 h-6" /> My Client
                   </NavLink>
                 </li>
+               
                 <li>
                   <NavLink
                     to={`/adsAccount/${user?.email}`}
@@ -319,15 +315,7 @@ const NavBar = () => {
                     <FaSackDollar className="w-5 h-5" /> Salary
                   </NavLink>
                 </li>
-                <li>
-                  <NavLink
-                    to="/myCampaigns"
-                    className="text-white bg-red-800 hover:bg-green-300 hover:text-black"
-                    activeClassName="bg-green-300"
-                  >
-                    <MdCampaign className="w-6 h-6" /> Campaigns
-                  </NavLink>
-                </li>
+               
               </>
             )}
           </ul>
