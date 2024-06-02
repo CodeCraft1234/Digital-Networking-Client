@@ -9,6 +9,7 @@ import { AuthContext } from "../../Security/AuthProvider";
 import Selary from "./Selary";
 import EmployeerMouthlySelery from "./EmployeerMouthlySelery";
 import UserAdAccount from "../../Components/UserAdAccount/UserAdAccount";
+import { Helmet } from "react-helmet-async";
 
 
 
@@ -43,6 +44,10 @@ console.log(data)
 
   return (
     <div className="mt-24   ">
+      <Helmet>
+              <title> Digital Network | Employee Ad Account</title>
+              <link rel="canonical" href="https://www.tacobell.com/" />
+               </Helmet>
       
        {/* <div >
             <img className="rounded-full mx-auto w-72 h-72" src={userr.photo} alt=""/>

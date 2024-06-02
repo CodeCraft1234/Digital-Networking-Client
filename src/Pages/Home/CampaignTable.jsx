@@ -212,8 +212,104 @@ const CampaignTable = ({ email }) => {
 
     <div className="my-4 mb-24">
      
-      
+        {/* <div className="navbar-center mt-0 lg:flex mx-6 my-6">
+          <ul className="menu menu-horizontal items-center px-1 flex gap-4 justify-between mx-auto">
+            {ddd?.role === "admin" ? (
+              <>
+             
+                <li>
+                  <NavLink
+                    to="/allAdSAccount"
+                    className="text-white bg-green-800 hover:bg-blue-800 hover:text-white "
+                  >
+                    <MdAccountCircle className="w-6 h-6" /> Ads Accounts
+                  </NavLink>
+                </li>
+                <li>
+                  <NavLink
+                    to="/allClients"
+                    className="text-white bg-green-800 hover:bg-blue-800 hover:text-white "
+                  >
+                    <IoPeopleSharp className="w-6 h-6" /> Clients
+                  </NavLink>
+                </li>
+                <li>
+                  <NavLink
+                    to="/allCampaign"
+                    className="text-white bg-green-800 hover:bg-blue-800 hover:text-white "
+                  >
+                    <MdCampaign className="w-6 h-6" /> Campaigns
+                  </NavLink>
+                </li>
+                <li>
+                  <NavLink
+                    to={`/employeeMonthlySelary`}
+                    className="text-white bg-green-800 hover:bg-blue-800 hover:text-white "
+                  >
+                    <FaSackDollar className="w-5 h-5" /> Salary
+                  </NavLink>
+                </li>
+              
+              </>
+            ) : (
+              <>
+                <li>
+                  <NavLink
+                    to={`/userInfo/${user?.email}`}
+                    className="text-white bg-green-800 hover:bg-blue-800 hover:text-white "
+                    
+                  >
+                    <CgProfile className="w-6 h-6" /> My Profile
+                  </NavLink>
+                </li>
+                <li>
+                  <NavLink
+                    to={`/myProfile/${user?.email}`}
+                    className="text-white bg-green-800 hover:bg-blue-800 hover:text-white "
+                    
+                  >
+                    <IoPeopleSharp className="w-6 h-6" /> My Clients
+                  </NavLink>
+                </li>
+                <li>
+                  <NavLink
+                    to={`/adsAccount/${user?.email}`}
+                    className="text-white bg-green-800 hover:bg-blue-800 hover:text-white "
+                    
+                  >
+                    <MdAccountCircle className="w-6 h-6" /> Ads Accounts
+                  </NavLink>
+                </li>
 
+                <li>
+                  <NavLink
+                    to={`/selary/${user?.email}`}
+                    className="text-white bg-green-800 hover:bg-blue-800 hover:text-white "
+                  >
+                    <FaSackDollar className="w-5 h-5" /> Salary
+                  </NavLink>
+                </li>
+                
+                <li>
+                  <NavLink
+                    to="/allCampaign"
+                    className="text-white bg-green-800 hover:bg-blue-800 hover:text-white "
+                  >
+                    <MdCampaign className="w-6 h-6" /> Campaigns
+                  </NavLink>
+                </li>
+                <li>
+                  <NavLink
+                    to="/addClient"
+                    className="text-white bg-green-800 hover:bg-blue-800 hover:text-white "
+                  >
+                    <IoPeopleSharp className="w-6 h-6" /> Add Client
+                  </NavLink>
+                </li>
+              </>
+            )}
+          </ul>
+        </div> */}
 
     <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 mb-3  lg:grid-cols-6 gap-8 mt-4 p-4">
    <div className="balance-card bg-white rounded-2xl shadow-2xl p-5 text-center  transition-transform transform hover:scale-105 border-0">
