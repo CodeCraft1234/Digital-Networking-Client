@@ -340,7 +340,7 @@ return (
         {employee.map((userr, index) => (
           <tbody className="text-black text-sm md:text-xl" key={userr._id}>
             <tr className={`${index % 2 === 0 ? "bg-gray-100" : "bg-white"} border-b border-opacity-20`}>
-              <td className="p-3 hover:bg-gradient-to-r from-gray-100 via-gray-300 to-gray-100 rounded-xl hover:text-blue-600 font-bold hover:text-lg md:hover:text-base flex flex-col md:flex-row justify-start text-center ml-2 md:ml-10 items-center gap-2 border-l-2 border-r-2 border-gray-300">
+              <td className="p-3 hover:bg-gradient-to-r from-gray-100 via-gray-300 to-gray-100 hover:text-blue-600 font-bold hover:text-sm md:hover:text-sm sm:hover:text-sm flex flex-col md:flex-row justify-start text-center ml-2 md:ml-10 items-center gap-2 border-l-2 border-r-2 border-gray-300">
                 <Link to={`/userInfo/${userr?.email}`}>
                   <img className="w-10 h-10 rounded-full" src={userr?.photo} alt="" />
                 </Link>
@@ -349,12 +349,12 @@ return (
               <td className="p-3 text-center  border-r-2 border-gray-300">{userr.fullName}</td>
               {ddd?.role === 'admin' && (
                 <>
-                  <td className="p-3 text-center  border-r-2 border-gray-300">$ {userr.payoneer}</td>
-                  <td className="p-3 text-center  border-r-2 border-gray-300">৳ {userr.bkashMarcent}</td>
-                  <td className="p-3 text-center  border-r-2 border-gray-300">৳ {userr.bkashPersonal}</td>
-                  <td className="p-3 text-center  border-r-2 border-gray-300">৳ {userr.nagadPersonal}</td>
-                  <td className="p-3 text-center  border-r-2 border-gray-300">৳ {userr.rocketPersonal}</td>
-                  <td className="p-3 text-center  border-r-2 border-gray-300">৳ {userr.totalBDT}</td>
+                  <td className="p-3 text-center  border-r-2 border-gray-300">$ 1000</td>
+                  <td className="p-3 text-center  border-r-2 border-gray-300">৳ 1000</td>
+                  <td className="p-3 text-center  border-r-2 border-gray-300">৳ 1000</td>
+                  <td className="p-3 text-center  border-r-2 border-gray-300">৳ 1000</td>
+                  <td className="p-3 text-center  border-r-2 border-gray-300">৳ 1000</td>
+                  <td className="p-3 text-center  border-r-2 border-gray-300">৳ 1000</td>
                   <td className="p-3 text-center  border-r-2 border-gray-300">
                     <button className="px-3 py-1 bg-neutral-600 rounded text-white" onClick={() => document.getElementById(`modal_${userr._id}`).showModal()}>Edit</button>
                     <dialog id={`modal_${userr._id}`} className="modal">
