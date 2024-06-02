@@ -221,8 +221,7 @@ const CampaignTable = ({ email }) => {
                 <li>
                   <NavLink
                     to="/allAdSAccount"
-                    className="text-white bg-red-800 hover:bg-green-300 hover:text-black"
-                    activeClassName="bg-green-300"
+                    className="text-white bg-green-800 hover:bg-blue-800 hover:text-white "
                   >
                     <MdAccountCircle className="w-6 h-6" /> Ads Accounts
                   </NavLink>
@@ -230,8 +229,7 @@ const CampaignTable = ({ email }) => {
                 <li>
                   <NavLink
                     to="/allClients"
-                    className="text-white bg-red-800 hover:bg-green-300 hover:text-black"
-                    activeClassName="bg-green-300"
+                    className="text-white bg-green-800 hover:bg-blue-800 hover:text-white "
                   >
                     <IoPeopleSharp className="w-6 h-6" /> Clients
                   </NavLink>
@@ -239,8 +237,7 @@ const CampaignTable = ({ email }) => {
                 <li>
                   <NavLink
                     to="/allCampaign"
-                    className="text-white bg-red-800 hover:bg-green-300 hover:text-black"
-                    activeClassName="bg-green-300"
+                    className="text-white bg-green-800 hover:bg-blue-800 hover:text-white "
                   >
                     <MdCampaign className="w-6 h-6" /> Campaigns
                   </NavLink>
@@ -248,8 +245,7 @@ const CampaignTable = ({ email }) => {
                 <li>
                   <NavLink
                     to={`/employeeMonthlySelary`}
-                    className="text-white bg-red-800 hover:bg-green-300 hover:text-black"
-                    activeClassName="bg-green-300"
+                    className="text-white bg-green-800 hover:bg-blue-800 hover:text-white "
                   >
                     <FaSackDollar className="w-5 h-5" /> Salary
                   </NavLink>
@@ -261,8 +257,8 @@ const CampaignTable = ({ email }) => {
                 <li>
                   <NavLink
                     to={`/userInfo/${user?.email}`}
-                    className="text-white bg-red-800 hover:bg-green-300 hover:text-black"
-                    activeClassName="bg-green-300"
+                    className="text-white bg-green-800 hover:bg-blue-800 hover:text-white "
+                    
                   >
                     <CgProfile className="w-6 h-6" /> My Profile
                   </NavLink>
@@ -270,8 +266,8 @@ const CampaignTable = ({ email }) => {
                 <li>
                   <NavLink
                     to={`/myProfile/${user?.email}`}
-                    className="text-white bg-red-800 hover:bg-green-300 hover:text-black"
-                    activeClassName="bg-green-300"
+                    className="text-white bg-green-800 hover:bg-blue-800 hover:text-white "
+                    
                   >
                     <IoPeopleSharp className="w-6 h-6" /> My Clients
                   </NavLink>
@@ -279,8 +275,8 @@ const CampaignTable = ({ email }) => {
                 <li>
                   <NavLink
                     to={`/adsAccount/${user?.email}`}
-                    className="text-white bg-red-800 hover:bg-green-300 hover:text-black"
-                    activeClassName="bg-green-300"
+                    className="text-white bg-green-800 hover:bg-blue-800 hover:text-white "
+                    
                   >
                     <MdAccountCircle className="w-6 h-6" /> Ads Accounts
                   </NavLink>
@@ -289,8 +285,7 @@ const CampaignTable = ({ email }) => {
                 <li>
                   <NavLink
                     to={`/selary/${user?.email}`}
-                    className="text-white bg-red-800 hover:bg-green-300 hover:text-black"
-                    activeClassName="bg-green-300"
+                    className="text-white bg-green-800 hover:bg-blue-800 hover:text-white "
                   >
                     <FaSackDollar className="w-5 h-5" /> Salary
                   </NavLink>
@@ -299,8 +294,7 @@ const CampaignTable = ({ email }) => {
                 <li>
                   <NavLink
                     to="/allCampaign"
-                    className="text-white bg-red-800 hover:bg-green-300 hover:text-black"
-                    activeClassName="bg-green-300"
+                    className="text-white bg-green-800 hover:bg-blue-800 hover:text-white "
                   >
                     <MdCampaign className="w-6 h-6" /> Campaigns
                   </NavLink>
@@ -308,8 +302,7 @@ const CampaignTable = ({ email }) => {
                 <li>
                   <NavLink
                     to="/addClient"
-                    className="text-white bg-red-800 hover:bg-green-300 hover:text-black"
-                    activeClassName="bg-green-300"
+                    className="text-white bg-green-800 hover:bg-blue-800 hover:text-white "
                   >
                     <IoPeopleSharp className="w-6 h-6" /> Add Client
                   </NavLink>
