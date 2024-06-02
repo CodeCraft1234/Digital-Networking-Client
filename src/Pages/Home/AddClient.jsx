@@ -3,6 +3,7 @@ import UseAxiosPublic from "../../Axios/UseAxiosPublic";
 import { useContext } from "react";
 import { AuthContext } from "../../Security/AuthProvider";
 import Swal from 'sweetalert2'
+import { Helmet } from "react-helmet-async";
 
 const AddClient = () => {
   const AxiosPublic=UseAxiosPublic()
@@ -49,6 +50,10 @@ const AddClient = () => {
     return (
         <div>
             <section className="p-6 mt-24 dark:text-gray-100">
+            <Helmet>
+              <title> Digital Network | Add Client</title>
+              <link rel="canonical" href="https://www.tacobell.com/" />
+               </Helmet>
                
     <Form onSubmit={handleaddblog} className="container w-full max-w-xl p-8 mx-auto space-y-6 rounded-md shadow dark:bg-gray-900">
     <div>

@@ -13,12 +13,13 @@ import {
   FaYoutube,
 } from "react-icons/fa";
 import { FaTwitter } from "react-icons/fa6";
+import { Helmet } from "react-helmet-async";
 
 const AllEmployee = () => {
   const [users, setUsers] = useUsers();
   const { user } = useContext(AuthContext);
   const [ddd, setDdd] = useState(null);
-
+console.log(ddd)
   useEffect(() => {
     if (users && user) {
       const fff = users.find((u) => u.email === user?.email);
@@ -40,6 +41,10 @@ const AllEmployee = () => {
 
   return (
     <div className="mt-24 p-4 dark:text-green-800">
+      <Helmet>
+              <title> Digital Network | All Employee</title>
+              <link rel="canonical" href="https://www.tacobell.com/" />
+               </Helmet>
       {/* <h6 className="text-center mx-4 py-4 text-white uppercase font-bold text-3xl md:text-5xl bg-green-800 mb-6">
         All Employee
       </h6> */}

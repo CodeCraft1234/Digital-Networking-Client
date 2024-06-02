@@ -9,7 +9,7 @@ import UseAxiosPublic from "../../Axios/UseAxiosPublic";
 import Swal from "sweetalert2";
 import { Helmet } from "react-helmet-async";
 
-const Campaigns = () => {
+const MyCampaigns = () => {
   const [users] = useUsers();
   const { user } = useContext(AuthContext);
   const [ddd, setDdd] = useState([]);
@@ -33,7 +33,7 @@ const Campaigns = () => {
   const handleSort = (e) => {
     e.preventDefault();
     const email = e.target.email.value;
-    const filtered = campaigns.filter(c => c.status === email);
+    const filtered = campaigns.filter(c => c.employeeEmail === email);
     setFilteredClients(filtered);
   };
 
@@ -42,7 +42,7 @@ const Campaigns = () => {
   const [selectedCategory, setSelectedCategory] = useState("");
 
   const filteredItems = filteredClients.filter((item) =>
-    item.clientEmail.toLowerCase().includes(searchQuery.toLowerCase())
+    item.tBudged.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   const filteredByCategory = selectedCategory
@@ -52,7 +52,7 @@ const Campaigns = () => {
     : filteredItems;
 
 
-  const [totalSpent, setTotalSpent] = useState(0);
+    const [totalSpent, setTotalSpent] = useState(0);
   const [totalBudged, setTotalBudged] = useState(0);
   const [totalRCV, setTotalRCV] = useState(0);
   const [totalbill, setTotalBill] = useState(0);
@@ -119,18 +119,16 @@ const Campaigns = () => {
   return (
     <div className="mt-24">
       <Helmet>
-              <title> Digital Network | All Campaign</title>
+              <title> Digital Network | Employee Campaign</title>
               <link rel="canonical" href="https://www.tacobell.com/" />
                </Helmet>
 <div className="flex justify-between items-center ">
 <form className="flex justify-center items-center" onSubmit={handleSort}>
         <div className="mb-4 ml-10 mx-auto">
-          <label className="block text-gray-700">Sort By Status</label>
+          <label className="block text-gray-700">Sort By Employee</label>
           <select name="email" className="border rounded p-2 mt-1">
-          <option disabled value="">Status</option>
-            <option  value='Active'>Active</option>
-            <option  value='Complete'>Complete</option>
-            <option  value='In Review'>In Review</option>
+          <option value="">All Employee</option>
+            {ddd.map(d => <option key={d._id} value={d.email}>{d.name}</option>)}
           </select>
           <button type="submit" className="ml-2 px-4 py-2 bg-blue-500 text-white rounded">
             Search
@@ -215,4 +213,4 @@ const Campaigns = () => {
   );
 };
 
-export default Campaigns;
+export default MyCampaigns;

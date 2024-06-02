@@ -210,8 +210,7 @@ const CampaignTable = ({ email }) => {
     
   return (
 
-    <div className="my-24 mb-24">
-      {/* all navlinks */}
+    <div className="my-4 mb-24">
      
         {/* <div className="navbar-center mt-0 lg:flex mx-6 my-6">
           <ul className="menu menu-horizontal items-center px-1 flex gap-4 justify-between mx-auto">
@@ -522,6 +521,7 @@ const CampaignTable = ({ email }) => {
       <table className="min-w-full bg-white">
   <thead className="bg-red-800 text-white">
     <tr>
+      <th className="p-3 text-center">SL</th>
       <th className="p-3 text-center">Date</th>
       <th className="p-3 text-center">Client Name</th>
       <th className="p-3 text-center">Client Phone</th>
@@ -543,6 +543,7 @@ const CampaignTable = ({ email }) => {
             : "text-gray-500 border-b border-opacity-20 hover:text-blue-600"
         }`}
       >
+        <td className="p-3 text-center">{index + 1}</td>
         <td className="p-3 text-center">{campaign.date}</td>
         <Link to={`/client/${campaign.clientEmail}`}>
           <td className="p-3 flex justify-center text-center">{campaign.clientName}</td>
@@ -607,6 +608,7 @@ const CampaignTable = ({ email }) => {
       </tr>
     ))}
     <tr className="bg-green-800 text-sm text-white font-bold">
+      <td className="p-3 text-center"></td>
       <td className="p-3 text-center"></td>
       <td className="p-3 text-right" colSpan="2">
         Total :

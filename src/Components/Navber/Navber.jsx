@@ -274,6 +274,15 @@ const NavBar = () => {
               </>
             ) : (
               <>
+              <li>
+                  <NavLink
+                    to="/"
+                    className="text-white bg-red-800 hover:bg-green-300 hover:text-black"
+                    activeClassName="bg-green-300"
+                  >
+                    <FaHome className="w-6 h-6" /> Home
+                  </NavLink>
+                </li>
                 <li>
                   <NavLink
                     to={`/userInfo/${user?.email}`}
@@ -312,20 +321,11 @@ const NavBar = () => {
                 </li>
                 <li>
                   <NavLink
-                    to="/allCampaign"
+                    to="/myCampaigns"
                     className="text-white bg-red-800 hover:bg-green-300 hover:text-black"
                     activeClassName="bg-green-300"
                   >
                     <MdCampaign className="w-6 h-6" /> Campaigns
-                  </NavLink>
-                </li>
-                <li>
-                  <NavLink
-                    to="/addClient"
-                    className="text-white bg-red-800 hover:bg-green-300 hover:text-black"
-                    activeClassName="bg-green-300"
-                  >
-                    <IoPeopleSharp className="w-6 h-6" /> Add Client
                   </NavLink>
                 </li>
               </>

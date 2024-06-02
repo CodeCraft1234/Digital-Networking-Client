@@ -8,6 +8,7 @@ import UseAxiosPublic from "../../Axios/UseAxiosPublic";
 import { AuthContext } from "../../Security/AuthProvider";
 import UserAdAccount from "../../Components/UserAdAccount/UserAdAccount";
 import EmployeerMouthlySelery from "../Home/EmployeerMouthlySelery";
+import { Helmet } from "react-helmet-async";
 
 
 
@@ -29,8 +30,8 @@ const Profile = () => {
   const userr=useLoaderData()
   console.log(userr)
   const AxiosPublic=UseAxiosPublic()
-const [data,setData]=useState([])
-console.log(data)
+ const [data,setData]=useState([])
+  console.log(data)
 
     useEffect(()=>{
       AxiosPublic.get(`https://digital-networking-server.vercel.app/users/${userr.email}`)
@@ -42,10 +43,14 @@ console.log(data)
 
   return (
     <div className="mt-24   ">
+      <Helmet>
+              <title> Digital Network | Employee Profile</title>
+              <link rel="canonical" href="https://www.tacobell.com/" />
+               </Helmet>
       
-       <div >
-            <img className="rounded-full mx-auto w-72 h-72" src={userr.photo} alt=""/>
-            <h6 className="text-center font-bold">{userr.fullName}</h6>
+       <div className="">
+            <img className="rounded-full border-2 p-2 border-black mx-auto sm:w-44 h-44 lg:w-72 lg:h-72" src={userr?.photo} alt=""/>
+            <h1 className="lg:text-4xl mt-4 sm:text-2xl md:text-3xl font-bold text-center">{userr?.name}</h1>
       </div>
       
       

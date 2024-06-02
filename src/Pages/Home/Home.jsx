@@ -4,6 +4,7 @@ import { AuthContext } from "../../Security/AuthProvider";
 import Login from "../../Security/Login";
 import useUsers from "../../Hook/useUsers";
 import MyProfile from "./MyProfile";
+import { Helmet } from "react-helmet-async";
 
 const Home = () => {
     const { user } = useContext(AuthContext);
@@ -22,6 +23,11 @@ const Home = () => {
 
     return (
         <div>
+              <Helmet>
+              <title> Digital Network | Home</title>
+              <link rel="canonical" href="https://www.tacobell.com/" />
+               </Helmet>
+               
             {user ? (
                 <div>
                     {ddd?.role === "admin" ? (
