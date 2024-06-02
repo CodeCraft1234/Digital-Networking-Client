@@ -211,8 +211,8 @@ const CampaignTable = ({ email }) => {
   return (
 
     <div className="my-24 mb-24">
-      {/* all navlinks */}
      
+      
         <div className="navbar-center mt-0 lg:flex mx-6 my-6">
           <ul className="menu menu-horizontal items-center px-1 flex gap-4 justify-between mx-auto">
             {ddd?.role === "admin" ? (
