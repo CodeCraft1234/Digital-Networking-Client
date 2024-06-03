@@ -36,10 +36,9 @@ const UserAdAccount = ({email}) => {
   const handleAddAdsAcount = (e) => {
     e.preventDefault();
     const accountName = e.target.accountName.value;
-    const issueDate = e.target.issueDate.value;
-    console.log(accountName, issueDate);
+    const paymentDate = e.target.paymentDate.value;
     const employeeEmail = email;
-    const data = { accountName, issueDate, employeeEmail };
+    const data = { accountName, paymentDate, employeeEmail };
 
     AxiosPublic.post("https://digital-networking-server.vercel.app/adsAccount", data).then((res) => {
       console.log(res.data);
@@ -57,13 +56,14 @@ const AxiosPublic=UseAxiosPublic()
   const handleUpdate = (e, id) => {
     e.preventDefault();
     const accountName = e.target.accountName.value;
+    const paymentDate=e.target.paymentDate.value;
     const currentBallence = e.target.currentBallence.value;
     const threshold = e.target.threshold.value;
     const totalSpent = e.target.totalSpent.value;
     const status = e.target.status.value;
     console.log(accountName, currentBallence,threshold, totalSpent, status);
 
-    const body = { accountName, currentBallence,threshold, totalSpent, status };
+    const body = { accountName,paymentDate, currentBallence,threshold, totalSpent, status };
 
     AxiosPublic.patch(`https://digital-networking-server.vercel.app/adsAccount/${id}`, body)
         .then(res => {
@@ -88,6 +88,33 @@ const AxiosPublic=UseAxiosPublic()
             });
         });
 };
+
+const [currentTotal,setCurrentTotal]=useState(0)
+const [tSpent,setthreshold]=useState(0)
+ const [TSpent,setTSpent]=useState(0)
+
+useEffect(() => {
+ 
+  const total = adsAccounts.reduce(
+    (acc, campaign) => acc + parseFloat(campaign.currentBallence),
+    0
+  );
+  setCurrentTotal(total);
+
+  const totalBill = adsAccounts.reduce(
+    (acc, campaign) => acc + parseFloat(campaign.threshold),
+    0
+  );
+  setthreshold(totalBill);
+
+  const totalBilll = adsAccounts.reduce(
+    (acc, campaign) => acc + parseFloat(campaign.totalSpent),
+    0
+  );
+  setTSpent(totalBilll);
+
+}, [adsAccounts]);
+
 
   return (
     <div className="mt-24 p-4 dark:text-green-800">
@@ -114,12 +141,11 @@ const AxiosPublic=UseAxiosPublic()
                 />
               </div>
               <div className="mb-4">
-                <label className="block text-gray-250">Issue Date</label>
+                <label className="block text-gray-250">Payment Date</label>
                 <input
                 required
                   type="date"
-                  name="issueDate"
-                  defaultValue={0}
+                  name="paymentDate"
                   className="w-full border rounded p-2 mt-1"
                 />
               </div>
@@ -146,6 +172,7 @@ const AxiosPublic=UseAxiosPublic()
       <table className="min-w-full bg-white">
         <thead className="bg-red-800 text-white">
           <tr>
+            <th className="p-3">SL</th>
             <th className="p-3">Payment Date</th>
             <th className="p-3">Ad Account Name</th>
             <th className="p-3">Current Balance</th>
@@ -153,7 +180,6 @@ const AxiosPublic=UseAxiosPublic()
             <th className="p-3">Total Spent</th>
             <th className="p-3">Status</th>
             <th className="p-3">Action</th>
-            <th className="p-3"></th>
           </tr>
         </thead>
         <tbody>
@@ -166,13 +192,14 @@ const AxiosPublic=UseAxiosPublic()
                   : "text-gray-500 border-b border-opacity-20 "
               }`}
             >
-              <td className="p-3 text-center">{account.issueDate}</td>
-              <td className="p-3 text-center">{account.accountName}</td>
-              <td className="p-3 text-center">$ {account.currentBallence}</td>
-              <td className="p-3 text-center">$ {account.threshold}</td>
-              <td className="p-3 text-center">$ {account.totalSpent}</td>
-              <td className="p-3 text-center">{account.status}</td>
-              <td className="p-3 text-center">
+              <td className="p-3 border-r-2 border-l-2 border-gray-300 text-center">{index + 1}</td>
+              <td className="p-3 border-r-2 border-l-2 border-gray-300 text-center">{account.paymentDate}</td>
+              <td className="p-3 border-r-2 border-gray-300 text-center">{account.accountName}</td>
+              <td className="p-3 border-r-2 border-gray-300  text-center">$ {account.currentBallence}</td>
+              <td className="p-3 border-r-2 border-gray-300 text-center">$ {account.threshold}</td>
+              <td className="p-3 border-r-2 border-gray-300 text-center">$ {account.totalSpent}</td>
+              <td className="p-3 border-r-2 border-gray-300 text-center">{account.status}</td>
+              <td className="p-3 border-r-2 border-gray-300 text-center">
                 <button
                   className="font-avenir px-3 mx-auto py-1 bg-neutral rounded text-white"
                   onClick={() =>
@@ -185,17 +212,32 @@ const AxiosPublic=UseAxiosPublic()
                   <div className="modal-box">
                     <form onSubmit={(e) => handleUpdate(e, account._id)}>
                       <div className="flex justify-center items-center gap-3">
-                        <div className="mb-4">
+                      <div className="mb-4">
                           <label className="block text-gray-500">
                           Account Name
                           </label>
                           <input
                             type="text required"
                             name="accountName"
-                            defaultValue={account.accountName}
+                            defaultValue={account?.accountName}
                             className="w-full border rounded p-2 mt-1 text-gray-500"
                           />
                         </div>
+                        <div className="mb-4">
+                          <label className="block text-gray-500">
+                          Payment Date
+                          </label>
+                          <input
+                          required
+                            type="date"
+                            name="paymentDate"
+                            defaultValue={account?.paymentDate}
+                            className="w-full border rounded p-2 mt-1 text-gray-500"
+                          />
+                        </div>
+                      </div>
+                      <div className="flex justify-center items-center gap-3">
+                        
                         <div className="mb-4">
                           <label className="block text-gray-500">
                             Current Ballence
@@ -256,21 +298,26 @@ const AxiosPublic=UseAxiosPublic()
                         Update
                       </button>
                     </form>
-                    {/* <div className="modal-action">
-                      <button
-                        className="p-2 rounded-lg bg-red-600 text-white text-center"
-                        onClick={() =>
-                          document.getElementById(`modal_${index}`).close()
-                        }
-                      >
-                        Close
-                      </button>
-                    </div> */}
+                    
                   </div>
                 </dialog>
               </td>
             </tr>
           ))}
+          <tr className="bg-green-800 text-sm text-white font-bold">
+    
+    <td className="p-3 border-2 border-gray-300 text-right" colSpan="3">
+      Total :
+    </td>
+    <td className="p-3 border-2 border-gray-300 text-center">$ {currentTotal}</td>
+    <td className="p-3 border-2 border-gray-300 text-center">$ {tSpent}</td> 
+    <td className="p-3 border-2 border-gray-300 text-center">$ {TSpent}</td> 
+    <td className="p-3 border-2 border-gray-300 text-center"></td> 
+    <td className="p-3 border-2 border-gray-300 text-center"></td> 
+   
+    
+
+  </tr>
         </tbody>
       </table>
     </div>

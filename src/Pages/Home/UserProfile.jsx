@@ -8,6 +8,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import useClients from "../../Hook/useClient";
 import useUsers from "../../Hook/useUsers";
 import useAdsAccount from "../../Hook/useAdAccount";
+import PaymentHistry from "./PaymentHistry";
 
 const UserProfile = () => {
     const { user } = useContext(AuthContext);
@@ -19,6 +20,7 @@ const UserProfile = () => {
     const [data, setData] = useState({});
 
     const [campaign, refetch] = useCampaings();
+
     const [totalSpent, setTotalSpent] = useState(0);
     const [dollerRate, setDollerRate] = useState(0);
     const [totalBudged, setTotalBudged] = useState(0);
@@ -177,6 +179,7 @@ const UserProfile = () => {
        AxiosPublic.post('https://digital-networking-server.vercel.app/campaigns',data)
        .then(res=>{
         console.log(res.data)
+        refetch()
         toast.success("add successful");
        })
        }
@@ -190,9 +193,6 @@ const UserProfile = () => {
         setData22(filtered);
       }, [clients, user?.email]);
 
-const handleRefresh = () => {
-   
-};
 
     const handleUpdatePayment=(e, id)=>{
         e.preventDefault();
@@ -228,7 +228,7 @@ const handleRefresh = () => {
 
     return (
         <div className="mt-24">
-            <div className="flex flex-wrap justify-around p-5">
+            <div className="grid lg:grid-cols-4 sm:grid-cols-2 gap-5 justify-around p-5">
                 <div className="px-24 py-16 rounded-2xl bg-green-400 shadow-lg text-center">
                     <h2 className="text-4xl font-bold">Total Spent</h2>
                     <p className="text-xl">Balance: $ {totalSpent}</p>
@@ -237,18 +237,18 @@ const handleRefresh = () => {
 
                 <div className="px-24 py-16 rounded-2xl bg-green-400 shadow-lg text-center">
                     <h2 className="text-4xl font-bold">Total Bill</h2>
-                    <p className="text-xl">Balance: ৳ {totalSpent * dollerRate}</p>
+                    <p className="text-xl">Balance: ৳ {parseInt(totalSpent * dollerRate)}</p>
                 </div>
 
                 <div className="px-24 py-16 rounded-2xl bg-green-400 shadow-lg text-center">
                     <h2 className="text-4xl font-bold">Total Paid</h2>
-                    <p className="text-xl">Balance: ৳{totalPaymeent}</p>
+                    <p className="text-xl">Balance: ৳ {parseInt(totalPaymeent)}</p>
 
                 </div>
 
                 <div className="px-24 py-16 rounded-2xl bg-green-400 shadow-lg text-center">
                     <h2 className="text-4xl font-bold">Total DUE</h2>
-                    <p className="text-2xl">Balance: ৳{totalSpent * dollerRate - totalPaymeent}</p>
+                    <p className="text-2xl">Balance: ৳{ parseInt(totalSpent * dollerRate - totalPaymeent)}</p>
                 </div>
             </div>
 
@@ -365,7 +365,8 @@ const handleRefresh = () => {
                                     
                                     <td className="p-3 border-r-2 border-gray-200 text-center">$ {work.tBudged}</td>
                                     <td className="p-3 border-r-2 border-gray-200 text-center">$ {work.tSpent}</td>
-                                    <td className="p-3 border-r-2 border-gray-200 text-center">৳ {work.tSpent * work.dollerRate}</td>
+                                    <td className="p-3 border-r-2 border-gray-200 text-center">৳
+                                     {parseInt(work.tSpent * work.dollerRate)}</td>
                                     <td className={`p-3 text-center border-r-2 border-gray-200 ${work.status === "Active" ? "text-green-500" : "text-red-500"}`}>{work.status}</td>
                                     {
                                           ddd?.role === 'admin' ? <></> :    <td className="p-3 text-center border-r-2 border-gray-200">
@@ -373,6 +374,7 @@ const handleRefresh = () => {
                                           <dialog id={`modal_${index}`} className="modal">
                                               <div className="modal-box">
                                                   <form onSubmit={(e) => handleUpdate(e, work._id)}>
+                                                  <h1 className="text-md mb-5">Ads Account: <span className="text-blue-600 text-xl font-bold">{work.adsAccount}</span></h1>
                                                       <div className="flex justify-center items-center gap-3">
                                                           <div className="mb-4">
                                                               <label className="block text-gray-700">Total Budged</label>
@@ -386,11 +388,11 @@ const handleRefresh = () => {
                                                       <div className="flex justify-center items-center gap-3">
                                                       <div className="mb-4">
                                                               <label className="block text-gray-700">Dollers Rate</label>
-                                                              <input type="number" name="dollerRate" defaultValue={140} className="w-full border rounded p-2 mt-1" />
+                                                              <input type="number" name="dollerRate" defaultValue={work.dollerRate} className="w-full border rounded p-2 mt-1" />
                                                           </div>
                                                       <div className="mb-4">
                                                           <label className="block text-gray-700">Status</label>
-                                                          <select name="status" className="w-full border rounded p-2 mt-1">
+                                                          <select defaultValue={work.status}  name="status" className="w-full border rounded p-2 mt-1">
                                                               <option value="In Review">In Review</option>
                                                               <option value="Active">Active</option>
                                                               <option value="Complete">Complete</option>
@@ -429,9 +431,9 @@ const handleRefresh = () => {
                 </div>
             </div>
 
- 
+ <PaymentHistry email={param?.email}></PaymentHistry>
 
-            <div className=" p-2 sm:p-4 dark:text-green-600">
+            {/* <div className=" p-2 sm:p-4 dark:text-green-600">
                 <h6 className="text-center font-bold text-3xl md:text-5xl text-green-600">
                     Payment History
                 </h6>
@@ -558,7 +560,7 @@ const handleRefresh = () => {
                                                   {/* <div className="modal-action">
                                                       <button className="btn" onClick={() => document.getElementById(`modal_${payment._id}`).close()}>Close</button>
                                                   </div> */}
-                                              </div>
+                                              {/* </div>
                                           </dialog>
                                       </td>
                                     
@@ -578,7 +580,7 @@ const handleRefresh = () => {
                         </tbody>
                     </table>
                 </div>
-            </div>
+            </div> */} */
             <ToastContainer />
         </div>
     );
