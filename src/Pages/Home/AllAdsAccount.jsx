@@ -198,7 +198,7 @@ const AllAdsAccount = () => {
 </td>
                 <td className="p-3 border-r-2 border-gray-300 text-center">
                   <button
-                    className="font-avenir px-3 mx-auto py-1 bg-neutral rounded text-white"
+                    className="font-avenir px-3  mx-auto py-1 bg-green-800 rounded-lg text-white"
                     onClick={() => setModalData(account)}
                   >
                     Edit
