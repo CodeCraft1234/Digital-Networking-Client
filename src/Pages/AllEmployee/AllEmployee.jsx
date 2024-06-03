@@ -18,7 +18,7 @@ import UseAxiosPublic from "../../Axios/UseAxiosPublic";
 import Swal from "sweetalert2";
 
 const AllEmployee = () => {
-  const [users, setUsers, refetch] = useUsers();
+  const [users, setUsers] = useUsers();
   const { user } = useContext(AuthContext);
   const [ddd, setDdd] = useState(null);
 console.log(ddd)
@@ -55,7 +55,7 @@ console.log(ddd)
       if (result.isConfirmed) {
         AxiosPublic.delete(`/users/${id}`)
         .then((res) => {
-          refetch();
+          // refetch();
           if (res.data.deletedCount > 0) {
             Swal.fire({
               title: "Deleted!",
