@@ -364,7 +364,7 @@ return (
                   <td className="p-3 text-center  border-r-2 border-gray-300">৳ 1000</td>
                   <td className="p-3 text-center  border-r-2 border-gray-300">৳ 1000</td>
                   <td className="p-3 text-center  border-r-2 border-gray-300">
-                    <button className="px-3 py-1 bg-neutral-600 rounded text-white" onClick={() => document.getElementById(`modal_${userr._id}`).showModal()}>Edit</button>
+                    <button className="font-avenir px-3  mx-auto py-1 bg-green-800 rounded-lg text-white" onClick={() => document.getElementById(`modal_${userr._id}`).showModal()}>Edit</button>
                     <dialog id={`modal_${userr._id}`} className="modal">
                       <Payment id={userr._id}></Payment>
                       <form method="dialog">
