@@ -84,8 +84,6 @@ const [client,setClient]=useState([])
   console.log(totalSpent, totalBudged, totalRCV, totalbill);
 
   useEffect(() => {
-
-
     const totalRcv = filteredByCategory.reduce((acc, campaign) => {
       const payment = parseFloat(campaign.tPayment);
       return acc + (isNaN(payment) ? 0 : payment);
@@ -149,9 +147,9 @@ const [client,setClient]=useState([])
 <div className="flex justify-between items-center ">
 <form className="flex justify-center items-center" onSubmit={handleSort}>
         <div className="mb-4 ml-10 mx-auto">
-          <label className="block text-gray-700">Sort By Employee</label>
+          <label className="block text-gray-700">Sort By Client</label>
           <select name="email" className="border rounded p-2 mt-1">
-          <option value="">All Employee</option>
+          <option value="">All Client</option>
             {client.map(d => <option key={d._id} value={d.clientEmail}>{d.clientName}</option>)}
           </select>
           <button type="submit" className="ml-2 px-4 py-2 bg-blue-500 text-white rounded">

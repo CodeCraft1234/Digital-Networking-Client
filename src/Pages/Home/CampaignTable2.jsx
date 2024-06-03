@@ -91,6 +91,7 @@ const CampaignTable2 = ({ email }) => {
 
 
   const handlePayment = (e) => {
+
     e.preventDefault();
     const employeeEmail = user?.email;
     const payAmount = e.target.payAmount.value;
@@ -123,6 +124,7 @@ const CampaignTable2 = ({ email }) => {
       });
     });
   };
+
 
 
 
@@ -484,10 +486,10 @@ const CampaignTable2 = ({ email }) => {
           <td className="p-3 flex justify-center text-center">{campaign.clientName}</td>
         </Link>
         <td className="p-3 text-center">{campaign.clientPhone}</td>
-        <td className="p-3 text-center">{campaign.tBudged}</td>
-        <td className="p-3 text-center">{campaign.tSpent}</td>
-        <td className="p-3 text-center">{campaign.tBill}</td>
-        <td className="p-3 text-center">{campaign.tPayment}</td>
+        <td className="p-3 text-center">$ {campaign.tBudged}</td>
+        <td className="p-3 text-center">$ {campaign.tSpent}</td>
+        <td className="p-3 text-center">৳ {campaign.tBill}</td>
+        <td className="p-3 text-center">৳ {campaign.tPayment}</td>
         <td className="p-3">
 
         <button
@@ -548,10 +550,10 @@ const CampaignTable2 = ({ email }) => {
       <td className="p-3 text-right" colSpan="2">
         Total :
       </td>
-      <td className="p-3 text-center">{totalBudged}</td>
-      <td className="p-3 text-center"> {totalSpent}</td>
-      <td className="p-3 text-center">{totalbill}</td>
-      <td className="p-3 text-center">{totalRCV}</td>
+      <td className="p-3 text-center">$ {totalBudged}</td>
+      <td className="p-3 text-center">$ {totalSpent}</td>
+      <td className="p-3 text-center">৳ {totalbill}</td>
+      <td className="p-3 text-center">৳ {totalRCV}</td>
       <td className="p-3"></td>
     </tr>
   </tbody>
