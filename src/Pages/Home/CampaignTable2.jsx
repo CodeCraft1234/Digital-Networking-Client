@@ -22,8 +22,9 @@ import { SlPeople } from "react-icons/sl";
 import { CgProfile } from "react-icons/cg";
 
 
-const CampaignTable = ({ email }) => {
+const CampaignTable2 = ({ email }) => {
   console.log(email);
+  const { user }=useContext(AuthContext)
   const [clients, refetch] = useClients();
   const [adsAccount] = useAdsAccount();
   const AxiosPublic = UseAxiosPublic();
@@ -33,7 +34,6 @@ const CampaignTable = ({ email }) => {
   console.log("kjhgfaklhgklagshkl", clients, adsAccount);
 
 
-  const { user } = useContext(AuthContext);
     const [users] = useUsers();
     const [ddd, setDdd] = useState(null);
 
@@ -56,7 +56,7 @@ const CampaignTable = ({ email }) => {
 
   useEffect(() => {
     const filtered = clients.filter(
-      (campaign) => campaign.employeeEmail === email
+      (campaign) => campaign.employeeEmail === user?.email
     );
     console.log(filtered);
 
@@ -85,7 +85,7 @@ const CampaignTable = ({ email }) => {
     setTotalBill(totalBill);
 
     setFilteredCampaigns(filtered);
-  }, [clients, email]);
+  }, [clients, user?.email]);
 
 
   const handlePayment = (e) => {};
@@ -95,7 +95,7 @@ const CampaignTable = ({ email }) => {
     const clientName = e.target.clientName.value;
     const clientPhone = e.target.clientPhone.value;
     const clientEmail = e.target.clientEmail.value;
-    const employeeEmail = email;
+    const employeeEmail = user?.email;
     const tBudged = 0;
     const tSpent = 0;
     const tBill = 0;
@@ -154,7 +154,7 @@ const CampaignTable = ({ email }) => {
       .then(res => {
           console.log('sdjkhagjijkhgjkhdsajljkhgdsjkajkjkfjldfgjkgjkgd',res.data);
           const da=res.data
-          const filtered=da.filter(f=> f.employeeEmail === email) 
+          const filtered=da.filter(f=> f.employeeEmail === user?.email) 
 
           const filter2=filtered.filter(d=>d.paymentMethod === 'bkashMarchent')
           const total = filter2.reduce((acc, datas) => acc + parseFloat(datas.amount),0);
@@ -173,7 +173,7 @@ const CampaignTable = ({ email }) => {
           setRocketPersonalTotal(total5)
          
       })
-  },[email])
+  },[user?.email])
 
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
@@ -526,4 +526,4 @@ const CampaignTable = ({ email }) => {
     </div>
   );
 };
-export default CampaignTable;
+export default CampaignTable2;

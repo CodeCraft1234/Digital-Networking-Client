@@ -89,7 +89,10 @@ const handleFacebook = () => {
     signIn(email, password)
       .then((result) => {
         console.log(result.user);
-        navigate(location?.state ? location.state : "/")
+        {
+          ddd?.role === 'employee' ? navigate(`/myProfile/${ddd?.email}`) :  navigate("/")
+        }
+      
         Swal.fire({
           title: "successfully login!",
           text: "login!",
