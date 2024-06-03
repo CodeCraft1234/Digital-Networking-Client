@@ -20,12 +20,14 @@ import { IoPeopleSharp } from "react-icons/io5";
 import { FaPeopleGroup, FaSackDollar } from "react-icons/fa6";
 import { SlPeople } from "react-icons/sl";
 import { CgProfile } from "react-icons/cg";
+import useEmployeePayment from "../../Hook/useEmployeePayment";
 
 
 const CampaignTable2 = ({ email }) => {
   console.log(email);
   const { user }=useContext(AuthContext)
   const [clients, refetch] = useClients();
+  const [employeePayment] = useEmployeePayment();
   const [adsAccount] = useAdsAccount();
   const AxiosPublic = UseAxiosPublic();
   const [filteredCampaigns, setFilteredCampaigns] = useState([]);
@@ -90,10 +92,38 @@ const CampaignTable2 = ({ email }) => {
 
   const handlePayment = (e) => {
 
-    
+    e.preventDefault();
+    const employeeEmail = user?.email;
+    const payAmount = e.target.payAmount.value;
+    const paymentMethod = e.target.paymentMethod.value;
+    const date = e.target.date.value;
+
+    const data = {
+      employeeEmail, payAmount, paymentMethod, date
+    };
+    console.log(data);
+    AxiosPublic.post("https://digital-networking-server.vercel.app/cashout", data)
+    .then((res) => {
+      // toast.success("Client Added successfully");
+      console.log(res.data);
+      refetch();
+      Swal.fire({
+        title: "Good job!",
+        text: "Cashout success!",
+        icon: "success"
+      });
+      
+  })
+  .catch(error => {
+      console.error("Error adding cashout:", error);
+      // toast.error("Failed to update campaign");
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: "Failed to add cashout!",
+      });
+    });
   };
-
-
 
 
 
@@ -124,7 +154,7 @@ const CampaignTable2 = ({ email }) => {
     };
     console.log(data);
 
-    AxiosPublic.post("https://digital-networking-server.vercel.app/clients", data)
+    AxiosPublic.post("https://digital-networking-server.vercel.app/employeePayment", data)
     .then((res) => {
       // toast.success("Client Added successfully");
       console.log(res.data);
@@ -357,7 +387,7 @@ const CampaignTable2 = ({ email }) => {
             <div className="modal-box">
               <form onSubmit={(e) => handlePayment(e)}>
                 <div className="flex justify-center items-center gap-3">
-                  <div className="mb-4">
+                  {/* <div className="mb-4">
                     <label className="block text-gray-250">
                       Previous Received
                     </label>
@@ -368,7 +398,7 @@ const CampaignTable2 = ({ email }) => {
                       defaultValue={56345623}
                       className="w-full border rounded p-2 mt-1"
                     />
-                  </div>
+                  </div> */}
                   <div className="mb-4">
                     <label className="block text-gray-250">Pay Amount</label>
                     <input
@@ -392,6 +422,7 @@ const CampaignTable2 = ({ email }) => {
                       <option value="rocketPersonal">Bkash Personal</option>
                       <option value="rocketPersonal">Nagad Personal</option>
                       <option value="rocketPersonal">Rocket Personal</option>
+                      <option value="bank">Bank</option>
                     </select>
                   </div>
                   <div className="mb-4">

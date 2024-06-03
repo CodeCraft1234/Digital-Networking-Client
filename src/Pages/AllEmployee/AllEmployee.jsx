@@ -14,6 +14,8 @@ import {
 } from "react-icons/fa";
 import { FaTwitter } from "react-icons/fa6";
 import { Helmet } from "react-helmet-async";
+import UseAxiosPublic from "../../Axios/UseAxiosPublic";
+import Swal from "sweetalert2";
 
 const AllEmployee = () => {
   const [users, setUsers] = useUsers();
@@ -39,6 +41,35 @@ console.log(ddd)
 
   console.log(ddd?.name);
 
+  const AxiosPublic =UseAxiosPublic()
+  const handledelete = (id) => {
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You want to delete this Blog!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete employee",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        AxiosPublic.delete(`/users/${id}`)
+        .then((res) => {
+          // refetch();
+          if (res.data.deletedCount > 0) {
+            Swal.fire({
+              title: "Deleted!",
+              text: "Your employee has been deleted.",
+              icon: "success",
+            });
+          }
+        });
+      }
+    });
+  };
+
+
+
   return (
     <div className="mt-24 p-4 dark:text-green-800">
       <Helmet>
@@ -55,12 +86,12 @@ console.log(ddd)
         </h2>
       )} */}
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-10 p-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-10 p-4 ">
         {employee?.map((em) => (
           <div
             key={em._id}
             className="bg-white  border border-black mx-auto shadow-md rounded-lg p-6 transform transition-all hover:shadow-xl"
-            style={{ width: "300px", height: "400px" }}
+            style={{ width: "300px", height: "450px" }}
           >
             <div className="text-center text-black  overflow-hidden">
               <img
@@ -73,7 +104,7 @@ console.log(ddd)
                 {em.name}
               </h2>
             </div>
-            <div className="text-left text-black ">
+            <div className="text-left text-black flex-col  ">
               <div className="flex items-center justify-start mb-2 gap-2 overflow-hidden">
                 <span className="font-bold ">Full Name: </span>
                 <span className="text-sm text-gray-600">{em.fullName}</span>
@@ -96,7 +127,9 @@ console.log(ddd)
                 <span className="text-sm text-gray-600">{em.fullAddress}</span>
               </div>
 
-              <div className="flex items-center justify-center mb-2 gap-0 overflow-hidden ">
+             
+             
+             <div className="flex items-center justify-center mb-2 gap-0 overflow-hidden div">
                 {/* <span className=" font-bold">Facebook: </span> */}
                 <button className=" text-blue-600 rounded-lg  border-gray-600 p-3">
                   <Link to={em.facebookID}>
@@ -128,7 +161,12 @@ console.log(ddd)
                     <FaWhatsapp className="w-5 h-5"></FaWhatsapp>
                   </Link>
                 </button>
+               
               </div>
+              <div className="flex items-center justify-center">
+             <button onClick={() => handledelete(em._id)} className="p-2 rounded-lg bg-red-600 text-white mx-auto ">Delete</button>
+          
+             </div>
             </div>
           </div>
         ))}
