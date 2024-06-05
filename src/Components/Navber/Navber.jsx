@@ -144,16 +144,16 @@ const NavBar = () => {
                     className="text-white bg-red-800 hover:bg-green-300 hover:text-black"
                     activeClassName="bg-green-300"
                   >
-                    <MdCampaign className="w-6 h-6" /> Campaigns
+                    <MdCampaign className="w-6 h-6" />My Campaigns
                   </NavLink>
                 </li>
                    <li>
                   <NavLink
-                   to={`/myClient`}
+                   to={`/myClients`}
                     className="text-white bg-red-800 hover:bg-green-300 hover:text-black"
                     activeClassName="bg-green-300"
                   >
-                    <IoIosPeople className="w-6 h-6" /> My Client
+                    <IoIosPeople className="w-6 h-6" /> My Clients
                   </NavLink>
                 </li>
                   
@@ -164,18 +164,10 @@ const NavBar = () => {
                       className="text-white bg-red-800 hover:bg-green-300 hover:text-black"
                       activeClassName="bg-green-300"
                     >
-                      <MdAccountCircle className="w-6 h-6" /> Ads Account
+                      <MdAccountCircle className="w-6 h-6" />My Ads Account
                     </NavLink>
                   </li>
-                  <li>
-                    <NavLink
-                      to={`/selary/${user?.email}`}
-                      className="text-white bg-red-800 hover:bg-green-300 hover:text-black"
-                      activeClassName="bg-green-300"
-                    >
-                      <FaSackDollar className="w-5 h-5" /> Salary
-                    </NavLink>
-                  </li>
+                  
                   <li>
                     <NavLink
                       to="/allCampaign"
@@ -248,15 +240,7 @@ const NavBar = () => {
                     <MdCampaign className="w-6 h-6" /> Campaigns
                   </NavLink>
                 </li>
-                <li>
-                  <NavLink
-                    to={`/employeeMonthlySelary`}
-                    className="text-white bg-red-800 hover:bg-green-300 hover:text-black"
-                    activeClassName="bg-green-300"
-                  >
-                    <FaSackDollar className="w-5 h-5" /> Salary
-                  </NavLink>
-                </li>
+               
                 <li>
                   <NavLink
                     to="/allEmployee"
@@ -284,16 +268,16 @@ const NavBar = () => {
                     className="text-white bg-red-800 hover:bg-green-300 hover:text-black"
                     activeClassName="bg-green-300"
                   >
-                    <MdCampaign className="w-6 h-6" /> Campaigns
+                    <MdCampaign className="w-6 h-6" />My Campaigns
                   </NavLink>
                 </li>
                 <li>
                   <NavLink
-                   to={`/myClient`}
+                   to={`/myClients`}
                     className="text-white bg-red-800 hover:bg-green-300 hover:text-black"
                     activeClassName="bg-green-300"
                   >
-                    <IoIosPeople className="w-6 h-6" /> My Client
+                    <IoIosPeople className="w-6 h-6" /> My Clients
                   </NavLink>
                 </li>
                
@@ -303,18 +287,10 @@ const NavBar = () => {
                     className="text-white bg-red-800 hover:bg-green-300 hover:text-black"
                     activeClassName="bg-green-300"
                   >
-                    <MdAccountCircle className="w-6 h-6" /> Ads Accounts
+                    <MdAccountCircle className="w-6 h-6" />My Ads Accounts
                   </NavLink>
                 </li>
-                <li>
-                  <NavLink
-                    to={`/selary/${user?.email}`}
-                    className="text-white bg-red-800 hover:bg-green-300 hover:text-black"
-                    activeClassName="bg-green-300"
-                  >
-                    <FaSackDollar className="w-5 h-5" /> Salary
-                  </NavLink>
-                </li>
+               
                
               </>
             )}

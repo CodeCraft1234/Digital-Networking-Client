@@ -116,6 +116,32 @@ const AllAdsAccount = () => {
       )
     : filteredItems;
 
+
+    const handleDelete=(id)=>{
+      Swal.fire({
+        title: "Are you sure?",
+        text: "You want to delete this Blog!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, delete blog",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          AxiosPublic.delete(`/adsAccount/${id}`)
+          .then((res) => {
+            refetch();
+            if (res.data.deletedCount > 0) {
+              Swal.fire({
+                title: "Deleted!",
+                text: "Your blog has been deleted.",
+                icon: "success",
+              });
+            }
+          });
+        }
+      });
+    }
   return (
     <div>
        <Helmet>
@@ -174,6 +200,7 @@ const AllAdsAccount = () => {
                 <th className="p-3">Threshold</th>
                 <th className="p-3">Total Spent</th>
                 <th className="p-3">Status</th>
+                <th className="p-3">Edit</th>
                 <th className="p-3">Action</th>
                 
               </tr>
@@ -204,6 +231,16 @@ const AllAdsAccount = () => {
                     Edit
                   </button>
                 </td>
+                <td className="p-3 border-r-2 border-gray-300 text-center">
+
+                  <button
+                    className="font-avenir px-3  mx-auto py-1 bg-green-800 rounded-lg text-white"
+                    onClick={()=>handleDelete(account._id)}
+                  >
+                    Delete
+                  </button>
+
+                </td>
               </tr>
               
 
@@ -216,6 +253,7 @@ const AllAdsAccount = () => {
       <td className="p-3 border-2 border-black text-center">$ {totalCurrentBallence}</td>
       <td className="p-3 border-2 border-black text-center">$ {totalThreshold}</td>
       <td className="p-3 border-2 border-black text-center">$ {totalSpent}</td>
+      <td className="p-3 border-2 border-black text-center"></td>
       <td className="p-3 border-2 border-black text-center"></td>
       <td className="p-3 border-2 border-black text-center"></td>
       

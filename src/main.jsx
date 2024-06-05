@@ -35,6 +35,7 @@ import EmployeeMonthlySalary from "./Pages/Home/EmployeerMouthlySelery";
 import AllCampaign from "./Pages/Home/AllCampaign";
 import MyCampaigns from "./Pages/Home/Mycampaigns";
 import { HelmetProvider } from "react-helmet-async";
+import MyClients from "./Pages/Home/MyClients";
 
 const router = createBrowserRouter([
   {
@@ -89,6 +90,10 @@ const router = createBrowserRouter([
        {
         path:'/myCampaigns',
         element:<MyCampaigns></MyCampaigns>
+       },
+       {
+        path:'/myClients',
+        element:<MyClients></MyClients>
        },
        {
         path:'/addClient',

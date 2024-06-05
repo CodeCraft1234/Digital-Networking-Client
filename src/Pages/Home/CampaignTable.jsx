@@ -211,11 +211,13 @@ const CampaignTable = ({ email }) => {
   return (
 
     <div className="my-4 mb-24">
-
-<div className="">
+        {
+            ddd?.role === 'admin' ? <></> :   <div className="">
             <img className="rounded-full border-2 p-2 border-black mx-auto sm:w-44 h-44 lg:w-72 lg:h-72" src={user?.photoURL} alt=""/>
             <h1 className="lg:text-4xl mt-4 sm:text-2xl md:text-3xl font-bold text-center">{user?.displayName}</h1>
       </div>
+        }
+     
      
     <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 mb-3  lg:grid-cols-6 gap-8 mt-4 p-4">
    <div className="balance-card bg-white rounded-2xl shadow-2xl p-5 text-center  transition-transform transform hover:scale-105 border-0">

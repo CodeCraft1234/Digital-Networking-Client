@@ -260,36 +260,36 @@ const UserProfile = () => {
 
             <div className="p-4">
                 <h6 className="text-center font-bold text-3xl md:text-5xl text-green-800">Campaign List </h6>
-                {
-                 ddd?.role === 'admin' ? <></> :  <div className="flex ml-10 text-start justify-start items-center ">
+                 <div className="flex ml-10 text-start justify-start items-center ">
                  <div>
+
                  <button className="font-avenir px-3  mx-auto py-1 bg-green-800 ml-10 rounded-lg text-white" onClick={() => document.getElementById('my_modal_2').showModal()}>Add Campaign</button>
                                      <dialog id="my_modal_2" className="modal">
                                          <div className="modal-box">        
                                          <section className=" dark:text-gray-100">
                                 
-                                <Form onSubmit={handleaddblog} className="container w-full max-w-xl p-8 mx-auto space-y-6 rounded-md shadow dark:bg-gray-900">
+                                <Form onSubmit={handleaddblog} className="container w-full max-w-xl p-8 mx-auto space-y-6 rounded-md shadow text-black font-bold">
                                 <div>
                                 <h1 className="text-3xl my-4 text-center font-bold  text-white">Add a Campaign </h1>
                                     <div className="flex justify-center  items-center gap-10">
                                     <div>
                                         <label for="date" className="block mb-1 ">Date</label>
-                                        <input id="date" name="date" type="date" placeholder="type...." required className="block w-full p-2 rounded focus:outline-none focus:ring focus:ri focus:ri dark:bg-gray-800" />
+                                        <input id="date" name="date" type="date" placeholder="type...." required className="block w-full p-2 border-2 border-black rounded focus:outline-none focus:ring focus:ri focus:ri " />
                                     </div>
                                     
                                     </div>
                                     <div>
                                         <label for="name" className="block mb-1 ml-1">Campaign Name</label>
-                                        <input id="name" name="campaignName" type="text" placeholder="type...." required className="block w-full p-2 rounded focus:outline-none focus:ring focus:ri focus:ri dark:bg-gray-800" />
+                                        <input id="name" name="campaignName" type="text" placeholder="type...." required className="block w-full p-2 rounded focus:outline-none focus:ring border-2 border-black focus:ri focus:ri " />
                                     </div>
                                     <div className="flex justify-center items-center gap-3">
                                     
                                    
 
                                     <div className="">
-                                            <label className="block  text-white">Ads Account</label>
-                                            <select required  name="adsAccount" className="w-full border rounded p-2 mt-1 dark:bg-gray-800">
-                                            <option className="text-white" value="">All Ads Account</option>
+                                            <label className="block  text-black">Ads Account</label>
+                                            <select required  name="adsAccount" className="w-full border rounded p-2 mt-1  border-black">
+                                            <option className="text-black" value="">All Ads Account</option>
                                             {
                                             adsAccounts.map(ads=> <option  key={ads._id} value={ads?.accountName}>{ads?.accountName}</option>)
                                             } 
@@ -300,7 +300,7 @@ const UserProfile = () => {
                                         
                                     <div>
                                         <label for="name" className="block mb-1 ml-1">Page URL</label>
-                                        <input id="name" name="pageURL" type="text" placeholder="type...." required className="block w-full p-2 rounded focus:outline-none focus:ring focus:ri focus:ri dark:bg-gray-800" />
+                                        <input id="name" name="pageURL" type="text" placeholder="type...." required className="block w-full p-2 rounded focus:outline-none focus:ring focus:ri focus:ri border-2 border-black" />
                                     </div>
                                     </div>
                                     <div className="flex justify-center items-center gap-3">
@@ -308,7 +308,7 @@ const UserProfile = () => {
 
                                     <div>
                                         <label for="name" className="block mb-1 ml-1">Page Name</label>
-                                        <input id="name" name="pageName" type="text" placeholder="type...." required className="block w-full p-2 rounded focus:outline-none focus:ring focus:ri focus:ri dark:bg-gray-800" />
+                                        <input id="name" name="pageName" type="text" placeholder="type...." required className="block w-full p-2 rounded focus:outline-none focus:ring focus:ri focus:ri border-2 border-black" />
                                     </div>
 
 
@@ -316,26 +316,31 @@ const UserProfile = () => {
                                   
                                     <div>
                                         <label for="name" className="block mb-1 ml-1">Total Budged</label>
-                                        <input id="name" name="totalBudged" type="number" placeholder="type...." required className="block w-full p-2 rounded focus:outline-none focus:ring focus:ri focus:ri dark:bg-gray-800" />
+                                        <input step="0.01" id="name" name="totalBudged" type="number" placeholder="type...." required className="block w-full p-2 rounded focus:outline-none focus:ring focus:ri focus:ri border-black border-2" />
                                     </div>
                                     </div>
                                    
                                     
                                  </div>
-                                   <button method="dialog"  className="font-avenir px-3 flex justify-center  mx-auto py-1 bg-green-800 ml-10 rounded-lg text-white">Submit</button>
+                                   <button method="dialog"  className="font-avenir px-3 flex justify-center  mx-auto py-1 bg-green-800  rounded-lg text-white">Submit</button>
                                   </Form>
                                           </section>
-                                             <div className="modal-action flex justify-center">
+                                             <div className="modal-action flex justify-end">
                                                  <form method="dialog">
-                                                     <button className="font-avenir flex justify-center  px-3 mx-auto py-1 bg-neutral rounded text-white">Close</button>
+                                                     <button className="p-2 rounded-lg bg-red-600 text-white text-center">Close</button>
                                                  </form>
                                              </div>
                                          </div>
                                      </dialog>
                  </div>
+
+                 
                 
                                </div> 
-            }
+            
+
+
+
                 <div className="overflow-x-auto mt-6">
                     <table className="min-w-full bg-white">
                         <thead className="bg-green-800 text-white">
@@ -363,14 +368,14 @@ const UserProfile = () => {
                                     <td className="p-3 border-r-2 border-gray-200 text-center">{work.campaignName}</td>
                                     <td className="p-3 border-r-2 border-gray-200 text-center">{work.adsAccount}</td>
                                     
-                                    <td className="p-3 border-r-2 border-gray-200 text-center">$ {work.tBudged}</td>
-                                    <td className="p-3 border-r-2 border-gray-200 text-center">$ {work.tSpent}</td>
-                                    <td className="p-3 border-r-2 border-gray-200 text-center">৳
-                                     {parseInt(work.tSpent * work.dollerRate)}</td>
+                                    <td className="p-3 border-r-2 border-gray-200 text-center"><span className="text-md mr-1 font-extrabold">$</span>  {work.tBudged}</td>
+                                    <td className="p-3 border-r-2 border-gray-200 text-center"><span className="text-md mr-1 font-extrabold">$</span>  {work.tSpent}</td>
+                                    <td className="p-3 border-r-2 border-gray-200 text-center"><span className="text-md mr-1 font-extrabold">৳</span> 
+                                         {parseInt(work.tSpent * work.dollerRate)}</td>
                                     <td className={`p-3 text-center border-r-2 border-gray-200 ${work.status === "Active" ? "text-green-500" : "text-red-500"}`}>{work.status}</td>
                                     {
                                           ddd?.role === 'admin' ? <></> :    <td className="p-3 text-center border-r-2 border-gray-200">
-                                          <button className="font-avenir px-3 mx-auto py-1 bg-neutral rounded text-white" onClick={() => document.getElementById(`modal_${index}`).showModal()}>Edit</button>
+                                          <button className="font-avenir px-3 flex justify-center  mx-auto py-1 bg-green-800  rounded-lg text-white" onClick={() => document.getElementById(`modal_${index}`).showModal()}>Edit</button>
                                           <dialog id={`modal_${index}`} className="modal">
                                               <div className="modal-box">
                                                   <form onSubmit={(e) => handleUpdate(e, work._id)}>
@@ -378,17 +383,20 @@ const UserProfile = () => {
                                                       <div className="flex justify-center items-center gap-3">
                                                           <div className="mb-4">
                                                               <label className="block text-gray-700">Total Budged</label>
-                                                              <input type="number" name="tBudged" defaultValue={work.tBudged} className="w-full border rounded p-2 mt-1" />
+                                                              <input type="number" name="tBudged" defaultValue={work.tBudged} 
+                                                              step="0.01" className="w-full border rounded p-2 mt-1" />
                                                           </div>
                                                           <div className="mb-4">
                                                               <label className="block text-gray-700">Total Spent</label>
-                                                              <input type="number" name="totalSpent" defaultValue={work.tSpent} className="w-full border rounded p-2 mt-1" />
+                                                              <input type="number" name="totalSpent" defaultValue={work.tSpent}  
+                                                              step="0.01"
+                                                              className="w-full border rounded p-2 mt-1" />
                                                           </div>
                                                       </div>
                                                       <div className="flex justify-center items-center gap-3">
                                                       <div className="mb-4">
                                                               <label className="block text-gray-700">Dollers Rate</label>
-                                                              <input type="number" name="dollerRate" defaultValue={work.dollerRate} className="w-full border rounded p-2 mt-1" />
+                                                              <input step="0.01" type="number" name="dollerRate" defaultValue={work.dollerRate} className="w-full border rounded p-2 mt-1" />
                                                           </div>
                                                       <div className="mb-4">
                                                           <label className="block text-gray-700">Status</label>
@@ -400,11 +408,11 @@ const UserProfile = () => {
                                                       </div>
                                                       </div>
                                                      
-                                                      <button onClick={() => document.getElementById(`modal_${index}`).close()} type="submit" className="font-avenir px-3 mx-auto py-1 bg-neutral rounded text-white">Update</button>
+                                                      <button onClick={() => document.getElementById(`modal_${index}`).close()} type="submit" className="font-avenir px-3 flex justify-center  mx-auto py-1 bg-green-800  rounded-lg text-white">Update</button>
                                                   </form>
-                                                  {/* <div className="modal-action">
-                                                      <button className="btn" onClick={() => document.getElementById(`modal_${index}`).close()}>Close</button>
-                                                  </div> */}
+                                                  <div className="modal-action">
+                                                      <button className="p-2 rounded-lg bg-red-600 text-white text-center" onClick={() => document.getElementById(`modal_${index}`).close()}>Close</button>
+                                                  </div>
                                               </div>
                                           </dialog>
                                       </td>
@@ -418,8 +426,8 @@ const UserProfile = () => {
                                 <td className="p-3 text-center"></td>
                                 <td className="p-3 text-center"></td>
                                 <td className="p-3 text-right" colSpan="2">Total Spent:</td>
-                                <td className="p-3 text-center">$ {totalSpent}</td>
-                                <td className="p-3 text-center">৳ {totalSpent * dollerRate}</td>
+                                <td className="p-3 text-center"><span className="text-md mr-1 font-extrabold">$</span>  {totalSpent}</td>
+                                <td className="p-3 text-center"><span className="text-md mr-1 font-extrabold">৳</span>  {totalSpent * dollerRate}</td>
                                 <td className="p-3 text-center"></td>
                                 {
                                      ddd?.role === 'admin' ? <></> :  <td className="p-3 text-center"></td>
@@ -432,155 +440,6 @@ const UserProfile = () => {
             </div>
 
  <PaymentHistry email={param?.email}></PaymentHistry>
-
-            {/* <div className=" p-2 sm:p-4 dark:text-green-600">
-                <h6 className="text-center font-bold text-3xl md:text-5xl text-green-600">
-                    Payment History
-                </h6>
-                <div>
-                 <button className="font-avenir px-3  mx-auto py-1 bg-green-800 ml-10 rounded-lg text-white" onClick={() => document.getElementById('my_modal_8').showModal()}>Pay Now</button>
-                                     <dialog id="my_modal_8" className="modal">
-                                         <div className="modal-box">
-                                             <form onSubmit={(e) => handlePayment(e)}>
-                                                <div className="flex justify-center items-center gap-3">
-                                                
-                                                 <div className="mb-4">
-                                                     <label className="block text-gray-700">New Amount</label>
-                                                     <input required type="number" name="amount"  className="w-full border rounded p-2 mt-1" />
-                                                 </div>
-                                                 <div className="mb-4">
-                                                     <label className="block text-gray-700">Note</label>
-                                                     <input required type="text" name="note"  className="w-full border rounded p-2 mt-1" />
-                                                 </div>
-                                                </div>
-                                                 <div className="flex justify-center items-center gap-4">
-                                                     <div className="mb-4">
-                                                         <label className="block text-gray-700">Payment Method</label>
-                                                         <select  name="paymentMethod" className="w-full border rounded p-2 mt-1">
-                                                         <option disabled value="">Select an Method</option>
-                                                             <option value="bkashMarchent">Bkash Marchent</option>
-                                                             <option value="bkashPersonal">Bkash Personal</option>
-                                                             <option value="nagadPersonal">Nagad Personal</option>
-                                                             <option value="rocketPersonal">Rocket Personal</option>
-                                                             <option value="bank">Bank</option>
-                                                         </select>
-                                                     </div>
-                                                     <div className="mb-4">
-                                                         <label className="block text-gray-700">Date</label>
-                                                         <input required type="date" name="date" defaultValue={0} className="w-full border rounded p-2 mt-1" />
-                                                     </div>
-                                                 </div>
-                                                 <button type="submit" className="font-avenir flex justify-center  px-3 mx-auto py-1 bg-neutral rounded text-white">Pay Now</button>
-                                             </form>
-                                             <div className="modal-action lex justify-center">
-                                                 <form method="dialog">
-                                                     <button className="btn btn-primary">Close</button>
-                                                 </form>
-                                             </div>
-                                         </div>
-                                     </dialog>
-                 </div>
-                <div className="overflow-x-auto mt-6">
-                    <table className="min-w-full bg-white">
-                        <thead className="bg-green-800 text-white">
-                            <tr>
-                                <th className="p-3 ">SL</th>
-                                <th className="p-3">Payment Date</th>
-                                <th className="p-3">Payment Amount</th>
-                                <th className="p-3">Payment Method</th>
-                                <th className="p-3"> Note</th>
-                                <th className="p-3">Edit</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {Histry.map((payment, index) => (
-                                <tr
-                                    key={index}
-                                    className={`${index % 2 === 0 ? "bg-gray-100" : "bg-white"}`}
-                                >
-                                    <td className="p-3  border-r-2 border-l-2 border-gray-200 text-center">{index + 1}</td>
-                                    <td className="p-3 border-r-2 border-gray-200 text-center">{payment.date}</td>
-                                    <td className="p-3 border-r-2 border-gray-200 text-center">৳ {payment.amount}</td>
-                                  
-                                    <td className="p-3 border-r-2 border-gray-200 text-center">
-
-
-                                    
-                                        {payment.paymentMethod === 'bkashMarchent' && <img className="h-10 w-24 flex mx-auto my-auto items-center justify-center" src='https://i.ibb.co/bHMLyvM/b-Kash-Merchant.png' alt="" />
-                                        }
-                                        {payment.paymentMethod === 'bkashPersonal' && <img className="h-10 w-24 flex my-auto items-center mx-auto justify-center" src='https://i.ibb.co/520Py6s/bkash-1.png' alt="" />
-                                        }
-                                        {payment.paymentMethod === 'rocketPersonal' && <img className="h-10 w-24 flex my-auto items-center mx-auto justify-center" src='https://i.ibb.co/QkTM4M3/rocket.png' alt="" />
-                                        }
-                                        {payment.paymentMethod === 'nagadPersonal' && <img className="h-10 w-24 flex my-auto items-center mx-auto justify-center" src='https://i.ibb.co/JQBQBcF/nagad-marchant.png' alt="" /> 
-                                        }
-                                        {payment.paymentMethod === 'bank' && <img className="h-12 w-13 flex my-auto items-center mx-auto justify-center" src='https://i.ibb.co/kS0jD01/bank-3d-render-icon-illustration-png.webp' alt="" />
-                                        }
-                                        </td>
-                                        <td className="p-3 border-r-2 border-gray-200 text-center"> {payment.note}</td>
-                                           <td className="p-3 border-r-2 border-gray-200 text-center">
-
-                                           <button className="font-avenir px-3 mx-auto py-1 bg-neutral rounded text-white" onClick={() => document.getElementById(`modal_${payment._id}`).showModal()}>
-                                            Edit
-                                            </button>
-
-                                          <dialog id={`modal_${payment._id}`} className="modal">
-                                              <div className="modal-box">
-                                                  <form onSubmit={(e) => handleUpdatePayment(e, payment._id)}>
-                                                      <div className="flex justify-center items-center gap-3">
-                                                      <div className="mb-4">
-                                                              <label className="block text-gray-700"> Date</label>
-                                                              <input type="date" defaultValue={payment.date} name='date'  className="w-full border rounded p-2 mt-1" />
-                                                          </div>
-                                                          <div className="mb-4">
-                                                              <label className="block text-gray-700"> Amount</label>
-                                                              <input type="number" name="amount"   defaultValue={payment.amount} className="w-full border rounded p-2 mt-1" />
-                                                          </div>
-                                                          
-                                                      </div>
-                                                      <div className="flex justify-center items-center gap-3">
-                                                      <div className="mb-4">
-                                                              <label className="block text-gray-700">Note</label>
-                                                              <input type="text" name="note" defaultValue={payment?.note} className="w-full border rounded p-2 mt-1" />
-                                                          </div>
-                                                      <div className="mb-4">
-                                                          <label className="block text-gray-700">Method</label>
-                                                          <select name="method" defaultValue={payment.paymentMethod} className="w-full border rounded p-2 mt-1">
-                                                          <option value="bkashMarchent">Bkash Marchent</option>
-                                                             <option value="bkashPersonal">Bkash Personal</option>
-                                                             <option value="nagadPersonal">Nagad Personal</option>
-                                                             <option value="rocketPersonal">Rocket Personal</option>
-                                                             <option value="bank">Bank</option>
-                                                          </select>
-                                                      </div>
-                                                      </div>
-                                                     
-                                                      <button onClick={() => document.getElementById(`modal_${payment._id}`).close()} type="submit" className="font-avenir px-3 mx-auto py-1 bg-neutral rounded text-white">Update</button>
-                                                  </form>
-                                                  {/* <div className="modal-action">
-                                                      <button className="btn" onClick={() => document.getElementById(`modal_${payment._id}`).close()}>Close</button>
-                                                  </div> */}
-                                              {/* </div>
-                                          </dialog>
-                                      </td>
-                                    
-                                     
-                                </tr>
-                            ))}
-                            <tr className="bg-green-800 text-white font-bold">
-                                <td className="p-3 text-center" colSpan="2">
-                                    Total Amount =
-                                </td>
-                                <td className="p-3 text-center">৳ {totalPaymeent}</td>
-                                <td className="p-3 text-center"></td>
-                                <td className="p-3 text-center"></td>
-                                <td className="p-3 text-center"></td>
-                               
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div> */} */
             <ToastContainer />
         </div>
     );

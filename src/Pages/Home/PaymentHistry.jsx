@@ -84,7 +84,6 @@ const PaymentHistry = () => {
                 console.log(res.data);
                 refetch(); // Ensure this function is defined and correct
                 toast.success("Campaign updated successfully");
-                // window.location.reload(); // Generally better to avoid reloading the page
             })
             .catch(error => {
                 console.error("Error updating campaign:", error);
@@ -98,7 +97,7 @@ const PaymentHistry = () => {
         const previousAmount = parseFloat(e.target.previousAmount.value);
         const date = e.target.date.value;
         const note = e.target.note.value;
-        const method = e.target.method.value;
+        const method = e.target.paymentMethod.value;
         const body = { note, amount, date, method };
         AxiosPublic.patch(`https://digital-networking-server.vercel.app/Mpayment/${id}`, body)
             .then(res => {
@@ -138,25 +137,26 @@ const PaymentHistry = () => {
                     Payment History
                 </h6>
                 <div>
+                    
                  <button className="font-avenir px-3  mx-auto py-1 bg-green-800 ml-10 rounded-lg text-white" onClick={() => document.getElementById('my_modal_8').showModal()}>Pay Now</button>
                                      <dialog id="my_modal_8" className="modal">
-                                         <div className="modal-box">
+                                         <div className="modal-box text-black font-bold">
                                              <form onSubmit={(e) => handlePayment(e)}>
                                                 <div className="flex justify-center items-center gap-3">
                                                 
                                                  <div className="mb-4">
                                                      <label className="block text-gray-700">New Amount</label>
-                                                     <input required type="number" name="amount"  className="w-full border rounded p-2 mt-1" />
+                                                     <input required type="number" name="amount"  className="w-full border-2 border-black rounded p-2 mt-1" />
                                                  </div>
                                                  <div className="mb-4">
                                                      <label className="block text-gray-700">Note</label>
-                                                     <input required type="text" name="note"  className="w-full border rounded p-2 mt-1" />
+                                                     <input required type="text" name="note"  className="w-full border-2 border-black rounded p-2 mt-1" />
                                                  </div>
                                                 </div>
                                                  <div className="flex justify-center items-center gap-4">
                                                      <div className="mb-4">
                                                          <label className="block text-gray-700">Payment Method</label>
-                                                         <select  name="paymentMethod" className="w-full border rounded p-2 mt-1">
+                                                         <select  name="paymentMethod" className="w-full border-2 border-black rounded p-2 mt-1">
                                                          <option disabled value="">Select an Method</option>
                                                              <option value="bkashMarchent">Bkash Marchent</option>
                                                              <option value="bkashPersonal">Bkash Personal</option>
@@ -167,14 +167,14 @@ const PaymentHistry = () => {
                                                      </div>
                                                      <div className="mb-4">
                                                          <label className="block text-gray-700">Date</label>
-                                                         <input required type="date" name="date" defaultValue={0} className="w-full border rounded p-2 mt-1" />
+                                                         <input required type="date" name="date" defaultValue={0} className="w-full border-2 border-black rounded p-2 mt-1" />
                                                      </div>
                                                  </div>
-                                                 <button type="submit" className="font-avenir flex justify-center  px-3 mx-auto py-1 bg-neutral rounded text-white">Pay Now</button>
+                                                 <button type="submit" className="font-avenir px-3 flex justify-center  mx-auto py-1 bg-green-800  rounded-lg text-white">Pay Now</button>
                                              </form>
-                                             <div className="modal-action lex justify-center">
-                                                 <form method="dialog">
-                                                     <button className="btn btn-primary">Close</button>
+                                             <div className="flex justify-end">
+                                                 <form method="dialog modal-action">
+                                                     <button className="p-2 rounded-lg bg-red-600 text-white text-center">Close</button>
                                                  </form>
                                              </div>
                                          </div>
@@ -200,7 +200,7 @@ const PaymentHistry = () => {
                                 >
                                     <td className="p-3  border-r-2 border-l-2 border-gray-200 text-center">{index + 1}</td>
                                     <td className="p-3 border-r-2 border-gray-200 text-center">{payment.date}</td>
-                                    <td className="p-3 border-r-2 border-gray-200 text-center">৳ {payment.amount}</td>
+                                    <td className="p-3 border-r-2 border-gray-200 text-center"><span className="text-md mr-1 font-extrabold">৳</span>  {payment.amount}</td>
                                   
                                     <td className="p-3 border-r-2 border-gray-200 text-center">
 
@@ -217,37 +217,37 @@ const PaymentHistry = () => {
                                         {payment.paymentMethod === 'bank' && <img className="h-12 w-13 flex my-auto items-center mx-auto justify-center" src='https://i.ibb.co/kS0jD01/bank-3d-render-icon-illustration-png.webp' alt="" />
                                         }
                                         </td>
-                                        <td className="p-3 border-r-2 border-gray-200 text-center"> {payment.note}</td>
-                                           <td className="p-3 border-r-2 border-gray-200 text-center">
+                                        <td className="p-3 border-r-2 border-gray-200 text-start"> {payment.note}</td>
+                                           <td className="p-3 border-r-2 border-gray-200 text-start">
 
-                                           <button className="font-avenir px-3 mx-auto py-1 bg-neutral rounded text-white" onClick={() => document.getElementById(`modal_${payment._id}`).showModal()}>
+                                           <button className="font-avenir px-3 flex justify-center  mx-auto py-1 bg-green-800  rounded-lg text-white" onClick={() => document.getElementById(`modal_${payment._id}`).showModal()}>
                                             Edit
                                             </button>
 
                                           <dialog id={`modal_${payment._id}`} className="modal">
-                                              <div className="modal-box">
+                                              <div className="modal-box text-black font-bold">
                                                   <form onSubmit={(e) => handleUpdatePayment(e, payment._id)}>
                                                       <div className="flex justify-center items-center gap-3">
                                                       
                                                           <div className="mb-4">
                                                               <label className="block text-gray-700"> Previous Amount</label>
-                                                              <input type="number" name="previousAmount" disabled   defaultValue={payment?.amount} className="w-full border rounded p-2 mt-1" />
+                                                              <input type="number" name="previousAmount" disabled   defaultValue={payment?.amount} className="w-full border-2 border-black rounded p-2 mt-1" />
                                                           </div>
                                                           <div className="mb-4">
                                                               <label className="block text-gray-700"> New Amount</label>
-                                                              <input type="number" name="amount"   defaultValue={payment.amount} className="w-full border rounded p-2 mt-1" />
+                                                              <input type="number" name="amount"   defaultValue={payment.amount} className="w-full border-2 border-black rounded p-2 mt-1" />
                                                           </div>
                                                           
                                                       </div>
                                                       <div className="flex justify-center items-center gap-3">
                                                       <div className="mb-4">
                                                               <label className="block text-gray-700"> Date</label>
-                                                              <input type="date" defaultValue={payment.date} name='date'  className="w-full border rounded p-2 mt-1" />
+                                                              <input type="date" defaultValue={payment.date} name='date'  className="w-full border-2 border-black rounded p-2 mt-1" />
                                                           </div>
                                                      
                                                       <div className="mb-4">
                                                           <label className="block text-gray-700">Method</label>
-                                                          <select name="method" defaultValue={payment.paymentMethod} className="w-full border rounded p-2 mt-1">
+                                                          <select name="paymentMethod" defaultValue={payment.paymentMethod} className="w-full border-2 border-black rounded p-2 mt-1">
                                                           <option value="bkashMarchent">Bkash Marchent</option>
                                                              <option value="bkashPersonal">Bkash Personal</option>
                                                              <option value="nagadPersonal">Nagad Personal</option>
@@ -258,13 +258,13 @@ const PaymentHistry = () => {
                                                       </div>
                                                       <div className="mb-4">
                                                               <label className="block text-gray-700">Note</label>
-                                                              <input type="text" name="note" defaultValue={payment?.note} className="w-full border rounded p-2 mt-1" />
+                                                              <input type="text" name="note" defaultValue={payment?.note} className="w-full border-2 border-black rounded p-2 mt-1" />
                                                           </div>
-                                                      <button onClick={() => document.getElementById(`modal_${payment._id}`).close()} type="submit" className="font-avenir px-3 mx-auto py-1 bg-neutral rounded text-white">Update</button>
+                                                      <button onClick={() => document.getElementById(`modal_${payment._id}`).close()} type="submit" className="font-avenir px-3 flex justify-center  mx-auto py-1 bg-green-800  rounded-lg text-white">Update</button>
                                                   </form>
-                                                  {/* <div className="modal-action">
-                                                      <button className="btn" onClick={() => document.getElementById(`modal_${payment._id}`).close()}>Close</button>
-                                                  </div> */}
+                                                  <div className="modal-action">
+                                                      <button className="p-2 rounded-lg bg-red-600 text-white text-center" onClick={() => document.getElementById(`modal_${payment._id}`).close()}>Close</button>
+                                                  </div>
                                               </div>
                                           </dialog>
                                       </td>
@@ -276,7 +276,7 @@ const PaymentHistry = () => {
                                 <td className="p-3 text-center" colSpan="2">
                                     Total Amount =
                                 </td>
-                                <td className="p-3 text-center">৳ {totalPayment}</td>
+                                <td className="p-3 text-center"><span className="text-md mr-1 font-extrabold">৳</span>  {totalPayment}</td>
                                 <td className="p-3 text-center"></td>
                                 <td className="p-3 text-center"></td>
                                 <td className="p-3 text-center"></td>
