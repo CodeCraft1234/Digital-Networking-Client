@@ -12,8 +12,8 @@ import { AuthContext } from "../../Security/AuthProvider";
 import useEmployeePayment from "../../Hook/useEmployeePayment";
 import { IoIosSearch } from "react-icons/io";
 
-const CampaignTable2 = ({ email }) => {
-  console.log("llllllllllllllllllllllllllllllllllllllllllll",email);
+const CampaignTable2 = () => {
+  
   const { user }=useContext(AuthContext)
   const [clients, refetch] = useClients();
   const [employeePayment] = useEmployeePayment();

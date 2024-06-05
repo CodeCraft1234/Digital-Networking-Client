@@ -273,6 +273,7 @@ const AllAdsAccount = () => {
                   <input
                     type="number"
                     name="currentBallence"
+                    step="0.01"
                     defaultValue={modalData.currentBallence}
                     className="w-full border rounded p-2 mt-1 text-gray-500"
                   />
@@ -282,6 +283,7 @@ const AllAdsAccount = () => {
                   <input
                     type="number"
                     name="threshold"
+                    step="0.01"
                     defaultValue={modalData.threshold}
                     className="w-full border rounded p-2 mt-1 text-gray-500"
                   />
@@ -293,6 +295,7 @@ const AllAdsAccount = () => {
                   <input
                     type="number"
                     name="totalSpent"
+                    step="0.01"
                     defaultValue={modalData.totalSpent}
                     className="w-full border rounded p-2 mt-1 text-gray-500"
                   />
