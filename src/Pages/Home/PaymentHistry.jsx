@@ -267,9 +267,7 @@ const PaymentHistry = () => {
                                                   </div>
                                               </div>
                                           </dialog>
-                                      </td>
-                                    
-                                     
+                                      </td>    
                                 </tr>
                             ))}
                             <tr className="bg-green-800 text-white font-bold">

@@ -125,6 +125,24 @@ const NavBar = () => {
                       <SlPeople className="w-6 h-6" /> Employees
                     </NavLink>
                   </li>
+                  <li>
+                  <NavLink
+                    to="/employeePayment"
+                    className="text-white bg-red-800 hover:bg-green-300 hover:text-black"
+                    activeClassName="bg-green-300"
+                  >
+                    <FaPeopleGroup className="w-6 h-6" /> Employees Payment
+                  </NavLink>
+                </li>
+                  <li>
+                  <NavLink
+                    to="/adminDashboard"
+                    className="text-white bg-red-800 hover:bg-green-300 hover:text-black"
+                    activeClassName="bg-green-300"
+                  >
+                    <FaPeopleGroup className="w-6 h-6" /> Dashboard
+                  </NavLink>
+                </li>
                 </>
               ) : (
                 <>
@@ -250,6 +268,27 @@ const NavBar = () => {
                     <FaPeopleGroup className="w-6 h-6" /> Employees
                   </NavLink>
                 </li>
+
+                <li>
+                  <NavLink
+                    to="/employeePayment"
+                    className="text-white bg-red-800 hover:bg-green-300 hover:text-black"
+                    activeClassName="bg-green-300"
+                  >
+                    <FaPeopleGroup className="w-6 h-6" /> Employees Payment
+                  </NavLink>
+                </li>
+
+                <li>
+                  <NavLink
+                    to="dashboard"
+                    className="text-white bg-red-800 hover:bg-green-300 hover:text-black"
+                    activeClassName="bg-green-300"
+                  >
+                    <FaPeopleGroup className="w-6 h-6" /> Dashboard
+                  </NavLink>
+                </li>
+
               </>
             ) : (
               <>

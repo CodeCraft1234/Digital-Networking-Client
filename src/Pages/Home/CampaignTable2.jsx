@@ -613,6 +613,7 @@ const location=useLocation()
                   <div className="mb-4">
                     <label className="block text-gray-250">Pay Amount</label>
                     <input
+                    required
                       type="number"
                       name="payAmount"
                       defaultValue={0}
@@ -624,8 +625,8 @@ const location=useLocation()
                     <input
                       type="text"
                       name="note" 
-                      required
-                      placeholder="type note..."
+                      required 
+                      placeholder="type note..." 
                       className="w-full border-2 border-black rounded p-2 mt-1"
                     />
                   </div>
@@ -727,7 +728,7 @@ const location=useLocation()
                                                           </div>
                                                           <div className="mb-4">
                                                               <label className="block text-gray-700"> New Amount</label>
-                                                              <input type="number" name="payAmount"   defaultValue={payment?.payAmount} className="w-full border-2 border-black rounded p-2 mt-1" />
+                                                              <input required type="number" name="payAmount"   defaultValue={payment?.payAmount} className="w-full border-2 border-black rounded p-2 mt-1" />
                                                           </div>
                                                           
                                                       </div>
@@ -739,7 +740,7 @@ const location=useLocation()
                                                      
                                                       <div className="mb-4">
                                                           <label className="block text-gray-700">Method</label>
-                                                          <select name="paymentMethod" defaultValue={payment.paymentMethod} className="w-full border-2 border-black rounded p-2 mt-1">
+                                                          <select required name="paymentMethod" defaultValue={payment.paymentMethod} className="w-full border-2 border-black rounded p-2 mt-1">
                                                           <option value="bkashMarchent">Bkash Marchent</option>
                                                              <option value="bkashPersonal">Bkash Personal</option>
                                                              <option value="nagadPersonal">Nagad Personal</option>
@@ -750,16 +751,16 @@ const location=useLocation()
                                                       </div>
                                                       <div className="mb-4">
                                                               <label className="block text-gray-700">Note</label>
-                                                              <input type="text" name="note" defaultValue={payment?.note} className="w-full border-2 border-black rounded p-2 mt-1" />
+                                                              <input required type="text" name="note" defaultValue={payment?.note} className="w-full border-2 border-black rounded p-2 mt-1" />
                                                           </div>
                                                       <button onClick={() => document.getElementById(`modal_${payment._id}`).close()} type="submit"  className="font-avenir px-3 mx-auto py-1 rounded-lg flex justify-center text-white bg-green-800">Update</button>
                                                   </form>
                                                   <div className="modal-action">
                                                       <button className="p-2 rounded-lg bg-red-600 text-white text-center" onClick={() => document.getElementById(`modal_${payment._id}`).close()}>Close</button>
-                                                  </div> *
+                                                  </div> 
                                                </div>
                                           </dialog>
-                                      </td> *
+                                      </td> 
                                 </tr>
                             ))}
                             <tr className="bg-green-800 text-white font-bold">
