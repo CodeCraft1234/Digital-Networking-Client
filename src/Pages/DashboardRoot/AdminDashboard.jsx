@@ -48,6 +48,15 @@ const AdminDashboard = () => {
                 </li>
           <li>
                   <NavLink
+                    to="dashboard/Users"
+                    className="text-white bg-red-800 hover:bg-green-300 hover:text-black"
+                    activeClassName="bg-green-300"
+                  >
+                    <MdAccountCircle className="w-6 h-6" /> Users
+                  </NavLink>
+                </li>
+          <li>
+                  <NavLink
                     to="dashboard/allUsers"
                     className="text-white bg-red-800 hover:bg-green-300 hover:text-black"
                     activeClassName="bg-green-300"

@@ -42,6 +42,7 @@ import Banner from "./Pages/Home/Banner";
 import AllUsers from "./Pages/Home/AllUsers";
 import Dashboard from "./Pages/DashboardRoot/Dashboard";
 import CampaignTable2 from "./Pages/Home/CampaignTable2";
+import Users from "./Pages/DashboardRoot/Users";
 
 const router = createBrowserRouter([
   {
@@ -174,6 +175,10 @@ const router = createBrowserRouter([
           {
             path:'dashboard/allUsers',
             element:<AllUsers></AllUsers>
+          },
+          {
+            path:'dashboard/Users',
+            element:<Users></Users>
           },
           {
             path:'dashboard/myCampaigns',
