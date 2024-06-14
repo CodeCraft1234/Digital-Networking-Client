@@ -160,6 +160,7 @@ const router = createBrowserRouter([
             path:'/dashboard/settings',
             element:<Settings></Settings>
            },
+        
            {
             path:'dashboard/employeePayment',
             element:<EmployeePayments></EmployeePayments>
