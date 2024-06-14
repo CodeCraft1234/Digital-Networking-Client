@@ -42,7 +42,9 @@ import Banner from "./Pages/Home/Banner";
 import AllUsers from "./Pages/Home/AllUsers";
 import Dashboard from "./Pages/DashboardRoot/Dashboard";
 import CampaignTable2 from "./Pages/Home/CampaignTable2";
-import Users from "./Pages/DashboardRoot/Users";
+
+import Settings from "./Pages/DashboardRoot/Routes/Settings";
+
 
 const router = createBrowserRouter([
   {
@@ -157,6 +159,10 @@ const router = createBrowserRouter([
             element:<AllCampaign></AllCampaign>
            },
            {
+            path:'/dashboard/settings',
+            element:<Settings></Settings>
+           },
+           {
             path:'dashboard/employeePayment',
             element:<EmployeePayments></EmployeePayments>
            },
@@ -200,6 +206,7 @@ const router = createBrowserRouter([
             path:'dashboard/employeeMonthlySelary',
             element:<EmployeeMonthlySalary></EmployeeMonthlySalary>
            },
+        
            {
             path:'dashboard/adsAccount/:email',
             element:<Profile2></Profile2>,

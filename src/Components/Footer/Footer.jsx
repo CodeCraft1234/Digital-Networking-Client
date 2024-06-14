@@ -1,13 +1,54 @@
+import { useEffect, useState } from "react";
 import {
   FaFacebookSquare,
   FaInstagramSquare,
   FaLinkedin,
+  FaTwitter,
+  FaWhatsapp,
+  FaYoutube,
 } from "react-icons/fa";
+import useLogo from "../../Hook/useLogo";
+import useLinks from "../../Hook/useLinks";
 
 const Footer = () => {
+
+  const [logo, setLogo] = useLogo();
+  const [latestLogo, setLatestLogo] = useState(null);
+  console.log(latestLogo, logo);
+
+  useEffect(() => {
+    if (logo && logo.length > 0) {
+      // Sort the logos based on date in descending order
+      const sortedLogo = [...logo].sort((a, b) => new Date(b.date) - new Date(a.date));
+
+      // Get the latest logo
+      const latest = sortedLogo[0];
+
+      // Set the sorted logo and latest logo state
+      setLogo(sortedLogo);
+      setLatestLogo(latest);
+    }
+  }, [logo, setLogo]);
+
+  const [links, setLinks] = useLinks();
+  const [latestLinks, setLatestLinks] = useState(null);
+  
+  useEffect(() => {
+    if (links && links.length > 0) {
+      // Sort the links based on date in descending order
+      const sortedLinks = [...links].sort((a, b) => new Date(b.date) - new Date(a.date));
+  
+      // Get the latest link
+      const latest = sortedLinks[0];
+  
+      // Update state with sorted links and latest link
+      setLinks(sortedLinks);
+      setLatestLinks(latest);
+    }
+  }, [links, setLinks]);
   return (
     <div>
-      <footer className="px-4 divide-y bg-black text-white">
+      <footer className="px-4 divide-y font-bold bg-gray-300 text-black">
         <div className="container flex flex-col justify-between py-10 mx-auto space-y-8 lg:flex-row lg:space-y-0">
           <div className="lg:w-1/3">
             <a
@@ -17,8 +58,8 @@ const Footer = () => {
             >
               <div className="flex justify-center items-center mx-auto">
                 <img
-                  className="h-24 w-24 bg-blue-800 p-1 rounded-full"
-                  src="https://i.ibb.co/Cnvg0RS/Digital-Network-Logo.png"
+                  className="h-24 w-24 p-1 "
+                  src={latestLogo?.photo}
                   alt=""
                 />
               </div>
@@ -26,7 +67,7 @@ const Footer = () => {
           </div>
           <div className="grid grid-cols-2 text-sm gap-x-3 gap-y-8 lg:w-2/3 sm:grid-cols-4">
             <div className="space-y-3">
-              <h3 className="tracki uppercase dark:text-gray-50">Services</h3>
+              <h3 className="tracki uppercase ">Services</h3>
               <ul className="space-y-1">
                 <li>
                   <a rel="noopener noreferrer" href="#">
@@ -56,7 +97,7 @@ const Footer = () => {
               </ul>
             </div>
             <div className="space-y-3">
-              <h3 className="tracki uppercase dark:text-gray-50">Interest</h3>
+              <h3 className="tracki uppercase ">Interest</h3>
               <ul className="space-y-1">
                 <li>
                   <a rel="noopener noreferrer" href="#">
@@ -76,7 +117,7 @@ const Footer = () => {
               </ul>
             </div>
             <div className="space-y-3">
-              <h3 className="uppercase dark:text-gray-50">Skills</h3>
+              <h3 className="uppercase ">Skills</h3>
               <ul className="space-y-1">
                 <li>
                   <a rel="noopener noreferrer" href="#">
@@ -111,21 +152,41 @@ const Footer = () => {
               </ul>
             </div>
             <div className="space-y-3">
-              <div className="uppercase dark:text-gray-50">Social media</div>
-              <div className="flex text-2xl justify-start space-x-3">
-                <a href="https://www.linkedin.com/hellodigitalNetwork">
-                  {" "}
-                  <FaLinkedin />
-                </a>
-                <a href="https://www.facebook.com/hellodigitalNetwork">
-                  {" "}
-                  <FaFacebookSquare />
-                </a>
-                <a href="https://www.instagram.com/hellodigitalNetwork">
-                  {" "}
-                  <FaInstagramSquare />
-                </a>
+              <div className="uppercase  font-bold">
+                Social media
               </div>
+              <div className="flex text-2xl justify-start space-x-3">
+  {latestLinks?.facebookID && (
+    <a href={latestLinks.facebookID} target="_blank" rel="noopener noreferrer">
+      <FaFacebookSquare />
+    </a>
+  )}
+
+  {latestLinks?.instagramID && (
+    <a href={latestLinks.instagramID} target="_blank" rel="noopener noreferrer">
+      <FaInstagramSquare />
+    </a>
+  )}
+
+  {latestLinks?.twitterID && (
+    <a href={latestLinks.twitterID} target="_blank" rel="noopener noreferrer">
+      <FaTwitter size={24} />
+    </a>
+  )}
+
+  {latestLinks?.whatsappID && (
+    <a href={latestLinks.whatsappID} target="_blank" rel="noopener noreferrer">
+      <FaWhatsapp size={24} />
+    </a>
+  )}
+
+  {latestLinks?.youtubeID && (
+    <a href={latestLinks.youtubeID} target="_blank" rel="noopener noreferrer">
+      <FaYoutube size={24} />
+    </a>
+  )}
+</div>
+
             </div>
           </div>
         </div>
