@@ -10,6 +10,7 @@ import { IoPeopleSharp } from "react-icons/io5";
 import { FaPeopleGroup, FaSackDollar } from "react-icons/fa6";
 import { SlPeople } from "react-icons/sl";
 import { CgProfile } from "react-icons/cg";
+import useLogo from "../../Hook/useLogo";
 
 const NavBar = () => {
   const { user, logOut } = useContext(AuthContext);
@@ -51,6 +52,25 @@ const NavBar = () => {
   }, [users, user]);
 
   console.log(ddd?.name);
+
+
+  const [logo, setLogo] = useLogo();
+  const [latestLogo, setLatestLogo] = useState(null);
+  console.log(latestLogo, logo);
+
+  useEffect(() => {
+    if (logo && logo.length > 0) {
+      // Sort the logos based on date in descending order
+      const sortedLogo = [...logo].sort((a, b) => new Date(b.date) - new Date(a.date));
+
+      // Get the latest logo
+      const latest = sortedLogo[0];
+
+      // Set the sorted logo and latest logo state
+      setLogo(sortedLogo);
+      setLatestLogo(latest);
+    }
+  }, [logo, setLogo]);
 
   return (
     <div className="">
@@ -220,8 +240,8 @@ const NavBar = () => {
           <div className="flex justify-center items-center">
             <Link to="/">
               <img
-                className="h-20 rounded-full w-20"
-                src="https://i.ibb.co/Cnvg0RS/Digital-Network-Logo.png"
+                className="h-20  w-20"
+                src={latestLogo?.photo}
                 alt=""
               />
             </Link>
