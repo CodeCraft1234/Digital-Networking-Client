@@ -44,6 +44,7 @@ import Dashboard from "./Pages/DashboardRoot/Dashboard";
 import CampaignTable2 from "./Pages/Home/CampaignTable2";
 
 import Settings from "./Pages/DashboardRoot/Routes/Settings";
+import Users from "./Pages/DashboardRoot/Users";
 
 
 const router = createBrowserRouter([
