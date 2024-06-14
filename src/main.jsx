@@ -35,6 +35,13 @@ import EmployeeMonthlySalary from "./Pages/Home/EmployeerMouthlySelery";
 import AllCampaign from "./Pages/Home/AllCampaign";
 import MyCampaigns from "./Pages/Home/Mycampaigns";
 import { HelmetProvider } from "react-helmet-async";
+import MyClients from "./Pages/Home/MyClients";
+import EmployeePayments from "./Pages/Home/EmployeePayments";
+import DashboardRoot from "./Pages/DashboardRoot/DashboardRoot";
+import Banner from "./Pages/Home/Banner";
+import AllUsers from "./Pages/Home/AllUsers";
+import Dashboard from "./Pages/DashboardRoot/Dashboard";
+import CampaignTable2 from "./Pages/Home/CampaignTable2";
 
 const router = createBrowserRouter([
   {
@@ -87,8 +94,16 @@ const router = createBrowserRouter([
         element:<AllCampaign></AllCampaign>
        },
        {
+        path:'/employeePayment',
+        element:<EmployeePayments></EmployeePayments>
+       },
+       {
         path:'/myCampaigns',
         element:<MyCampaigns></MyCampaigns>
+       },
+       {
+        path:'/myClients',
+        element:<MyClients></MyClients>
        },
        {
         path:'/addClient',
@@ -112,7 +127,6 @@ const router = createBrowserRouter([
         path:'/adsAccount/:email',
         element:<Profile2></Profile2>,
         loader: ({ params }) => fetch(`https://digital-networking-server.vercel.app/users/${params.email}`)
-
        },
        {
         path:'/myProfile/:email',
@@ -125,6 +139,69 @@ const router = createBrowserRouter([
         element:<UserProfile></UserProfile>,
         loader: ({ params }) => fetch(`https://digital-networking-server.vercel.app/users/${params.email}`)
        },
+       {
+        path: "dashboard",
+        element:<DashboardRoot></DashboardRoot>,
+        children: [
+          {
+            path:'/dashboard/admin/home',
+            element:<Banner></Banner>
+           },
+          {
+            path:'/dashboard/employee/home',
+            element:<CampaignTable2></CampaignTable2>
+           },
+          {
+            path:'dashboard/allCampaign',
+            element:<AllCampaign></AllCampaign>
+           },
+           {
+            path:'dashboard/employeePayment',
+            element:<EmployeePayments></EmployeePayments>
+           },
+           {
+            path:'dashboard/allEmployee',
+            element:<AllEmployee></AllEmployee>
+           },
+           {
+            path:'dashboard/allAdSAccount',
+            element:<AllAdsAccount></AllAdsAccount>
+          },
+          {
+            path:'dashboard/allClients',
+            element:<AllClients></AllClients>
+          },
+          {
+            path:'dashboard/allUsers',
+            element:<AllUsers></AllUsers>
+          },
+          {
+            path:'dashboard/myCampaigns',
+            element:<MyCampaigns></MyCampaigns>
+           },
+           {
+            path:'dashboard/myClients',
+            element:<MyClients></MyClients>
+           },
+           {
+            path:'dashboard/addClient',
+            element:<AddClient></AddClient>
+           },
+           {
+            path:'dashboard/salerySheet',
+            element:<SalarySheet></SalarySheet>
+           },
+           {
+            path:'dashboard/employeeMonthlySelary',
+            element:<EmployeeMonthlySalary></EmployeeMonthlySalary>
+           },
+           {
+            path:'dashboard/adsAccount/:email',
+            element:<Profile2></Profile2>,
+            loader: ({ params }) => fetch(`https://digital-networking-server.vercel.app/users/${params.email}`)
+           },
+        ]
+       }
     ]
   },
 ]);

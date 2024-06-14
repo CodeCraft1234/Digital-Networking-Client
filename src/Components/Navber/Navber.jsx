@@ -125,6 +125,24 @@ const NavBar = () => {
                       <SlPeople className="w-6 h-6" /> Employees
                     </NavLink>
                   </li>
+                  <li>
+                  <NavLink
+                    to="/employeePayment"
+                    className="text-white bg-red-800 hover:bg-green-300 hover:text-black"
+                    activeClassName="bg-green-300"
+                  >
+                    <FaPeopleGroup className="w-6 h-6" /> Employees Payment
+                  </NavLink>
+                </li>
+                  <li>
+                  <NavLink
+                    to="/adminDashboard"
+                    className="text-white bg-red-800 hover:bg-green-300 hover:text-black"
+                    activeClassName="bg-green-300"
+                  >
+                    <FaPeopleGroup className="w-6 h-6" /> Dashboard
+                  </NavLink>
+                </li>
                 </>
               ) : (
                 <>
@@ -144,16 +162,16 @@ const NavBar = () => {
                     className="text-white bg-red-800 hover:bg-green-300 hover:text-black"
                     activeClassName="bg-green-300"
                   >
-                    <MdCampaign className="w-6 h-6" /> Campaigns
+                    <MdCampaign className="w-6 h-6" />My Campaigns
                   </NavLink>
                 </li>
                    <li>
                   <NavLink
-                   to={`/myClient`}
+                   to={`/myClients`}
                     className="text-white bg-red-800 hover:bg-green-300 hover:text-black"
                     activeClassName="bg-green-300"
                   >
-                    <IoIosPeople className="w-6 h-6" /> My Client
+                    <IoIosPeople className="w-6 h-6" /> My Clients
                   </NavLink>
                 </li>
                   
@@ -164,18 +182,10 @@ const NavBar = () => {
                       className="text-white bg-red-800 hover:bg-green-300 hover:text-black"
                       activeClassName="bg-green-300"
                     >
-                      <MdAccountCircle className="w-6 h-6" /> Ads Account
+                      <MdAccountCircle className="w-6 h-6" />My Ads Account
                     </NavLink>
                   </li>
-                  <li>
-                    <NavLink
-                      to={`/selary/${user?.email}`}
-                      className="text-white bg-red-800 hover:bg-green-300 hover:text-black"
-                      activeClassName="bg-green-300"
-                    >
-                      <FaSackDollar className="w-5 h-5" /> Salary
-                    </NavLink>
-                  </li>
+                  
                   <li>
                     <NavLink
                       to="/allCampaign"
@@ -194,6 +204,15 @@ const NavBar = () => {
                       <IoPeopleSharp className="w-6 h-6" /> Add Client
                     </NavLink>
                   </li>
+                  <li>
+                  <NavLink
+                    to="dashboard/employee/home"
+                    className="text-white bg-red-800 hover:bg-green-300 hover:text-black"
+                    activeClassName="bg-green-300"
+                  >
+                    <FaPeopleGroup className="w-6 h-6" /> Dashboard
+                  </NavLink>
+                </li>
                 </>
               )}
             </ul>
@@ -210,6 +229,7 @@ const NavBar = () => {
         </div>
         <div className="navbar-center hidden lg:flex">
           <ul className="menu menu-horizontal items-center px-1 flex gap-4">
+
             {ddd?.role === "admin" ? (
               <>
                 <li>
@@ -248,15 +268,7 @@ const NavBar = () => {
                     <MdCampaign className="w-6 h-6" /> Campaigns
                   </NavLink>
                 </li>
-                <li>
-                  <NavLink
-                    to={`/employeeMonthlySelary`}
-                    className="text-white bg-red-800 hover:bg-green-300 hover:text-black"
-                    activeClassName="bg-green-300"
-                  >
-                    <FaSackDollar className="w-5 h-5" /> Salary
-                  </NavLink>
-                </li>
+               
                 <li>
                   <NavLink
                     to="/allEmployee"
@@ -266,6 +278,27 @@ const NavBar = () => {
                     <FaPeopleGroup className="w-6 h-6" /> Employees
                   </NavLink>
                 </li>
+
+                <li>
+                  <NavLink
+                    to="/employeePayment"
+                    className="text-white bg-red-800 hover:bg-green-300 hover:text-black"
+                    activeClassName="bg-green-300"
+                  >
+                    <FaPeopleGroup className="w-6 h-6" /> Employees Payment
+                  </NavLink>
+                </li>
+
+                <li>
+                  <NavLink
+                    to="/dashboard/admin/home"
+                    className="text-white bg-red-800 hover:bg-green-300 hover:text-black"
+                    activeClassName="bg-green-300"
+                  >
+                    <FaPeopleGroup className="w-6 h-6" /> Dashboard
+                  </NavLink>
+                </li>
+
               </>
             ) : (
               <>
@@ -284,16 +317,16 @@ const NavBar = () => {
                     className="text-white bg-red-800 hover:bg-green-300 hover:text-black"
                     activeClassName="bg-green-300"
                   >
-                    <MdCampaign className="w-6 h-6" /> Campaigns
+                    <MdCampaign className="w-6 h-6" />My Campaigns
                   </NavLink>
                 </li>
                 <li>
                   <NavLink
-                   to={`/myClient`}
+                   to={`/myClients`}
                     className="text-white bg-red-800 hover:bg-green-300 hover:text-black"
                     activeClassName="bg-green-300"
                   >
-                    <IoIosPeople className="w-6 h-6" /> My Client
+                    <IoIosPeople className="w-6 h-6" /> My Clients
                   </NavLink>
                 </li>
                
@@ -303,18 +336,19 @@ const NavBar = () => {
                     className="text-white bg-red-800 hover:bg-green-300 hover:text-black"
                     activeClassName="bg-green-300"
                   >
-                    <MdAccountCircle className="w-6 h-6" /> Ads Accounts
+                    <MdAccountCircle className="w-6 h-6" />My Ads Accounts
                   </NavLink>
                 </li>
                 <li>
                   <NavLink
-                    to={`/selary/${user?.email}`}
+                    to="/dashboard/employee/home"
                     className="text-white bg-red-800 hover:bg-green-300 hover:text-black"
                     activeClassName="bg-green-300"
                   >
-                    <FaSackDollar className="w-5 h-5" /> Salary
+                    <FaPeopleGroup className="w-6 h-6" /> Dashboard
                   </NavLink>
                 </li>
+               
                
               </>
             )}
