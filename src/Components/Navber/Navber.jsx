@@ -204,6 +204,15 @@ const NavBar = () => {
                       <IoPeopleSharp className="w-6 h-6" /> Add Client
                     </NavLink>
                   </li>
+                  <li>
+                  <NavLink
+                    to="dashboard/employee/home"
+                    className="text-white bg-red-800 hover:bg-green-300 hover:text-black"
+                    activeClassName="bg-green-300"
+                  >
+                    <FaPeopleGroup className="w-6 h-6" /> Dashboard
+                  </NavLink>
+                </li>
                 </>
               )}
             </ul>
@@ -220,6 +229,7 @@ const NavBar = () => {
         </div>
         <div className="navbar-center hidden lg:flex">
           <ul className="menu menu-horizontal items-center px-1 flex gap-4">
+
             {ddd?.role === "admin" ? (
               <>
                 <li>
@@ -281,7 +291,7 @@ const NavBar = () => {
 
                 <li>
                   <NavLink
-                    to="dashboard"
+                    to="/dashboard/admin/home"
                     className="text-white bg-red-800 hover:bg-green-300 hover:text-black"
                     activeClassName="bg-green-300"
                   >
@@ -327,6 +337,15 @@ const NavBar = () => {
                     activeClassName="bg-green-300"
                   >
                     <MdAccountCircle className="w-6 h-6" />My Ads Accounts
+                  </NavLink>
+                </li>
+                <li>
+                  <NavLink
+                    to="/dashboard/employee/home"
+                    className="text-white bg-red-800 hover:bg-green-300 hover:text-black"
+                    activeClassName="bg-green-300"
+                  >
+                    <FaPeopleGroup className="w-6 h-6" /> Dashboard
                   </NavLink>
                 </li>
                

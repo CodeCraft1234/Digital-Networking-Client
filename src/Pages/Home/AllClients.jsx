@@ -153,7 +153,7 @@ const AxiosPublic =UseAxiosPublic()
 
 
       <div className="p-2 sm:p-4">
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto border-2 border-black">
           <table className="min-w-full bg-white">
             <thead className="bg-red-800 text-white">
               <tr>

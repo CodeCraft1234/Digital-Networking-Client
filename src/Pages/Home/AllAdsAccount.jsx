@@ -148,13 +148,13 @@ const AllAdsAccount = () => {
               <title> Digital Network | Ads Account</title>
               <link rel="canonical" href="https://www.tacobell.com/" />
                </Helmet>
-      <div className="mt-24 p-4 dark:text-green-800">
+      <div className="mt-24 p-4 ">
       
 
        <div className="flex justify-between items-center ">
        <form className="flex justify-center items-center" onSubmit={handleFilter}>
           <div className="mb-4 ml-10 mx-auto">
-            <label className="block text-gray-500 font-bold">Sort By Employee</label>
+            <label className="block text-black font-bold">Sort By Employee</label>
             <select
               name="email"
               value={selectedEmail}
@@ -190,7 +190,7 @@ const AllAdsAccount = () => {
       </div>
        </div>
 
-        <div className="overflow-x-auto mt-6">
+        <div className="overflow-x-auto  border-2 border-black">
           <table className="min-w-full bg-white">
             <thead className="bg-red-800 text-white">
               <tr>

@@ -46,13 +46,22 @@ const AdminDashboard = () => {
                     <MdAccountCircle className="w-6 h-6" /> Ads Accounts
                   </NavLink>
                 </li>
+          <li>
+                  <NavLink
+                    to="dashboard/allUsers"
+                    className="text-white bg-red-800 hover:bg-green-300 hover:text-black"
+                    activeClassName="bg-green-300"
+                  >
+                    <MdAccountCircle className="w-6 h-6" /> All Users
+                  </NavLink>
+                </li>
                 <li>
                   <NavLink
                     to="dashboard/allClients"
                     className="text-white bg-red-800 hover:bg-green-300 hover:text-black"
                     activeClassName="bg-green-300"
                   >
-                    <IoPeopleSharp className="w-6 h-6" /> Clients
+                    <IoPeopleSharp className="w-6 h-6" />All Clients
                   </NavLink>
                 </li>
                 <li>
@@ -61,7 +70,7 @@ const AdminDashboard = () => {
                     className="text-white bg-red-800 hover:bg-green-300 hover:text-black"
                     activeClassName="bg-green-300"
                   >
-                    <MdCampaign className="w-6 h-6" /> Campaigns
+                    <MdCampaign className="w-6 h-6" />All Campaigns
                   </NavLink>
                 </li>
                
@@ -71,7 +80,7 @@ const AdminDashboard = () => {
                     className="text-white bg-red-800 hover:bg-green-300 hover:text-black"
                     activeClassName="bg-green-300"
                   >
-                    <FaPeopleGroup className="w-6 h-6" /> Employees
+                    <FaPeopleGroup className="w-6 h-6" />All Employees
                   </NavLink>
                 </li>
 
@@ -81,7 +90,16 @@ const AdminDashboard = () => {
                     className="text-white bg-red-800 hover:bg-green-300 hover:text-black"
                     activeClassName="bg-green-300"
                   >
-                    <FaPeopleGroup className="w-6 h-6" /> Employees Payment
+                    <FaPeopleGroup className="w-6 h-6" />Employees Payment
+                  </NavLink>
+                </li>
+                <li>
+                  <NavLink
+                    to="dashboard/employeePayment"
+                    className="text-white bg-red-800 hover:bg-green-300 hover:text-black"
+                    activeClassName="bg-green-300"
+                  >
+                    <FaPeopleGroup className="w-6 h-6" /> Settings
                   </NavLink>
                 </li>
 
