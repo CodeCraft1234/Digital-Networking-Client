@@ -206,7 +206,7 @@ const MyClients = () => {
   
     return (
         <div>
-             <div className="overflow-x-auto  mt-28">
+             <div className="overflow-x-auto ml-4  mt-28">
 
         
 <div className="flex justify-between items-center ">

@@ -46,6 +46,7 @@ import CampaignTable2 from "./Pages/Home/CampaignTable2";
 import Settings from "./Pages/DashboardRoot/Routes/Settings";
 import Users from "./Pages/DashboardRoot/Users";
 import AddClientTwo from "./Pages/DashboardRoot/AddClient";
+import AddEmployee from "./Pages/DashboardRoot/AddEmployee";
 
 
 const router = createBrowserRouter([
@@ -149,7 +150,7 @@ const router = createBrowserRouter([
         element:<DashboardRoot></DashboardRoot>,
         children: [
           {
-            path:'/dashboard/admin/home',
+            path:'dashboard',
             element:<Banner></Banner>
            },
           {
@@ -159,6 +160,10 @@ const router = createBrowserRouter([
           {
             path:'dashboard/allCampaign',
             element:<AllCampaign></AllCampaign>
+           },
+          {
+            path:'dashboard/addEmployee',
+            element:<AddEmployee></AddEmployee>
            },
            {
             path:'/dashboard/settings',

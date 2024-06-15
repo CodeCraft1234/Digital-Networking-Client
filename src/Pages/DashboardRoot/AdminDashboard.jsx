@@ -40,138 +40,128 @@ const AdminDashboard = () => {
     }
   }, [logo, setLogo]);
   return (
-    <div className="overflow-hidden h-screen">
-      <div className="w-[250px]">
-        <img className="w-44 mx-auto" src={latestLogo?.photo} alt="" />
-        <ul className="mt-4">
-          <li className="my-1">
-            <NavLink
-              to="/dashboard/admin/home"
-              className={({ isActive, isPending }) =>
-                isPending
-                  ? "pending"
-                  : isActive
-                  ? "bg-blue-600 text-white text-lg sm:text-sm md:text-xl lg:text-2xl"
-                  : "hover:bg-blue-600 hover:text-white text-white text-lg sm:text-sm md:text-xl lg:text-2xl"
-              }
-            >
-              <AiFillDashboard className="w-6 h-6 mr-2" />
-              Dashboard
-            </NavLink>
-          </li>
 
-          <li className="my-1">
-            <NavLink
-              to="dashboard/allAdSAccount"
-              className="text-white text-lg sm:text-sm md:text-xl lg:text-2xl hover:bg-blue-600 hover:text-white py-2 px-4 rounded-lg flex items-center"
-              activeClassName="bg-blue-600 text-white"
-            >
-              <MdAccountCircle className="w-6 h-6 mr-2" /> Ads Accounts
-            </NavLink>
-          </li>
+    <div className="overflow-y-auto h-screen">
+  <div className="w-[200px]">
+    <img
+      className="w-44 mx-auto"
+      src={latestLogo?.photo}
+      alt=""
+    />
+    <ul className="mt-4">
 
-          <li className="my-1">
-            <NavLink
-              to="dashboard/Users"
-              className="text-white text-lg sm:text-sm md:text-xl lg:text-2xl hover:bg-blue-600 hover:text-white py-2 px-4 rounded-lg flex items-center"
-              activeClassName="bg-blue-600 text-white"
-            >
-              <FaPeopleGroup className="w-6 h-6 mr-2" /> Users
-            </NavLink>
-          </li>
+    <li className="my-1 text-base">
+  <NavLink
+    to="/dashboard/admin/home"
+   
+    className={({ isActive, isPending }) =>
+      isPending ? "pending" : isActive ? "  bg-blue-300 text-blue-700" : " hover:text-gray-100"
+    }
+  >
+    <RxDashboard className="w-6 h-6 mr-2" />
+    Dashboard
+  </NavLink>
+</li>
 
-          <li className="my-1">
-            <NavLink
+
+      <li className="my-1 text-base">
+        <NavLink
+           to="dashboard/allAdSAccount"
+          className="text-white hover:bg-green-300 hover:text-black py-2 px-4 rounded-lg flex items-center"
+          activeClassName=" bg-blue-400"
+        >
+          <MdAccountCircle className="w-6 h-6 mr-2" /> Ads Accounts
+        </NavLink>
+      </li>
+      <li className="my-1 text-base">
+        <NavLink
+           to="dashboard/addEmployee"
+          className="text-white hover:bg-green-300 hover:text-black py-2 px-4 rounded-lg flex items-center"
+          activeClassName=" bg-blue-400"
+        >
+          <MdAccountCircle className="w-6 h-6 mr-2" /> Add Employee
+        </NavLink>
+      </li>
+
+      <li className="my-1 text-base">
+        <NavLink
               to="dashboard/allUsers"
-              className="text-white text-lg sm:text-sm md:text-xl lg:text-2xl hover:bg-blue-600 hover:text-white py-2 px-4 rounded-lg flex items-center"
-              activeClassName="bg-blue-600 text-white"
-            >
-              <FaUser  className="w-6 h-6 mr-2" /> All Users
-            </NavLink>
-          </li>
+          className="text-white hover:bg-green-300 hover:text-black py-2 px-4 rounded-lg flex items-center"
+          activeClassName=" bg-blue-400"
+        >
+          <MdAccountCircle className="w-6 h-6 mr-2" />All Users
+        </NavLink>
+      </li>
 
-          <li className="my-1">
-            <NavLink
-              to="dashboard/allClients"
-              className="text-white text-lg sm:text-sm md:text-xl lg:text-2xl hover:bg-blue-600 hover:text-white py-2 px-4 rounded-lg flex items-center"
-              activeClassName="bg-blue-600 text-white"
-            >
-              <IoPeopleSharp className="w-6 h-6 mr-2" /> Clients
-            </NavLink>
-          </li>
+      <li className="my-1 text-base">
+        <NavLink
+            to="dashboard/allClients"
+          className="text-white hover:bg-green-300 hover:text-black py-2 px-4 rounded-lg flex items-center"
+          activeClassName="bg-green-300"
+        >
+          <IoPeopleSharp className="w-6 h-6 mr-2" />  Clients
+        </NavLink>
+      </li>
+      
 
-          <li className="my-1">
-            <NavLink
-              to="dashboard/AddClients"
-              className="text-white text-lg sm:text-sm md:text-xl lg:text-2xl hover:bg-blue-600 hover:text-white py-2 px-4 rounded-lg flex items-center"
-              activeClassName="bg-blue-600 text-white"
-            >
-              <IoPeopleSharp className="w-6 h-6 mr-2" /> Add Clients
-            </NavLink>
-          </li>
+      <li className="my-1 text-base">
+        <NavLink
+            to="dashboard/allCampaign"
+          className="text-white hover:bg-green-300 hover:text-black py-2 px-4 rounded-lg flex items-center"
+          activeClassName="bg-green-300"
+        >
+          <MdCampaign className="w-6 h-6 mr-2" /> Campaigns
+        </NavLink>
+      </li>
 
-          <li className="my-1">
-            <NavLink
-              to="dashboard/allCampaign"
-              className="text-white text-lg sm:text-sm md:text-xl lg:text-2xl hover:bg-blue-600 hover:text-white py-2 px-4 rounded-lg flex items-center"
-              activeClassName="bg-blue-600 text-white"
-            >
-              <MdCampaign className="w-6 h-6 mr-2" /> Campaigns
-            </NavLink>
-          </li>
+      <li className="my-1 text-base">
+        <NavLink
+           to="dashboard/allEmployee"
+          className="text-white hover:bg-green-300 hover:text-black py-2 px-4 rounded-lg flex items-center"
+          activeClassName="bg-green-300"
+        >
+          <FaPeopleGroup className="w-6 h-6 mr-2" /> Employees
+        </NavLink>
+      </li>
 
-          <li className="my-1">
-            <NavLink
-              to="dashboard/allEmployee"
-              className="text-white text-lg sm:text-sm md:text-xl lg:text-2xl hover:bg-blue-600 hover:text-white py-2 px-4 rounded-lg flex items-center"
-              activeClassName="bg-blue-600 text-white"
-            >
-              <FaPeopleGroup className="w-6 h-6 mr-2" /> Employees
-            </NavLink>
-          </li>
+      <li className="my-1 text-base">
+        <NavLink
+             to="dashboard/employeePayment"
+          className="text-white hover:bg-green-300 hover:text-black py-2 px-4 rounded-lg flex items-center"
+          activeClassName="bg-green-300"
+        >
+          <FaPeopleGroup className="w-6 h-6 mr-2" /> Payment
+        </NavLink>
+      </li>
+      <li className="my-1 text-base">
+        <NavLink
+             to="dashboard/Users"
+          className="text-white hover:bg-green-300 hover:text-black py-2 px-4 rounded-lg flex items-center"
+          activeClassName="bg-green-300"
+        >
+          <FaPeopleGroup className="w-6 h-6 mr-2" /> Users
+        </NavLink>
+      </li>
 
-          <li className="my-1">
-            <NavLink
-              to="dashboard/employeePayment"
-              className="text-white text-lg sm:text-sm md:text-xl lg:text-2xl hover:bg-blue-600 hover:text-white py-2 px-4 rounded-lg flex items-center"
-              activeClassName="bg-blue-600 text-white"
-            >
-              <FaPeopleGroup className="w-6 h-6 mr-2" /> Payment
-            </NavLink>
-          </li>
+      <li className="my-1 text-base">
+        <NavLink
+          to="/dashboard/settings"
+          className="text-white hover:bg-green-300 hover:text-black py-2 px-4 rounded-lg flex items-center"
+          activeClassName="bg-green-300"
+        >
+          <FaCog className="w-6 h-6 mr-2" /> Settings
+        </NavLink>
+      </li>
 
-          <li className="my-1">
-            <NavLink
-              to="dashboard/Users"
-              className="text-white text-lg sm:text-sm md:text-xl lg:text-2xl hover:bg-blue-600 hover:text-white py-2 px-4 rounded-lg flex items-center"
-              activeClassName="bg-blue-600 text-white"
-            >
-              <FaPeopleGroup className="w-6 h-6 mr-2" /> Users
-            </NavLink>
-          </li>
-
-          <li className="my-1">
-            <NavLink
-              to="/dashboard/settings"
-              className="text-white text-lg sm:text-sm md:text-xl lg:text-2xl hover:bg-blue-600 hover:text-white py-2 px-4 rounded-lg flex items-center"
-              activeClassName="bg-blue-600 text-white"
-            >
-              <FaCog className="w-6 h-6 mr-2" /> Settings
-            </NavLink>
-          </li>
-
-          <li className="my-1">
-            <NavLink
-              to="/"
-              className="text-white text-lg sm:text-sm md:text-xl lg:text-2xl hover:bg-blue-600 hover:text-white py-2 px-4 rounded-lg flex items-center"
-              activeClassName="bg-blue-600 text-white"
-            >
-              <FaHome className="w-6 h-6 mr-2" /> Go Home
-            </NavLink>
-          </li>
-        </ul>
-      </div>
-    </div>
+      <li className="my-1 text-base">
+        <NavLink to="/" className="text-white hover:bg-green-300 hover:text-black py-2 px-4 rounded-lg flex items-center">
+          <FaHome className="w-6 h-6 mr-2" />
+          Go Home
+        </NavLink>
+      </li>
+    </ul>
+  </div>
+</div>
   );
 };
 export default AdminDashboard;
