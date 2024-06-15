@@ -6,6 +6,7 @@ import {
   FaCog,
   FaEmpire,
   FaHome,
+  FaUser,
   FaUsers,
 } from "react-icons/fa";
 
@@ -13,14 +14,12 @@ import { RxDashboard } from "react-icons/rx";
 
 import { MdAccountCircle, MdCampaign } from "react-icons/md";
 import { IoPeopleSharp } from "react-icons/io5";
-import { FaPeopleGroup,  } from "react-icons/fa6";
+import { FaPeopleGroup } from "react-icons/fa6";
 import { useEffect, useState } from "react";
 import useLogo from "../../Hook/useLogo";
-
-
+import { AiFillDashboard, AiTwotoneDashboard } from "react-icons/ai";
 
 const AdminDashboard = () => {
-
   const [logo, setLogo] = useLogo();
   const [latestLogo, setLatestLogo] = useState(null);
   console.log(latestLogo, logo);
@@ -28,7 +27,9 @@ const AdminDashboard = () => {
   useEffect(() => {
     if (logo && logo.length > 0) {
       // Sort the logos based on date in descending order
-      const sortedLogo = [...logo].sort((a, b) => new Date(b.date) - new Date(a.date));
+      const sortedLogo = [...logo].sort(
+        (a, b) => new Date(b.date) - new Date(a.date)
+      );
 
       // Get the latest logo
       const latest = sortedLogo[0];
@@ -161,9 +162,6 @@ const AdminDashboard = () => {
     </ul>
   </div>
 </div>
-
-  
-
   );
 };
 export default AdminDashboard;
