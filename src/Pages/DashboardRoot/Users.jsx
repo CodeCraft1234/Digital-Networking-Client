@@ -34,6 +34,7 @@ const Users = () => {
   const [bulkAction, setBulkAction] = useState("");
   const [roleChange, setRoleChange] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
+  const [filteredAdsAccounts, setFilteredAdsAccounts] = useState([]);
 
   const handleSelectUser = (username) => {
     setSelectedUsers((prevSelected) =>
@@ -61,6 +62,19 @@ const Users = () => {
   const filteredUsers = users.filter((user) =>
     user.username.toLowerCase().includes(searchQuery.toLowerCase())
   );
+
+  const [selectedCategory, setSelectedCategory] = useState("");
+
+  const filteredItems =  filteredAdsAccounts.filter((item) =>
+    item.accountName.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const filteredByCategory = selectedCategory
+    ? filteredItems.filter(
+        (item) => item.category.toLowerCase() === selectedCategory.toLowerCase()
+      )
+    : filteredItems;
+
 
   return (
     // <div className="mt-12 p-4 mx-12 my-12 sm:mx-24 sm:my-24">
@@ -659,8 +673,8 @@ const Users = () => {
         </div>
       </div>
       <div className="overflow-x-auto">
-        <table className="min-w-full bg-white border">
-          <thead>
+        <table className="min-w-full bg-white border ">
+          <thead className="flex justify-between gap-5">
             <tr>
               <th className="border px-2 sm:px-4 py-1 sm:py-2">
                 <input
@@ -681,7 +695,7 @@ const Users = () => {
               <th className="border px-2 sm:px-4 py-1 sm:py-2">Views</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody className="">
             {filteredUsers.map((user) => (
               <tr key={user.username} className="hover:bg-gray-100 group">
                 <td className="border px-2 sm:px-4 py-1 sm:py-2">
@@ -727,7 +741,7 @@ const Users = () => {
               </tr>
             ))}
           </tbody>
-          <tfoot>
+          {/* <tfoot>
             <tr>
               <th className="border px-2 sm:px-4 py-1 sm:py-2">
                 <input
@@ -747,7 +761,7 @@ const Users = () => {
               <th className="border px-2 sm:px-4 py-1 sm:py-2">Posts</th>
               <th className="border px-2 sm:px-4 py-1 sm:py-2">Views</th>
             </tr>
-          </tfoot>
+          </tfoot> */}
         </table>
       </div>
       <div className="flex flex-wrap justify-between mt-4">
@@ -790,6 +804,8 @@ const Users = () => {
         </div>
       </div>
     </div>
+
+
   );
 };
 

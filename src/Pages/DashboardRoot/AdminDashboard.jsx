@@ -72,6 +72,16 @@ const AdminDashboard = () => {
 
           <li className="my-1">
             <NavLink
+              to="dashboard/Users"
+              className="text-white text-lg sm:text-sm md:text-xl lg:text-2xl hover:bg-blue-600 hover:text-white py-2 px-4 rounded-lg flex items-center"
+              activeClassName="bg-blue-600 text-white"
+            >
+              <FaPeopleGroup className="w-6 h-6 mr-2" /> Users
+            </NavLink>
+          </li>
+
+          <li className="my-1">
+            <NavLink
               to="dashboard/allUsers"
               className="text-white text-lg sm:text-sm md:text-xl lg:text-2xl hover:bg-blue-600 hover:text-white py-2 px-4 rounded-lg flex items-center"
               activeClassName="bg-blue-600 text-white"
