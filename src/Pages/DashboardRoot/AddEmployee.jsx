@@ -3,7 +3,7 @@ import { AuthContext } from "../../Security/AuthProvider";
 import UseAxiosPublic from "../../Axios/UseAxiosPublic";
 import toast from "react-hot-toast";
 
-const AddClientTwo = () => {
+const AddEmployee = () => {
   const { createUser, updateProfiles,user } = useContext(AuthContext);
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
@@ -21,7 +21,7 @@ const AddClientTwo = () => {
         console.log(email, name);
         const date = new Date();
         const employeeEmail=user?.email
-        const userInfo = { name,phone,email,date,employeeEmail,role:'client' };
+        const userInfo = { name,phone,email,date,employeeEmail,role:'employee' };
         
         AxiosPublic.post("/users", userInfo).then((res) => {
           console.log(res.data);
@@ -112,4 +112,4 @@ const AddClientTwo = () => {
   );
 };
 
-export default AddClientTwo;
+export default AddEmployee;

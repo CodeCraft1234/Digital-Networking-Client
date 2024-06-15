@@ -12,26 +12,29 @@ import {
   signOut,
   updateProfile,
 } from "firebase/auth";
-import UseAxiosSecure from "../Axios/UseAxiosSecure";
-import axios from "axios";
 
 export const AuthContext = createContext(null);
 const googleProvider = new GoogleAuthProvider();
-// const githubProvider = new GithubAuthProvider();
 const facebookprovider = new FacebookAuthProvider();
 
 const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
-  // const AxiosSecure = UseAxiosSecure();
 
   const createUser = (email, password) => {
     setLoading(true);
-    return createUserWithEmailAndPassword(auth, email, password);
+    return createUserWithEmailAndPassword(auth, email, password)
+      .then((result) => {
+        setLoading(false);
+        return result; // Return the result for further handling if needed
+      })
+      .catch((error) => {
+        setLoading(false);
+        throw error; // Re-throw the error for further handling if needed
+      });
   };
 
   const forgetPass = (email) => {
-    // setLoading(true);
     return sendPasswordResetEmail(auth, email);
   };
 
@@ -51,13 +54,13 @@ const AuthProvider = ({ children }) => {
   };
 
   const githubProvider = new GithubAuthProvider();
-  const githubLogin = () =>{
+  const githubLogin = () => {
     setLoading(true);
     return signInWithPopup(auth, githubProvider);  
-}
+  };
 
   const updateProfiles = (name, photo) => {
-    updateProfile(auth.currentUser, {
+    return updateProfile(auth.currentUser, {
       displayName: name,
       photoURL: photo,
     });
@@ -69,23 +72,21 @@ const AuthProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    // Simulate a data fetching
     setTimeout(() => {
       setLoading(false);
-    }, 5000); // 5 seconds delay
+    }, 5000);
   }, []);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, currentUser => {
-        setUser(currentUser);
-        console.log('current user', currentUser);
-        setLoading(false);
-        
+      setUser(currentUser);
+      console.log('current user', currentUser);
+      setLoading(false);
     });
     return () => {
-        return unsubscribe();
-    }
-  }, [])
+      unsubscribe();
+    };
+  }, []);
 
   const authInfo = {
     user,

@@ -40,8 +40,8 @@ const AdminDashboard = () => {
   }, [logo, setLogo]);
   return (
 
-    <div className="overflow-hidden h-screen">
-  <div className="w-[250px]">
+    <div className="overflow-y-auto h-screen">
+  <div className="w-[200px]">
     <img
       className="w-44 mx-auto"
       src={latestLogo?.photo}
@@ -49,7 +49,7 @@ const AdminDashboard = () => {
     />
     <ul className="mt-4">
 
-    <li className="my-1">
+    <li className="my-1 text-base">
   <NavLink
     to="/dashboard/admin/home"
    
@@ -63,7 +63,7 @@ const AdminDashboard = () => {
 </li>
 
 
-      <li className="my-1">
+      <li className="my-1 text-base">
         <NavLink
            to="dashboard/allAdSAccount"
           className="text-white hover:bg-green-300 hover:text-black py-2 px-4 rounded-lg flex items-center"
@@ -72,8 +72,17 @@ const AdminDashboard = () => {
           <MdAccountCircle className="w-6 h-6 mr-2" /> Ads Accounts
         </NavLink>
       </li>
+      <li className="my-1 text-base">
+        <NavLink
+           to="dashboard/addEmployee"
+          className="text-white hover:bg-green-300 hover:text-black py-2 px-4 rounded-lg flex items-center"
+          activeClassName=" bg-blue-400"
+        >
+          <MdAccountCircle className="w-6 h-6 mr-2" /> Add Employee
+        </NavLink>
+      </li>
 
-      <li className="my-1">
+      <li className="my-1 text-base">
         <NavLink
               to="dashboard/allUsers"
           className="text-white hover:bg-green-300 hover:text-black py-2 px-4 rounded-lg flex items-center"
@@ -83,7 +92,7 @@ const AdminDashboard = () => {
         </NavLink>
       </li>
 
-      <li className="my-1">
+      <li className="my-1 text-base">
         <NavLink
             to="dashboard/allClients"
           className="text-white hover:bg-green-300 hover:text-black py-2 px-4 rounded-lg flex items-center"
@@ -92,17 +101,9 @@ const AdminDashboard = () => {
           <IoPeopleSharp className="w-6 h-6 mr-2" />  Clients
         </NavLink>
       </li>
-      <li className="my-1">
-        <NavLink
-            to="dashboard/AddClients"
-          className="text-white hover:bg-green-300 hover:text-black py-2 px-4 rounded-lg flex items-center"
-          activeClassName="bg-green-300"
-        >
-          <IoPeopleSharp className="w-6 h-6 mr-2" /> Add Clients
-        </NavLink>
-      </li>
+      
 
-      <li className="my-1">
+      <li className="my-1 text-base">
         <NavLink
             to="dashboard/allCampaign"
           className="text-white hover:bg-green-300 hover:text-black py-2 px-4 rounded-lg flex items-center"
@@ -112,7 +113,7 @@ const AdminDashboard = () => {
         </NavLink>
       </li>
 
-      <li className="my-1">
+      <li className="my-1 text-base">
         <NavLink
            to="dashboard/allEmployee"
           className="text-white hover:bg-green-300 hover:text-black py-2 px-4 rounded-lg flex items-center"
@@ -122,7 +123,7 @@ const AdminDashboard = () => {
         </NavLink>
       </li>
 
-      <li className="my-1">
+      <li className="my-1 text-base">
         <NavLink
              to="dashboard/employeePayment"
           className="text-white hover:bg-green-300 hover:text-black py-2 px-4 rounded-lg flex items-center"
@@ -131,7 +132,7 @@ const AdminDashboard = () => {
           <FaPeopleGroup className="w-6 h-6 mr-2" /> Payment
         </NavLink>
       </li>
-      <li className="my-1">
+      <li className="my-1 text-base">
         <NavLink
              to="dashboard/Users"
           className="text-white hover:bg-green-300 hover:text-black py-2 px-4 rounded-lg flex items-center"
@@ -141,7 +142,7 @@ const AdminDashboard = () => {
         </NavLink>
       </li>
 
-      <li className="my-1">
+      <li className="my-1 text-base">
         <NavLink
           to="/dashboard/settings"
           className="text-white hover:bg-green-300 hover:text-black py-2 px-4 rounded-lg flex items-center"
@@ -151,7 +152,7 @@ const AdminDashboard = () => {
         </NavLink>
       </li>
 
-      <li className="my-1">
+      <li className="my-1 text-base">
         <NavLink to="/" className="text-white hover:bg-green-300 hover:text-black py-2 px-4 rounded-lg flex items-center">
           <FaHome className="w-6 h-6 mr-2" />
           Go Home

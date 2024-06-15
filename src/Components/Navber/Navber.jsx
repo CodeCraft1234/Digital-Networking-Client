@@ -94,148 +94,113 @@ const NavBar = () => {
               </svg>
             </label>
             <ul
-              tabIndex={0}
-              className="menu menu-sm dropdown-content bg-white mt-3 z-[1] p-2 rounded-box w-52 gap-2"
-            >
-              {ddd?.role === "admin" ? (
-                <>
-                  <li>
-                    <NavLink
-                      to="/"
-                      className="text-white bg-red-800 hover:bg-green-300 hover:text-black"
-                      activeClassName="bg-green-300"
-                    >
-                      <FaHome className="w-6 h-6" /> Home
-                    </NavLink>
-                  </li>
-                  
-                  <li>
-                    <NavLink
-                      to="/adAccountTable"
-                      className="text-white bg-red-800 hover:bg-green-300 hover:text-black"
-                      activeClassName="bg-green-300"
-                    >
-                      <FaUserCog className="w-6 h-6" /> User Ads Account
-                    </NavLink>
-                  </li>
-                  <li>
-                    <NavLink
-                      to="/monthlyadAccountTable"
-                      className="text-white bg-red-800 hover:bg-green-300 hover:text-black"
-                      activeClassName="bg-green-300"
-                    >
-                      <FaUserCheck className="w-6 h-6" /> Monthly Ads Account
-                    </NavLink>
-                  </li>
-                  <li>
-                    <NavLink
-                      to={`/userInfo/${user?.email}`}
-                      className="text-white bg-red-800 hover:bg-green-300 hover:text-black"
-                      activeClassName="bg-green-300"
-                    >
-                      <FaSackDollar className="w-5 h-5" /> Salary
-                    </NavLink>
-                  </li>
-                  <li>
-                    <NavLink
-                      to="/allEmployee"
-                      className="text-white bg-red-800 hover:bg-green-300 hover:text-black"
-                      activeClassName="bg-green-300"
-                    >
-                      <SlPeople className="w-6 h-6" /> Employees
-                    </NavLink>
-                  </li>
-                  <li>
-                  <NavLink
-                    to="/employeePayment"
-                    className="text-white bg-red-800 hover:bg-green-300 hover:text-black"
-                    activeClassName="bg-green-300"
-                  >
-                    <FaPeopleGroup className="w-6 h-6" /> Employees Payment
-                  </NavLink>
-                </li>
-                  <li>
-                  <NavLink
-                    to="/adminDashboard"
-                    className="text-white bg-red-800 hover:bg-green-300 hover:text-black"
-                    activeClassName="bg-green-300"
-                  >
-                    <FaPeopleGroup className="w-6 h-6" /> Dashboard
-                  </NavLink>
-                </li>
-                </>
-              ) : (
-                <>
-                   <li>
-                  <NavLink
-                   to={`/`}
-                    className="text-white bg-red-800 hover:bg-green-300 hover:text-black"
-                    activeClassName="bg-green-300"
-                  >
-                    <FaHome className="w-6 h-6" /> Home
-                  </NavLink>
-                </li>
+  tabIndex={0}
+  className="menu menu-sm dropdown-content bg-white mt-3 z-[1] p-2 rounded-box w-52 gap-2"
+>
+  {ddd?.role === "admin" ? (
+    <>
+      <li>
+        <NavLink
+          to="/"
+          className="text-white bg-red-800 hover:bg-green-300 hover:text-black"
+          activeClassName="bg-green-300"
+        >
+          <FaHome className="w-6 h-6" /> Home
+        </NavLink>
+      </li>
+      
+      <li>
+        <NavLink
+          to="/adAccountTable"
+          className="text-white bg-red-800 hover:bg-green-300 hover:text-black"
+          activeClassName="bg-green-300"
+        >
+          <FaUserCog className="w-6 h-6" /> User Ads Account
+        </NavLink>
+      </li>
+     
+      <li>
+        <NavLink
+          to="/employeePayment"
+          className="text-white bg-red-800 hover:bg-green-300 hover:text-black"
+          activeClassName="bg-green-300"
+        >
+          <FaPeopleGroup className="w-6 h-6" /> Employees Payment
+        </NavLink>
+      </li>
+      <li>
+        <NavLink
+          to="dashboard"
+          className="text-white bg-red-800 hover:bg-green-300 hover:text-black"
+          activeClassName="bg-green-300"
+        >
+          <FaPeopleGroup className="w-6 h-6" /> Dashboard
+        </NavLink>
+      </li>
+    </>
+  ) : ddd?.role === "employee" ? (
+    <>
+      <li>
+        <NavLink
+          to="/"
+          className="text-white bg-red-800 hover:bg-green-300 hover:text-black"
+          activeClassName="bg-green-300"
+        >
+          <FaHome className="w-6 h-6" /> Home
+        </NavLink>
+      </li>
+      <li>
+        <NavLink
+          to="/myCampaigns"
+          className="text-white bg-red-800 hover:bg-green-300 hover:text-black"
+          activeClassName="bg-green-300"
+        >
+          <MdCampaign className="w-6 h-6" /> My Campaigns
+        </NavLink>
+      </li>
+      <li>
+        <NavLink
+          to={`/myClients`}
+          className="text-white bg-red-800 hover:bg-green-300 hover:text-black"
+          activeClassName="bg-green-300"
+        >
+          <IoIosPeople className="w-6 h-6" /> My Clients
+        </NavLink>
+      </li>
+      <li>
+        <NavLink
+          to={`/userInfo/${user?.email}`}
+          className="text-white bg-red-800 hover:bg-green-300 hover:text-black"
+          activeClassName="bg-green-300"
+        >
+          <MdAccountCircle className="w-6 h-6" /> My Ads Account
+        </NavLink>
+      </li>
+     
+      <li>
+        <NavLink
+          to="dashboard/employee/home"
+          className="text-white bg-red-800 hover:bg-green-300 hover:text-black"
+          activeClassName="bg-green-300"
+        >
+          <FaPeopleGroup className="w-6 h-6" /> Dashboard
+        </NavLink>
+      </li>
+    </>
+  ) : (
+    // Default case: non-admin and non-employee users will only see the "Home" link
+    <li>
+      <NavLink
+        to={`/`}
+        className="text-white bg-red-800 hover:bg-green-300 hover:text-black"
+        activeClassName="bg-green-300"
+      >
+        <FaHome className="w-6 h-6" /> Home
+      </NavLink>
+    </li>
+  )}
+</ul>
 
-                <li>
-                  <NavLink
-                    to="/myCampaigns"
-                    className="text-white bg-red-800 hover:bg-green-300 hover:text-black"
-                    activeClassName="bg-green-300"
-                  >
-                    <MdCampaign className="w-6 h-6" />My Campaigns
-                  </NavLink>
-                </li>
-                   <li>
-                  <NavLink
-                   to={`/myClients`}
-                    className="text-white bg-red-800 hover:bg-green-300 hover:text-black"
-                    activeClassName="bg-green-300"
-                  >
-                    <IoIosPeople className="w-6 h-6" /> My Clients
-                  </NavLink>
-                </li>
-                  
-
-                  <li>
-                    <NavLink
-                      to={`/userInfo/${user?.email}`}
-                      className="text-white bg-red-800 hover:bg-green-300 hover:text-black"
-                      activeClassName="bg-green-300"
-                    >
-                      <MdAccountCircle className="w-6 h-6" />My Ads Account
-                    </NavLink>
-                  </li>
-                  
-                  <li>
-                    <NavLink
-                      to="/allCampaign"
-                      className="text-white bg-red-800 hover:bg-green-300 hover:text-black"
-                      activeClassName="bg-green-300"
-                    >
-                      <MdCampaign className="w-6 h-6" /> All Campaign
-                    </NavLink>
-                  </li>
-                  <li>
-                    <NavLink
-                      to="/addClient"
-                      className="text-white bg-red-800 hover:bg-green-300 hover:text-black"
-                      activeClassName="bg-green-300"
-                    >
-                      <IoPeopleSharp className="w-6 h-6" /> Add Client
-                    </NavLink>
-                  </li>
-                  <li>
-                  <NavLink
-                    to="dashboard/employee/home"
-                    className="text-white bg-red-800 hover:bg-green-300 hover:text-black"
-                    activeClassName="bg-green-300"
-                  >
-                    <FaPeopleGroup className="w-6 h-6" /> Dashboard
-                  </NavLink>
-                </li>
-                </>
-              )}
-            </ul>
           </div>
           <div className="flex justify-center items-center">
             <Link to="/">
@@ -250,128 +215,108 @@ const NavBar = () => {
         <div className="navbar-center hidden lg:flex">
           <ul className="menu menu-horizontal items-center px-1 flex gap-4">
 
-            {ddd?.role === "admin" ? (
-              <>
-                <li>
-                  <NavLink
-                    to={`/`}
-                    className="text-white bg-red-800 hover:bg-green-300 hover:text-black"
-                    activeClassName="bg-green-300"
-                  >
-                    <FaHome className="w-6 h-6" /> Home
-                  </NavLink>
-                </li>
-                <li>
-                  <NavLink
-                    to="/allAdSAccount"
-                    className="text-white bg-red-800 hover:bg-green-300 hover:text-black"
-                    activeClassName="bg-green-300"
-                  >
-                    <MdAccountCircle className="w-6 h-6" /> Ads Accounts
-                  </NavLink>
-                </li>
-                <li>
-                  <NavLink
-                    to="/allClients"
-                    className="text-white bg-red-800 hover:bg-green-300 hover:text-black"
-                    activeClassName="bg-green-300"
-                  >
-                    <IoPeopleSharp className="w-6 h-6" /> Clients
-                  </NavLink>
-                </li>
-                <li>
-                  <NavLink
-                    to="/allCampaign"
-                    className="text-white bg-red-800 hover:bg-green-300 hover:text-black"
-                    activeClassName="bg-green-300"
-                  >
-                    <MdCampaign className="w-6 h-6" /> Campaigns
-                  </NavLink>
-                </li>
-               
-                <li>
-                  <NavLink
-                    to="/allEmployee"
-                    className="text-white bg-red-800 hover:bg-green-300 hover:text-black"
-                    activeClassName="bg-green-300"
-                  >
-                    <FaPeopleGroup className="w-6 h-6" /> Employees
-                  </NavLink>
-                </li>
-
-                <li>
-                  <NavLink
-                    to="/employeePayment"
-                    className="text-white bg-red-800 hover:bg-green-300 hover:text-black"
-                    activeClassName="bg-green-300"
-                  >
-                    <FaPeopleGroup className="w-6 h-6" /> Employees Payment
-                  </NavLink>
-                </li>
-
-                <li>
-                  <NavLink
-                    to="/dashboard/admin/home"
-                    className="text-white bg-red-800 hover:bg-green-300 hover:text-black"
-                    activeClassName="bg-green-300"
-                  >
-                    <FaPeopleGroup className="w-6 h-6" /> Dashboard
-                  </NavLink>
-                </li>
-
-              </>
-            ) : (
-              <>
-              <li>
-                  <NavLink
-                   to={`/`}
-                    className="text-white bg-red-800 hover:bg-green-300 hover:text-black"
-                    activeClassName="bg-green-300"
-                  >
-                    <FaHome className="w-6 h-6" /> Home
-                  </NavLink>
-                </li>
-                <li>
-                  <NavLink
-                    to="/myCampaigns"
-                    className="text-white bg-red-800 hover:bg-green-300 hover:text-black"
-                    activeClassName="bg-green-300"
-                  >
-                    <MdCampaign className="w-6 h-6" />My Campaigns
-                  </NavLink>
-                </li>
-                <li>
-                  <NavLink
-                   to={`/myClients`}
-                    className="text-white bg-red-800 hover:bg-green-300 hover:text-black"
-                    activeClassName="bg-green-300"
-                  >
-                    <IoIosPeople className="w-6 h-6" /> My Clients
-                  </NavLink>
-                </li>
-               
-                <li>
-                  <NavLink
-                    to={`/adsAccount/${user?.email}`}
-                    className="text-white bg-red-800 hover:bg-green-300 hover:text-black"
-                    activeClassName="bg-green-300"
-                  >
-                    <MdAccountCircle className="w-6 h-6" />My Ads Accounts
-                  </NavLink>
-                </li>
-                <li>
-                  <NavLink
-                    to="/dashboard/employee/home"
-                    className="text-white bg-red-800 hover:bg-green-300 hover:text-black"
-                    activeClassName="bg-green-300"
-                  >
-                    <FaPeopleGroup className="w-6 h-6" /> Dashboard
-                  </NavLink>
-                </li>
-               
-               
-              </>
-            )}
+          {ddd?.role === "admin" ? (
+    <>
+      <li>
+        <NavLink
+          to="/"
+          className="text-white bg-red-800 hover:bg-green-300 hover:text-black"
+          activeClassName="bg-green-300"
+        >
+          <FaHome className="w-6 h-6" /> Home
+        </NavLink>
+      </li>
+      
+      <li>
+        <NavLink
+          to="/allAdSAccount"
+          className="text-white bg-red-800 hover:bg-green-300 hover:text-black"
+          activeClassName="bg-green-300"
+        >
+          <FaUserCog className="w-6 h-6" /> User Ads Account
+        </NavLink>
+      </li>
+     
+      <li>
+        <NavLink
+          to="/employeePayment"
+          className="text-white bg-red-800 hover:bg-green-300 hover:text-black"
+          activeClassName="bg-green-300"
+        >
+          <FaPeopleGroup className="w-6 h-6" /> Employees Payment
+        </NavLink>
+      </li>
+      <li>
+        <NavLink
+          to="dashboard"
+          className="text-white bg-red-800 hover:bg-green-300 hover:text-black"
+          activeClassName="bg-green-300"
+        >
+          <FaPeopleGroup className="w-6 h-6" /> Dashboard
+        </NavLink>
+      </li>
+    </>
+  ) : ddd?.role === "employee" ? (
+    <>
+      <li>
+        <NavLink
+          to="/"
+          className="text-white bg-red-800 hover:bg-green-300 hover:text-black"
+          activeClassName="bg-green-300"
+        >
+          <FaHome className="w-6 h-6" /> Home
+        </NavLink>
+      </li>
+      <li>
+        <NavLink
+          to="/myCampaigns"
+          className="text-white bg-red-800 hover:bg-green-300 hover:text-black"
+          activeClassName="bg-green-300"
+        >
+          <MdCampaign className="w-6 h-6" /> My Campaigns
+        </NavLink>
+      </li>
+      <li>
+        <NavLink
+          to={`/myClients`}
+          className="text-white bg-red-800 hover:bg-green-300 hover:text-black"
+          activeClassName="bg-green-300"
+        >
+          <IoIosPeople className="w-6 h-6" /> My Clients
+        </NavLink>
+      </li>
+      <li>
+        <NavLink
+          to={`/userInfo/${user?.email}`}
+          className="text-white bg-red-800 hover:bg-green-300 hover:text-black"
+          activeClassName="bg-green-300"
+        >
+          <MdAccountCircle className="w-6 h-6" /> My Ads Account
+        </NavLink>
+      </li>
+     
+      <li>
+        <NavLink
+          to="dashboard/employee/home"
+          className="text-white bg-red-800 hover:bg-green-300 hover:text-black"
+          activeClassName="bg-green-300"
+        >
+          <FaPeopleGroup className="w-6 h-6" /> Dashboard
+        </NavLink>
+      </li>
+    </>
+  ) : (
+    // Default case: non-admin and non-employee users will only see the "Home" link
+    <li>
+      <NavLink
+        to={`/`}
+        className="text-white bg-red-800 hover:bg-green-300 hover:text-black"
+        activeClassName="bg-green-300"
+      >
+        <FaHome className="w-6 h-6" /> Home
+      </NavLink>
+    </li>
+  )}
           </ul>
         </div>
         <div className="navbar-end">
