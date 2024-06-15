@@ -92,6 +92,15 @@ const AdminDashboard = () => {
           <IoPeopleSharp className="w-6 h-6 mr-2" />  Clients
         </NavLink>
       </li>
+      <li className="my-1">
+        <NavLink
+            to="dashboard/AddClients"
+          className="text-white hover:bg-green-300 hover:text-black py-2 px-4 rounded-lg flex items-center"
+          activeClassName="bg-green-300"
+        >
+          <IoPeopleSharp className="w-6 h-6 mr-2" /> Add Clients
+        </NavLink>
+      </li>
 
       <li className="my-1">
         <NavLink
