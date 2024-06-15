@@ -45,6 +45,7 @@ import CampaignTable2 from "./Pages/Home/CampaignTable2";
 
 import Settings from "./Pages/DashboardRoot/Routes/Settings";
 import Users from "./Pages/DashboardRoot/Users";
+import AddClientTwo from "./Pages/DashboardRoot/AddClient";
 
 
 const router = createBrowserRouter([
@@ -182,6 +183,10 @@ const router = createBrowserRouter([
           {
             path:'dashboard/allUsers',
             element:<AllUsers></AllUsers>
+          },
+          {
+            path:'dashboard/AddClients',
+            element:<AddClientTwo></AddClientTwo>
           },
           {
             path:'dashboard/Users',
