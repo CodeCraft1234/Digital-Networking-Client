@@ -47,6 +47,7 @@ import Settings from "./Pages/DashboardRoot/Routes/Settings";
 import Users from "./Pages/DashboardRoot/Users";
 import AddClientTwo from "./Pages/DashboardRoot/AddClient";
 import AddEmployee from "./Pages/DashboardRoot/AddEmployee";
+import AddLogos from "./Pages/DashboardRoot/Routes/AddLogos";
 
 
 const router = createBrowserRouter([
@@ -164,6 +165,10 @@ const router = createBrowserRouter([
           {
             path:'dashboard/addEmployee',
             element:<AddEmployee></AddEmployee>
+           },
+          {
+            path:'/dashboard/addLogos',
+            element:<AddLogos></AddLogos>
            },
            {
             path:'/dashboard/settings',
