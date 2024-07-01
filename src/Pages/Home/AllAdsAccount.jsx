@@ -1,9 +1,8 @@
 import { useEffect, useState } from "react";
 import useAdsAccount from "../../Hook/useAdAccount";
 import UseAxiosPublic from "../../Axios/UseAxiosPublic";
-// import { toast } from "react-toastify";
 import useUsers from "../../Hook/useUsers";
-import Swal from 'sweetalert2'
+import Swal from 'sweetalert2';
 import { IoIosSearch } from "react-icons/io";
 import { Helmet } from "react-helmet-async";
 
@@ -11,10 +10,14 @@ const AllAdsAccount = () => {
   const [adsAccount, refetch] = useAdsAccount();
   const [adsAccounts, setAdsAccounts] = useState([]);
   const [filteredAdsAccounts, setFilteredAdsAccounts] = useState([]);
-  const [modalData, setModalData] = useState(null); // to store the current account data for the modal
-  const [selectedEmail, setSelectedEmail] = useState(""); // to store the selected employee email
-  const [users] = useUsers(); // to get the list of users
+  const [modalData, setModalData] = useState(null);
+  const [selectedEmail, setSelectedEmail] = useState("");
+  const [selectedStatus, setSelectedStatus] = useState("");
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
+  const [users] = useUsers();
   const AxiosPublic = UseAxiosPublic();
+  const [sortOrder, setSortOrder] = useState('asc');
 
   useEffect(() => {
     if (adsAccount) {
@@ -24,7 +27,7 @@ const AllAdsAccount = () => {
         return 0;
       });
       setAdsAccounts(sortedAccounts);
-      setFilteredAdsAccounts(sortedAccounts); // initialize the filtered ads accounts
+      setFilteredAdsAccounts(sortedAccounts);
     }
   }, [adsAccount]);
 
@@ -47,7 +50,7 @@ const AllAdsAccount = () => {
           icon: "success"
         });
 
-        setModalData(null); // Close the modal
+        setModalData(null);
       })
       .catch(error => {
         console.error("Error adding account:", error);
@@ -59,9 +62,20 @@ const AllAdsAccount = () => {
       });
   };
 
-  const handleFilter = (e) => {
-    e.preventDefault();
-    const filtered = adsAccounts.filter(account => account.employeeEmail === selectedEmail);
+  const handleFilter = () => {
+    let filtered = adsAccounts;
+    if (selectedEmail) {
+      filtered = filtered.filter(account => account.employeeEmail === selectedEmail);
+    }
+    if (selectedStatus) {
+      filtered = filtered.filter(account => account.status === selectedStatus);
+    }
+    if (startDate) {
+      filtered = filtered.filter(account => new Date(account.issueDate) >= new Date(startDate));
+    }
+    if (endDate) {
+      filtered = filtered.filter(account => new Date(account.issueDate) <= new Date(endDate));
+    }
     const sortedFiltered = filtered.slice().sort((a, b) => {
       if (a.status === 'Active' && b.status !== 'Active') return -1;
       if (a.status !== 'Active' && b.status === 'Active') return 1;
@@ -69,6 +83,10 @@ const AllAdsAccount = () => {
     });
     setFilteredAdsAccounts(sortedFiltered);
   };
+
+  useEffect(() => {
+    handleFilter();
+  }, [selectedEmail, selectedStatus, startDate, endDate]);
 
   const [totalSpent, setTotalSpent] = useState(0);
   const [totalCurrentBallence, setTotalCurrentBallence] = useState(0);
@@ -106,8 +124,8 @@ const AllAdsAccount = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
 
-  const filteredItems =  filteredAdsAccounts.filter((item) =>
-    item.accountName.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredItems = filteredAdsAccounts.filter((item) =>
+    item.employeeEmail.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   const filteredByCategory = selectedCategory
@@ -116,19 +134,18 @@ const AllAdsAccount = () => {
       )
     : filteredItems;
 
-
-    const handleDelete=(id)=>{
-      Swal.fire({
-        title: "Are you sure?",
-        text: "You want to delete this Blog!",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#3085d6",
-        cancelButtonColor: "#d33",
-        confirmButtonText: "Yes, delete blog",
-      }).then((result) => {
-        if (result.isConfirmed) {
-          AxiosPublic.delete(`/adsAccount/${id}`)
+  const handleDelete = (id) => {
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You want to delete this Blog!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete blog",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        AxiosPublic.delete(`/adsAccount/${id}`)
           .then((res) => {
             refetch();
             if (res.data.deletedCount > 0) {
@@ -139,58 +156,121 @@ const AllAdsAccount = () => {
               });
             }
           });
-        }
+      }
+    });
+  };
+
+  const handleSort = () => {
+    const sortedAds = [...filteredAdsAccounts].sort((a, b) => {
+      if (sortOrder === 'asc') {
+        return a.status.localeCompare(b.status);
+      } else {
+        return b.status.localeCompare(a.status);
+      }
+    });
+    setFilteredAdsAccounts(sortedAds);
+    setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+  };
+
+  const handleInlineUpdate = (id, key, value) => {
+    AxiosPublic.patch(`https://digital-networking-server.vercel.app/adsAccount/${id}`, { [key]: value })
+      .then((res) => {
+        console.log(res.body);
+        refetch();
+        Swal.fire({
+          title: "Updated!",
+          text: `${key} updated successfully!`,
+          icon: "success"
+        });
+      })
+      .catch(error => {
+        console.error("Error updating account:", error);
+        Swal.fire({
+          icon: "error",
+          title: "Oops...",
+          text: `Failed to update ${key}!`,
+        });
       });
-    }
+  };
+
+  const [editingCell, setEditingCell] = useState({});
+
   return (
     <div>
-       <Helmet>
-              <title> Digital Network | Ads Account</title>
-              <link rel="canonical" href="https://www.tacobell.com/" />
-               </Helmet>
-      <div className="mt-24 p-4 ">
-      
+      <Helmet>
+        <title>Digital Network | Ads Account</title>
+        <link rel="canonical" href="https://www.tacobell.com/" />
+      </Helmet>
+      <div className="mt-5 p-4 ">
+        <div className="flex justify-between items-center ">
+          <div className="flex justify-center items-center">
+            <div className=" ml-10 flex justify-start mb-5 items-center gap-5 ">
+             <div>
+             <label className="block text-black font-bold">Sort By Employee</label>
+              <select
+                name="email"
+                value={selectedEmail}
+                onChange={(e) => setSelectedEmail(e.target.value)}
+                className="border rounded p-2 mt-1"
+              >
+                <option disabled value="">All</option>
+                {users?.filter(u => u.role === 'employee').map((user) => (
+                  <option key={user._id} value={user.email}>{user.name}</option>
+                ))}
+              </select>
+             </div>
+             <div>
+             <label className="block text-black font-bold">Sort By Status</label>
+              <select
+                name="status"
+                value={selectedStatus}
+                onChange={(e) => setSelectedStatus(e.target.value)}
+                className="border rounded p-2 mt-1"
+              >
+                <option value="">All</option>
+                <option value="Active">Active</option>
+                <option value="Disable">Disable</option>
+              </select>
+             </div>
+             <div>
+              <label className="block text-black font-bold">Start Date</label>
+              <input
+                type="date"
+                value={startDate}
+                onChange={(e) => setStartDate(e.target.value)}
+                className="border rounded p-2 mt-1"
+              />
+             </div>
+             <div>
+              <label className="block text-black font-bold">End Date</label>
+              <input
+                type="date"
+                value={endDate}
+                onChange={(e) => setEndDate(e.target.value)}
+                className="border rounded p-2 mt-1"
+              />
+             </div>
+            </div>
+          </div>
 
-       <div className="flex justify-between items-center ">
-       <form className="flex justify-center items-center" onSubmit={handleFilter}>
-          <div className="mb-4 ml-10 mx-auto">
-            <label className="block text-black font-bold">Sort By Employee</label>
-            <select
-              name="email"
-              value={selectedEmail}
-              onChange={(e) => setSelectedEmail(e.target.value)}
-              className="border rounded p-2 mt-1"
+          <div className="flex justify-end ">
+            <input
+              type="text"
+              placeholder="Ads Account Name..."
+              className="rounded-l-lg w-20 placeholder-black border-2 border-black p-2 font-bold text-black sm:w-2/3 text-sm bg-blue-300"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+            <button
+              type="button"
+              className="w-10 p-2 font-semibold rounded-r-lg sm:w-1/3 bg-[#FF9F0D] dark:bg-[#FF9F0D] text-white"
             >
-              <option disabled value="">All</option>
-              {users?.filter(u => u.role === 'employee').map((user) => (
-                <option key={user._id} value={user.email}>{user.name}</option>
-              ))}
-            </select>
-            <button className="ml-2 font-avenir px-3 mx-auto py-2 rounded-lg text-white bg-green-800">
-              Search
+              <IoIosSearch className="mx-auto font-bold w-6 h-6" />
             </button>
           </div>
-        </form>
+        </div>
 
-        <div className="flex justify-end ">
-        
-                <input
-                  type="text"
-                  placeholder="Ads Account Name..."
-                  className=" rounded-l-lg w-20 placeholder-black border-2 border-black p-2 font-bold text-black sm:w-2/3 text-sm bg-blue-300"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                />
-                <button
-                  type="button"
-                  className=" w-10 p-2 font-semibold rounded-r-lg sm:w-1/3 bg-[#FF9F0D] dark:bg-[#FF9F0D] text-white"
-                >
-                  <IoIosSearch className="mx-auto font-bold w-6 h-6" />
-                </button>
-      </div>
-       </div>
-
-        <div className="overflow-x-auto  border-2 border-black">
+        <div className="overflow-x-auto border-2 border-black">
           <table className="min-w-full bg-white">
             <thead className="bg-red-800 text-white">
               <tr>
@@ -199,65 +279,100 @@ const AllAdsAccount = () => {
                 <th className="p-3">Current Balance</th>
                 <th className="p-3">Threshold</th>
                 <th className="p-3">Total Spent</th>
-                <th className="p-3">Status</th>
+                <th className="p-3 cursor-pointer" onClick={handleSort}>Status</th>
                 <th className="p-3">Edit</th>
                 <th className="p-3">Action</th>
-                
               </tr>
             </thead>
             <tbody>
               {filteredByCategory.map((account, index) => (
                 <tr
-                key={account._id}
-                className={`${
-                  index % 2 === 0
-                    ? "bg-white text-gray-500 border-b border-opacity-20"
-                    : "bg-gray-200 text-gray-500 border-b border-opacity-20"
-                }`}
-              >
-                <td className="p-3 border-l-2 border-r-2 border-gray-300 text-center">{account.issueDate}</td>
-                <td className="p-3 border-r-2 border-gray-300 text-center">{account.accountName}</td>
-                <td className="p-3 border-r-2 border-gray-300 text-center">$ {account.currentBallence}</td>
-                <td className="p-3 border-r-2 border-gray-300 text-center">$ {account.threshold}</td>
-                <td className="p-3 border-r-2 border-gray-300 text-center">$ {account.totalSpent}</td>
-                <td className={`p-3 border-r-2 border-gray-300 text-center ${account.status === 'Active' ? 'text-green-900 font-bold' : 'text-red-600 font-bold'}`}>
-  {account.status}
-</td>
-                <td className="p-3 border-r-2 border-gray-300 text-center">
-                  <button
-                    className="font-avenir px-3  mx-auto py-1 bg-green-800 rounded-lg text-white"
-                    onClick={() => setModalData(account)}
+                  key={account._id}
+                  className={`${
+                    index % 2 === 0
+                      ? "bg-white text-gray-500 border-b border-opacity-20"
+                      : "bg-gray-200 text-gray-500 border-b border-opacity-20"
+                  }`}
+                >
+                  <td className="p-3 border-l-2 border-r-2 border-gray-300 text-center">{new Date(account.issueDate).toLocaleDateString('en-GB')}</td>
+                  <td className="p-3 border-r-2 border-gray-300 text-center">{account.accountName}</td>
+                  <td className="p-3 border-r-2 border-gray-300 text-center"
+                    onMouseEnter={() => setEditingCell({ id: account._id, key: 'currentBallence' })}
+                    onMouseLeave={() => setEditingCell({})}
                   >
-                    Edit
-                  </button>
-                </td>
-                <td className="p-3 border-r-2 border-gray-300 text-center">
-
-                  <button
-                    className="font-avenir px-3  mx-auto py-1 bg-green-800 rounded-lg text-white"
-                    onClick={()=>handleDelete(account._id)}
+                    {editingCell.id === account._id && editingCell.key === 'currentBallence' ? (
+                      <input
+                        type="number"
+                        defaultValue={account.currentBallence}
+                        onBlur={(e) => handleInlineUpdate(account._id, 'currentBallence', e.target.value)}
+                        className="w-full border rounded p-2 mt-1 text-gray-500"
+                      />
+                    ) : (
+                      `$ ${account.currentBallence}`
+                    )}
+                  </td>
+                  <td className="p-3 border-r-2 border-gray-300 text-center"
+                    onMouseEnter={() => setEditingCell({ id: account._id, key: 'threshold' })}
+                    onMouseLeave={() => setEditingCell({})}
                   >
-                    Delete
-                  </button>
-
-                </td>
-              </tr>
-              
-
+                    {editingCell.id === account._id && editingCell.key === 'threshold' ? (
+                      <input
+                        type="number"
+                        defaultValue={account.threshold}
+                        onBlur={(e) => handleInlineUpdate(account._id, 'threshold', e.target.value)}
+                        className="w-full border rounded p-2 mt-1 text-gray-500"
+                      />
+                    ) : (
+                      `$ ${account.threshold}`
+                    )}
+                  </td>
+                  <td className="p-3 border-r-2 border-gray-300 text-center"
+                    onMouseEnter={() => setEditingCell({ id: account._id, key: 'totalSpent' })}
+                    onMouseLeave={() => setEditingCell({})}
+                  >
+                    {editingCell.id === account._id && editingCell.key === 'totalSpent' ? (
+                      <input
+                        type="number"
+                        defaultValue={account.totalSpent}
+                        onBlur={(e) => handleInlineUpdate(account._id, 'totalSpent', e.target.value)}
+                        className="w-full border rounded p-2 mt-1 text-gray-500"
+                      />
+                    ) : (
+                      `$ ${account.totalSpent}`
+                    )}
+                  </td>
+                  <td className={`p-3 border-r-2 border-gray-300 text-center ${account.status === 'Active' ? 'text-green-900 font-bold' : 'text-red-600 font-bold'}`}>
+                    {account.status}
+                  </td>
+                  <td className="p-3 border-r-2 border-gray-300 text-center">
+                    <button
+                      className="font-avenir px-3 mx-auto py-1 bg-green-800 rounded-lg text-white"
+                      onClick={() => setModalData(account)}
+                    >
+                      Edit
+                    </button>
+                  </td>
+                  <td className="p-3 border-r-2 border-gray-300 text-center">
+                    <button
+                      className="font-avenir px-3 mx-auto py-1 bg-green-800 rounded-lg text-white"
+                      onClick={() => handleDelete(account._id)}
+                    >
+                      Delete
+                    </button>
+                  </td>
+                </tr>
               ))}
-                  <tr className="bg-green-800 text-sm text-white font-bold">
-      
-      <td className="p-3 border-2 border-black text-right" colSpan="2">
-        Total :
-      </td>
-      <td className="p-3 border-2 border-black text-center">$ {totalCurrentBallence}</td>
-      <td className="p-3 border-2 border-black text-center">$ {totalThreshold}</td>
-      <td className="p-3 border-2 border-black text-center">$ {totalSpent}</td>
-      <td className="p-3 border-2 border-black text-center"></td>
-      <td className="p-3 border-2 border-black text-center"></td>
-      <td className="p-3 border-2 border-black text-center"></td>
-      
-    </tr>
+              <tr className="bg-green-800 text-sm text-white font-bold">
+                <td className="p-3 border-2 border-black text-right" colSpan="2">
+                  Total :
+                </td>
+                <td className="p-3 border-2 border-black text-center">$ {totalCurrentBallence}</td>
+                <td className="p-3 border-2 border-black text-center">$ {totalThreshold}</td>
+                <td className="p-3 border-2 border-black text-center">$ {totalSpent}</td>
+                <td className="p-3 border-2 border-black text-center"></td>
+                <td className="p-3 border-2 border-black text-center"></td>
+                <td className="p-3 border-2 border-black text-center"></td>
+              </tr>
             </tbody>
           </table>
         </div>
