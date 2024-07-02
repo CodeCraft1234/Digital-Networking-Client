@@ -130,7 +130,7 @@ const NavBar = () => {
       </li>
       <li>
         <NavLink
-          to="dashboard"
+          to="/dashboard/admin/home"
           className="text-white bg-red-800 hover:bg-green-300 hover:text-black"
           activeClassName="bg-green-300"
         >
@@ -248,7 +248,7 @@ const NavBar = () => {
       </li>
       <li>
         <NavLink
-          to="dashboard"
+          to="/dashboard/admin/home"
           className="text-white bg-red-800 hover:bg-green-300 hover:text-black"
           activeClassName="bg-green-300"
         >

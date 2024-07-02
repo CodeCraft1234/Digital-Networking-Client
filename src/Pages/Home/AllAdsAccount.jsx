@@ -6,6 +6,7 @@ import Swal from 'sweetalert2';
 import { IoIosSearch } from "react-icons/io";
 import { Helmet } from "react-helmet-async";
 import { FaEdit } from "react-icons/fa";
+import axios from "axios";
 
 const AllAdsAccount = () => {
   const [adsAccount, refetch] = useAdsAccount();
@@ -60,6 +61,9 @@ const AllAdsAccount = () => {
         });
       });
   };
+
+  // current balance update
+ 
 
   const handleFilter = () => {
     let filtered = adsAccounts;
@@ -167,6 +171,35 @@ const AllAdsAccount = () => {
 
 
   
+
+  
+    const handleUpdateCurrentBalance = (e, id) => {
+      e.preventDefault();
+      const currentBallence = e.target.currentBalance.value;
+  
+      const body = { currentBallence:currentBallence };
+      console.log(body);
+  
+      axios.put(`http://localhost:5000/adsAccount/currentBalance/${id}`, body)
+        .then((res) => {
+          console.log(res.data);
+          refetch();
+          Swal.fire({
+            title: "Good job!",
+            text: "Current Balance updated!",
+            icon: "success"
+          });
+          setModalData(null);
+        })
+        .catch(error => {
+          console.error("Error updating account:", error);
+          Swal.fire({
+            icon: "error",
+            title: "Oops...",
+            text: "Failed to update account!",
+          });
+        });
+    };
 
   return (
     <div>
@@ -278,35 +311,40 @@ const AllAdsAccount = () => {
   
 
               </td>
-                  <td className="p-3 border-r-2 border-gray-300 text-center ">
-                    <div className="relative group flex items-center justify-center ">
-                    <h1>$ {account.currentBallence}</h1>
-                    <button
-    className="text-black px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-    onClick={() => document.getElementById(`my_modal_1`).showModal()}
-  >
-   <FaEdit />
-  </button>
-  
-  <dialog id={`my_modal_1`} className="modal">
-    <div className="modal-box">
-      <input
-        type="number"
-        name="currentBallence"
-        step="0.01"
-        defaultValue={account.currentBallence}
-        className="w-full border rounded p-2 mt-1 text-gray-500"
-      />
-      <form method="dialog">
-        <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
-      </form>
-    </div>
-  </dialog>
-                    </div>
- 
-  
+              <td className="p-3 border-r-2 border-gray-300 text-center">
+      <div className="relative group flex items-center justify-center">
+        <h1>$ {account.currentBallence}</h1>
+        <button
+          className="text-black px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+          onClick={() => document.getElementById(`my_modal_1`).showModal()}
+        >
+          <FaEdit />
+        </button>
 
-              </td>
+        <dialog id="my_modal_1" className="modal">
+          <div className="modal-box">
+            <form onSubmit={(e) => handleUpdateCurrentBalance(e, account._id)}>
+              <input
+                type="number"
+                name="currentBalance"
+                step="0.01"
+                defaultValue={account?.currentBallence}
+                className="w-full border rounded p-2 mt-1 text-gray-500"
+              />
+              <button
+                type="submit"
+                className="mt-4 font-avenir px-3 mx-auto py-1 rounded-lg text-white bg-green-800"
+              >
+                Update
+              </button>
+            </form>
+            <form method="dialog">
+              <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+            </form>
+          </div>
+        </dialog>
+      </div>
+    </td>
                   <td className="p-3 border-r-2 border-gray-300 text-center ">
                     <div className="relative group flex items-center justify-between">
                     <h1>$ {account.threshold}</h1>
@@ -393,7 +431,7 @@ const AllAdsAccount = () => {
           <div className="modal-box">
             <form onSubmit={(e) => handleUpdate(e, modalData._id)}>
               <div className="flex justify-center items-center gap-3">
-                <div className="mb-4">
+                <div  className="mb-4" >
                   <label className="block text-gray-500">Current Balance</label>
                   <input
                     type="number"
@@ -455,6 +493,7 @@ const AllAdsAccount = () => {
       )}
     </div>
   );
-};
-
+}
 export default AllAdsAccount;
+
+
