@@ -61,6 +61,37 @@ const AllAdsAccount = () => {
       });
   };
 
+  // current balance update
+  const handleUpdatecurrentBallence = (e, id) => {
+    e.preventDefault();
+    const currentBallence = e.target.currentBallence.value;
+    
+
+    const body = { currentBallence };
+    console.log(body);
+
+    AxiosPublic.patch(`http://localhost:5000/adsAccount/currentBallence/${id}`, body)
+      .then((res) => {
+        console.log(res.body);
+        refetch();
+        Swal.fire({
+          title: "Good job!",
+          text: "Current Balance updated!",
+          icon: "success"
+        });
+
+        setModalData(null);
+      })
+      .catch(error => {
+        console.error("Error adding account:", error);
+        Swal.fire({
+          icon: "error",
+          title: "Oops...",
+          text: "Failed to add account!",
+        });
+      });
+  };
+
   const handleFilter = () => {
     let filtered = adsAccounts;
     if (selectedEmail) {
@@ -297,6 +328,15 @@ const AllAdsAccount = () => {
         defaultValue={account.currentBallence}
         className="w-full border rounded p-2 mt-1 text-gray-500"
       />
+      <form onSubmit={(e) => handleUpdatecurrentBallence(e, modalData._id)}>
+      <button 
+                
+                className="mt-4 font-avenir px-3 mx-auto py-1 rounded-lg text-white bg-green-800"
+              >
+                Update
+              </button>
+      </form>
+      
       <form method="dialog">
         <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
       </form>
@@ -393,7 +433,7 @@ const AllAdsAccount = () => {
           <div className="modal-box">
             <form onSubmit={(e) => handleUpdate(e, modalData._id)}>
               <div className="flex justify-center items-center gap-3">
-                <div className="mb-4">
+                <div  className="mb-4" >
                   <label className="block text-gray-500">Current Balance</label>
                   <input
                     type="number"
