@@ -123,6 +123,41 @@ const EmployeePayments = () => {
         setActiveDropdown(orderId);
     }
 };
+
+const [selectedPayment, setSelectedPayment] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+
+  const handleEditClick = (payment) => {
+    setSelectedPayment(payment);
+    setIsModalOpen(true);
+  };
+
+  const handleCancel = () => {
+    setIsModalOpen(false);
+    setSelectedPayment(null);
+  };
+
+  const handleUpdate = (e) => {
+    e.preventDefault();
+    const updatedPayment = {
+      ...selectedPayment,
+      date: e.target.date.value,
+      payAmount: parseFloat(e.target.amount.value),
+      paymentMethod: e.target.method.value,
+      note: e.target.note.value,
+    };
+    console.log(updatedPayment);
+
+    AxiosPublic.patch(
+      `https://digital-networking-server.vercel.app/employeePayment/${selectedPayment._id}`,
+      updatedPayment
+    ).then((res) => {
+      console.log(res.data);
+      handleCancel();
+      refetch();
+    });
+};
   return (
     <div className="mt-5">
       <Helmet>
@@ -283,6 +318,13 @@ const EmployeePayments = () => {
                                                 >
                                                     Delete
                                                 </button>
+                                                <button
+                                                   onClick={() => handleEditClick(payment)}
+                                                    className="block w-full text-left px-4 py-2 text-black hover:bg-gray-100"
+                                                >
+                                                    Edit
+                                                </button>
+
                                             </div>
                                         )}
                                     </td>
@@ -303,6 +345,76 @@ const EmployeePayments = () => {
           </tbody>
         </table>
       </div>
+      {isModalOpen && (
+        <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 z-50">
+          <div className="bg-white p-8 rounded-lg w-11/12 md:w-3/4 lg:w-1/2">
+            <h2 className="text-2xl text-black font-bold mb-4 text-center">
+              Edit Payment
+            </h2>
+            <form onSubmit={handleUpdate}>
+    <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-4">
+      <div>
+        <label className="block text-gray-700">Payment Date</label>
+        <input
+          type="date"
+          name="date"
+          className="mt-1 py-2 px-2 block w-full bg-white text-black border border-gray-600 rounded-md shadow-sm"
+          defaultValue={selectedPayment.date}
+        />
+      </div>
+      <div>
+        <label className="block text-gray-700">Payment Amount</label>
+        <input
+          type="number"
+          name="amount"
+          className="mt-1 py-2 px-2 block w-full text-black bg-white border border-gray-600 rounded-md shadow-sm"
+          defaultValue={selectedPayment.payAmount}
+        />
+      </div>
+      <div>
+        <label className="block text-gray-700">Payment Method</label>
+        <select
+          name="method"
+          className="mt-1 py-2 px-2 block w-full text-black bg-white border border-gray-600 rounded-md shadow-sm"
+          defaultValue={selectedPayment.paymentMethod}
+        >
+          <option value="bkashPersonal">bKash Personal</option>
+          <option value="bkashMarchent">bKash Marcent</option>
+          <option value="nagadPersonal">Nagad Personal</option>
+          <option value="rocketPersonal">Rocket Personal</option>
+          <option value="bank">Bank</option>
+        </select>
+      </div>
+    </div>
+    <div>
+      <label className="block text-gray-700">Note</label>
+      <input
+        type="text"
+        name="note"
+        placeholder="type note...."
+        className="mt-1 py-3 px-2 block w-full text-black bg-white border border-gray-600 rounded-md shadow-sm"
+        defaultValue={selectedPayment.note}
+      />
+    </div>
+    <div className="flex justify-end mt-6">
+      <button
+        type="button"
+        className="mr-4 px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600"
+        onClick={handleCancel}
+      >
+        Cancel
+      </button>
+      <button
+        type="submit"
+        className="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600"
+      >
+        Update
+      </button>
+    </div>
+  </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

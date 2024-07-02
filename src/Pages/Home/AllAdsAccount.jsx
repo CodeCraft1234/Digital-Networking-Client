@@ -173,7 +173,7 @@ const AllAdsAccount = () => {
     console.log(body);
 
     axios
-      .put(`http://localhost:5000/adsAccount/currentBalance/${id}`, body)
+      .put(`https://digital-networking-server.vercel.app/adsAccount/currentBalance/${id}`, body)
       .then((res) => {
         console.log(res.data);
         refetch();
@@ -202,7 +202,7 @@ const AllAdsAccount = () => {
     console.log(body);
 
     axios
-      .put(`http://localhost:5000/adsAccount/threshold/${id}`, body)
+      .put(`https://digital-networking-server.vercel.app/adsAccount/threshold/${id}`, body)
       .then((res) => {
         console.log(res.data);
         refetch();
@@ -230,7 +230,7 @@ const AllAdsAccount = () => {
     console.log(body);
 
     axios
-      .put(`http://localhost:5000/adsAccount/totalSpent/${id}`, body)
+      .put(`https://digital-networking-server.vercel.app/adsAccount/totalSpent/${id}`, body)
       .then((res) => {
         console.log(res.data);
         refetch();
@@ -322,6 +322,7 @@ const AllAdsAccount = () => {
           <table className="min-w-full  text-center bg-white">
             <thead className="bg-red-800 text-white">
               <tr>
+                <th className="p-3">SL</th>
                 <th className="p-3">Ad Account Name</th>
                 <th className="p-3">Current Balance</th>
                 <th className="p-3">Threshold</th>
@@ -342,6 +343,7 @@ const AllAdsAccount = () => {
                       : "bg-gray-200  text-left text-gray-500 border-b border-opacity-20"
                   }`}
                 >
+                  <td className="p-3 border-r-2  border-gray-300 text-center px-5 ">{index + 1}</td>
                   <td className="p-3 border-r-2  border-gray-300 text-start px-5 ">
                     <div className="">
                       <h1> {account.accountName}</h1>
@@ -507,7 +509,7 @@ const AllAdsAccount = () => {
                 </tr>
               ))}
               <tr className="bg-green-800   text-sm text-white font-bold">
-                <td className="p-3  text-right" colSpan="1">
+                <td className="p-3  text-right" colSpan="2">
                   Total :
                 </td>
                 <td className="p-3 border-2 border-gray-300  text-center">
