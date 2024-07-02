@@ -5,6 +5,7 @@ import useUsers from "../../Hook/useUsers";
 import Swal from 'sweetalert2';
 import { IoIosSearch } from "react-icons/io";
 import { Helmet } from "react-helmet-async";
+import { FaEdit } from "react-icons/fa";
 
 const AllAdsAccount = () => {
   const [adsAccount, refetch] = useAdsAccount();
@@ -13,8 +14,6 @@ const AllAdsAccount = () => {
   const [modalData, setModalData] = useState(null);
   const [selectedEmail, setSelectedEmail] = useState("");
   const [selectedStatus, setSelectedStatus] = useState("");
-  const [startDate, setStartDate] = useState("");
-  const [endDate, setEndDate] = useState("");
   const [users] = useUsers();
   const AxiosPublic = UseAxiosPublic();
   const [sortOrder, setSortOrder] = useState('asc');
@@ -70,12 +69,6 @@ const AllAdsAccount = () => {
     if (selectedStatus) {
       filtered = filtered.filter(account => account.status === selectedStatus);
     }
-    if (startDate) {
-      filtered = filtered.filter(account => new Date(account.issueDate) >= new Date(startDate));
-    }
-    if (endDate) {
-      filtered = filtered.filter(account => new Date(account.issueDate) <= new Date(endDate));
-    }
     const sortedFiltered = filtered.slice().sort((a, b) => {
       if (a.status === 'Active' && b.status !== 'Active') return -1;
       if (a.status !== 'Active' && b.status === 'Active') return 1;
@@ -86,7 +79,7 @@ const AllAdsAccount = () => {
 
   useEffect(() => {
     handleFilter();
-  }, [selectedEmail, selectedStatus, startDate, endDate]);
+  }, [selectedEmail, selectedStatus]);
 
   const [totalSpent, setTotalSpent] = useState(0);
   const [totalCurrentBallence, setTotalCurrentBallence] = useState(0);
@@ -162,7 +155,7 @@ const AllAdsAccount = () => {
 
   const handleSort = () => {
     const sortedAds = [...filteredAdsAccounts].sort((a, b) => {
-      if (sortOrder === 'asc') {
+      if (sortOrder === 'desc') {
         return a.status.localeCompare(b.status);
       } else {
         return b.status.localeCompare(a.status);
@@ -172,28 +165,8 @@ const AllAdsAccount = () => {
     setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
   };
 
-  const handleInlineUpdate = (id, key, value) => {
-    AxiosPublic.patch(`https://digital-networking-server.vercel.app/adsAccount/${id}`, { [key]: value })
-      .then((res) => {
-        console.log(res.body);
-        refetch();
-        Swal.fire({
-          title: "Updated!",
-          text: `${key} updated successfully!`,
-          icon: "success"
-        });
-      })
-      .catch(error => {
-        console.error("Error updating account:", error);
-        Swal.fire({
-          icon: "error",
-          title: "Oops...",
-          text: `Failed to update ${key}!`,
-        });
-      });
-  };
 
-  const [editingCell, setEditingCell] = useState({});
+  
 
   return (
     <div>
@@ -232,24 +205,6 @@ const AllAdsAccount = () => {
                 <option value="Disable">Disable</option>
               </select>
              </div>
-             <div>
-              <label className="block text-black font-bold">Start Date</label>
-              <input
-                type="date"
-                value={startDate}
-                onChange={(e) => setStartDate(e.target.value)}
-                className="border rounded p-2 mt-1"
-              />
-             </div>
-             <div>
-              <label className="block text-black font-bold">End Date</label>
-              <input
-                type="date"
-                value={endDate}
-                onChange={(e) => setEndDate(e.target.value)}
-                className="border rounded p-2 mt-1"
-              />
-             </div>
             </div>
           </div>
 
@@ -270,18 +225,17 @@ const AllAdsAccount = () => {
           </div>
         </div>
 
-        <div className="overflow-x-auto border-2 border-black">
-          <table className="min-w-full bg-white">
+        <div className="overflow-x-auto  text-center border border-black">
+          <table className="min-w-full  text-center bg-white">
             <thead className="bg-red-800 text-white">
               <tr>
-                <th className="p-3">Payment Date</th>
+                
                 <th className="p-3">Ad Account Name</th>
                 <th className="p-3">Current Balance</th>
                 <th className="p-3">Threshold</th>
                 <th className="p-3">Total Spent</th>
                 <th className="p-3 cursor-pointer" onClick={handleSort}>Status</th>
-                <th className="p-3">Edit</th>
-                <th className="p-3">Action</th>
+                <th className="p-3">Payment Date</th>
               </tr>
             </thead>
             <tbody>
@@ -290,88 +244,144 @@ const AllAdsAccount = () => {
                   key={account._id}
                   className={`${
                     index % 2 === 0
-                      ? "bg-white text-gray-500 border-b border-opacity-20"
-                      : "bg-gray-200 text-gray-500 border-b border-opacity-20"
+                      ? "bg-white text-left text-gray-500 border-b border-opacity-20"
+                      : "bg-gray-200  text-left text-gray-500 border-b border-opacity-20"
                   }`}
                 >
-                  <td className="p-3 border-l-2 border-r-2 border-gray-300 text-center">{new Date(account.issueDate).toLocaleDateString('en-GB')}</td>
-                  <td className="p-3 border-r-2 border-gray-300 text-center">{account.accountName}</td>
-                  <td className="p-3 border-r-2 border-gray-300 text-center"
-                    onMouseEnter={() => setEditingCell({ id: account._id, key: 'currentBallence' })}
-                    onMouseLeave={() => setEditingCell({})}
-                  >
-                    {editingCell.id === account._id && editingCell.key === 'currentBallence' ? (
-                      <input
-                        type="number"
-                        defaultValue={account.currentBallence}
-                        onBlur={(e) => handleInlineUpdate(account._id, 'currentBallence', e.target.value)}
-                        className="w-full border rounded p-2 mt-1 text-gray-500"
-                      />
-                    ) : (
-                      `$ ${account.currentBallence}`
-                    )}
-                  </td>
-                  <td className="p-3 border-r-2 border-gray-300 text-center"
-                    onMouseEnter={() => setEditingCell({ id: account._id, key: 'threshold' })}
-                    onMouseLeave={() => setEditingCell({})}
-                  >
-                    {editingCell.id === account._id && editingCell.key === 'threshold' ? (
-                      <input
-                        type="number"
-                        defaultValue={account.threshold}
-                        onBlur={(e) => handleInlineUpdate(account._id, 'threshold', e.target.value)}
-                        className="w-full border rounded p-2 mt-1 text-gray-500"
-                      />
-                    ) : (
-                      `$ ${account.threshold}`
-                    )}
-                  </td>
-                  <td className="p-3 border-r-2 border-gray-300 text-center"
-                    onMouseEnter={() => setEditingCell({ id: account._id, key: 'totalSpent' })}
-                    onMouseLeave={() => setEditingCell({})}
-                  >
-                    {editingCell.id === account._id && editingCell.key === 'totalSpent' ? (
-                      <input
-                        type="number"
-                        defaultValue={account.totalSpent}
-                        onBlur={(e) => handleInlineUpdate(account._id, 'totalSpent', e.target.value)}
-                        className="w-full border rounded p-2 mt-1 text-gray-500"
-                      />
-                    ) : (
-                      `$ ${account.totalSpent}`
-                    )}
-                  </td>
-                  <td className={`p-3 border-r-2 border-gray-300 text-center ${account.status === 'Active' ? 'text-green-900 font-bold' : 'text-red-600 font-bold'}`}>
-                    {account.status}
-                  </td>
-                  <td className="p-3 border-r-2 border-gray-300 text-center">
+                 
+              
+
+                  <td className="p-3 border-r-2  border-gray-300 text-start px-5 ">
+                   
+                    <div className="">
+                    <h1> {account.accountName}</h1>
+                   <div className="flex justify-start gap-3">
+                   <button
+    className="text-blue-600"
+    onClick={() => setModalData(account)}
+  >
+    Edit
+  </button>
                     <button
-                      className="font-avenir px-3 mx-auto py-1 bg-green-800 rounded-lg text-white"
-                      onClick={() => setModalData(account)}
-                    >
-                      Edit
-                    </button>
-                  </td>
-                  <td className="p-3 border-r-2 border-gray-300 text-center">
-                    <button
-                      className="font-avenir px-3 mx-auto py-1 bg-green-800 rounded-lg text-white"
+                      className="text-start flex justify-start text-red-600"
                       onClick={() => handleDelete(account._id)}
                     >
                       Delete
                     </button>
-                  </td>
+                   </div>
+                    </div>
+                    
+  
+
+                   
+ 
+  
+
+              </td>
+                  <td className="p-3 border-r-2 border-gray-300 text-center ">
+                    <div className="relative group flex items-center justify-center ">
+                    <h1>$ {account.currentBallence}</h1>
+                    <button
+    className="text-black px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+    onClick={() => document.getElementById(`my_modal_1`).showModal()}
+  >
+   <FaEdit />
+  </button>
+  
+  <dialog id={`my_modal_1`} className="modal">
+    <div className="modal-box">
+      <input
+        type="number"
+        name="currentBallence"
+        step="0.01"
+        defaultValue={account.currentBallence}
+        className="w-full border rounded p-2 mt-1 text-gray-500"
+      />
+      <form method="dialog">
+        <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+      </form>
+    </div>
+  </dialog>
+                    </div>
+ 
+  
+
+              </td>
+                  <td className="p-3 border-r-2 border-gray-300 text-center ">
+                    <div className="relative group flex items-center justify-between">
+                    <h1>$ {account.threshold}</h1>
+                    <button
+    className="text-black px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+    onClick={() => document.getElementById(`my_modal_2`).showModal()}
+  >
+    <FaEdit />
+  </button>
+  
+  <dialog id={`my_modal_2`} className="modal">
+    <div className="modal-box">
+      <input
+        type="number"
+        name="threshold"
+        step="0.01"
+        defaultValue={account.threshold}
+        className="w-full border rounded p-2 mt-1 text-gray-500"
+      />
+      <form method="dialog">
+        <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+      </form>
+    </div>
+  </dialog>
+                    </div>
+ 
+  
+
+             </td>
+                  <td className="p-3 border-r-2 border-gray-300 text-center ">
+                    <div className="relative group flex items-center justify-between">
+                    <h1>$ {account.totalSpent}</h1>
+                    <button
+    className=" text-black px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+    onClick={() => document.getElementById(`my_modal_${account._id}`).showModal()}
+  >
+    <FaEdit />
+  </button>
+  
+  <dialog id={`my_modal_${account._id}`} className="modal">
+    <div className="modal-box">
+      <input
+        type="number"
+        name="currentBallence"
+        step="0.01"
+        defaultValue={account.totalSpent}
+        className="w-full border rounded p-2 mt-1 text-gray-500"
+      />
+      <form method="dialog">
+        <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+      </form>
+    </div>
+  </dialog>
+                    </div>
+ 
+  
+
+             </td>
+                  <td className={`p-3 border-r-2  text-center border-gray-300  ${account.status === 'Active' ? 'text-green-900 font-bold' : 'text-red-600 font-bold'}`}>
+                  {account.status}
+             </td>
+                 
+             <td className="p-3 border-l-2 border-r-2 text-center border-gray-300 ">{new Date(account.issueDate).toLocaleDateString('en-GB')}</td>
                 </tr>
               ))}
-              <tr className="bg-green-800 text-sm text-white font-bold">
-                <td className="p-3 border-2 border-black text-right" colSpan="2">
+              <tr className="bg-green-800   text-sm text-white font-bold">
+                <td className="p-3  text-right" colSpan="1">
                   Total :
                 </td>
-                <td className="p-3 border-2 border-black text-center">$ {totalCurrentBallence}</td>
-                <td className="p-3 border-2 border-black text-center">$ {totalThreshold}</td>
-                <td className="p-3 border-2 border-black text-center">$ {totalSpent}</td>
-                <td className="p-3 border-2 border-black text-center"></td>
-                <td className="p-3 border-2 border-black text-center"></td>
-                <td className="p-3 border-2 border-black text-center"></td>
+                <td className="p-3 border-2 border-gray-300  text-center">$ {totalCurrentBallence}</td>
+                <td className="p-3 border-2 border-gray-300  text-center">$ {totalThreshold}</td>
+                <td className="p-3 border-2 border-gray-300 text-center">$ {totalSpent}</td>
+                <td className="p-3 border-2 border-gray-300 text-center"></td>
+                <td className="p-3 border-2 border-gray-300 text-center"></td>
+              
               </tr>
             </tbody>
           </table>
