@@ -1,4 +1,4 @@
-import { NavLink } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import {
   FaAngleDown,
   FaAngleUp,
@@ -62,14 +62,17 @@ const AdminDashboard = () => {
 
   const getActiveStyle = (isActive) => (
     isActive
-      ? { backgroundColor: 'blue', color: 'white' }
+      ? { backgroundColor: 'purple', color: 'white' }
       : {}
   );
+  
 
   return (
     <div className="overflow-y-auto h-screen">
       <div className="w-[200px]">
-        <img className="w-44 mx-auto" src={latestLogo?.photo} alt="" />
+       <Link to={'/'}>
+       <img className="w-44 mx-auto" src={latestLogo?.photo} alt="" />
+       </Link>
         <ul className="mt-4 space-y-1">
           <NavLink
             to="/dashboard/admin/home"
@@ -88,13 +91,7 @@ const AdminDashboard = () => {
             <MdAccountCircle className="w-6 h-6 mr-2" /> Ads Accounts
           </NavLink>
 
-          <NavLink
-            to="dashboard/addEmployee"
-            className="text-white hover:bg-green-300 hover:text-black py-2 px-4 rounded-lg flex items-center"
-            style={({ isActive }) => getActiveStyle(isActive)}
-          >
-            <MdAccountCircle className="w-6 h-6 mr-2" /> Add Employee
-          </NavLink>
+         
 
           <div className="relative" onMouseLeave={handleMouseLeave}>
             <NavLink
@@ -113,13 +110,13 @@ const AdminDashboard = () => {
             </NavLink>
             {isOpen && (
               <div
-                className="absolute top-full left-0 w-48 bg-white rounded-lg shadow-lg py-2 z-50 animate-dropdown"
+                className="absolute top-full left-0 w-48 bg-gray-600 rounded-lg shadow-lg py-2 z-50 animate-dropdown"
                 onMouseEnter={handleMouseEnter}
                 onMouseLeave={handleMouseLeave}
               >
                 <NavLink
                   to="dashboard/allUsers"
-                  className="text-black hover:bg-green-300 hover:text-black py-2 px-4 rounded-lg flex items-center"
+                  className="text-white hover:bg-green-300 hover:text-black py-2 px-4 rounded-lg flex items-center"
                   style={({ isActive }) => getActiveStyle(isActive)}
                 >
                   <FaPeopleGroup className="w-6 h-6 mr-2" />
@@ -127,15 +124,23 @@ const AdminDashboard = () => {
                 </NavLink>
                 <NavLink
                   to="dashboard/allClients"
-                  className="text-black hover:bg-green-300 hover:text-black py-2 px-4 rounded-lg flex items-center"
+                  className="text-white hover:bg-green-300 hover:text-black py-2 px-4 rounded-lg flex items-center"
                   style={({ isActive }) => getActiveStyle(isActive)}
                 >
                   <IoPeopleSharp className="w-6 h-6 mr-2" />
                   Clients
                 </NavLink>
                 <NavLink
+                   to="dashboard/addEmployee"
+                  className="text-white hover:bg-green-300 hover:text-black py-2 px-3 rounded-lg flex items-center"
+                  style={({ isActive }) => getActiveStyle(isActive)}
+                >
+                  <IoPeopleSharp className="w-6 h-6 mr-2" />
+                  Add Employee
+                </NavLink>
+                <NavLink
                   to="dashboard/allEmployee"
-                  className="text-black hover:bg-green-300 hover:text-black py-2 px-4 rounded-lg flex items-center"
+                  className="text-white hover:bg-green-300 hover:text-black py-2 px-4 rounded-lg flex items-center"
                   style={({ isActive }) => getActiveStyle(isActive)}
                 >
                   <FaPeopleGroup className="w-6 h-6 mr-2" />
@@ -169,14 +174,7 @@ const AdminDashboard = () => {
             <FaPeopleGroup className="w-6 h-6 mr-2" /> Settings
           </NavLink>
 
-          <NavLink
-            to="/"
-            className="text-white hover:bg-green-300 hover:text-black py-2 px-4 rounded-lg flex items-center"
-            style={({ isActive }) => getActiveStyle(isActive)}
-          >
-            <FaHome className="w-6 h-6 mr-2" />
-            Go Home
-          </NavLink>
+          
         </ul>
       </div>
     </div>

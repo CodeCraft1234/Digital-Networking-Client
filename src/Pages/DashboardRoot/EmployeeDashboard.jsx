@@ -19,6 +19,12 @@ import { AuthContext } from "../../Security/AuthProvider";
 
 const EmployeeDashboard = () => {
   const {user}=useContext(AuthContext)
+
+  const getActiveStyle = (isActive) => (
+    isActive
+      ? { backgroundColor: 'purple', color: 'white' }
+      : {}
+  );
   return (
     <div className="overflow-hidden h-screen">
     <div className="w-[200px] bg-gray-900 text-white">
@@ -33,64 +39,45 @@ const EmployeeDashboard = () => {
       </div>
       <ul className="space-y-1">
       <NavLink
-        to="/dashboard/employee/home"
-        className={({ isActive }) =>
-          isActive
-            ? "flex items-center py-3 px-6 rounded-lg bg-blue-500 text-red-500"
-            : "flex items-center py-3 px-6 rounded-lg hover:bg-gray-800"
-        }
-      >
-        <RxDashboard className="w-6 h-6 mr-2" />
-        <span>Dashboard</span>
-      </NavLink>
-
+             to="/dashboard/employee/home"
+            className="text-white hover:bg-green-300 hover:text-black py-2 px-4 rounded-lg flex items-center"
+            style={({ isActive }) => getActiveStyle(isActive)}
+          >
+            <RxDashboard className="w-6 h-6 mr-2" />
+            Dashboard
+          </NavLink>
       <NavLink
-        to="dashboard/AddClients"
-        className={({ isActive }) =>
-          isActive
-            ? "flex items-center py-3 px-6 rounded-lg bg-green-300"
-            : "flex items-center py-3 px-6 rounded-lg hover:bg-gray-800"
-        }
-      >
-        <IoPeopleSharp className="w-6 h-6 mr-2" />
-        <span>Add Clients</span>
-      </NavLink>
-
+             to="dashboard/AddClients"
+            className="text-white hover:bg-green-300 hover:text-black py-2 px-4 rounded-lg flex items-center"
+            style={({ isActive }) => getActiveStyle(isActive)}
+          >
+            <RxDashboard className="w-6 h-6 mr-2" />
+            Add Clients
+          </NavLink>
       <NavLink
-        to="dashboard/myCampaigns"
-        className={({ isActive }) =>
-          isActive
-            ? "flex items-center py-3 px-6 rounded-lg bg-green-300"
-            : "flex items-center py-3 px-6 rounded-lg hover:bg-gray-800"
-        }
-      >
-        <MdCampaign className="w-6 h-6 mr-2" />
-        <span>Campaigns</span>
-      </NavLink>
-
+              to="dashboard/myCampaigns"
+            className="text-white hover:bg-green-300 hover:text-black py-2 px-4 rounded-lg flex items-center"
+            style={({ isActive }) => getActiveStyle(isActive)}
+          >
+            <RxDashboard className="w-6 h-6 mr-2" />
+            Campaigns
+          </NavLink>
       <NavLink
-        to="dashboard/myClients"
-        className={({ isActive }) =>
-          isActive
-            ? "flex items-center py-3 px-6 rounded-lg bg-green-300"
-            : "flex items-center py-3 px-6 rounded-lg hover:bg-gray-800"
-        }
-      >
-        <IoIosPeople className="w-6 h-6 mr-2" />
-        <span>Clients</span>
-      </NavLink>
-
+             to="dashboard/myClients"
+            className="text-white hover:bg-green-300 hover:text-black py-2 px-4 rounded-lg flex items-center"
+            style={({ isActive }) => getActiveStyle(isActive)}
+          >
+            <RxDashboard className="w-6 h-6 mr-2" />
+            Clients
+          </NavLink>
       <NavLink
-        to={`dashboard/adsAccount/${user?.email}`}
-        className={({ isActive }) =>
-          isActive
-            ? "flex items-center py-3 px-6 rounded-lg bg-green-300"
-            : "flex items-center py-3 px-6 rounded-lg hover:bg-gray-800"
-        }
-      >
-        <MdAccountCircle className="w-6 h-6 mr-2" />
-        <span>Ads Accounts</span>
-      </NavLink>
+              to={`dashboard/adsAccount/${user?.email}`}
+            className="text-white hover:bg-green-300 hover:text-black py-2 px-4 rounded-lg flex items-center"
+            style={({ isActive }) => getActiveStyle(isActive)}
+          >
+            <RxDashboard className="w-6 h-6 mr-2" />
+            Ads Accounts
+          </NavLink>
     </ul>
     </div>
   </div>

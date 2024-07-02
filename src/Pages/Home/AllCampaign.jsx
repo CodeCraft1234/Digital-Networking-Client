@@ -61,8 +61,6 @@ const Campaigns = () => {
   console.log(totalSpent, totalBudged, totalRCV, totalbill);
 
   useEffect(() => {
-
-
     const totalRcv = filteredByCategory.reduce((acc, campaign) => {
       const payment = parseFloat(campaign.tPayment);
       return acc + (isNaN(payment) ? 0 : payment);
@@ -128,7 +126,7 @@ const Campaigns = () => {
 
 
   return (
-    <div className="mt-24">
+    <div className="mt-5">
       <Helmet>
               <title> Digital Network | All Campaign</title>
               <link rel="canonical" href="https://www.tacobell.com/" />
@@ -280,7 +278,7 @@ const Campaigns = () => {
     </tr>
   ))}
   <tr className="bg-green-800 text-sm text-white font-bold">
-    <td className="p-3 border-2 border-black text-right" colSpan="1">
+    <td className="p-3 border-2 border-black text-right" colSpan="2">
       Total :
     </td>
     <td className="p-3 border-2 border-black text-center">$ {totalBudged}</td>

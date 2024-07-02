@@ -227,26 +227,26 @@ const UserProfile = () => {
      }, [adsAccount, user?.email]);
 
     return (
-        <div className="mt-24">
-            <div className="grid lg:grid-cols-4 sm:grid-cols-2 gap-5 justify-around p-5">
-                <div className="px-24 py-16 rounded-2xl bg-green-400 shadow-lg text-center">
+        <div className="mt-5">
+            <div className="grid lg:grid-cols-4 text-black sm:grid-cols-2 gap-5 justify-around p-5">
+                <div className="px-5 py-10 rounded-2xl bg-green-400 shadow-lg text-center">
                     <h2 className="text-4xl font-bold">Total Spent</h2>
                     <p className="text-xl">Balance: $ {totalSpent}</p>
                     
                 </div>
 
-                <div className="px-24 py-16 rounded-2xl bg-green-400 shadow-lg text-center">
+                <div className="px-5 py-10 rounded-2xl bg-green-400 shadow-lg text-center">
                     <h2 className="text-4xl font-bold">Total Bill</h2>
                     <p className="text-xl">Balance: ৳ {parseInt(totalSpent * dollerRate)}</p>
                 </div>
 
-                <div className="px-24 py-16 rounded-2xl bg-green-400 shadow-lg text-center">
+                <div className="px-5 py-10 rounded-2xl bg-green-400 shadow-lg text-center">
                     <h2 className="text-4xl font-bold">Total Paid</h2>
                     <p className="text-xl">Balance: ৳ {parseInt(totalPaymeent)}</p>
 
                 </div>
 
-                <div className="px-24 py-16 rounded-2xl bg-green-400 shadow-lg text-center">
+                <div className="px-5 py-10 rounded-2xl bg-green-400 shadow-lg text-center">
                     <h2 className="text-4xl font-bold">Total DUE</h2>
                     <p className="text-2xl">Balance: ৳{ parseInt(totalSpent * dollerRate - totalPaymeent)}</p>
                 </div>

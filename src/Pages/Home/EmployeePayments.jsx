@@ -115,6 +115,14 @@ const EmployeePayments = () => {
       }
     });
   };
+  const [activeDropdown, setActiveDropdown] = useState(null);
+  const toggleDropdown = (orderId) => {
+    if (activeDropdown === orderId) {
+        setActiveDropdown(null);
+    } else {
+        setActiveDropdown(orderId);
+    }
+};
   return (
     <div className="mt-5">
       <Helmet>
@@ -259,14 +267,25 @@ const EmployeePayments = () => {
                 <td className="p-3 border-r-2 border-gray-200 text-start">
                   {payment.note}
                 </td>
-                <td className="p-3 border-r-2 border-gray-200 text-start">
-                  <button
-                    className="font-avenir px-3 mx-auto py-1 rounded-lg flex justify-center text-white bg-green-800"
-                    onClick={() => handleDelete(payment._id)}
-                  >
-                    Delete
-                  </button>
-                </td>
+                <td className="px-4 text-center border-gray-500 py-2 relative">
+                                        <button
+                                            onClick={() => toggleDropdown(payment._id)}
+                                            className=" focus:outline-none"
+                                        >
+                                            &#8226;&#8226;&#8226;
+                                        </button>
+                                        {activeDropdown === payment._id && (
+                                            <div className="absolute right-0 mt-2 w-48 bg-white rounded-md  z-10">
+                                             
+                                                <button
+                                                    onClick={() => {  handleDelete(payment._id); toggleDropdown(payment._id); }}
+                                                    className="block w-full text-left px-4 py-2 text-black hover:bg-gray-100"
+                                                >
+                                                    Delete
+                                                </button>
+                                            </div>
+                                        )}
+                                    </td>
               </tr>
             ))}
             <tr className="bg-green-800 text-white font-bold">
