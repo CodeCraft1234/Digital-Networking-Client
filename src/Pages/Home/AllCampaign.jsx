@@ -8,6 +8,7 @@ import useCampaings from "../../Hook/useCampaign";
 import UseAxiosPublic from "../../Axios/UseAxiosPublic";
 import Swal from "sweetalert2";
 import { Helmet } from "react-helmet-async";
+import { FaEdit } from "react-icons/fa";
 
 const Campaigns = () => {
   const [users] = useUsers();
@@ -116,6 +117,16 @@ const Campaigns = () => {
     });
   };
 
+  const [activeDropdown, setActiveDropdown] = useState(null);
+  const toggleDropdown = (orderId) => {
+    if (activeDropdown === orderId) {
+        setActiveDropdown(null);
+    } else {
+        setActiveDropdown(orderId);
+    }
+};
+
+
   return (
     <div className="mt-24">
       <Helmet>
@@ -162,12 +173,13 @@ const Campaigns = () => {
           <table className="min-w-full bg-white">
             <thead className="bg-red-800 text-white">
               <tr>
-                <th className="p-3 text-center">Date</th>
+                <th className="p-3 text-center">SL</th>
                 <th className="p-3 text-center">Campaign Name</th>
                 <th className="p-3 text-center">Total Budged</th>
                 <th className="p-3 text-center">Total spent</th>
                 <th className="p-3 text-center">Status</th>
-                <th className="p-3 text-center">Action</th>
+                <th className="p-3 text-center">Date</th>
+              
               </tr>
             </thead>
             <tbody>
@@ -180,22 +192,95 @@ const Campaigns = () => {
           : "bg-gray-200 text-gray-500 border-b border-opacity-20"
       }`}
     >
-      <td className="p-3 border-l-2 border-r-2 border-gray-300 text-center">{campaign.date}</td>
-      <td className="p-3 border-r-2 border-gray-300 text-center">
-        <Link to={`/client/${campaign.clientEmail}`} className="flex justify-center">
+      <td className="p-3 border-r-2  border-gray-300 text-start px-5 ">{index + 1}</td>
+
+
+      <td className="p-3 border-r-2  border-gray-300 text-start px-5 ">
+                   
+                   <div className="">
+                   <Link to={`/client/${campaign.clientEmail}`} className="">
         {campaign.campaignName}
         </Link>
-      </td>
-      <td className="p-3 border-r-2 border-gray-300 text-center">$ {campaign.tBudged}</td>
-      <td className="p-3 border-r-2 border-gray-300 text-center">$ {campaign.tSpent}</td>
-      <td className="p-3 border-r-2 border-gray-300 text-center">{campaign.status}</td>
-      <td className="p-3 border-r-2 border-gray-300 text-center"><button  className="font-avenir px-3 mx-auto py-1 rounded-lg flex justify-center text-white bg-green-800" onClick={() => handledelete(campaign._id)}>Delete</button></td>
+                  <div className="flex justify-start gap-3">
+                  <button
+   className="text-blue-600"
+  
+ >
+   Edit
+ </button>
+                   <button
+                     className="text-start flex justify-start text-red-600"
+                     onClick={() => handledelete(campaign._id)}
+                   >
+                     Delete
+                   </button>
+                  </div>
+                   </div>
+             </td>
 
-      
+             <td className="p-3 border-r-2 border-gray-300 text-center ">
+                    <div className="relative group flex items-center justify-center ">
+                    <h1>$ {campaign.tBudged}</h1>
+                    <button
+    className="text-black px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+    onClick={() => document.getElementById(`my_modal_1`).showModal()}
+  >
+   <FaEdit />
+  </button>
+  
+  <dialog id={`my_modal_1`} className="modal">
+    <div className="modal-box">
+      <input
+        type="number"
+        name="currentBallence"
+        step="0.01"
+        defaultValue={campaign.tBudged}
+        className="w-full border rounded p-2 mt-1 text-gray-500"
+      />
+      <form method="dialog">
+        <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+      </form>
+    </div>
+  </dialog>
+                    </div>
+            </td>
+             <td className="p-3 border-r-2 border-gray-300 text-center ">
+                    <div className="relative group flex items-center justify-center ">
+                    <h1>$ {campaign.tSpent}</h1>
+                    <button
+    className="text-black px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+    onClick={() => document.getElementById(`my_modal_2`).showModal()}
+  >
+   <FaEdit />
+  </button>
+  
+  <dialog id={`my_modal_2`} className="modal">
+    <div className="modal-box">
+      <input
+        type="number"
+        name="currentBallence"
+        step="0.01"
+        defaultValue={campaign.tSpent}
+        className="w-full border rounded p-2 mt-1 text-gray-500"
+      />
+      <form method="dialog">
+        <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+      </form>
+    </div>
+  </dialog>
+                    </div>
+            </td>
+
+
+      <td className="p-3 border-r-2 border-gray-300 text-center">{campaign.status}</td>
+      <td className="p-3 border-l-2 border-r-2 border-gray-300 ">{campaign.date}</td>
+ 
+
+     
     </tr>
   ))}
   <tr className="bg-green-800 text-sm text-white font-bold">
-    <td className="p-3 border-2 border-black text-right" colSpan="2">
+    <td className="p-3 border-2 border-black text-right" colSpan="1">
       Total :
     </td>
     <td className="p-3 border-2 border-black text-center">$ {totalBudged}</td>

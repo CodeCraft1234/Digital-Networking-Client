@@ -17,10 +17,11 @@ const EmployeePayments = () => {
   const [employees, setEmployees] = useState([]);
   const [filteredClients, setFilteredClients] = useState([]);
   const [sortDay, setSortDay] = useState("");
-  const [sortMonth, setSortMonth] = useState(""); // New state variable for month
+  const [sortMonth, setSortMonth] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
   const [selectedEmployee, setSelectedEmployee] = useState("");
+  const [selectedDate, setSelectedDate] = useState("");
 
   useEffect(() => {
     if (users && user) {
@@ -39,9 +40,7 @@ const EmployeePayments = () => {
     let filtered = employeePayment;
 
     if (selectedEmployee) {
-      filtered = filtered.filter(
-        (c) => c.employeeEmail === selectedEmployee
-      );
+      filtered = filtered.filter((c) => c.employeeEmail === selectedEmployee);
     }
 
     if (sortDay !== "") {
@@ -58,8 +57,20 @@ const EmployeePayments = () => {
       });
     }
 
+    if (selectedDate) {
+      filtered = filtered.filter((c) => {
+        const paymentDate = new Date(c.date);
+        const selected = new Date(selectedDate);
+        return (
+          paymentDate.getDate() === selected.getDate() &&
+          paymentDate.getMonth() === selected.getMonth() &&
+          paymentDate.getFullYear() === selected.getFullYear()
+        );
+      });
+    }
+
     setFilteredClients(filtered);
-  }, [selectedEmployee, sortDay, sortMonth, employeePayment]);
+  }, [selectedEmployee, sortDay, sortMonth, selectedDate, employeePayment]);
 
   const filteredItems = filteredClients.filter((item) =>
     item.paymentMethod.toLowerCase().includes(searchQuery.toLowerCase())
@@ -104,16 +115,15 @@ const EmployeePayments = () => {
       }
     });
   };
-
   return (
     <div className="mt-24">
       <Helmet>
         <title>Digital Network | Employee Payments</title>
         <link rel="canonical" href="https://www.tacobell.com/" />
       </Helmet>
-      <div className="flex justify-between items-center">
+      <div className="flex justify-between gap-4 items-center">
         <div className="flex justify-center items-center mb-4 ml-10 mx-auto">
-          <label className="block text-gray-700 mr-2">Sort By Employee</label>
+          <label className="block text-gray-700 mr-2">By Employee</label>
           <select
             className="border rounded p-2 mt-1 mr-2"
             value={selectedEmployee}
@@ -126,7 +136,7 @@ const EmployeePayments = () => {
               </option>
             ))}
           </select>
-          <label className="block text-gray-700 mr-2">Sort By Date (1-31)</label>
+          <label className="block text-gray-700 mr-2">By Date (1-31)</label>
           <select
             className="border rounded p-2 mt-1 mr-2"
             value={sortDay}
@@ -139,7 +149,7 @@ const EmployeePayments = () => {
               </option>
             ))}
           </select>
-          <label className="block text-gray-700 mr-2">Sort By Month</label>
+          <label className="block text-gray-700 mr-2">By Month</label>
           <select
             className="border rounded p-2 mt-1"
             value={sortMonth}
@@ -155,6 +165,14 @@ const EmployeePayments = () => {
               </option>
             ))}
           </select>
+          <label className="block text-gray-700 ml-2">By Date</label>
+          <input
+            type="date"
+            className="border rounded p-2 mt-1"
+            value={selectedDate}
+            onChange={(e) => setSelectedDate(e.target.value)}
+          />
+          
         </div>
         <div className="flex justify-end">
           <input
