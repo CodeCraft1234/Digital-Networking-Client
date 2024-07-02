@@ -19,7 +19,7 @@ const DashboardRoot = () => {
             </button>
           </div>
         </div>
-        <div className=" bg-[#85F4FA] lg:ml-52 min-h-screen rounded-lg w-full lg:col-span-2">
+        <div className=" bg-white lg:ml-52 min-h-screen rounded-lg w-full lg:col-span-2">
           <Outlet></Outlet>
         </div>
       </div>
