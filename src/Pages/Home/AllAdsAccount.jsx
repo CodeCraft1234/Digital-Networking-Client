@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import useAdsAccount from "../../Hook/useAdAccount";
 import UseAxiosPublic from "../../Axios/UseAxiosPublic";
 import useUsers from "../../Hook/useUsers";
-import Swal from 'sweetalert2';
+import Swal from "sweetalert2";
 import { IoIosSearch } from "react-icons/io";
 import { Helmet } from "react-helmet-async";
 import { FaEdit } from "react-icons/fa";
@@ -17,13 +17,13 @@ const AllAdsAccount = () => {
   const [selectedStatus, setSelectedStatus] = useState("");
   const [users] = useUsers();
   const AxiosPublic = UseAxiosPublic();
-  const [sortOrder, setSortOrder] = useState('asc');
+  const [sortOrder, setSortOrder] = useState("asc");
 
   useEffect(() => {
     if (adsAccount) {
       const sortedAccounts = adsAccount.slice().sort((a, b) => {
-        if (a.status === 'Active' && b.status !== 'Active') return -1;
-        if (a.status !== 'Active' && b.status === 'Active') return 1;
+        if (a.status === "Active" && b.status !== "Active") return -1;
+        if (a.status !== "Active" && b.status === "Active") return 1;
         return 0;
       });
       setAdsAccounts(sortedAccounts);
@@ -40,19 +40,22 @@ const AllAdsAccount = () => {
 
     const body = { currentBallence, threshold, totalSpent, status };
 
-    AxiosPublic.patch(`https://digital-networking-server.vercel.app/adsAccount/${id}`, body)
+    AxiosPublic.patch(
+      `https://digital-networking-server.vercel.app/adsAccount/${id}`,
+      body
+    )
       .then((res) => {
         console.log(res.body);
         refetch();
         Swal.fire({
           title: "Good job!",
           text: "Add Account success!",
-          icon: "success"
+          icon: "success",
         });
 
         setModalData(null);
       })
-      .catch(error => {
+      .catch((error) => {
         console.error("Error adding account:", error);
         Swal.fire({
           icon: "error",
@@ -63,19 +66,22 @@ const AllAdsAccount = () => {
   };
 
   // current balance update
- 
 
   const handleFilter = () => {
     let filtered = adsAccounts;
     if (selectedEmail) {
-      filtered = filtered.filter(account => account.employeeEmail === selectedEmail);
+      filtered = filtered.filter(
+        (account) => account.employeeEmail === selectedEmail
+      );
     }
     if (selectedStatus) {
-      filtered = filtered.filter(account => account.status === selectedStatus);
+      filtered = filtered.filter(
+        (account) => account.status === selectedStatus
+      );
     }
     const sortedFiltered = filtered.slice().sort((a, b) => {
-      if (a.status === 'Active' && b.status !== 'Active') return -1;
-      if (a.status !== 'Active' && b.status === 'Active') return 1;
+      if (a.status === "Active" && b.status !== "Active") return -1;
+      if (a.status !== "Active" && b.status === "Active") return 1;
       return 0;
     });
     setFilteredAdsAccounts(sortedFiltered);
@@ -90,31 +96,22 @@ const AllAdsAccount = () => {
   const [totalThreshold, setTotalThreshold] = useState(0);
 
   useEffect(() => {
-    const tspent = filteredAdsAccounts.reduce(
-      (acc, campaign) => {
-        const currentBallence = parseFloat(campaign.currentBallence);
-        return acc + (isNaN(currentBallence) ? 0 : currentBallence);
-      },
-      0
-    );
+    const tspent = filteredAdsAccounts.reduce((acc, campaign) => {
+      const currentBallence = parseFloat(campaign.currentBallence);
+      return acc + (isNaN(currentBallence) ? 0 : currentBallence);
+    }, 0);
     setTotalCurrentBallence(tspent);
 
-    const total = filteredAdsAccounts.reduce(
-      (acc, campaign) => {
-        const threshold = parseFloat(campaign.threshold);
-        return acc + (isNaN(threshold) ? 0 : threshold);
-      },
-      0
-    );
+    const total = filteredAdsAccounts.reduce((acc, campaign) => {
+      const threshold = parseFloat(campaign.threshold);
+      return acc + (isNaN(threshold) ? 0 : threshold);
+    }, 0);
     setTotalThreshold(total);
 
-    const totalBill = filteredAdsAccounts.reduce(
-      (acc, campaign) => {
-        const totalSpent = parseFloat(campaign.totalSpent);
-        return acc + (isNaN(totalSpent) ? 0 : totalSpent);
-      },
-      0
-    );
+    const totalBill = filteredAdsAccounts.reduce((acc, campaign) => {
+      const totalSpent = parseFloat(campaign.totalSpent);
+      return acc + (isNaN(totalSpent) ? 0 : totalSpent);
+    }, 0);
     setTotalSpent(totalBill);
   }, [filteredAdsAccounts]);
 
@@ -142,64 +139,117 @@ const AllAdsAccount = () => {
       confirmButtonText: "Yes, delete blog",
     }).then((result) => {
       if (result.isConfirmed) {
-        AxiosPublic.delete(`/adsAccount/${id}`)
-          .then((res) => {
-            refetch();
-            if (res.data.deletedCount > 0) {
-              Swal.fire({
-                title: "Deleted!",
-                text: "Your blog has been deleted.",
-                icon: "success",
-              });
-            }
-          });
+        AxiosPublic.delete(`/adsAccount/${id}`).then((res) => {
+          refetch();
+          if (res.data.deletedCount > 0) {
+            Swal.fire({
+              title: "Deleted!",
+              text: "Your blog has been deleted.",
+              icon: "success",
+            });
+          }
+        });
       }
     });
   };
 
   const handleSort = () => {
     const sortedAds = [...filteredAdsAccounts].sort((a, b) => {
-      if (sortOrder === 'desc') {
+      if (sortOrder === "desc") {
         return a.status.localeCompare(b.status);
       } else {
         return b.status.localeCompare(a.status);
       }
     });
     setFilteredAdsAccounts(sortedAds);
-    setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+    setSortOrder(sortOrder === "asc" ? "desc" : "asc");
   };
 
+  const handleUpdateCurrentBalance = (e, id) => {
+    e.preventDefault();
+    const currentBallence = e.target.currentBalance.value;
 
-  
+    const body = { currentBallence: currentBallence };
+    console.log(body);
 
-  
-    const handleUpdateCurrentBalance = (e, id) => {
-      e.preventDefault();
-      const currentBallence = e.target.currentBalance.value;
-  
-      const body = { currentBallence:currentBallence };
-      console.log(body);
-  
-      axios.put(`http://localhost:5000/adsAccount/currentBalance/${id}`, body)
-        .then((res) => {
-          console.log(res.data);
-          refetch();
-          Swal.fire({
-            title: "Good job!",
-            text: "Current Balance updated!",
-            icon: "success"
-          });
-          setModalData(null);
-        })
-        .catch(error => {
-          console.error("Error updating account:", error);
-          Swal.fire({
-            icon: "error",
-            title: "Oops...",
-            text: "Failed to update account!",
-          });
+    axios
+      .put(`http://localhost:5000/adsAccount/currentBalance/${id}`, body)
+      .then((res) => {
+        console.log(res.data);
+        refetch();
+        Swal.fire({
+          title: "Good job!",
+          text: "Current Balance updated!",
+          icon: "success",
         });
-    };
+        setModalData(null);
+      })
+      .catch((error) => {
+        console.error("Error updating account:", error);
+        Swal.fire({
+          icon: "error",
+          title: "Oops...",
+          text: "Failed to update account!",
+        });
+      });
+  };
+
+  const handleUpdateThreshold = (e, id) => {
+    e.preventDefault();
+    const threshold = e.target.threshold.value;
+
+    const body = { threshold: threshold };
+    console.log(body);
+
+    axios
+      .put(`http://localhost:5000/adsAccount/threshold/${id}`, body)
+      .then((res) => {
+        console.log(res.data);
+        refetch();
+        Swal.fire({
+          title: "Good job!",
+          text: "Threshold Balance updated!",
+          icon: "success",
+        });
+        setModalData(null);
+      })
+      .catch((error) => {
+        console.error("Error updating account:", error);
+        Swal.fire({
+          icon: "error",
+          title: "Oops...",
+          text: "Failed to update account!",
+        });
+      });
+  };
+  const handleUpdateTotalSpent = (e, id) => {
+    e.preventDefault();
+    const totalSpent = e.target.totalSpent.value;
+
+    const body = { totalSpent: totalSpent };
+    console.log(body);
+
+    axios
+      .put(`http://localhost:5000/adsAccount/totalSpent/${id}`, body)
+      .then((res) => {
+        console.log(res.data);
+        refetch();
+        Swal.fire({
+          title: "Good job!",
+          text: "Total Spent updated!",
+          icon: "success",
+        });
+        setModalData(null);
+      })
+      .catch((error) => {
+        console.error("Error updating account:", error);
+        Swal.fire({
+          icon: "error",
+          title: "Oops...",
+          text: "Failed to update account!",
+        });
+      });
+  };
 
   return (
     <div>
@@ -211,33 +261,43 @@ const AllAdsAccount = () => {
         <div className="flex justify-between items-center ">
           <div className="flex justify-center items-center">
             <div className=" ml-10 flex justify-start mb-5 items-center gap-5 ">
-             <div>
-             <label className="block text-black font-bold">Sort By Employee</label>
-              <select
-                name="email"
-                value={selectedEmail}
-                onChange={(e) => setSelectedEmail(e.target.value)}
-                className="border rounded p-2 mt-1"
-              >
-                <option disabled value="">All</option>
-                {users?.filter(u => u.role === 'employee').map((user) => (
-                  <option key={user._id} value={user.email}>{user.name}</option>
-                ))}
-              </select>
-             </div>
-             <div>
-             <label className="block text-black font-bold">Sort By Status</label>
-              <select
-                name="status"
-                value={selectedStatus}
-                onChange={(e) => setSelectedStatus(e.target.value)}
-                className="border rounded p-2 mt-1"
-              >
-                <option value="">All</option>
-                <option value="Active">Active</option>
-                <option value="Disable">Disable</option>
-              </select>
-             </div>
+              <div>
+                <label className="block text-black font-bold">
+                  Sort By Employee
+                </label>
+                <select
+                  name="email"
+                  value={selectedEmail}
+                  onChange={(e) => setSelectedEmail(e.target.value)}
+                  className="border rounded p-2 mt-1"
+                >
+                  <option disabled value="">
+                    All
+                  </option>
+                  {users
+                    ?.filter((u) => u.role === "employee")
+                    .map((user) => (
+                      <option key={user._id} value={user.email}>
+                        {user.name}
+                      </option>
+                    ))}
+                </select>
+              </div>
+              <div>
+                <label className="block text-black font-bold">
+                  Sort By Status
+                </label>
+                <select
+                  name="status"
+                  value={selectedStatus}
+                  onChange={(e) => setSelectedStatus(e.target.value)}
+                  className="border rounded p-2 mt-1"
+                >
+                  <option value="">All</option>
+                  <option value="Active">Active</option>
+                  <option value="Disable">Disable</option>
+                </select>
+              </div>
             </div>
           </div>
 
@@ -262,12 +322,13 @@ const AllAdsAccount = () => {
           <table className="min-w-full  text-center bg-white">
             <thead className="bg-red-800 text-white">
               <tr>
-                
                 <th className="p-3">Ad Account Name</th>
                 <th className="p-3">Current Balance</th>
                 <th className="p-3">Threshold</th>
                 <th className="p-3">Total Spent</th>
-                <th className="p-3 cursor-pointer" onClick={handleSort}>Status</th>
+                <th className="p-3 cursor-pointer" onClick={handleSort}>
+                  Status
+                </th>
                 <th className="p-3">Payment Date</th>
               </tr>
             </thead>
@@ -281,145 +342,185 @@ const AllAdsAccount = () => {
                       : "bg-gray-200  text-left text-gray-500 border-b border-opacity-20"
                   }`}
                 >
-                 
-              
-
                   <td className="p-3 border-r-2  border-gray-300 text-start px-5 ">
-                   
                     <div className="">
-                    <h1> {account.accountName}</h1>
-                   <div className="flex justify-start gap-3">
-                   <button
-    className="text-blue-600"
-    onClick={() => setModalData(account)}
-  >
-    Edit
-  </button>
-                    <button
-                      className="text-start flex justify-start text-red-600"
-                      onClick={() => handleDelete(account._id)}
-                    >
-                      Delete
-                    </button>
-                   </div>
+                      <h1> {account.accountName}</h1>
+                      <div className="flex justify-start gap-3">
+                        <button
+                          className="text-blue-600"
+                          onClick={() => setModalData(account)}
+                        >
+                          Edit
+                        </button>
+                        <button
+                          className="text-start flex justify-start text-red-600"
+                          onClick={() => handleDelete(account._id)}
+                        >
+                          Delete
+                        </button>
+                      </div>
                     </div>
-                    
-  
+                  </td>
+                  <td className="p-3 border-r-2 border-gray-300 text-center">
+                    <div className="relative group flex items-center justify-center">
+                      <h1>$ {account.currentBallence}</h1>
+                      <button
+                        className="text-black px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                        onClick={() =>
+                          document.getElementById(`my_modal_1`).showModal()
+                        }
+                      >
+                        <FaEdit />
+                      </button>
 
-                   
- 
-  
-
-              </td>
-              <td className="p-3 border-r-2 border-gray-300 text-center">
-      <div className="relative group flex items-center justify-center">
-        <h1>$ {account.currentBallence}</h1>
-        <button
-          className="text-black px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-          onClick={() => document.getElementById(`my_modal_1`).showModal()}
-        >
-          <FaEdit />
-        </button>
-
-        <dialog id="my_modal_1" className="modal">
-          <div className="modal-box">
-            <form onSubmit={(e) => handleUpdateCurrentBalance(e, account._id)}>
-              <input
-                type="number"
-                name="currentBalance"
-                step="0.01"
-                defaultValue={account?.currentBallence}
-                className="w-full border rounded p-2 mt-1 text-gray-500"
-              />
-              <button
-                type="submit"
-                className="mt-4 font-avenir px-3 mx-auto py-1 rounded-lg text-white bg-green-800"
-              >
-                Update
-              </button>
-            </form>
-            <form method="dialog">
-              <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
-            </form>
-          </div>
-        </dialog>
-      </div>
-    </td>
+                      <dialog id="my_modal_1" className="modal">
+                        <div className="modal-box">
+                          <form
+                            onSubmit={(e) =>
+                              handleUpdateCurrentBalance(e, account._id)
+                            }
+                          >
+                            <input
+                              type="number"
+                              name="currentBalance"
+                              step="0.01"
+                              defaultValue={account?.currentBallence}
+                              className="w-full border rounded p-2 mt-1 text-gray-500"
+                            />
+                            <button
+                              type="submit"
+                              className="mt-4 font-avenir px-3 mx-auto py-1 rounded-lg text-white bg-green-800"
+                            >
+                              Update
+                            </button>
+                          </form>
+                          <form method="dialog">
+                            <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
+                              ✕
+                            </button>
+                          </form>
+                        </div>
+                      </dialog>
+                    </div>
+                  </td>
                   <td className="p-3 border-r-2 border-gray-300 text-center ">
                     <div className="relative group flex items-center justify-between">
-                    <h1>$ {account.threshold}</h1>
-                    <button
-    className="text-black px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-    onClick={() => document.getElementById(`my_modal_2`).showModal()}
-  >
-    <FaEdit />
-  </button>
-  
-  <dialog id={`my_modal_2`} className="modal">
-    <div className="modal-box">
-      <input
-        type="number"
-        name="threshold"
-        step="0.01"
-        defaultValue={account.threshold}
-        className="w-full border rounded p-2 mt-1 text-gray-500"
-      />
-      <form method="dialog">
-        <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
-      </form>
-    </div>
-  </dialog>
-                    </div>
- 
-  
+                      <h1>$ {account.threshold}</h1>
+                      <button
+                        className="text-black px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                        onClick={() =>
+                          document.getElementById(`my_modal_2`).showModal()
+                        }
+                      >
+                        <FaEdit />
+                      </button>
 
-             </td>
+                      <dialog id={`my_modal_2`} className="modal">
+                        <div className="modal-box">
+                          <form
+                            onSubmit={(e) =>
+                              handleUpdateThreshold(e, account._id)
+                            }
+                          >
+                            <input
+                              type="number"
+                              name="threshold"
+                              step="0.01"
+                              defaultValue={account.threshold}
+                              className="w-full border rounded p-2 mt-1 text-gray-500"
+                            />
+                            <button
+                              type="submit"
+                              className="mt-4 font-avenir px-3 mx-auto py-1 rounded-lg text-white bg-green-800"
+                            >
+                              Update
+                            </button>
+                          </form>
+
+                          <form method="dialog">
+                            <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
+                              ✕
+                            </button>
+                          </form>
+                        </div>
+                      </dialog>
+                    </div>
+                  </td>
                   <td className="p-3 border-r-2 border-gray-300 text-center ">
                     <div className="relative group flex items-center justify-between">
-                    <h1>$ {account.totalSpent}</h1>
-                    <button
-    className=" text-black px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-    onClick={() => document.getElementById(`my_modal_${account._id}`).showModal()}
-  >
-    <FaEdit />
-  </button>
-  
-  <dialog id={`my_modal_${account._id}`} className="modal">
-    <div className="modal-box">
-      <input
-        type="number"
-        name="currentBallence"
-        step="0.01"
-        defaultValue={account.totalSpent}
-        className="w-full border rounded p-2 mt-1 text-gray-500"
-      />
-      <form method="dialog">
-        <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
-      </form>
-    </div>
-  </dialog>
-                    </div>
- 
-  
+                      <h1>$ {account.totalSpent}</h1>
+                      <button
+                        className=" text-black px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                        onClick={() =>
+                          document
+                            .getElementById(`my_modal_${account._id}`)
+                            .showModal()
+                        }
+                      >
+                        <FaEdit />
+                      </button>
 
-             </td>
-                  <td className={`p-3 border-r-2  text-center border-gray-300  ${account.status === 'Active' ? 'text-green-900 font-bold' : 'text-red-600 font-bold'}`}>
-                  {account.status}
-             </td>
-                 
-             <td className="p-3 border-l-2 border-r-2 text-center border-gray-300 ">{new Date(account.issueDate).toLocaleDateString('en-GB')}</td>
+                      <dialog id={`my_modal_${account._id}`} className="modal">
+                        <div className="modal-box">
+                          <form
+                            onSubmit={(e) =>
+                              handleUpdateTotalSpent(e, account._id)
+                            }
+                          >
+                            <input
+                              type="number"
+                              name="totalSpent"
+                              step="0.01"
+                              defaultValue={account?.totalSpent}
+                              className="w-full border rounded p-2 mt-1 text-gray-500"
+                            />
+                            <button
+                              type="submit"
+                              className="mt-4 font-avenir px-3 mx-auto py-1 rounded-lg text-white bg-green-800"
+                            >
+                              Update
+                            </button>
+                          </form>
+
+                          <form method="dialog">
+                            <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
+                              ✕
+                            </button>
+                          </form>
+                        </div>
+                      </dialog>
+                    </div>
+                  </td>
+                  <td
+                    className={`p-3 border-r-2  text-center border-gray-300  ${
+                      account.status === "Active"
+                        ? "text-green-900 font-bold"
+                        : "text-red-600 font-bold"
+                    }`}
+                  >
+                    {account.status}
+                  </td>
+
+                  <td className="p-3 border-l-2 border-r-2 text-center border-gray-300 ">
+                    {new Date(account.issueDate).toLocaleDateString("en-GB")}
+                  </td>
                 </tr>
               ))}
               <tr className="bg-green-800   text-sm text-white font-bold">
                 <td className="p-3  text-right" colSpan="1">
                   Total :
                 </td>
-                <td className="p-3 border-2 border-gray-300  text-center">$ {totalCurrentBallence}</td>
-                <td className="p-3 border-2 border-gray-300  text-center">$ {totalThreshold}</td>
-                <td className="p-3 border-2 border-gray-300 text-center">$ {totalSpent}</td>
+                <td className="p-3 border-2 border-gray-300  text-center">
+                  $ {totalCurrentBallence}
+                </td>
+                <td className="p-3 border-2 border-gray-300  text-center">
+                  $ {totalThreshold}
+                </td>
+                <td className="p-3 border-2 border-gray-300 text-center">
+                  $ {totalSpent}
+                </td>
                 <td className="p-3 border-2 border-gray-300 text-center"></td>
                 <td className="p-3 border-2 border-gray-300 text-center"></td>
-              
               </tr>
             </tbody>
           </table>
@@ -431,7 +532,7 @@ const AllAdsAccount = () => {
           <div className="modal-box">
             <form onSubmit={(e) => handleUpdate(e, modalData._id)}>
               <div className="flex justify-center items-center gap-3">
-                <div  className="mb-4" >
+                <div className="mb-4">
                   <label className="block text-gray-500">Current Balance</label>
                   <input
                     type="number"
@@ -476,7 +577,7 @@ const AllAdsAccount = () => {
                 </div>
               </div>
 
-              <button 
+              <button
                 type="submit"
                 className="font-avenir px-3 mx-auto py-1 rounded-lg text-white bg-green-800"
               >
@@ -484,7 +585,10 @@ const AllAdsAccount = () => {
               </button>
             </form>
             <div className="modal-action">
-              <button className="p-2 rounded-lg bg-red-600 text-white text-center" onClick={() => setModalData(null)}>
+              <button
+                className="p-2 rounded-lg bg-red-600 text-white text-center"
+                onClick={() => setModalData(null)}
+              >
                 Close
               </button>
             </div>
@@ -493,7 +597,5 @@ const AllAdsAccount = () => {
       )}
     </div>
   );
-}
+};
 export default AllAdsAccount;
-
-
