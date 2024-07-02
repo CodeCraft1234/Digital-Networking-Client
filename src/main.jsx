@@ -151,7 +151,7 @@ const router = createBrowserRouter([
         element:<DashboardRoot></DashboardRoot>,
         children: [
           {
-            path:'dashboard',
+            path:'/dashboard/admin/home',
             element:<Banner></Banner>
            },
           {
