@@ -11,9 +11,8 @@ import {
   FaUser,
   FaUsers,
 } from "react-icons/fa";
-
+import { IoMdArrowDropdown, IoMdArrowDropup } from 'react-icons/io';
 import { RxDashboard } from "react-icons/rx";
-
 import { MdAccountCircle, MdCampaign } from "react-icons/md";
 import { IoPeopleSharp } from "react-icons/io5";
 import { FaPeopleGroup } from "react-icons/fa6";
@@ -52,215 +51,136 @@ const AdminDashboard = () => {
       setLatestLogo(latest);
     }
   }, [logo, setLogo]);
+
+  const handleMouseEnter = () => {
+    setIsOpen(true);
+  };
+
+  const handleMouseLeave = () => {
+    setIsOpen(false);
+  };
+
+  const getActiveStyle = (isActive) => (
+    isActive
+      ? { backgroundColor: 'blue', color: 'white' }
+      : {}
+  );
+
   return (
     <div className="overflow-y-auto h-screen">
       <div className="w-[200px]">
         <img className="w-44 mx-auto" src={latestLogo?.photo} alt="" />
-        <ul className="mt-4">
-          <li className="my-1 text-base">
-            <NavLink
-              to="/dashboard/admin/home"
-              className={({ isActive, isPending }) =>
-                isPending
-                  ? "pending"
-                  : isActive
-                  ? "  bg-blue-300 text-blue-700"
-                  : " hover:text-gray-100"
-              }
-            >
-              <RxDashboard className="w-6 h-6 mr-2" />
-              Dashboard
-            </NavLink>
-          </li>
+        <ul className="mt-4 space-y-1">
+          <NavLink
+            to="/dashboard/admin/home"
+            className="text-white hover:bg-green-300 hover:text-black py-2 px-4 rounded-lg flex items-center"
+            style={({ isActive }) => getActiveStyle(isActive)}
+          >
+            <RxDashboard className="w-6 h-6 mr-2" />
+            Dashboard
+          </NavLink>
 
-          <li className="my-1 text-base">
-            <NavLink
-              to="dashboard/allAdSAccount"
-              className="text-white hover:bg-green-300 hover:text-black py-2 px-4 rounded-lg flex items-center"
-              activeClassName=" bg-blue-400"
-            >
-              <MdAccountCircle className="w-6 h-6 mr-2" /> Ads Accounts
-            </NavLink>
-          </li>
-          <li className="my-1 text-base">
-            <NavLink
-              to="dashboard/addEmployee"
-              className="text-white hover:bg-green-300 hover:text-black py-2 px-4 rounded-lg flex items-center"
-              activeClassName=" bg-blue-400"
-            >
-              <MdAccountCircle className="w-6 h-6 mr-2" /> Add Employee
-            </NavLink>
-          </li>
+          <NavLink
+            to="dashboard/allAdSAccount"
+            className="text-white hover:bg-green-300 hover:text-black py-2 px-4 rounded-lg flex items-center"
+            style={({ isActive }) => getActiveStyle(isActive)}
+          >
+            <MdAccountCircle className="w-6 h-6 mr-2" /> Ads Accounts
+          </NavLink>
 
-          {/* <li className="my-1 text-base">
-        <NavLink
+          <NavLink
+            to="dashboard/addEmployee"
+            className="text-white hover:bg-green-300 hover:text-black py-2 px-4 rounded-lg flex items-center"
+            style={({ isActive }) => getActiveStyle(isActive)}
+          >
+            <MdAccountCircle className="w-6 h-6 mr-2" /> Add Employee
+          </NavLink>
+
+          <div className="relative" onMouseLeave={handleMouseLeave}>
+            <NavLink
               to="dashboard/allUsers"
-          className="text-white hover:bg-green-300 hover:text-black py-2 px-4 rounded-lg flex items-center"
-          activeClassName=" bg-blue-400"
-        >
-          <MdAccountCircle className="w-6 h-6 mr-2" />All Users
-        </NavLink>
-      </li> */}
-
-          <li className="my-1 text-base">
-            <NavLink
-              to="dashboard/allClients"
               className="text-white hover:bg-green-300 hover:text-black py-2 px-4 rounded-lg flex items-center"
-              activeClassName="bg-green-300"
+              style={({ isActive }) => getActiveStyle(isActive)}
+              onMouseEnter={handleMouseEnter}
             >
-              <IoPeopleSharp className="w-6 h-6 mr-2" /> Clients
-            </NavLink>
-          </li>
-
-          <li className="my-1 text-base">
-            <NavLink
-              to="dashboard/allCampaign"
-              className="text-white hover:bg-green-300 hover:text-black py-2 px-4 rounded-lg flex items-center"
-              activeClassName="bg-green-300"
-            >
-              <MdCampaign className="w-6 h-6 mr-2" /> Campaigns
-            </NavLink>
-          </li>
-
-          <li className="my-1 text-base">
-            <NavLink
-              to="dashboard/allEmployee"
-              className="text-white hover:bg-green-300 hover:text-black py-2 px-4 rounded-lg flex items-center"
-              activeClassName="bg-green-300"
-            >
-              <FaPeopleGroup className="w-6 h-6 mr-2" /> Employees
-            </NavLink>
-          </li>
-
-          <li className="my-1 text-base">
-            <NavLink
-              to="dashboard/employeePayment"
-              className="text-white hover:bg-green-300 hover:text-black py-2 px-4 rounded-lg flex items-center"
-              activeClassName="bg-green-300"
-            >
-              <FaPeopleGroup className="w-6 h-6 mr-2" /> Payment
-            </NavLink>
-          </li>
-
-          {/* <li className="my-1 text-base relative">
-      <button onClick={toggleDropdownTwo}
-        className="text-white hover:bg-green-300 hover:text-black py-2 px-4 rounded-lg flex items-center w-full"
-      >
-         <FaPeopleGroup className="w-6 h-6 mr-2" /> Users
-         <span className="ml-auto">
-          {isOpen ? <FaAngleUp /> : <FaAngleDown />}
-        </span>
-      </button>
-      {isOpenTwo && (
-        <ul className="absolute left-0 w-full bg-white rounded-lg shadow-lg mx-8 z-10">
-          <li className="text-black hover:bg-green-300 py-2 px-4 rounded-t-lg">
-            <NavLink to="dashboard/Users" className="flex items-center">
+              <FaPeopleGroup className="w-6 h-6 mr-2" />
               Users
+              {isOpen ? (
+                <IoMdArrowDropup className="w-6 h-6 ml-2" />
+              ) : (
+                <IoMdArrowDropdown className="w-6 h-6 ml-2" />
+              )}
             </NavLink>
-          </li>
-          <li className="text-black hover:bg-green-300 py-2 px-4 rounded-b-lg">
-            <NavLink to="dashboard/allUsers" className="flex items-center">
-              ALL Users
-            </NavLink>
-          </li>
-        </ul>
-      )}
-        
-      </li> */}
-
-          <div className="flex my-1 text-base">
-            <div className="">
-              <div className="">
-                <Menu>
-                  <Menu.Button className="text-white py-2 px-4 rounded-lg flex items-center w-full">
-                    <FaPeopleGroup className="w-6 h-6 mr-4" /> Users
-                  </Menu.Button>
-                  <Menu.Items className="mt-2">
-                    <Menu.Item>
-                      {({ active }) => (
-                        <NavLink
-                          to="dashboard/allUsers"
-                          className={`text-white hover:text-black hover:bg-green-300 py-2 px-4 rounded-lg ${
-                            active ? "hover:bg-green-300 " : ""
-                          }`}
-                        >
-                          All Users
-                        </NavLink>
-                      )}
-                    </Menu.Item>
-                    <Menu.Item>
-                      {({ active }) => (
-                        <NavLink
-                          to="dashboard/Users"
-                          className={`text-white hover:text-black hover:bg-green-300 py-2 px-4 rounded-lg ${
-                            active ? "hover:bg-green-300" : ""
-                          }`}
-                        >
-                          Users
-                        </NavLink>
-                      )}
-                    </Menu.Item>
-                    {/* <Menu.Item>
-                {({ active }) => (
-                  <a
-                    href="#profile"
-                    className={`block py-2 px-4 ${active ? 'bg-gray-700' : ''}`}
-                  >
-                    Profile
-                  </a>
-                )}
-              </Menu.Item> */}
-                  </Menu.Items>
-                </Menu>
+            {isOpen && (
+              <div
+                className="absolute top-full left-0 w-48 bg-white rounded-lg shadow-lg py-2 z-50 animate-dropdown"
+                onMouseEnter={handleMouseEnter}
+                onMouseLeave={handleMouseLeave}
+              >
+                <NavLink
+                  to="dashboard/allUsers"
+                  className="text-black hover:bg-green-300 hover:text-black py-2 px-4 rounded-lg flex items-center"
+                  style={({ isActive }) => getActiveStyle(isActive)}
+                >
+                  <FaPeopleGroup className="w-6 h-6 mr-2" />
+                  All Users
+                </NavLink>
+                <NavLink
+                  to="dashboard/allClients"
+                  className="text-black hover:bg-green-300 hover:text-black py-2 px-4 rounded-lg flex items-center"
+                  style={({ isActive }) => getActiveStyle(isActive)}
+                >
+                  <IoPeopleSharp className="w-6 h-6 mr-2" />
+                  Clients
+                </NavLink>
+                <NavLink
+                  to="dashboard/allEmployee"
+                  className="text-black hover:bg-green-300 hover:text-black py-2 px-4 rounded-lg flex items-center"
+                  style={({ isActive }) => getActiveStyle(isActive)}
+                >
+                  <FaPeopleGroup className="w-6 h-6 mr-2" />
+                  Employees
+                </NavLink>
               </div>
-            </div>
+            )}
           </div>
 
-          <li className="my-1 text-base relative">
-            <button
-              onClick={toggleDropdown}
-              className="text-white hover:bg-green-300 hover:text-black py-2 px-4 rounded-lg flex items-center w-full"
-            >
-              <FaCog className="w-6 h-6 mr-2" />
-              Settings
-              <span className="ml-auto">
-                {isOpen ? <FaAngleUp /> : <FaAngleDown />}
-              </span>
-            </button>
-            {isOpen && (
-              <ul className="absolute left-0 w-full bg-white rounded-lg shadow-lg mt-12 z-10">
-                <li className="text-black hover:bg-green-300 py-2 px-4 rounded-t-lg">
-                  <NavLink
-                    to="/dashboard/addLogos"
-                    className="flex items-center"
-                  >
-                    Add Logos
-                  </NavLink>
-                </li>
-                <li className="text-black hover:bg-green-300 py-2 px-4 rounded-b-lg">
-                  <NavLink
-                    to="/dashboard/settings"
-                    className="flex items-center"
-                  >
-                    Add Links
-                  </NavLink>
-                </li>
-              </ul>
-            )}
-          </li>
+          <NavLink
+            to="dashboard/allCampaign"
+            className="text-white hover:bg-green-300 hover:text-black py-2 px-4 rounded-lg flex items-center"
+            style={({ isActive }) => getActiveStyle(isActive)}
+          >
+            <MdCampaign className="w-6 h-6 mr-2" /> Campaigns
+          </NavLink>
 
-          <li className="my-1 text-base">
-            <NavLink
-              to="/"
-              className="text-white hover:bg-green-300 hover:text-black py-2 px-4 rounded-lg flex items-center"
-            >
-              <FaHome className="w-6 h-6 mr-2" />
-              Go Home
-            </NavLink>
-          </li>
+          <NavLink
+            to="dashboard/employeePayment"
+            className="text-white hover:bg-green-300 hover:text-black py-2 px-4 rounded-lg flex items-center"
+            style={({ isActive }) => getActiveStyle(isActive)}
+          >
+            <FaPeopleGroup className="w-6 h-6 mr-2" /> Payment
+          </NavLink>
+
+          <NavLink
+            to="/dashboard/settings"
+            className="text-white hover:bg-green-300 hover:text-black py-2 px-4 rounded-lg flex items-center"
+            style={({ isActive }) => getActiveStyle(isActive)}
+          >
+            <FaPeopleGroup className="w-6 h-6 mr-2" /> Settings
+          </NavLink>
+
+          <NavLink
+            to="/"
+            className="text-white hover:bg-green-300 hover:text-black py-2 px-4 rounded-lg flex items-center"
+            style={({ isActive }) => getActiveStyle(isActive)}
+          >
+            <FaHome className="w-6 h-6 mr-2" />
+            Go Home
+          </NavLink>
         </ul>
       </div>
     </div>
   );
 };
+
 export default AdminDashboard;

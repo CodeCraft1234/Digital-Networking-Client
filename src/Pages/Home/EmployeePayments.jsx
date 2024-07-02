@@ -116,16 +116,16 @@ const EmployeePayments = () => {
     });
   };
   return (
-    <div className="mt-24">
+    <div className="mt-5">
       <Helmet>
         <title>Digital Network | Employee Payments</title>
         <link rel="canonical" href="https://www.tacobell.com/" />
       </Helmet>
-      <div className="flex justify-between gap-4 items-center">
+      <div className="flex text-black justify-between gap-4 items-center">
         <div className="flex justify-center items-center mb-4 ml-10 mx-auto">
-          <label className="block text-gray-700 mr-2">By Employee</label>
+          <label className="block  mr-2">By Employee</label>
           <select
-            className="border rounded p-2 mt-1 mr-2"
+            className="border  bg-blue-200 text-black border-gray-400 rounded p-2 mt-1 mr-2"
             value={selectedEmployee}
             onChange={(e) => setSelectedEmployee(e.target.value)}
           >
@@ -136,9 +136,9 @@ const EmployeePayments = () => {
               </option>
             ))}
           </select>
-          <label className="block text-gray-700 mr-2">By Date (1-31)</label>
+          <label className="block  mr-2">By Date (1-31)</label>
           <select
-            className="border rounded p-2 mt-1 mr-2"
+            className="border  bg-blue-200 text-black border-gray-400 rounded p-2 mt-1 mr-2"
             value={sortDay}
             onChange={(e) => setSortDay(e.target.value)}
           >
@@ -149,9 +149,9 @@ const EmployeePayments = () => {
               </option>
             ))}
           </select>
-          <label className="block text-gray-700 mr-2">By Month</label>
+          <label className="block  mr-2">By Month</label>
           <select
-            className="border rounded p-2 mt-1"
+            className="border  bg-blue-200 text-black border-gray-400 rounded p-2 mt-1"
             value={sortMonth}
             onChange={(e) => setSortMonth(e.target.value)}
           >
@@ -165,10 +165,10 @@ const EmployeePayments = () => {
               </option>
             ))}
           </select>
-          <label className="block text-gray-700 ml-2">By Date</label>
+          <label className="block  ml-2">By Date</label>
           <input
             type="date"
-            className="border rounded p-2 mt-1"
+            className="border rounded bg-blue-200 text-black border-gray-400 p-2 mt-1"
             value={selectedDate}
             onChange={(e) => setSelectedDate(e.target.value)}
           />
