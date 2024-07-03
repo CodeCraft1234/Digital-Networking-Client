@@ -19,12 +19,7 @@ import { AuthContext } from "../../Security/AuthProvider";
 
 const EmployeeDashboard = () => {
   const {user,logOut}=useContext(AuthContext)
-
-
-
-
   const navigate = useNavigate();
-
   const handleLogOut = () => {
     logOut().then().catch();
     navigate("/login");

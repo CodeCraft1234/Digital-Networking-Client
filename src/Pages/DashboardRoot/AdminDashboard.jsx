@@ -31,17 +31,14 @@ const AdminDashboard = () => {
   const [isOpenTwo, setIsOpenTwo] = useState(false);
 
 
-  const {user}=useContext(AuthContext)
 
 
 
 
-  const navigate = useNavigate();
 
-  const handleLogOut = () => {
-    logOut().then().catch();
-    navigate("/login");
-  };
+
+
+
   const toggleDropdown = () => {
     setIsOpen(!isOpen);
   };
@@ -79,7 +76,12 @@ const AdminDashboard = () => {
       : {}
   );
   
-
+  const {user,logOut}=useContext(AuthContext)
+  const navigate = useNavigate();
+  const handleLogOut = () => {
+    logOut().then().catch();
+    navigate("/login");
+  };
   return (
     <div className="overflow-y-auto h-screen">
       <div className="w-[200px]">
@@ -87,6 +89,10 @@ const AdminDashboard = () => {
        <img className="w-44 mx-auto" src={latestLogo?.photo} alt="" />
        </Link>
         <ul className="mt-4 space-y-1">
+        <div className="flex my-5 justify-start gap-2 px-4 items-center text-white ">
+        <img className="h-10 w-10 rounded-full" src={user?.photoURL} alt="" />
+        <h1>{user?.displayName}</h1>
+        </div>
           <NavLink
             to="/dashboard/admin/home"
             className="text-white hover:bg-green-300 hover:text-black py-2 px-4 rounded-lg flex items-center"
