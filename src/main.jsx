@@ -48,13 +48,20 @@ import Users from "./Pages/DashboardRoot/Users";
 import AddClientTwo from "./Pages/DashboardRoot/AddClient";
 import AddEmployee from "./Pages/DashboardRoot/AddEmployee";
 import AddLogos from "./Pages/DashboardRoot/Routes/AddLogos";
+import AdminPayments from "./Pages/DashboardRoot/AdminPayments";
+import ClientPayments from "./Pages/DashboardRoot/ClientPayments";
 
 
 const router = createBrowserRouter([
+  
   {
     path: "/",
     element:<DashboardRoot></DashboardRoot>,
     children: [
+      {
+        path:'/',
+        element:<Home></Home>
+      },
       {
         path:'/dashboard/admin/home',
         element:<Banner></Banner>
@@ -88,7 +95,20 @@ const router = createBrowserRouter([
         element:<Settings></Settings>
        },
        {
+        path:'/dashboard/adminPayments',
+        element:<AdminPayments></AdminPayments>
+       },
+       {
+        path:'/dashboard/clientPayments',
+        element:<ClientPayments></ClientPayments>
+       },
+       {
         path:'/dashboard/client/:email',
+        element:<UserProfile></UserProfile>,
+        loader: ({ params }) => fetch(`https://digital-networking-server.vercel.app/users/${params.email}`)
+       },
+       {
+        path:'/dashboard/payments/:email',
         element:<UserProfile></UserProfile>,
         loader: ({ params }) => fetch(`https://digital-networking-server.vercel.app/users/${params.email}`)
        },
