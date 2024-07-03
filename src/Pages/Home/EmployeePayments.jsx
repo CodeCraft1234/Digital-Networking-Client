@@ -121,75 +121,105 @@ const EmployeePayments = () => {
         <title>Digital Network | Employee Payments</title>
         <link rel="canonical" href="https://www.tacobell.com/" />
       </Helmet>
-      <div className="flex text-black justify-between gap-4 items-center">
-        <div className="flex justify-center items-center mb-4 ml-10 mx-auto">
-          <label className="block  mr-2">By Employee</label>
-          <select
-            className="border  bg-blue-200 text-black border-gray-400 rounded p-2 mt-1 mr-2"
-            value={selectedEmployee}
-            onChange={(e) => setSelectedEmployee(e.target.value)}
-          >
-            <option value="">All Employee</option>
-            {employees.map((employee) => (
-              <option key={employee._id} value={employee.email}>
-                {employee.name}
-              </option>
-            ))}
-          </select>
-          <label className="block  mr-2">By Date (1-31)</label>
-          <select
-            className="border  bg-blue-200 text-black border-gray-400 rounded p-2 mt-1 mr-2"
-            value={sortDay}
-            onChange={(e) => setSortDay(e.target.value)}
-          >
-            <option value="">Select Day</option>
-            {[...Array(31).keys()].map((day) => (
-              <option key={day + 1} value={day + 1}>
-                {day + 1}
-              </option>
-            ))}
-          </select>
-          <label className="block  mr-2">By Month</label>
-          <select
-            className="border  bg-blue-200 text-black border-gray-400 rounded p-2 mt-1"
-            value={sortMonth}
-            onChange={(e) => setSortMonth(e.target.value)}
-          >
-            <option value="">Select Month</option>
-            {[
-              "January", "February", "March", "April", "May", "June",
-              "July", "August", "September", "October", "November", "December"
-            ].map((month, index) => (
-              <option key={index + 1} value={index + 1}>
-                {month}
-              </option>
-            ))}
-          </select>
-          <label className="block  ml-2">By Date</label>
-          <input
-            type="date"
-            className="border rounded bg-blue-200 text-black border-gray-400 p-2 mt-1"
-            value={selectedDate}
-            onChange={(e) => setSelectedDate(e.target.value)}
-          />
-          
-        </div>
-        <div className="flex justify-end">
+      <div className="flex flex-col text-black gap-4">
+      <div className="flex justify-between items-center w-full p-4">
+        <div className="flex items-center space-x-4">
           <input
             type="text"
-            placeholder="Payment Method"
-            className="rounded-l-lg w-20 placeholder-black border-2 border-black p-2 font-bold text-black sm:w-2/3 text-sm bg-blue-300"
+            placeholder="Client Phone Number"
+            className="rounded-l-lg placeholder-black border-2 border-black p-2 font-bold text-black text-xs bg-blue-300"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
           <button
             type="button"
-            className="w-10 p-2 font-semibold rounded-r-lg sm:w-1/3 bg-[#FF9F0D] dark:bg-[#FF9F0D] text-white"
+            className="p-2 bg-[#FF9F0D] text-white rounded-r-lg"
           >
-            <IoIosSearch className="mx-auto font-bold w-6 h-6" />
+            <IoIosSearch className="w-6 h-6" />
           </button>
         </div>
+        
+       
+          <div className="flex items-center">
+            <label className="text-gray-700 text-xs mr-2">By Employee</label>
+            <select
+              className="border rounded p-1 text-xs bg-white"
+              value={selectedEmployee}
+              onChange={(e) => setSelectedEmployee(e.target.value)}
+            >
+              <option value="">All Employee</option>
+              {employees.map((employee) => (
+                <option key={employee._id} value={employee.email}>
+                  {employee.name}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="flex items-center">
+            <label className="text-gray-700 text-xs mr-2">By Date (1-31)</label>
+            <select
+              className="border rounded p-1 text-xs bg-white"
+              value={sortDay}
+              onChange={(e) => setSortDay(e.target.value)}
+            >
+              <option value="">Select Day</option>
+              {[...Array(31).keys()].map((day) => (
+                <option key={day + 1} value={day + 1}>
+                  {day + 1}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="flex items-center">
+            <label className="text-gray-700 text-xs mr-2">By Month</label>
+            <select
+              className="border rounded p-1 text-xs bg-white"
+              value={sortMonth}
+              onChange={(e) => setSortMonth(e.target.value)}
+            >
+              <option value="">Select Month</option>
+              {[
+                "January",
+                "February",
+                "March",
+                "April",
+                "May",
+                "June",
+                "July",
+                "August",
+                "September",
+                "October",
+                "November",
+                "December",
+              ].map((month, index) => (
+                <option key={index + 1} value={index + 1}>
+                  {month}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="flex items-center">
+            <label className="text-gray-700 text-xs mr-2">By Date</label>
+            <input
+              type="date"
+              className="border rounded p-1 text-xs bg-white"
+              value={selectedDate}
+              onChange={(e) => setSelectedDate(e.target.value)}
+            />
+          </div>
+
+          <button
+            type="submit"
+            className="px-4 py-2 bg-blue-500 text-white rounded text-xs"
+          >
+            Search
+          </button>
+        
       </div>
+    </div>
 
       <div className="overflow-x-auto mt-6 border-2 border-black mx-4">
         <table className="min-w-full bg-white">
