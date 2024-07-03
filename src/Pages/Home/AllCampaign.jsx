@@ -9,6 +9,7 @@ import UseAxiosPublic from "../../Axios/UseAxiosPublic";
 import Swal from "sweetalert2";
 import { Helmet } from "react-helmet-async";
 import { FaEdit } from "react-icons/fa";
+import axios from "axios";
 
 const Campaigns = () => {
   const [users] = useUsers();
@@ -89,6 +90,63 @@ const Campaigns = () => {
 
   }, [filteredByCategory]);
 
+  const handleUpdateTotalBudget = (e, id) => {
+    e.preventDefault();
+    const tBudged = e.target.tBudged.value;
+
+    const body = { tBudged: tBudged };
+    console.log(body);
+
+    axios
+      .put(`http://localhost:5000/campaings/totalBudged/${id}`, body)
+      .then((res) => {
+        console.log(res.data);
+        refetch();
+        Swal.fire({
+          title: "Good job!",
+          text: "Total Budget updated!",
+          icon: "success",
+        });
+        setTotalBudged(null);
+      })
+      .catch((error) => {
+        console.error("Error updating account:", error);
+        Swal.fire({
+          icon: "error",
+          title: "Oops...",
+          text: "Failed to update account!",
+        });
+      });
+  };
+
+  const handleUpdateTotalSpent = (e, id) => {
+    e.preventDefault();
+    const tSpent = e.target.tSpent.value;
+
+    const body = { tSpent: tSpent };
+    console.log(body);
+
+    axios
+      .put(`http://localhost:5000/campaings/totalSpent/${id}`, body)
+      .then((res) => {
+        console.log(res.data);
+        refetch();
+        Swal.fire({
+          title: "Good job!",
+          text: "Total Spent updated!",
+          icon: "success",
+        });
+        setTotalSpent(totalSpent);
+      })
+      .catch((error) => {
+        console.error("Error updating account:", error);
+        Swal.fire({
+          icon: "error",
+          title: "Oops...",
+          text: "Failed to update account!",
+        });
+      });
+  };
 
   const AxiosPublic =UseAxiosPublic()
   const handledelete = (id) => {
@@ -230,13 +288,25 @@ const Campaigns = () => {
   
   <dialog id={`my_modal_1`} className="modal">
     <div className="modal-box">
+    <form
+                            onSubmit={(e) =>
+                              handleUpdateTotalBudget(e, campaign._id)
+                            }
+                          >
       <input
         type="number"
-        name="currentBallence"
+        name="tBudged"
         step="0.01"
         defaultValue={campaign.tBudged}
         className="w-full border rounded p-2 mt-1 text-gray-500"
       />
+      <button
+                              type="submit"
+                              className="mt-4 font-avenir px-3 mx-auto py-1 rounded-lg text-white bg-green-800"
+                            >
+                              Update
+                            </button>
+                          </form>
       <form method="dialog">
         <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
       </form>
@@ -255,14 +325,27 @@ const Campaigns = () => {
   </button>
   
   <dialog id={`my_modal_2`} className="modal">
+  
     <div className="modal-box">
+    <form
+                            onSubmit={(e) =>
+                              handleUpdateTotalSpent(e, campaign._id)
+                            }
+                          >
       <input
         type="number"
-        name="currentBallence"
+        name="tSpent"
         step="0.01"
         defaultValue={campaign.tSpent}
         className="w-full border rounded p-2 mt-1 text-gray-500"
       />
+       <button
+                              type="submit"
+                              className="mt-4 font-avenir px-3 mx-auto py-1 rounded-lg text-white bg-green-800"
+                            >
+                              Update
+                            </button>
+                          </form>
       <form method="dialog">
         <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
       </form>
