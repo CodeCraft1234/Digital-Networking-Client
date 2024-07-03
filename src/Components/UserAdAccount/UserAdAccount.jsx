@@ -40,7 +40,7 @@ const UserAdAccount = ({email}) => {
     const employeeEmail = email;
     const data = { accountName, paymentDate, employeeEmail };
 
-    AxiosPublic.post("https://digital-networking-server.vercel.app/adsAccount", data).then((res) => {
+    AxiosPublic.post("/adsAccount", data).then((res) => {
       console.log(res.data);
       // toast.success("add successful");
       refetch()
@@ -129,25 +129,25 @@ useEffect(() => {
         Add Ads Account
       </button>
       <dialog id="my_modal_3" className="modal">
-        <div className="modal-box">
+        <div className="modal-box bg-white">
           <form onSubmit={(e) => handleAddAdsAcount(e)}>
             <div className="flex justify-center items-center gap-3">
               <div className="mb-4">
-                <label className="block text-gray-250">Account Name</label>
+                <label className="block text-black">Account Name</label>
                 <input
                   type="text required"
                   name="accountName"
                   placeholder="type here..."
-                  className="w-full border rounded p-2 mt-1"
+                  className="w-full border border-gray-600 text-black bg-white rounded p-2 mt-1"
                 />
               </div>
               <div className="mb-4">
-                <label className="block text-gray-250">Payment Date</label>
+                <label className="block text-black">Payment Date</label>
                 <input
                 required
                   type="date"
                   name="paymentDate"
-                  className="w-full border rounded p-2 mt-1"
+                  className="w-full border bg-green-300 border-gray-600 text-black rounded p-2 mt-1"
                 />
               </div>
             </div>
@@ -210,7 +210,7 @@ useEffect(() => {
                   Edit
                 </button>
                 <dialog id={`modal_${index}`} className="modal">
-                  <div className="modal-box text-black font-bold">
+                  <div className="modal-box bg-white   text-black font-bold">
                     <form onSubmit={(e) => handleUpdate(e, account._id)}>
                       <div className="flex justify-center items-center gap-3">
                       <div className="mb-4">
@@ -222,7 +222,7 @@ useEffect(() => {
                             name="accountName" 
 
                             defaultValue={account?.accountName}
-                            className="w-full border-2 border-black rounded p-2 mt-1 text-gray-500"
+                            className="w-full border-2 border-black rounded p-2 mt-1 bg-white text-black"
                           />
                         </div>
                         <div className="mb-4">
@@ -234,7 +234,7 @@ useEffect(() => {
                             type="date"
                             name="paymentDate"
                             defaultValue={account?.paymentDate}
-                            className="w-full border-2 border-black rounded p-2 mt-1 text-gray-500"
+                            className="w-full border-2 border-black bg-green-300 rounded p-2 mt-1 text-black"
                           />
                         </div>
                       </div>
@@ -249,7 +249,7 @@ useEffect(() => {
                             type="number required"
                             name="currentBallence"
                             defaultValue={account.currentBallence}
-                            className="w-full  border-2 border-black rounded p-2 mt-1 text-gray-500"
+                            className="w-full  border-2 border-black rounded p-2 mt-1 text-black bg-white"
                           />
                         </div>
                         <div className="mb-4">
@@ -261,7 +261,7 @@ useEffect(() => {
                             name="threshold"
                             step="0.01"
                             defaultValue={account.threshold}
-                            className="w-full  border-2 border-black rounded p-2 mt-1 text-gray-500"
+                            className="w-full  border-2 border-black rounded p-2 mt-1 text-black bg-white"
                           />
                         </div>
                       </div>
@@ -275,7 +275,7 @@ useEffect(() => {
                             name="totalSpent"
                             step="0.01"
                             defaultValue={account.totalSpent}
-                            className="w-full  border-2 border-black rounded p-2 mt-1 text-gray-500"
+                            className="w-full  border-2 border-black rounded p-2 mt-1 text-black bg-white"
                           />
                         </div>
                         <div className="mb-4">
@@ -286,7 +286,7 @@ useEffect(() => {
                           type="text required"
                             name="status"
                             defaultValue={account.status}
-                            className="w-full border-2 border-black rounded p-2 mt-1"
+                            className="w-full border-2 border-black text-black bg-white rounded p-2 mt-1"
                           >
                             <option className="text-green-800" value="Active">Active</option>
                             <option className="text-red-800" value="Disable">Disable</option>
@@ -305,7 +305,7 @@ useEffect(() => {
                     </form>
                     <div className="modal-action">
                                                       <button className="p-2 rounded-lg bg-red-600 text-white text-center" onClick={() => document.getElementById(`modal_${index}`).close()}>Close</button>
-                                                  </div>
+                              </div>
                     
                   </div>
                 </dialog>

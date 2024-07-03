@@ -509,7 +509,7 @@ const location=useLocation()
       >
         <td className="p-3 text-center">{index + 1}</td>
       
-        <Link to={`/client/${campaign.clientEmail}`}>
+        <Link to={`/dashboard/client/${campaign.clientEmail}`}>
           <td className="p-3 flex justify-center text-center">{campaign.clientName}</td>
         </Link>
         <td className="p-3 text-center">{campaign.clientPhone}</td>
