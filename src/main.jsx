@@ -141,11 +141,7 @@ const router = createBrowserRouter([
         loader: ({ params }) => fetch(`https://digital-networking-server.vercel.app/users/${params.email}`)
 
        },
-       {
-        path:'/client/:email',
-        element:<UserProfile></UserProfile>,
-        loader: ({ params }) => fetch(`https://digital-networking-server.vercel.app/users/${params.email}`)
-       },
+      
        {
         path: "dashboard",
         element:<DashboardRoot></DashboardRoot>,
@@ -173,6 +169,11 @@ const router = createBrowserRouter([
            {
             path:'/dashboard/settings',
             element:<Settings></Settings>
+           },
+           {
+            path:'/dashboard/client/:email',
+            element:<UserProfile></UserProfile>,
+            loader: ({ params }) => fetch(`https://digital-networking-server.vercel.app/users/${params.email}`)
            },
            {
             path:'dashboard/employeePayment',

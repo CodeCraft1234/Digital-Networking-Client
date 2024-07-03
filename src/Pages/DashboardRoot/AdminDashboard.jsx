@@ -1,4 +1,4 @@
-import { NavLink } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import {
   FaAngleDown,
   FaAngleUp,
@@ -16,10 +16,11 @@ import { RxDashboard } from "react-icons/rx";
 import { MdAccountCircle, MdCampaign } from "react-icons/md";
 import { IoPeopleSharp } from "react-icons/io5";
 import { FaPeopleGroup } from "react-icons/fa6";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import useLogo from "../../Hook/useLogo";
 import { AiFillDashboard, AiTwotoneDashboard } from "react-icons/ai";
 import { Menu } from "@headlessui/react";
+import { AuthContext } from "../../Security/AuthProvider";
 
 const AdminDashboard = () => {
   const [logo, setLogo] = useLogo();
@@ -29,6 +30,18 @@ const AdminDashboard = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isOpenTwo, setIsOpenTwo] = useState(false);
 
+
+  const {user}=useContext(AuthContext)
+
+
+
+
+  const navigate = useNavigate();
+
+  const handleLogOut = () => {
+    logOut().then().catch();
+    navigate("/login");
+  };
   const toggleDropdown = () => {
     setIsOpen(!isOpen);
   };
@@ -62,14 +75,17 @@ const AdminDashboard = () => {
 
   const getActiveStyle = (isActive) => (
     isActive
-      ? { backgroundColor: 'blue', color: 'white' }
+      ? { backgroundColor: 'purple', color: 'white' }
       : {}
   );
+  
 
   return (
     <div className="overflow-y-auto h-screen">
       <div className="w-[200px]">
-        <img className="w-44 mx-auto" src={latestLogo?.photo} alt="" />
+       <Link to={'/'}>
+       <img className="w-44 mx-auto" src={latestLogo?.photo} alt="" />
+       </Link>
         <ul className="mt-4 space-y-1">
           <NavLink
             to="/dashboard/admin/home"
@@ -88,13 +104,7 @@ const AdminDashboard = () => {
             <MdAccountCircle className="w-6 h-6 mr-2" /> Ads Accounts
           </NavLink>
 
-          <NavLink
-            to="dashboard/addEmployee"
-            className="text-white hover:bg-green-300 hover:text-black py-2 px-4 rounded-lg flex items-center"
-            style={({ isActive }) => getActiveStyle(isActive)}
-          >
-            <MdAccountCircle className="w-6 h-6 mr-2" /> Add Employee
-          </NavLink>
+         
 
           <div className="relative" onMouseLeave={handleMouseLeave}>
             <NavLink
@@ -113,13 +123,13 @@ const AdminDashboard = () => {
             </NavLink>
             {isOpen && (
               <div
-                className="absolute top-full left-0 w-48 bg-white rounded-lg shadow-lg py-2 z-50 animate-dropdown"
+                className="absolute top-full left-0 w-48 bg-gray-600 rounded-lg shadow-lg py-2 z-50 animate-dropdown"
                 onMouseEnter={handleMouseEnter}
                 onMouseLeave={handleMouseLeave}
               >
                 <NavLink
                   to="dashboard/allUsers"
-                  className="text-black hover:bg-green-300 hover:text-black py-2 px-4 rounded-lg flex items-center"
+                  className="text-white hover:bg-green-300 hover:text-black py-2 px-4 rounded-lg flex items-center"
                   style={({ isActive }) => getActiveStyle(isActive)}
                 >
                   <FaPeopleGroup className="w-6 h-6 mr-2" />
@@ -127,15 +137,23 @@ const AdminDashboard = () => {
                 </NavLink>
                 <NavLink
                   to="dashboard/allClients"
-                  className="text-black hover:bg-green-300 hover:text-black py-2 px-4 rounded-lg flex items-center"
+                  className="text-white hover:bg-green-300 hover:text-black py-2 px-4 rounded-lg flex items-center"
                   style={({ isActive }) => getActiveStyle(isActive)}
                 >
                   <IoPeopleSharp className="w-6 h-6 mr-2" />
                   Clients
                 </NavLink>
                 <NavLink
+                   to="dashboard/addEmployee"
+                  className="text-white hover:bg-green-300 hover:text-black py-2 px-3 rounded-lg flex items-center"
+                  style={({ isActive }) => getActiveStyle(isActive)}
+                >
+                  <IoPeopleSharp className="w-6 h-6 mr-2" />
+                  Add Employee
+                </NavLink>
+                <NavLink
                   to="dashboard/allEmployee"
-                  className="text-black hover:bg-green-300 hover:text-black py-2 px-4 rounded-lg flex items-center"
+                  className="text-white hover:bg-green-300 hover:text-black py-2 px-4 rounded-lg flex items-center"
                   style={({ isActive }) => getActiveStyle(isActive)}
                 >
                   <FaPeopleGroup className="w-6 h-6 mr-2" />
@@ -168,15 +186,20 @@ const AdminDashboard = () => {
           >
             <FaPeopleGroup className="w-6 h-6 mr-2" /> Settings
           </NavLink>
-
           <NavLink
-            to="/"
+              to={`dashboard/adsAccount/${user?.email}`}
             className="text-white hover:bg-green-300 hover:text-black py-2 px-4 rounded-lg flex items-center"
             style={({ isActive }) => getActiveStyle(isActive)}
           >
-            <FaHome className="w-6 h-6 mr-2" />
-            Go Home
+             <button
+                          onClick={handleLogOut}
+                          className="font-avenir w-full px-3 py-1 bg-red-700 rounded text-white"
+                        >
+                          Logout
+                        </button>
           </NavLink>
+
+          
         </ul>
       </div>
     </div>
