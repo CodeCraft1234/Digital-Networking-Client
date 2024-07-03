@@ -53,186 +53,101 @@ import AddLogos from "./Pages/DashboardRoot/Routes/AddLogos";
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <Root></Root>,
-    children:[
+    element:<DashboardRoot></DashboardRoot>,
+    children: [
       {
-        path:'/',
-        element:<PrivateRoute><Home></Home></PrivateRoute>
-      },
-      {
-        path: '/login',
-        element: <Login></Login>
-      },
-      {
-        path: "/signup",
-        element: <Register></Register>
-      },
-      {
-        path:'/adAccountAds',
-        element:<AddAdsAccount></AddAdsAccount>
-      },
-      {
-        path:'/employeeAdAccount/:id',
-        element:<EmployeeAdAccount></EmployeeAdAccount>
-      },
-      {
-        path:'/allAdSAccount',
-        element:<AllAdsAccount></AllAdsAccount>
-      },
-      {
-        path:'/allClients',
-        element:<AllClients></AllClients>
-      },
-      {
-        path:'/updateProfile',
-        element:<UpdateProfile></UpdateProfile>
+        path:'/dashboard/admin/home',
+        element:<Banner></Banner>
+       },
+       {
+        path:'/login',
+        element:<Login></Login>
+       },
+       {
+        path:'/signup',
+        element:<Register></Register>
        },
       {
-        path:'/allEmployee',
-        element:<AllEmployee></AllEmployee>
+        path:'/dashboard/employee/home',
+        element:<CampaignTable2></CampaignTable2>
        },
       {
-        path:'/userInfo/:email',
-        element:<Profile></Profile>,
+        path:'dashboard/allCampaign',
+        element:<AllCampaign></AllCampaign>
+       },
+      {
+        path:'dashboard/addEmployee',
+        element:<AddEmployee></AddEmployee>
+       },
+      {
+        path:'/dashboard/addLogos',
+        element:<AddLogos></AddLogos>
+       },
+       {
+        path:'/dashboard/settings',
+        element:<Settings></Settings>
+       },
+       {
+        path:'/dashboard/client/:email',
+        element:<UserProfile></UserProfile>,
         loader: ({ params }) => fetch(`https://digital-networking-server.vercel.app/users/${params.email}`)
        },
        {
-        path:'/allCampaign',
-        element:<AllCampaign></AllCampaign>
-       },
-       {
-        path:'/employeePayment',
+        path:'dashboard/employeePayment',
         element:<EmployeePayments></EmployeePayments>
        },
        {
-        path:'/myCampaigns',
+        path:'dashboard/allEmployee',
+        element:<AllEmployee></AllEmployee>
+       },
+       {
+        path:'dashboard/allAdSAccount',
+        element:<AllAdsAccount></AllAdsAccount>
+      },
+      {
+        path:'dashboard/allClients',
+        element:<AllClients></AllClients>
+      },
+      {
+        path:'dashboard/allUsers',
+        element:<AllUsers></AllUsers>
+      },
+      {
+        path:'dashboard/AddClients',
+        element:<AddClientTwo></AddClientTwo>
+      },
+      {
+        path:'dashboard/Users',
+        element:<Users></Users>
+      },
+      {
+        path:'dashboard/myCampaigns',
         element:<MyCampaigns></MyCampaigns>
        },
        {
-        path:'/myClients',
+        path:'dashboard/myClients',
         element:<MyClients></MyClients>
        },
        {
-        path:'/addClient',
+        path:'dashboard/addClient',
         element:<AddClient></AddClient>
        },
        {
-        path:'/salerySheet',
+        path:'dashboard/salerySheet',
         element:<SalarySheet></SalarySheet>
        },
        {
-        path:'/employeeMonthlySelary',
+        path:'dashboard/employeeMonthlySelary',
         element:<EmployeeMonthlySalary></EmployeeMonthlySalary>
        },
+    
        {
-        path:'/selary/:email',
-        element:<Profile1></Profile1>,
-        loader: ({ params }) => fetch(`https://digital-networking-server.vercel.app/users/${params.email}`)
-
-       },
-       {
-        path:'/adsAccount/:email',
+        path:'dashboard/adsAccount/:email',
         element:<Profile2></Profile2>,
         loader: ({ params }) => fetch(`https://digital-networking-server.vercel.app/users/${params.email}`)
        },
-       {
-        path:'/myProfile/:email',
-        element:<Profile3></Profile3>,
-        loader: ({ params }) => fetch(`https://digital-networking-server.vercel.app/users/${params.email}`)
-
-       },
-      
-       {
-        path: "dashboard",
-        element:<DashboardRoot></DashboardRoot>,
-        children: [
-          {
-            path:'/dashboard/admin/home',
-            element:<Banner></Banner>
-           },
-          {
-            path:'/dashboard/employee/home',
-            element:<CampaignTable2></CampaignTable2>
-           },
-          {
-            path:'dashboard/allCampaign',
-            element:<AllCampaign></AllCampaign>
-           },
-          {
-            path:'dashboard/addEmployee',
-            element:<AddEmployee></AddEmployee>
-           },
-          {
-            path:'/dashboard/addLogos',
-            element:<AddLogos></AddLogos>
-           },
-           {
-            path:'/dashboard/settings',
-            element:<Settings></Settings>
-           },
-           {
-            path:'/dashboard/client/:email',
-            element:<UserProfile></UserProfile>,
-            loader: ({ params }) => fetch(`https://digital-networking-server.vercel.app/users/${params.email}`)
-           },
-           {
-            path:'dashboard/employeePayment',
-            element:<EmployeePayments></EmployeePayments>
-           },
-           {
-            path:'dashboard/allEmployee',
-            element:<AllEmployee></AllEmployee>
-           },
-           {
-            path:'dashboard/allAdSAccount',
-            element:<AllAdsAccount></AllAdsAccount>
-          },
-          {
-            path:'dashboard/allClients',
-            element:<AllClients></AllClients>
-          },
-          {
-            path:'dashboard/allUsers',
-            element:<AllUsers></AllUsers>
-          },
-          {
-            path:'dashboard/AddClients',
-            element:<AddClientTwo></AddClientTwo>
-          },
-          {
-            path:'dashboard/Users',
-            element:<Users></Users>
-          },
-          {
-            path:'dashboard/myCampaigns',
-            element:<MyCampaigns></MyCampaigns>
-           },
-           {
-            path:'dashboard/myClients',
-            element:<MyClients></MyClients>
-           },
-           {
-            path:'dashboard/addClient',
-            element:<AddClient></AddClient>
-           },
-           {
-            path:'dashboard/salerySheet',
-            element:<SalarySheet></SalarySheet>
-           },
-           {
-            path:'dashboard/employeeMonthlySelary',
-            element:<EmployeeMonthlySalary></EmployeeMonthlySalary>
-           },
-        
-           {
-            path:'dashboard/adsAccount/:email',
-            element:<Profile2></Profile2>,
-            loader: ({ params }) => fetch(`https://digital-networking-server.vercel.app/users/${params.email}`)
-           },
-        ]
-       }
     ]
-  },
+   }
 ]);
 
 const queryClient = new QueryClient();

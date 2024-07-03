@@ -33,7 +33,7 @@ const EmployeeDashboard = () => {
   return (
     <div className="overflow-hidden h-screen">
     <div className="w-[200px] bg-gray-900 text-white">
-      <div className="flex items-center justify-center py-4">
+      <div className="flex  items-center justify-center py-4">
        <Link to={'/'}>
        
        <img
@@ -43,7 +43,7 @@ const EmployeeDashboard = () => {
         /></Link>
       </div>
       <ul className="space-y-1">
-        <div className="flex justify-start gap-2 px-4 items-center text-white ">
+        <div className="flex justify-start gap-2 px-4 my-5 items-center text-white ">
         <img className="h-10 w-10 rounded-full" src={user?.photoURL} alt="" />
         <h1>{user?.displayName}</h1>
         </div>
@@ -88,12 +88,29 @@ const EmployeeDashboard = () => {
             Ads Accounts
           </NavLink>
 
+          {
+            user?.email ? <NavLink
+    
+        >
+           <button
+                        onClick={handleLogOut}
+                        className="font-avenir w-full px-3 py-1 bg-red-700 rounded text-white"
+                      >
+                        Logout
+                      </button>
+        </NavLink> : <NavLink
+              to={`/login`}
+            className="text-white hover:bg-green-300 hover:text-black py-2 px-4 rounded-lg flex items-center"
+
+          >
              <button
-                          onClick={handleLogOut}
+                        
                           className="font-avenir w-full px-3 py-1 bg-red-700 rounded text-white"
                         >
-                          Logout
+                          Login
                         </button>
+          </NavLink>
+          }
           
     </ul>
     </div>

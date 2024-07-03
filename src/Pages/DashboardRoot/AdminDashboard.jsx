@@ -192,18 +192,30 @@ const AdminDashboard = () => {
           >
             <FaPeopleGroup className="w-6 h-6 mr-2" /> Settings
           </NavLink>
-          <NavLink
-              to={`dashboard/adsAccount/${user?.email}`}
+
+          {
+            user?.email ? <NavLink
+          
+        >
+           <button
+                        onClick={handleLogOut}
+                        className="font-avenir w-full px-3 py-1 bg-red-700 rounded text-white"
+                      >
+                        Logout
+                      </button>
+        </NavLink> : <NavLink
+              to={`/login`}
             className="text-white hover:bg-green-300 hover:text-black py-2 px-4 rounded-lg flex items-center"
-            style={({ isActive }) => getActiveStyle(isActive)}
+
           >
              <button
-                          onClick={handleLogOut}
+                        
                           className="font-avenir w-full px-3 py-1 bg-red-700 rounded text-white"
                         >
-                          Logout
+                          Login
                         </button>
           </NavLink>
+          }
 
           
         </ul>
