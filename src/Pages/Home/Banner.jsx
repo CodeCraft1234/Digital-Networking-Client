@@ -113,7 +113,7 @@ useEffect(()=>{
 
 return (
 
-        <div className="mt-20 p-4 dark:text-green-800">
+        <div className="mt-5 p-4 dark:text-green-800">
   <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 mb-3  lg:grid-cols-6 gap-8 mt-4 p-4 ">
 
       <div className="balance-card bg-white rounded-2xl p-5 text-center shadow-2xl transition-transform transform hover:scale-105 border-0 ">

@@ -68,10 +68,13 @@ console.log(ddd)
     });
   };
 
-
+  const [activeDropdown, setActiveDropdown] = useState(null);
+  const toggleDropdown = (orderId) => {
+    setActiveDropdown(activeDropdown === orderId ? null : orderId);
+  };
 
   return (
-    <div className="mt-24 p-4 dark:text-green-800">
+    <div className="mt-5 p-4 dark:text-green-800">
       <Helmet>
               <title> Digital Network | All Employee</title>
               <link rel="canonical" href="https://www.tacobell.com/" />
@@ -106,7 +109,27 @@ console.log(ddd)
       <td className="p-3 border-r-2 border-gray-300 text-center">{campaign.name}</td>
       <td className="p-3 border-r-2 border-gray-300 text-center">$ {campaign.email}</td>
       <td className="p-3 border-r-2 border-gray-300 text-center">$ {campaign.role}</td>
-      <td className="p-3 border-r-2 border-gray-300 text-center"><button  className="font-avenir px-3 mx-auto py-1 rounded-lg flex justify-center text-white bg-green-800" onClick={() => handledelete(campaign._id)}>Delete</button></td>
+      <td className="p-3 border-r-2 border-gray-200 text-center">
+                  <div className="relative inline-block">
+                  <button
+                                            onClick={() => toggleDropdown(campaign._id)}
+                                            className=" focus:outline-none"
+                                        >
+                                            &#8226;&#8226;&#8226;
+                                        </button>
+                    {activeDropdown === campaign._id && (
+                      <div className="absolute right-0 z-20 w-40 py-2 mt-2 bg-white border border-gray-300 rounded-md shadow-xl">
+      
+                        <button
+                          className="block w-full px-4 py-2 text-left text-gray-800 hover:bg-gray-200"
+                          onClick={() => handledelete(campaign._id)}
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                </td>
       
     </tr>
   ))}

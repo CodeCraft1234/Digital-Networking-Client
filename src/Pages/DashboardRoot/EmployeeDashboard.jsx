@@ -1,4 +1,4 @@
-import { Link, NavLink } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import {
   FaBlog,
   FaBlogger,
@@ -18,7 +18,23 @@ import { useContext } from "react";
 import { AuthContext } from "../../Security/AuthProvider";
 
 const EmployeeDashboard = () => {
-  const {user}=useContext(AuthContext)
+  const {user,logOut}=useContext(AuthContext)
+
+
+
+
+  const navigate = useNavigate();
+
+  const handleLogOut = () => {
+    logOut().then().catch();
+    navigate("/login");
+  };
+
+  const getActiveStyle = (isActive) => (
+    isActive
+      ? { backgroundColor: 'purple', color: 'white' }
+      : {}
+  );
   return (
     <div className="overflow-hidden h-screen">
     <div className="w-[200px] bg-gray-900 text-white">
@@ -32,65 +48,58 @@ const EmployeeDashboard = () => {
         /></Link>
       </div>
       <ul className="space-y-1">
+        <div className="flex justify-start gap-2 px-4 items-center text-white ">
+        <img className="h-10 w-10 rounded-full" src={user?.photoURL} alt="" />
+        <h1>{user?.displayName}</h1>
+        </div>
       <NavLink
-        to="/dashboard/employee/home"
-        className={({ isActive }) =>
-          isActive
-            ? "flex items-center py-3 px-6 rounded-lg bg-blue-500 text-red-500"
-            : "flex items-center py-3 px-6 rounded-lg hover:bg-gray-800"
-        }
-      >
-        <RxDashboard className="w-6 h-6 mr-2" />
-        <span>Dashboard</span>
-      </NavLink>
+             to="/dashboard/employee/home"
+            className="text-white hover:bg-green-300 hover:text-black py-2 px-4 rounded-lg flex items-center"
+            style={({ isActive }) => getActiveStyle(isActive)}
+          >
+            <RxDashboard className="w-6 h-6 mr-2" />
+            Dashboard
+          </NavLink>
+      <NavLink
+             to="dashboard/AddClients"
+            className="text-white hover:bg-green-300 hover:text-black py-2 px-4 rounded-lg flex items-center"
+            style={({ isActive }) => getActiveStyle(isActive)}
+          >
+            <RxDashboard className="w-6 h-6 mr-2" />
+            Add Clients
+          </NavLink>
+      <NavLink
+              to="dashboard/myCampaigns"
+            className="text-white hover:bg-green-300 hover:text-black py-2 px-4 rounded-lg flex items-center"
+            style={({ isActive }) => getActiveStyle(isActive)}
+          >
+            <RxDashboard className="w-6 h-6 mr-2" />
+            Campaigns
+          </NavLink>
+      <NavLink
+             to="dashboard/myClients"
+            className="text-white hover:bg-green-300 hover:text-black py-2 px-4 rounded-lg flex items-center"
+            style={({ isActive }) => getActiveStyle(isActive)}
+          >
+            <RxDashboard className="w-6 h-6 mr-2" />
+            Clients
+          </NavLink>
+      <NavLink
+              to={`dashboard/adsAccount/${user?.email}`}
+            className="text-white hover:bg-green-300 hover:text-black py-2 px-4 rounded-lg flex items-center"
+            style={({ isActive }) => getActiveStyle(isActive)}
+          >
+            <RxDashboard className="w-6 h-6 mr-2" />
+            Ads Accounts
+          </NavLink>
 
-      <NavLink
-        to="dashboard/AddClients"
-        className={({ isActive }) =>
-          isActive
-            ? "flex items-center py-3 px-6 rounded-lg bg-green-300"
-            : "flex items-center py-3 px-6 rounded-lg hover:bg-gray-800"
-        }
-      >
-        <IoPeopleSharp className="w-6 h-6 mr-2" />
-        <span>Add Clients</span>
-      </NavLink>
-
-      <NavLink
-        to="dashboard/myCampaigns"
-        className={({ isActive }) =>
-          isActive
-            ? "flex items-center py-3 px-6 rounded-lg bg-green-300"
-            : "flex items-center py-3 px-6 rounded-lg hover:bg-gray-800"
-        }
-      >
-        <MdCampaign className="w-6 h-6 mr-2" />
-        <span>Campaigns</span>
-      </NavLink>
-
-      <NavLink
-        to="dashboard/myClients"
-        className={({ isActive }) =>
-          isActive
-            ? "flex items-center py-3 px-6 rounded-lg bg-green-300"
-            : "flex items-center py-3 px-6 rounded-lg hover:bg-gray-800"
-        }
-      >
-        <IoIosPeople className="w-6 h-6 mr-2" />
-        <span>Clients</span>
-      </NavLink>
-
-      <NavLink
-        to={`dashboard/adsAccount/${user?.email}`}
-        className={({ isActive }) =>
-          isActive
-            ? "flex items-center py-3 px-6 rounded-lg bg-green-300"
-            : "flex items-center py-3 px-6 rounded-lg hover:bg-gray-800"
-        }
-      >
-        <MdAccountCircle className="w-6 h-6 mr-2" />
-        <span>Ads Accounts</span>
-      </NavLink>
+             <button
+                          onClick={handleLogOut}
+                          className="font-avenir w-full px-3 py-1 bg-red-700 rounded text-white"
+                        >
+                          Logout
+                        </button>
+          
     </ul>
     </div>
   </div>
