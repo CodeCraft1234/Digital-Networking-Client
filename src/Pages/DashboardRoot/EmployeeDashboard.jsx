@@ -13,13 +13,13 @@ import { RxDashboard } from "react-icons/rx";
 import { MdAccountCircle, MdCampaign } from "react-icons/md";
 import { IoPeopleSharp } from "react-icons/io5";
 
-import { FaPeopleGroup,  } from "react-icons/fa6";
+
 import { IoIosPeople, IoMdArrowDropdown, IoMdArrowDropup } from "react-icons/io";
 import { useContext, useState } from "react";
 
 import { FaPeopleGroup, FaUser } from "react-icons/fa6";
-import { IoIosPeople } from "react-icons/io";
-import { useContext } from "react";
+
+
 
 import { AuthContext } from "../../Security/AuthProvider";
 
@@ -77,14 +77,7 @@ const EmployeeDashboard = () => {
           </Link>
         </div>
         <ul className="space-y-1">
-          <div className="flex justify-start gap-2 px-4 my-5 items-center text-white ">
-            <img
-              className="h-10 w-10 rounded-full"
-              src={user?.photoURL}
-              alt=""
-            />
-            <h1>{user?.displayName}</h1>
-          </div>
+        
           <NavLink
             to="/dashboard/employee/home"
             className="text-white hover:bg-green-300 hover:text-black py-2 px-4 rounded-lg flex items-center"
@@ -170,6 +163,10 @@ const EmployeeDashboard = () => {
 
           {user?.email ? (
             <NavLink>
+               <div className="flex my-5 mt-16 justify-start gap-2 px-4 items-center text-white ">
+        <img className="h-10 w-10 rounded-full" src={user?.photoURL} alt="" />
+        <h1>{user?.displayName}</h1>
+        </div>
               <button
                 onClick={handleLogOut}
                 className="font-avenir w-full px-3 py-1 bg-red-700 rounded text-white"
