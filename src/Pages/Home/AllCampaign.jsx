@@ -92,9 +92,9 @@ const Campaigns = () => {
 
   const handleUpdateTotalBudget = (e, id) => {
     e.preventDefault();
-    const totalBudged = e.target.totalBudged.value;
+    const tBudged = e.target.tBudged.value;
 
-    const body = { totalBudged: totalBudged };
+    const body = { tBudged: tBudged };
     console.log(body);
 
     axios
@@ -121,9 +121,9 @@ const Campaigns = () => {
 
   const handleUpdateTotalSpent = (e, id) => {
     e.preventDefault();
-    const totalSpent = e.target.totalSpent.value;
+    const tSpent = e.target.tSpent.value;
 
-    const body = { totalSpent: totalSpent };
+    const body = { tSpent: tSpent };
     console.log(body);
 
     axios
@@ -136,7 +136,7 @@ const Campaigns = () => {
           text: "Total Spent updated!",
           icon: "success",
         });
-        setTotalSpent(null);
+        setTotalSpent(totalSpent);
       })
       .catch((error) => {
         console.error("Error updating account:", error);
@@ -278,7 +278,7 @@ const Campaigns = () => {
 
              <td className="p-3 border-r-2 border-gray-300 text-center ">
                     <div className="relative group flex items-center justify-center ">
-                    <h1>$ {campaign.totalBudged}</h1>
+                    <h1>$ {campaign.tBudged}</h1>
                     <button
     className="text-black px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
     onClick={() => document.getElementById(`my_modal_1`).showModal()}
@@ -295,9 +295,9 @@ const Campaigns = () => {
                           >
       <input
         type="number"
-        name="totalBudged"
+        name="tBudged"
         step="0.01"
-        defaultValue={campaign.totalBudged}
+        defaultValue={campaign.tBudged}
         className="w-full border rounded p-2 mt-1 text-gray-500"
       />
       <button
@@ -316,7 +316,7 @@ const Campaigns = () => {
             </td>
              <td className="p-3 border-r-2 border-gray-300 text-center ">
                     <div className="relative group flex items-center justify-center ">
-                    <h1>$ {campaign.totalSpent}</h1>
+                    <h1>$ {campaign.tSpent}</h1>
                     <button
     className="text-black px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
     onClick={() => document.getElementById(`my_modal_2`).showModal()}
@@ -334,9 +334,9 @@ const Campaigns = () => {
                           >
       <input
         type="number"
-        name="totalSpent"
+        name="tSpent"
         step="0.01"
-        defaultValue={campaign.totalSpent}
+        defaultValue={campaign.tSpent}
         className="w-full border rounded p-2 mt-1 text-gray-500"
       />
        <button
