@@ -376,7 +376,7 @@ const AllAdsAccount = () => {
                       </button>
 
                       <dialog id="my_modal_1" className="modal">
-                        <div className="modal-box">
+                        <div className="modal-box bg-white">
                           <form
                             onSubmit={(e) =>
                               handleUpdateCurrentBalance(e, account._id)
@@ -387,7 +387,7 @@ const AllAdsAccount = () => {
                               name="currentBalance"
                               step="0.01"
                               defaultValue={account?.currentBallence}
-                              className="w-full border rounded p-2 mt-1 text-gray-500"
+                              className="w-full  rounded p-2 mt-3 bg-white text-black border border-gray-700"
                             />
                             <button
                               type="submit"
@@ -418,7 +418,7 @@ const AllAdsAccount = () => {
                       </button>
 
                       <dialog id={`my_modal_2`} className="modal">
-                        <div className="modal-box">
+                        <div className="modal-box py-4 bg-white">
                           <form
                             onSubmit={(e) =>
                               handleUpdateThreshold(e, account._id)
@@ -427,9 +427,9 @@ const AllAdsAccount = () => {
                             <input
                               type="number"
                               name="threshold"
-                              step="0.01"
+                              step="0.01" 
                               defaultValue={account.threshold}
-                              className="w-full border rounded p-2 mt-1 text-gray-500"
+                              className="w-full  rounded p-2 mt-5 bg-white text-black border border-gray-700 "
                             />
                             <button
                               type="submit"
@@ -463,7 +463,7 @@ const AllAdsAccount = () => {
                       </button>
 
                       <dialog id={`my_modal_${account._id}`} className="modal">
-                        <div className="modal-box">
+                        <div className="modal-box bg-white">
                           <form
                             onSubmit={(e) =>
                               handleUpdateTotalSpent(e, account._id)
@@ -474,7 +474,7 @@ const AllAdsAccount = () => {
                               name="totalSpent"
                               step="0.01"
                               defaultValue={account?.totalSpent}
-                              className="w-full border rounded p-2 mt-1 text-gray-500"
+                              className="w-full  rounded p-2 mt-3 bg-white text-black border border-gray-700 "
                             />
                             <button
                               type="submit"
@@ -531,7 +531,7 @@ const AllAdsAccount = () => {
 
       {modalData && (
         <dialog className="modal" open>
-          <div className="modal-box">
+          <div className="modal-box bg-white text-black">
             <form onSubmit={(e) => handleUpdate(e, modalData._id)}>
               <div className="flex justify-center items-center gap-3">
                 <div className="mb-4">
@@ -541,7 +541,7 @@ const AllAdsAccount = () => {
                     name="currentBallence"
                     step="0.01"
                     defaultValue={modalData.currentBallence}
-                    className="w-full border rounded p-2 mt-1 text-gray-500"
+                    className="w-full border rounded p-2 mt-1 text-black bg-white border-gray-500"
                   />
                 </div>
                 <div className="mb-4">
@@ -551,7 +551,7 @@ const AllAdsAccount = () => {
                     name="threshold"
                     step="0.01"
                     defaultValue={modalData.threshold}
-                    className="w-full border rounded p-2 mt-1 text-gray-500"
+                    className="w-full border rounded p-2 mt-1 text-black bg-white border-gray-500"
                   />
                 </div>
               </div>
@@ -563,7 +563,7 @@ const AllAdsAccount = () => {
                     name="totalSpent"
                     step="0.01"
                     defaultValue={modalData.totalSpent}
-                    className="w-full border rounded p-2 mt-1 text-gray-500"
+                    className="w-full border rounded p-2 mt-1 text-black bg-white border-gray-500"
                   />
                 </div>
                 <div className="mb-4">
@@ -571,7 +571,7 @@ const AllAdsAccount = () => {
                   <select
                     name="status"
                     defaultValue={modalData.status}
-                    className="w-full border rounded p-2 mt-1 text-gray-500"
+                    className="w-full border rounded p-2 mt-1 text-black bg-white border-gray-500"
                   >
                     <option value="Active">Active</option>
                     <option value="Disable">Disable</option>

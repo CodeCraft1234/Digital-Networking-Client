@@ -1,4 +1,4 @@
-import { Link, NavLink } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import {
   FaAngleDown,
   FaAngleUp,
@@ -16,10 +16,11 @@ import { RxDashboard } from "react-icons/rx";
 import { MdAccountCircle, MdCampaign } from "react-icons/md";
 import { IoPeopleSharp } from "react-icons/io5";
 import { FaPeopleGroup } from "react-icons/fa6";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import useLogo from "../../Hook/useLogo";
 import { AiFillDashboard, AiTwotoneDashboard } from "react-icons/ai";
 import { Menu } from "@headlessui/react";
+import { AuthContext } from "../../Security/AuthProvider";
 
 const AdminDashboard = () => {
   const [logo, setLogo] = useLogo();
@@ -29,6 +30,18 @@ const AdminDashboard = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isOpenTwo, setIsOpenTwo] = useState(false);
 
+
+  const {user}=useContext(AuthContext)
+
+
+
+
+  const navigate = useNavigate();
+
+  const handleLogOut = () => {
+    logOut().then().catch();
+    navigate("/login");
+  };
   const toggleDropdown = () => {
     setIsOpen(!isOpen);
   };
@@ -172,6 +185,18 @@ const AdminDashboard = () => {
             style={({ isActive }) => getActiveStyle(isActive)}
           >
             <FaPeopleGroup className="w-6 h-6 mr-2" /> Settings
+          </NavLink>
+          <NavLink
+              to={`dashboard/adsAccount/${user?.email}`}
+            className="text-white hover:bg-green-300 hover:text-black py-2 px-4 rounded-lg flex items-center"
+            style={({ isActive }) => getActiveStyle(isActive)}
+          >
+             <button
+                          onClick={handleLogOut}
+                          className="font-avenir w-full px-3 py-1 bg-red-700 rounded text-white"
+                        >
+                          Logout
+                        </button>
           </NavLink>
 
           
