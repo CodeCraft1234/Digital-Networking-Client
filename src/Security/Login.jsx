@@ -89,9 +89,7 @@ const handleFacebook = () => {
     signIn(email, password)
       .then((result) => {
         console.log(result.user);
-        {
-          ddd?.role === 'employee' ? navigate(`/dashboard/employee/home`) :  navigate("/dashboard/admin/home")
-        }
+        navigate(`/`)
       
         Swal.fire({
           title: "successfully login!",
@@ -139,7 +137,7 @@ const handleFacebook = () => {
 
  const [show,setShow]=useState(false)
   return (
-    <div className="mt-32 flex justify-center items-center mx-auto lg:pb-0 md:pb-0 pb-8">
+    <div className=" flex min-h-screen justify-center items-center mx-auto lg:pb-0 md:pb-0 pb-8">
       <div className="box mt-10">
         <div className="login">
           <div className="loginBx">

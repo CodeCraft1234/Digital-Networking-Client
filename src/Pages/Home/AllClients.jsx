@@ -186,7 +186,7 @@ const AxiosPublic =UseAxiosPublic()
     >
       <td className="p-3 border-l-2 border-r-2 border-gray-300 text-center">{campaign.date}</td>
       <td className="p-3 border-r-2 border-gray-300 text-center">
-        <Link to={`/client/${campaign.clientEmail}`} className="flex justify-center">
+        <Link to={`/dashboard/client/${campaign.clientEmail}`} className="flex justify-center">
           {campaign.clientName}
         </Link>
       </td>
