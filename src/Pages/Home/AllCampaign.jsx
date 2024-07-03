@@ -81,10 +81,12 @@ const Campaigns = () => {
   }, [campaigns]);
 
   const handleSort = (e) => {
+
     e.preventDefault();
     const email = e.target.email.value;
     const filtered = campaigns.filter((c) => c.status === email);
     setFilteredClients(filtered);
+
   };
 
   const [searchQuery, setSearchQuery] = useState("");
@@ -132,6 +134,8 @@ const Campaigns = () => {
     );
     setTotalBill(totalBill);
   }, [filteredByCategory]);
+
+
 
   const handleUpdateTotalBudget = (e, id) => {
     e.preventDefault();
@@ -191,6 +195,7 @@ const Campaigns = () => {
       });
   };
 
+
   const AxiosPublic = UseAxiosPublic();
   const handledelete = (id) => {
     Swal.fire({
@@ -227,11 +232,12 @@ const Campaigns = () => {
   };
 
   return (
-    <div className="mt-24">
+    <div className="mt-5">
       <Helmet>
         <title> Digital Network | All Campaign</title>
         <link rel="canonical" href="https://www.tacobell.com/" />
       </Helmet>
+
       <div className="flex text-black justify-between gap-4 items-center ">
         <form
           className="flex justify-center items-center"
@@ -335,6 +341,7 @@ const Campaigns = () => {
             </div>
           </div>
         </form>
+
       </div>
 
       <div className="p-2 sm:p-4">
@@ -360,11 +367,13 @@ const Campaigns = () => {
                       : "bg-gray-200 text-gray-500 border-b border-opacity-20"
                   }`}
                 >
+
                   <td className="p-3 border-r-2  border-gray-300 text-start px-5 ">
                     {index + 1}
                   </td>
 
                   <td className="p-3 border-r-2  border-gray-300 text-start px-5 ">
+
                     <div className="">
                       <Link to={`/client/${campaign.clientEmail}`} className="">
                         {campaign.campaignName}
@@ -381,11 +390,14 @@ const Campaigns = () => {
                     </div>
                   </td>
 
+
+
                   <td className="p-3 border-r-2 border-gray-300 text-center ">
                     <div className="relative group flex items-center justify-center ">
                       <h1>$ {campaign.tBudged}</h1>
                       <button
                         className="text-black px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+
                         onClick={() =>
                           document.getElementById(`my_modal_1`).showModal()
                         }
@@ -414,6 +426,7 @@ const Campaigns = () => {
                               Update
                             </button>
                           </form>
+
                           <form method="dialog">
                             <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
                               ✕
@@ -428,6 +441,7 @@ const Campaigns = () => {
                       <h1>$ {campaign.tSpent}</h1>
                       <button
                         className="text-black px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+
                         onClick={() =>
                           document.getElementById(`my_modal_2`).showModal()
                         }
@@ -456,6 +470,7 @@ const Campaigns = () => {
                               Update
                             </button>
                           </form>
+
                           <form method="dialog">
                             <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
                               ✕
@@ -465,6 +480,7 @@ const Campaigns = () => {
                       </dialog>
                     </div>
                   </td>
+
 
                   <td
                     className={`p-3 border-r-2 text-center border-gray-300 ${
@@ -477,6 +493,7 @@ const Campaigns = () => {
                         : ""
                     }`}
                   >
+
                     {campaign.status}
                   </td>
                   <td className="p-3 border-l-2 border-r-2 border-gray-300 ">
@@ -485,10 +502,12 @@ const Campaigns = () => {
                 </tr>
               ))}
               <tr className="bg-green-800 text-sm text-white font-bold">
+
                 <td
                   className="p-3 border-2 border-black text-right"
                   colSpan="1"
                 >
+
                   Total :
                 </td>
                 <td className="p-3 border-2 border-black text-center">

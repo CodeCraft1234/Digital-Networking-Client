@@ -90,7 +90,7 @@ const handleFacebook = () => {
       .then((result) => {
         console.log(result.user);
         {
-          ddd?.role === 'employee' ? navigate(`/myProfile/${ddd?.email}`) :  navigate("/")
+          ddd?.role === 'employee' ? navigate(`/dashboard/employee/home`) :  navigate("/dashboard/admin/home")
         }
       
         Swal.fire({
