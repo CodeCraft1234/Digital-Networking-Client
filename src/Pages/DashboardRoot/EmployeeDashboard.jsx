@@ -17,9 +17,9 @@ import { FaPeopleGroup,  } from "react-icons/fa6";
 import { IoIosPeople, IoMdArrowDropdown, IoMdArrowDropup } from "react-icons/io";
 import { useContext, useState } from "react";
 
-import { FaPeopleGroup, FaUser } from "react-icons/fa6";
-import { IoIosPeople } from "react-icons/io";
-import { useContext } from "react";
+import {  FaUser } from "react-icons/fa6";
+
+
 
 import { AuthContext } from "../../Security/AuthProvider";
 
