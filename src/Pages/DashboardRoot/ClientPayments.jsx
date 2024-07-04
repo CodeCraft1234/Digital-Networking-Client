@@ -18,7 +18,7 @@ const ClientPayments = () => {
   const [filteredData, setFilteredData] = useState([]);
 
   useEffect(() => {
-    const finds = MPayment.filter(f => f.employeeEmail === user?.email);
+    const finds = MPayment.filter((f) => f.employeeEmail === user?.email);
     setData(finds);
   }, [MPayment, user]);
 
@@ -26,19 +26,26 @@ const ClientPayments = () => {
     let filtered = data;
 
     if (sortMonth) {
-      filtered = filtered.filter(payment => new Date(payment.date).getMonth() + 1 === parseInt(sortMonth));
+      filtered = filtered.filter(
+        (payment) =>
+          new Date(payment.date).getMonth() + 1 === parseInt(sortMonth)
+      );
     }
 
     if (selectedDate) {
-      filtered = filtered.filter(payment => payment.date === selectedDate);
+      filtered = filtered.filter((payment) => payment.date === selectedDate);
     }
 
     if (selectedCategory) {
-      filtered = filtered.filter(payment => payment.paymentMethod === selectedCategory);
+      filtered = filtered.filter(
+        (payment) => payment.paymentMethod === selectedCategory
+      );
     }
 
     if (searchQuery) {
-      filtered = filtered.filter(payment => payment.paymentMethod.toLowerCase().includes(searchQuery.toLowerCase()));
+      filtered = filtered.filter((payment) =>
+        payment.paymentMethod.toLowerCase().includes(searchQuery.toLowerCase())
+      );
     }
 
     setFilteredData(filtered);
@@ -106,7 +113,10 @@ const ClientPayments = () => {
     });
   };
 
-  const totalPayment = filteredData.reduce((sum, payment) => sum + payment.payAmount, 0);
+  const totalPayment = filteredData.reduce(
+    (sum, payment) => sum + payment.payAmount,
+    0
+  );
 
   return (
     <div className="mt-5">
@@ -116,49 +126,58 @@ const ClientPayments = () => {
       </Helmet>
       <div className="flex text-black justify-between gap-4 items-center">
         <div className="flex justify-center items-center gap-5 mb-4 ml-10 mx-auto">
-         <div className="flex flex-col justify-center items-center">
-         <label className="">By Month</label>
-          <select
-            className="border bg-blue-200 text-black border-gray-400 rounded p-2 mt-1"
-            value={sortMonth}
-            onChange={(e) => setSortMonth(e.target.value)}
-          >
-            <option value="">Select Month</option>
-            {[
-              "January", "February", "March", "April", "May", "June",
-              "July", "August", "September", "October", "November", "December"
-            ].map((month, index) => (
-              <option key={index + 1} value={index + 1}>
-                {month}
-              </option>
-            ))}
-          </select>
-         </div>
-         <div className="flex flex-col justify-center items-center">
-         <label className="block ">By Date</label>
-          <input
-            type="date"
-            className="border rounded bg-blue-200 text-black border-gray-400 p-2 mt-1"
-            value={selectedDate}
-            onChange={(e) => setSelectedDate(e.target.value)}
-          />
-         </div>
-         <div className="flex flex-col justify-center items-center">
-         <label className="block ml-2">Payment Method</label>
-          <select
-            className="border bg-blue-200 text-black border-gray-400 rounded p-2 mt-1"
-            value={selectedCategory}
-            onChange={(e) => setSelectedCategory(e.target.value)}
-          >
-            <option value="">All Methods</option>
-            <option value="bkashPersonal">bKash Personal</option>
-            <option value="bkashMarchent">bKash Marcent</option>
-            <option value="nagadPersonal">Nagad Personal</option>
-            <option value="rocketPersonal">Rocket Personal</option>
-            <option value="bank">Bank</option>
-          </select>
-         </div>
-          
+          <div className="flex flex-col justify-center items-center">
+            <label className="">By Month</label>
+            <select
+              className="border bg-blue-200 text-black border-gray-400 rounded p-2 mt-1"
+              value={sortMonth}
+              onChange={(e) => setSortMonth(e.target.value)}
+            >
+              <option value="">Select Month</option>
+              {[
+                "January",
+                "February",
+                "March",
+                "April",
+                "May",
+                "June",
+                "July",
+                "August",
+                "September",
+                "October",
+                "November",
+                "December",
+              ].map((month, index) => (
+                <option key={index + 1} value={index + 1}>
+                  {month}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className="flex flex-col justify-center items-center">
+            <label className="block ">By Date</label>
+            <input
+              type="date"
+              className="border rounded bg-blue-200 text-black border-gray-400 p-2 mt-1"
+              value={selectedDate}
+              onChange={(e) => setSelectedDate(e.target.value)}
+            />
+          </div>
+          <div className="flex flex-col justify-center items-center">
+            <label className="block ml-2">Payment Method</label>
+            <select
+              className="border bg-blue-200 text-black border-gray-400 rounded p-2 mt-1"
+              value={selectedCategory}
+              onChange={(e) => setSelectedCategory(e.target.value)}
+            >
+              <option value="">All Methods</option>
+              <option value="bkashPersonal">bKash Personal</option>
+              <option value="bkashMarchent">bKash Marcent</option>
+              <option value="nagadPersonal">Nagad Personal</option>
+              <option value="rocketPersonal">Rocket Personal</option>
+              <option value="bank">Bank</option>
+            </select>
+          </div>
         </div>
         <div className="flex justify-end">
           <input
@@ -199,13 +218,13 @@ const ClientPayments = () => {
                   {index + 1}
                 </td>
                 <td className="p-3 border-r-2 border-gray-200 text-center">
-                  {payment.date}
+                  {new Date(payment.date).toLocaleDateString("en-GB")}
                 </td>
                 <td className="p-3 border-r-2 border-gray-200 text-center">
-                  ৳ {payment.payAmount} 
+                  ৳ {payment.payAmount}
                 </td>
                 <td className="p-3 border-r-2 border-gray-200 text-center">
-                {payment.paymentMethod === "bkashMarchent" && (
+                  {payment.paymentMethod === "bkashMarchent" && (
                     <img
                       className="h-10 w-24 flex mx-auto my-auto items-center justify-center"
                       src="https://i.ibb.co/bHMLyvM/b-Kash-Merchant.png"
@@ -246,12 +265,12 @@ const ClientPayments = () => {
                 </td>
                 <td className="p-3 border-r-2 border-gray-200 text-center">
                   <div className="relative inline-block">
-                  <button
-                                            onClick={() => toggleDropdown(payment._id)}
-                                            className=" focus:outline-none"
-                                        >
-                                            &#8226;&#8226;&#8226;
-                                        </button>
+                    <button
+                      onClick={() => toggleDropdown(payment._id)}
+                      className=" focus:outline-none"
+                    >
+                      &#8226;&#8226;&#8226;
+                    </button>
                     {activeDropdown === payment._id && (
                       <div className="absolute right-0 z-20 w-40 py-2 mt-2 bg-white border border-gray-300 rounded-md shadow-xl">
                         <button
