@@ -25,6 +25,7 @@ const Campaigns = () => {
   const [selectedEmployee, setSelectedEmployee] = useState("");
   const [selectedDate, setSelectedDate] = useState("");
 
+
   useEffect(() => {
     if (users && user) {
       const employees = users.filter((u) => u.role === "employee");
@@ -125,6 +126,8 @@ const Campaigns = () => {
     );
     setTotalBill(totalBill);
   }, [filteredByCategory]);
+
+
 
   const handleUpdateTotalBudget = (e, id) => {
     e.preventDefault();
@@ -436,6 +439,9 @@ const Campaigns = () => {
                       </dialog>
                     </div>
                   </td>
+                 
+
+     
 
                   <td
                     className={`p-3 border-r-2 text-center border-gray-300 ${
