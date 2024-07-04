@@ -184,7 +184,7 @@ const AxiosPublic =UseAxiosPublic()
           : "bg-gray-200 text-gray-500 border-b border-opacity-20"
       }`}
     >
-      <td className="p-3 border-l-2 border-r-2 border-gray-300 text-center">{campaign.date}</td>
+      <td className="p-3 border-l-2 border-r-2 border-gray-300 text-center">{new Date(campaign?.date).toLocaleDateString("en-GB")}</td>
       <td className="p-3 border-r-2 border-gray-300 text-center">
         <Link to={`/dashboard/client/${campaign.clientEmail}`} className="flex justify-center">
           {campaign.clientName}

@@ -67,7 +67,7 @@ const PaymentHistory = () => {
                 key={index}
                 className={`${index % 2 === 0 ? "bg-gray-100" : "bg-white"}`}
               >
-                <td className="p-3 text-center">{payment.date}</td>
+                <td className="p-3 text-center">{new Date(payment.date).toLocaleDateString("en-GB")}</td>
                 <td className="p-3 text-center">৳ {payment.amount}</td>
                 <td className="p-3 text-center">{payment.method}</td>
                 <td className="p-3 text-center">

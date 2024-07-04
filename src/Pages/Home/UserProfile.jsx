@@ -290,6 +290,31 @@ const UserProfile = () => {
     setData22(filtered);
   }, [clients, user?.email]);
 
+  const handledelete = (id) => {
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You want to delete this Blog!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete blog",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        AxiosPublic.delete(`/campaigns/${id}`).then((res) => {
+          refetch();
+          if (res.data.deletedCount > 0) {
+            Swal.fire({
+              title: "Deleted!",
+              text: "Your blog has been deleted.",
+              icon: "success",
+            });
+          }
+        });
+      }
+    });
+  };
+
   const handleUpdatePayment = (e, id) => {
     e.preventDefault();
     const amount = e.target.amount.value;
@@ -495,7 +520,7 @@ const UserProfile = () => {
             <thead className="bg-green-800 text-white">
               <tr>
                 <th className="p-3">ID</th>
-                <th className="p-3">Date</th>
+                
                 <th className="p-3">Campaign Name</th>
                 <th className="p-3">Ads Account</th>
 
@@ -503,6 +528,7 @@ const UserProfile = () => {
                 <th className="p-3">T. Spent</th>
                 <th className="p-3">Total Bill</th>
                 <th className="p-3">Status</th>
+                <th className="p-3">Date</th>
                 {ddd?.role === "admin" ? <></> : <th className="p-3">Edit</th>}
               </tr>
             </thead>
@@ -515,12 +541,20 @@ const UserProfile = () => {
                   <td className="p-3 border-r-2 border-l-2 border-gray-200 text-center">
                     {work._id.slice(-5)}
                   </td>
-                  <td className="p-3 border-r-2 border-gray-200 text-center">
-                    {work.date}
-                  </td>
-                  <td className="p-3 border-r-2 border-gray-200 text-center">
+                  
+                  <td className="p-3 border-r-2 border-gray-200 text-left">
                     {work.campaignName}
+                    <div className="flex justify-start gap-3">
+                        <button className="text-blue-600">Edit</button>
+                        <button
+                          className="text-start flex justify-start text-red-600"
+                          onClick={() => handledelete(work._id)}
+                        >
+                          Delete
+                        </button>
+                      </div>
                   </td>
+                  
                   <td className="p-3 border-r-2 border-gray-200 text-center">
                     {work.adsAccount}
                   </td>
@@ -625,6 +659,9 @@ const UserProfile = () => {
                     }`}
                   >
                     {work.status}
+                  </td>
+                  <td className="p-3 border-r-2 border-gray-200 text-center">
+                  {new Date(work?.date).toLocaleDateString("en-GB")}
                   </td>
                   {ddd?.role === "admin" ? (
                     <></>
