@@ -527,8 +527,8 @@ const UserProfile = () => {
 
                   <td className="p-3 border-r-2 border-gray-200 text-center">
                   <div className="relative group flex items-center justify-center ">
-                    <h1 className="text-md mr-1 font-extrabold">$</h1>{" "}
-                    {work.tBudged}
+                   
+                   $ {work.tBudged}
                     <button
                         className="text-black px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
                         onClick={() =>
@@ -571,8 +571,8 @@ const UserProfile = () => {
 
                   <td className="p-3 border-r-2 border-gray-200 text-center">
                   <div className="relative group flex items-center justify-center ">
-                    <h1 className="text-md mr-1 font-extrabold">$</h1>{" "}
-                    {work.tSpent}
+                    
+                    $ {work.tSpent}
                     <button
                         className="text-black px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
                         onClick={() =>

@@ -13,8 +13,8 @@ import {
 } from "react-icons/fa";
 import { IoMdArrowDropdown, IoMdArrowDropup } from 'react-icons/io';
 import { RxDashboard } from "react-icons/rx";
-import { MdAccountCircle, MdCampaign } from "react-icons/md";
-import { IoPeopleSharp } from "react-icons/io5";
+import { MdAccountCircle, MdCampaign, MdOutlinePayment } from "react-icons/md";
+import { IoPeopleSharp, IoSettingsSharp } from "react-icons/io5";
 import { FaPeopleGroup } from "react-icons/fa6";
 import { useContext, useEffect, useState } from "react";
 import useLogo from "../../Hook/useLogo";
@@ -29,15 +29,6 @@ const AdminDashboard = () => {
 
   const [isOpen, setIsOpen] = useState(false);
   const [isOpenTwo, setIsOpenTwo] = useState(false);
-
-
-
-
-
-
-
-
-
 
   const toggleDropdown = () => {
     setIsOpen(!isOpen);
@@ -89,10 +80,7 @@ const AdminDashboard = () => {
        <img className="w-44 mx-auto" src={latestLogo?.photo} alt="" />
        </Link>
         <ul className="mt-4 space-y-1">
-        <div className="flex my-5 justify-start gap-2 px-4 items-center text-white ">
-        <img className="h-10 w-10 rounded-full" src={user?.photoURL} alt="" />
-        <h1>{user?.displayName}</h1>
-        </div>
+
           <NavLink
             to="/dashboard/admin/home"
             className="text-white hover:bg-green-300 hover:text-black py-2 px-4 rounded-lg flex items-center"
@@ -182,7 +170,7 @@ const AdminDashboard = () => {
             className="text-white hover:bg-green-300 hover:text-black py-2 px-4 rounded-lg flex items-center"
             style={({ isActive }) => getActiveStyle(isActive)}
           >
-            <FaPeopleGroup className="w-6 h-6 mr-2" /> Payment
+            <MdOutlinePayment className="w-6 h-6 mr-2" /> Payment
           </NavLink>
 
           <NavLink
@@ -190,13 +178,19 @@ const AdminDashboard = () => {
             className="text-white hover:bg-green-300 hover:text-black py-2 px-4 rounded-lg flex items-center"
             style={({ isActive }) => getActiveStyle(isActive)}
           >
-            <FaPeopleGroup className="w-6 h-6 mr-2" /> Settings
+            <IoSettingsSharp className="w-6 h-6 mr-2" /> Settings
           </NavLink>
 
+         
+
           {
-            user?.email ? <NavLink
+            user?.email ? <NavLink className='mt-10'
           
         >
+           <div className="flex my-5 mt-16 justify-start gap-2 px-4 items-center text-white ">
+        <img className="h-10 w-10 rounded-full" src={user?.photoURL} alt="" />
+        <h1>{user?.displayName}</h1>
+        </div>
            <button
                         onClick={handleLogOut}
                         className="font-avenir w-full px-3 py-1 bg-red-700 rounded text-white"

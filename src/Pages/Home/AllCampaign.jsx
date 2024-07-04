@@ -458,7 +458,7 @@ const Campaigns = () => {
               <tr className="bg-green-800 text-sm text-white font-bold">
                 <td
                   className="p-3 border-2 border-black text-right"
-                  colSpan="1"
+                  colSpan="2"
                 >
                   Total :
                 </td>
