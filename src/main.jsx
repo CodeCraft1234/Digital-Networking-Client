@@ -53,6 +53,14 @@ import ClientPayments from "./Pages/DashboardRoot/ClientPayments";
 
 
 const router = createBrowserRouter([
+  {
+    path:'/login',
+    element:<Login></Login>
+   },
+   {
+    path:'/signup',
+    element:<Register></Register>
+   },
   
   {
     path: "/",
@@ -65,14 +73,6 @@ const router = createBrowserRouter([
       {
         path:'/dashboard/admin/home',
         element:<Banner></Banner>
-       },
-       {
-        path:'/login',
-        element:<Login></Login>
-       },
-       {
-        path:'/signup',
-        element:<Register></Register>
        },
       {
         path:'/dashboard/employee/home',
