@@ -50,6 +50,7 @@ import AddEmployee from "./Pages/DashboardRoot/AddEmployee";
 import AddLogos from "./Pages/DashboardRoot/Routes/AddLogos";
 import AdminPayments from "./Pages/DashboardRoot/AdminPayments";
 import ClientPayments from "./Pages/DashboardRoot/ClientPayments";
+import Summery from "./Pages/DashboardRoot/Summery";
 
 
 const router = createBrowserRouter([
@@ -85,7 +86,11 @@ const router = createBrowserRouter([
       {
         path:'dashboard/addEmployee',
         element:<AddEmployee></AddEmployee>
-       },
+      },
+      {
+        path:'dashboard/summery',
+        element:<Summery></Summery>
+      },
       {
         path:'/dashboard/addLogos',
         element:<AddLogos></AddLogos>
@@ -105,6 +110,11 @@ const router = createBrowserRouter([
        {
         path:'/dashboard/client/:email',
         element:<UserProfile></UserProfile>,
+        loader: ({ params }) => fetch(`https://digital-networking-server.vercel.app/users/${params.email}`)
+       },
+       {
+        path:'/dashboard/userInfo/:email',
+        element:<Profile></Profile>,
         loader: ({ params }) => fetch(`https://digital-networking-server.vercel.app/users/${params.email}`)
        },
        {

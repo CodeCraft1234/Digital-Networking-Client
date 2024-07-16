@@ -36,15 +36,6 @@ const [client,setClient]=useState([])
 
   }, [clients, user?.email]);
 
-
-
-
-
-
-
-
-
-
   const [filteredClients, setFilteredClients] = useState([]);
 
   useEffect(() => {
@@ -54,13 +45,16 @@ const [client,setClient]=useState([])
     }
   }, [users, user]);
 
-  useEffect(() => {
 
+  useEffect(() => {
     const filtered=campaigns.filter(c=>c?.email === user?.email )
     if (filtered) {
       setFilteredClients(filtered);
+      console.log(filtered);
     }
-  }, [campaigns]);
+  }, [campaigns,user?.email]);
+  console.log(campaigns);
+
 
   const handleOpenBudgetModal = () => {
     setIsBudgetModalOpen(true);
@@ -92,7 +86,7 @@ const [client,setClient]=useState([])
 
   const filteredByCategory = selectedCategory
     ? filteredItems.filter(
-        (item) => item?._id.toLowerCase() === selectedCategory.toLowerCase()
+        (item) => item?.campaignName.toLowerCase() === selectedCategory.toLowerCase()
       )
     : filteredItems;
 
@@ -136,7 +130,7 @@ const [client,setClient]=useState([])
     console.log(body);
 
     axios
-      .put(`http://localhost:5000/campaings/totalBudged/${id}`, body)
+      .put(`https://digital-networking-server.vercel.app/campaings/totalBudged/${id}`, body)
       .then((res) => {
         console.log(res.data);
         refetch();
@@ -165,7 +159,7 @@ const [client,setClient]=useState([])
     console.log(body);
 
     axios
-      .put(`http://localhost:5000/campaings/totalSpent/${id}`, body)
+      .put(`https://digital-networking-server.vercel.app/campaings/totalSpent/${id}`, body)
       .then((res) => {
         console.log(res.data);
         refetch();
@@ -187,50 +181,51 @@ const [client,setClient]=useState([])
   };
  
  
+  const handleUpdate = (e, id) => {
+    e.preventDefault();
+    const tSpent = e.target.totalSpent.value;
+    const status = e.target.status.value;
+    const dollerRate = e.target.dollerRate.value;
+    const tBudged = e.target.tBudged.value;
+    const body = { tSpent, status, dollerRate, tBudged };
 
+    AxiosPublic.patch(
+      `https://digital-networking-server.vercel.app/campaings/${id}`,
+      body
+    )
+      .then((res) => {
+        console.log(res.data);
+        refetch();
+        toast.success("Campaign updated successfully");
+      })
+      .catch((error) => {
+        console.error("Error updating campaign:", error);
+        toast.error("Failed to update campaign");
+      });
+  };
  
 
 
   const AxiosPublic =UseAxiosPublic()
   const handledelete = (id) => {
-    Swal.fire({
-      title: "Are you sure?",
-      text: "You want to delete this Blog!",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Yes, delete blog",
-    }).then((result) => {
-      if (result.isConfirmed) {
         AxiosPublic.delete(`/campaigns/${id}`)
         .then((res) => {
           refetch();
-          if (res.data.deletedCount > 0) {
-            Swal.fire({
-              title: "Deleted!",
-              text: "Your blog has been deleted.",
-              icon: "success",
-            });
-          }
         });
-      }
-    });
-  };
+
+    }
 
   return (
-    <div className="mt-24">
+    <div className="mt-5">
       <Helmet>
-              <title> Digital Network | Employee Campaign</title>
-              <link rel="canonical" href="https://www.tacobell.com/" />
-               </Helmet>
+        <title>My Campaign | Digital Network </title>
+        <link rel="canonical" href="https://www.example.com/" />
+      </Helmet>
 <div className="flex justify-between items-center ">
 <form className="flex justify-center items-center" onSubmit={handleSort}>
-
-  
         <div className="mb-4 ml-10 mx-auto">
           <label className="block text-gray-700">Sort By Client</label>
-          <select name="email" className="border rounded p-2 mt-1">
+          <select name="email" className="border border-gray-700 text-black bg-white  rounded p-2 mt-1">
           <option value="">All Client</option>
             {client.map(d => <option key={d._id} value={d.clientEmail}>{d.clientName}</option>)}
           </select>
@@ -242,7 +237,7 @@ const [client,setClient]=useState([])
       <div className="flex justify-end ">
                 <input
                   type="text"
-                  placeholder=" Campaign ID"
+                  placeholder=" Campaign Name"
                   className=" rounded-l-lg w-20 placeholder-black border-2 border-black p-2 font-bold text-black sm:w-2/3 text-sm bg-blue-300"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
@@ -290,7 +285,106 @@ const [client,setClient]=useState([])
         {campaign.campaignName}
         </Link>
         <div className="flex justify-start gap-3">
-                        <button className="text-blue-600">Edit</button>
+        <div>
+                      <button
+                        className="text-blue-700"
+                        onClick={() =>
+                          document.getElementById(`modal_${index}`).showModal()
+                        }
+                      >
+                        Edit
+                      </button>
+                      <dialog id={`modal_${index}`} className="modal">
+                        <div className="modal-box bg-white text-black">
+                          <form onSubmit={(e) => handleUpdate(e, campaign._id)}>
+                            <h1 className="text-md mb-5">
+                              Ads Account:{" "}
+                              <span className="text-blue-600 text-xl font-bold">
+                                {campaign.adsAccount}
+                              </span>
+                            </h1>
+                            <div className="flex justify-center items-center gap-3">
+                              <div className="mb-4">
+                                <label className="block text-gray-700">
+                                  Total Budged
+                                </label>
+                                <input
+                                  type="number"
+                                  name="tBudged"
+                                  defaultValue={campaign.tBudged}
+                                  step="0.01"
+                                  className="w-full bg-white border rounded p-2 mt-1"
+                                />
+                              </div>
+                              <div className="mb-4">
+                                <label className="block text-gray-700">
+                                  Total Spent
+                                </label>
+                                <input
+                                  type="number"
+                                  name="totalSpent"
+                                  defaultValue={campaign.tSpent}
+                                  step="0.01"
+                                  className="w-full bg-white border rounded p-2 mt-1"
+                                />
+                              </div>
+                            </div>
+                            <div className="flex justify-center items-center gap-3">
+                              <div className="mb-4">
+                                <label className="block text-gray-700">
+                                  Dollers Rate
+                                </label>
+                                <input
+                                  step="0.01"
+                                  type="number"
+                                  name="dollerRate"
+                                  defaultValue={campaign.dollerRate}
+                                  className="w-full bg-white border rounded p-2 mt-1"
+                                />
+                              </div>
+                              <div className="mb-4">
+                                <label className="block text-gray-700">
+                                  Status
+                                </label>
+                                <select
+                                  defaultValue={campaign.status}
+                                  name="status"
+                                  className="w-full bg-white border rounded p-2 mt-1"
+                                >
+                                  <option value="In Review">In Review</option>
+                                  <option value="Active">Active</option>
+                                  <option value="Complete">Complete</option>
+                                </select>
+                              </div>
+                            </div>
+
+                            <button
+                              onClick={() =>
+                                document
+                                  .getElementById(`modal_${index}`)
+                                  .close()
+                              }
+                              type="submit"
+                              className="font-avenir px-3 flex justify-center  mx-auto py-1 bg-green-800  rounded-lg text-white"
+                            >
+                              Update
+                            </button>
+                          </form>
+                          <div className="modal-action">
+                            <button
+                              className="p-2 rounded-lg bg-red-600 text-white text-center"
+                              onClick={() =>
+                                document
+                                  .getElementById(`modal_${index}`)
+                                  .close()
+                              }
+                            >
+                              Close
+                            </button>
+                          </div>
+                        </div>
+                      </dialog>
+                      </div>
                         <button
                           className="text-start flex justify-start text-red-600"
                           onClick={() => handledelete(campaign._id)}
@@ -303,104 +397,7 @@ const [client,setClient]=useState([])
         <Link to={campaign.pageURL} className="flex justify-center">
         {campaign.pageName}
         </Link>
-      </td>
-      {/* <td className="p-3 border-r-2 border-gray-300 text-center ">
-                    <div className="relative group flex items-center justify-center ">
-                      <h1>$ {campaign.tBudged}</h1>
-                      <button
-                        className="text-black px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                        onClick={() =>
-                          document.getElementById(`my_modal_1`).showModal()
-                        }
-                      >
-                        <FaEdit />
-                      </button>
-
-                      <dialog id={`my_modal_1`} className="modal">
-                        <div className="modal-box">
-                          <form
-                            onSubmit={(e) =>
-                              handleUpdateTotalBudget(e, campaign._id)
-                            }
-                          >
-                            <input
-                              type="number"
-                              name="tBudged"
-                              step="0.01"
-                              defaultValue={campaign.tBudged}
-                              className="w-full border rounded p-2 mt-1 text-gray-500"
-                            />
-                            <button
-                              type="submit"
-                              className="mt-4 font-avenir px-3 mx-auto py-1 rounded-lg text-white bg-green-800"
-                            >
-                              Update
-                            </button>
-                          </form>
-                          
-
-                          <form method="dialog">
-                            <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
-                              ✕
-                            </button>
-                          </form>
-                        </div>
-                      </dialog>
-                    </div>
-                  </td>
-                  <td className="p-3 border-r-2 border-gray-300 text-center ">
-                    <div className="relative group flex items-center justify-center ">
-                      <h1>$ {campaign.tSpent}</h1>
-                      <button
-                        className="text-black px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                        onClick={() =>
-                          document.getElementById(`my_modal_2`).showModal()
-                        }
-                      >
-                        <FaEdit />
-                      </button>
-
-                      
-                      <dialog id={`my_modal_2`} className="modal">
-                        <div className="modal-box">
-                          <form
-                            onSubmit={(e) =>
-                              handleUpdateTotalSpent(e, campaign._id),
-                              handleCancel()
-                            }
-                          >
-                            <input
-                              type="number"
-                              name="tSpent"
-                              step="0.01"
-                              defaultValue={campaign.tSpent}
-                              className="w-full border rounded p-2 mt-1 text-gray-500"
-                            />
-                            <button
-                              type="submit"
-                              className="mt-4 font-avenir px-3 mx-auto py-1 rounded-lg text-white bg-green-800"
-                            >
-                              Update
-                            </button>
-                            <button onClick={handleCancel}
-                              type="submit"
-                              className="mt-4 ml-2 font-avenir px-3 mx-auto py-1 rounded-lg text-white bg-red-800"
-                            >
-                              Cancel
-                            </button>
-                          </form>
-
-                          <form method="dialog">
-                            <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
-                              ✕
-                            </button>
-                          </form>
-                        </div>
-                      </dialog>
-                      
-                    </div>
-                  </td> */}
-                   
+      </td>        
       <td className="p-3 border-r-2 border-gray-300 text-center">
         <div className="relative group flex items-center justify-center">
           <h1>$ {campaign.tBudged}</h1>
@@ -498,32 +495,22 @@ const [client,setClient]=useState([])
           )}
         </div>
       </td>
-  
       <td className="p-3 border-r-2 border-gray-300 text-center">{campaign.status}</td>
       <td className="p-3 border-l-2 border-r-2 border-gray-300 text-center">{campaign.date}</td>
-      
-
-      
     </tr>
   ))}
   <tr className="bg-green-800 text-sm text-white font-bold">
-    
     <td className="p-3 border-2 border-gray-300 text-right" colSpan="4">
       Total :
     </td>
     <td className="p-3 border-2 border-gray-300 text-center">$ {totalBudged}</td>
     <td className="p-3 border-2 border-gray-300 text-center">$ {totalSpent}</td> 
     <td className="p-3 border-2 border-gray-300 text-center"></td> 
-
-
   </tr>
 </tbody>
-
-          </table>
-          
+          </table>  
         </div>
       </div>
-      
     </div>
   );
 };

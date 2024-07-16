@@ -7,6 +7,7 @@ import { IoIosSearch } from 'react-icons/io';
 import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import Swal from 'sweetalert2';
+import { Helmet } from 'react-helmet-async';
 
 const MyClients = () => {
     const { user }=useContext(AuthContext)
@@ -38,6 +39,7 @@ const MyClients = () => {
     const [totalBudged, setTotalBudged] = useState(0);
     const [totalRCV, setTotalRCV] = useState(0);
     const [totalbill, setTotalBill] = useState(0);
+    const totalDue = totalbill - totalRCV;
   
 
   
@@ -202,13 +204,23 @@ const MyClients = () => {
       };
   
   
-  
-  
+      const handledelete = (id) => {
+        AxiosPublic.delete(`/clients/${id}`).then((res) => {
+          refetch();
+          toast.success("delete successful");
+        });
+
+     }
+  console.log(filteredByCategory);
     return (
         <div>
-             <div className="overflow-x-auto ml-4  mt-28">
+             <div className="overflow-x-auto ml-4  mt-5">
 
-        
+      <Helmet>
+        <title> My Client | Digital Network</title>
+        <link rel="canonical" href="https://www.tacobell.com/" />
+      </Helmet>
+
 <div className="flex justify-between items-center ">
 
 <div className="flex justify-start mb-5 text-gray-500 border-b border-opacity-20 mx-2 pb-1 items-center gap-3">
@@ -221,7 +233,7 @@ const MyClients = () => {
     Add Client
   </button>
   <dialog id="my_modal_2" className="modal">
-    <div className="modal-box text-black font-bold">
+    <div className="modal-box bg-white text-black font-bold">
       <form o onSubmit={handleaddblog}>
         <div className="flex justify-center items-center gap-3">
           <div className="mb-4">
@@ -231,7 +243,7 @@ const MyClients = () => {
               name="clientName"
               type="text"
               required
-              className="w-full border-2 border-black rounded p-2 mt-1 "
+              className="w-full bg-white border-2 border-black rounded p-2 mt-1 "
             />
           </div>
         </div>
@@ -243,7 +255,7 @@ const MyClients = () => {
               name="clientPhone"
               type="number"
               required
-              className="w-full  border-2 border-black rounded p-2 mt-1 "
+              className="w-full bg-white  border-2 border-black rounded p-2 mt-1 "
             />
           </div>
           <div className="mb-4">
@@ -254,7 +266,7 @@ const MyClients = () => {
               type="email"
               required
 
-              className="w-full  border-2 border-black rounded p-2 mt-1 "
+              className="w-full bg-white border-2 border-black rounded p-2 mt-1 "
             />
           </div>
         </div>
@@ -303,7 +315,8 @@ const MyClients = () => {
 <th className="p-3 text-center">T.Spent</th>
 <th className="p-3 text-center">Total Bill</th>
 <th className="p-3 text-center">Total Payment Rcv</th>
-<th className="p-3">Edit</th>
+<th className="p-3 text-center">Total Due</th>
+<th className="p-3">Action</th>
 </tr>
 </thead>
 <tbody>
@@ -326,71 +339,35 @@ const MyClients = () => {
   <td className="p-3 border-r border-gray-400 text-center">$ {campaign.tSpent}</td>
   <td className="p-3 border-r border-gray-400 text-center">৳ {campaign.tBill}</td>
   <td className="p-3 border-r border-gray-400 text-center">৳ {campaign.tPayment}</td>
-  <td className="p-3 border-r border-gray-400">
+  <td className="p-3 border-r border-gray-400 text-center">
+          ৳ {
+            !isNaN(Number(campaign.tBill)) && !isNaN(Number(campaign.tPaid)) 
+            ? Number(campaign.tBill) - Number(campaign.tPayment) 
+            : 'Invalid Data'
+          }
+        </td>
 
-  <button
-      className="font-avenir px-3  mx-auto py-1 bg-green-800 ml-10 rounded-lg text-white"
-      onClick={() => document.getElementById("my_modal_7").showModal()}
-    >
-      Edit
-    </button>
-    <dialog id="my_modal_7" className="modal">
-      <div className="modal-box">
-        <form onSubmit={(e) => handleUpdate(e, campaign._id)}>
-          <div className="flex justify-center items-center gap-3">
-            <div className="mb-4">
-              <label className="block text-gray-250">
-                Client Name
-              </label>
-              <input
-                required
-                type="text"
-                defaultValue={campaign.clientName}
-                name="clientName"
-                placeholder="type here...."
-                className="w-full border rounded p-2 mt-1"
-              />
-            </div>
-            <div className="mb-4">
-              <label className="block text-gray-250">Client Phone</label>
-              <input
-              required
-                type="number"
-                name="clientPhone"
-                defaultValue={campaign.clientPhone}
-                placeholder="type here...."
-                className="w-full border rounded p-2 mt-1"
-              />
-            </div>
-          </div>
-          <button
-            type="submit"
-            className="font-avenir px-3 mx-auto py-1 rounded-lg flex justify-center text-white bg-green-800"
-          >
-            Update
-          </button>
-        </form>
-        <div className="modal-action">
-          <form method="dialog">
-            <button className="p-2 rounded-lg bg-red-600 text-white text-center">Close</button>
-          </form>
-        </div>
-      </div>
-    </dialog>
+  <td className="p-3 border-r border-gray-400">
+       <button
+           className="text-center  text-red-600"
+          onClick={() => handledelete(campaign._id)}  >
+            Delete
+      </button>
   </td>
 </tr>
 ))}
 <tr className="bg-green-800 text-sm text-white font-bold">
 <td className="p-3 text-center"></td>
 
-<td className="p-3 border-r border-gray-400 text-right" colSpan="2">
+<td className="p-3  text-right" colSpan="2">
   Total :
 </td>
-<td className="p-3 border-r border-gray-400 text-center">$ {totalBudged}</td>
-<td className="p-3 border-r border-gray-400 text-center">$ {totalSpent}</td>
-<td className="p-3 border-r border-gray-400 text-center">৳ {totalbill}</td>
-<td className="p-3 border-r border-gray-400 text-center">৳ {totalRCV}</td>
-<td className="p-3 border-r border-gray-400"></td>
+<td className="p-3  text-center">$ {totalBudged}</td>
+<td className="p-3  text-center">$ {totalSpent}</td>
+<td className="p-3  text-center">৳ {totalbill}</td>
+<td className="p-3  text-center">৳ {totalRCV}</td>
+<td className="p-3 ">Total Due : ৳ {totalDue}</td>
+<td className="p-3 ">Total Due : ৳ {totalDue}</td>
 </tr>
 </tbody>
 </table>

@@ -144,11 +144,14 @@ const EmployeePayments = () => {
     });
   };
 
+
+ 
+
   return (
     <div className="mt-5">
       <Helmet>
-        <title>Digital Network | Employee Payments</title>
-        <link rel="canonical" href="https://www.tacobell.com/" />
+        <title>All Payments | Digital Network </title>
+        <link rel="canonical" href="https://www.example.com/" />
       </Helmet>
       <div className="flex text-black justify-between gap-4 items-center">
         <div className="flex justify-center items-center gap-5 mb-4 ml-10 mx-auto">
@@ -242,10 +245,11 @@ const EmployeePayments = () => {
           <thead className="bg-green-800 text-white">
             <tr>
               <th className="p-3">SL</th>
-              <th className="p-3">Payment Date</th>
+              <th className="p-3">Employee Name</th>
               <th className="p-3">Payment Amount</th>
               <th className="p-3">Payment Method</th>
               <th className="p-3">Note</th>
+              <th className="p-3">Payment Date</th>
               <th className="p-3">Action</th>
             </tr>
           </thead>
@@ -258,8 +262,9 @@ const EmployeePayments = () => {
                 <td className="p-3 border-r-2 border-l-2 border-gray-200 text-center">
                   {index + 1}
                 </td>
+               
                 <td className="p-3 border-r-2 border-gray-200 text-center">
-                {new Date(payment.date).toLocaleDateString("en-GB")}
+                   {payment.employeeName}
                 </td>
                 <td className="p-3 border-r-2 border-gray-200 text-center">
                   ৳ {payment.payAmount}
@@ -303,6 +308,9 @@ const EmployeePayments = () => {
                 </td>
                 <td className="p-3 border-r-2 border-gray-200 text-center">
                   {payment.note}
+                </td>
+                <td className="p-3 border-r-2 border-gray-200 text-center">
+                {new Date(payment.date).toLocaleDateString("en-GB")}
                 </td>
                 <td className="p-3 border-r-2 border-gray-200 text-center">
                   <div className="relative inline-block">
@@ -353,12 +361,12 @@ const EmployeePayments = () => {
                   id="date"
                   name="date"
                   defaultValue={selectedPayment.date}
-                  className="w-full border border-gray-300 p-2 rounded-lg"
+                  className="w-full border bg-white border-gray-300 p-2 rounded-lg"
                   required
                 />
               </div>
-              <div className="mb-4">
-                <label htmlFor="amount" className="block text-gray-700">
+              <div className="mb-4 text-black">
+                <label htmlFor="amount" className="block text-black">
                   Payment Amount
                 </label>
                 <input
@@ -366,7 +374,7 @@ const EmployeePayments = () => {
                   id="amount"
                   name="amount"
                   defaultValue={selectedPayment.payAmount}
-                  className="w-full border border-gray-300 p-2 rounded-lg"
+                  className="w-full border bg-white border-gray-300 p-2 rounded-lg"
                   required
                 />
               </div>
@@ -378,7 +386,7 @@ const EmployeePayments = () => {
                   id="method"
                   name="method"
                   defaultValue={selectedPayment.paymentMethod}
-                  className="w-full border border-gray-300 p-2 rounded-lg"
+                  className="w-full border bg-white border-gray-300 p-2 rounded-lg"
                   required
                 >
                   <option value="bkashPersonal">bKash Personal</option>
@@ -396,7 +404,7 @@ const EmployeePayments = () => {
                   id="note"
                   name="note"
                   defaultValue={selectedPayment.note}
-                  className="w-full border border-gray-300 p-2 rounded-lg"
+                  className="w-full border bg-white border-gray-300 p-2 rounded-lg"
                 ></textarea>
               </div>
               <div className="flex justify-end">

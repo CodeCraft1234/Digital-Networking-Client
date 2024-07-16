@@ -12,7 +12,12 @@ const Root = () => {
         <ScrollTop />
         {noheaderfooter || <NavBar></NavBar>}
         <div className="min-h-screen max-w-auto mx-auto">
-          <Outlet></Outlet>
+          <Outlet>
+          <Helmet>
+        <title> Dashboard | Digital Network</title>
+        <link rel="canonical" href="https://www.tacobell.com/" />
+      </Helmet>
+          </Outlet>
         </div>
         {noheaderfooter || <Footer></Footer>}
         <Toaster />

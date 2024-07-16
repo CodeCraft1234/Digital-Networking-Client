@@ -2,6 +2,7 @@ import { useContext, useState } from "react";
 import { AuthContext } from "../../Security/AuthProvider";
 import UseAxiosPublic from "../../Axios/UseAxiosPublic";
 import toast from "react-hot-toast";
+import { Helmet } from "react-helmet-async";
 
 const AddClientTwo = () => {
   const { createUser, updateProfiles,user } = useContext(AuthContext);
@@ -41,6 +42,10 @@ const AddClientTwo = () => {
 
   return (
     <div className="flex justify-center items-center min-h-screen mt-5">
+       <Helmet>
+        <title>Add Client | Digital Network </title>
+        <link rel="canonical" href="https://www.example.com/" />
+      </Helmet>
       <div className="bg-white p-6 rounded shadow-md w-full max-w-md mx-4">
         <h2 className="text-2xl font-bold mb-4 text-center">Add New Client</h2>
         <form onSubmit={handleSubmit} className="space-y-4">

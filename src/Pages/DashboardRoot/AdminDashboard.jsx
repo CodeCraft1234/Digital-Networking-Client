@@ -74,12 +74,20 @@ const AdminDashboard = () => {
     navigate("/login");
   };
   return (
-    <div className="overflow-y-auto h-screen">
+    <div className="overflow-y-auto bg-gray-900 h-screen">
       <div className="w-[200px]">
        <Link to={'/'}>
-       <img className="w-44 mx-auto" src={latestLogo?.photo} alt="" />
+       <div className="flex  items-center justify-center py-4">
+          <Link to={"/"}>
+            <img
+              className="w-24"
+              src="https://i.ibb.co/Cnvg0RS/Digital-Network-Logo.png"
+              alt="Logo"
+            />
+          </Link>
+        </div>
        </Link>
-        <ul className="mt-4 space-y-1">
+        <ul className=" space-y-1">
 
           <NavLink
             to="/dashboard/admin/home"

@@ -3,6 +3,7 @@ import {
   FaBlog,
   FaBlogger,
   FaBorderAll,
+  FaDAndD,
   FaEmpire,
   FaHome,
   FaUsers,
@@ -10,11 +11,11 @@ import {
 
 import { RxDashboard } from "react-icons/rx";
 
-import { MdAccountCircle, MdCampaign } from "react-icons/md";
+import { MdAccountCircle, MdCampaign, MdOutlinePayments, MdOutlineSummarize } from "react-icons/md";
 import { IoPeopleSharp } from "react-icons/io5";
 
 
-import { IoIosPeople, IoMdArrowDropdown, IoMdArrowDropup } from "react-icons/io";
+import { IoIosAddCircleOutline, IoIosPeople, IoMdArrowDropdown, IoMdArrowDropup } from "react-icons/io";
 import { useContext, useState } from "react";
 
 import { FaPeopleGroup, FaUser } from "react-icons/fa6";
@@ -23,6 +24,8 @@ import { FaPeopleGroup, FaUser } from "react-icons/fa6";
 
 
 import { AuthContext } from "../../Security/AuthProvider";
+import { GiClick } from "react-icons/gi";
+import { RiSecurePaymentFill, RiSecurePaymentLine } from "react-icons/ri";
 
 const EmployeeDashboard = () => {
   const { user, logOut } = useContext(AuthContext);
@@ -38,7 +41,14 @@ const EmployeeDashboard = () => {
       ? { backgroundColor: 'purple', color: 'white' }
       : {}
   );
+
+  const getActiveStyle2 = (isActive) => (
+    isActive
+      ? { backgroundColor: 'green', color: 'white' }
+      : {}
+  );
   const [isOpen, setIsOpen] = useState(false);
+  const [isOpen2, setIsOpen2] = useState(false);
   const [isOpenTwo, setIsOpenTwo] = useState(false);
 
 
@@ -53,12 +63,22 @@ const EmployeeDashboard = () => {
   const toggleDropdown = () => {
     setIsOpen(!isOpen);
   };
+  const toggleDropdown2 = () => {
+    setIsOpen(!isOpen2);
+  };
   const toggleDropdownTwo = () => {
     setIsOpenTwo(!isOpenTwo);
   };
 
   const handleMouseEnter = () => {
     setIsOpen(true);
+  };
+
+  const handleMouseLeave2 = () => {
+    setIsOpen2(false);
+  };
+  const handleMouseEnter2 = () => {
+    setIsOpen2(true);
   };
 
   const handleMouseLeave = () => {
@@ -87,14 +107,49 @@ const EmployeeDashboard = () => {
             <RxDashboard className="w-6 h-6 mr-2" />
             Dashboard
           </NavLink>
-          <NavLink
-            to="dashboard/AddClients"
-            className="text-white hover:bg-green-300 hover:text-black py-2 px-4 rounded-lg flex items-center"
-            style={({ isActive }) => getActiveStyle(isActive)}
-          >
-            <IoPeopleSharp className="w-6 h-6 mr-2" />
-            Add Clients
-          </NavLink>
+          <div className="relative" onMouseLeave={handleMouseLeave2}>
+            <NavLink
+              to="dashboard/myClients"
+              className="text-white hover:bg-green-300 hover:text-black py-2 px-4 rounded-lg flex items-center"
+              style={({ isActive }) => getActiveStyle(isActive)}
+              onMouseEnter={handleMouseEnter2}
+            >
+              <GiClick className="w-6 h-6 mr-2" />
+              Clients
+              {isOpen2 ? (
+                <IoMdArrowDropup className="w-6 h-6 ml-2" />
+              ) : (
+                <IoMdArrowDropdown className="w-6 h-6 ml-2" />
+              )}
+            </NavLink>
+            {isOpen2 && (
+              <div
+                className="absolute top-full left-0 w-48 bg-gray-600 rounded-lg shadow-lg py-2 z-50 animate-dropdown"
+                onMouseEnter={handleMouseEnter2}
+                onMouseLeave={handleMouseLeave2}
+              >
+                <NavLink
+                  to="dashboard/myClients"
+                  className="text-white hover:bg-green-300 hover:text-black py-2 px-4 rounded-lg flex items-center"
+                  style={({ isActive }) => getActiveStyle(isActive)}
+                >
+                  <FaPeopleGroup className="w-6 h-6 mr-2" />
+                  My Clients
+                </NavLink>
+                <NavLink
+                 to="dashboard/AddClients"
+                  className="text-white hover:bg-green-300 hover:text-black py-2 px-4 rounded-lg flex items-center"
+                  style={({ isActive }) => getActiveStyle(isActive)}
+                >
+                  <IoIosAddCircleOutline className="w-6 h-6 mr-2" />
+                  Add Clients
+                </NavLink>
+               
+               
+              </div>
+            )}
+          </div>
+
           <NavLink
             to="dashboard/myCampaigns"
             className="text-white hover:bg-green-300 hover:text-black py-2 px-4 rounded-lg flex items-center"
@@ -103,14 +158,7 @@ const EmployeeDashboard = () => {
             <MdCampaign className="w-6 h-6 mr-2" />
             Campaigns
           </NavLink>
-          <NavLink
-            to="dashboard/myClients"
-            className="text-white hover:bg-green-300 hover:text-black py-2 px-4 rounded-lg flex items-center"
-            style={({ isActive }) => getActiveStyle(isActive)}
-          >
-            <IoPeopleSharp className="w-6 h-6 mr-2" />
-            Clients
-          </NavLink>
+         
           <NavLink
             to={`dashboard/adsAccount/${user?.email}`}
             className="text-white hover:bg-green-300 hover:text-black py-2 px-4 rounded-lg flex items-center"
@@ -119,14 +167,14 @@ const EmployeeDashboard = () => {
             <MdAccountCircle className="w-6 h-6 mr-2" />
             Ads Accounts
           </NavLink>
+
           <div className="relative" onMouseLeave={handleMouseLeave}>
             <NavLink
-              to="dashboard/allUsers"
-              className="text-white hover:bg-green-300 hover:text-black py-2 px-4 rounded-lg flex items-center"
-              style={({ isActive }) => getActiveStyle(isActive)}
+           to="dashboard/adminPayments"
+              className="text-white  py-2 px-4 rounded-lg flex items-center"
               onMouseEnter={handleMouseEnter}
             >
-              <FaPeopleGroup className="w-6 h-6 mr-2" />
+              <MdOutlinePayments className="w-6 h-6 mr-2" />
               Payments
               {isOpen ? (
                 <IoMdArrowDropup className="w-6 h-6 ml-2" />
@@ -143,17 +191,17 @@ const EmployeeDashboard = () => {
                 <NavLink
                   to="dashboard/adminPayments"
                   className="text-white hover:bg-green-300 hover:text-black py-2 px-4 rounded-lg flex items-center"
-                  style={({ isActive }) => getActiveStyle(isActive)}
+                  style={({ isActive }) => getActiveStyle2(isActive)}
                 >
-                  <FaPeopleGroup className="w-6 h-6 mr-2" />
+                  <RiSecurePaymentLine className="w-6 h-6 mr-2" />
                   Admin Pay
                 </NavLink>
                 <NavLink
                   to="dashboard/clientPayments"
                   className="text-white hover:bg-green-300 hover:text-black py-2 px-4 rounded-lg flex items-center"
-                  style={({ isActive }) => getActiveStyle(isActive)}
+                  style={({ isActive }) => getActiveStyle2(isActive)}
                 >
-                  <IoPeopleSharp className="w-6 h-6 mr-2" />
+                  <RiSecurePaymentFill className="w-6 h-6 mr-2" />
                   Client Pay
                 </NavLink>
                
@@ -161,6 +209,14 @@ const EmployeeDashboard = () => {
               </div>
             )}
           </div>
+          <NavLink
+            to={`dashboard/summery`}
+            className="text-white hover:bg-green-300 hover:text-black py-2 px-4 rounded-lg flex items-center"
+            style={({ isActive }) => getActiveStyle(isActive)}
+          >
+            <MdOutlineSummarize className="w-6 h-6 mr-2" />
+            Em Summery
+          </NavLink>
 
           {user?.email ? (
             <NavLink>

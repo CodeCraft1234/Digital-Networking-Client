@@ -71,20 +71,12 @@ console.log(ddd)
 
 
   return (
-    <div className="mt-24 p-4 dark:text-green-800">
+    <div className="mt-5 p-4 dark:text-green-800">
       <Helmet>
-              <title> Digital Network | All Employee</title>
-              <link rel="canonical" href="https://www.tacobell.com/" />
-               </Helmet>
-      {/* <h6 className="text-center mx-4 py-4 text-white uppercase font-bold text-3xl md:text-5xl bg-green-800 mb-6">
-        All Employee
-      </h6> */}
+        <title>All Employee | Digital Network </title>
+        <link rel="canonical" href="https://www.example.com/" />
+      </Helmet>
 
-      {/* {ddd?.role === "employee" && (
-        <h2 className="mb-4 text-center mx-4 py-4 text-white uppercase font-bold text-3xl md:text-5xl bg-green-800">
-          All Employers
-        </h2>
-      )} */}
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-10 p-4 ">
         {employee?.map((em) => (

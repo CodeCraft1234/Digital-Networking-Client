@@ -33,16 +33,13 @@ const AllAdsAccount = () => {
 
   const handleUpdate = (e, id) => {
     e.preventDefault();
+    const accountName = e.target.accountName.value;
     const currentBallence = e.target.currentBallence.value;
     const threshold = e.target.threshold.value;
     const totalSpent = e.target.totalSpent.value;
     const status = e.target.status.value;
-
-    const body = { currentBallence, threshold, totalSpent, status };
-
-    AxiosPublic.patch(
-      `https://digital-networking-server.vercel.app/adsAccount/${id}`,
-      body
+    const body = { accountName,currentBallence, threshold, totalSpent, status };
+    AxiosPublic.patch(`/adsAccount/${id}`,body
     )
       .then((res) => {
         console.log(res.body);
@@ -177,51 +174,24 @@ const AllAdsAccount = () => {
       .then((res) => {
         console.log(res.data);
         refetch();
-        Swal.fire({
-          title: "Good job!",
-          text: "Current Balance updated!",
-          icon: "success",
-        });
         setModalData(null);
       })
-      .catch((error) => {
-        console.error("Error updating account:", error);
-        Swal.fire({
-          icon: "error",
-          title: "Oops...",
-          text: "Failed to update account!",
-        });
-      });
   };
 
   const handleUpdateThreshold = (e, id) => {
     e.preventDefault();
     const threshold = e.target.threshold.value;
-
     const body = { threshold: threshold };
     console.log(body);
-
     axios
       .put(`https://digital-networking-server.vercel.app/adsAccount/threshold/${id}`, body)
       .then((res) => {
         console.log(res.data);
         refetch();
-        Swal.fire({
-          title: "Good job!",
-          text: "Threshold Balance updated!",
-          icon: "success",
-        });
         setModalData(null);
       })
-      .catch((error) => {
-        console.error("Error updating account:", error);
-        Swal.fire({
-          icon: "error",
-          title: "Oops...",
-          text: "Failed to update account!",
-        });
-      });
-  };
+    }
+
   const handleUpdateTotalSpent = (e, id) => {
     e.preventDefault();
     const totalSpent = e.target.totalSpent.value;
@@ -234,28 +204,16 @@ const AllAdsAccount = () => {
       .then((res) => {
         console.log(res.data);
         refetch();
-        Swal.fire({
-          title: "Good job!",
-          text: "Total Spent updated!",
-          icon: "success",
-        });
+     
         setModalData(null);
       })
-      .catch((error) => {
-        console.error("Error updating account:", error);
-        Swal.fire({
-          icon: "error",
-          title: "Oops...",
-          text: "Failed to update account!",
-        });
-      });
   };
 
   return (
     <div>
       <Helmet>
-        <title>Digital Network | Ads Account</title>
-        <link rel="canonical" href="https://www.tacobell.com/" />
+        <title>All Ads Accounts | Digital Network </title>
+        <link rel="canonical" href="https://www.example.com/" />
       </Helmet>
       <div className="mt-5 p-4 ">
         <div className="flex justify-between items-center ">
@@ -324,6 +282,7 @@ const AllAdsAccount = () => {
               <tr>
                 <th className="p-3">SL</th>
                 <th className="p-3">Ad Account Name</th>
+                <th className="p-3">Employeer Name</th>
                 <th className="p-3">Current Balance</th>
                 <th className="p-3">Threshold</th>
                 <th className="p-3">Total Spent</th>
@@ -362,6 +321,9 @@ const AllAdsAccount = () => {
                         </button>
                       </div>
                     </div>
+                  </td>
+                  <td className="p-3 border-r-2  border-gray-300 text-center px-5 ">
+                  {account.employeerName}
                   </td>
                   <td className="p-3 border-r-2 border-gray-300 text-center">
                     <div className="relative group flex items-center justify-center">
@@ -504,12 +466,12 @@ const AllAdsAccount = () => {
                   </td>
 
                   <td className="p-3 border-l-2 border-r-2 text-center border-gray-300 ">
-                    {new Date(account.issueDate).toLocaleDateString("en-GB")}
+                    {new Date(account.paymentDate).toLocaleDateString("en-GB")}
                   </td>
                 </tr>
               ))}
               <tr className="bg-green-800   text-sm text-white font-bold">
-                <td className="p-3  text-right" colSpan="2">
+                <td className="p-3  text-right" colSpan="3">
                   Total :
                 </td>
                 <td className="p-3 border-2 border-gray-300  text-center">
@@ -534,6 +496,18 @@ const AllAdsAccount = () => {
           <div className="modal-box bg-white text-black">
             <form onSubmit={(e) => handleUpdate(e, modalData._id)}>
               <div className="flex justify-center items-center gap-3">
+              <div className="mb-4">
+                          <label className="block text-gray-500">
+                          Account Name
+                          </label>
+                          <input
+                            type="text required"
+                            name="accountName" 
+
+                            defaultValue={modalData.accountName}
+                            className="w-full border-2 border-black rounded p-2 mt-1 bg-white text-black"
+                          />
+                        </div>
                 <div className="mb-4">
                   <label className="block text-gray-500">Current Balance</label>
                   <input

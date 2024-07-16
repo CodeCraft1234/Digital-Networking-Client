@@ -53,13 +53,12 @@ const Settings = () => {
     
     return (
         <div>
-              <div className="text-white min-h-screen bg-gradient-to-r from-purple-200 via-pink-100 to-red-100 flex items-center justify-center p-10 overflow-x-hidden">
+           <div className="text-white min-h-screen bg-gradient-to-r from-purple-200 via-pink-100 to-red-100 flex items-center justify-center p-10 overflow-x-hidden">
       <Helmet>
-        <title>Digital Network | AddLinks</title>
+        <title>Settings | Digital Network </title>
         <link rel="canonical" href="https://www.example.com/" />
       </Helmet>
      
-      
       <div className="bg-white p-8 rounded-lg shadow-xl w-full max-w-md">
         <h2 className="text-2xl font-bold mb-4 text-center text-black">Add your Links</h2>
         <form onSubmit={handleSubmit} action="#" method="post">

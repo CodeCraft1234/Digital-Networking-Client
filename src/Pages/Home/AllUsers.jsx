@@ -75,10 +75,10 @@ console.log(ddd)
 
   return (
     <div className="mt-5 p-4 dark:text-green-800">
-      <Helmet>
-              <title> Digital Network | All Employee</title>
-              <link rel="canonical" href="https://www.tacobell.com/" />
-               </Helmet>
+     <Helmet>
+        <title>All Users | Digital Network </title>
+        <link rel="canonical" href="https://www.example.com/" />
+      </Helmet>
 
                <div className="p-2 sm:p-4">
         <div className="overflow-x-auto">

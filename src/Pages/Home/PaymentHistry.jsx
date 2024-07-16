@@ -6,14 +6,31 @@ import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import useMpayment from "../../Hook/UseMpayment";
 import useCampaings from "../../Hook/useCampaign";
+import useClients from "../../Hook/useClient";
+import useUsers from "../../Hook/useUsers";
+import axios from "axios";
+import Swal from "sweetalert2";
 
 const PaymentHistry = () => {
   const { user } = useContext(AuthContext);
+  const [ users ]=useUsers()
   const param = useParams();
+  console.log(param);
   const [MPayment, refetch] = useMpayment();
   const AxiosPublic = UseAxiosPublic();
   const [totalPayment, setTotalPayment] = useState(0);
   const [Histry, setHistry] = useState([]);
+  const [Histryy, setHistryy] = useState([]);
+ 
+  const [userdata,setUserData]=useState()
+  console.log(userdata);
+
+
+  useEffect(() => {
+    // Sort the Histry array by date in descending order
+    const sortedHistry = [...Histry].sort((a, b) => new Date(b.date) - new Date(a.date));
+    setHistryy(sortedHistry);
+  }, [Histry]);
 
   useEffect(() => {
     if (param?.email) {
@@ -26,7 +43,24 @@ const PaymentHistry = () => {
       );
       setTotalPayment(totalBill);
     }
+ 
   }, [param?.email, MPayment]);
+
+  useEffect(()=>{
+    const finder=users.find(use=>use.email === user?.email)
+    setUserData(finder)
+  },[users,user?.email])
+
+
+    const [clients]=useClients()
+    const [datas,setdatas]=useState()
+    console.log(datas);
+    useEffect(() => {
+    if (param?.email) {
+        const realdata = clients.find((m) => m.clientEmail === param?.email);
+        setdatas(realdata)
+      }
+    }, [param?.email, clients]);
 
   const [dataa2, setData2] = useState([]);
 
@@ -36,6 +70,7 @@ const PaymentHistry = () => {
   const [dollerRate, setDollerRate] = useState(0);
   const [totalBudged, setTotalBudged] = useState(0);
   console.log(param?.email);
+
   useEffect(() => {
     const filtered = campaign.filter(
       (campaign) => campaign.clientEmail === param?.email
@@ -70,20 +105,20 @@ const PaymentHistry = () => {
     const date = e.target.date.value;
     const note = e.target.note.value;
     const clientEmail = param?.email;
+    const clientName = datas?.clientName;
     const employeeEmail = user?.email;
     const body = {
       paymentMethod,
       amount,
       note,
       clientEmail,
+      clientName,
       employeeEmail,
       date,
     };
+    console.log(body);
     try {
-      await AxiosPublic.post(
-        `https://digital-networking-server.vercel.app/MPayment`,
-        body
-      );
+      await AxiosPublic.post(`https://digital-networking-server.vercel.app/MPayment`,body);
       toast.success("Payment successful");
       refetch(); // Automatically refetch after successful payment
     } catch (error) {
@@ -95,14 +130,9 @@ const PaymentHistry = () => {
     const tBill = totalSpent * dollerRate;
     const tPayment = totalPayment + amount; // Ensure this variable is defined and correct
     const tBudged = totalBudged;
-
     const data = { tSpent, tBill, tPayment, tBudged };
-
-    AxiosPublic.patch(
-      `https://digital-networking-server.vercel.app/clients/${param?.email}`,
-      data
-    )
-      .then((res) => {
+    AxiosPublic.patch(`https://digital-networking-server.vercel.app/clients/${param?.email}`,data)
+    .then((res) => {
         console.log(res.data);
         refetch(); // Ensure this function is defined and correct
         toast.success("Campaign updated successfully");
@@ -111,6 +141,28 @@ const PaymentHistry = () => {
         console.error("Error updating campaign:", error);
         toast.error("Failed to update campaign");
       });
+
+      const fields = {
+        bkashMarchent: (userdata.bkashMarchent || 0) + amount + (paymentMethod === 'bkashMarchent' ? amount : 0),
+        bkashPersonal: (userdata.bkashPersonal || 0) + amount,
+        nagadPersonal: (userdata.nagadPersonal || 0) + amount,
+        rocketPersonal: (userdata.rocketPersonal || 0) + amount,
+      };
+    
+      if (!fields[paymentMethod]) {
+        console.error("Invalid payment method");
+        return;
+      }
+    
+      const body2 = { [paymentMethod]: fields[paymentMethod] };
+    
+      try {
+        const res = await axios.put(`http://localhost:5000/users/${paymentMethod}/${userdata._id}`, body2);
+        console.log(res.data);
+        refetch();  // Make sure this function correctly refetches the updated data
+      } catch (error) {
+        console.error("Error updating account:", error);
+      }
   };
 
   const handleUpdatePayment = (e, id) => {
@@ -158,8 +210,16 @@ const PaymentHistry = () => {
         toast.error("Failed to update campaign");
       });
   };
+
+  const handledelete = (id) => {
+    AxiosPublic.delete(`/Mpayment/${id}`).then((res) => {
+      refetch();
+    });
+
+ }
   return (
     <div>
+
       <div className=" p-2 sm:p-4 dark:text-green-600">
         <h6 className="text-center font-bold text-xl md:text-5xl text-green-600">
           Payment History
@@ -172,7 +232,7 @@ const PaymentHistry = () => {
             Pay Now
           </button>
           <dialog id="my_modal_8" className="modal">
-            <div className="modal-box text-black bg-white font-bold">
+            <div className="modal-box  text-black bg-white font-bold">
               <form onSubmit={(e) => handlePayment(e)}>
                 <div className="flex justify-center items-center gap-3">
                   <div className="mb-4">
@@ -246,15 +306,16 @@ const PaymentHistry = () => {
             <thead className="bg-green-800 text-white">
               <tr>
                 <th className="p-3 ">SL</th>
-                <th className="p-3">Payment Date</th>
+                <th className="p-3 ">Client Name</th>
                 <th className="p-3">Payment Amount</th>
                 <th className="p-3">Payment Method</th>
                 <th className="p-3"> Note</th>
-                <th className="p-3">Action</th>
+                <th className="p-3">Payment Date</th>
+                
               </tr>
             </thead>
             <tbody>
-              {Histry.map((payment, index) => (
+              {Histryy.map((payment, index) => (
                 <tr
                   key={index}
                   className={`${index % 2 === 0 ? "bg-gray-100" : "bg-white"}`}
@@ -262,58 +323,13 @@ const PaymentHistry = () => {
                   <td className="p-3  border-r-2 border-l-2 border-gray-200 text-center">
                     {index + 1}
                   </td>
-                  <td className="p-3 border-r-2 border-gray-200 text-center">
-                  {new Date(payment.date).toLocaleDateString("en-GB")}
-                  </td>
-                  <td className="p-3 border-r-2 border-gray-200 text-center">
-                    <span className="text-md mr-1 font-extrabold">৳</span>{" "}
-                    {payment.amount}
-                  </td>
-
-                  <td className="p-3 border-r-2 border-gray-200 text-center">
-                    {payment.paymentMethod === "bkashMarchent" && (
-                      <img
-                        className="h-10 w-24 flex mx-auto my-auto items-center justify-center"
-                        src="https://i.ibb.co/bHMLyvM/b-Kash-Merchant.png"
-                        alt=""
-                      />
-                    )}
-                    {payment.paymentMethod === "bkashPersonal" && (
-                      <img
-                        className="h-10 w-24 flex my-auto items-center mx-auto justify-center"
-                        src="https://i.ibb.co/520Py6s/bkash-1.png"
-                        alt=""
-                      />
-                    )}
-                    {payment.paymentMethod === "rocketPersonal" && (
-                      <img
-                        className="h-10 w-24 flex my-auto items-center mx-auto justify-center"
-                        src="https://i.ibb.co/QkTM4M3/rocket.png"
-                        alt=""
-                      />
-                    )}
-                    {payment.paymentMethod === "nagadPersonal" && (
-                      <img
-                        className="h-10 w-24 flex my-auto items-center mx-auto justify-center"
-                        src="https://i.ibb.co/JQBQBcF/nagad-marchant.png"
-                        alt=""
-                      />
-                    )}
-                    {payment.paymentMethod === "bank" && (
-                      <img
-                        className="h-12 w-13 flex my-auto items-center mx-auto justify-center"
-                        src="https://i.ibb.co/kS0jD01/bank-3d-render-icon-illustration-png.webp"
-                        alt=""
-                      />
-                    )}
-                  </td>
+                
                   <td className="p-3 border-r-2 border-gray-200 text-start">
-                    {" "}
-                    {payment.note}
-                  </td>
-                  <td className="p-3 border-r-2 border-gray-200 text-start">
-                    <button
-                      className="font-avenir px-3 flex justify-center  mx-auto py-1 bg-green-800  rounded-lg text-white"
+                    {payment.clientName}
+                    <div className="flex justify-start items-center gap-3">
+                      <div>
+                      <button
+                      className="text-blue-700"
                       onClick={() =>
                         document
                           .getElementById(`modal_${payment._id}`)
@@ -429,12 +445,70 @@ const PaymentHistry = () => {
                         </div>
                       </div>
                     </dialog>
+                      </div>
+                      <button
+                          className="text-start flex justify-start text-red-600"
+                          onClick={() => handledelete(payment._id)}
+                        >
+                          Delete
+                        </button>
+                    </div>
                   </td>
+                  <td className="p-3 border-r-2 border-gray-200 text-center">
+                    <span className="text-md mr-1 font-extrabold">৳</span>{" "}
+                    {payment.amount}
+                  </td>
+
+                  <td className="p-3 border-r-2 border-gray-200 text-center">
+                    {payment.paymentMethod === "bkashMarchent" && (
+                      <img
+                        className="h-10 w-24 flex mx-auto my-auto items-center justify-center"
+                        src="https://i.ibb.co/bHMLyvM/b-Kash-Merchant.png"
+                        alt=""
+                      />
+                    )}
+                    {payment.paymentMethod === "bkashPersonal" && (
+                      <img
+                        className="h-10 w-24 flex my-auto items-center mx-auto justify-center"
+                        src="https://i.ibb.co/520Py6s/bkash-1.png"
+                        alt=""
+                      />
+                    )}
+                    {payment.paymentMethod === "rocketPersonal" && (
+                      <img
+                        className="h-10 w-24 flex my-auto items-center mx-auto justify-center"
+                        src="https://i.ibb.co/QkTM4M3/rocket.png"
+                        alt=""
+                      />
+                    )}
+                    {payment.paymentMethod === "nagadPersonal" && (
+                      <img
+                        className="h-10 w-24 flex my-auto items-center mx-auto justify-center"
+                        src="https://i.ibb.co/JQBQBcF/nagad-marchant.png"
+                        alt=""
+                      />
+                    )}
+                    {payment.paymentMethod === "bank" && (
+                      <img
+                        className="h-12 w-13 flex my-auto items-center mx-auto justify-center"
+                        src="https://i.ibb.co/PZc0P4w/brac-bank-seeklogo.png"
+                        alt=""
+                      />
+                    )}
+                  </td>
+                  <td className="p-3 border-r-2 border-gray-200 text-start">
+                    {" "}
+                    {payment.note}
+                  </td>
+                  <td className="p-3 border-r-2 border-gray-200 text-center">
+                  {new Date(payment.date).toLocaleDateString("en-GB")}
+                  </td>
+                 
                 </tr>
               ))}
               <tr className="bg-green-800 text-white font-bold">
                 <td className="p-3 text-center" colSpan="2">
-                  Total Amount =
+                  Total Amount :
                 </td>
                 <td className="p-3 text-center">
                   <span className="text-md mr-1 font-extrabold">৳</span>{" "}
@@ -443,6 +517,7 @@ const PaymentHistry = () => {
                 <td className="p-3 text-center"></td>
                 <td className="p-3 text-center"></td>
                 <td className="p-3 text-center"></td>
+                
               </tr>
             </tbody>
           </table>

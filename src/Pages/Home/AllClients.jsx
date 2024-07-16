@@ -121,10 +121,10 @@ const AxiosPublic =UseAxiosPublic()
 
   return (
     <div className="mt-5">
-       <Helmet>
-              <title> Digital Network | Clients</title>
-              <link rel="canonical" href="https://www.tacobell.com/" />
-               </Helmet>
+      <Helmet>
+        <title>All Clients | Digital Network </title>
+        <link rel="canonical" href="https://www.example.com/" />
+      </Helmet>
 <div className="flex justify-between items-center ">
 <form className="flex justify-center items-center" onSubmit={handleSort}>
         <div className="mb-4 ml-10 mx-auto">
