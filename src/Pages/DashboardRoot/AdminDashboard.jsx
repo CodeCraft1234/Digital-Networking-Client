@@ -13,7 +13,7 @@ import {
 } from "react-icons/fa";
 import { IoMdArrowDropdown, IoMdArrowDropup } from 'react-icons/io';
 import { RxDashboard } from "react-icons/rx";
-import { MdAccountCircle, MdCampaign, MdOutlinePayment } from "react-icons/md";
+import { MdAccountCircle, MdCampaign, MdOutlinePayment, MdOutlinePayments } from "react-icons/md";
 import { IoPeopleSharp, IoSettingsSharp } from "react-icons/io5";
 import { FaPeopleGroup } from "react-icons/fa6";
 import { useContext, useEffect, useState } from "react";
@@ -21,6 +21,7 @@ import useLogo from "../../Hook/useLogo";
 import { AiFillDashboard, AiTwotoneDashboard } from "react-icons/ai";
 import { Menu } from "@headlessui/react";
 import { AuthContext } from "../../Security/AuthProvider";
+import { RiSecurePaymentFill, RiSecurePaymentLine } from "react-icons/ri";
 
 const AdminDashboard = () => {
   const [logo, setLogo] = useLogo();
@@ -53,6 +54,7 @@ const AdminDashboard = () => {
     }
   }, [logo, setLogo]);
 
+
   const handleMouseEnter = () => {
     setIsOpen(true);
   };
@@ -60,12 +62,15 @@ const AdminDashboard = () => {
   const handleMouseLeave = () => {
     setIsOpen(false);
   };
+  const handleMouseEnter2 = () => {
+    setIsOpenTwo(true);
+  };
 
-  const getActiveStyle = (isActive) => (
-    isActive
-      ? { backgroundColor: 'purple', color: 'white' }
-      : {}
-  );
+  const handleMouseLeave2 = () => {
+    setIsOpenTwo(false);
+  };
+
+
   
   const {user,logOut}=useContext(AuthContext)
   const navigate = useNavigate();
@@ -73,6 +78,19 @@ const AdminDashboard = () => {
     logOut().then().catch();
     navigate("/login");
   };
+
+  const getActiveStyle2 = (isActive) => (
+    isActive
+      ? { backgroundColor: 'green', color: 'white' }
+      : {}
+  );
+
+  const getActiveStyle = (isActive) => (
+    isActive
+      ? { backgroundColor: 'green', color: 'white' }
+      : {}
+  );
+
   return (
     <div className="overflow-y-auto bg-gray-900 h-screen">
       <div className="w-[200px]">
@@ -173,13 +191,48 @@ const AdminDashboard = () => {
             <MdCampaign className="w-6 h-6 mr-2" /> Campaigns
           </NavLink>
 
-          <NavLink
-            to="dashboard/employeePayment"
-            className="text-white hover:bg-green-300 hover:text-black py-2 px-4 rounded-lg flex items-center"
-            style={({ isActive }) => getActiveStyle(isActive)}
-          >
-            <MdOutlinePayment className="w-6 h-6 mr-2" /> Payment
-          </NavLink>
+
+          <div className="relative" onMouseLeave={handleMouseLeave2}>
+            <NavLink
+           to="dashboard/employeePayment"
+              className="text-white  py-2 px-4 rounded-lg flex items-center"
+              onMouseEnter={handleMouseEnter2}
+            >
+              <MdOutlinePayments className="w-6 h-6 mr-2" />
+              Payments
+              {isOpenTwo ? (
+                <IoMdArrowDropup className="w-6 h-6 ml-2" />
+              ) : (
+                <IoMdArrowDropdown className="w-6 h-6 ml-2" />
+              )}
+            </NavLink>
+            {isOpenTwo && (
+              <div
+                className="absolute top-full left-0 w-48 bg-gray-600 rounded-lg shadow-lg py-2 z-50 animate-dropdown"
+                onMouseEnter={handleMouseEnter2}
+                onMouseLeave={handleMouseLeave2}
+              >
+                <NavLink
+                  to="dashboard/employeePayment"
+                  className="text-white hover:bg-green-300 hover:text-black py-2 px-4 rounded-lg flex items-center"
+                  style={({ isActive }) => getActiveStyle2(isActive)}
+                >
+                  <RiSecurePaymentLine className="w-6 h-6 mr-2" />
+                  Admin Pay
+                </NavLink>
+                <NavLink
+                  to="dashboard/AllClientsPayments"
+                  className="text-white hover:bg-green-300 hover:text-black py-2 px-4 rounded-lg flex items-center"
+                  style={({ isActive }) => getActiveStyle2(isActive)}
+                >
+                  <RiSecurePaymentFill className="w-6 h-6 mr-2" />
+                  Clients Pay
+                </NavLink>
+               
+               
+              </div>
+            )}
+          </div>
 
           <NavLink
             to="/dashboard/settings"

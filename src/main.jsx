@@ -51,6 +51,7 @@ import AddLogos from "./Pages/DashboardRoot/Routes/AddLogos";
 import AdminPayments from "./Pages/DashboardRoot/AdminPayments";
 import ClientPayments from "./Pages/DashboardRoot/ClientPayments";
 import Summery from "./Pages/DashboardRoot/Summery";
+import AllClientsPayments from "./Pages/Home/AllClientsPayments";
 
 
 const router = createBrowserRouter([
@@ -102,6 +103,10 @@ const router = createBrowserRouter([
        {
         path:'/dashboard/adminPayments',
         element:<AdminPayments></AdminPayments>
+       },
+       {
+        path:'/dashboard/AllClientsPayments',
+        element:<AllClientsPayments></AllClientsPayments>
        },
        {
         path:'/dashboard/clientPayments',

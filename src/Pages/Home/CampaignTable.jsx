@@ -753,7 +753,6 @@ const CampaignTable = ({ email }) => {
               </div>
               <ToastContainer />
   </div>
-     
     </div>
   );
 };
