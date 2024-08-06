@@ -222,7 +222,9 @@ const EmployeeDashboard = () => {
             <NavLink>
                <div className="flex my-5 mt-16 justify-start gap-2 px-4 items-center text-white ">
         <img className="h-10 w-10 rounded-full" src={user?.photoURL} alt="" />
-        <h1>{user?.displayName}</h1>
+        <Link to={'/dashboard/updateProfile'}>
+                <h1>{user?.displayName}</h1>
+                </Link>
         </div>
               <button
                 onClick={handleLogOut}

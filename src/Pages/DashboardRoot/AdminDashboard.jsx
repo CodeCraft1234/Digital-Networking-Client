@@ -116,6 +116,8 @@ const AdminDashboard = () => {
             Dashboard
           </NavLink>
 
+
+
           <NavLink
             to="dashboard/allAdSAccount"
             className="text-white hover:bg-green-300 hover:text-black py-2 px-4 rounded-lg flex items-center"
@@ -179,6 +181,14 @@ const AdminDashboard = () => {
                   <FaPeopleGroup className="w-6 h-6 mr-2" />
                   Employees
                 </NavLink>
+                <NavLink
+                  to="dashboard/adsUser"
+                  className="text-white hover:bg-green-300 hover:text-black py-2 px-4 rounded-lg flex items-center"
+                  style={({ isActive }) => getActiveStyle(isActive)}
+                >
+                  <FaPeopleGroup className="w-6 h-6 mr-2" />
+                  Ads User
+                </NavLink>
               </div>
             )}
           </div>
@@ -218,7 +228,7 @@ const AdminDashboard = () => {
                   style={({ isActive }) => getActiveStyle2(isActive)}
                 >
                   <RiSecurePaymentLine className="w-6 h-6 mr-2" />
-                  Admin Pay
+                  Employee Pay
                 </NavLink>
                 <NavLink
                   to="dashboard/AllClientsPayments"
@@ -227,6 +237,14 @@ const AdminDashboard = () => {
                 >
                   <RiSecurePaymentFill className="w-6 h-6 mr-2" />
                   Clients Pay
+                </NavLink>
+                <NavLink
+                  to="dashboard/allAdsPayments"
+                  className="text-white hover:bg-green-300 hover:text-black py-2 px-4 rounded-lg flex items-center"
+                  style={({ isActive }) => getActiveStyle2(isActive)}
+                >
+                  <RiSecurePaymentFill className="w-6 h-6 mr-2" />
+                  Ads Pay
                 </NavLink>
                
                
@@ -250,7 +268,9 @@ const AdminDashboard = () => {
         >
            <div className="flex my-5 mt-16 justify-start gap-2 px-4 items-center text-white ">
         <img className="h-10 w-10 rounded-full" src={user?.photoURL} alt="" />
-        <h1>{user?.displayName}</h1>
+        <Link to={'/dashboard/updateProfile'}>
+                <h1>{user?.displayName}</h1>
+                </Link>
         </div>
            <button
                         onClick={handleLogOut}

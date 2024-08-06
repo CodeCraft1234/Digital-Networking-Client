@@ -1,3 +1,4 @@
+
 import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../../Security/AuthProvider";
 import { IoIosSearch } from "react-icons/io";
@@ -144,8 +145,49 @@ const EmployeePayments = () => {
     });
   };
 
+  const [bkashMarcent,setBkashMarcentTotal]=useState(0)
+  const [nagadPersonal,setNagadPersonalTotal]=useState(0)
+  const [bkashPersonal,setBkashPersonalTotal]=useState(0)
+  const [rocketPersonal,setRocketPersonalTotal]=useState(0)
+  const [bankTotal,setBankTotal]=useState(0)
 
+  useEffect(()=>{
+          const filtered=employeePayment
+          const filter2=filtered.filter(d=>d.paymentMethod === 'bkashMarchent')
+          const total = filter2.reduce((acc, datas) => acc + parseFloat(datas.payAmount),0);
+          setBkashMarcentTotal(total)
+
+          const filter3=filtered.filter(d=>d.paymentMethod === 'nagadPersonal')
+          const total3 = filter3.reduce((acc, datas) => acc + parseFloat(datas.payAmount),0);
+          setNagadPersonalTotal(total3)
+
+          const filter4=filtered.filter(d=>d.paymentMethod === 'bkashPersonal')
+          const total4 = filter4.reduce((acc, datas) => acc + parseFloat(datas.payAmount),0);
+          setBkashPersonalTotal(total4)
+
+          const filter5=filtered.filter(d=>d.paymentMethod === 'rocketPersonal')
+          const total5 = filter5.reduce((acc, datas) => acc + parseFloat(datas.payAmount),0);
+          setRocketPersonalTotal(total5)
+
+          const filter6=filtered.filter(d=>d.paymentMethod === 'bank')
+          const total6 = filter6.reduce((acc, datas) => acc + parseFloat(datas.payAmount),0);
+          setBankTotal(total6)
+   
+  },[])
  
+  const sortByDateDescending = (items) => {
+    return items.sort((a, b) => new Date(b.date) - new Date(a.date));
+  };
+  
+  // Sorted items
+  const sortedItems = sortByDateDescending(filteredByCategory);
+
+  const [showAll, setShowAll] = useState(false); // State to handle showing all data
+  const [itemsToShow, setItemsToShow] = useState(40); // Number of items to show initially
+  const displayedItems = showAll ? sortedItems : sortedItems.slice(0, itemsToShow);
+
+
+
 
   return (
     <div className="mt-5">
@@ -153,6 +195,33 @@ const EmployeePayments = () => {
         <title>All Payments | Digital Network </title>
         <link rel="canonical" href="https://www.example.com/" />
       </Helmet>
+
+
+      <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 mb-3  lg:grid-cols-5 gap-8 mt-4 p-4">
+   <div className="balance-card bg-white rounded-2xl shadow-lg p-5 text-center  transition-transform transform hover:scale-105 border-0">
+     <img className="balance-card-img" src="https://i.ibb.co/bHMLyvM/b-Kash-Merchant.png" alt="bKash" />
+     <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"> <span className="text-lg lg:text-2xl font-extrabold"> ৳</span> {bkashMarcent}</p>
+   </div>
+   <div className="balance-card bg-white rounded-2xl shadow-lg p-5 text-center transition-transform transform hover:scale-105 border-0">
+     <img className="balance-card-img" src="https://i.ibb.co/520Py6s/bkash-1.png" alt="bKash" />
+     <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"> <span className="text-lg lg:text-2xl font-extrabold"> ৳</span> {bkashPersonal}</p>
+   </div>
+   <div className="balance-card bg-white rounded-2xl shadow-lg p-5 text-center transition-transform transform hover:scale-105 border-0">
+     <img className="balance-card-img" src="https://i.ibb.co/JQBQBcF/nagad-marchant.png" alt="Nagad" />
+     <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"><span className="text-lg lg:text-2xl font-extrabold"> ৳</span> {nagadPersonal}</p>
+   </div>
+   <div className="balance-card bg-white rounded-2xl shadow-lg p-5 text-center transition-transform transform hover:scale-105 border-0">
+     <img className="balance-card-img" src="https://i.ibb.co/QkTM4M3/rocket.png" alt="Rocket" />
+     <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"><span className="text-lg lg:text-2xl font-extrabold"> ৳</span> {rocketPersonal}</p>
+   </div>
+
+   <div className="balance-card bg-white rounded-2xl shadow-lg p-5 text-center transition-transform transform hover:scale-105 border-0">
+     <img className="balance-card-img" src="https://i.ibb.co/PZc0P4w/brac-bank-seeklogo.png" alt="Rocket" />
+     {/* <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"><span className="text-lg lg:text-2xl font-extrabold">Bank Received : ৳</span> {bankTotal}</p>
+     <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"><span className="text-lg lg:text-2xl font-extrabold">Bank Cashout : ৳</span> {bankTotal2}</p> */}
+     <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"><span className="text-lg lg:text-2xl font-extrabold"> ৳</span> {bankTotal}</p>
+   </div>
+     </div>
       <div className="flex text-black justify-between gap-4 items-center">
         <div className="flex justify-center items-center gap-5 mb-4 ml-10 mx-auto">
           <div className="flex flex-col justify-center items-center">
@@ -254,7 +323,7 @@ const EmployeePayments = () => {
             </tr>
           </thead>
           <tbody>
-            {filteredByCategory.map((payment, index) => (
+            {displayedItems.map((payment, index) => (
               <tr
                 key={index}
                 className={index % 2 === 0 ? "bg-gray-100" : "bg-white"}
@@ -426,6 +495,22 @@ const EmployeePayments = () => {
           </div>
         </div>
       )}
+      {!showAll && filteredByCategory.length > itemsToShow && (
+  <button
+    onClick={() => setShowAll(true)}
+    className="mt-4 p-2  mx-auto flex justify-center my-10 bg-blue-500 text-white rounded"
+  >
+    Show All
+  </button>
+)}
+{showAll && (
+  <button
+    onClick={() => setShowAll(false)}
+    className="mt-4 p-2  mx-auto flex justify-center my-10 bg-gray-500 text-white rounded"
+  >
+    Show Less
+  </button>
+)}
     </div>
   );
 };

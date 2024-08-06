@@ -52,6 +52,12 @@ import AdminPayments from "./Pages/DashboardRoot/AdminPayments";
 import ClientPayments from "./Pages/DashboardRoot/ClientPayments";
 import Summery from "./Pages/DashboardRoot/Summery";
 import AllClientsPayments from "./Pages/Home/AllClientsPayments";
+import AdsAccountCenter from "./Pages/DashboardRoot/Routes/AdsAccountCenter";
+import AdsPayments from "./Pages/DashboardRoot/AdsPayments";
+import AdsDashboardHome from "./Pages/DashboardRoot/AdsHome";
+import AllAdsPayments from "./Pages/DashboardRoot/AllAdsPayments";
+import AdsUser from "./Pages/DashboardRoot/AdsUser";
+import AdsProfile from "./Pages/DashboardRoot/AdsProfile";
 
 
 const router = createBrowserRouter([
@@ -75,6 +81,10 @@ const router = createBrowserRouter([
       {
         path:'/dashboard/admin/home',
         element:<Banner></Banner>
+       },
+      {
+        path:'/dashboard/ads/home',
+        element:<AdsDashboardHome></AdsDashboardHome>
        },
       {
         path:'/dashboard/employee/home',
@@ -113,6 +123,19 @@ const router = createBrowserRouter([
         element:<ClientPayments></ClientPayments>
        },
        {
+        path:'/dashboard/AllAdsPayments',
+        element:<AllAdsPayments></AllAdsPayments>
+       },
+
+       {
+        path:'/dashboard/adsPayments',
+        element:<AdsPayments></AdsPayments>
+       },
+       {
+        path:'/dashboard/adsUser',
+        element:<AdsUser></AdsUser>
+       },
+       {
         path:'/dashboard/client/:email',
         element:<UserProfile></UserProfile>,
         loader: ({ params }) => fetch(`https://digital-networking-server.vercel.app/users/${params.email}`)
@@ -120,6 +143,11 @@ const router = createBrowserRouter([
        {
         path:'/dashboard/userInfo/:email',
         element:<Profile></Profile>,
+        loader: ({ params }) => fetch(`https://digital-networking-server.vercel.app/users/${params.email}`)
+       },
+       {
+        path:'/dashboard/adsuserInfo/:email',
+        element:<AdsProfile></AdsProfile>,
         loader: ({ params }) => fetch(`https://digital-networking-server.vercel.app/users/${params.email}`)
        },
        {
@@ -156,6 +184,10 @@ const router = createBrowserRouter([
         element:<Users></Users>
       },
       {
+        path:'dashboard/updateProfile',
+        element:<UpdateProfile></UpdateProfile>
+      },
+      {
         path:'dashboard/myCampaigns',
         element:<MyCampaigns></MyCampaigns>
        },
@@ -179,6 +211,11 @@ const router = createBrowserRouter([
        {
         path:'dashboard/adsAccount/:email',
         element:<Profile2></Profile2>,
+        loader: ({ params }) => fetch(`https://digital-networking-server.vercel.app/users/${params.email}`)
+       },
+       {
+        path:'dashboard/adsAccountCenter/:email',
+        element:<AdsAccountCenter></AdsAccountCenter>,
         loader: ({ params }) => fetch(`https://digital-networking-server.vercel.app/users/${params.email}`)
        },
     ]

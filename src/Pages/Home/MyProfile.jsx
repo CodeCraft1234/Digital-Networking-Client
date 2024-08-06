@@ -16,7 +16,7 @@ const MyProfile = () => {
     },[])
 
     return (
-        <div className="mx auto mt-24 ">
+        <div className="mx auto mt-5 ">
            
           <CampaignTable2></CampaignTable2>
         </div>

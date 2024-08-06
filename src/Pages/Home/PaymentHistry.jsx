@@ -157,7 +157,7 @@ const PaymentHistry = () => {
       const body2 = { [paymentMethod]: fields[paymentMethod] };
     
       try {
-        const res = await axios.put(`http://localhost:5000/users/${paymentMethod}/${userdata._id}`, body2);
+        const res = await axios.put(`https://digital-networking-server.vercel.app/users/${paymentMethod}/${userdata._id}`, body2);
         console.log(res.data);
         refetch();  // Make sure this function correctly refetches the updated data
       } catch (error) {

@@ -48,63 +48,67 @@ const UpdateProfile = () => {
     const image_hosting_api = `https://api.imgbb.com/1/upload?key=${image_hosting_key}`;
   
     const handleSubmit = async (e) => {
-        e.preventDefault();
+      e.preventDefault();
+    
+      let companyLogo;
+    
+      if (image) {
         const formData = new FormData();
         formData.append("image", image);
-      
+    
         try {
           const res = await AxiosPublic.post(image_hosting_api, formData, {
             headers: {
               "content-type": "multipart/form-data",
             },
           });
-          const companyLogo = res.data.data.display_url;
-      
-          const updateData = {
-            fullName,
-            companyLogo,
-            fullAddress,
-            companyName,
-            contctNumber,
-            facebookID,
-            instagramID,
-            linkedinID,
-            twitterID,
-            youtubeID,
-            whatsappID,
-            bkashPersonal:7484
-          };
-
-          const body={bkashPersonal:7484}
-          AxiosPublic.patch(`/users/${user?.email}`,updateData)
-          .then(res=>{
-            Swal.fire({
-              title: "updated!",
-              text: "This blog has been updated.",
-              icon: "success"
-            });
-            console.log(res.data)      
-            })
-      
-          const response = await AxiosPublic.patch(`https://digital-networking-server.vercel.app/users/${user?.email}`, updateData);
-          console.log(response.data);
+          companyLogo = res.data.data.display_url;
         } catch (error) {
-          console.error("Error updating profile:", error);
+          console.error("Error uploading image:", error);
+          return; // Exit the function if image upload fails
         }
-
-
-      
-        setImage(null);
+      } else {
+        // If no new image is selected, keep the previous image data
+        companyLogo = user?.companyLogo; // Assuming user object has the previous logo URL
+      }
+    
+      const updateData = {
+        fullName: fullName || user?.fullName,
+        companyLogo: companyLogo || user?.companyLogo,
+        fullAddress: fullAddress || user?.fullAddress,
+        companyName: companyName || user?.companyName,
+        contctNumber: contctNumber || user?.contctNumber,
+        facebookID: facebookID || user?.facebookID,
+        instagramID: instagramID || user?.instagramID,
+        linkedinID: linkedinID || user?.linkedinID,
+        twitterID: twitterID || user?.twitterID,
+        youtubeID: youtubeID || user?.youtubeID,
+        whatsappID: whatsappID || user?.whatsappID,
+        bkashPersonal: 7484 // Assuming this is always updated
       };
-      
-  
+    
+      try {
+        const response = await AxiosPublic.patch(`https://digital-networking-server.vercel.app/users/${user?.email}`, updateData);
+        Swal.fire({
+          title: "Updated!",
+          text: "This blog has been updated.",
+          icon: "success"
+        });
+        console.log(response.data);
+      } catch (error) {
+        console.error("Error updating profile:", error);
+      }
+    
+      setImage(null);
+    };
+    
     const handleImageChange = (e) => {
-        const selectedImage = e.target.files[0];
-        setImage(selectedImage);
-      };
+      const selectedImage = e.target.files[0];
+      setImage(selectedImage);
+    };
 
     return (
-        <div className="mt-24">
+        <div className="mt-0">
             <section className="py-6 dark:bg-gray-800 dark:text-gray-50">
 	<div className="grid max-w-6xl grid-cols-1 items-baseline px-6 mx-auto lg:px-8 md:grid-cols-2 md:divide-x">
 		<div className="py-6 mx-auto md:py-0 md:px-6">
@@ -324,7 +328,6 @@ const UpdateProfile = () => {
             onChange={handleImageChange}
             className="w-full p-2 mb-4 border rounded"
             accept="image/*"
-            required
           />
 
           <button
@@ -346,62 +349,3 @@ export default UpdateProfile;
 
 
 
-{/* <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col py-6 space-y-6 md:py-0 md:px-6">
-			<label className="block">
-				<span className="mb-1">Full Name</span>
-				<input
-                  {...register("fullName", { required: true })}
-                  type="text"
-                  placeholder="Full Name"
-                  className="block bg-white py-3 px-3 border border-white w-full rounded-md shadow-sm focus:ring focus:ri focus:ri dark:bg-gray-800"
-                  required
-                />
-			</label>
-			<label className="block">
-				<span className="mb-1">Company Name</span>
-				<input
-                  {...register("companyName", { required: true })}
-                  type="text"
-                  placeholder="Company Name"
-                  className="block bg-white py-3 px-3 border border-white w-full rounded-md shadow-sm focus:ring focus:ri focus:ri dark:bg-gray-800"
-                  required
-                />
-			</label>
-			<label className="block">
-				<span className="mb-1">Company Logo</span>
-                <input
-                  {...register("companyLogo")}
-                  type="file"
-                  placeholder="Company Logo"
-                  className="file-input file-input-bordered block bg-white py-3 px-3 border border-white w-full rounded-md shadow-sm focus:ring focus:ri focus:ri dark:bg-gray-800"
-                />
-			</label>
-			<label className="block">
-				<span className="mb-1">Full Address</span>
-                <input
-                  {...register("fullAddress")}
-                  type="text"
-                  placeholder="Full Address"
-                  className="block bg-white py-3 px-3 border border-white w-full rounded-md shadow-sm focus:ring focus:ri focus:ri dark:bg-gray-800"
-                />
-			</label>
-			<label className="block">
-				<span className="mb-1">Facebook ID</span>
-				<input
-                  {...register("facebookID")}
-                  type="text"
-                  placeholder="Facebook ID"
-                  className="block bg-white py-3 px-3 border border-white w-full rounded-md shadow-sm focus:ring focus:ri focus:ri dark:bg-gray-800"
-                />
-			</label>
-			<label className="block">
-				<span className="mb-1">Contact Number</span>
-				<input
-                  {...register("contactNumber")}
-                  type="type"
-                  placeholder="Contact Number"
-                  className="block bg-white py-3 px-3 border border-white w-full rounded-md shadow-sm focus:ring focus:ri focus:ri dark:bg-gray-800"
-                />
-			</label>
-			<button type="button" className="self-center px-8 py-3 text-lg rounded focus:ring hover:ring focus:ri dark:bg-violet-400 dark:text-gray-900 focus:ri hover:ri">Submit</button>
-		</form> */}

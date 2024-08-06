@@ -5,6 +5,7 @@ import Login from "../../Security/Login";
 import useUsers from "../../Hook/useUsers";
 import MyProfile from "./MyProfile";
 import { Helmet } from "react-helmet-async";
+import AdsDashboardHome from "../DashboardRoot/AdsHome";
 
 const Home = () => {
     const { user } = useContext(AuthContext);
@@ -23,21 +24,25 @@ const Home = () => {
 
     return (
         <div>
-              <Helmet>
-              <title> Digital Network | Home</title>
-              <link rel="canonical" href="https://www.tacobell.com/" />
-               </Helmet>
-               
+            <Helmet>
+                <title>Digital Network | Home</title>
+                <link rel="canonical" href="https://www.tacobell.com/" />
+            </Helmet>
+            
             {user ? (
                 <div>
                     {ddd?.role === "admin" ? (
                         <Banner />
                     ) : (
-                        <MyProfile />
+                        ddd?.role === "adsAccount" ? (
+                            <AdsDashboardHome />
+                        ) : (
+                            <MyProfile />
+                        )
                     )}
                 </div>
             ) : (
-                <Login /> 
+                <Login />
             )}
         </div>
     );

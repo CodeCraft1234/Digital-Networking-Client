@@ -238,26 +238,7 @@ const CampaignTable2 = () => {
       )}
     </div>
 
-   {/* <div className="balance-card bg-white rounded-2xl shadow-2xl p-5 text-center transition-transform transform hover:scale-105 border-0">
-   <p className="balance-card-text text-lg lg:text-2xl mt-3 font-bold text-gray-700">Total Bill: <span className="text-lg lg:text-2xl font-extrabold"> ৳</span> {totalbill}</p>
 
-     <p className="balance-card-text text-lg lg:text-2xl mt-3 font-bold text-gray-700 ">Total Received: <span className="text-lg lg:text-2xl font-extrabold"> ৳</span> {totalRCV}</p>
-     <p className="balance-card-text text-lg lg:text-2xl mt-3 font-bold text-gray-700">Total Due: <span className="text-lg lg:text-2xl font-extrabold"> ৳</span> {totalbill - totalRCV}</p>
-
-   </div> */}
-
-
-   {/* <div className="balance-card bg-white rounded-2xl shadow-2xl p-5 text-center transition-transform transform hover:scale-105 border-0">
-
-     <p className="balance-card-text text-lg lg:text-2xl mt-3 font-bold text-gray-700 ">Total Received: <span className="text-lg lg:text-2xl font-extrabold"> ৳</span> {totalRCV}</p>
-     <p className="balance-card-text text-lg lg:text-2xl mt-3 font-bold text-gray-700">Total Cashout: <span className="text-lg lg:text-2xl font-extrabold"> ৳</span> {totalPayment}</p>
-
-     <p className="balance-card-text text-lg lg:text-2xl mt-3 font-bold text-gray-700">Total Due: <span className="text-lg lg:text-2xl font-extrabold"> ৳</span> {totalRCV - totalPayment}</p>
-    
-   </div> */}
-
-  
-  
    <div className="balance-card bg-white rounded-2xl shadow-2xl p-5 text-center transition-transform transform hover:scale-105 border-0">
      <img className="balance-card-img" src="https://i.ibb.co/PZc0P4w/brac-bank-seeklogo.png" alt="Rocket" />
      {/* <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"><span className="text-lg lg:text-2xl font-extrabold">Bank Received : ৳</span> {bankTotal}</p>

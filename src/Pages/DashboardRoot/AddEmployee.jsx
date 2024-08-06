@@ -47,7 +47,7 @@ const AddEmployee = () => {
         <link rel="canonical" href="https://www.example.com/" />
       </Helmet>
       <div className="bg-white p-6 rounded shadow-md w-full max-w-md mx-4">
-        <h2 className="text-2xl font-bold mb-4 text-center">Add New Client</h2>
+        <h2 className="text-2xl font-bold mb-4 text-black text-center">Add New Employee</h2>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label htmlFor="name" className="block text-sm font-medium text-gray-700">

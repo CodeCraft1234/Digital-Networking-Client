@@ -7,10 +7,12 @@ import useUsers from "../../Hook/useUsers";
 import { IoIosSearch } from "react-icons/io";
 import axios from "axios";
 import { Helmet } from "react-helmet-async";
+import useAdsAccount from "../../Hook/useAdAccount";
+import useAdsPayment from "../../Hook/useAdsPayment";
 
-const AdminPayments = () => {
+const  AllAdsPayments = () => {
   const { user } = useContext(AuthContext);
-  const [employeePayment, refetch] = useEmployeePayment();
+  const [adsPayment, refetch] = useAdsPayment();
   const AxiosPublic = UseAxiosPublic();
   const [users] = useUsers();
 
@@ -26,7 +28,7 @@ const AdminPayments = () => {
 
   const [totalPayment, setTotalPayment] = useState(0);
   useEffect(() => {
-    const realdata = employeePayment.filter(
+    const realdata = adsPayment.filter(
       (m) => m.employeeEmail === user?.email
     );
     setPayment(realdata);
@@ -35,7 +37,7 @@ const AdminPayments = () => {
       0
     );
     setTotalPayment(totalBill);
-  }, [employeePayment, user?.email]);
+  }, [adsPayment, user?.email]);
 
 
   useEffect(() => {
@@ -71,7 +73,7 @@ const AdminPayments = () => {
     }
 
     setFilteredClients(filtered);
-  }, [selectedEmployee, sortMonth, selectedDate, employeePayment]);
+  }, [selectedEmployee, sortMonth, selectedDate, adsPayment]);
 
   const filteredItems = filteredClients.filter((item) =>
     item.paymentMethod.toLowerCase().includes(searchQuery.toLowerCase())
@@ -121,7 +123,7 @@ const AdminPayments = () => {
     };
 
     AxiosPublic.post(
-      "https://digital-networking-server.vercel.app/employeePayment",
+      "https://digital-networking-server.vercel.app/adsPayment",
       data
     )
       .then((res) => {
@@ -172,7 +174,7 @@ const AdminPayments = () => {
     const body = { note, payAmount, date, paymentMethod };
 
     AxiosPublic.patch(
-      `https://digital-networking-server.vercel.app/employeePayment/${id}`,
+      `https://digital-networking-server.vercel.app/adsPayment/${id}`,
       body
     )
       .then((res) => {
@@ -665,4 +667,4 @@ const AdminPayments = () => {
   );
 };
 
-export default AdminPayments;
+export default AllAdsPayments;

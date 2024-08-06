@@ -130,7 +130,7 @@ const Campaigns = () => {
     console.log(body);
 
     axios
-      .put(`http://localhost:5000/campaigns/totalBudged/${id}`, body)
+      .put(`https://digital-networking-server.vercel.app/campaigns/totalBudged/${id}`, body)
       .then((res) => {
         console.log(res.data);
         refetch();
@@ -159,7 +159,7 @@ const Campaigns = () => {
     console.log(body);
 
     axios
-      .put(`http://localhost:5000/campaigns/totalSpent/${id}`, body)
+      .put(`https://digital-networking-server.vercel.app/campaigns/totalSpent/${id}`, body)
       .then((res) => {
         console.log(res.data);
         refetch();

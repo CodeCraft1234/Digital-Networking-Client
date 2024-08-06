@@ -9,7 +9,9 @@ import { FaEdit } from "react-icons/fa";
 import axios from "axios";
 
 const AllAdsAccount = () => {
-  const [adsAccount, refetch] = useAdsAccount();
+  const [adsAccount, refetch] = useAdsAccount()
+  console.log(adsAccount);
+  console.log(adsAccount);
   const [adsAccounts, setAdsAccounts] = useState([]);
   const [filteredAdsAccounts, setFilteredAdsAccounts] = useState([]);
   const [modalData, setModalData] = useState(null);
@@ -115,15 +117,15 @@ const AllAdsAccount = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
 
-  const filteredItems = filteredAdsAccounts.filter((item) =>
-    item.employeeEmail.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  // const filteredItems = filteredAdsAccounts.filter((item) =>
+  //   item?.employeeEmail.toLowerCase().includes(searchQuery.toLowerCase())
+  // );
 
   const filteredByCategory = selectedCategory
-    ? filteredItems.filter(
+    ? filteredAdsAccounts.filter(
         (item) => item.category.toLowerCase() === selectedCategory.toLowerCase()
       )
-    : filteredItems;
+    : filteredAdsAccounts;
 
   const handleDelete = (id) => {
     Swal.fire({

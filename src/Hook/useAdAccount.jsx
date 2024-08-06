@@ -6,7 +6,7 @@ import UseAxiosPublic from "../Axios/UseAxiosPublic";
 const useAdsAccount = () => {
     const AxiosPublic=UseAxiosPublic()
     const { refetch, data: adsAccount=[]}=useQuery({
-        queryKey:['adsAccount'],
+        queryKey:['/adsAccount'],
         queryFn: async () => {
             const res=await AxiosPublic.get(`/adsAccount`)
             return res.data
