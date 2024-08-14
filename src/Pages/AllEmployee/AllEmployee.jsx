@@ -83,7 +83,7 @@ const AllEmployee = () => {
                 <td className="px-6 py-4 border text-center">
                   <img
                     className="w-10 h-10 rounded-full mx-auto"
-                    src={em.companyLogo}
+                    src={em.photo}
                     alt={em.name}
                   />
                 </td>
