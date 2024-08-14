@@ -172,8 +172,8 @@ const PaymentHistry = () => {
     const previousAmount = parseFloat(e.target.previousAmount.value);
     const date = e.target.date.value;
     const note = e.target.note.value;
-    const method = e.target.paymentMethod.value;
-    const body = { note, amount, date, method };
+    const paymentMethod = e.target.paymentMethod.value;
+    const body = { note, amount, date, paymentMethod };
     AxiosPublic.patch(
       `https://digital-networking-server.vercel.app/Mpayment/${id}`,
       body

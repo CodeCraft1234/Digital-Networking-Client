@@ -1,22 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import usemonthlySpent from "../../Hook/useMonthlySpent";
+import useMonthlySpent from "../../Hook/useMonthlySpent";
 import useEmployeePayment from '../../Hook/useEmployeePayment';
 import { Link } from 'react-router-dom';
+import useSellery from '../../Hook/useSellery';
 
 const Sellery = () => {
-  const [monthlySpent] = usemonthlySpent();
+  const [monthlySpent] = useMonthlySpent();
   const [employeePayment] = useEmployeePayment();
+  const [sellery, refetch] = useSellery();
   
   const [sortMonth, setSortMonth] = useState(new Date().toLocaleString('default', { month: 'long' }));
   const [sortByEmployeeName, setSortByEmployeeName] = useState(null);
   const [totalPayment, setTotalPayment] = useState(0);
   const [totalSpent, setTotalSpent] = useState(0);
-
-  // Function to get the current year and month
-  const getCurrentMonth = () => {
-    const now = new Date();
-    return now.toLocaleString('default', { month: 'long' });
-  };
 
   // Function to aggregate totalSpent by employee names and months
   const aggregateAccountsByEmployee = (data) => {
@@ -56,7 +52,7 @@ const Sellery = () => {
       
       if (paymentMonth === month && paymentYear === currentYear) {
         if (!employeeName || payment.employeeName === employeeName) {
-          total += parseFloat(payment.payAmount);
+          total += parseFloat(payment.payAmount) || 0;
         }
       }
     });
@@ -74,7 +70,7 @@ const Sellery = () => {
       
       if (spentMonth === month) {
         if (!employeeName || spent.employeeName === employeeName) {
-          total += spent.totalSpentt;
+          total += spent.totalSpentt || 0;
         }
       }
     });
@@ -90,7 +86,27 @@ const Sellery = () => {
       return paymentMonth === month && payment.employeeEmail === email;
     });
 
-    return payments.reduce((acc, payment) => acc + parseFloat(payment.payAmount), 0);
+    return payments.reduce((acc, payment) => acc + (parseFloat(payment.payAmount) || 0), 0);
+  };
+
+  const calculateSelleryAmount = (email, month) => {
+    const payments = sellery.filter(payment => {
+      const paymentDate = new Date(payment.date);
+      const paymentMonth = paymentDate.toLocaleString('default', { month: 'long' });
+      return paymentMonth === month && payment.email === email;
+    });
+  
+    return payments.reduce((acc, payment) => acc + (parseFloat(payment.amount) || 0), 0);
+  };
+
+  const calculateBonusAmount = (email, month) => {
+    const payments = sellery.filter(payment => {
+      const paymentDate = new Date(payment.date);
+      const paymentMonth = paymentDate.toLocaleString('default', { month: 'long' });
+      return paymentMonth === month && payment.email === email;
+    });
+  
+    return payments.reduce((acc, payment) => acc + (parseFloat(payment.bonus) || 0), 0);
   };
 
   // Filter and aggregate data
@@ -100,14 +116,14 @@ const Sellery = () => {
   const currentTotalSpent = calculateTotalSpent(sortMonth, sortByEmployeeName);
 
   // Calculate totals for the footer
-  const totalSpentSum = sortedAccounts.reduce((acc, account) => acc + parseFloat(account.totalSpentt), 0);
+  const totalSpentSum = sortedAccounts.reduce((acc, account) => acc + (parseFloat(account.totalSpentt) || 0), 0);
   const totalBillSum = totalSpentSum * 140;
   const totalAdminPay = sortedAccounts.reduce((acc, account) => acc + calculateAdminPay(account.employeeEmail, sortMonth), 0);
   const totalDue = totalBillSum - totalAdminPay;
   const totalSalary = totalSpentSum * 7;
-  const salaryPaid = totalSalary;
+  const salaryPaid = sortedAccounts.reduce((acc, account) => acc + calculateSelleryAmount(account.employeeEmail, sortMonth), 0);
   const salaryUnpaid = totalSalary - salaryPaid;
-  const bonus = totalSalary;
+  const bonus = sortedAccounts.reduce((acc, account) => acc + calculateBonusAmount(account.employeeEmail, sortMonth), 0);
 
   useEffect(() => {
     setTotalPayment(currentTotalPayment);
@@ -118,7 +134,7 @@ const Sellery = () => {
     <div className='m-5'>
       <div className="flex justify-between mb-4">
         <select
-          className="px-4 py-2 border rounded bg-gradient-to-r from-blue-400 via-green-500 to-yellow-500 text-white"
+          className="px-4 py-2 border rounded bg-white text-black border-gray-700 "
           onChange={(e) => setSortByEmployeeName(e.target.value)}
           value={sortByEmployeeName || ""}
         >
@@ -128,7 +144,7 @@ const Sellery = () => {
           ))}
         </select>
         <select
-          className="mr-4 px-4 py-2 border rounded bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 text-white"
+          className=" px-4 py-2 border rounded bg-white text-black border-gray-700"
           onChange={(e) => setSortMonth(e.target.value)}
           value={sortMonth || ""}
         >
@@ -178,40 +194,40 @@ const Sellery = () => {
                   $ {account.totalSpentt}
                 </td>
                 <td className="p-3 border-r-2 border-gray-300 text-center">
-                  $ {(account.totalSpentt * 140)}
+                  $ {(account.totalSpentt * 140).toFixed(2)}
                 </td>
                 <td className="p-3 border-r-2 border-gray-300 text-center">
-                  ৳ {calculateAdminPay(account.employeeEmail, sortMonth)}
+                  $ {calculateAdminPay(account.employeeEmail, sortMonth).toFixed(2)}
                 </td>
                 <td className="p-3 border-r-2 border-gray-300 text-center">
-                  ৳ {(account.totalSpentt * 140 - calculateAdminPay(account.employeeEmail, sortMonth)).toFixed(2)}
+                  $ {(account.totalSpentt * 140 - calculateAdminPay(account.employeeEmail, sortMonth)).toFixed(2)}
                 </td>
                 <td className="p-3 border-r-2 border-gray-300 text-center">
-                  ৳ {(account.totalSpentt * 7)}
+                  $ {(account.totalSpentt * 7).toFixed(2)}
                 </td>
                 <td className="p-3 border-r-2 border-gray-300 text-center">
-                  ৳ {(salaryPaid).toFixed(2)}
+                  $ {calculateSelleryAmount(account.employeeEmail, sortMonth).toFixed(2)}
                 </td>
                 <td className="p-3 border-r-2 border-gray-300 text-center">
-                  ৳ {(salaryUnpaid).toFixed(2)}
+                  $ {(account.totalSpentt * 7 - calculateSelleryAmount(account.employeeEmail, sortMonth)).toFixed(2)}
                 </td>
                 <td className="p-3 border-r-2 border-gray-300 text-center">
-                  ৳ {(bonus).toFixed(2)}
+                  $ {calculateBonusAmount(account.employeeEmail, sortMonth).toFixed(2)}
                 </td>
               </tr>
             ))}
           </tbody>
-          <tfoot className="bg-[#05a0db] text-white">
-            <tr>
-              <td colSpan="3" className="p-3 text-right font-bold">Total:</td>
-              <td className="p-3 text-center font-bold">$ {parseFloat(totalSpentSum)}</td>
-              <td className="p-3 text-center font-bold">৳ {totalBillSum}</td>
-              <td className="p-3 text-center font-bold">৳ {totalAdminPay}</td>
-              <td className="p-3 text-center font-bold">৳ {totalDue}</td>
-              <td className="p-3 text-center font-bold">৳ {totalSalary}</td>
-              <td className="p-3 text-center font-bold">৳ {salaryPaid}</td>
-              <td className="p-3 text-center font-bold">৳ {salaryUnpaid}</td>
-              <td className="p-3 text-center font-bold">৳ {bonus}</td>
+          <tfoot>
+            <tr className="bg-[#05a0db] text-white font-bold">
+              <td className="p-3" colSpan="3">Total</td>
+              <td className="p-3">${totalSpentSum.toFixed(2)}</td>
+              <td className="p-3">৳{totalBillSum.toFixed(2)}</td>
+              <td className="p-3">৳{totalAdminPay.toFixed(2)}</td>
+              <td className="p-3">৳{totalDue.toFixed(2)}</td>
+              <td className="p-3">৳{totalSalary.toFixed(2)}</td>
+              <td className="p-3">৳{salaryPaid.toFixed(2)}</td>
+              <td className="p-3">৳{salaryUnpaid.toFixed(2)}</td>
+              <td className="p-3">৳{bonus.toFixed(2)}</td>
             </tr>
           </tfoot>
         </table>

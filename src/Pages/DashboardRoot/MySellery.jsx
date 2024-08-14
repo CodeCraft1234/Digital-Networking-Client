@@ -1,59 +1,20 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import useMonthlySpent from "../../Hook/useMonthlySpent";
 import useEmployeePayment from '../../Hook/useEmployeePayment';
 import { useParams } from 'react-router-dom';
+import useSellery from '../../Hook/useSellery';
+import { FaEdit } from 'react-icons/fa';
+import UseAxiosPublic from '../../Axios/UseAxiosPublic';
 import { AuthContext } from '../../Security/AuthProvider';
+// Assuming AxiosPublic is configured
 
 const MySellery = () => {
     const {user}=useContext(AuthContext)
+    const [sellery, refetch] = useSellery();
     const [monthlySpent] = useMonthlySpent();
     const [employeePayment] = useEmployeePayment();
-  
-    const [sortByEmployeeName, setSortByEmployeeName] = useState(null);
 
-    // Function to aggregate totalSpent by employee names and months
-    const aggregateAccountsByEmployee = (data) => {
-        const aggregated = {};
-    
-        data.forEach(account => {
-            const date = new Date(account.date);
-            const month = date.toLocaleString('default', { month: 'long' });
-            const year = date.getFullYear();
-            const key = `${account.employeeName}-${month}-${year}`;
-    
-            if (!aggregated[key]) {
-                aggregated[key] = { 
-                    employeeName: account.employeeName,
-                    accountName: account.accountName,
-                    totalSpentt: 0, 
-                    month, 
-                    year,
-                    employeeEmail: account.employeeEmail 
-                };
-            }
-            aggregated[key].totalSpentt += account.totalSpentt;
-        });
-    
-        return Object.values(aggregated);
-    };
-
-    // Function to calculate total payment for the given month and employee
-    const calculateTotalPayment = (month) => {
-        const currentYear = new Date().getFullYear();
-        let total = 0;
-
-        employeePayment.forEach(payment => {
-            const paymentDate = new Date(payment.date);
-            const paymentMonth = paymentDate.toLocaleString('default', { month: 'long' });
-            const paymentYear = paymentDate.getFullYear();
-            
-            if (paymentMonth === month && paymentYear === currentYear && payment.employeeEmail === user?.email) {
-                total += parseFloat(payment.payAmount);
-            }
-        });
-
-        return total;
-    };
+    const months = Array.from({ length: 12 }, (_, i) => new Date(0, i).toLocaleString('default', { month: 'long' }));
 
     // Function to calculate total spent for the given month and employee
     const calculateTotalSpent = (month) => {
@@ -62,7 +23,7 @@ const MySellery = () => {
         monthlySpent.forEach(spent => {
             const spentDate = new Date(spent.date);
             const spentMonth = spentDate.toLocaleString('default', { month: 'long' });
-            
+
             if (spentMonth === month && spent.employeeEmail === user?.email) {
                 total += spent.totalSpentt;
             }
@@ -82,24 +43,43 @@ const MySellery = () => {
         return payments.reduce((acc, payment) => acc + parseFloat(payment.payAmount), 0);
     };
 
-    // Filter and aggregate data
-    const aggregatedAccounts = aggregateAccountsByEmployee(monthlySpent);
-    const months = Array.from({ length: 12 }, (_, i) => new Date(0, i).toLocaleString('default', { month: 'long' }));
-  
+    const AxiosPublic=UseAxiosPublic()
+    // Handle Sellery Submission
+    const handleSellery = (e, month) => {
+        e.preventDefault();
+        const amount = e.target.amount.value;
+        const bonus = e.target.bonus.value;
+        const date = new Date(`${month} 1, ${new Date().getFullYear()}`); // Create a date based on the month
+        const email=user?.email
+        const bodyy = { amount, date,bonus, email };
+        AxiosPublic.post('/sellery', bodyy)
+            .then(res => {
+                console.log(res.data);
+                refetch(); // Refetch sellery data after posting
+            })
+            .catch(error => {
+                console.error("Error posting sellery:", error);
+            });
+    };
+
+    const calculateTotalSelleryAndBonus = (month) => {
+        let totalSellery = 0;
+        let totalBonus = 0;
+    
+        sellery.forEach(s => {
+            const selleryDate = new Date(s.date);
+            const selleryMonth = selleryDate.toLocaleString('default', { month: 'long' });
+    
+            if (selleryMonth === month && s.email === user?.email) {
+                totalSellery += parseFloat(s.amount) || 0;
+                totalBonus += parseFloat(s.bonus) || 0;
+            }
+        });
+    
+        return { totalSellery, totalBonus };
+    };
     return (
         <div className='m-5'>
-            <div className="flex justify-between mb-4">
-                <select
-                    className="px-4 py-2 border rounded bg-gradient-to-r from-blue-400 via-green-500 to-yellow-500 text-white"
-                    onChange={(e) => setSortByEmployeeName(e.target.value)}
-                    value={sortByEmployeeName || ""}
-                >
-                    <option value="">Select Employee</option>
-                    {[...new Set(aggregatedAccounts.map(account => account.employeeName))].map(employeeName => (
-                        <option key={employeeName} value={employeeName}>{employeeName}</option>
-                    ))}
-                </select>
-            </div>
             <div className="overflow-x-auto text-center border border-black">
                 <table className="min-w-full text-center bg-white">
                     <thead className="bg-[#05a0db] text-white">
@@ -117,15 +97,15 @@ const MySellery = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {months.map((month, index) => {
-                            const totalSpent = calculateTotalSpent(month);
-                            const totalBill = totalSpent * 140;
-                            const adminPay = calculateAdminPay(month);
-                            const totalDue = totalBill - adminPay;
-                            const totalSalary = totalSpent * 7;
-                            const salaryPaid = totalSalary;
-                            const salaryUnpaid = totalSalary - salaryPaid;
-                            const bonus = totalSalary;
+                    {months.map((month, index) => {
+    const totalSpent = calculateTotalSpent(month);
+    const totalBill = totalSpent * 140;
+    const adminPay = calculateAdminPay(month);
+    const totalDue = totalBill - adminPay;
+    const totalSalary = totalSpent * 7;
+
+    // Calculate total sellery and bonus for the month
+    const { totalSellery, totalBonus } = calculateTotalSelleryAndBonus(month);
 
                             return (
                                 <tr
@@ -156,31 +136,82 @@ const MySellery = () => {
                                         ৳ {totalSalary}
                                     </td>
                                     <td className="p-3 border-r-2 border-gray-300 text-center">
-                                        ৳ {salaryPaid.toFixed(2)}
+                                        <div className="relative group flex items-center justify-center">
+                                            <h1>৳ {totalSellery}</h1>
+                                            <button
+                                                className="text-black text-right px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                                                onClick={() =>
+                                                    document
+                                                        .getElementById(`my_modal_6d-${index}`)
+                                                        .showModal()
+                                                }
+                                            >
+                                                <FaEdit />
+                                            </button>
+
+                                            <dialog id={`my_modal_6d-${index}`} className="modal">
+                                                <div className="modal-box bg-white">
+                                                    <form
+                                                        onSubmit={(e) => handleSellery(e, month)}
+                                                    >
+                                                        <h1 className="text-black font-bold text-start">Sellery Amount</h1>
+                                                        <input
+                                                            type="number"
+                                                            name="amount"
+                                                            step="0.01"
+                                                            placeholder="0"
+                                                            className="w-full rounded p-2 mt-3 bg-white text-black border border-gray-700"
+                                                        />
+                                                       <h1 className="text-black mt-3 font-bold text-start">Bonus</h1>
+                                                        <input
+                                                            type="number"
+                                                            name="bonus"
+                                                            step="0.01"
+                                                            placeholder="0"
+                                                            className="w-full rounded p-2 mt-3 bg-white text-black border border-gray-700"
+                                                        />
+
+                                                        <button
+                                                            type="submit"
+                                                            className="mt-4 font-avenir px-3 mx-auto py-1 rounded-lg text-white bg-[#05a0db]"
+                                                        >
+                                                            Update
+                                                        </button>
+                                                    </form>
+                                                    <form method="dialog">
+                                                        <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
+                                                            ✕
+                                                        </button>
+                                                    </form>
+                                                </div>
+                                            </dialog>
+                                        </div>
                                     </td>
                                     <td className="p-3 border-r-2 border-gray-300 text-center">
-                                        ৳ {salaryUnpaid.toFixed(2)}
+                                        ৳ {totalSalary - totalSellery}
                                     </td>
                                     <td className="p-3 border-r-2 border-gray-300 text-center">
-                                        ৳ {bonus.toFixed(2)}
+                                    ৳ {totalBonus}
+                                       
                                     </td>
                                 </tr>
                             );
                         })}
                     </tbody>
                     <tfoot className="bg-[#05a0db] text-white">
-                        <tr>
-                            <td colSpan="2" className="p-3 text-right font-bold">Total:</td>
-                            <td className="p-3 text-center font-bold">$ {months.reduce((acc, month) => acc + calculateTotalSpent(month), 0)}</td>
-                            <td className="p-3 text-center font-bold">৳ {months.reduce((acc, month) => acc + calculateTotalSpent(month) * 140, 0)}</td>
-                            <td className="p-3 text-center font-bold">৳ {months.reduce((acc, month) => acc + calculateAdminPay(month), 0)}</td>
-                            <td className="p-3 text-center font-bold">৳ {months.reduce((acc, month) => acc + calculateTotalSpent(month) * 140 - calculateAdminPay(month), 0)}</td>
-                            <td className="p-3 text-center font-bold">৳ {months.reduce((acc, month) => acc + calculateTotalSpent(month) * 7, 0)}</td>
-                            <td className="p-3 text-center font-bold">৳ {months.reduce((acc, month) => acc + calculateTotalSpent(month) * 7, 0).toFixed(2)}</td>
-                            <td className="p-3 text-center font-bold">৳ {months.reduce((acc, month) => acc + 0, 0).toFixed(2)}</td>
-                            <td className="p-3 text-center font-bold">৳ {months.reduce((acc, month) => acc + calculateTotalSpent(month) * 7, 0).toFixed(2)}</td>
-                        </tr>
-                    </tfoot>
+    <tr>
+        <td colSpan="2" className="p-3 text-right font-bold">Total:</td>
+        <td className="p-3 text-center font-bold">$ {months.reduce((acc, month) => acc + calculateTotalSpent(month), 0)}</td>
+        <td className="p-3 text-center font-bold">৳ {months.reduce((acc, month) => acc + calculateTotalSpent(month) * 140, 0)}</td>
+        <td className="p-3 text-center font-bold">৳ {months.reduce((acc, month) => acc + calculateAdminPay(month), 0)}</td>
+        <td className="p-3 text-center font-bold">৳ {months.reduce((acc, month) => acc + calculateTotalSpent(month) * 140 - calculateAdminPay(month), 0)}</td>
+        <td className="p-3 text-center font-bold">৳ {months.reduce((acc, month) => acc + calculateTotalSpent(month) * 7, 0)}</td>
+        <td className="p-3 text-center font-bold">৳ {months.reduce((acc, month) => acc + calculateTotalSelleryAndBonus(month).totalSellery, 0)}</td>
+        <td className="p-3 text-center font-bold">৳ {months.reduce((acc, month) => acc + (calculateTotalSpent(month) * 7 - calculateTotalSelleryAndBonus(month).totalSellery), 0).toFixed(2)}</td>
+        <td className="p-3 text-center font-bold">৳ {months.reduce((acc, month) => acc + calculateTotalSelleryAndBonus(month).totalBonus, 0)}</td>
+    </tr>
+</tfoot>
+
                 </table>
             </div>
         </div>

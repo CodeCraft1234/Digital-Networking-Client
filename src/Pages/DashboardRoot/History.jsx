@@ -2,9 +2,10 @@ import React, { useState, useEffect } from 'react';
 import usemonthlySpent from "../../Hook/useMonthlySpent";
 import { MdDelete, MdEditSquare } from 'react-icons/md';
 import axios from 'axios';
+import UseAxiosPublic from '../../Axios/UseAxiosPublic';
 
 const History = () => {
-  const [monthlySpent] = usemonthlySpent();
+  const [monthlySpent,refetch] = usemonthlySpent();
   const [sortMonth, setSortMonth] = useState('');
   const [sortYear, setSortYear] = useState('');
   const [sortEmployee, setSortEmployee] = useState(null); // State for sorting by employee name
@@ -60,9 +61,9 @@ const History = () => {
   const handleUpdate2 = (e, id, ) => {
     e.preventDefault();
     const totalSpentt = e.target.totalSpentt.value;
-    const body = { totalSpentt: totalSpentt };
+    const body = { totalSpentt: parseFloat(totalSpentt)};
   
-    axios.put(`https://digital-networking-server.vercel.app/monthlySpent/totalSpent/${id}`, body)
+    axios.patch(`https://digital-networking-server.vercel.app/monthlySpent/totalSpent/${id}`, body)
       .then((res) => {
         console.log(res.data);
         refetch();
@@ -71,8 +72,16 @@ const History = () => {
       .catch((error) => {
         console.error("Error updating total spent:", error);
       });
-  
   };
+
+  const AxiosPublic=UseAxiosPublic()
+  const handledelete = (id) => {
+    AxiosPublic.delete(`/monthlySpent/${id}`).then((res) => {
+      refetch();
+    });
+};
+
+
   return (
     <div className='m-5' >
       <div className="flex justify-between mb-4">

@@ -418,12 +418,15 @@ const MyClients = () => {
   <dialog id={`modal_${index}`} className="modal">
     <div className="modal-box bg-white text-black">
       <form onSubmit={(e) => handleUpdate2(e, campaign._id)}>
+<<<<<<< HEAD
       <h1
              className=" text-black flex hover:text-red-500  justify-end  text-end"
              onClick={() => document.getElementById(`modal_${index}`).close()}
            >
             <ImCross />
            </h1>
+=======
+>>>>>>> 2e76713368f36d3eea9624e7e01855816f427304
         <h1 className="text-md mb-5">
           Client Name:{" "}
           <span className="text-blue-600 text-xl font-bold">
