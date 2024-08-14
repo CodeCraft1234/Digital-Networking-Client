@@ -224,7 +224,7 @@ const CampaignTable = ({ email }) => {
 
 
 <table className="min-w-full bg-white">
-<thead className="bg-red-800 text-white">
+<thead className="bg-[#05a0db] text-white">
 <tr>
 <th className="p-3 text-center">SL</th>
 <th className="p-3 text-center">Client Name</th>
@@ -269,7 +269,7 @@ const CampaignTable = ({ email }) => {
 
 </tr>
 ))}
-<tr className="bg-green-800 text-sm text-white font-bold">
+<tr className="bg-[#05a0db] text-sm text-white font-bold">
 <td className="p-3 text-center"></td>
 
 <td className="p-3  text-right" colSpan="1">
@@ -301,7 +301,7 @@ const CampaignTable = ({ email }) => {
 
     <div className="overflow-x-auto mt-6 mx-4">
                   <table className="min-w-full bg-white">
-                      <thead className="bg-green-800 text-white">
+                      <thead className="bg-[#05a0db] text-white">
                           <tr>
                               <th className="p-3 ">SL</th>
                               <th className="p-3">Payment Date</th>
@@ -338,7 +338,7 @@ const CampaignTable = ({ email }) => {
                                       <td className="p-3 border-r-2 border-gray-200 text-center"> {payment.note}</td>
                               </tr>
                           ))}
-                          <tr className="bg-green-800 text-white font-bold">
+                          <tr className="bg-[#05a0db] text-white font-bold">
                               <td className="p-3 text-center" colSpan="2">
                                   Total Amount =
                               </td>

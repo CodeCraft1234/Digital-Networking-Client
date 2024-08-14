@@ -12,7 +12,7 @@ import {
 import { RxDashboard } from "react-icons/rx";
 
 import { MdAccountCircle, MdCampaign, MdOutlinePayments, MdOutlineSummarize } from "react-icons/md";
-import { IoPeopleSharp } from "react-icons/io5";
+import { IoLogOutOutline, IoPeopleSharp } from "react-icons/io5";
 
 
 import { IoIosAddCircleOutline, IoIosPeople, IoMdArrowDropdown, IoMdArrowDropup } from "react-icons/io";
@@ -35,13 +35,13 @@ const AdsDashboard = () => {
 
   const getActiveStyle = (isActive) => (
     isActive
-      ? { backgroundColor: 'purple', color: 'white' }
+      ? { backgroundColor: '#05a0db', color: 'white' }
       : {}
   );
 
   const getActiveStyle2 = (isActive) => (
     isActive
-      ? { backgroundColor: 'green', color: 'white' }
+      ? { backgroundColor: '#f89320', color: 'white' }
       : {}
   );
   const [isOpen, setIsOpen] = useState(false);
@@ -89,7 +89,7 @@ const AdsDashboard = () => {
           <Link to={"/"}>
             <img
               className="w-24"
-              src="https://i.ibb.co/Cnvg0RS/Digital-Network-Logo.png"
+              src="https://i.ibb.co/rvH9Bz0/Logo-01.png"
               alt="Logo"
             />
           </Link>
@@ -98,7 +98,7 @@ const AdsDashboard = () => {
         
           <NavLink
             to="/dashboard/ads/home"
-            className="text-white hover:bg-green-300 hover:text-black py-2 px-4 rounded-lg flex items-center"
+            className="text-white hover:bg-[#f89320] hover:text-black py-2 px-4 rounded-lg flex items-center"
             style={({ isActive }) => getActiveStyle(isActive)}
           >
             <RxDashboard className="w-6 h-6 mr-2" />
@@ -107,7 +107,7 @@ const AdsDashboard = () => {
       
           <NavLink
             to={`dashboard/adsAccountCenter/${user?.email}`}
-            className="text-white hover:bg-green-300 hover:text-black py-2 px-4 rounded-lg flex items-center"
+            className="text-white hover:bg-[#f89320] hover:text-black py-2 px-4 rounded-lg flex items-center"
             style={({ isActive }) => getActiveStyle(isActive)}
           >
             <MdAccountCircle className="w-6 h-6 mr-2" />
@@ -115,7 +115,7 @@ const AdsDashboard = () => {
           </NavLink>
           <NavLink
             to='dashboard/adsPayments'
-            className="text-white hover:bg-green-300 hover:text-black py-2 px-4 rounded-lg flex items-center"
+            className="text-white hover:bg-[#f89320] hover:text-black py-2 px-4 rounded-lg flex items-center"
             style={({ isActive }) => getActiveStyle(isActive)}
           >
             <MdAccountCircle className="w-6 h-6 mr-2" />
@@ -125,7 +125,7 @@ const AdsDashboard = () => {
 
           {user?.email ? (
             <NavLink>
-               <div className="flex my-5 mt-16 justify-start gap-2 px-4 items-center text-white ">
+               <div className="flex my-2 mt-16 justify-start gap-2 px-4 items-center text-white ">
               
                 <img className="h-10 w-10 rounded-full" src={user?.photoURL} alt="" />
                 <Link to={'/dashboard/updateProfile'}>
@@ -136,9 +136,9 @@ const AdsDashboard = () => {
         </div>
               <button
                 onClick={handleLogOut}
-                className="font-avenir w-full px-3 py-1 bg-red-700 rounded text-white"
+                className="font-avenir flex hover:bg-[#f89320] justify-center items-center gap-2 w-full px-3 py-1  text-white rounded "
               >
-                Logout
+                Logout <IoLogOutOutline />
               </button>
             </NavLink>
           ) : (

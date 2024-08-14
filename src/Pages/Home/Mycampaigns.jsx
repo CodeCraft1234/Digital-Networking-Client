@@ -10,6 +10,7 @@ import Swal from "sweetalert2";
 import { Helmet } from "react-helmet-async";
 import { FaEdit } from "react-icons/fa";
 import axios from "axios";
+import { MdDelete, MdEditSquare } from "react-icons/md";
 
 const MyCampaigns = () => {
   const [users] = useUsers();
@@ -215,15 +216,17 @@ const [client,setClient]=useState([])
 
     }
 
+
+    
   return (
-    <div className="mt-5">
+    <div className="mt-5 mx-5">
       <Helmet>
         <title>My Campaign | Digital Network </title>
         <link rel="canonical" href="https://www.example.com/" />
       </Helmet>
 <div className="flex justify-between items-center ">
 <form className="flex justify-center items-center" onSubmit={handleSort}>
-        <div className="mb-4 ml-10 mx-auto">
+        <div className="mb-4  mx-auto">
           <label className="block text-gray-700">Sort By Client</label>
           <select name="email" className="border border-gray-700 text-black bg-white  rounded p-2 mt-1">
           <option value="">All Client</option>
@@ -237,35 +240,32 @@ const [client,setClient]=useState([])
       <div className="flex justify-end ">
                 <input
                   type="text"
-                  placeholder=" Campaign Name"
-                  className=" rounded-l-lg w-20 placeholder-black border-2 border-black p-2 font-bold text-black sm:w-2/3 text-sm bg-blue-300"
+                  placeholder="Search Campaign Name..."
+                  className=" rounded-lg   placeholder-black border-2 border-black p-2 font-bold text-black  text-sm bg-white"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                 />
-                <button
-                  type="button"
-                  className=" w-10 p-2 font-semibold rounded-r-lg sm:w-1/3 bg-[#FF9F0D] dark:bg-[#FF9F0D] text-white"
-                >
-                  <IoIosSearch className="mx-auto font-bold w-6 h-6" />
-                </button>
+              
       </div>
 </div>
 
 
 
 
-      <div className="p-2 sm:p-4">
+      <div className="">
         <div className="overflow-x-auto">
           <table className="min-w-full bg-white">
-            <thead className="bg-red-800 text-white">
+            <thead className="bg-[#05a0db] text-white">
               <tr>
-                <th className="p-3 text-center border-2 border-gray-300">ID</th>
+                <th className="p-3 text-center border-2 border-gray-300">SL</th>
+                <th className="p-3 text-center border-2 border-gray-300">Date</th>
                 <th className="p-3 text-center border-2 border-gray-300">Campaign Name</th>
+                <th className="p-3 text-center border-2 border-gray-300">client Name</th>
                 <th className="p-3 text-center border-2 border-gray-300">Page Name</th>
                 <th className="p-3 text-center border-2 border-gray-300">Total Budged</th>
                 <th className="p-3 text-center border-2 border-gray-300">Total spent</th>
                 <th className="p-3 text-center border-2 border-gray-300">Status</th>
-                <th className="p-3 text-center border-2 border-gray-300">Date</th>
+                <th className="p-3 text-center border-2 border-gray-300">Action</th>
               </tr>
             </thead>
             <tbody>
@@ -278,124 +278,28 @@ const [client,setClient]=useState([])
           : "bg-gray-200 text-black border-b border-opacity-20"
       }`}
     >
-      <td className="p-3 border-r-2 border-l-2 border-gray-200 text-center">{campaign._id.slice(-5)}</td>
-      
+      <td className="p-3 border-r-2 border-l-2 border-gray-200 text-center">{index + 1}</td>
+      <td className="p-3 border-l-2 border-r-2 border-gray-300 text-center">
+  {new Date(campaign.date).toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  })}
+</td>
       <td className="p-3 border-r-2 border-gray-300 text-left">
         <Link to={`/client/${campaign.clientEmail}`} className="flex justify-start">
         {campaign.campaignName}
         </Link>
-        <div className="flex justify-start gap-3">
-        <div>
-                      <button
-                        className="text-blue-700"
-                        onClick={() =>
-                          document.getElementById(`modal_${index}`).showModal()
-                        }
-                      >
-                        Edit
-                      </button>
-                      <dialog id={`modal_${index}`} className="modal">
-                        <div className="modal-box bg-white text-black">
-                          <form onSubmit={(e) => handleUpdate(e, campaign._id)}>
-                            <h1 className="text-md mb-5">
-                              Ads Account:{" "}
-                              <span className="text-blue-600 text-xl font-bold">
-                                {campaign.adsAccount}
-                              </span>
-                            </h1>
-                            <div className="flex justify-center items-center gap-3">
-                              <div className="mb-4">
-                                <label className="block text-gray-700">
-                                  Total Budged
-                                </label>
-                                <input
-                                  type="number"
-                                  name="tBudged"
-                                  defaultValue={campaign.tBudged}
-                                  step="0.01"
-                                  className="w-full bg-white border rounded p-2 mt-1"
-                                />
-                              </div>
-                              <div className="mb-4">
-                                <label className="block text-gray-700">
-                                  Total Spent
-                                </label>
-                                <input
-                                  type="number"
-                                  name="totalSpent"
-                                  defaultValue={campaign.tSpent}
-                                  step="0.01"
-                                  className="w-full bg-white border rounded p-2 mt-1"
-                                />
-                              </div>
-                            </div>
-                            <div className="flex justify-center items-center gap-3">
-                              <div className="mb-4">
-                                <label className="block text-gray-700">
-                                  Dollers Rate
-                                </label>
-                                <input
-                                  step="0.01"
-                                  type="number"
-                                  name="dollerRate"
-                                  defaultValue={campaign.dollerRate}
-                                  className="w-full bg-white border rounded p-2 mt-1"
-                                />
-                              </div>
-                              <div className="mb-4">
-                                <label className="block text-gray-700">
-                                  Status
-                                </label>
-                                <select
-                                  defaultValue={campaign.status}
-                                  name="status"
-                                  className="w-full bg-white border rounded p-2 mt-1"
-                                >
-                                  <option value="In Review">In Review</option>
-                                  <option value="Active">Active</option>
-                                  <option value="Complete">Complete</option>
-                                </select>
-                              </div>
-                            </div>
 
-                            <button
-                              onClick={() =>
-                                document
-                                  .getElementById(`modal_${index}`)
-                                  .close()
-                              }
-                              type="submit"
-                              className="font-avenir px-3 flex justify-center  mx-auto py-1 bg-green-800  rounded-lg text-white"
-                            >
-                              Update
-                            </button>
-                          </form>
-                          <div className="modal-action">
-                            <button
-                              className="p-2 rounded-lg bg-red-600 text-white text-center"
-                              onClick={() =>
-                                document
-                                  .getElementById(`modal_${index}`)
-                                  .close()
-                              }
-                            >
-                              Close
-                            </button>
-                          </div>
-                        </div>
-                      </dialog>
-                      </div>
-                        <button
-                          className="text-start flex justify-start text-red-600"
-                          onClick={() => handledelete(campaign._id)}
-                        >
-                          Delete
-                        </button>
-                      </div>
       </td>
       <td className="p-3 border-r-2 border-gray-300 text-center">
         <Link to={campaign.pageURL} className="flex justify-center">
         {campaign.pageName}
+        </Link>
+      </td>        
+      <td className="p-3 border-r-2 border-gray-300 text-center">
+        <Link to={campaign.pageURL} className="flex justify-center">
+        {campaign.clientName}
         </Link>
       </td>        
       <td className="p-3 border-r-2 border-gray-300 text-center">
@@ -495,17 +399,128 @@ const [client,setClient]=useState([])
           )}
         </div>
       </td>
-      <td className="p-3 border-r-2 border-gray-300 text-center">{campaign.status}</td>
-      <td className="p-3 border-l-2 border-r-2 border-gray-300 text-center">{campaign.date}</td>
+      
+      <td
+  className={`p-3 border text-center border-gray-300 ${
+    campaign.status === "Active"
+      ? "text-green-700 font-bold"
+      : campaign.status === "Complete"
+      ? "text-black font-bold"
+      : "text-red-600 font-bold"
+  }`}
+>
+  {campaign.status}
+</td>
+
+      <td className="p-3 border-l-2 border-r-2 border-gray-300 text-center">
+      <div className="flex justify-center gap-3">
+        <div>
+                      <button
+                        className="text-blue-700  text-3xl"
+                        onClick={() =>
+                          document.getElementById(`modal_${index}`).showModal()
+                        }
+                      >
+                        <MdEditSquare />
+                      </button>
+                      <dialog id={`modal_${index}`} className="modal">
+  <div className="modal-box bg-white text-black">
+    <form onSubmit={(e) => handleUpdate(e, campaign._id)}>
+      <h1 className="text-md mb-5">
+        Ads Account:{" "}
+        <span className="text-blue-600 text-xl font-bold">
+          {campaign.adsAccount}
+        </span>
+      </h1>
+
+      <div className="mb-4">
+        <label className="block text-start  font-bold text-gray-700">Total Budged</label>
+        <input
+          type="number"
+          name="tBudged"
+          defaultValue={campaign.tBudged}
+          step="0.01"
+          className="w-full bg-white border rounded p-2 mt-1"
+        />
+      </div>
+
+      <div className="mb-4">
+        <label className="block text-start  font-bold text-gray-700">Total Spent</label>
+        <input
+          type="number"
+          name="totalSpent"
+          defaultValue={campaign.tSpent}
+          step="0.01"
+          className="w-full bg-white border rounded p-2 mt-1"
+        />
+      </div>
+
+      <div className="mb-4">
+        <label className="block text-start  font-bold text-gray-700">Dollars Rate</label>
+        <input
+          step="0.01"
+          type="number"
+          name="dollerRate"
+          defaultValue={campaign.dollerRate}
+          className="w-full bg-white border rounded p-2 mt-1"
+        />
+      </div>
+
+      <div className="mb-4">
+        <label className="block text-start  font-bold text-gray-700">Status</label>
+        <select
+          defaultValue={campaign.status}
+          name="status"
+          className="w-full bg-white border rounded p-2 mt-1"
+        >
+          <option value="In Review">In Review</option>
+          <option value="Active">Active</option>
+          <option value="Complete">Complete</option>
+        </select>
+      </div>
+
+      <div className="modal-action grid grid-cols-2 gap-3 mt-4">
+      <button
+          type="button"
+          className="p-2 rounded-lg bg-red-600 text-white"
+          onClick={() =>
+            document.getElementById(`modal_${index}`).close()
+          }
+        >
+          Close
+        </button>
+        <button
+          type="submit"
+          className="font-avenir px-3 py-1 bg-[#05a0db] rounded-lg text-white"
+        >
+          Update
+        </button>
+       
+      </div>
+    </form>
+  </div>
+</dialog>
+                      </div>
+                        <button
+                          className="text-start flex justify-start text-black text-3xl"
+                          onClick={() => handledelete(campaign._id)}
+                        >
+                          <MdDelete />
+                        </button>
+                      </div>
+</td>
     </tr>
   ))}
-  <tr className="bg-green-800 text-sm text-white font-bold">
-    <td className="p-3 border-2 border-gray-300 text-right" colSpan="4">
+  <tr className="bg-[#05a0db] text-sm text-white font-bold">
+    <td className="p-3  border-gray-300 text-right" colSpan="4">
       Total :
     </td>
-    <td className="p-3 border-2 border-gray-300 text-center">$ {totalBudged}</td>
-    <td className="p-3 border-2 border-gray-300 text-center">$ {totalSpent}</td> 
-    <td className="p-3 border-2 border-gray-300 text-center"></td> 
+    <td className="p-3  border-gray-300 text-start">$ {totalBudged}</td>
+    <td className="p-3  border-gray-300 text-start">$ {totalSpent}</td> 
+    <td className="p-3  border-gray-300 text-start"></td> 
+    <td className="p-3  border-gray-300 text-start"></td> 
+    <td className="p-3  border-gray-300 text-start"></td> 
+
   </tr>
 </tbody>
           </table>  

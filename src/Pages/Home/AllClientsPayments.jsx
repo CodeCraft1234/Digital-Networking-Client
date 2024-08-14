@@ -5,30 +5,34 @@ import UseAxiosPublic from "../../Axios/UseAxiosPublic";
 import { Helmet } from "react-helmet-async";
 import useMpayment from "../../Hook/UseMpayment";
 import Swal from "sweetalert2";
+import { MdDelete, MdEditSquare } from "react-icons/md";
 
 const AllClientsPayments = () => {
   const [MPayment, refetch] = useMpayment();
   const AxiosPublic = UseAxiosPublic();
-  const [sortMonth, setSortMonth] = useState("");
+  const [sortMonth, setSortMonth] = useState(""); // Default is empty
   const [selectedDate, setSelectedDate] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredData, setFilteredData] = useState([]);
 
-
-
   const [totalPayment, setTotalPayment] = useState(0);
   const [payment, setPayment] = useState([]);
-  console.log(payment);
 
   useEffect(() => {
-    setPayment(MPayment)
+    setPayment(MPayment);
     const totalBill = MPayment.reduce(
       (acc, campaign) => acc + parseFloat(campaign.amount),
       0
     );
     setTotalPayment(totalBill);
   }, [MPayment]);
+
+  // Set default sortMonth to current month when component mounts
+  useEffect(() => {
+    const currentMonth = new Date().getMonth() + 1; // Months are 0-indexed
+    setSortMonth(currentMonth);
+  }, []);
 
   useEffect(() => {
     let filtered = MPayment;
@@ -60,13 +64,10 @@ const AllClientsPayments = () => {
   }, [sortMonth, selectedDate, selectedCategory, searchQuery, MPayment]);
 
   const handleDelete = (id) => {
-
-        AxiosPublic.delete(`/MPayment/${id}`).then((res) => {
-          refetch();
-         
-          })
-        }
-    
+    AxiosPublic.delete(`/MPayment/${id}`).then((res) => {
+      refetch();
+    });
+  };
 
   const [activeDropdown, setActiveDropdown] = useState(null);
   const toggleDropdown = (orderId) => {
@@ -91,13 +92,13 @@ const AllClientsPayments = () => {
     const updatedPayment = {
       ...selectedPayment,
       date: e.target.date.value,
-      payAmount: parseFloat(e.target.amount.value),
-      paymentMethod: e.target.method.value,
+      amount: parseFloat(e.target.amount.value),
+      method: e.target.method.value,
       note: e.target.note.value,
     };
 
     AxiosPublic.patch(
-      `https://digital-networking-server.vercel.app/employeePayment/${selectedPayment._id}`,
+      `https://digital-networking-server.vercel.app/MPayment/${selectedPayment._id}`,
       updatedPayment
     ).then((res) => {
       handleCancel();
@@ -105,46 +106,54 @@ const AllClientsPayments = () => {
     });
   };
 
+  const [bkashMarcent, setBkashMarcentTotal] = useState(0);
+  const [nagadPersonal, setNagadPersonalTotal] = useState(0);
+  const [bkashPersonal, setBkashPersonalTotal] = useState(0);
+  const [rocketPersonal, setRocketPersonalTotal] = useState(0);
+  const [bankTotal, setBankTotal] = useState(0);
 
-  const [bkashMarcent,setBkashMarcentTotal]=useState(0)
-  const [nagadPersonal,setNagadPersonalTotal]=useState(0)
-  const [bkashPersonal,setBkashPersonalTotal]=useState(0)
-  const [rocketPersonal,setRocketPersonalTotal]=useState(0)
-  const [bankTotal,setBankTotal]=useState(0)
+  useEffect(() => {
+    AxiosPublic.get(`https://digital-networking-server.vercel.app/Mpayment`)
+      .then((res) => {
+        const da = res.data;
+        const filtered = res.data;
 
-  useEffect(()=>{
-      AxiosPublic.get(`https://digital-networking-server.vercel.app/Mpayment`)
-      .then(res => {
-          console.log('sdjkhagjijkhgjkhdsajljkhgdsjkajkjkfjldfgjkgjkgd',res.data);
-          const da=res.data
-          const filtered=res.data 
+        const filter2 = filtered.filter(
+          (d) => d.paymentMethod === 'bkashMarchent'
+        );
+        const total = filter2.reduce((acc, datas) => acc + parseFloat(datas.amount), 0);
+        setBkashMarcentTotal(total);
 
-          const filter2=filtered.filter(d=>d.paymentMethod === 'bkashMarchent')
-          const total = filter2.reduce((acc, datas) => acc + parseFloat(datas.amount),0);
-          setBkashMarcentTotal(total)
+        const filter3 = filtered.filter(
+          (d) => d.paymentMethod === 'nagadPersonal'
+        );
+        const total3 = filter3.reduce((acc, datas) => acc + parseFloat(datas.amount), 0);
+        setNagadPersonalTotal(total3);
 
-          const filter3=filtered.filter(d=>d.paymentMethod === 'nagadPersonal')
-          const total3 = filter3.reduce((acc, datas) => acc + parseFloat(datas.amount),0);
-          setNagadPersonalTotal(total3)
+        const filter4 = filtered.filter(
+          (d) => d.paymentMethod === 'bkashPersonal'
+        );
+        const total4 = filter4.reduce((acc, datas) => acc + parseFloat(datas.amount), 0);
+        setBkashPersonalTotal(total4);
 
-          const filter4=filtered.filter(d=>d.paymentMethod === 'bkashPersonal')
-          const total4 = filter4.reduce((acc, datas) => acc + parseFloat(datas.amount),0);
-          setBkashPersonalTotal(total4)
+        const filter5 = filtered.filter(
+          (d) => d.paymentMethod === 'rocketPersonal'
+        );
+        const total5 = filter5.reduce((acc, datas) => acc + parseFloat(datas.amount), 0);
+        setRocketPersonalTotal(total5);
 
-          const filter5=filtered.filter(d=>d.paymentMethod === 'rocketPersonal')
-          const total5 = filter5.reduce((acc, datas) => acc + parseFloat(datas.amount),0);
-          setRocketPersonalTotal(total5)
-
-          const filter6=filtered.filter(d=>d.paymentMethod === 'bank')
-          const total6 = filter6.reduce((acc, datas) => acc + parseFloat(datas.amount),0);
-          setBankTotal(total6)
-      })
-  },[])
-
+        const filter6 = filtered.filter(
+          (d) => d.paymentMethod === 'bank'
+        );
+        const total6 = filter6.reduce((acc, datas) => acc + parseFloat(datas.amount), 0);
+        setBankTotal(total6);
+      });
+  }, []);
 
   const [showAll, setShowAll] = useState(false); // State to handle showing all data
-  const [itemsToShow, setItemsToShow] = useState(40); // Number of items to show initially
+  const [itemsToShow, setItemsToShow] = useState(200); // Number of items to show initially
   const displayedItems = showAll ? filteredData : filteredData.slice(0, itemsToShow);
+
   return (
     <div className="mt-5">
       <Helmet>
@@ -253,13 +262,13 @@ const AllClientsPayments = () => {
 
       <div className="overflow-x-auto mt-6 border-2 border-black mx-4">
         <table className="min-w-full bg-white">
-          <thead className="bg-green-800 text-white">
+          <thead className="bg-[#05a0db] text-white">
             <tr>
               <th className="p-3">SL</th>
+              <th className="p-3">Payment Date</th>
               <th className="p-3">Payment Amount</th>
               <th className="p-3">Payment Method</th>
               <th className="p-3">Note</th>
-              <th className="p-3">Payment Date</th>
               <th className="p-3">Action</th>
             </tr>
           </thead>
@@ -271,6 +280,9 @@ const AllClientsPayments = () => {
               >
                 <td className="p-3 border-r-2 border-l-2 border-gray-200 text-center">
                   {index + 1}
+                </td>
+                <td className="p-3 border-r-2 border-gray-200 text-center">
+                  {new Date(payment.date).toLocaleDateString("en-GB")}
                 </td>
               
                 <td className="p-3 border-r-2 border-gray-200 text-center">
@@ -316,39 +328,28 @@ const AllClientsPayments = () => {
                 <td className="p-3 border-r-2 border-gray-200 text-center">
                   {payment.note}
                 </td>
-                <td className="p-3 border-r-2 border-gray-200 text-center">
-                  {new Date(payment.date).toLocaleDateString("en-GB")}
-                </td>
-                <td className="p-3 border-r-2 border-gray-200 text-center">
-                  <div className=" inline-block">
-                    <button
-                      onClick={() => toggleDropdown(payment._id)}
-                      className=" focus:outline-none"
-                    >
-                      &#8226;&#8226;&#8226;
-                    </button>
-                    {activeDropdown === payment._id && (
-                      <div className="absolute right-4 z-20 w-40 py-2 mt-2 bg-white border border-gray-300 rounded-md shadow-xl">
-                        <button
-                          className="block w-full px-4 py-2 text-left text-gray-800 hover:bg-gray-200"
+               
+                <td className="p-3 border-r-2 flex justify-center items-center border-gray-200 text-center">
+               
+                       <button
+                          className=" px-4 py-2 text-3xl text-left text-blue-700 "
                           onClick={() => handleEditClick(payment)}
                         >
-                          Edit
+                       <MdEditSquare />
                         </button>
                         <button
-                          className="block w-full px-4 py-2 text-left text-gray-800 hover:bg-gray-200"
+                          className="text-start flex justify-start text-black text-3xl"
                           onClick={() => handleDelete(payment._id)}
                         >
-                          Delete
+                          <MdDelete />
                         </button>
-                      </div>
-                    )}
-                  </div>
+                  
+                
                 </td>
               </tr>
             ))}
           </tbody>
-          <tr className="bg-green-800 text-white font-bold">
+          <tr className="bg-[#05a0db] text-white font-bold">
               <td className="p-3 text-center" colSpan="1">
                 Total Amount =
               </td>
@@ -364,7 +365,7 @@ const AllClientsPayments = () => {
       {isModalOpen && selectedPayment && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
           <div className="bg-white p-6 rounded-lg">
-            <h2 className="text-lg font-medium mb-4">Edit Payment</h2>
+            <h2 className="text-lg font-medium mb-4 text-black">Edit Payment</h2>
             <form onSubmit={handleUpdate}>
               <div className="mb-4">
                 <label htmlFor="date" className="block text-gray-700">
@@ -375,7 +376,7 @@ const AllClientsPayments = () => {
                   id="date"
                   name="date"
                   defaultValue={selectedPayment.date}
-                  className="w-full border border-gray-300 p-2 rounded-lg"
+                  className="w-full border bg-white border-black border-gray-300 p-2 rounded-lg"
                   required
                 />
               </div>
@@ -387,8 +388,8 @@ const AllClientsPayments = () => {
                   type="number"
                   id="amount"
                   name="amount"
-                  defaultValue={selectedPayment.payAmount}
-                  className="w-full border border-gray-300 p-2 rounded-lg"
+                  defaultValue={selectedPayment.amount}
+                  className="w-full border bg-white border-black border-gray-300 p-2 rounded-lg"
                   required
                 />
               </div>
@@ -400,7 +401,7 @@ const AllClientsPayments = () => {
                   id="method"
                   name="method"
                   defaultValue={selectedPayment.paymentMethod}
-                  className="w-full border border-gray-300 p-2 rounded-lg"
+                  className="w-full border bg-white border-black border-gray-300 p-2 rounded-lg"
                   required
                 >
                   <option value="bkashPersonal">bKash Personal</option>
@@ -418,10 +419,10 @@ const AllClientsPayments = () => {
                   id="note"
                   name="note"
                   defaultValue={selectedPayment.note}
-                  className="w-full border border-gray-300 p-2 rounded-lg"
+                  className="w-full border bg-white border-black border-gray-300 p-2 rounded-lg"
                 ></textarea>
               </div>
-              <div className="flex justify-end">
+              <div className="flex justify-center">
                 <button
                   type="button"
                   onClick={handleCancel}

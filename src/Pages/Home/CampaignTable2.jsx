@@ -11,6 +11,8 @@ import useEmployeePayment from "../../Hook/useEmployeePayment";
 import { FaEdit, FaTimes } from "react-icons/fa";
 import axios from "axios";
 import { Helmet } from "react-helmet-async";
+import useMpayment from "../../Hook/UseMpayment";
+import useAdsAccount from "../../Hook/useAdAccount";
 
 const CampaignTable2 = () => {
   const { user }=useContext(AuthContext)
@@ -155,16 +157,59 @@ const CampaignTable2 = () => {
         setShowForm(false); // Make sure this function correctly refetches the updated data
       })
   };
+  const [MPayment] = useMpayment();
+  const [totalPayment, setTotalPayment] = useState(0);
+  const [payments, setPayments] = useState([]);
+  console.log(payment);
+
+  useEffect(() => {
+    const realdata = MPayment.filter(
+      (m) => m.employeeEmail === user?.email
+    );
+    setPayment(realdata)
+    const totalBill = realdata.reduce(
+      (acc, campaign) => acc + parseFloat(campaign.amount),
+      0
+    );
+    setTotalPayment(totalBill);
+  }, [MPayment, user?.email]);
+
+  useEffect(() => {
+    const finds = MPayment.filter((f) => f.employeeEmail === user?.email);
+  }, [MPayment, user]);
+
+  const [adsAccount] = useAdsAccount();
+ const [TSpent,setTSpent]=useState(0)
+
+ const [adsAccounts, setAdsAccounts] = useState([]);
+
+ useEffect(() => {
+   const filterdata = adsAccount.filter((m) => m.employeeEmail === user?.email);
+   console.log(filterdata);
+   setAdsAccounts(filterdata);
+
+ }, [adsAccount, user?.email]);
+
+useEffect(() => {
+  const totalBilll = adsAccounts.reduce(
+    (acc, campaign) => acc + parseFloat(campaign.totalSpent),
+    0
+  );
+  setTSpent(totalBilll);
+
+}, [adsAccounts]);
+
   return (
 
-    <div className="my-4 mb-24">  
+    <div className="my-4 mb-4">  
 
       <Helmet>
         <title> Dashboard | Digital Network</title>
         <link rel="canonical" href="https://www.tacobell.com/" />
       </Helmet>
 
-    <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 mb-3  lg:grid-cols-3 gap-8 mt-4 p-4">
+
+    <div className="grid grid-cols-2 md:grid-cols-1  items-center sm:grid-cols-2   lg:grid-cols-5 gap-5  p-4">
    <div className="balance-card bg-white rounded-2xl shadow-2xl p-5 text-center  transition-transform transform hover:scale-105 border-0">
      <img className="balance-card-img" src="https://i.ibb.co/bHMLyvM/b-Kash-Merchant.png" alt="bKash" />
      {/* <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"> <span className="text-lg lg:text-2xl font-extrabold">Received : ৳</span> {bkashMarcent}</p>
@@ -185,22 +230,29 @@ const CampaignTable2 = () => {
    </div>
    <div className="balance-card bg-white rounded-2xl shadow-2xl p-5 text-center transition-transform transform hover:scale-105 border-0">
      <img className="balance-card-img" src="https://i.ibb.co/QkTM4M3/rocket.png" alt="Rocket" />
-     {/* <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"><span className="text-lg lg:text-2xl font-extrabold">Received : ৳</span> {rocketPersonal}</p>
-     <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"><span className="text-lg lg:text-2xl font-extrabold">Cashout : ৳</span> {rocketPersonal2}</p> */}
      <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"><span className="text-lg lg:text-2xl font-extrabold"> ৳</span> {rocketPersonal - rocketPersonal2}</p>
    </div>
 
-   <div className="balance-card group items-start justify-center bg-white rounded-2xl shadow-2xl p-5 text-center transition-transform transform hover:scale-105 border-0">
-      <div>
-        <img className="balance-card-img w-56 h-auto ml-8" src="https://i.ibb.co/3WVZGdz/PAYO-BIG-aa26e6e0.png" alt="Payoneer" />
-        <div className="flex justify-center items-center gap-3 ml-10">
+
+
+
+   <div className="balance-card bg-white rounded-2xl shadow-2xl p-5 text-center transition-transform transform hover:scale-105 border-0">
+     <img className="balance-card-img" src="https://i.ibb.co/PZc0P4w/brac-bank-seeklogo.png" alt="Rocket" />
+     {/* <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"><span className="text-lg lg:text-2xl font-extrabold">Bank Received : ৳</span> {bankTotal}</p>
+     <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"><span className="text-lg lg:text-2xl font-extrabold">Bank Cashout : ৳</span> {bankTotal2}</p> */}
+     <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"><span className="text-lg lg:text-2xl font-extrabold"> ৳</span> {bankTotal - bankTotal2}</p>
+   </div>
+   <div className="relative bg-white rounded-2xl shadow-2xl p-6 lg:p-5 text-center transition-transform transform hover:scale-105 border-0 group">
+      <div className="relative py-2 mx-auto">
+        <img className="h-8 w-36 mt-2 mx-auto" src="https://i.ibb.co/3WVZGdz/PAYO-BIG-aa26e6e0.png" alt="Payoneer" />
+        <div className="flex flex-col items-center mt-2  gap-2 relative">
           <span className="balance-card-text text-4xl flex items-center justify-center gap-2">
             <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700">
               <span className="text-lg lg:text-2xl font-extrabold text-green-600">$</span>{ddd?.payoneer || 0}
             </p>
           </span>
           <button 
-            className="text-black text-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" 
+            className="absolute top-full mt-0 text-black text-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"
             onClick={() => setShowForm(true)}
           >
             <FaEdit />
@@ -237,17 +289,32 @@ const CampaignTable2 = () => {
         </div>
       )}
     </div>
-
-
+    <div className="balance-card bg-white rounded-2xl shadow-2xl p-5 text-center transition-transform transform hover:scale-105 border-0">
+     <h1 className="text-xl font-bold text-black py-4">Total BDT</h1>
+     <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"><span className="text-lg lg:text-2xl font-extrabold"> ৳</span> {bankTotal - bankTotal2 || 0}</p>
+   </div>
    <div className="balance-card bg-white rounded-2xl shadow-2xl p-5 text-center transition-transform transform hover:scale-105 border-0">
-     <img className="balance-card-img" src="https://i.ibb.co/PZc0P4w/brac-bank-seeklogo.png" alt="Rocket" />
-     {/* <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"><span className="text-lg lg:text-2xl font-extrabold">Bank Received : ৳</span> {bankTotal}</p>
-     <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"><span className="text-lg lg:text-2xl font-extrabold">Bank Cashout : ৳</span> {bankTotal2}</p> */}
+     <h1 className="text-xl font-bold text-black py-4">Total Spend</h1>
+    
+     <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"><span className="text-lg lg:text-2xl font-extrabold"> $</span> {TSpent}</p>
+   </div>
+   <div className="balance-card bg-white rounded-2xl shadow-2xl p-5 text-center transition-transform transform hover:scale-105 border-0">
+     <h1 className="text-xl font-bold text-black py-4">Payment Rcv</h1>
+     <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"><span className="text-lg lg:text-2xl font-extrabold"> ৳</span> {totalPayment}</p>
+   </div>
+     <div className="balance-card bg-white rounded-2xl shadow-2xl p-5 text-center transition-transform transform hover:scale-105 border-0">
+     <h1 className="text-xl font-bold text-black py-4">Customer Due</h1>
      <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"><span className="text-lg lg:text-2xl font-extrabold"> ৳</span> {bankTotal - bankTotal2}</p>
    </div>
 
+   
+  
+   
+
   
      </div>
+
+    
      <ToastContainer />
     </div>
   );

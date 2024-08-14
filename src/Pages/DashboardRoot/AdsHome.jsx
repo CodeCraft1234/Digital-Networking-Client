@@ -26,7 +26,7 @@ const AdsDashboardHome = () => {
       );
       setPayment(realdata);
       const totalBill = realdata.reduce(
-        (acc, campaign) => acc + parseFloat(campaign.payAmount),
+        (acc, campaign) => acc + parseFloat(campaign.payAmount || 0),
         0
       );
       setTotalPayment(totalBill);
@@ -48,9 +48,11 @@ const AdsDashboardHome = () => {
     setTSpent(totalSpent);
 
     const totalDollarRate = adsAccounts.reduce(
-      (acc, campaign) => acc + parseFloat(campaign.dollarRate || 0),
-      0
+      (acc, campaign) => acc + parseFloat(campaign.dollerRate), // Convert string to number and add to accumulator
+      0 // Initial value of accumulator
     );
+    
+    console.log(adsAccounts.length, totalDollarRate);
     const averageDollarRate = adsAccounts.length ? totalDollarRate / adsAccounts.length : 0;
     setAverageDollarRate(averageDollarRate);
 
@@ -59,6 +61,13 @@ const AdsDashboardHome = () => {
 
     const totalDue = totalBill - totalPayment;
     setTotalDue(totalDue);
+
+    // Debugging statements
+    console.log('Total Spent:', totalSpent);
+    console.log('Average Dollar Rate:', averageDollarRate);
+    console.log('Total Bill:', totalBill);
+    console.log('Total Payment:', totalPayment);
+    console.log('Total Due:', totalDue);
   }, [adsAccounts, totalPayment]);
 
   return (
@@ -67,22 +76,22 @@ const AdsDashboardHome = () => {
         <title>Dashboard | Digital Network</title>
         <link rel="canonical" href="https://www.tacobell.com/" />
       </Helmet>
-      <div className="grid lg:grid-cols-4 text-black sm:grid-cols-2 gap-5 justify-around p-5">
-        <div className="px-5 py-10 rounded-2xl bg-green-400 shadow-lg text-center">
-          <h2 className="text-4xl font-bold">Total Spent</h2>
-          <p className="text-xl">Balance: $ {TSpent}</p>
+      <div className="grid lg:grid-cols-4 text-white sm:grid-cols-2 gap-5 justify-around p-5">
+        <div className="px-5 py-10 rounded-2xl bg-[#05a0db] shadow-lg text-center">
+          <h2 className="text-xl">Total Spent</h2>
+          <p className="text-4xl font-bold"> $ {TSpent.toFixed(2)}</p>
         </div>
-        <div className="px-5 py-10 rounded-2xl bg-green-400 shadow-lg text-center">
-          <h2 className="text-4xl font-bold">Total Bill</h2>
-          <p className="text-xl">Balance: $ {totalBill}</p>
+        <div className="px-5 py-10 rounded-2xl bg-[#05a0db] shadow-lg text-center">
+          <h2 className="text-xl">Total Bill</h2>
+          <p className="text-4xl font-bold"> ৳ {totalBill.toFixed(2)}</p>
         </div>
-        <div className="px-5 py-10 rounded-2xl bg-green-400 shadow-lg text-center">
-          <h2 className="text-4xl font-bold">Total Paid</h2>
-          <p className="text-xl">Balance: $ {totalPayment}</p>
+        <div className="px-5 py-10 rounded-2xl bg-[#05a0db] shadow-lg text-center">
+          <h2 className="text-xl">Total Paid</h2>
+          <p className="text-4xl font-bold"> ৳ {totalPayment.toFixed(2)}</p>
         </div>
-        <div className="px-5 py-10 rounded-2xl bg-green-400 shadow-lg text-center">
-          <h2 className="text-4xl font-bold">Total Due</h2>
-          <p className="text-xl">Balance: $ {totalDue}</p>
+        <div className="px-5 py-10 rounded-2xl bg-[#05a0db] shadow-lg text-center">
+          <h2 className="text-xl ">Total Due</h2>
+          <p className=" text-4xl font-bold"> ৳ {totalDue.toFixed(2)}</p>
         </div>
       </div>
       <ToastContainer />

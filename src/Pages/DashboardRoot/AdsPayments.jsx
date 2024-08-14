@@ -128,19 +128,7 @@ const  AllAdsPayments = () => {
     )
       .then((res) => {
         refetch();
-        Swal.fire({
-          title: "Good job!",
-          text: "Cashout success!",
-          icon: "success",
-        });
       })
-      .catch((error) => {
-        Swal.fire({
-          icon: "error",
-          title: "Oops...",
-          text: "Failed to add cashout!",
-        });
-      });
 
       const fields = {
         bkashMarchent: (userdata.bkashMarchent || 0) - payAmount,
@@ -285,7 +273,7 @@ const  AllAdsPayments = () => {
     <div className="flex mt-5 justify-between items-center gap-5  ml-2 ">
          <div className="">
         <button
-          className="font-avenir px-3  mx-auto py-1 bg-green-800 ml-5 rounded-lg text-white"
+          className="font-avenir px-3  mx-auto py-1 bg-[#05a0db] ml-5 rounded-lg text-white"
           onClick={() => document.getElementById("my_modal_1").showModal()}
         >
          Pay Admin
@@ -342,7 +330,7 @@ const  AllAdsPayments = () => {
               </div>
               <button
                 type="submit"
-                className="font-avenir px-3 mx-auto py-1 rounded-lg flex justify-center text-white bg-green-800"
+                className="font-avenir px-3 mx-auto py-1 rounded-lg flex justify-center text-white bg-[#05a0db]"
               >
                 Send
               </button>
@@ -435,7 +423,7 @@ const  AllAdsPayments = () => {
 
       <div className="overflow-x-auto mt-6 mx-4">
         <table className="min-w-full bg-white">
-          <thead className="bg-green-800 text-white">
+          <thead className="bg-[#05a0db] text-white">
             <tr>
               <th className="p-3 ">SL</th>
               <th className="p-3">Payment Amount</th>
@@ -649,7 +637,7 @@ const  AllAdsPayments = () => {
                 
               </tr>
             ))}
-            <tr className="bg-green-800 text-white font-bold">
+            <tr className="bg-[#05a0db] text-white font-bold">
               <td className="p-3 text-center" colSpan="1">
                 Total Amount :
               </td>

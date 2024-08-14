@@ -7,6 +7,7 @@ import { IoIosSearch } from "react-icons/io";
 import Swal from "sweetalert2";
 import UseAxiosPublic from "../../Axios/UseAxiosPublic";
 import { Helmet } from "react-helmet-async";
+import { MdDelete } from "react-icons/md";
 
 const AllClients = () => {
   const [users] = useUsers();
@@ -125,11 +126,11 @@ const AxiosPublic =UseAxiosPublic()
         <title>All Clients | Digital Network </title>
         <link rel="canonical" href="https://www.example.com/" />
       </Helmet>
-<div className="flex justify-between items-center ">
+<div className="flex mx-5 justify-between items-center ">
 <form className="flex justify-center items-center" onSubmit={handleSort}>
-        <div className="mb-4 ml-10 mx-auto">
+        <div className="mb-4  mx-auto">
           <label className="block text-gray-700">Sort By Employee</label>
-          <select name="email" className="border rounded p-2 mt-1">
+          <select name="email" className="border bg-white border-black text-black rounded p-2 mt-1">
           <option value="">All Employee</option>
             {ddd.map(d => <option key={d._id} value={d.email}>{d.name}</option>)}
           </select>
@@ -142,16 +143,11 @@ const AxiosPublic =UseAxiosPublic()
                 <input
                   type="text"
                   placeholder=" Client Phone Number"
-                  className=" rounded-l-lg w-20 placeholder-black border-2 border-black p-2 font-bold text-black sm:w-2/3 text-sm bg-blue-300"
+                  className=" rounded-lg bg-white placeholder-black border-2 border-black p-2 font-bold text-black  text-sm "
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                 />
-                <button
-                  type="button"
-                  className=" w-10 p-2 font-semibold rounded-r-lg sm:w-1/3 bg-[#FF9F0D] dark:bg-[#FF9F0D] text-white"
-                >
-                  <IoIosSearch className="mx-auto font-bold w-6 h-6" />
-                </button>
+               
       </div>
 </div>
 
@@ -161,9 +157,9 @@ const AxiosPublic =UseAxiosPublic()
       <div className="p-2 sm:p-4">
         <div className="overflow-x-auto border-2 border-black">
           <table className="min-w-full bg-white">
-            <thead className="bg-red-800 text-white">
+            <thead className="bg-[#05a0db] text-white">
               <tr>
-                <th className="p-3 text-center">Date</th>
+                <th className="p-3 text-center">SL</th>
                 <th className="p-3 text-center">Client Name</th>
                 <th className="p-3 text-center">Client Phone</th>
                 <th className="p-3 text-center">T.Budget</th>
@@ -184,7 +180,7 @@ const AxiosPublic =UseAxiosPublic()
           : "bg-gray-200 text-gray-500 border-b border-opacity-20"
       }`}
     >
-      <td className="p-3 border-l-2 border-r-2 border-gray-300 text-center">{new Date(campaign?.date).toLocaleDateString("en-GB")}</td>
+      <td className="p-3 border-l-2 border-r-2 border-gray-300 text-center">{index + 1}</td>
       <td className="p-3 border-r-2 border-gray-300 text-center">
         <Link to={`/dashboard/client/${campaign.clientEmail}`} className="flex justify-center">
           {campaign.clientName}
@@ -192,42 +188,34 @@ const AxiosPublic =UseAxiosPublic()
       </td>
       <td className="p-3 border-r-2 border-gray-300 text-center">{campaign.clientPhone}</td>
       <td className="p-3 border-r-2 border-gray-300 text-center">$ {campaign.tBudged}</td>
-      <td className="p-3 border-r-2 border-gray-300 text-center">$ {campaign.tSpent}</td>
-      <td className="p-3 border-r-2 border-gray-300 text-center">৳ {campaign.tBill}</td>
+      <td className="p-3 border-r-2 border-gray-300 text-center">
+  ${parseFloat(campaign.tSpent).toFixed(2)}
+</td>
+<td className="p-3 border-r-2 border-gray-300 text-center">
+  ৳{parseFloat(campaign.tBill).toFixed(2)}
+</td>
+
       <td className="p-3 border-r-2 border-gray-300 text-center">৳ {campaign.tPayment}</td>
       <td className="p-3 border-r-2 border-gray-200 text-center">
-                  <div className="relative inline-block">
-                  <button
-                                            onClick={() => toggleDropdown(campaign._id)}
-                                            className=" focus:outline-none"
-                                        >
-                                            &#8226;&#8226;&#8226;
-                                        </button>
-                    {activeDropdown === campaign._id && (
-                      <div className="absolute right-0 z-20 w-40 py-2 mt-2 bg-white border border-gray-300 rounded-md shadow-xl">
-      
-                        <button
-                          className="block w-full px-4 py-2 text-left text-gray-800 hover:bg-gray-200"
+      <button
+                          className="text-center  text-black text-3xl"
                           onClick={() => handledelete(campaign._id)}
                         >
-                          Delete
+                          <MdDelete />
                         </button>
-                      </div>
-                    )}
-                  </div>
                 </td>
       
     </tr>
   ))}
-  <tr className="bg-green-800 text-sm text-white font-bold">
-    <td className="p-3 border-2 border-black text-right" colSpan="3">
+  <tr className="bg-[#05a0db] text-sm text-white font-bold">
+    <td className="p-3  border-black text-right" colSpan="3">
       Total :
     </td>
-    <td className="p-3 border-2 border-black text-center">$ {totalBudged}</td>
-    <td className="p-3 border-2 border-black text-center">$ {totalSpent}</td>
-    <td className="p-3 border-2 border-black text-center">৳ {totalbill}</td>
-    <td className="p-3 border-2 border-black text-center">৳ {totalRCV}</td>
-    <td className="p-3 border-2 border-black text-center"></td>
+    <td className="p-3  border-black text-center">$ {totalBudged}</td>
+    <td className="p-3  border-black text-center">$ {totalSpent}</td>
+    <td className="p-3  border-black text-center">৳ {totalbill}</td>
+    <td className="p-3  border-black text-center">৳ {totalRCV}</td>
+    <td className="p-3  border-black text-center"></td>
    
   </tr>
 </tbody>

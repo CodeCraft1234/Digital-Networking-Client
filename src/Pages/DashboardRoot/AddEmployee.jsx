@@ -58,7 +58,7 @@ const AddEmployee = () => {
               id="name"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="mt-1 block w-full p-2 border border-gray-300 rounded shadow-sm focus:ring-blue-500 focus:border-blue-500"
+              className="mt-1 block w-full p-2 border bg-white border-gray-300 rounded shadow-sm focus:ring-blue-500 focus:border-blue-500"
               placeholder="Enter client name"
               required
             />
@@ -72,7 +72,7 @@ const AddEmployee = () => {
               id="phone"
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
-              className="mt-1 block w-full p-2 border border-gray-300 rounded shadow-sm focus:ring-blue-500 focus:border-blue-500"
+              className="mt-1 block w-full p-2 bg-white border border-gray-300 rounded shadow-sm focus:ring-blue-500 focus:border-blue-500"
               placeholder="Enter phone number"
               required
             />
@@ -86,7 +86,7 @@ const AddEmployee = () => {
               id="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="mt-1 block w-full p-2 border border-gray-300 rounded shadow-sm focus:ring-blue-500 focus:border-blue-500"
+              className="mt-1 block w-full p-2 border bg-white border-gray-300 rounded shadow-sm focus:ring-blue-500 focus:border-blue-500"
               placeholder="Enter email"
               required
             />
@@ -100,7 +100,7 @@ const AddEmployee = () => {
               id="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="mt-1 block w-full p-2 border border-gray-300 rounded shadow-sm focus:ring-blue-500 focus:border-blue-500"
+              className="mt-1 block w-full p-2 border bg-white border-gray-300 rounded shadow-sm focus:ring-blue-500 focus:border-blue-500"
               placeholder="Enter password"
               required
             />

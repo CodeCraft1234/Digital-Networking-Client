@@ -5,6 +5,7 @@ import {
   FaBorderAll,
   FaDAndD,
   FaEmpire,
+  FaHistory,
   FaHome,
   FaUsers,
 } from "react-icons/fa";
@@ -12,7 +13,7 @@ import {
 import { RxDashboard } from "react-icons/rx";
 
 import { MdAccountCircle, MdCampaign, MdOutlinePayments, MdOutlineSummarize } from "react-icons/md";
-import { IoPeopleSharp } from "react-icons/io5";
+import { IoLogOutOutline, IoPeopleSharp } from "react-icons/io5";
 
 
 import { IoIosAddCircleOutline, IoIosPeople, IoMdArrowDropdown, IoMdArrowDropup } from "react-icons/io";
@@ -38,13 +39,13 @@ const EmployeeDashboard = () => {
 
   const getActiveStyle = (isActive) => (
     isActive
-      ? { backgroundColor: 'purple', color: 'white' }
+      ? { backgroundColor: '#05a0db', color: 'white' }
       : {}
   );
 
   const getActiveStyle2 = (isActive) => (
     isActive
-      ? { backgroundColor: 'green', color: 'white' }
+      ? { backgroundColor: '#f89320', color: 'white' }
       : {}
   );
   const [isOpen, setIsOpen] = useState(false);
@@ -86,13 +87,13 @@ const EmployeeDashboard = () => {
   };
 
   return (
-    <div className="overflow-hidden h-screen">
+    <div className=" h-screen">
       <div className="w-[200px] bg-gray-900 text-white">
         <div className="flex  items-center justify-center py-4">
           <Link to={"/"}>
             <img
               className="w-24"
-              src="https://i.ibb.co/Cnvg0RS/Digital-Network-Logo.png"
+              src="https://i.ibb.co/rvH9Bz0/Logo-01.png"
               alt="Logo"
             />
           </Link>
@@ -100,59 +101,27 @@ const EmployeeDashboard = () => {
         <ul className="space-y-1">
         
           <NavLink
-            to="/dashboard/employee/home"
-            className="text-white hover:bg-green-300 hover:text-black py-2 px-4 rounded-lg flex items-center"
+            to="/"
+            className="text-white hover:bg-[#f89320] hover:text-black py-2 px-4 rounded-lg flex items-center"
             style={({ isActive }) => getActiveStyle(isActive)}
           >
             <RxDashboard className="w-6 h-6 mr-2" />
             Dashboard
           </NavLink>
-          <div className="relative" onMouseLeave={handleMouseLeave2}>
-            <NavLink
-              to="dashboard/myClients"
-              className="text-white hover:bg-green-300 hover:text-black py-2 px-4 rounded-lg flex items-center"
-              style={({ isActive }) => getActiveStyle(isActive)}
-              onMouseEnter={handleMouseEnter2}
-            >
-              <GiClick className="w-6 h-6 mr-2" />
-              Clients
-              {isOpen2 ? (
-                <IoMdArrowDropup className="w-6 h-6 ml-2" />
-              ) : (
-                <IoMdArrowDropdown className="w-6 h-6 ml-2" />
-              )}
-            </NavLink>
-            {isOpen2 && (
-              <div
-                className="absolute top-full left-0 w-48 bg-gray-600 rounded-lg shadow-lg py-2 z-50 animate-dropdown"
-                onMouseEnter={handleMouseEnter2}
-                onMouseLeave={handleMouseLeave2}
-              >
-                <NavLink
+          <NavLink
                   to="dashboard/myClients"
-                  className="text-white hover:bg-green-300 hover:text-black py-2 px-4 rounded-lg flex items-center"
+                  className="text-white hover:bg-[#f89320] hover:text-black py-2 px-4 rounded-lg flex items-center"
                   style={({ isActive }) => getActiveStyle(isActive)}
                 >
                   <FaPeopleGroup className="w-6 h-6 mr-2" />
                   My Clients
                 </NavLink>
-                <NavLink
-                 to="dashboard/AddClients"
-                  className="text-white hover:bg-green-300 hover:text-black py-2 px-4 rounded-lg flex items-center"
-                  style={({ isActive }) => getActiveStyle(isActive)}
-                >
-                  <IoIosAddCircleOutline className="w-6 h-6 mr-2" />
-                  Add Clients
-                </NavLink>
-               
-               
-              </div>
-            )}
-          </div>
+
+
 
           <NavLink
             to="dashboard/myCampaigns"
-            className="text-white hover:bg-green-300 hover:text-black py-2 px-4 rounded-lg flex items-center"
+            className="text-white hover:bg-[#f89320] hover:text-black py-2 px-4 rounded-lg flex items-center"
             style={({ isActive }) => getActiveStyle(isActive)}
           >
             <MdCampaign className="w-6 h-6 mr-2" />
@@ -161,36 +130,15 @@ const EmployeeDashboard = () => {
          
           <NavLink
             to={`dashboard/adsAccount/${user?.email}`}
-            className="text-white hover:bg-green-300 hover:text-black py-2 px-4 rounded-lg flex items-center"
+            className="text-white hover:bg-[#f89320] hover:text-black py-2 px-4 rounded-lg flex items-center"
             style={({ isActive }) => getActiveStyle(isActive)}
           >
             <MdAccountCircle className="w-6 h-6 mr-2" />
             Ads Accounts
           </NavLink>
-
-          <div className="relative" onMouseLeave={handleMouseLeave}>
-            <NavLink
-           to="dashboard/adminPayments"
-              className="text-white  py-2 px-4 rounded-lg flex items-center"
-              onMouseEnter={handleMouseEnter}
-            >
-              <MdOutlinePayments className="w-6 h-6 mr-2" />
-              Payments
-              {isOpen ? (
-                <IoMdArrowDropup className="w-6 h-6 ml-2" />
-              ) : (
-                <IoMdArrowDropdown className="w-6 h-6 ml-2" />
-              )}
-            </NavLink>
-            {isOpen && (
-              <div
-                className="absolute top-full left-0 w-48 bg-gray-600 rounded-lg shadow-lg py-2 z-50 animate-dropdown"
-                onMouseEnter={handleMouseEnter}
-                onMouseLeave={handleMouseLeave}
-              >
-                <NavLink
+          <NavLink
                   to="dashboard/adminPayments"
-                  className="text-white hover:bg-green-300 hover:text-black py-2 px-4 rounded-lg flex items-center"
+                  className="text-white hover:bg-[#f89320] hover:text-black py-2 px-4 rounded-lg flex items-center"
                   style={({ isActive }) => getActiveStyle2(isActive)}
                 >
                   <RiSecurePaymentLine className="w-6 h-6 mr-2" />
@@ -198,39 +146,47 @@ const EmployeeDashboard = () => {
                 </NavLink>
                 <NavLink
                   to="dashboard/clientPayments"
-                  className="text-white hover:bg-green-300 hover:text-black py-2 px-4 rounded-lg flex items-center"
+                  className="text-white hover:bg-[#f89320] hover:text-black py-2 px-4 rounded-lg flex items-center"
                   style={({ isActive }) => getActiveStyle2(isActive)}
                 >
                   <RiSecurePaymentFill className="w-6 h-6 mr-2" />
                   Client Pay
                 </NavLink>
-               
-               
-              </div>
-            )}
-          </div>
+                <NavLink
+            to={`dashboard/myHistory`}
+            className="text-white hover:bg-[#f89320] hover:text-black py-2 px-4 rounded-lg flex items-center"
+            style={({ isActive }) => getActiveStyle(isActive)}
+          >
+            <FaHistory className="w-6 h-6 mr-2" />
+            My History
+          </NavLink>
           <NavLink
-            to={`dashboard/summery`}
-            className="text-white hover:bg-green-300 hover:text-black py-2 px-4 rounded-lg flex items-center"
+            to={`dashboard/mySellery`}
+            className="text-white hover:bg-[#f89320] hover:text-black py-2 px-4 rounded-lg flex items-center"
             style={({ isActive }) => getActiveStyle(isActive)}
           >
             <MdOutlineSummarize className="w-6 h-6 mr-2" />
-            Em Summery
+            My Salary
           </NavLink>
+
+         
 
           {user?.email ? (
             <NavLink>
-               <div className="flex my-5 mt-16 justify-start gap-2 px-4 items-center text-white ">
-        <img className="h-10 w-10 rounded-full" src={user?.photoURL} alt="" />
-        <Link to={'/dashboard/updateProfile'}>
+               <div className="flex my-2 mt-5 justify-start  gap-2 px-4 items-center text-white ">
+              
+                <img className="h-10 w-10 rounded-full" src={user?.photoURL} alt="" />
+                <Link to={'/dashboard/updateProfile'}>
                 <h1>{user?.displayName}</h1>
                 </Link>
+      
+
         </div>
               <button
                 onClick={handleLogOut}
-                className="font-avenir w-full px-3 py-1 bg-red-700 rounded text-white"
+                className="font-avenir mb-10 flex hover:bg-[#f89320] justify-center items-center gap-2 w-full px-3 py-1  text-white rounded "
               >
-                Logout
+                Logout <IoLogOutOutline />
               </button>
             </NavLink>
           ) : (

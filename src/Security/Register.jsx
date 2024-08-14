@@ -51,7 +51,7 @@ const Register = () => {
         console.log(result.user);
         console.log(email, name, photo);
         const date = new Date();
-        const userInfo = { email, name, photo, date, role: 'employee',bkashMarcent,bkashPersonal,nagadPersonal,rocketPersonal,payoneer,totalBDT };
+        const userInfo = { email, name, photo, date, role: 'client',bkashMarcent,bkashPersonal,nagadPersonal,rocketPersonal,payoneer,totalBDT };
         AxiosPublic.post("/users", userInfo).then((res) => {
           console.log(res.data);
         });

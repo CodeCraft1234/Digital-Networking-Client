@@ -169,70 +169,72 @@ const sortedAdsAccounts = [...filteredAdsAccounts].sort((a, b) => {
          <title>Ads Account | Digital Network </title>
          <link rel="canonical" href="https://www.example.com/" />
        </Helmet>
-      <div className="flex justify-start mb-5 text-gray-500 border-b border-opacity-20 mx-2 pb-1 items-center gap-3">
-       <button
-         className="font-avenir px-3  py-1  rounded-lg text-white bg-green-800"
-         onClick={() => document.getElementById("my_modal_3").showModal()}
-       >
-         Add Ads Account
-       </button>
-       <dialog id="my_modal_3" className="modal">
-         <div className="modal-box bg-white">
-           <form onSubmit={(e) => handleAddAdsAcount(e)}>
-             <div className="flex justify-center items-center gap-3">
-               <div className="mb-4">
-                 <label className="block text-black">Account Name</label>
-                 <input
-                   type="text required"
-                   name="accountName"
-                   placeholder="type here..."
-                   className="w-full border border-gray-600 text-black bg-white rounded p-2 mt-1"
-                 />
-               </div>
-               <div className="mb-4">
-                 <label className="block text-black">Payment Date</label>
-                 <input
-                 required
-                   type="date"
-                   name="paymentDate"
-                   className="w-full border bg-green-300 border-gray-600 text-black rounded p-2 mt-1"
-                 />
-               </div>
-             </div>
-             <button
-               type="submit"
-               className="font-avenir px-3 mx-auto py-1 rounded-lg flex justify-center text-white bg-green-800"
-             >
-               Send
-             </button>
-           </form>
-           <div className="modal-action">
-             <form method="dialog">
-               <button className="p-2 rounded-lg bg-red-600 text-white text-center">Close</button>
-             </form>
-           </div>
-         </div>
-       </dialog>
- </div> 
+       {
+
+        user?.role === 'admin' &&   <div className="flex justify-start mb-5 text-gray-500 border-b border-opacity-20 mx-2 pb-1 items-center gap-3">
+        <button
+          className="font-avenir px-3  py-1  rounded-lg text-white bg-green-800"
+          onClick={() => document.getElementById("my_modal_3").showModal()}
+        >
+          Add Ads Account
+        </button>
+        <dialog id="my_modal_3" className="modal">
+          <div className="modal-box bg-white">
+            <form onSubmit={(e) => handleAddAdsAcount(e)}>
+              <div className="flex justify-center items-center gap-3">
+                <div className="mb-4">
+                  <label className="block text-black">Account Name</label>
+                  <input
+                    type="text required"
+                    name="accountName"
+                    placeholder="type here..."
+                    className="w-full border border-gray-600 text-black bg-white rounded p-2 mt-1"
+                  />
+                </div>
+                <div className="mb-4">
+                  <label className="block text-black">Payment Date</label>
+                  <input
+                  required
+                    type="date"
+                    name="paymentDate"
+                    className="w-full border bg-green-300 border-gray-600 text-black rounded p-2 mt-1"
+                  />
+                </div>
+              </div>
+              <button
+                type="submit"
+                className="font-avenir px-3 mx-auto py-1 rounded-lg flex justify-center text-white bg-green-800"
+              >
+                Send
+              </button>
+            </form>
+            <div className="modal-action">
+              <form method="dialog">
+                <button className="p-2 rounded-lg bg-red-600 text-white text-center">Close</button>
+              </form>
+            </div>
+          </div>
+        </dialog>
+  </div> 
+       }
+    
      
- <div className="mb-5">
+ <div className="mb-5 flex justify-end">
                 <input
                     type="text"
                     placeholder="Search by account name..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="border p-2 rounded"
+                    className="border bg-white text-black border-black p-2 rounded"
                 />
             </div>
  
      <div className="overflow-x-auto mt-6">
        <table className="min-w-full bg-white">
-         <thead className="bg-red-800 text-white">
+         <thead className="bg-[#05a0db] text-white">
            <tr>
              <th className="p-3">SL</th>
              <th className="p-3">Ad Account Name</th>
-             {/* <th className="p-3">Current Balance</th>
-             <th className="p-3">Threshold</th> */}
              <th className="p-3">Total Spent</th>
              <th className="p-3">Total Bill</th>
              <th className="p-3 cursor-pointer" onClick={() => setSortOrder(!sortOrder)}>Status</th>
@@ -288,7 +290,7 @@ const sortedAdsAccounts = [...filteredAdsAccounts].sort((a, b) => {
                <td className="p-3 border border-gray-300 text-center"> {new Date(account?.paymentDate).toLocaleDateString("en-GB")}</td>
              </tr>
            ))}
-           <tr className="bg-green-800 text-sm text-white font-bold">
+           <tr className="bg-[#05a0db] text-sm text-white font-bold">
      
      <td className="p-3  text-right" colSpan="2">
        Total :

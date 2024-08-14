@@ -7,6 +7,8 @@ import useUsers from "../../Hook/useUsers";
 import { IoIosSearch } from "react-icons/io";
 import axios from "axios";
 import { Helmet } from "react-helmet-async";
+import { toast, ToastContainer } from "react-toastify";
+import { MdDelete, MdEditSquare } from "react-icons/md";
 
 const AdminPayments = () => {
   const { user } = useContext(AuthContext);
@@ -125,20 +127,12 @@ const AdminPayments = () => {
       data
     )
       .then((res) => {
+        toast.success("Send successful!");
         refetch();
-        Swal.fire({
-          title: "Good job!",
-          text: "Cashout success!",
-          icon: "success",
-        });
+        console.log(red.data);
+       
       })
-      .catch((error) => {
-        Swal.fire({
-          icon: "error",
-          title: "Oops...",
-          text: "Failed to add cashout!",
-        });
-      });
+
 
       const fields = {
         bkashMarchent: (userdata.bkashMarchent || 0) - payAmount,
@@ -176,21 +170,9 @@ const AdminPayments = () => {
       body
     )
       .then((res) => {
-        window.location.reload();
         refetch();
-        Swal.fire({
-          title: "Good job!",
-          text: "Payment updated successfully!",
-          icon: "success",
-        });
+        toast.success("Update successful!");
       })
-      .catch((error) => {
-        Swal.fire({
-          icon: "error",
-          title: "Oops...",
-          text: "Failed to update payment!",
-        });
-      });
   };
 
   const [activeDropdown, setActiveDropdown] = useState(null);
@@ -214,6 +196,7 @@ const AdminPayments = () => {
 
   const handleDelete = (id) => {
       AxiosPublic.delete(`/employeePayment/${id}`).then((res) => {
+        toast.success("Delete successful!");
           refetch();
         });
       }
@@ -249,11 +232,12 @@ const AdminPayments = () => {
 
   return (
     <div>
+      <ToastContainer />
       <Helmet>
         <title>Admin Payment | Digital Network </title>
         <link rel="canonical" href="https://www.example.com/" />
       </Helmet>
-     <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 mb-3  lg:grid-cols-5 gap-8 mt-4 p-4">
+     <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 mb-3  lg:grid-cols-6 gap-5 mt-4 p-4">
    <div className="balance-card bg-white rounded-2xl shadow-lg p-5 text-center  transition-transform transform hover:scale-105 border-0">
      <img className="balance-card-img" src="https://i.ibb.co/bHMLyvM/b-Kash-Merchant.png" alt="bKash" />
      <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"> <span className="text-lg lg:text-2xl font-extrabold"> ৳</span> {bkashMarcent2}</p>
@@ -277,13 +261,18 @@ const AdminPayments = () => {
      <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"><span className="text-lg lg:text-2xl font-extrabold">Bank Cashout : ৳</span> {bankTotal2}</p> */}
      <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"><span className="text-lg lg:text-2xl font-extrabold"> ৳</span> {bankTotal2}</p>
    </div>
+   <div className="balance-card bg-white rounded-2xl shadow-lg p-5 text-center transition-transform transform hover:scale-105 border-0">
+     <h1 className="text-xl text-black font-bold">Total BDT</h1>
+     
+     <p className="balance-card-text mt-9 text-lg lg:text-2xl font-bold text-gray-700"><span className="text-lg lg:text-2xl font-extrabold"> ৳</span> {totalPayment}</p>
+   </div>
      </div>
    
 {/* ///////////////////////////////////////////////////////////////// */}
-    <div className="flex mt-5 justify-between items-center gap-5  ml-2 ">
+    <div className="flex mt-5 justify-between items-center gap-5   ">
          <div className="">
         <button
-          className="font-avenir px-3  mx-auto py-1 bg-green-800 ml-5 rounded-lg text-white"
+          className="font-avenir px-3 mt-7 mx-auto py-1 bg-[#05a0db] ml-5 rounded-lg text-white"
           onClick={() => document.getElementById("my_modal_1").showModal()}
         >
          Pay Admin
@@ -291,8 +280,7 @@ const AdminPayments = () => {
         <dialog id="my_modal_1" className="modal">
           <div className="modal-box bg-white text-black font-bold">
             <form onSubmit={(e) => handlePayment(e)}>
-              <div className="flex  justify-center items-center gap-3">
-                <div className="mb-4">
+            <div className="mb-4">
                   <label className="block text-gray-250">Pay Amount</label>
                   <input
                     required
@@ -312,8 +300,8 @@ const AdminPayments = () => {
                     className="w-full border-2 bg-white border-black rounded p-2 mt-1"
                   />
                 </div>
-              </div>
-              <div className="flex justify-center items-center gap-4">
+             
+              
                 <div className="mb-4">
                   <label className="block text-gray-250">Payment Method</label>
                   <select
@@ -337,10 +325,10 @@ const AdminPayments = () => {
                     className="w-full border-2 bg-green-300 text-black border-black rounded p-2 mt-1"
                   />
                 </div>
-              </div>
+            
               <button
                 type="submit"
-                className="font-avenir px-3 mx-auto py-1 rounded-lg flex justify-center text-white bg-green-800"
+                className="font-avenir px-3 mx-auto py-1 rounded-lg flex justify-center text-white bg-[#05a0db]"
               >
                 Send
               </button>
@@ -356,6 +344,16 @@ const AdminPayments = () => {
         </dialog>
          </div>
           <div className="flex  justify-end items-center gap-5  ml-2 ">
+
+          <div className="flex flex-col justify-center items-center">
+      <label className="block">By Date</label>
+      <input
+        type="date"
+        className="border rounded bg-blue-200 text-black border-gray-400 p-2 mt-1"
+        value={selectedDate}
+        onChange={(e) => setSelectedDate(e.target.value)}
+      />
+    </div>
   
     <div className="flex flex-col justify-end items-center">
       <label>By Month</label>
@@ -385,15 +383,7 @@ const AdminPayments = () => {
         ))}
       </select>
     </div>
-    <div className="flex flex-col justify-center items-center">
-      <label className="block">By Date</label>
-      <input
-        type="date"
-        className="border rounded bg-blue-200 text-black border-gray-400 p-2 mt-1"
-        value={selectedDate}
-        onChange={(e) => setSelectedDate(e.target.value)}
-      />
-    </div>
+
     <div className="flex flex-col justify-center items-center">
       <label className="block ml-2">Payment Method</label>
       <select
@@ -413,16 +403,11 @@ const AdminPayments = () => {
     <input
       type="text"
       placeholder="Payment Method"
-      className="rounded-l-lg w-20 placeholder-black border-2 border-black p-2 font-bold text-black sm:w-2/3 text-sm bg-blue-300"
+      className="rounded-lg w-full placeholder-black border-2 border-black p-2 font-bold   text-sm bg-white text-black"
       value={searchQuery}
       onChange={(e) => setSearchQuery(e.target.value)}
     />
-    <button
-      type="button"
-      className="w-10 p-2 font-semibold rounded-r-lg sm:w-1/3 bg-[#FF9F0D] dark:bg-[#FF9F0D] text-white"
-    >
-      <IoIosSearch className="mx-auto  font-bold w-6 h-6" />
-    </button>
+  
   </div>
           </div>
   
@@ -433,14 +418,14 @@ const AdminPayments = () => {
 
       <div className="overflow-x-auto mt-6 mx-4">
         <table className="min-w-full bg-white">
-          <thead className="bg-green-800 text-white">
+          <thead className="bg-[#05a0db] text-white">
             <tr>
               <th className="p-3 ">SL</th>
+              <th className="p-3">Payment Date</th>
               <th className="p-3">Payment Amount</th>
               <th className="p-3">Payment Method</th>
               <th className="p-3"> Note</th>
-              <th className="p-3">Payment Date</th>
-              <th className="p-3">Edit</th>
+              <th className="p-3">Action</th>
             </tr>
           </thead>
           <tbody>
@@ -452,7 +437,9 @@ const AdminPayments = () => {
                 <td className="p-3  border-r-2 border-l-2 border-gray-200 text-center">
                   {index + 1}
                 </td>
-               
+                <td className="p-3 border-r-2 border-gray-200 text-center">
+                {new Date(payment.date).toLocaleDateString("en-GB")}
+                </td>
                 <td className="p-3 border-r-2 border-gray-200 text-center">
                   ৳ {payment.payAmount}
                 </td>
@@ -499,37 +486,25 @@ const AdminPayments = () => {
                   {payment.note}
                 </td>
 
-                <td className="p-3 border-r-2 border-gray-200 text-center">
-                {new Date(payment.date).toLocaleDateString("en-GB")}
-                </td>
+             
 
-                <td className="p-3 border-r-2 border-gray-200 text-center">
-                  <div className=" inline-block">
-                    <button
-                      onClick={() => toggleDropdown(payment._id)}
-                      className=" focus:outline-none"
-                    >
-                      &#8226;&#8226;&#8226;
-                    </button>
-                    {activeDropdown === payment._id && (
-                      <div className="absolute text-start  right-4 z-20 w-40 py-2 mt-2 bg-white border border-gray-300 rounded-md shadow-xl">
-                         <button
-                    className="font-avenir  py-1 px-4 rounded-lg text-black"
+                <td className="p-3 border-r-2 flex justify-center gap-3 items-center border-gray-200 text-center">
+                <button
+                    className="font-avenir text-3xl  py-1 px-4 rounded-lg text-blue-700"
                     onClick={() =>
                       document
                         .getElementById(`modal_${payment._id}`)
                         .showModal()
                     }
                   >
-                   Edit
+                   <MdEditSquare />
                   </button>
-                  
                   <dialog id={`modal_${payment._id}`} className="modal">
                     <div className="modal-box bg-white text-black font-bold">
                       <form
                         onSubmit={(e) => handleUpdatePayment(e, payment._id)}
                       >
-                        <div className="flex justify-center items-center gap-3">
+                       
                           <div className="mb-4">
                             <label className="block text-gray-700">
                               {" "}
@@ -556,8 +531,8 @@ const AdminPayments = () => {
                               className="w-full border-2 bg-white border-black rounded p-2 mt-1"
                             />
                           </div>
-                        </div>
-                        <div className="flex justify-center items-center gap-3">
+                     
+                       
                           <div className="mb-4">
                             <label className="block text-gray-700"> Date</label>
                             <input
@@ -593,7 +568,7 @@ const AdminPayments = () => {
                               <option value="bank">Bank</option>
                             </select>
                           </div>
-                        </div>
+                      
                         <div className="mb-4">
                           <label className="block text-gray-700">Note</label>
                           <input
@@ -611,7 +586,7 @@ const AdminPayments = () => {
                               .close()
                           }
                           type="submit"
-                          className="font-avenir px-3 mx-auto py-1 rounded-lg flex justify-center text-white bg-green-800"
+                          className="font-avenir px-3 mx-auto py-1 rounded-lg flex justify-center text-white bg-[#05a0db]"
                         >
                           Update
                         </button>
@@ -630,15 +605,12 @@ const AdminPayments = () => {
                       </div>
                     </div>
                   </dialog>
-                        <button
-                          className="block w-full px-4 py-2 text-left text-gray-800 hover:bg-gray-200"
+                  <button
+                          className="text-start flex justify-start text-black text-3xl"
                           onClick={() => handleDelete(payment._id)}
                         >
-                          Delete
+                          <MdDelete />
                         </button>
-                      </div>
-                    )}
-                  </div>
                 </td>
 
 
@@ -647,15 +619,15 @@ const AdminPayments = () => {
                 
               </tr>
             ))}
-            <tr className="bg-green-800 text-white font-bold">
-              <td className="p-3 text-center" colSpan="1">
+            <tr className="bg-[#05a0db] text-white font-bold">
+              <td className="p-3 text-center" colSpan="2">
                 Total Amount :
               </td>
               <td className="p-3 text-center">৳ {totalPayment}</td>
               <td className="p-3 text-center"></td>
               <td className="p-3 text-center"></td>
               <td className="p-3 text-center"></td>
-              <td className="p-3 text-center"></td>
+
             </tr>
           </tbody>
         </table>

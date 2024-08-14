@@ -8,6 +8,7 @@ import UseAxiosPublic from '../../Axios/UseAxiosPublic';
 import { Helmet } from 'react-helmet-async';
 import useAdsPayment from '../../Hook/useAdsPayment';
 import { IoIosSearch } from 'react-icons/io';
+import { MdDelete, MdEditSquare } from 'react-icons/md';
 
 const AdsProfile = () => {
     const { user } = useContext(AuthContext);
@@ -262,19 +263,9 @@ const AdsProfile = () => {
     )
       .then((res) => {
         refetch();
-        Swal.fire({
-          title: "Good job!",
-          text: "Cashout success!",
-          icon: "success",
-        });
+
       })
-      .catch((error) => {
-        Swal.fire({
-          icon: "error",
-          title: "Oops...",
-          text: "Failed to add cashout!",
-        });
-      });
+
 
       const fields = {
         bkashMarchent: (userdata.bkashMarchent || 0) - payAmount,
@@ -404,6 +395,67 @@ const AdsProfile = () => {
       })
     },[])
 
+
+
+    const [payment2, setPayment2] = useState([]);
+    const [totalPayment2, setTotalPayment2] = useState(0);
+    const [adsAccounts2, setAdsAccounts2] = useState([]);
+    const [TSpent2, setTSpent2] = useState(0);
+    const [averageDollarRate, setAverageDollarRate] = useState(0);
+    const [totalBill, setTotalBill] = useState(0);
+    const [totalDue, setTotalDue] = useState(0);
+  
+    useEffect(() => {
+      if (user) {
+        const realdata = adsPayment.filter(
+          (m) => m.employeeEmail === email
+        );
+        setPayment2(realdata);
+        const totalBill = realdata.reduce(
+          (acc, campaign) => acc + parseFloat(campaign.payAmount || 0),
+          0
+        );
+        setTotalPayment2(totalBill);
+      }
+    }, [adsPayment, user]);
+  
+    useEffect(() => {
+      if (user) {
+        const filterdata = adsAccountCenter.filter((m) => m.employeeEmail === email);
+        setAdsAccounts2(filterdata);
+      }
+    }, [adsAccountCenter, email]);
+  
+    useEffect(() => {
+      const totalSpent = adsAccounts.reduce(
+        (acc, campaign) => acc + parseFloat(campaign.totalSpent || 0),
+        0
+      );
+      setTSpent2(totalSpent);
+  
+      const totalDollarRate = adsAccounts.reduce(
+        (acc, campaign) => acc + parseFloat(campaign.dollerRate), // Convert string to number and add to accumulator
+        0 // Initial value of accumulator
+      );
+      
+      console.log(adsAccounts.length, totalDollarRate);
+      const averageDollarRate = adsAccounts.length ? totalDollarRate / adsAccounts.length : 0;
+      setAverageDollarRate(averageDollarRate);
+  
+      const totalBill = totalSpent * averageDollarRate;
+      setTotalBill(totalBill);
+  
+      const totalDue = totalBill - totalPayment;
+      setTotalDue(totalDue);
+  
+      // Debugging statements
+      console.log('Total Spent:', totalSpent);
+      console.log('Average Dollar Rate:', averageDollarRate);
+      console.log('Total Bill:', totalBill);
+      console.log('Total Payment:', totalPayment);
+      console.log('Total Due:', totalDue);
+    }, [adsAccounts, totalPayment]);
+    
     return (
         <div className='my-5'>
           
@@ -412,66 +464,90 @@ const AdsProfile = () => {
          <title>Ads user profile | Digital Network </title>
          <link rel="canonical" href="https://www.example.com/" />
        </Helmet>
-      <div className="flex justify-start mb-5 text-gray-500 border-b border-opacity-20 mx-2 pb-1 items-center gap-3">
-       <button
-         className="font-avenir px-3  mx-auto py-1 ml-10 rounded-lg text-white bg-green-800"
-         onClick={() => document.getElementById("my_modal_3").showModal()}
-       >
-         Add Ads Account
-       </button>
-       <dialog id="my_modal_3" className="modal">
-         <div className="modal-box bg-white">
-           <form onSubmit={(e) => handleAddAdsAcount(e)}>
-             <div className="flex justify-center items-center gap-3">
-               <div className="mb-4">
-                 <label className="block text-black">Account Name</label>
-                 <input
-                   type="text required"
-                   name="accountName"
-                   placeholder="type here..."
-                   className="w-full border border-gray-600 text-black bg-white rounded p-2 mt-1"
-                 />
-               </div>
-               <div className="mb-4">
-                 <label className="block text-black">Payment Date</label>
-                 <input
-                 required
-                   type="date"
-                   name="paymentDate"
-                   className="w-full border bg-green-300 border-gray-600 text-black rounded p-2 mt-1"
-                 />
-               </div>
-             </div>
-             <button
-               type="submit"
-               className="font-avenir px-3 mx-auto py-1 rounded-lg flex justify-center text-white bg-green-800"
-             >
-               Send
-             </button>
-           </form>
-           <div className="modal-action">
-             <form method="dialog">
-               <button className="p-2 rounded-lg bg-red-600 text-white text-center">Close</button>
-             </form>
-           </div>
-         </div>
-       </dialog>
- </div> 
-     
+
+       <div className="grid lg:grid-cols-4 text-white sm:grid-cols-2 gap-5 justify-around p-5">
+        <div className="px-5 py-10 rounded-2xl bg-[#05a0db] shadow-lg text-center">
+          <h2 className="text-xl">Total Spent</h2>
+          <p className="text-4xl font-bold"> $ {TSpent2.toFixed(2)}</p>
+        </div>
+        <div className="px-5 py-10 rounded-2xl bg-[#05a0db] shadow-lg text-center">
+          <h2 className="text-xl">Total Bill</h2>
+          <p className="text-4xl font-bold"> ৳ {totalBill.toFixed(2)}</p>
+        </div>
+        <div className="px-5 py-10 rounded-2xl bg-[#05a0db] shadow-lg text-center">
+          <h2 className="text-xl">Total Paid</h2>
+          <p className="text-4xl font-bold"> ৳ {totalPayment2.toFixed(2)}</p>
+        </div>
+        <div className="px-5 py-10 rounded-2xl bg-[#05a0db] shadow-lg text-center">
+          <h2 className="text-xl ">Total Due</h2>
+          <p className=" text-4xl font-bold"> ৳ {totalDue.toFixed(2)}</p>
+        </div>
+      </div>
+
+
+       <div className="flex justify-start mb-5 text-gray-500 border-opacity-20 mx-2 pb-1 items-center gap-3">
+  <button
+    className="font-avenir px-3 py-1 rounded-lg text-white bg-[#05a0db]"
+    onClick={() => document.getElementById("my_modal_3").showModal()}
+  >
+    Add Ads Account
+  </button>
+  <dialog id="my_modal_3" className="modal">
+    <div className="modal-box bg-white">
+      <form onSubmit={(e) => handleAddAdsAcount(e)}>
+        <div className="mb-4">
+          <label className="block text-black">Payment Date</label>
+          <input
+            required
+            type="date"
+            name="paymentDate"
+            className="w-full border bg-green-300 border-gray-600 text-black rounded p-2 mt-1"
+          />
+        </div>
+        <div className="mb-4">
+          <label className="block text-black">Account Name</label>
+          <input
+            type="text"
+            name="accountName"
+            placeholder="type here..."
+            className="w-full border border-gray-600 text-black bg-white rounded p-2 mt-1"
+          />
+        </div>
+
+        <div className="grid lg:grid-cols-2 gap-3 mt-4">
+        
+          <form method="dialog">
+            <button className="font-avenir px-3 py-1 w-full  rounded-lg  bg-red-600 text-white">
+              Close
+            </button>
+          </form>
+          <button
+            type="submit"
+            className="font-avenir px-3 py-1 rounded-lg w-full  text-white bg-[#05a0db]"
+          >
+            Send
+          </button>
+        </div>
+      </form>
+    </div>
+  </dialog>
+</div>
+
    
  
      <div className="overflow-x-auto mt-6">
        <table className="min-w-full bg-white">
-         <thead className="bg-red-800 text-white">
+         <thead className="bg-[#05a0db] text-white">
            <tr>
              <th className="p-3">SL</th>
+             <th className="p-3">Payment Date</th>
              <th className="p-3">Ad Account Name</th>
              <th className="p-3">Current Balance</th>
              <th className="p-3">Threshold</th>
              <th className="p-3">Total Spent</th>
              <th className="p-3">Total Bill</th>
              <th className="p-3">Status</th>
-             <th className="p-3">Payment Date</th>
+             <th className="p-3">Action</th>
          
            </tr>
          </thead>
@@ -486,24 +562,12 @@ const AdsProfile = () => {
              }`}
              >
                <td className="p-3 border-r-2 border-l-2 border-gray-300 text-center">{index + 1}</td>
+               <td className="p-3 border border-gray-300 text-center"> {new Date(account?.paymentDate).toLocaleDateString("en-GB")}</td>
               
                <td className="p-3 border-r-2  border-gray-300 text-start px-5 ">
                      <div className="">
                        <h1> {account.accountName}</h1>
-                       <div className="flex justify-start gap-3">
-                         <button
-                           className="text-blue-600"
-                           onClick={() => setModalData(account)}
-                         >
-                           Edit
-                         </button>
-                         <button
-                           className="text-start flex justify-start text-red-600"
-                           onClick={() => handleDelete(account._id)}
-                         >
-                           Delete
-                         </button>
-                       </div>
+                   
                      </div>
                    </td>
                <td className="p-3 border border-gray-300  text-center">$ {account.currentBallence}</td>
@@ -518,12 +582,28 @@ const AdsProfile = () => {
                    >
                      {account.status} 
                      </td>
-               <td className="p-3 border border-gray-300 text-center"> {new Date(account?.paymentDate).toLocaleDateString("en-GB")}</td>
+               <td className={`p-3 border flex justify-center gap-2 text-center border-gray-300  `}
+                   >
+                    <button
+                           className="text-blue-600 text-3xl"
+                           onClick={() => setModalData(account)}
+                         >
+                         <MdEditSquare />
+                         </button>
+                         <button
+                          className="text-start flex justify-start text-black text-3xl"
+                          onClick={() => handleDelete(account._id)}
+                        >
+                          <MdDelete />
+                        </button>
+                        
+                     </td>
+              
              </tr>
            ))}
-           <tr className="bg-green-800 text-sm text-white font-bold">
+           <tr className="bg-[#05a0db] text-sm text-white font-bold">
      
-     <td className="p-3  text-right" colSpan="2">
+     <td className="p-3  text-right" colSpan="3">
        Total :
      </td>
      <td className="p-3  border-gray-300 text-center">$ {currentTotal}</td>
@@ -673,80 +753,80 @@ const AdsProfile = () => {
    
 {/* ///////////////////////////////////////////////////////////////// */}
     <div className="flex mt-5 justify-between items-center gap-5  ml-2 ">
-         <div className="">
-        <button
-          className="font-avenir px-3  mx-auto py-1 bg-green-800 ml-5 rounded-lg text-white"
-          onClick={() => document.getElementById("my_modal_1").showModal()}
-        >
-         Pay Admin
-        </button>
-        <dialog id="my_modal_1" className="modal">
-          <div className="modal-box bg-white text-black font-bold">
-            <form onSubmit={(e) => handlePayment(e)}>
-              <div className="flex  justify-center items-center gap-3">
-                <div className="mb-4">
-                  <label className="block text-gray-250">Pay Amount</label>
-                  <input
-                    required
-                    type="number"
-                    name="payAmount"
-                    defaultValue={0}
-                    className="w-full border-2 bg-white border-black rounded p-2 mt-1"
-                  />
-                </div>
-                <div className="mb-4">
-                  <label className="block text-gray-250">Note</label>
-                  <input
-                    type="text"
-                    name="note"
-                    required
-                    placeholder="type note..."
-                    className="w-full border-2 bg-white border-black rounded p-2 mt-1"
-                  />
-                </div>
-              </div>
-              <div className="flex justify-center items-center gap-4">
-                <div className="mb-4">
-                  <label className="block text-gray-250">Payment Method</label>
-                  <select
-                    required
-                    name="paymentMethod"
-                    className="w-full border-2 bg-white border-black rounded p-2 mt-1"
-                  >
-                    <option value="bkashMarchent">Bkash Marchent</option>
-                    <option value="bkashPersonal">Bkash Personal</option>
-                    <option value="nagadPersonal">Nagad Personal</option>
-                    <option value="rocketPersonal">Rocket Personal</option>
-                    <option value="bank">Bank</option>
-                  </select>
-                </div>
-                <div className="mb-4">
-                  <label className="block text-gray-250">Date</label>
-                  <input
-                    required
-                    type="date"
-                    name="date"
-                    className="w-full border-2 bg-green-300 text-black border-black rounded p-2 mt-1"
-                  />
-                </div>
-              </div>
-              <button
-                type="submit"
-                className="font-avenir px-3 mx-auto py-1 rounded-lg flex justify-center text-white bg-green-800"
-              >
-                Send
-              </button>
-            </form>
-            <div className="modal-action">
-              <form method="dialog">
-                <button className="p-2 rounded-lg bg-red-600 text-white text-center">
-                  Close
-                </button>
-              </form>
-            </div>
-          </div>
-        </dialog>
-         </div>
+    <div className="">
+  <button
+    className="font-avenir px-3 mx-auto py-1 bg-[#05a0db] ml-5 rounded-lg text-white"
+    onClick={() => document.getElementById("my_modal_1").showModal()}
+  >
+    Pay Admin
+  </button>
+  <dialog id="my_modal_1" className="modal">
+    <div className="modal-box bg-white text-black font-bold">
+      <form onSubmit={(e) => handlePayment(e)}>
+      <div className="mb-4">
+          <label className="block text-gray-250">Date</label>
+          <input
+            required
+            type="date"
+            name="date"
+            className="w-full border-2 bg-green-300 text-black border-black rounded p-2 mt-1"
+          />
+        </div>
+        <div className="mb-4">
+          <label className="block text-gray-250">Pay Amount</label>
+          <input
+            required
+            type="number"
+            name="payAmount"
+            defaultValue={0}
+            className="w-full border-2 bg-white border-black rounded p-2 mt-1"
+          />
+        </div>
+        <div className="mb-4">
+          <label className="block text-gray-250">Note</label>
+          <input
+            type="text"
+            name="note"
+            required
+            placeholder="type note..."
+            className="w-full border-2 bg-white border-black rounded p-2 mt-1"
+          />
+        </div>
+        <div className="mb-4">
+          <label className="block text-gray-250">Payment Method</label>
+          <select
+            required
+            name="paymentMethod"
+            className="w-full border-2 bg-white border-black rounded p-2 mt-1"
+          >
+            <option value="bkashMarchent">Bkash Marchent</option>
+            <option value="bkashPersonal">Bkash Personal</option>
+            <option value="nagadPersonal">Nagad Personal</option>
+            <option value="rocketPersonal">Rocket Personal</option>
+            <option value="bank">Bank</option>
+          </select>
+        </div>
+       
+
+        <div className="grid lg:grid-cols-2 gap-3 mt-4">
+        <form method="dialog">
+            <button className="font-avenir px-3 py-1 w-full rounded-lg text-white bg-red-600">
+              Close
+            </button>
+          </form>
+          <button
+            type="submit"
+            className="font-avenir px-3 py-1  w-full rounded-lg text-white bg-[#05a0db]"
+          >
+            Send
+          </button>
+       
+        </div>
+      </form>
+    </div>
+  </dialog>
+</div>
+
           <div className="flex  justify-end items-center gap-5  ml-2 ">
   
     <div className="flex flex-col justify-end items-center">
@@ -825,13 +905,13 @@ const AdsProfile = () => {
 
       <div className="overflow-x-auto mt-6 mx-4">
         <table className="min-w-full bg-white">
-          <thead className="bg-green-800 text-white">
+          <thead className="bg-[#05a0db] text-white">
             <tr>
               <th className="p-3 ">SL</th>
+              <th className="p-3">Payment Date</th>
               <th className="p-3">Payment Amount</th>
               <th className="p-3">Payment Method</th>
               <th className="p-3"> Note</th>
-              <th className="p-3">Payment Date</th>
               <th className="p-3">Edit</th>
             </tr>
           </thead>
@@ -843,6 +923,9 @@ const AdsProfile = () => {
               >
                 <td className="p-3  border-r-2 border-l-2 border-gray-200 text-center">
                   {index + 1}
+                </td>
+                <td className="p-3 border-r-2 border-gray-200 text-center">
+                {new Date(payment.date).toLocaleDateString("en-GB")}
                 </td>
                
                 <td className="p-3 border-r-2 border-gray-200 text-center">
@@ -891,146 +974,107 @@ const AdsProfile = () => {
                   {payment.note}
                 </td>
 
-                <td className="p-3 border-r-2 border-gray-200 text-center">
-                {new Date(payment.date).toLocaleDateString("en-GB")}
-                </td>
+               
 
                 <td className="p-3 border-r-2 border-gray-200 text-center">
-                  <div className=" inline-block">
-                    <button
-                      onClick={() => toggleDropdown(payment._id)}
-                      className=" focus:outline-none"
-                    >
-                      &#8226;&#8226;&#8226;
-                    </button>
-                    {activeDropdown === payment._id && (
-                      <div className="absolute text-start  right-4 z-20 w-40 py-2 mt-2 bg-white border border-gray-300 rounded-md shadow-xl">
-                         <button
-                    className="font-avenir  py-1 px-4 rounded-lg text-black"
+                <div className='flex gap-3 items-center'>
+                <button
+                    className="font-avenir text-3xl  py-1 px-4 rounded-lg text-blue-700"
                     onClick={() =>
                       document
                         .getElementById(`modal_${payment._id}`)
                         .showModal()
                     }
                   >
-                   Edit
+                  <MdEditSquare />
                   </button>
-                  
-                  <dialog id={`modal_${payment._id}`} className="modal">
-                    <div className="modal-box bg-white text-black font-bold">
-                      <form
-                        onSubmit={(e) => handleUpdatePayment(e, payment._id)}
-                      >
-                        <div className="flex justify-center items-center gap-3">
-                          <div className="mb-4">
-                            <label className="block text-gray-700">
-                              {" "}
-                              Previous Amount
-                            </label>
-                            <input
-                              type="number"
-                              name="previousAmount"
-                              disabled
-                              defaultValue={payment?.payAmount}
-                              className="w-full border-2 bg-white border-black rounded p-2 mt-1"
-                            />
-                          </div>
-                          <div className="mb-4">
-                            <label className="block text-gray-700">
-                              {" "}
-                              New Amount
-                            </label>
-                            <input
-                              required
-                              type="number"
-                              name="payAmount"
-                              defaultValue={payment?.payAmount}
-                              className="w-full border-2 bg-white border-black rounded p-2 mt-1"
-                            />
-                          </div>
-                        </div>
-                        <div className="flex justify-center items-center gap-3">
-                          <div className="mb-4">
-                            <label className="block text-gray-700"> Date</label>
-                            <input
-                              type="date"
-                              defaultValue={payment.date}
-                              name="date"
-                              className="w-full border-2 bg-white border-black rounded p-2 mt-1"
-                            />
-                          </div>
+                  <button
+                          className="text-start flex justify-start text-black text-3xl"
+                          onClick={() => handleDelete(payment._id)}
+                        >
+                          <MdDelete />
+                        </button>
+                </div>
+                
+                <dialog id={`modal_${payment._id}`} className="modal">
+  <div className="modal-box bg-white text-black font-bold">
+    <form onSubmit={(e) => handleUpdatePayment(e, payment._id)}>
+      <div className="mb-4">
+        <label className="block text-gray-700">Previous Amount</label>
+        <input
+          type="number"
+          name="previousAmount"
+          disabled
+          defaultValue={payment?.payAmount}
+          className="w-full border-2 bg-white border-black rounded p-2 mt-1"
+        />
+      </div>
+      <div className="mb-4">
+        <label className="block text-gray-700">New Amount</label>
+        <input
+          required
+          type="number"
+          name="payAmount"
+          defaultValue={payment?.payAmount}
+          className="w-full border-2 bg-white border-black rounded p-2 mt-1"
+        />
+      </div>
+      <div className="mb-4">
+        <label className="block text-gray-700">Date</label>
+        <input
+          type="date"
+          defaultValue={payment.date}
+          name="date"
+          className="w-full border-2 bg-white border-black rounded p-2 mt-1"
+        />
+      </div>
+      <div className="mb-4">
+        <label className="block text-gray-700">Method</label>
+        <select
+          required
+          name="paymentMethod"
+          defaultValue={payment.paymentMethod}
+          className="w-full border-2 bg-white border-black rounded p-2 mt-1"
+        >
+          <option value="bkashMarchent">Bkash Marchent</option>
+          <option value="bkashPersonal">Bkash Personal</option>
+          <option value="nagadPersonal">Nagad Personal</option>
+          <option value="rocketPersonal">Rocket Personal</option>
+          <option value="bank">Bank</option>
+        </select>
+      </div>
+      <div className="mb-4">
+        <label className="block text-gray-700">Note</label>
+        <input
+          required
+          type="text"
+          name="note"
+          defaultValue={payment?.note}
+          className="w-full border-2 bg-white border-black rounded p-2 mt-1"
+        />
+      </div>
+      
+      <div className="flex gap-3 mt-4">
+      <button
+          type="button"
+          className="font-avenir px-3 py-1 rounded-lg text-white bg-red-600 flex-1"
+          onClick={() => document.getElementById(`modal_${payment._id}`).close()}
+        >
+          Close
+        </button>
+        <button
+          type="submit"
+          className="font-avenir px-3 py-1 rounded-lg text-white bg-green-800 flex-1"
+        >
+          Update
+        </button>
+       
+      </div>
+    </form>
+  </div>
+</dialog>
 
-                          <div className="mb-4">
-                            <label className="block text-gray-700">
-                              Method
-                            </label>
-                            <select
-                              required
-                              name="paymentMethod"
-                              defaultValue={payment.paymentMethod}
-                              className="w-full border-2 bg-white border-black rounded p-2 mt-1"
-                            >
-                              <option value="bkashMarchent">
-                                Bkash Marchent
-                              </option>
-                              <option value="bkashPersonal">
-                                Bkash Personal
-                              </option>
-                              <option value="nagadPersonal">
-                                Nagad Personal
-                              </option>
-                              <option value="rocketPersonal">
-                                Rocket Personal
-                              </option>
-                              <option value="bank">Bank</option>
-                            </select>
-                          </div>
-                        </div>
-                        <div className="mb-4">
-                          <label className="block text-gray-700">Note</label>
-                          <input
-                            required
-                            type="text"
-                            name="note"
-                            defaultValue={payment?.note}
-                            className="w-full border-2 bg-white border-black rounded p-2 mt-1"
-                          />
-                        </div>
-                        <button
-                          onClick={() =>
-                            document
-                              .getElementById(`modal_${payment._id}`)
-                              .close()
-                          }
-                          type="submit"
-                          className="font-avenir px-3 mx-auto py-1 rounded-lg flex justify-center text-white bg-green-800"
-                        >
-                          Update
-                        </button>
-                      </form>
-                      <div className="modal-action">
-                        <button
-                          className="p-2 rounded-lg bg-red-600 text-white text-center"
-                          onClick={() =>
-                            document
-                              .getElementById(`modal_${payment._id}`)
-                              .close()
-                          }
-                        >
-                          Close
-                        </button>
-                      </div>
-                    </div>
-                  </dialog>
-                        <button
-                          className="block w-full px-4 py-2 text-left text-gray-800 hover:bg-gray-200"
-                          onClick={() => handleDelete2(payment._id)}
-                        >
-                          Delete
-                        </button>
-                      </div>
-                    )}
-                  </div>
+              
                 </td>
 
 
@@ -1039,15 +1083,15 @@ const AdsProfile = () => {
                 
               </tr>
             ))}
-            <tr className="bg-green-800 text-white font-bold">
-              <td className="p-3 text-center" colSpan="1">
+            <tr className="bg-[#05a0db] text-white font-bold">
+              <td className="p-3 text-center" colSpan="2">
                 Total Amount :
               </td>
               <td className="p-3 text-center">৳ {totalPayment}</td>
               <td className="p-3 text-center"></td>
               <td className="p-3 text-center"></td>
               <td className="p-3 text-center"></td>
-              <td className="p-3 text-center"></td>
+
             </tr>
           </tbody>
         </table>

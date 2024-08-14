@@ -5,6 +5,7 @@ import { AuthContext } from "../../Security/AuthProvider";
 import UseAxiosPublic from "../../Axios/UseAxiosPublic";
 import Swal from "sweetalert2";
 import { Helmet } from "react-helmet-async";
+import { MdDelete } from "react-icons/md";
 
 const AllUsers = () => {
   const [users, refetch] = useUsers();
@@ -72,16 +73,16 @@ const AllUsers = () => {
   };
 
   return (
-    <div className="mt-5 p-4 dark:text-green-800">
+    <div className="mt-5 mx-5 dark:text-green-800">
       <Helmet>
         <title>All Users | Digital Network</title>
         <link rel="canonical" href="https://www.example.com/" />
       </Helmet>
 
-      <div className="p-2 sm:p-4">
+      <div className=" ">
         <div className="overflow-x-auto">
           <table className="min-w-full bg-white">
-            <thead className="bg-red-800 text-white">
+            <thead className="bg-[#05a0db] text-white">
               <tr>
                 <th className="p-3 text-center">Sl</th>
                 <th className="p-3 text-center">Profile</th>
@@ -106,7 +107,7 @@ const AllUsers = () => {
                   </td>
                   <td className="p-3 border-r-2 border-gray-300 text-center">
                     <img
-                      className="h-24 w-24 flex justify-center items-center mx-auto rounded-lg"
+                      className="h-16 w-16 flex justify-center items-center mx-auto rounded-full"
                       src={user.photo}
                       alt=""
                     />
@@ -130,24 +131,12 @@ const AllUsers = () => {
                     </select>
                   </td>
                   <td className="p-3 border-r-2 border-gray-200 text-center">
-                    <div className="relative inline-block">
-                      <button
-                        onClick={() => toggleDropdown(user._id)}
-                        className="focus:outline-none"
-                      >
-                        &#8226;&#8226;&#8226;
-                      </button>
-                      {activeDropdown === user._id && (
-                        <div className="absolute right-0 z-20 w-40 py-2 mt-2 bg-white border border-gray-300 rounded-md shadow-xl">
-                          <button
-                            className="block w-full px-4 py-2 text-left text-gray-800 hover:bg-gray-200"
-                            onClick={() => handleDelete(user._id)}
-                          >
-                            Delete
-                          </button>
-                        </div>
-                      )}
-                    </div>
+                  <button
+                          className="text-center  text-black text-3xl"
+                          onClick={() => handleDelete(user._id)}
+                        >
+                          <MdDelete />
+                        </button>
                   </td>
                 </tr>
               ))}

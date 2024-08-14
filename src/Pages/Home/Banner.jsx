@@ -63,7 +63,7 @@ useEffect(() => {
 }, [users]);
 
 
-const handleUpdateTotalBudget = (e, id) => {
+const handleUpdateTotalBudget = (e, id, modalId) => {
   e.preventDefault();
   const tBudged = e.target.tBudged.value;
   const body = { payoneer: tBudged };
@@ -72,23 +72,18 @@ const handleUpdateTotalBudget = (e, id) => {
   axios.put(`https://digital-networking-server.vercel.app/users/payoneer/${id}`, body)
     .then((res) => {
       console.log(res.data);
-      refetch();  // Make sure this function correctly refetches the updated data
-      Swal.fire({
-        title: "Good job!",
-        text: "Total Budget updated!",
-        icon: "success",
-      });
+      refetch();
+
+      // Automatically close the modal
+      const modalElement = document.getElementById(modalId);
+      if (modalElement) {
+        modalElement.close();
+      }
     })
     .catch((error) => {
-      console.error("Error updating account:", error);
-      Swal.fire({
-        icon: "error",
-        title: "Oops...",
-        text: "Failed to update account!",
-      });
+      console.error("Error updating Payoneer amount:", error);
     });
 };
-
 
 
 return (
@@ -131,15 +126,16 @@ return (
        <img className="balance-card-img w-56 h-auto mt-6" src="https://i.ibb.co/3WVZGdz/PAYO-BIG-aa26e6e0.png" alt="Payoneer" />
        <span className="balance-card-text text-4xl flex items-center justify-center gap-2">
        <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"> <span className="text-lg lg:text-2xl font-extrabold text-red-600">$</span>{payoneerTotal}</p>
-      
-    
        </span>
      </div>
       </div>
-      
-      <div className="balance-card bg-white rounded-2xl shadow-2xl p-5 text-center transition-transform transform hover:scale-105 border-0">
-      <p className="balance-card-text text-lg mt-5 lg:text-xl font-bold text-gray-700">Total: <span className="text-lg lg:text-xl font-extrabold">৳{bkashMarchentTotal + rocketPersonalTotal2 + bkashPersonalTotal2 + nagadPersonalTotal2}</span></p>
-      {/* <p className="balance-card-text text-lg mt-2 lg:text-xl font-bold text-gray-700">DUE: <span className="text-lg lg:text-xl font-extrabold text-gray-700">৳ { (payoneerTotal * 120) - (bkashMarchentTotal + rocketPersonalTotal2 + bkashPersonalTotal2 + nagadPersonalTotal2)}</span></p> */}
+      <div className=" bg-white rounded-2xl p-5 mt-4 text-center shadow-2xl transition-transform transform hover:scale-105 border-0 gap-4 ">
+      <div>
+      <h1 className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700">Total:</h1>
+       <span className="balance-card-text mt-3 text-4xl flex items-center justify-center gap-2">
+       <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"> <span className="text-lg lg:text-2xl font-extrabold text-black">৳</span>{bkashMarchentTotal + rocketPersonalTotal2 + bkashPersonalTotal2 + nagadPersonalTotal2}</p>
+       </span>
+     </div>
       </div>
     </div>
     
@@ -148,7 +144,7 @@ return (
     <div className="">
      <div className="overflow-x-auto mt-6">
      <table className="min-w-full text-xs md:text-base">
-        <thead className="bg-[#5db646] text-white font-bold text-sm md:text-xl">
+        <thead className="bg-[#05a0db] text-white font-bold text-sm md:text-xl">
           <tr>
             <th className="p-3 text-center">Employee Name</th>
          
@@ -208,34 +204,33 @@ return (
                       </button>
 
                       <dialog id={`my_modal_${userr._id}`} className="modal">
-                        <div className="modal-box bg-white">
-                          <form
-                            onSubmit={(e) =>
-                              handleUpdateTotalBudget(e, userr._id)
-                            }
-                          >
-                            <input
-                              type="number"
-                              name="tBudged"
-                              step="0.01"
-                              defaultValue={userr.payoneer}
-                              className="w-full border bg-white border-black rounded p-2 mt-1 text-gray-500"
-                            />
-                            <button
-                              type="submit"
-                              className="mt-4 font-avenir px-3 mx-auto py-1 rounded-lg text-white bg-green-800"
-                            >
-                              Update
-                            </button>
-                          </form>
+  <div className="modal-box bg-white">
+    <form
+      onSubmit={(e) => handleUpdateTotalBudget(e, userr._id, `my_modal_${userr._id}`)}
+    >
+      <input
+        type="number"
+        name="tBudged"
+        step="0.01"
+        defaultValue={userr.payoneer}
+        className="w-full border bg-white border-black rounded p-2 mt-1 text-gray-500"
+      />
+      <button
+        type="submit"
+        className="mt-4 font-avenir px-3 mx-auto py-1 rounded-lg text-white bg-[#05a0db]"
+      >
+        Update
+      </button>
+    </form>
 
-                          <form method="dialog">
-                            <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
-                              ✕
-                            </button>
-                          </form>
-                        </div>
-                      </dialog>
+    <form method="dialog">
+      <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
+        ✕
+      </button>
+    </form>
+  </div>
+</dialog>
+
                     </div>
                   </td>
                   
@@ -247,7 +242,7 @@ return (
         ))}
         <tfoot>
           {ddd?.role === 'admin' && (
-            <tr className="border-b border-opacity-20 bg-green-800 font-bold p-5 text-white text-sm md:text-lg">
+            <tr className="border-b border-opacity-20 bg-[#05a0db] font-bold p-5 text-white text-sm md:text-lg">
 
               <td className="p-3 text-center">Total BDT</td>
               <td className="p-3 text-center">৳ {bkashMarchentTotal}</td>

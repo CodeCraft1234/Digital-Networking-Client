@@ -6,6 +6,7 @@ import { Helmet } from "react-helmet-async"
 import Swal from "sweetalert2";
 import useUsers from "../../Hook/useUsers";
 import useAdsPayment from "../../Hook/useAdsPayment";
+import { MdDelete, MdEditSquare } from "react-icons/md";
 
 const AllAdsPayments = () => {
   const [adsPayment, refetch] = useAdsPayment();
@@ -14,12 +15,11 @@ const AllAdsPayments = () => {
   const [users] = useUsers();
   const { user } = useContext(AuthContext);
   const [filteredClients, setFilteredClients] = useState([]);
-  const [sortMonth, setSortMonth] = useState("");
+  const [sortMonth, setSortMonth] = useState(new Date().getMonth() + 1); // Default to current month
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
   const [selectedEmployee, setSelectedEmployee] = useState("");
   const [selectedDate, setSelectedDate] = useState("");
-
 
   useEffect(() => {
     if (adsPayment) {
@@ -34,7 +34,7 @@ const AllAdsPayments = () => {
       filtered = filtered.filter((c) => c.employeeEmail === selectedEmployee);
     }
 
-    if (sortMonth !== "") {
+    if (sortMonth) {
       filtered = filtered.filter((c) => {
         const month = new Date(c.date).getMonth() + 1;
         return month === parseInt(sortMonth);
@@ -76,27 +76,8 @@ const AllAdsPayments = () => {
   }, [filteredByCategory]);
 
   const handleDelete = (id) => {
-    Swal.fire({
-      title: "Are you sure?",
-      text: "You want to delete this payment!",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Yes, delete it",
-    }).then((result) => {
-      if (result.isConfirmed) {
-        AxiosPublic.delete(`/employeePayment/${id}`).then((res) => {
-          refetch();
-          if (res.data.deletedCount > 0) {
-            Swal.fire({
-              title: "Deleted!",
-              text: "Your payment has been deleted.",
-              icon: "success",
-            });
-          }
-        });
-      }
+    AxiosPublic.delete(`/adsPayment/${id}`).then((res) => {
+      refetch();
     });
   };
 
@@ -129,7 +110,7 @@ const AllAdsPayments = () => {
     };
 
     AxiosPublic.patch(
-      `https://digital-networking-server.vercel.app/employeePayment/${selectedPayment._id}`,
+      `https://digital-networking-server.vercel.app/adsPayment/${selectedPayment._id}`,
       updatedPayment
     ).then((res) => {
       handleCancel();
@@ -137,38 +118,34 @@ const AllAdsPayments = () => {
     });
   };
 
+  const [bkashMarcent, setBkashMarcentTotal] = useState(0);
+  const [nagadPersonal, setNagadPersonalTotal] = useState(0);
+  const [bkashPersonal, setBkashPersonalTotal] = useState(0);
+  const [rocketPersonal, setRocketPersonalTotal] = useState(0);
+  const [bankTotal, setBankTotal] = useState(0);
 
+  useEffect(() => {
+    const filtered = adsPayment;
+    const filter2 = filtered.filter(d => d.paymentMethod === 'bkashMarchent');
+    const total = filter2.reduce((acc, datas) => acc + parseFloat(datas.payAmount), 0);
+    setBkashMarcentTotal(total);
 
-  const [bkashMarcent,setBkashMarcentTotal]=useState(0)
-  const [nagadPersonal,setNagadPersonalTotal]=useState(0)
-  const [bkashPersonal,setBkashPersonalTotal]=useState(0)
-  const [rocketPersonal,setRocketPersonalTotal]=useState(0)
-  const [bankTotal,setBankTotal]=useState(0)
+    const filter3 = filtered.filter(d => d.paymentMethod === 'nagadPersonal');
+    const total3 = filter3.reduce((acc, datas) => acc + parseFloat(datas.payAmount), 0);
+    setNagadPersonalTotal(total3);
 
-  useEffect(()=>{
-          const filtered=adsPayment
-          const filter2=filtered.filter(d=>d.paymentMethod === 'bkashMarchent')
-          const total = filter2.reduce((acc, datas) => acc + parseFloat(datas.payAmount),0);
-          setBkashMarcentTotal(total)
+    const filter4 = filtered.filter(d => d.paymentMethod === 'bkashPersonal');
+    const total4 = filter4.reduce((acc, datas) => acc + parseFloat(datas.payAmount), 0);
+    setBkashPersonalTotal(total4);
 
-          const filter3=filtered.filter(d=>d.paymentMethod === 'nagadPersonal')
-          const total3 = filter3.reduce((acc, datas) => acc + parseFloat(datas.payAmount),0);
-          setNagadPersonalTotal(total3)
+    const filter5 = filtered.filter(d => d.paymentMethod === 'rocketPersonal');
+    const total5 = filter5.reduce((acc, datas) => acc + parseFloat(datas.payAmount), 0);
+    setRocketPersonalTotal(total5);
 
-          const filter4=filtered.filter(d=>d.paymentMethod === 'bkashPersonal')
-          const total4 = filter4.reduce((acc, datas) => acc + parseFloat(datas.payAmount),0);
-          setBkashPersonalTotal(total4)
-
-          const filter5=filtered.filter(d=>d.paymentMethod === 'rocketPersonal')
-          const total5 = filter5.reduce((acc, datas) => acc + parseFloat(datas.payAmount),0);
-          setRocketPersonalTotal(total5)
-
-          const filter6=filtered.filter(d=>d.paymentMethod === 'bank')
-          const total6 = filter6.reduce((acc, datas) => acc + parseFloat(datas.payAmount),0);
-          setBankTotal(total6)
-   
-  },[])
- 
+    const filter6 = filtered.filter(d => d.paymentMethod === 'bank');
+    const total6 = filter6.reduce((acc, datas) => acc + parseFloat(datas.payAmount), 0);
+    setBankTotal(total6);
+  }, [adsPayment]);
 
   const [showAll, setShowAll] = useState(false); // State to handle showing all data
   const [itemsToShow, setItemsToShow] = useState(40); // Number of items to show initially
@@ -279,7 +256,7 @@ const AllAdsPayments = () => {
 
       <div className="overflow-x-auto mt-6 border-2 border-black mx-4">
         <table className="min-w-full bg-white">
-          <thead className="bg-green-800 text-white">
+          <thead className="bg-[#05a0db] text-white">
             <tr>
               <th className="p-3">SL</th>
               <th className="p-3">Employee Name</th>
@@ -338,7 +315,7 @@ const AllAdsPayments = () => {
                   {payment.paymentMethod === "bank" && (
                     <img
                       className="h-12 w-13 flex my-auto items-center mx-auto justify-center"
-                      src="https://i.ibb.co/kS0jD01/bank-3d-render-icon-illustration-png.webp"
+                      src="https://i.ibb.co/PZc0P4w/brac-bank-seeklogo.png"
                       alt=""
                     />
                   )}
@@ -350,30 +327,18 @@ const AllAdsPayments = () => {
                 {new Date(payment.date).toLocaleDateString("en-GB")}
                 </td>
                 <td className="p-3 border-r-2 border-gray-200 text-center">
-                  <div className="relative inline-block">
-                    <button
-                      onClick={() => toggleDropdown(payment._id)}
-                      className=" focus:outline-none"
-                    >
-                      &#8226;&#8226;&#8226;
-                    </button>
-                    {activeDropdown === payment._id && (
-                      <div className="absolute right-0 z-20 w-40 py-2 mt-2 bg-white border border-gray-300 rounded-md shadow-xl">
-                        <button
-                          className="block w-full px-4 py-2 text-left text-gray-800 hover:bg-gray-200"
+                <button
+                          className=" px-4 py-2  text-3xl text-blue-700  hover:bg-gray-200"
                           onClick={() => handleEditClick(payment)}
                         >
-                          Edit
+                               <MdEditSquare />
                         </button>
                         <button
-                          className="block w-full px-4 py-2 text-left text-gray-800 hover:bg-gray-200"
+                          className=" text-black text-3xl"
                           onClick={() => handleDelete(payment._id)}
                         >
-                          Delete
+                          <MdDelete />
                         </button>
-                      </div>
-                    )}
-                  </div>
                 </td>
               </tr>
             ))}
@@ -444,7 +409,7 @@ const AllAdsPayments = () => {
                   className="w-full border bg-white border-gray-300 p-2 rounded-lg"
                 ></textarea>
               </div>
-              <div className="flex justify-end">
+              <div className="flex justify-center">
                 <button
                   type="button"
                   onClick={handleCancel}
