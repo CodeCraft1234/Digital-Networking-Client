@@ -13,6 +13,7 @@ import axios from "axios";
 import Swal from "sweetalert2";
 import { FaEdit } from "react-icons/fa";
 import { MdDelete, MdEditSquare } from "react-icons/md";
+import { Helmet } from "react-helmet-async";
 
 const UserProfile = () => {
   const { user } = useContext(AuthContext);
@@ -242,40 +243,42 @@ const UserProfile = () => {
 
   return (
     <div className="mt-5">
-      <div className="grid lg:grid-cols-4 text-black sm:grid-cols-2 gap-5 justify-around p-5">
+       <Helmet>
+       <title>{`User Profile | ${user?.displayName}`}</title>
+        <link rel="canonical" href="https://www.example.com/" />
+      </Helmet>
+      <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 text-black sm:grid-cols-2 gap-5 justify-around p-5">
         <div className="px-5 py-10 rounded-2xl bg-[#05a0db] text-white shadow-lg text-center">
-          <h2 className="text-4xl font-bold">Total Spent</h2>
-          <p className="text-xl">Balance: $ {totalSpent}</p>
+          <h2 className="text-2xl font-bold">Total Spent</h2>
+          <p className="text-4xl font-bold mt-2"> $ {totalSpent}</p>
         </div>
 
         <div className="px-5 py-10 rounded-2xl bg-[#05a0db] text-white shadow-lg text-center">
-          <h2 className="text-4xl font-bold">Total Bill</h2>
-          <p className="text-xl">
-            Balance: ৳ {parseInt(totalSpent * dollerRate)}
+          <h2 className="text-2xl font-bold">Total Bill</h2>
+          <p className="text-4xl font-bold mt-2">
+             <span className="text-4xl font-extrabold">৳</span> {parseInt(totalSpent * dollerRate)}
           </p>
         </div>
 
         <div className="px-5 py-10 rounded-2xl bg-[#05a0db] text-white shadow-lg text-center">
-          <h2 className="text-4xl font-bold">Total Paid</h2>
-          <p className="text-xl">Balance: ৳ {parseInt(totalPaymeent)}</p>
+          <h2 className="text-2xl font-bold">Total Paid</h2>
+          <p className="text-4xl font-bold mt-2"> <span className="text-4xl font-extrabold">৳</span> {parseInt(totalPaymeent)}</p>
         </div>
 
         <div className="px-5 py-10 rounded-2xl bg-[#05a0db] text-white shadow-lg text-center">
-          <h2 className="text-4xl font-bold">Total DUE</h2>
-          <p className="text-2xl">
-            Balance: ৳{parseInt(totalSpent * dollerRate - totalPaymeent)}
+          <h2 className="text-2xl font-bold">Total DUE</h2>
+          <p className="text-4xl font-bold mt-2">
+          <span className="text-4xl font-extrabold">৳</span> {parseInt(totalSpent * dollerRate - totalPaymeent)}
           </p>
         </div>
       </div>
 
       <div className="p-4">
-        <h6 className="text-center font-bold text-3xl md:text-5xl text-green-800">
-          Campaign List{" "}
-        </h6>
+        
         <div className="flex  text-start justify-start items-center ">
   <div>
     <button
-      className="font-avenir px-3 mx-auto py-1 bg-[#05a0db] rounded-lg text-white"
+      className="font-avenir px-6 mx-auto py-2 bg-[#05a0db] rounded-lg text-white"
       onClick={() => document.getElementById("my_modal_2").showModal()}
     >
       Add Campaign
@@ -291,7 +294,7 @@ const UserProfile = () => {
               <h1 className="text-3xl my-4 text-center font-bold text-white">
                 Add a Campaign
               </h1>
-              <div>
+              <div className="mb-4">
                 <label htmlFor="date" className="block mb-1">
                   Date
                 </label>
@@ -301,10 +304,10 @@ const UserProfile = () => {
                   type="date"
                   placeholder="type...."
                   required
-                  className="block w-full bg-green-300 p-2 border-2 border-black rounded focus:outline-none focus:ring"
+                  className="w-full border border-gray-600 text-black bg-white rounded p-2 mt-1"
                 />
               </div>
-              <div>
+              <div className="mb-4">
                 <label htmlFor="name" className="block mb-1 ml-1">
                   Campaign Name
                 </label>
@@ -314,16 +317,16 @@ const UserProfile = () => {
                   type="text"
                   placeholder="type...."
                   required
-                  className="block w-full bg-white p-2 rounded focus:outline-none focus:ring border-2 border-black"
+                  className="w-full border border-gray-600 text-black bg-white rounded p-2 mt-1"
                 />
               </div>
               
-              <div className="">
+              <div className="mb-4">
                 <label className="block text-black">Ads Account</label>
                 <select
                   required
                   name="adsAccount"
-                  className="w-full bg-white border rounded p-2 mt-1 border-black"
+                  className="w-full border border-gray-600 text-black bg-white rounded p-2 mt-1"
                 >
                   <option className="text-black" value="">
                     All Ads Account
@@ -335,7 +338,7 @@ const UserProfile = () => {
                   ))}
                 </select>
               </div>
-              <div>
+              <div className="mb-4">
                 <label htmlFor="pageName" className="block mb-1 ml-1">
                   Page Name
                 </label>
@@ -345,7 +348,7 @@ const UserProfile = () => {
                   type="text"
                   placeholder="type...."
                   required
-                  className="block bg-white w-full p-2 rounded focus:outline-none focus:ring border-2 border-black"
+                  className="w-full border border-gray-600 text-black bg-white rounded p-2 mt-1"
                 />
               </div>
               <div>
@@ -359,7 +362,7 @@ const UserProfile = () => {
                   type="number"
                   placeholder="type...."
                   required
-                  className="block bg-white w-full p-2 rounded focus:outline-none focus:ring border-black border-2"
+                  className="w-full border border-gray-600 text-black bg-white rounded p-2 mt-1"
                 />
               </div>
             </div>
@@ -555,7 +558,7 @@ const UserProfile = () => {
         </h1>
 
         <div className="mb-4">
-          <label className="block text-gray-700">
+          <label className="block text-left text-gray-700">
             Total Budged
           </label>
           <input
@@ -567,7 +570,7 @@ const UserProfile = () => {
           />
         </div>
         <div className="mb-4">
-          <label className="block text-gray-700">
+          <label className="block text-left text-gray-700">
             Total Spent
           </label>
           <input
@@ -580,7 +583,7 @@ const UserProfile = () => {
         </div>
 
         <div className="mb-4">
-          <label className="block text-gray-700">
+          <label className="block text-left text-gray-700">
             Dollers Rate
           </label>
           <input
@@ -592,7 +595,7 @@ const UserProfile = () => {
           />
         </div>
         <div className="mb-4">
-          <label className="block text-gray-700">
+          <label className="block text-left text-gray-700">
             Status
           </label>
           <select

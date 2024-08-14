@@ -11,6 +11,8 @@ import { Helmet } from "react-helmet-async";
 import { FaEdit } from "react-icons/fa";
 import axios from "axios";
 import { MdDelete, MdEditSquare } from "react-icons/md";
+import { ImCross } from "react-icons/im";
+import { toast } from "react-toastify";
 
 const MyCampaigns = () => {
   const [users] = useUsers();
@@ -197,7 +199,7 @@ const [client,setClient]=useState([])
       .then((res) => {
         console.log(res.data);
         refetch();
-        toast.success("Campaign updated successfully");
+        toast.success(`Campaign updated successfully`);
       })
       .catch((error) => {
         console.error("Error updating campaign:", error);
@@ -212,6 +214,7 @@ const [client,setClient]=useState([])
         AxiosPublic.delete(`/campaigns/${id}`)
         .then((res) => {
           refetch();
+          toast.success("campaign delete successful");
         });
 
     }
@@ -224,7 +227,7 @@ const [client,setClient]=useState([])
         <title>My Campaign | Digital Network </title>
         <link rel="canonical" href="https://www.example.com/" />
       </Helmet>
-<div className="flex justify-between items-center ">
+<div className="flex justify-end items-end gap-3 ">
 <form className="flex justify-center items-center" onSubmit={handleSort}>
         <div className="mb-4  mx-auto">
           <label className="block text-gray-700">Sort By Client</label>
@@ -237,7 +240,7 @@ const [client,setClient]=useState([])
           </button>
         </div>
       </form>
-      <div className="flex justify-end ">
+      <div className="flex justify-end mb-4">
                 <input
                   type="text"
                   placeholder="Search Campaign Name..."
@@ -426,8 +429,14 @@ const [client,setClient]=useState([])
                       <dialog id={`modal_${index}`} className="modal">
   <div className="modal-box bg-white text-black">
     <form onSubmit={(e) => handleUpdate(e, campaign._id)}>
-      <h1 className="text-md mb-5">
-        Ads Account:{" "}
+    <h1
+             className=" text-black flex hover:text-red-500  justify-end  text-end"
+             onClick={() => document.getElementById(`modal_${index}`).close()}
+           >
+            <ImCross />
+           </h1>
+      <h1 className="text-md mb-5 text-xl mt-4">
+        Campaign Name:{" "} <span className="text-blue-600 text-xl font-bold">{campaign.campaignName}</span>
         <span className="text-blue-600 text-xl font-bold">
           {campaign.adsAccount}
         </span>

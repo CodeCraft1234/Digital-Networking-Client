@@ -6,6 +6,7 @@ import { Helmet } from "react-helmet-async";
 import useMpayment from "../../Hook/UseMpayment";
 import Swal from "sweetalert2";
 import { MdDelete, MdEditSquare } from "react-icons/md";
+import { toast } from "react-toastify";
 
 const ClientPayments = () => {
   const [MPayment, refetch] = useMpayment();
@@ -73,6 +74,7 @@ const ClientPayments = () => {
   const handleDelete = (id) => {
 
         AxiosPublic.delete(`/MPayment/${id}`).then((res) => {
+          toast.success("Delete successful!");
           refetch();
          
           })
@@ -111,6 +113,7 @@ const ClientPayments = () => {
       `https://digital-networking-server.vercel.app/Mpayment/${selectedPayment._id}`,
       updatedPayment
     ).then((res) => {
+      toast.success("Payment Update successful!");
       handleCancel();
       refetch();
     });
@@ -186,74 +189,75 @@ const ClientPayments = () => {
      </div>
 
 {/* ///////////////////////////////////////////////////////////////// */}
-      <div className="flex text-black justify-between gap-4 items-center">
-        <div className="flex justify-center items-center gap-5 mb-4 ml-5 mx-auto">
-          <div className="flex flex-col justify-center items-center">
-            <label className="">By Month</label>
-            <select
-              className="border bg-blue-200 text-black border-gray-400 rounded p-2 mt-1"
-              value={sortMonth}
-              onChange={(e) => setSortMonth(e.target.value)}
-            >
-              <option value="">Select Month</option>
-              {[
-                "January",
-                "February",
-                "March",
-                "April",
-                "May",
-                "June",
-                "July",
-                "August",
-                "September",
-                "October",
-                "November",
-                "December",
-              ].map((month, index) => (
-                <option key={index + 1} value={index + 1}>
-                  {month}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div className="flex flex-col justify-center items-center">
-            <label className="block ">By Date</label>
-            <input
-              type="date"
-              className="border rounded bg-blue-200 text-black border-gray-400 p-2 mt-1"
-              value={selectedDate}
-              onChange={(e) => setSelectedDate(e.target.value)}
-            />
-          </div>
-          <div className="flex flex-col justify-center items-center">
-            <label className="block ml-2">Payment Method</label>
-            <select
-              className="border bg-blue-200 text-black border-gray-400 rounded p-2 mt-1"
-              value={selectedCategory}
-              onChange={(e) => setSelectedCategory(e.target.value)}
-            >
-              <option value="">All Methods</option>
-              <option value="bkashPersonal">bKash Personal</option>
-              <option value="bkashMarchent">bKash Marcent</option>
-              <option value="nagadPersonal">Nagad Personal</option>
-              <option value="rocketPersonal">Rocket Personal</option>
-              <option value="bank">Bank</option>
-            </select>
-          </div>
-        </div>
-        <div className="flex mr-5 justify-end">
-          <input
-            type="text"
-            placeholder="Payment Method..."
-            className="rounded-lg placeholder-black border-2 border-black p-2 font-bold text-black  bg-white"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
-        
-        </div>
-      </div>
+<div className="flex justify-end items-end gap-4 text-black">
+  <div className="flex flex-col justify-center items-center mb-4">
+    <label className="text-right">By Month</label>
+    <select
+      className="border bg-white text-black border-gray-400 rounded p-2 mt-1"
+      value={sortMonth}
+      onChange={(e) => setSortMonth(e.target.value)}
+    >
+      <option value="">Select Month</option>
+      {[
+        "January",
+        "February",
+        "March",
+        "April",
+        "May",
+        "June",
+        "July",
+        "August",
+        "September",
+        "October",
+        "November",
+        "December",
+      ].map((month, index) => (
+        <option key={index + 1} value={index + 1}>
+          {month}
+        </option>
+      ))}
+    </select>
+  </div>
 
-      <div className="overflow-x-auto  border-2 border-black mx-4">
+  <div className="flex flex-col justify-center items-center mb-4">
+    <label className="text-right">By Date</label>
+    <input
+      type="date"
+      className="border bg-white text-black border-gray-400 rounded p-2 mt-1"
+      value={selectedDate}
+      onChange={(e) => setSelectedDate(e.target.value)}
+    />
+  </div>
+
+  <div className="flex flex-col justify-center items-center mb-4">
+    <label className="text-right">Payment Method</label>
+    <select
+      className="border bg-white text-black border-gray-400 rounded p-2 mt-1"
+      value={selectedCategory}
+      onChange={(e) => setSelectedCategory(e.target.value)}
+    >
+      <option value="">All Methods</option>
+      <option value="bkashPersonal">bKash Personal</option>
+      <option value="bkashMarchent">bKash Marcent</option>
+      <option value="nagadPersonal">Nagad Personal</option>
+      <option value="rocketPersonal">Rocket Personal</option>
+      <option value="bank">Bank</option>
+    </select>
+  </div>
+
+  <div className="flex flex-col justify-end items-end mb-4 mr-12">
+    <input
+      type="text"
+      placeholder="Payment Method..."
+      className="border bg-white text-black border-gray-400 rounded p-2 mt-1"
+      value={searchQuery}
+      onChange={(e) => setSearchQuery(e.target.value)}
+    />
+  </div>
+</div>
+
+
+      <div className="overflow-x-auto  rounded mx-4">
         <table className="min-w-full bg-white">
           <thead className="bg-[#05a0db] text-white">
             <tr>

@@ -8,6 +8,7 @@ import useUsers from "../../Hook/useUsers";
 import { Helmet } from "react-helmet-async";
 import { toast, ToastContainer } from "react-toastify";
 import { MdDelete, MdEditSquare } from "react-icons/md";
+import { ImCross } from "react-icons/im";
 
 const UserAdAccount = ({email}) => {
 
@@ -101,7 +102,7 @@ const handleUpdate = (e, id) => {
   AxiosPublic.patch(`/adsAccount/${id}`,body
   )
     .then((res) => {
-      toast.success("Update successful!");
+      toast.success("Ads Account Update successful!");
       refetch()
     });
 };
@@ -110,7 +111,7 @@ const handleDelete=(id)=>[
   AxiosPublic.delete(`/adsAccount/${id}`)
     .then(res=>{
       console.log(res.data);
-      toast.success("Delete successful!");
+      toast.success("Ads Account Delete successful!");
       refetch()
       })
 ]
@@ -135,14 +136,20 @@ const filteredAdsAccounts = adsAccounts.filter(account =>
           className="font-avenir px-3 py-1 rounded-lg text-white bg-[#05a0db]"
           onClick={() => document.getElementById("my_modal_3").showModal()}
         >
-          Add Ads Account
+          Add an Ads Account
         </button>
         
         <dialog id="my_modal_3" className="modal">
   <div className="modal-box bg-white">
     <form onSubmit={(e) => handleAddAdsAcount(e)}>
       <div className="mb-4">
-        <label className="block text-black">Payment Date</label>
+      <h1
+             className=" text-black flex hover:text-red-500  justify-end  text-end"
+             onClick={() => document.getElementById(`my_modal_3`).close()}
+           >
+            <ImCross />
+           </h1>
+        <label className="block text-black">Date</label>
         <input
           required
           type="date"
@@ -203,7 +210,7 @@ const filteredAdsAccounts = adsAccounts.filter(account =>
             <th className="p-3">Ad Account Name</th>
             <th className="p-3">Current Balance</th>
             <th className="p-3">Threshold</th>
-            <th className="p-3">Total Spent</th>
+            <th className="p-3">Spent</th>
             <th className="p-3">Status</th>
             <th className="p-3">Action</th>
         
@@ -221,7 +228,7 @@ const filteredAdsAccounts = adsAccounts.filter(account =>
             >
               <td className="p-3 border-r-2 border-l-2 border-gray-300 text-center">{index + 1}</td>
               <td className="p-3 border border-gray-300 text-center"> {new Date(account?.paymentDate).toLocaleDateString("en-GB")}</td>
-              <td className="p-3 border-r-2  border-gray-300 text-start px-5 ">
+              <td className="p-3 border-r-2  border-gray-300 text-center px-5 ">
                     <div className="">
                       <h1> {account.accountName}</h1>
                   
@@ -281,6 +288,12 @@ const filteredAdsAccounts = adsAccounts.filter(account =>
        <dialog className="modal" open>
        <div className="modal-box bg-white text-black">
          <form onSubmit={(e) => handleUpdate(e, modalData._id)}>
+         <h1
+             className=" text-black flex hover:text-red-500  justify-end  text-end"
+             onClick={() => setModalData(null)}
+           >
+            <ImCross />
+           </h1>
            <div className="mb-4">
              <label className="block text-gray-500">Account Name</label>
              <input

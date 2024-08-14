@@ -9,6 +9,7 @@ import { toast, ToastContainer } from 'react-toastify';
 import Swal from 'sweetalert2';
 import { Helmet } from 'react-helmet-async';
 import { MdDelete, MdEditSquare } from 'react-icons/md';
+import { ImCross } from 'react-icons/im';
 
 const MyClients = () => {
     const { user }=useContext(AuthContext)
@@ -263,27 +264,33 @@ const MyClients = () => {
 {
   ddd?.role === 'admin' ? <></> : <div>
   <button
-    className="font-avenir px-3 mx-auto py-1 bg-[#05a0db]  rounded-lg text-white"
+    className="font-avenir px-3 mx-auto py-1 bg-[#05a0db] rounded-lg text-white"
     onClick={() => document.getElementById("my_modal_2").showModal()}
   >
     Add Client
   </button>
   <dialog id="my_modal_2" className="modal">
     <div className="modal-box bg-white text-black font-bold">
-      <form o onSubmit={handleaddblog}>
-        <div className="flex justify-center items-center gap-3">
+      <form onSubmit={handleaddblog}>
+     
           <div className="mb-4">
+          <h1
+             className=" text-black flex hover:text-red-500  justify-end  text-end"
+             onClick={() => document.getElementById("my_modal_2").close()}
+           >
+            <ImCross />
+           </h1>
             <label className="block text-black">Client Name</label>
             <input
               id="name"
               name="clientName"
               type="text"
               required
-              className="w-full bg-white border-2 border-black rounded p-2 mt-1 "
+              className="w-full bg-white border-2 border-black rounded p-2 mt-1"
             />
           </div>
-        </div>
-        <div className="flex justify-center items-center gap-3">
+   
+       
           <div className="mb-4">
             <label className="block text-black">Client Phone</label>
             <input
@@ -291,7 +298,7 @@ const MyClients = () => {
               name="clientPhone"
               type="number"
               required
-              className="w-full bg-white  border-2 border-black rounded p-2 mt-1 "
+              className="w-full bg-white border-2 border-black rounded p-2 mt-1"
             />
           </div>
           <div className="mb-4">
@@ -301,23 +308,32 @@ const MyClients = () => {
               name="clientEmail"
               type="email"
               required
-
-              className="w-full bg-white border-2 border-black rounded p-2 mt-1 "
+              className="w-full bg-white border-2 border-black rounded p-2 mt-1"
             />
           </div>
+    
+
+        <div className="grid mt-8 grid-cols-2 gap-3">
+        <button
+            type="button"
+            onClick={() => document.getElementById("my_modal_2").close()}
+            className="p-2 rounded-lg bg-red-600 text-white text-center"
+          >
+            Close
+          </button>
+          <button
+            type="submit"
+            className="font-avenir px-3 py-1 bg-[#05a0db] rounded text-white"
+          >
+            Submit
+          </button>
+         
         </div>
-        <button type="submit" className="font-avenir  flex justify-center px-3 mx-auto py-1 bg-[#05a0db] rounded text-white">
-          Submit
-        </button>
       </form>
-      <div className="modal-action flex justify-end">
-        <form method="dialog">
-          <button className="p-2 rounded-lg bg-red-600 text-white text-center">Close</button>
-        </form>
-      </div>
     </div>
   </dialog>
 </div>
+
 
 }
  <div> 
@@ -389,80 +405,87 @@ const MyClients = () => {
 
   <td className="p-3 border-r text-center border-gray-400">
   <div className="flex justify-center items-center gap-3">
-        <div>
-                      <button
-                        className="text-blue-700  text-3xl"
-                        onClick={() =>
-                          document.getElementById(`modal_${index}`).showModal()
-                        }
-                      >
-                        <MdEditSquare />
-                      </button>
-                      <dialog id={`modal_${index}`} className="modal">
-                        <div className="modal-box bg-white text-black">
-                        <form onSubmit={(e) => handleUpdate2(e, campaign._id)}>
-  <h1 className="text-md mb-5">
-    Client Name:{" "}
-    <span className="text-blue-600 text-xl font-bold">
-      {campaign.clientName}
-    </span>
-  </h1>
+  <div>
+  <button
+    className="text-blue-700 text-3xl"
+    onClick={() =>
+      document.getElementById(`modal_${index}`).showModal()
+    }
+  >
+    <MdEditSquare />
+  </button>
 
-  <div className="mb-4">
-    <label className="block text-start text-gray-700">Client Name</label>
-    <input
-      type="text"
-      name="clientName"
-      defaultValue={campaign?.clientName}
-      className="w-full border-black bg-white border rounded p-2 mt-1"
-    />
-  </div>
-  <div className="mb-4">
-    <label className="block text-start text-gray-700">Phone</label>
-    <input
-      type="text"
-      name="clientPhone"
-      defaultValue={campaign?.clientPhone}
-      className="w-full bg-white border-black border rounded p-2 mt-1"
-    />
-  </div>
-  <div className="mb-4">
-    <label className="block text-start text-gray-700">Email</label>
-    <input
-      type="email"
-      name="clientEmail"
-      defaultValue={campaign?.clientEmail}
-      className="w-full border-black bg-white border rounded p-2 mt-1"
-    />
-  </div>
+  <dialog id={`modal_${index}`} className="modal">
+    <div className="modal-box bg-white text-black">
+      <form onSubmit={(e) => handleUpdate2(e, campaign._id)}>
+      <h1
+             className=" text-black flex hover:text-red-500  justify-end  text-end"
+             onClick={() => document.getElementById(`modal_${index}`).close()}
+           >
+            <ImCross />
+           </h1>
+        <h1 className="text-md mb-5">
+          Client Name:{" "}
+          <span className="text-blue-600 text-xl font-bold">
+            {campaign.clientName}
+          </span>
+        </h1>
 
-  <div className="grid grid-cols-2 gap-3">
-    <button
-      onClick={() =>
-        document.getElementById(`modal_${index}`).close()
-      }
-      type="button"
-      className="font-avenir px-3 py-1 bg-red-600 rounded-lg text-white"
-    >
-      Close
-    </button>
-    <button
-      type="submit"
-      className="font-avenir px-3 py-1 bg-[#05a0db] rounded-lg text-white"
-    >
-      Update
-    </button>
-  </div>
-</form>
+        <div className="mb-4">
+          <label className="block text-start text-gray-700">Client Name</label>
+          <input
+            type="text"
+            name="clientName"
+            defaultValue={campaign?.clientName}
+            className="w-full border-black bg-white border rounded p-2 mt-1"
+          />
+        </div>
+        <div className="mb-4">
+          <label className="block text-start text-gray-700">Phone</label>
+          <input
+            type="text"
+            name="clientPhone"
+            defaultValue={campaign?.clientPhone}
+            className="w-full bg-white border-black border rounded p-2 mt-1"
+          />
+        </div>
+        <div className="mb-4">
+          <label className="block text-start text-gray-700">Email</label>
+          <input
+            type="email"
+            name="clientEmail"
+            defaultValue={campaign?.clientEmail}
+            className="w-full border-black bg-white border rounded p-2 mt-1"
+          />
+        </div>
 
-                        
-                        </div>
-                      </dialog>
-                      </div>
+        <div className="grid grid-cols-2 gap-3">
+          <button
+            onClick={() =>
+              document.getElementById(`modal_${index}`).close()
+            }
+            type="button"
+            className="font-avenir px-3 py-1 bg-red-600 rounded-lg text-white"
+          >
+            Close
+          </button>
+          <button
+            type="submit"
+            className="font-avenir px-3 py-1 bg-[#05a0db] rounded-lg text-white"
+          >
+            Update
+          </button>
+        </div>
+      </form>
+    </div>
+  </dialog>
+</div>
+
                       <button
                           className="text-center  text-black text-3xl"
                           onClick={() => handledelete(campaign._id)}
                         >
+                          <ToastContainer></ToastContainer>
                           <MdDelete />
                         </button>
                       </div>
