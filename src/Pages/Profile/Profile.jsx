@@ -42,21 +42,18 @@ const Profile = () => {
     },[])
 
   return (
-    <div className="mt-24   ">
+    <div className="my-5   ">
       <Helmet>
               <title> Digital Network | Employee Profile</title>
               <link rel="canonical" href="https://www.tacobell.com/" />
                </Helmet>
       
        <div className="">
-            <img className="rounded-full border-2 p-2 border-black mx-auto sm:w-44 h-44 lg:w-72 lg:h-72" src={userr?.photo} alt=""/>
-            <h1 className="lg:text-4xl mt-4 sm:text-2xl md:text-3xl font-bold text-center">{userr?.name}</h1>
+            <img className="rounded-full border-2 p-2 border-black mx-auto sm:w-24 h-24 lg:w-52 lg:h-52" src={userr?.photo} alt=""/>
+            <h1 className="lg:text-4xl mt-4 text-black sm:text-2xl md:text-3xl font-bold text-center">{userr?.name}</h1>
       </div>
-      
-      
     <CampaignTable email={userr?.email}></CampaignTable> 
      <UserAdAccount email={userr?.email}></UserAdAccount>
-      <EmployeerMouthlySelery email={userr?.email}></EmployeerMouthlySelery>
     </div>
   );
 };

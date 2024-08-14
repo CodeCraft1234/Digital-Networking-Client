@@ -12,12 +12,23 @@ import PaymentHistry from "./PaymentHistry";
 import axios from "axios";
 import Swal from "sweetalert2";
 import { FaEdit } from "react-icons/fa";
+import { MdDelete, MdEditSquare } from "react-icons/md";
 
 const UserProfile = () => {
   const { user } = useContext(AuthContext);
   const userr = useLoaderData();
   const param = useParams();
   console.log(param?.email);
+
+  const [clients]=useClients()
+  const [datas,setdatas]=useState()
+  console.log(datas);
+  useEffect(() => {
+  if (param?.email) {
+      const realdata = clients.find((m) => m.clientEmail === param?.email);
+      setdatas(realdata)
+    }
+  }, [param?.email, clients]);
 
   const AxiosPublic = UseAxiosPublic();
   const [data, setData] = useState({});
@@ -76,57 +87,7 @@ const UserProfile = () => {
       });
   }, [param?.email]);
 
-  const handlePayment = async (e) => {
-    e.preventDefault();
-    const paymentMethod = e.target.paymentMethod.value;
-    const amount = parseFloat(e.target.amount.value);
-    const date = e.target.date.value;
-    const note = e.target.note.value;
-    const clientEmail = param?.email;
-    const employeeEmail = user?.email;
 
-    const body = {
-      paymentMethod,
-      amount,
-      note,
-      clientEmail,
-      employeeEmail,
-      date,
-    };
-    try {
-      await AxiosPublic.post(
-        `https://digital-networking-server.vercel.app/MPayment`,
-        body
-      );
-      toast.success("Payment successful");
-      refetch(); // Automatically refetch after successful payment
-    } catch (error) {
-      console.error("Error processing payment:", error);
-      toast.error("Failed to process payment");
-    }
-
-    const tSpent = totalSpent;
-    const tBill = totalSpent * dollerRate;
-    const tPayment = totalPaymeent + amount; // Ensure this variable is defined and correct
-    const tBudged = totalBudged;
-
-    const data = { tSpent, tBill, tPayment, tBudged };
-
-    AxiosPublic.patch(
-      `https://digital-networking-server.vercel.app/clients/${param?.email}`,
-      data
-    )
-      .then((res) => {
-        console.log(res.data);
-        refetch(); // Ensure this function is defined and correct
-        toast.success("Campaign updated successfully");
-        // window.location.reload(); // Generally better to avoid reloading the page
-      })
-      .catch((error) => {
-        console.error("Error updating campaign:", error);
-        toast.error("Failed to update campaign");
-      });
-  };
 
   const [dataa2, setData2] = useState([]);
   console.log(param?.email);
@@ -160,59 +121,29 @@ const UserProfile = () => {
   const handleUpdateTotalBudget = (e, id) => {
     e.preventDefault();
     const tBudged = e.target.tBudged.value;
-
     const body = { tBudged: tBudged };
     console.log(body);
-
-    axios
-      .put(`http://localhost:5000/campaings/totalBudged/${id}`, body)
+    axios.put(`https://digital-networking-server.vercel.app/campaings/totalBudged/${id}`, body)
       .then((res) => {
         console.log(res.data);
         refetch();
-        Swal.fire({
-          title: "Good job!",
-          text: "Total Budget updated!",
-          icon: "success",
-        });
+        toast("update successfully")
         setTotalBudged(null);
       })
-      .catch((error) => {
-        console.error("Error updating account:", error);
-        Swal.fire({
-          icon: "error",
-          title: "Oops...",
-          text: "Failed to update account!",
-        });
-      });
   };
 
   const handleUpdateTotalSpent = (e, id) => {
     e.preventDefault();
     const tSpent = e.target.tSpent.value;
-
     const body = { tSpent: tSpent };
     console.log(body);
-
-    axios
-      .put(`http://localhost:5000/campaings/totalSpent/${id}`, body)
+    axios.put(`https://digital-networking-server.vercel.app/campaings/totalSpent/${id}`, body)
       .then((res) => {
         console.log(res.data);
         refetch();
-        Swal.fire({
-          title: "Good job!",
-          text: "Total Spent updated!",
-          icon: "success",
-        });
-        setTotalSpent(totalSpent);
+        toast("update successfully")
+        setTotalSpent(null);
       })
-      .catch((error) => {
-        console.error("Error updating account:", error);
-        Swal.fire({
-          icon: "error",
-          title: "Oops...",
-          text: "Failed to update account!",
-        });
-      });
   };
 
   const handleUpdate = (e, id) => {
@@ -221,7 +152,6 @@ const UserProfile = () => {
     const status = e.target.status.value;
     const dollerRate = e.target.dollerRate.value;
     const tBudged = e.target.tBudged.value;
-
     const body = { tSpent, status, dollerRate, tBudged };
 
     AxiosPublic.patch(
@@ -239,14 +169,13 @@ const UserProfile = () => {
       });
   };
 
-  const [clients] = useClients();
 
   const handleaddblog = (e) => {
     e.preventDefault();
     const campaignName = e.target.campaignName.value;
     const clientEmail = param?.email;
     const pageName = e.target.pageName.value;
-    const pageURL = e.target.pageURL.value;
+    const clientName = datas?.clientName
     const tBudged = e.target.totalBudged.value;
     const adsAccount = e.target.adsAccount.value;
     const email = user?.email;
@@ -257,7 +186,6 @@ const UserProfile = () => {
     const data = {
       campaignName,
       clientEmail,
-      pageURL,
       pageName,
       adsAccount,
       status,
@@ -266,6 +194,7 @@ const UserProfile = () => {
       tSpent,
       dollerRate,
       date,
+      clientName
     };
     console.log(data);
 
@@ -291,52 +220,13 @@ const UserProfile = () => {
   }, [clients, user?.email]);
 
   const handledelete = (id) => {
-    Swal.fire({
-      title: "Are you sure?",
-      text: "You want to delete this Blog!",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Yes, delete blog",
-    }).then((result) => {
-      if (result.isConfirmed) {
         AxiosPublic.delete(`/campaigns/${id}`).then((res) => {
           refetch();
-          if (res.data.deletedCount > 0) {
-            Swal.fire({
-              title: "Deleted!",
-              text: "Your blog has been deleted.",
-              icon: "success",
-            });
-          }
+          toast.success("delete successful");
         });
-      }
-    });
-  };
 
-  const handleUpdatePayment = (e, id) => {
-    e.preventDefault();
-    const amount = e.target.amount.value;
-    const date = e.target.date.value;
-    const note = e.target.note.value;
-    const method = e.target.method.value;
-    const body = { note, amount, date, method };
-
-    AxiosPublic.patch(
-      `https://digital-networking-server.vercel.app/Mpayment/${id}`,
-      body
-    )
-      .then((res) => {
-        console.log(res.data);
-        refetch();
-        toast.success("Campaign updated successfully");
-      })
-      .catch((error) => {
-        console.error("Error updating campaign:", error);
-        toast.error("Failed to update campaign");
-      });
-  };
+     }
+ 
 
   const [adsAccount, refetchh] = useAdsAccount();
   const [adsAccounts, setAdsAccounts] = useState([]);
@@ -353,24 +243,24 @@ const UserProfile = () => {
   return (
     <div className="mt-5">
       <div className="grid lg:grid-cols-4 text-black sm:grid-cols-2 gap-5 justify-around p-5">
-        <div className="px-5 py-10 rounded-2xl bg-green-400 shadow-lg text-center">
+        <div className="px-5 py-10 rounded-2xl bg-[#05a0db] text-white shadow-lg text-center">
           <h2 className="text-4xl font-bold">Total Spent</h2>
           <p className="text-xl">Balance: $ {totalSpent}</p>
         </div>
 
-        <div className="px-5 py-10 rounded-2xl bg-green-400 shadow-lg text-center">
+        <div className="px-5 py-10 rounded-2xl bg-[#05a0db] text-white shadow-lg text-center">
           <h2 className="text-4xl font-bold">Total Bill</h2>
           <p className="text-xl">
             Balance: ৳ {parseInt(totalSpent * dollerRate)}
           </p>
         </div>
 
-        <div className="px-5 py-10 rounded-2xl bg-green-400 shadow-lg text-center">
+        <div className="px-5 py-10 rounded-2xl bg-[#05a0db] text-white shadow-lg text-center">
           <h2 className="text-4xl font-bold">Total Paid</h2>
           <p className="text-xl">Balance: ৳ {parseInt(totalPaymeent)}</p>
         </div>
 
-        <div className="px-5 py-10 rounded-2xl bg-green-400 shadow-lg text-center">
+        <div className="px-5 py-10 rounded-2xl bg-[#05a0db] text-white shadow-lg text-center">
           <h2 className="text-4xl font-bold">Total DUE</h2>
           <p className="text-2xl">
             Balance: ৳{parseInt(totalSpent * dollerRate - totalPaymeent)}
@@ -382,145 +272,130 @@ const UserProfile = () => {
         <h6 className="text-center font-bold text-3xl md:text-5xl text-green-800">
           Campaign List{" "}
         </h6>
-        <div className="flex ml-10 text-start justify-start items-center ">
-          <div>
-            <button
-              className="font-avenir px-3  mx-auto py-1 bg-green-800 ml-10 rounded-lg text-white"
-              onClick={() => document.getElementById("my_modal_2").showModal()}
-            >
-              Add Campaign
-            </button>
-            <dialog id="my_modal_2" className="modal">
-              <div className="modal-box">
-                <section className=" dark:text-gray-100">
-                  <Form
-                    onSubmit={handleaddblog}
-                    className="container w-full max-w-xl p-8 mx-auto space-y-6 rounded-md shadow text-black font-bold"
-                  >
-                    <div>
-                      <h1 className="text-3xl my-4 text-center font-bold  text-white">
-                        Add a Campaign{" "}
-                      </h1>
-                      <div className="flex justify-center  items-center gap-10">
-                        <div>
-                          <label for="date" className="block mb-1 ">
-                            Date
-                          </label>
-                          <input
-                            id="date"
-                            name="date"
-                            type="date"
-                            placeholder="type...."
-                            required
-                            className="block w-full p-2 border-2 border-black rounded focus:outline-none focus:ring focus:ri focus:ri "
-                          />
-                        </div>
-                      </div>
-                      <div>
-                        <label for="name" className="block mb-1 ml-1">
-                          Campaign Name
-                        </label>
-                        <input
-                          id="name"
-                          name="campaignName"
-                          type="text"
-                          placeholder="type...."
-                          required
-                          className="block w-full p-2 rounded focus:outline-none focus:ring border-2 border-black focus:ri focus:ri "
-                        />
-                      </div>
-                      <div className="flex justify-center items-center gap-3">
-                        <div className="">
-                          <label className="block  text-black">
-                            Ads Account
-                          </label>
-                          <select
-                            required
-                            name="adsAccount"
-                            className="w-full border rounded p-2 mt-1  border-black"
-                          >
-                            <option className="text-black" value="">
-                              All Ads Account
-                            </option>
-                            {adsAccounts.map((ads) => (
-                              <option key={ads._id} value={ads?.accountName}>
-                                {ads?.accountName}
-                              </option>
-                            ))}
-                          </select>
-                        </div>
-
-                        <div>
-                          <label for="name" className="block mb-1 ml-1">
-                            Page URL
-                          </label>
-                          <input
-                            id="name"
-                            name="pageURL"
-                            type="text"
-                            placeholder="type...."
-                            required
-                            className="block w-full p-2 rounded focus:outline-none focus:ring focus:ri focus:ri border-2 border-black"
-                          />
-                        </div>
-                      </div>
-                      <div className="flex justify-center items-center gap-3">
-                        <div>
-                          <label for="name" className="block mb-1 ml-1">
-                            Page Name
-                          </label>
-                          <input
-                            id="name"
-                            name="pageName"
-                            type="text"
-                            placeholder="type...."
-                            required
-                            className="block w-full p-2 rounded focus:outline-none focus:ring focus:ri focus:ri border-2 border-black"
-                          />
-                        </div>
-
-                        <div>
-                          <label for="name" className="block mb-1 ml-1">
-                            Total Budged
-                          </label>
-                          <input
-                            step="0.01"
-                            id="name"
-                            name="totalBudged"
-                            type="number"
-                            placeholder="type...."
-                            required
-                            className="block w-full p-2 rounded focus:outline-none focus:ring focus:ri focus:ri border-black border-2"
-                          />
-                        </div>
-                      </div>
-                    </div>
-                    <button
-                      method="dialog"
-                      className="font-avenir px-3 flex justify-center  mx-auto py-1 bg-green-800  rounded-lg text-white"
-                    >
-                      Submit
-                    </button>
-                  </Form>
-                </section>
-                <div className="modal-action flex justify-end">
-                  <form method="dialog">
-                    <button className="p-2 rounded-lg bg-red-600 text-white text-center">
-                      Close
-                    </button>
-                  </form>
-                </div>
+        <div className="flex  text-start justify-start items-center ">
+  <div>
+    <button
+      className="font-avenir px-3 mx-auto py-1 bg-[#05a0db] rounded-lg text-white"
+      onClick={() => document.getElementById("my_modal_2").showModal()}
+    >
+      Add Campaign
+    </button>
+    <dialog id="my_modal_2" className="modal overflow-y-hidden">
+      <div className="modal-box bg-white">
+        <section className="dark:text-gray-100">
+          <Form
+            onSubmit={handleaddblog}
+            className=" w-full  p-3 mx-auto space-y-6 rounded-md  text-black font-bold"
+          >
+            <div>
+              <h1 className="text-3xl my-4 text-center font-bold text-white">
+                Add a Campaign
+              </h1>
+              <div>
+                <label htmlFor="date" className="block mb-1">
+                  Date
+                </label>
+                <input
+                  id="date"
+                  name="date"
+                  type="date"
+                  placeholder="type...."
+                  required
+                  className="block w-full bg-green-300 p-2 border-2 border-black rounded focus:outline-none focus:ring"
+                />
               </div>
-            </dialog>
-          </div>
-        </div>
+              <div>
+                <label htmlFor="name" className="block mb-1 ml-1">
+                  Campaign Name
+                </label>
+                <input
+                  id="name"
+                  name="campaignName"
+                  type="text"
+                  placeholder="type...."
+                  required
+                  className="block w-full bg-white p-2 rounded focus:outline-none focus:ring border-2 border-black"
+                />
+              </div>
+              
+              <div className="">
+                <label className="block text-black">Ads Account</label>
+                <select
+                  required
+                  name="adsAccount"
+                  className="w-full bg-white border rounded p-2 mt-1 border-black"
+                >
+                  <option className="text-black" value="">
+                    All Ads Account
+                  </option>
+                  {adsAccounts.map((ads) => (
+                    <option key={ads._id} value={ads?.accountName}>
+                      {ads?.accountName}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label htmlFor="pageName" className="block mb-1 ml-1">
+                  Page Name
+                </label>
+                <input
+                  id="pageName"
+                  name="pageName"
+                  type="text"
+                  placeholder="type...."
+                  required
+                  className="block bg-white w-full p-2 rounded focus:outline-none focus:ring border-2 border-black"
+                />
+              </div>
+              <div>
+                <label htmlFor="totalBudged" className="block mb-1 ml-1">
+                  Total Budged
+                </label>
+                <input
+                  step="0.01"
+                  id="totalBudged"
+                  name="totalBudged"
+                  type="number"
+                  placeholder="type...."
+                  required
+                  className="block bg-white w-full p-2 rounded focus:outline-none focus:ring border-black border-2"
+                />
+              </div>
+            </div>
+
+            {/* Buttons at the bottom in a two-grid layout */}
+            <div className="grid grid-cols-2 gap-3 mt-4">
+            <button
+                type="button"
+                className="p-2 rounded-lg bg-red-600 text-white text-center"
+                onClick={() => document.getElementById("my_modal_2").close()}
+              >
+                Close
+              </button>
+              <button
+                type="submit"
+                className="font-avenir px-3 py-2 bg-[#05a0db] rounded-lg text-white text-center"
+              >
+                Submit
+              </button>
+              
+            </div>
+          </Form>
+        </section>
+      </div>
+    </dialog>
+  </div>
+</div>
+
 
         <div className="overflow-x-auto mt-6">
           <table className="min-w-full bg-white">
-            <thead className="bg-green-800 text-white">
+            <thead className="bg-[#05a0db] text-white">
               <tr>
-                <th className="p-3">ID</th>
+                <th className="p-3">SL</th>
                 
+                <th className="p-3">Date</th>
                 <th className="p-3">Campaign Name</th>
                 <th className="p-3">Ads Account</th>
 
@@ -528,8 +403,8 @@ const UserProfile = () => {
                 <th className="p-3">T. Spent</th>
                 <th className="p-3">Total Bill</th>
                 <th className="p-3">Status</th>
-                <th className="p-3">Date</th>
-                {ddd?.role === "admin" ? <></> : <th className="p-3">Edit</th>}
+                <th className="p-3">Action</th>
+               
               </tr>
             </thead>
             <tbody>
@@ -539,20 +414,15 @@ const UserProfile = () => {
                   className={`${index % 2 === 0 ? "bg-gray-100" : "bg-white"}`}
                 >
                   <td className="p-3 border-r-2 border-l-2 border-gray-200 text-center">
-                    {work._id.slice(-5)}
+                    {index + 1}
+                  </td>
+                  <td className="p-3 border-r-2 border-gray-200 text-center">
+                  {new Date(work?.date).toLocaleDateString("en-GB")}
                   </td>
                   
                   <td className="p-3 border-r-2 border-gray-200 text-left">
                     {work.campaignName}
-                    <div className="flex justify-start gap-3">
-                        <button className="text-blue-600">Edit</button>
-                        <button
-                          className="text-start flex justify-start text-red-600"
-                          onClick={() => handledelete(work._id)}
-                        >
-                          Delete
-                        </button>
-                      </div>
+                  
                   </td>
                   
                   <td className="p-3 border-r-2 border-gray-200 text-center">
@@ -572,7 +442,7 @@ const UserProfile = () => {
                         <FaEdit />
                       </button>
                       <dialog id={`my_modal_1`} className="modal">
-                        <div className="modal-box">
+                        <div className="modal-box bg-white">
                           <form
                             onSubmit={(e) =>
                               handleUpdateTotalBudget(e, work._id)
@@ -582,8 +452,8 @@ const UserProfile = () => {
                               type="number"
                               name="tBudged"
                               step="0.01"
-                              defaultValue={work.tBudged}
-                              className="w-full border rounded p-2 mt-1 text-gray-500"
+                              defaultValue={work?.tBudged}
+                              className="w-full border bg-white rounded p-2 mt-1 text-gray-500"
                             />
                             <button
                               type="submit"
@@ -610,13 +480,13 @@ const UserProfile = () => {
                     <button
                         className="text-black px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
                         onClick={() =>
-                          document.getElementById(`my_modal_7`).showModal()
+                          document.getElementById(`my_modal_6`).showModal()
                         }
                       >
                         <FaEdit />
                       </button>
-                      <dialog id={`my_modal_7`} className="modal">
-                        <div className="modal-box">
+                      <dialog id={`my_modal_6`} className="modal">
+                        <div className="modal-box bg-white">
                           <form
                             onSubmit={(e) =>
                               handleUpdateTotalSpent(e, work._id)
@@ -626,8 +496,8 @@ const UserProfile = () => {
                               type="number"
                               name="tSpent"
                               step="0.01"
-                              defaultValue={work.tSpent}
-                              className="w-full border rounded p-2 mt-1 text-gray-500"
+                              defaultValue={work?.tSpent}
+                              className="w-full border bg-white rounded p-2 mt-1 text-gray-500"
                             />
                             <button
                               type="submit"
@@ -660,137 +530,147 @@ const UserProfile = () => {
                   >
                     {work.status}
                   </td>
-                  <td className="p-3 border-r-2 border-gray-200 text-center">
-                  {new Date(work?.date).toLocaleDateString("en-GB")}
-                  </td>
-                  {ddd?.role === "admin" ? (
-                    <></>
-                  ) : (
-                    <td className="p-3 text-center border-r-2 border-gray-200">
-                      <button
-                        className="font-avenir px-3 flex justify-center  mx-auto py-1 bg-green-800  rounded-lg text-white"
-                        onClick={() =>
-                          document.getElementById(`modal_${index}`).showModal()
-                        }
-                      >
-                        Edit
-                      </button>
-                      <dialog id={`modal_${index}`} className="modal">
-                        <div className="modal-box">
-                          <form onSubmit={(e) => handleUpdate(e, work._id)}>
-                            <h1 className="text-md mb-5">
-                              Ads Account:{" "}
-                              <span className="text-blue-600 text-xl font-bold">
-                                {work.adsAccount}
-                              </span>
-                            </h1>
-                            <div className="flex justify-center items-center gap-3">
-                              <div className="mb-4">
-                                <label className="block text-gray-700">
-                                  Total Budged
-                                </label>
-                                <input
-                                  type="number"
-                                  name="tBudged"
-                                  defaultValue={work.tBudged}
-                                  step="0.01"
-                                  className="w-full border rounded p-2 mt-1"
-                                />
-                              </div>
-                              <div className="mb-4">
-                                <label className="block text-gray-700">
-                                  Total Spent
-                                </label>
-                                <input
-                                  type="number"
-                                  name="totalSpent"
-                                  defaultValue={work.tSpent}
-                                  step="0.01"
-                                  className="w-full border rounded p-2 mt-1"
-                                />
-                              </div>
-                            </div>
-                            <div className="flex justify-center items-center gap-3">
-                              <div className="mb-4">
-                                <label className="block text-gray-700">
-                                  Dollers Rate
-                                </label>
-                                <input
-                                  step="0.01"
-                                  type="number"
-                                  name="dollerRate"
-                                  defaultValue={work.dollerRate}
-                                  className="w-full border rounded p-2 mt-1"
-                                />
-                              </div>
-                              <div className="mb-4">
-                                <label className="block text-gray-700">
-                                  Status
-                                </label>
-                                <select
-                                  defaultValue={work.status}
-                                  name="status"
-                                  className="w-full border rounded p-2 mt-1"
-                                >
-                                  <option value="In Review">In Review</option>
-                                  <option value="Active">Active</option>
-                                  <option value="Complete">Complete</option>
-                                </select>
-                              </div>
-                            </div>
+                  <td
+                    className={`p-3 text-center border-r-2 border-gray-200`}
+                  >
+                   <div className="flex justify-start gap-3">
 
-                            <button
-                              onClick={() =>
-                                document
-                                  .getElementById(`modal_${index}`)
-                                  .close()
-                              }
-                              type="submit"
-                              className="font-avenir px-3 flex justify-center  mx-auto py-1 bg-green-800  rounded-lg text-white"
-                            >
-                              Update
-                            </button>
-                          </form>
-                          <div className="modal-action">
-                            <button
-                              className="p-2 rounded-lg bg-red-600 text-white text-center"
-                              onClick={() =>
-                                document
-                                  .getElementById(`modal_${index}`)
-                                  .close()
-                              }
-                            >
-                              Close
-                            </button>
-                          </div>
-                        </div>
-                      </dialog>
-                    </td>
-                  )}
+                   <div>
+  <button
+    className="text-blue-700 text-3xl"
+    onClick={() =>
+      document.getElementById(`modal_${index}`).showModal()
+    }
+  >
+    <MdEditSquare />
+  </button>
+  <dialog id={`modal_${index}`} className="modal">
+    <div className="modal-box bg-white text-black">
+      <form onSubmit={(e) => handleUpdate(e, work._id)}>
+        <h1 className="text-md mb-5">
+          Ads Account:{" "}
+          <span className="text-blue-600 text-xl font-bold">
+            {work.adsAccount}
+          </span>
+        </h1>
+
+        <div className="mb-4">
+          <label className="block text-gray-700">
+            Total Budged
+          </label>
+          <input
+            type="number"
+            name="tBudged"
+            defaultValue={work.tBudged}
+            step="0.01"
+            className="w-full bg-white border border-gray-700 rounded p-2 mt-1"
+          />
+        </div>
+        <div className="mb-4">
+          <label className="block text-gray-700">
+            Total Spent
+          </label>
+          <input
+            type="number"
+            name="totalSpent"
+            defaultValue={work.tSpent}
+            step="0.01"
+            className="w-full bg-white border border-gray-700 rounded p-2 mt-1"
+          />
+        </div>
+
+        <div className="mb-4">
+          <label className="block text-gray-700">
+            Dollers Rate
+          </label>
+          <input
+            step="0.01"
+            type="number"
+            name="dollerRate"
+            defaultValue={work.dollerRate}
+            className="w-full bg-white border border-gray-700 rounded p-2 mt-1"
+          />
+        </div>
+        <div className="mb-4">
+          <label className="block text-gray-700">
+            Status
+          </label>
+          <select
+            defaultValue={work.status}
+            name="status"
+            className="w-full bg-white border border-gray-700 rounded p-2 mt-1"
+          >
+            <option value="In Review">In Review</option>
+            <option value="Active">Active</option>
+            <option value="Complete">Complete</option>
+          </select>
+        </div>
+
+        {/* Buttons at the bottom in a two-grid layout */}
+        <div className="grid grid-cols-2 gap-3 mt-4">
+        <button
+            type="button"
+            className="p-2 rounded-lg bg-red-600 text-white text-center"
+            onClick={() =>
+              document.getElementById(`modal_${index}`).close()
+            }
+          >
+            Close
+          </button>
+          <button
+            type="submit"
+            className="font-avenir px-3 py-2 bg-[#05a0db] rounded-lg text-white text-center"
+          >
+            Update
+          </button>
+        
+        </div>
+      </form>
+    </div>
+  </dialog>
+</div>
+
+<button
+                          className="text-start flex justify-start text-black text-3xl"
+                          onClick={() => handledelete(work._id)}
+                        >
+                          <MdDelete />
+                        </button>
+
+</div>
+                  </td>
+                 
                 </tr>
               ))}
-              <tr className="bg-green-800 text-white font-bold">
+              <tr className="bg-[#05a0db] text-white font-bold">
                 <td className="p-3  text-center"></td>
-
-                <td className="p-3 text-center"></td>
-                <td className="p-3 text-center"></td>
-                <td className="p-3 text-right" colSpan="2">
+                <td className="p-3 text-right" colSpan="4">
                   Total Spent:
                 </td>
-                <td className="p-3 text-center">
+                <td className="p-3 text-start">
                   <span className="text-md mr-1 font-extrabold">$</span>{" "}
                   {totalSpent}
                 </td>
-                <td className="p-3 text-center">
+                <td className="p-3 text-start">
                   <span className="text-md mr-1 font-extrabold">৳</span>{" "}
                   {totalSpent * dollerRate}
                 </td>
-                <td className="p-3 text-center"></td>
+
+
                 {ddd?.role === "admin" ? (
-                  <></>
+                  <>
+                    <td className="p-3 text-center"></td>
+                    <td className="p-3 text-center"></td>
+                  </>
                 ) : (
+                  <>
+                   <td className="p-3 text-center"></td>
                   <td className="p-3 text-center"></td>
+                
+                  </>
+                 
                 )}
+                 
               </tr>
             </tbody>
           </table>

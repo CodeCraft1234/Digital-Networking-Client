@@ -4,9 +4,11 @@ import { AuthContext } from '../../Security/AuthProvider';
 import UseAxiosPublic from '../../Axios/UseAxiosPublic';
 import useUsers from '../../Hook/useUsers';
 import { IoIosSearch } from 'react-icons/io';
-import { Link } from 'react-router-dom';
-import { toast } from 'react-toastify';
+import { Form, Link } from 'react-router-dom';
+import { toast, ToastContainer } from 'react-toastify';
 import Swal from 'sweetalert2';
+import { Helmet } from 'react-helmet-async';
+import { MdDelete, MdEditSquare } from 'react-icons/md';
 
 const MyClients = () => {
     const { user }=useContext(AuthContext)
@@ -38,6 +40,7 @@ const MyClients = () => {
     const [totalBudged, setTotalBudged] = useState(0);
     const [totalRCV, setTotalRCV] = useState(0);
     const [totalbill, setTotalBill] = useState(0);
+    const totalDue = totalbill - totalRCV;
   
 
   
@@ -111,28 +114,10 @@ const MyClients = () => {
         // toast.success("Client Added successfully");
         console.log(res.data);
         refetch();
-        Swal.fire({
-            icon: "success",
-            title: "success",
-            text: "Client add successfully",
-          });
-        toast.success("");
+        toast.success("Add successful!");
         
     })
-    .catch(error => {
-        console.error("Error adding client:", error);
-        // toast.error("Failed to update campaign");
-        Swal.fire({
-          icon: "error",
-          title: "Oops...",
-          text: "Failed to add client!",
-        });
-   
-     })
-     
     };
-  
-  
     const [bkashMarcent,setBkashMarcentTotal]=useState(0)
     const [nagadPersonal,setNagadPersonalTotal]=useState(0)
     const [bkashPersonal,setBkashPersonalTotal]=useState(0)
@@ -202,26 +187,89 @@ const MyClients = () => {
       };
   
   
-  
-  
-    return (
-        <div>
-             <div className="overflow-x-auto ml-4  mt-28">
+      const handledelete = (id) => {
+        AxiosPublic.delete(`/clients/${id}`).then((res) => {
+          refetch();
+          toast.success("delete successful");
+        });
 
-        
+     }
+  console.log(filteredByCategory);
+
+
+       const handleUpdate2 = (e, id) => {
+        e.preventDefault();
+        const clientName = e.target.clientName.value;
+        const clientPhone = e.target.clientPhone.value;
+        const clientEmail = e.target.clientEmail.value;
+        const body = { clientName, clientEmail,  clientPhone };
+    
+        AxiosPublic.patch(
+          `https://digital-networking-server.vercel.app/client/update/${id}`,
+          body
+        )
+          .then((res) => {
+            console.log(res.data);
+            refetch();
+            toast.success("client updated successfully");
+          })
+          .catch((error) => {
+            console.error("Error updating campaign:", error);
+            toast.error("Failed to update campaign");
+          });
+      };
+     
+    return (
+        <div className='mx-5'>
+           <ToastContainer />
+             <div className="overflow-x-auto   mt-5">
+
+      <Helmet>
+        <title> My Client | Digital Network</title>
+        <link rel="canonical" href="https://www.tacobell.com/" />
+      </Helmet>
+
+
+
+      <div className="grid lg:grid-cols-4 text-black sm:grid-cols-2 gap-5 justify-around py-5">
+        <div className="px-5 py-10 rounded-2xl bg-[#05a0db] text-white shadow-lg text-center">
+          <h2 className="text-2xl font-bold">Total Spent</h2>
+          <p className="text-4xl font-bold mt-2"> $ {totalSpent}</p>
+        </div>
+
+        <div className="px-5 py-10 rounded-2xl bg-[#05a0db] text-white shadow-lg text-center">
+          <h2 className="text-2xl font-bold">Total Bill</h2>
+          <p className="text-4xl font-bold mt-2"><span className='font-extrabold text-4xl'> ৳ </span>
+          {totalbill}
+          </p>
+        </div>
+
+        <div className="px-5 py-10 rounded-2xl bg-[#05a0db] text-white shadow-lg text-center">
+          <h2 className="text-2xl font-bold">Total Paid</h2>
+          <p className="text-4xl font-bold mt-2"> <span className='font-extrabold text-4xl'> ৳ </span> {totalRCV}</p>
+        </div>
+
+        <div className="px-5 py-10 rounded-2xl bg-[#05a0db] text-white shadow-lg text-center">
+          <h2 className="text-2xl font-bold">Total DUE</h2>
+          <p className="text-4xl font-bold mt-2">
+          <span className='font-extrabold text-4xl'> ৳ </span>{totalDue}
+          </p>
+        </div>
+      </div>
+
 <div className="flex justify-between items-center ">
 
 <div className="flex justify-start mb-5 text-gray-500 border-b border-opacity-20 mx-2 pb-1 items-center gap-3">
 {
   ddd?.role === 'admin' ? <></> : <div>
   <button
-    className="font-avenir px-3 mx-auto py-1 bg-green-800 ml-5 rounded-lg text-white"
+    className="font-avenir px-3 mx-auto py-1 bg-[#05a0db]  rounded-lg text-white"
     onClick={() => document.getElementById("my_modal_2").showModal()}
   >
     Add Client
   </button>
   <dialog id="my_modal_2" className="modal">
-    <div className="modal-box text-black font-bold">
+    <div className="modal-box bg-white text-black font-bold">
       <form o onSubmit={handleaddblog}>
         <div className="flex justify-center items-center gap-3">
           <div className="mb-4">
@@ -231,7 +279,7 @@ const MyClients = () => {
               name="clientName"
               type="text"
               required
-              className="w-full border-2 border-black rounded p-2 mt-1 "
+              className="w-full bg-white border-2 border-black rounded p-2 mt-1 "
             />
           </div>
         </div>
@@ -243,7 +291,7 @@ const MyClients = () => {
               name="clientPhone"
               type="number"
               required
-              className="w-full  border-2 border-black rounded p-2 mt-1 "
+              className="w-full bg-white  border-2 border-black rounded p-2 mt-1 "
             />
           </div>
           <div className="mb-4">
@@ -254,11 +302,11 @@ const MyClients = () => {
               type="email"
               required
 
-              className="w-full  border-2 border-black rounded p-2 mt-1 "
+              className="w-full bg-white border-2 border-black rounded p-2 mt-1 "
             />
           </div>
         </div>
-        <button type="submit" className="font-avenir  flex justify-center px-3 mx-auto py-1 bg-green-800 rounded text-white">
+        <button type="submit" className="font-avenir  flex justify-center px-3 mx-auto py-1 bg-[#05a0db] rounded text-white">
           Submit
         </button>
       </form>
@@ -272,28 +320,32 @@ const MyClients = () => {
 </div>
 
 }
- 
+ <div> 
+<Link to={'/dashboard/AddClients'}>
+<button
+    className="font-avenir px-3 mx-auto py-1 bg-[#f89320]  rounded-lg text-white"
+   
+  >
+    Client Access
+  </button>
+</Link>
+  </div>
 </div>
 <div className="flex justify-end mb-6">
           <input
             type="text"
-            placeholder=" Client Phone Number"
-            className=" rounded-l-lg w-20 placeholder-black border-2 border-black p-2 font-bold text-black sm:w-2/3 text-sm bg-blue-300"
+            placeholder=" Client Phone Number...."
+            className=" rounded-lg w-full placeholder-black border-2 border-black p-2 font-bold text-black text-sm bg-white"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
-          <button
-            type="button"
-            className=" w-10 p-2 font-semibold rounded-r-lg sm:w-1/3 bg-[#FF9F0D] dark:bg-[#FF9F0D] text-white"
-          >
-            <IoIosSearch className="mx-auto font-bold w-6 h-6" />
-          </button>
+        
 </div>
 </div>
 
 
 <table className="min-w-full bg-white">
-<thead className="bg-red-800 text-white">
+<thead className="bg-[#05a0db] text-white">
 <tr>
 <th className="p-3 text-center">SL</th>
 <th className="p-3 text-center">Client Name</th>
@@ -303,7 +355,8 @@ const MyClients = () => {
 <th className="p-3 text-center">T.Spent</th>
 <th className="p-3 text-center">Total Bill</th>
 <th className="p-3 text-center">Total Payment Rcv</th>
-<th className="p-3">Edit</th>
+<th className="p-3 text-center">Total Due</th>
+<th className="p-3">Action</th>
 </tr>
 </thead>
 <tbody>
@@ -319,83 +372,122 @@ const MyClients = () => {
   <td className="p-3 border-r border-gray-400 border-l text-center">{index + 1}</td>
 
   <Link to={`/dashboard/client/${campaign.clientEmail}`}>
-    <td className="p-3 border-r border-gray-400 flex justify-center text-center">{campaign.clientName}</td>
+    <td className="p-3 border-r border-gray-400 flex hover:font-bold hover:bg-yellow-50 justify-center text-center">{campaign.clientName}</td>
   </Link>
-  <td className="p-3 border-r border-gray-400 text-center">{campaign.clientPhone}</td>
+  <td className="p-3 border-r border-gray-400  text-center">{campaign.clientPhone}</td>
   <td className="p-3 border-r border-gray-400 text-center">$ {campaign.tBudged}</td>
   <td className="p-3 border-r border-gray-400 text-center">$ {campaign.tSpent}</td>
   <td className="p-3 border-r border-gray-400 text-center">৳ {campaign.tBill}</td>
   <td className="p-3 border-r border-gray-400 text-center">৳ {campaign.tPayment}</td>
-  <td className="p-3 border-r border-gray-400">
+  <td className="p-3 border-r border-gray-400 text-center">
+          ৳ {
+            !isNaN(Number(campaign.tBill)) && !isNaN(Number(campaign.tPaid)) 
+            ? Number(campaign.tBill) - Number(campaign.tPayment) 
+            : 'Invalid Data'
+          }
+        </td>
 
-  <button
-      className="font-avenir px-3  mx-auto py-1 bg-green-800 ml-10 rounded-lg text-white"
-      onClick={() => document.getElementById("my_modal_7").showModal()}
+  <td className="p-3 border-r text-center border-gray-400">
+  <div className="flex justify-center items-center gap-3">
+        <div>
+                      <button
+                        className="text-blue-700  text-3xl"
+                        onClick={() =>
+                          document.getElementById(`modal_${index}`).showModal()
+                        }
+                      >
+                        <MdEditSquare />
+                      </button>
+                      <dialog id={`modal_${index}`} className="modal">
+                        <div className="modal-box bg-white text-black">
+                        <form onSubmit={(e) => handleUpdate2(e, campaign._id)}>
+  <h1 className="text-md mb-5">
+    Client Name:{" "}
+    <span className="text-blue-600 text-xl font-bold">
+      {campaign.clientName}
+    </span>
+  </h1>
+
+  <div className="mb-4">
+    <label className="block text-start text-gray-700">Client Name</label>
+    <input
+      type="text"
+      name="clientName"
+      defaultValue={campaign?.clientName}
+      className="w-full border-black bg-white border rounded p-2 mt-1"
+    />
+  </div>
+  <div className="mb-4">
+    <label className="block text-start text-gray-700">Phone</label>
+    <input
+      type="text"
+      name="clientPhone"
+      defaultValue={campaign?.clientPhone}
+      className="w-full bg-white border-black border rounded p-2 mt-1"
+    />
+  </div>
+  <div className="mb-4">
+    <label className="block text-start text-gray-700">Email</label>
+    <input
+      type="email"
+      name="clientEmail"
+      defaultValue={campaign?.clientEmail}
+      className="w-full border-black bg-white border rounded p-2 mt-1"
+    />
+  </div>
+
+  <div className="grid grid-cols-2 gap-3">
+    <button
+      onClick={() =>
+        document.getElementById(`modal_${index}`).close()
+      }
+      type="button"
+      className="font-avenir px-3 py-1 bg-red-600 rounded-lg text-white"
     >
-      Edit
+      Close
     </button>
-    <dialog id="my_modal_7" className="modal">
-      <div className="modal-box">
-        <form onSubmit={(e) => handleUpdate(e, campaign._id)}>
-          <div className="flex justify-center items-center gap-3">
-            <div className="mb-4">
-              <label className="block text-gray-250">
-                Client Name
-              </label>
-              <input
-                required
-                type="text"
-                defaultValue={campaign.clientName}
-                name="clientName"
-                placeholder="type here...."
-                className="w-full border rounded p-2 mt-1"
-              />
-            </div>
-            <div className="mb-4">
-              <label className="block text-gray-250">Client Phone</label>
-              <input
-              required
-                type="number"
-                name="clientPhone"
-                defaultValue={campaign.clientPhone}
-                placeholder="type here...."
-                className="w-full border rounded p-2 mt-1"
-              />
-            </div>
-          </div>
-          <button
-            type="submit"
-            className="font-avenir px-3 mx-auto py-1 rounded-lg flex justify-center text-white bg-green-800"
-          >
-            Update
-          </button>
-        </form>
-        <div className="modal-action">
-          <form method="dialog">
-            <button className="p-2 rounded-lg bg-red-600 text-white text-center">Close</button>
-          </form>
-        </div>
-      </div>
-    </dialog>
+    <button
+      type="submit"
+      className="font-avenir px-3 py-1 bg-[#05a0db] rounded-lg text-white"
+    >
+      Update
+    </button>
+  </div>
+</form>
+
+                        
+                        </div>
+                      </dialog>
+                      </div>
+                      <button
+                          className="text-center  text-black text-3xl"
+                          onClick={() => handledelete(campaign._id)}
+                        >
+                          <MdDelete />
+                        </button>
+                      </div>
+
   </td>
 </tr>
 ))}
-<tr className="bg-green-800 text-sm text-white font-bold">
+<tr className="bg-[#05a0db] text-sm text-white font-bold">
 <td className="p-3 text-center"></td>
 
-<td className="p-3 border-r border-gray-400 text-right" colSpan="2">
+<td className="p-3  text-right" colSpan="2">
   Total :
 </td>
-<td className="p-3 border-r border-gray-400 text-center">$ {totalBudged}</td>
-<td className="p-3 border-r border-gray-400 text-center">$ {totalSpent}</td>
-<td className="p-3 border-r border-gray-400 text-center">৳ {totalbill}</td>
-<td className="p-3 border-r border-gray-400 text-center">৳ {totalRCV}</td>
-<td className="p-3 border-r border-gray-400"></td>
+<td className="p-3  text-center">$ {totalBudged}</td>
+<td className="p-3  text-center">$ {totalSpent}</td>
+<td className="p-3  text-center">৳ {totalbill}</td>
+<td className="p-3  text-center">৳ {totalRCV}</td>
+<td className="p-3 text-center"> ৳ {totalDue}</td>
+<td className="p-3 "></td>
 </tr>
 </tbody>
 </table>
 
   </div>
+  
         </div>
     );
 };

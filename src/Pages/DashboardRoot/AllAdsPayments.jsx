@@ -1,57 +1,40 @@
-
 import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../../Security/AuthProvider";
 import { IoIosSearch } from "react-icons/io";
 import UseAxiosPublic from "../../Axios/UseAxiosPublic";
-import { Helmet } from "react-helmet-async";
-import useEmployeePayment from "../../Hook/useEmployeePayment";
+import { Helmet } from "react-helmet-async"
 import Swal from "sweetalert2";
 import useUsers from "../../Hook/useUsers";
+import useAdsPayment from "../../Hook/useAdsPayment";
 import { MdDelete, MdEditSquare } from "react-icons/md";
 
-const EmployeePayments = () => {
-  const [employeePayment, refetch] = useEmployeePayment();
+const AllAdsPayments = () => {
+  const [adsPayment, refetch] = useAdsPayment();
   const AxiosPublic = UseAxiosPublic();
   const [totalPayment, setTotalPayment] = useState(0);
   const [users] = useUsers();
   const { user } = useContext(AuthContext);
-  const [employees, setEmployees] = useState([]);
   const [filteredClients, setFilteredClients] = useState([]);
-  const [sortMonth, setSortMonth] = useState("");
+  const [sortMonth, setSortMonth] = useState(new Date().getMonth() + 1); // Default to current month
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
   const [selectedEmployee, setSelectedEmployee] = useState("");
   const [selectedDate, setSelectedDate] = useState("");
 
   useEffect(() => {
-    if (users && user) {
-      const employeeList = users.filter((u) => u.role === "employee");
-      setEmployees(employeeList);
+    if (adsPayment) {
+      setFilteredClients(adsPayment);
     }
-  }, [users, user]);
+  }, [adsPayment]);
 
   useEffect(() => {
-    if (employeePayment) {
-      setFilteredClients(employeePayment);
-    }
-  }, [employeePayment]);
-
-  useEffect(() => {
-    // Set the default month to the current month if not already set
-    const currentMonth = new Date().getMonth() + 1;
-    if (!sortMonth) {
-      setSortMonth(currentMonth.toString());
-    }
-  }, [sortMonth]);
-
-  useEffect(() => {
-    let filtered = employeePayment;
+    let filtered = adsPayment;
 
     if (selectedEmployee) {
       filtered = filtered.filter((c) => c.employeeEmail === selectedEmployee);
     }
 
-    if (sortMonth !== "") {
+    if (sortMonth) {
       filtered = filtered.filter((c) => {
         const month = new Date(c.date).getMonth() + 1;
         return month === parseInt(sortMonth);
@@ -71,7 +54,7 @@ const EmployeePayments = () => {
     }
 
     setFilteredClients(filtered);
-  }, [selectedEmployee, sortMonth, selectedDate, employeePayment]);
+  }, [selectedEmployee, sortMonth, selectedDate, adsPayment]);
 
   const filteredItems = filteredClients.filter((item) =>
     item.paymentMethod.toLowerCase().includes(searchQuery.toLowerCase())
@@ -93,27 +76,8 @@ const EmployeePayments = () => {
   }, [filteredByCategory]);
 
   const handleDelete = (id) => {
-    Swal.fire({
-      title: "Are you sure?",
-      text: "You want to delete this payment!",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Yes, delete it",
-    }).then((result) => {
-      if (result.isConfirmed) {
-        AxiosPublic.delete(`/employeePayment/${id}`).then((res) => {
-          refetch();
-          if (res.data.deletedCount > 0) {
-            Swal.fire({
-              title: "Deleted!",
-              text: "Your payment has been deleted.",
-              icon: "success",
-            });
-          }
-        });
-      }
+    AxiosPublic.delete(`/adsPayment/${id}`).then((res) => {
+      refetch();
     });
   };
 
@@ -146,7 +110,7 @@ const EmployeePayments = () => {
     };
 
     AxiosPublic.patch(
-      `https://digital-networking-server.vercel.app/employeePayment/${selectedPayment._id}`,
+      `https://digital-networking-server.vercel.app/adsPayment/${selectedPayment._id}`,
       updatedPayment
     ).then((res) => {
       handleCancel();
@@ -161,7 +125,7 @@ const EmployeePayments = () => {
   const [bankTotal, setBankTotal] = useState(0);
 
   useEffect(() => {
-    const filtered = employeePayment;
+    const filtered = adsPayment;
     const filter2 = filtered.filter(d => d.paymentMethod === 'bkashMarchent');
     const total = filter2.reduce((acc, datas) => acc + parseFloat(datas.payAmount), 0);
     setBkashMarcentTotal(total);
@@ -181,20 +145,11 @@ const EmployeePayments = () => {
     const filter6 = filtered.filter(d => d.paymentMethod === 'bank');
     const total6 = filter6.reduce((acc, datas) => acc + parseFloat(datas.payAmount), 0);
     setBankTotal(total6);
-  }, [employeePayment]);
-
-  const sortByDateDescending = (items) => {
-    return items.sort((a, b) => new Date(b.date) - new Date(a.date));
-  };
-
-  // Sorted items
-  const sortedItems = sortByDateDescending(filteredByCategory);
+  }, [adsPayment]);
 
   const [showAll, setShowAll] = useState(false); // State to handle showing all data
-  const [itemsToShow, setItemsToShow] = useState(200); // Number of items to show initially
-  const displayedItems = showAll ? sortedItems : sortedItems.slice(0, itemsToShow);
-
-
+  const [itemsToShow, setItemsToShow] = useState(40); // Number of items to show initially
+  const displayedItems = showAll ? filteredByCategory : filteredByCategory.slice(0, itemsToShow);
 
   return (
     <div className="mt-5">
@@ -202,8 +157,6 @@ const EmployeePayments = () => {
         <title>All Payments | Digital Network </title>
         <link rel="canonical" href="https://www.example.com/" />
       </Helmet>
-
-
       <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 mb-3  lg:grid-cols-5 gap-8 mt-4 p-4">
    <div className="balance-card bg-white rounded-2xl shadow-lg p-5 text-center  transition-transform transform hover:scale-105 border-0">
      <img className="balance-card-img" src="https://i.ibb.co/bHMLyvM/b-Kash-Merchant.png" alt="bKash" />
@@ -231,21 +184,6 @@ const EmployeePayments = () => {
      </div>
       <div className="flex text-black justify-between gap-4 items-center">
         <div className="flex justify-center items-center gap-5 mb-4 ml-10 mx-auto">
-          <div className="flex flex-col justify-center items-center">
-            <label className="">By Employee</label>
-            <select
-              className="border bg-blue-200 text-black border-gray-400 rounded p-2 mt-1 "
-              value={selectedEmployee}
-              onChange={(e) => setSelectedEmployee(e.target.value)}
-            >
-              <option value="">All Employee</option>
-              {employees.map((employee) => (
-                <option key={employee._id} value={employee.email}>
-                  {employee.name}
-                </option>
-              ))}
-            </select>
-          </div>
           <div className="flex flex-col justify-center items-center">
             <label className="">By Month</label>
             <select
@@ -321,11 +259,11 @@ const EmployeePayments = () => {
           <thead className="bg-[#05a0db] text-white">
             <tr>
               <th className="p-3">SL</th>
-              <th className="p-3">Payment Date</th>
               <th className="p-3">Employee Name</th>
               <th className="p-3">Payment Amount</th>
               <th className="p-3">Payment Method</th>
               <th className="p-3">Note</th>
+              <th className="p-3">Payment Date</th>
               <th className="p-3">Action</th>
             </tr>
           </thead>
@@ -337,9 +275,6 @@ const EmployeePayments = () => {
               >
                 <td className="p-3 border-r-2 border-l-2 border-gray-200 text-center">
                   {index + 1}
-                </td>
-                <td className="p-3 border-r-2 border-gray-200 text-center">
-                {new Date(payment.date).toLocaleDateString("en-GB")}
                 </td>
                
                 <td className="p-3 border-r-2 border-gray-200 text-center">
@@ -388,8 +323,10 @@ const EmployeePayments = () => {
                 <td className="p-3 border-r-2 border-gray-200 text-center">
                   {payment.note}
                 </td>
-              
-                <td className="p-3 border-r-2 flex justify-center items-center border-gray-200 text-center">
+                <td className="p-3 border-r-2 border-gray-200 text-center">
+                {new Date(payment.date).toLocaleDateString("en-GB")}
+                </td>
+                <td className="p-3 border-r-2 border-gray-200 text-center">
                 <button
                           className=" px-4 py-2  text-3xl text-blue-700  hover:bg-gray-200"
                           onClick={() => handleEditClick(payment)}
@@ -402,8 +339,6 @@ const EmployeePayments = () => {
                         >
                           <MdDelete />
                         </button>
-                    
-                 
                 </td>
               </tr>
             ))}
@@ -474,7 +409,7 @@ const EmployeePayments = () => {
                   className="w-full border bg-white border-gray-300 p-2 rounded-lg"
                 ></textarea>
               </div>
-              <div className="flex justify-end">
+              <div className="flex justify-center">
                 <button
                   type="button"
                   onClick={handleCancel}
@@ -493,7 +428,8 @@ const EmployeePayments = () => {
           </div>
         </div>
       )}
-      {!showAll && filteredByCategory.length > itemsToShow && (
+    
+{!showAll && filteredByCategory.length > itemsToShow && (
   <button
     onClick={() => setShowAll(true)}
     className="mt-4 p-2  mx-auto flex justify-center my-10 bg-blue-500 text-white rounded"
@@ -509,8 +445,12 @@ const EmployeePayments = () => {
     Show Less
   </button>
 )}
+
     </div>
   );
 };
 
-export default EmployeePayments;
+export default AllAdsPayments;
+
+
+

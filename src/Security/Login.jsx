@@ -90,21 +90,7 @@ const handleFacebook = () => {
       .then((result) => {
         console.log(result.user);
         navigate(`/`)
-      
-        Swal.fire({
-          title: "successfully login!",
-          text: "login!",
-          icon: "success"
-        });
       })
-      .catch((error) => {
-        console.log(error);
-        Swal.fire({
-          title: "error",
-          text: "wrong password",
-          icon: "error"
-        });
-      });
   };
 
  const handleForgetPassword=(e)=>{

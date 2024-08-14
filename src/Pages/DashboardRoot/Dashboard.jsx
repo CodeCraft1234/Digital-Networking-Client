@@ -3,6 +3,12 @@ import { AuthContext } from "../../Security/AuthProvider";
 import AdminDashboard from "./AdminDashboard";
 import useUsers from "../../Hook/useUsers";
 import EmployeeDashboard from "./EmployeeDashboard";
+import AdsDashboard from "./AdsDashboard";
+
+
+
+
+
 
 const Dashboard = ({ showSidebar }) => {
   const { user } = useContext(AuthContext); // Get the authenticated user from the context
@@ -30,7 +36,7 @@ const Dashboard = ({ showSidebar }) => {
         {
           currentUser?.role === 'admin' ? 
             <AdminDashboard /> : 
-            (currentUser?.role === 'client' ? null  : <EmployeeDashboard />)
+            (currentUser?.role === 'adsAccount' ? <AdsDashboard></AdsDashboard>  : <EmployeeDashboard />)
         }
       </ul>
     </div>

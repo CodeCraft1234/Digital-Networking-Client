@@ -150,71 +150,47 @@ const CampaignTable = ({ email }) => {
       )
     : filteredItems;
 
+    const totalDue = totalbill - totalRCV;
   return (
 
-    <div className="my-4">
+    <div className="my-4 ">
         
      <div className="">
-  <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 mb-3  lg:grid-cols-4 gap-8 mt-4 p-4">
+  <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-6 mb-3  lg:grid-cols-6 gap-3 mt-4 p-4 ">
  <div className="balance-card bg-white rounded-2xl shadow-2xl p-5 text-center  transition-transform transform hover:scale-105 border-0">
    <img className="balance-card-img" src="https://i.ibb.co/bHMLyvM/b-Kash-Merchant.png" alt="bKash" />
-   <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"> <span className="text-lg lg:text-2xl font-extrabold">Received : ৳</span> {bkashMarcent}</p>
-   <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"> <span className="text-lg lg:text-2xl font-extrabold">Cashout : ৳</span> {bkashMarcent2}</p>
-   <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"> <span className="text-lg lg:text-2xl font-extrabold">Ballence : ৳</span> {bkashMarcent - bkashMarcent2}</p>
+   <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"> <span className="text-lg lg:text-2xl font-extrabold"> ৳</span> {bkashMarcent - bkashMarcent2}</p>
  </div>
  <div className="balance-card bg-white rounded-2xl shadow-2xl p-5 text-center transition-transform transform hover:scale-105 border-0">
    <img className="balance-card-img" src="https://i.ibb.co/520Py6s/bkash-1.png" alt="bKash" />
-   <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"> <span className="text-lg lg:text-2xl font-extrabold">Received : ৳</span> {bkashPersonal}</p>
-   <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"> <span className="text-lg lg:text-2xl font-extrabold">Cashout : ৳</span> {bkashPersonal2}</p>
-   <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"> <span className="text-lg lg:text-2xl font-extrabold">Ballence : ৳</span> {bkashPersonal - bkashPersonal2}</p>
+   <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"> <span className="text-lg lg:text-2xl font-extrabold"> ৳</span> {bkashPersonal - bkashPersonal2}</p>
  </div>
  <div className="balance-card bg-white rounded-2xl shadow-2xl p-5 text-center transition-transform transform hover:scale-105 border-0">
    <img className="balance-card-img" src="https://i.ibb.co/JQBQBcF/nagad-marchant.png" alt="Nagad" />
-   <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"><span className="text-lg lg:text-2xl font-extrabold">Received : ৳</span> {nagadPersonal}</p>
-   <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"><span className="text-lg lg:text-2xl font-extrabold">Cashout : ৳</span> {nagadPersonal2}</p>
-   <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"><span className="text-lg lg:text-2xl font-extrabold">Ballence : ৳</span> {nagadPersonal - nagadPersonal2}</p>
+
+   <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"><span className="text-lg lg:text-2xl font-extrabold"> ৳</span> {nagadPersonal - nagadPersonal2}</p>
  </div>
  <div className="balance-card bg-white rounded-2xl shadow-2xl p-5 text-center transition-transform transform hover:scale-105 border-0">
    <img className="balance-card-img" src="https://i.ibb.co/QkTM4M3/rocket.png" alt="Rocket" />
-   <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"><span className="text-lg lg:text-2xl font-extrabold">Received : ৳</span> {rocketPersonal}</p>
-   <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"><span className="text-lg lg:text-2xl font-extrabold">Cashout : ৳</span> {rocketPersonal2}</p>
-   <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"><span className="text-lg lg:text-2xl font-extrabold">Ballence : ৳</span> {rocketPersonal - rocketPersonal2}</p>
+
+   <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"><span className="text-lg lg:text-2xl font-extrabold"> ৳</span> {rocketPersonal - rocketPersonal2}</p>
  </div>
 
  <div className="balance-card bg-white rounded-2xl shadow-2xl p-5 text-center transition-transform transform hover:scale-105 border-0">
    <div>
      <img className="balance-card-img w-56 h-auto mt-5 " src="https://i.ibb.co/3WVZGdz/PAYO-BIG-aa26e6e0.png" alt="Payoneer" />
      <span className="balance-card-text text-4xl flex items-center justify-center gap-2">
-     <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"> <span className="text-lg lg:text-2xl font-extrabold text-red-600">$</span>4000</p>
-     <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"> <span className="text-lg lg:text-2xl font-extrabold text-blue-600">/</span></p>
-     <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"> <span className="text-lg lg:text-2xl font-extrabold text-green-600">$</span>{totalSpent}</p>
+     <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"> </p>
+     <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"> <span className="text-lg lg:text-2xl font-extrabold text-green-600">$ </span> {totalSpent.toFixed(2)}</p>
      </span>
 
    </div>
  </div>
 
- <div className="balance-card bg-white rounded-2xl shadow-2xl p-5 text-center transition-transform transform hover:scale-105 border-0">
- <p className="balance-card-text text-lg lg:text-2xl mt-3 font-bold text-gray-700">Total Bill: <span className="text-lg lg:text-2xl font-extrabold"> ৳</span> {totalbill}</p>
-
-   <p className="balance-card-text text-lg lg:text-2xl mt-3 font-bold text-gray-700 ">Total Received: <span className="text-lg lg:text-2xl font-extrabold"> ৳</span> {totalRCV}</p>
-   <p className="balance-card-text text-lg lg:text-2xl mt-3 font-bold text-gray-700">Total Due: <span className="text-lg lg:text-2xl font-extrabold"> ৳</span> {totalbill - totalRCV}</p>
-
- </div>
- <div className="balance-card bg-white rounded-2xl shadow-2xl p-5 text-center transition-transform transform hover:scale-105 border-0">
-
-   <p className="balance-card-text text-lg lg:text-2xl mt-3 font-bold text-gray-700 ">Total Received: <span className="text-lg lg:text-2xl font-extrabold"> ৳</span> {totalRCV}</p>
-   <p className="balance-card-text text-lg lg:text-2xl mt-3 font-bold text-gray-700">Total Cashout: <span className="text-lg lg:text-2xl font-extrabold"> ৳</span> {totalPayment}</p>
-
-   <p className="balance-card-text text-lg lg:text-2xl mt-3 font-bold text-gray-700">Total Due: <span className="text-lg lg:text-2xl font-extrabold"> ৳</span> {totalRCV - totalPayment}</p>
-  
- </div>
-
-
-
- <div className="balance-card bg-white rounded-2xl shadow-2xl p-5 text-center transition-transform transform hover:scale-105 border-0">
-   <img className="balance-card-img" src="https://i.ibb.co/kS0jD01/bank-3d-render-icon-illustration-png.webp" alt="Rocket" />
-   <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"><span className="text-lg lg:text-2xl font-extrabold">Bank Received : ৳</span> {bankTotal}</p>
-   <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"><span className="text-lg lg:text-2xl font-extrabold">Bank Cashout : ৳</span> {bankTotal2}</p>
+ 
+ <div className="balance-card bg-white rounded-2xl shadow-2xl p-5 mr-4 text-center transition-transform transform hover:scale-105 border-0">
+   <img className="balance-card-img" src="https://i.ibb.co/PZc0P4w/brac-bank-seeklogo.png" alt="Rocket" />
+   <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"><span className="text-lg lg:text-2xl font-extrabold"> ৳</span> {bankTotal - bankTotal2}</p>
  </div>
 
 
@@ -247,56 +223,65 @@ const CampaignTable = ({ email }) => {
 </div>
 
 
-    <table className="min-w-full bg-white">
-<thead className="bg-red-800 text-white">
-  <tr>
-    <th className="p-3 text-center">SL</th>
-  
-    <th className="p-3 text-center">Client Name</th>
-    <th className="p-3 text-center">Client Phone</th>
-    {/* <th className="p-3 text-center">Client Email</th> */}
-    <th className="p-3 text-center">T.Budget</th>
-    <th className="p-3 text-center">T.Spent</th>
-    <th className="p-3 text-center">Total Bill</th>
-    <th className="p-3 text-center">Total Payment Rcv</th>
-    {/* <th className="p-3">Edit</th> */}
-  </tr>
+<table className="min-w-full bg-white">
+<thead className="bg-[#05a0db] text-white">
+<tr>
+<th className="p-3 text-center">SL</th>
+<th className="p-3 text-center">Client Name</th>
+<th className="p-3 text-center">Client Phone</th>
+{/* <th className="p-3 text-center">Client Email</th> */}
+<th className="p-3 text-center">T.Budget</th>
+<th className="p-3 text-center">T.Spent</th>
+<th className="p-3 text-center">Total Bill</th>
+<th className="p-3 text-center">Total Payment Rcv</th>
+<th className="p-3 text-center">Total Due</th>
+
+</tr>
 </thead>
 <tbody>
-  {filteredByCategory.map((campaign, index) => (
-    <tr
-      key={campaign._id}
-      className={`${
-        index % 2 === 0
-          ? "text-gray-500 border-b border-opacity-20 hover:text-blue-600"
-          : "text-gray-500 border-b border-opacity-20 hover:text-blue-600"
-      }`}
-    >
-      <td className="p-3 text-center">{index + 1}</td>
-    
-      <Link to={`/client/${campaign.clientEmail}`}>
-        <td className="p-3 flex justify-center text-center">{campaign.clientName}</td>
-      </Link>
-      <td className="p-3 text-center">{campaign.clientPhone}</td>
-      <td className="p-3 text-center">$ {campaign.tBudged}</td>
-      <td className="p-3 text-center">$ {campaign.tSpent}</td>
-      <td className="p-3 text-center">৳ {campaign.tBill}</td>
-      <td className="p-3 text-center">৳ {campaign.tPayment}</td>
-     
-    </tr>
-  ))}
-  <tr className="bg-green-800  text-sm text-white font-bold">
-    <td className="p-3 text-center"></td>
-    <td className="p-3 text-center"></td>
-    <td className="p-3 text-right" colSpan="1">
-      Total :
-    </td>
-    <td className="p-3 text-center">$ {totalBudged}</td>
-    <td className="p-3 text-center">$ {totalSpent}</td>
-    <td className="p-3 text-center">৳ {totalbill}</td>
-    <td className="p-3 text-center">৳ {totalRCV}</td>
-    {/* <td className="p-3"></td> */}
-  </tr>
+{filteredByCategory.map((campaign, index) => (
+<tr
+  key={campaign._id}
+  className={`${
+    index % 2 === 0
+      ? "text-gray-500 border-b border-opacity-20 hover:text-blue-600"
+      : "text-gray-500 border-b border-opacity-20 hover:text-blue-600"
+  }`}
+>
+  <td className="p-3 border-r border-gray-400 border-l text-center">{index + 1}</td>
+
+  <Link to={`/dashboard/client/${campaign.clientEmail}`}>
+    <td className="p-3 border-r border-gray-400 flex justify-center text-center">{campaign.clientName}</td>
+  </Link>
+  <td className="p-3 border-r border-gray-400 text-center">{campaign.clientPhone}</td>
+  <td className="p-3 border-r border-gray-400 text-center">$ {campaign.tBudged}</td>
+  <td className="p-3 border-r border-gray-400 text-center">$ {campaign.tSpent}</td>
+  <td className="p-3 border-r border-gray-400 text-center">৳ {campaign.tBill}</td>
+  <td className="p-3 border-r border-gray-400 text-center">৳ {campaign.tPayment}</td>
+  <td className="p-3 border-r border-gray-400 text-center">
+          ৳ {
+            !isNaN(Number(campaign.tBill)) && !isNaN(Number(campaign.tPaid)) 
+            ? Number(campaign.tBill) - Number(campaign.tPayment) 
+            : 'Invalid Data'
+          }
+        </td>
+
+
+</tr>
+))}
+<tr className="bg-[#05a0db] text-sm text-white font-bold">
+<td className="p-3 text-center"></td>
+
+<td className="p-3  text-right" colSpan="1">
+  Total :
+</td>
+<td className="p-3  text-center">$ {totalBudged}</td>
+<td className="p-3  text-center">$ {totalSpent}</td>
+<td className="p-3  text-center">৳ {totalbill}</td>
+<td className="p-3  text-center">৳ {totalRCV}</td>
+<td className="p-3 ">Total Due : ৳ {totalDue}</td>
+<td className="p-3 ">Total Due : ৳ {totalDue}</td>
+</tr>
 </tbody>
 </table>
 
@@ -316,7 +301,7 @@ const CampaignTable = ({ email }) => {
 
     <div className="overflow-x-auto mt-6 mx-4">
                   <table className="min-w-full bg-white">
-                      <thead className="bg-green-800 text-white">
+                      <thead className="bg-[#05a0db] text-white">
                           <tr>
                               <th className="p-3 ">SL</th>
                               <th className="p-3">Payment Date</th>
@@ -353,7 +338,7 @@ const CampaignTable = ({ email }) => {
                                       <td className="p-3 border-r-2 border-gray-200 text-center"> {payment.note}</td>
                               </tr>
                           ))}
-                          <tr className="bg-green-800 text-white font-bold">
+                          <tr className="bg-[#05a0db] text-white font-bold">
                               <td className="p-3 text-center" colSpan="2">
                                   Total Amount =
                               </td>
@@ -368,7 +353,6 @@ const CampaignTable = ({ email }) => {
               </div>
               <ToastContainer />
   </div>
-     
     </div>
   );
 };

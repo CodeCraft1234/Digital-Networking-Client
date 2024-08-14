@@ -1,119 +1,71 @@
-
 import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../../Security/AuthProvider";
 import { IoIosSearch } from "react-icons/io";
 import UseAxiosPublic from "../../Axios/UseAxiosPublic";
 import { Helmet } from "react-helmet-async";
-import useEmployeePayment from "../../Hook/useEmployeePayment";
+import useMpayment from "../../Hook/UseMpayment";
 import Swal from "sweetalert2";
-import useUsers from "../../Hook/useUsers";
 import { MdDelete, MdEditSquare } from "react-icons/md";
 
-const EmployeePayments = () => {
-  const [employeePayment, refetch] = useEmployeePayment();
+const AllClientsPayments = () => {
+  const [MPayment, refetch] = useMpayment();
   const AxiosPublic = UseAxiosPublic();
-  const [totalPayment, setTotalPayment] = useState(0);
-  const [users] = useUsers();
-  const { user } = useContext(AuthContext);
-  const [employees, setEmployees] = useState([]);
-  const [filteredClients, setFilteredClients] = useState([]);
-  const [sortMonth, setSortMonth] = useState("");
-  const [searchQuery, setSearchQuery] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("");
-  const [selectedEmployee, setSelectedEmployee] = useState("");
+  const [sortMonth, setSortMonth] = useState(""); // Default is empty
   const [selectedDate, setSelectedDate] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [filteredData, setFilteredData] = useState([]);
+
+  const [totalPayment, setTotalPayment] = useState(0);
+  const [payment, setPayment] = useState([]);
 
   useEffect(() => {
-    if (users && user) {
-      const employeeList = users.filter((u) => u.role === "employee");
-      setEmployees(employeeList);
-    }
-  }, [users, user]);
-
-  useEffect(() => {
-    if (employeePayment) {
-      setFilteredClients(employeePayment);
-    }
-  }, [employeePayment]);
-
-  useEffect(() => {
-    // Set the default month to the current month if not already set
-    const currentMonth = new Date().getMonth() + 1;
-    if (!sortMonth) {
-      setSortMonth(currentMonth.toString());
-    }
-  }, [sortMonth]);
-
-  useEffect(() => {
-    let filtered = employeePayment;
-
-    if (selectedEmployee) {
-      filtered = filtered.filter((c) => c.employeeEmail === selectedEmployee);
-    }
-
-    if (sortMonth !== "") {
-      filtered = filtered.filter((c) => {
-        const month = new Date(c.date).getMonth() + 1;
-        return month === parseInt(sortMonth);
-      });
-    }
-
-    if (selectedDate) {
-      filtered = filtered.filter((c) => {
-        const paymentDate = new Date(c.date);
-        const selected = new Date(selectedDate);
-        return (
-          paymentDate.getDate() === selected.getDate() &&
-          paymentDate.getMonth() === selected.getMonth() &&
-          paymentDate.getFullYear() === selected.getFullYear()
-        );
-      });
-    }
-
-    setFilteredClients(filtered);
-  }, [selectedEmployee, sortMonth, selectedDate, employeePayment]);
-
-  const filteredItems = filteredClients.filter((item) =>
-    item.paymentMethod.toLowerCase().includes(searchQuery.toLowerCase())
-  );
-
-  const filteredByCategory = selectedCategory
-    ? filteredItems.filter(
-        (item) =>
-          item.paymentMethod.toLowerCase() === selectedCategory.toLowerCase()
-      )
-    : filteredItems;
-
-  useEffect(() => {
-    const totalBill = filteredByCategory.reduce(
-      (acc, campaign) => acc + parseFloat(campaign.payAmount),
+    setPayment(MPayment);
+    const totalBill = MPayment.reduce(
+      (acc, campaign) => acc + parseFloat(campaign.amount),
       0
     );
     setTotalPayment(totalBill);
-  }, [filteredByCategory]);
+  }, [MPayment]);
+
+  // Set default sortMonth to current month when component mounts
+  useEffect(() => {
+    const currentMonth = new Date().getMonth() + 1; // Months are 0-indexed
+    setSortMonth(currentMonth);
+  }, []);
+
+  useEffect(() => {
+    let filtered = MPayment;
+
+    if (sortMonth) {
+      filtered = filtered.filter(
+        (payment) =>
+          new Date(payment.date).getMonth() + 1 === parseInt(sortMonth)
+      );
+    }
+
+    if (selectedDate) {
+      filtered = filtered.filter((payment) => payment.date === selectedDate);
+    }
+
+    if (selectedCategory) {
+      filtered = filtered.filter(
+        (payment) => payment.paymentMethod === selectedCategory
+      );
+    }
+
+    if (searchQuery) {
+      filtered = filtered.filter((payment) =>
+        payment.paymentMethod.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+    }
+
+    setFilteredData(filtered);
+  }, [sortMonth, selectedDate, selectedCategory, searchQuery, MPayment]);
 
   const handleDelete = (id) => {
-    Swal.fire({
-      title: "Are you sure?",
-      text: "You want to delete this payment!",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Yes, delete it",
-    }).then((result) => {
-      if (result.isConfirmed) {
-        AxiosPublic.delete(`/employeePayment/${id}`).then((res) => {
-          refetch();
-          if (res.data.deletedCount > 0) {
-            Swal.fire({
-              title: "Deleted!",
-              text: "Your payment has been deleted.",
-              icon: "success",
-            });
-          }
-        });
-      }
+    AxiosPublic.delete(`/MPayment/${id}`).then((res) => {
+      refetch();
     });
   };
 
@@ -140,13 +92,13 @@ const EmployeePayments = () => {
     const updatedPayment = {
       ...selectedPayment,
       date: e.target.date.value,
-      payAmount: parseFloat(e.target.amount.value),
-      paymentMethod: e.target.method.value,
+      amount: parseFloat(e.target.amount.value),
+      method: e.target.method.value,
       note: e.target.note.value,
     };
 
     AxiosPublic.patch(
-      `https://digital-networking-server.vercel.app/employeePayment/${selectedPayment._id}`,
+      `https://digital-networking-server.vercel.app/MPayment/${selectedPayment._id}`,
       updatedPayment
     ).then((res) => {
       handleCancel();
@@ -161,48 +113,53 @@ const EmployeePayments = () => {
   const [bankTotal, setBankTotal] = useState(0);
 
   useEffect(() => {
-    const filtered = employeePayment;
-    const filter2 = filtered.filter(d => d.paymentMethod === 'bkashMarchent');
-    const total = filter2.reduce((acc, datas) => acc + parseFloat(datas.payAmount), 0);
-    setBkashMarcentTotal(total);
+    AxiosPublic.get(`https://digital-networking-server.vercel.app/Mpayment`)
+      .then((res) => {
+        const da = res.data;
+        const filtered = res.data;
 
-    const filter3 = filtered.filter(d => d.paymentMethod === 'nagadPersonal');
-    const total3 = filter3.reduce((acc, datas) => acc + parseFloat(datas.payAmount), 0);
-    setNagadPersonalTotal(total3);
+        const filter2 = filtered.filter(
+          (d) => d.paymentMethod === 'bkashMarchent'
+        );
+        const total = filter2.reduce((acc, datas) => acc + parseFloat(datas.amount), 0);
+        setBkashMarcentTotal(total);
 
-    const filter4 = filtered.filter(d => d.paymentMethod === 'bkashPersonal');
-    const total4 = filter4.reduce((acc, datas) => acc + parseFloat(datas.payAmount), 0);
-    setBkashPersonalTotal(total4);
+        const filter3 = filtered.filter(
+          (d) => d.paymentMethod === 'nagadPersonal'
+        );
+        const total3 = filter3.reduce((acc, datas) => acc + parseFloat(datas.amount), 0);
+        setNagadPersonalTotal(total3);
 
-    const filter5 = filtered.filter(d => d.paymentMethod === 'rocketPersonal');
-    const total5 = filter5.reduce((acc, datas) => acc + parseFloat(datas.payAmount), 0);
-    setRocketPersonalTotal(total5);
+        const filter4 = filtered.filter(
+          (d) => d.paymentMethod === 'bkashPersonal'
+        );
+        const total4 = filter4.reduce((acc, datas) => acc + parseFloat(datas.amount), 0);
+        setBkashPersonalTotal(total4);
 
-    const filter6 = filtered.filter(d => d.paymentMethod === 'bank');
-    const total6 = filter6.reduce((acc, datas) => acc + parseFloat(datas.payAmount), 0);
-    setBankTotal(total6);
-  }, [employeePayment]);
+        const filter5 = filtered.filter(
+          (d) => d.paymentMethod === 'rocketPersonal'
+        );
+        const total5 = filter5.reduce((acc, datas) => acc + parseFloat(datas.amount), 0);
+        setRocketPersonalTotal(total5);
 
-  const sortByDateDescending = (items) => {
-    return items.sort((a, b) => new Date(b.date) - new Date(a.date));
-  };
-
-  // Sorted items
-  const sortedItems = sortByDateDescending(filteredByCategory);
+        const filter6 = filtered.filter(
+          (d) => d.paymentMethod === 'bank'
+        );
+        const total6 = filter6.reduce((acc, datas) => acc + parseFloat(datas.amount), 0);
+        setBankTotal(total6);
+      });
+  }, []);
 
   const [showAll, setShowAll] = useState(false); // State to handle showing all data
   const [itemsToShow, setItemsToShow] = useState(200); // Number of items to show initially
-  const displayedItems = showAll ? sortedItems : sortedItems.slice(0, itemsToShow);
-
-
+  const displayedItems = showAll ? filteredData : filteredData.slice(0, itemsToShow);
 
   return (
     <div className="mt-5">
       <Helmet>
-        <title>All Payments | Digital Network </title>
+        <title>Client Payment | Digital Network </title>
         <link rel="canonical" href="https://www.example.com/" />
       </Helmet>
-
 
       <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 mb-3  lg:grid-cols-5 gap-8 mt-4 p-4">
    <div className="balance-card bg-white rounded-2xl shadow-lg p-5 text-center  transition-transform transform hover:scale-105 border-0">
@@ -229,23 +186,10 @@ const EmployeePayments = () => {
      <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"><span className="text-lg lg:text-2xl font-extrabold"> ৳</span> {bankTotal}</p>
    </div>
      </div>
+
+{/* ///////////////////////////////////////////////////////////////// */}
       <div className="flex text-black justify-between gap-4 items-center">
         <div className="flex justify-center items-center gap-5 mb-4 ml-10 mx-auto">
-          <div className="flex flex-col justify-center items-center">
-            <label className="">By Employee</label>
-            <select
-              className="border bg-blue-200 text-black border-gray-400 rounded p-2 mt-1 "
-              value={selectedEmployee}
-              onChange={(e) => setSelectedEmployee(e.target.value)}
-            >
-              <option value="">All Employee</option>
-              {employees.map((employee) => (
-                <option key={employee._id} value={employee.email}>
-                  {employee.name}
-                </option>
-              ))}
-            </select>
-          </div>
           <div className="flex flex-col justify-center items-center">
             <label className="">By Month</label>
             <select
@@ -322,7 +266,6 @@ const EmployeePayments = () => {
             <tr>
               <th className="p-3">SL</th>
               <th className="p-3">Payment Date</th>
-              <th className="p-3">Employee Name</th>
               <th className="p-3">Payment Amount</th>
               <th className="p-3">Payment Method</th>
               <th className="p-3">Note</th>
@@ -339,14 +282,11 @@ const EmployeePayments = () => {
                   {index + 1}
                 </td>
                 <td className="p-3 border-r-2 border-gray-200 text-center">
-                {new Date(payment.date).toLocaleDateString("en-GB")}
+                  {new Date(payment.date).toLocaleDateString("en-GB")}
                 </td>
-               
+              
                 <td className="p-3 border-r-2 border-gray-200 text-center">
-                   {payment.employeeName}
-                </td>
-                <td className="p-3 border-r-2 border-gray-200 text-center">
-                  ৳ {payment.payAmount}
+                  ৳ {payment.amount}
                 </td>
                 <td className="p-3 border-r-2 border-gray-200 text-center">
                   {payment.paymentMethod === "bkashMarchent" && (
@@ -388,36 +328,44 @@ const EmployeePayments = () => {
                 <td className="p-3 border-r-2 border-gray-200 text-center">
                   {payment.note}
                 </td>
-              
+               
                 <td className="p-3 border-r-2 flex justify-center items-center border-gray-200 text-center">
-                <button
-                          className=" px-4 py-2  text-3xl text-blue-700  hover:bg-gray-200"
+               
+                       <button
+                          className=" px-4 py-2 text-3xl text-left text-blue-700 "
                           onClick={() => handleEditClick(payment)}
                         >
-                               <MdEditSquare />
+                       <MdEditSquare />
                         </button>
                         <button
-                          className=" text-black text-3xl"
+                          className="text-start flex justify-start text-black text-3xl"
                           onClick={() => handleDelete(payment._id)}
                         >
                           <MdDelete />
                         </button>
-                    
-                 
+                  
+                
                 </td>
               </tr>
             ))}
           </tbody>
+          <tr className="bg-[#05a0db] text-white font-bold">
+              <td className="p-3 text-center" colSpan="1">
+                Total Amount =
+              </td>
+              <td className="p-3 text-center">৳ {totalPayment}</td>
+              <td className="p-3 text-center"></td>
+              <td className="p-3 text-center"></td>
+              <td className="p-3 text-center"></td>
+              <td className="p-3 text-center"></td>
+            </tr>
         </table>
       </div>
-      <h1 className="text-2xl font-semibold ml-6 mt-3 text-black">
-        Total Payments: {totalPayment} Taka
-      </h1>
-
+     
       {isModalOpen && selectedPayment && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
           <div className="bg-white p-6 rounded-lg">
-            <h2 className="text-lg font-medium mb-4">Edit Payment</h2>
+            <h2 className="text-lg font-medium mb-4 text-black">Edit Payment</h2>
             <form onSubmit={handleUpdate}>
               <div className="mb-4">
                 <label htmlFor="date" className="block text-gray-700">
@@ -428,20 +376,20 @@ const EmployeePayments = () => {
                   id="date"
                   name="date"
                   defaultValue={selectedPayment.date}
-                  className="w-full border bg-white border-gray-300 p-2 rounded-lg"
+                  className="w-full border bg-white border-black border-gray-300 p-2 rounded-lg"
                   required
                 />
               </div>
-              <div className="mb-4 text-black">
-                <label htmlFor="amount" className="block text-black">
+              <div className="mb-4">
+                <label htmlFor="amount" className="block text-gray-700">
                   Payment Amount
                 </label>
                 <input
                   type="number"
                   id="amount"
                   name="amount"
-                  defaultValue={selectedPayment.payAmount}
-                  className="w-full border bg-white border-gray-300 p-2 rounded-lg"
+                  defaultValue={selectedPayment.amount}
+                  className="w-full border bg-white border-black border-gray-300 p-2 rounded-lg"
                   required
                 />
               </div>
@@ -453,7 +401,7 @@ const EmployeePayments = () => {
                   id="method"
                   name="method"
                   defaultValue={selectedPayment.paymentMethod}
-                  className="w-full border bg-white border-gray-300 p-2 rounded-lg"
+                  className="w-full border bg-white border-black border-gray-300 p-2 rounded-lg"
                   required
                 >
                   <option value="bkashPersonal">bKash Personal</option>
@@ -471,10 +419,10 @@ const EmployeePayments = () => {
                   id="note"
                   name="note"
                   defaultValue={selectedPayment.note}
-                  className="w-full border bg-white border-gray-300 p-2 rounded-lg"
+                  className="w-full border bg-white border-black border-gray-300 p-2 rounded-lg"
                 ></textarea>
               </div>
-              <div className="flex justify-end">
+              <div className="flex justify-center">
                 <button
                   type="button"
                   onClick={handleCancel}
@@ -493,10 +441,10 @@ const EmployeePayments = () => {
           </div>
         </div>
       )}
-      {!showAll && filteredByCategory.length > itemsToShow && (
+      {!showAll && filteredData.length > itemsToShow && (
   <button
     onClick={() => setShowAll(true)}
-    className="mt-4 p-2  mx-auto flex justify-center my-10 bg-blue-500 text-white rounded"
+    className="mt-4 p-2 mx-auto flex justify-center my-10 bg-blue-500 text-white rounded"
   >
     Show All
   </button>
@@ -513,4 +461,4 @@ const EmployeePayments = () => {
   );
 };
 
-export default EmployeePayments;
+export default AllClientsPayments;

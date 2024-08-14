@@ -1,33 +1,26 @@
 import { useContext, useEffect, useState } from "react";
-import { ToastContainer, toast } from "react-toastify";
+import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css"
 import UseAxiosPublic from "../../Axios/UseAxiosPublic";
 import useUsers from "../../Hook/useUsers";
 import useClients from "../../Hook/useClient";
-import {  Link, useLocation,  } from "react-router-dom";
-import useAdsAccount from "../../Hook/useAdAccount";
 import Swal from 'sweetalert2'
 import './BalanceCards.css';
 import { AuthContext } from "../../Security/AuthProvider";
 import useEmployeePayment from "../../Hook/useEmployeePayment";
-import { IoIosSearch } from "react-icons/io";
+import { FaEdit, FaTimes } from "react-icons/fa";
+import axios from "axios";
+import { Helmet } from "react-helmet-async";
+import useMpayment from "../../Hook/UseMpayment";
+import useAdsAccount from "../../Hook/useAdAccount";
 
 const CampaignTable2 = () => {
-  
   const { user }=useContext(AuthContext)
-  const [clients, refetch] = useClients();
-  const [employeePayment] = useEmployeePayment();
-  console.log(employeePayment)
-  const [adsAccount] = useAdsAccount();
+  const [clients] = useClients();
+
   const AxiosPublic = UseAxiosPublic();
-  const [filteredCampaigns, setFilteredCampaigns] = useState([]);
-  const [data, setUserData] = useState([]);
-
-  console.log("kjhgfaklhgklagshkl", clients, adsAccount);
-
-
-    const [users] = useUsers();
-    const [ddd, setDdd] = useState(null);
+  const [users,refetch] = useUsers();
+  const [ddd, setDdd] = useState(null);
 
     useEffect(() => {
         if (users && user) {
@@ -37,21 +30,15 @@ const CampaignTable2 = () => {
         }
     }, [users, user]);
 
-    console.log(ddd?.name);
 
-
+    const [employeePayment] = useEmployeePayment();
     const [payment, setPayment] = useState([]);
-    const [totalPayment, setTotalPayment] = useState([]);
 
     useEffect(() => {
           const realdata = employeePayment.filter(m => m.employeeEmail === user?.email);
           setPayment(realdata);
           console.log(realdata);
-          const totalBill = realdata.reduce((acc, campaign) => acc + parseFloat(campaign.payAmount), 0);
-          setTotalPayment(totalBill);
-    
     }, [employeePayment, user?.email]);
-    console.log(payment,totalPayment);
 
   const [totalSpent, setTotalSpent] = useState(0);
   const [totalBudged, setTotalBudged] = useState(0);
@@ -90,103 +77,13 @@ const CampaignTable2 = () => {
     );
     setTotalBill(totalBill);
 
-    setFilteredCampaigns(filtered);
   }, [clients, user?.email]);
-
-
-  const handlePayment = (e) => {
-
-    e.preventDefault();
-    const employeeEmail = user?.email;
-    const payAmount = e.target.payAmount.value;
-    const paymentMethod = e.target.paymentMethod.value;
-    const note= e.target.note.value;
-    const date = e.target.date.value;
-
-    const data = {
-      employeeEmail, payAmount,note, paymentMethod, date
-    };
-    console.log(data);
-    AxiosPublic.post("https://digital-networking-server.vercel.app/employeePayment", data)
-    .then((res) => {
-      // toast.success("Client Added successfully");
-      console.log(res.data);
-      refetch();
-      Swal.fire({
-        title: "Good job!",
-        text: "Cashout success!",
-        icon: "success"
-      });
-      
-  })
-  .catch(error => {
-      console.error("Error adding cashout:", error);
-      // toast.error("Failed to update campaign");
-      Swal.fire({
-        icon: "error",
-        title: "Oops...",
-        text: "Failed to add cashout!",
-      });
-    });
-  };
-
-
-
-
-  const handleaddblog = (e) => {
-    e.preventDefault();
-    const clientName = e.target.clientName.value;
-    const clientPhone = e.target.clientPhone.value;
-    const clientEmail = e.target.clientEmail.value;
-    const employeeEmail = user?.email;
-    const tBudged = 0;
-    const tSpent = 0;
-    const tBill = 0;
-    const tDue = 0;
-    const tPaid = 0;
-    const date = new Date()
-    const data = {
-      clientName,
-      clientEmail,
-      clientPhone,
-      tBudged,
-      employeeEmail,
-      tSpent,
-      tBill,
-      date,
-      tDue,
-      tPaid,
-    };
-    console.log(data);
-
-    AxiosPublic.post("https://digital-networking-server.vercel.app/clients", data)
-    .then((res) => {
-      // toast.success("Client Added successfully");
-      console.log(res.data);
-      refetch();
-      toast.success("Client add successfully");
-      
-  })
-  .catch(error => {
-      console.error("Error adding client:", error);
-      // toast.error("Failed to update campaign");
-      Swal.fire({
-        icon: "error",
-        title: "Oops...",
-        text: "Failed to add client!",
-      });
- 
-   })
-   
-  };
-
 
   const [bkashMarcent,setBkashMarcentTotal]=useState(0)
   const [nagadPersonal,setNagadPersonalTotal]=useState(0)
   const [bkashPersonal,setBkashPersonalTotal]=useState(0)
   const [rocketPersonal,setRocketPersonalTotal]=useState(0)
   const [bankTotal,setBankTotal]=useState(0)
-  console.log(bkashMarcent,rocketPersonal,nagadPersonal,bkashPersonal)
 
   useEffect(()=>{
       AxiosPublic.get(`https://digital-networking-server.vercel.app/Mpayment`)
@@ -222,11 +119,8 @@ const CampaignTable2 = () => {
   const [bkashPersonal2,setBkashPersonalTotal2]=useState(0)
   const [rocketPersonal2,setRocketPersonalTotal2]=useState(0)
   const [bankTotal2,setBankTotal2]=useState(0)
-  console.log(bkashMarcent2,rocketPersonal2,nagadPersonal2,bkashPersonal2)
-
+  
   useEffect(()=>{
-
-
           const filter2=payment.filter(d=>d.paymentMethod === 'bkashMarchent')
           const total = filter2.reduce((acc, datas) => acc + parseFloat(datas.payAmount),0);
           setBkashMarcentTotal2(total)
@@ -248,529 +142,180 @@ const CampaignTable2 = () => {
   
   },[payment])
 
+  const [showForm, setShowForm] = useState(false);
+  const [newBalance, setNewBalance] = useState('');
 
-
-  const [searchQuery, setSearchQuery] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("");
-
-  const filteredItems = filteredCampaigns.filter((item) =>
-    item.clientPhone.toLowerCase().includes(searchQuery.toLowerCase())
-  );
-
-  const filteredByCategory = selectedCategory
-    ? filteredItems.filter(
-        (item) => item.category.toLowerCase() === selectedCategory.toLowerCase()
-      )
-    : filteredItems;
-
-
-    const handleUpdate = (e, id) => {
-      e.preventDefault();
-    
-      const clientName = e.target.clientName.value;
-      const clientPhone = e.target.clientPhone.value;
-      const data = { clientName, clientPhone };
-    
-      AxiosPublic.patch(`https://digital-networking-server.vercel.app/clients/${id}`, data)
-        .then(res => {
-          console.log(res.data);
-          refetch(); // Ensure this function is defined and correct
-          toast.success("Client updated successfully");
-        })
-        .catch(error => {
-          console.error("Error updating client:", error);
-          toast.error("Failed to update client");
-        });
-    };
-
-
-const location=useLocation()
-
-    const handleUpdatePayment = (e, id) => {
-      e.preventDefault();
-      const payAmount = parseFloat(e.target.payAmount.value);
-      const date = e.target.date.value;
-      const note = e.target.note.value;
-      const paymentMethod = e.target.paymentMethod.value;
-      const body = { note, payAmount, date, paymentMethod };
-      AxiosPublic.patch(`https://digital-networking-server.vercel.app/employeePayment/${id}`, body)
-          .then(res => {
-              console.log(res.data);
-              window.location.reload();
-              refetch();
-              toast.success("Campaign updated successfully");
-          })
-          .catch(error => {
-              console.error("Error updating campaign:", error);
-              toast.error("Failed to update campaign");
-          });
-  };
-
-  const handleSort = (e) => {
+  const handleUpdateTotalBudget = (e) => {
     e.preventDefault();
-    const email = e.target.email.value;
-    const filtered = clients.filter(c => c.employeeEmail === email);
-    setFilteredClients(filtered);
+    const body = { payoneer: newBalance };
+    console.log(body);
+
+    axios.put(`https://digital-networking-server.vercel.app/users/payoneer/${ddd?._id}`, body)
+      .then((res) => {
+        console.log(res.data);
+        refetch(); 
+        setShowForm(false); // Make sure this function correctly refetches the updated data
+      })
   };
-    
+  const [MPayment] = useMpayment();
+  const [totalPayment, setTotalPayment] = useState(0);
+  const [payments, setPayments] = useState([]);
+  console.log(payment);
+
+  useEffect(() => {
+    const realdata = MPayment.filter(
+      (m) => m.employeeEmail === user?.email
+    );
+    setPayment(realdata)
+    const totalBill = realdata.reduce(
+      (acc, campaign) => acc + parseFloat(campaign.amount),
+      0
+    );
+    setTotalPayment(totalBill);
+  }, [MPayment, user?.email]);
+
+  useEffect(() => {
+    const finds = MPayment.filter((f) => f.employeeEmail === user?.email);
+  }, [MPayment, user]);
+
+  const [adsAccount] = useAdsAccount();
+ const [TSpent,setTSpent]=useState(0)
+
+ const [adsAccounts, setAdsAccounts] = useState([]);
+
+ useEffect(() => {
+   const filterdata = adsAccount.filter((m) => m.employeeEmail === user?.email);
+   console.log(filterdata);
+   setAdsAccounts(filterdata);
+
+ }, [adsAccount, user?.email]);
+
+useEffect(() => {
+  const totalBilll = adsAccounts.reduce(
+    (acc, campaign) => acc + parseFloat(campaign.totalSpent),
+    0
+  );
+  setTSpent(totalBilll);
+
+}, [adsAccounts]);
+
   return (
 
-    <div className="my-4 mb-24">
-      
-    <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 mb-3  lg:grid-cols-4 gap-8 mt-4 p-4">
+    <div className="my-4 mb-4">  
+
+      <Helmet>
+        <title> Dashboard | Digital Network</title>
+        <link rel="canonical" href="https://www.tacobell.com/" />
+      </Helmet>
+
+
+    <div className="grid grid-cols-2 md:grid-cols-1  items-center sm:grid-cols-2   lg:grid-cols-5 gap-5  p-4">
    <div className="balance-card bg-white rounded-2xl shadow-2xl p-5 text-center  transition-transform transform hover:scale-105 border-0">
      <img className="balance-card-img" src="https://i.ibb.co/bHMLyvM/b-Kash-Merchant.png" alt="bKash" />
-     <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"> <span className="text-lg lg:text-2xl font-extrabold">Received : ৳</span> {bkashMarcent}</p>
-     <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"> <span className="text-lg lg:text-2xl font-extrabold">Cashout : ৳</span> {bkashMarcent2}</p>
-     <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"> <span className="text-lg lg:text-2xl font-extrabold">Ballence : ৳</span> {bkashMarcent - bkashMarcent2}</p>
+     {/* <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"> <span className="text-lg lg:text-2xl font-extrabold">Received : ৳</span> {bkashMarcent}</p>
+     <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"> <span className="text-lg lg:text-2xl font-extrabold">Cashout : ৳</span> {bkashMarcent2}</p> */}
+     <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"> <span className="text-lg lg:text-2xl font-extrabold"> ৳</span> {bkashMarcent - bkashMarcent2}</p>
    </div>
    <div className="balance-card bg-white rounded-2xl shadow-2xl p-5 text-center transition-transform transform hover:scale-105 border-0">
      <img className="balance-card-img" src="https://i.ibb.co/520Py6s/bkash-1.png" alt="bKash" />
-     <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"> <span className="text-lg lg:text-2xl font-extrabold">Received : ৳</span> {bkashPersonal}</p>
-     <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"> <span className="text-lg lg:text-2xl font-extrabold">Cashout : ৳</span> {bkashPersonal2}</p>
-     <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"> <span className="text-lg lg:text-2xl font-extrabold">Ballence : ৳</span> {bkashPersonal - bkashPersonal2}</p>
+     {/* <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"> <span className="text-lg lg:text-2xl font-extrabold">Received : ৳</span> {bkashPersonal}</p>
+     <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"> <span className="text-lg lg:text-2xl font-extrabold">Cashout : ৳</span> {bkashPersonal2}</p> */}
+     <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"> <span className="text-lg lg:text-2xl font-extrabold"> ৳</span> {bkashPersonal - bkashPersonal2}</p>
    </div>
    <div className="balance-card bg-white rounded-2xl shadow-2xl p-5 text-center transition-transform transform hover:scale-105 border-0">
      <img className="balance-card-img" src="https://i.ibb.co/JQBQBcF/nagad-marchant.png" alt="Nagad" />
-     <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"><span className="text-lg lg:text-2xl font-extrabold">Received : ৳</span> {nagadPersonal}</p>
-     <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"><span className="text-lg lg:text-2xl font-extrabold">Cashout : ৳</span> {nagadPersonal2}</p>
-     <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"><span className="text-lg lg:text-2xl font-extrabold">Ballence : ৳</span> {nagadPersonal - nagadPersonal2}</p>
+     {/* <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"><span className="text-lg lg:text-2xl font-extrabold">Received : ৳</span> {nagadPersonal}</p>
+     <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"><span className="text-lg lg:text-2xl font-extrabold">Cashout : ৳</span> {nagadPersonal2}</p> */}
+     <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"><span className="text-lg lg:text-2xl font-extrabold"> ৳</span> {nagadPersonal - nagadPersonal2}</p>
    </div>
    <div className="balance-card bg-white rounded-2xl shadow-2xl p-5 text-center transition-transform transform hover:scale-105 border-0">
      <img className="balance-card-img" src="https://i.ibb.co/QkTM4M3/rocket.png" alt="Rocket" />
-     <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"><span className="text-lg lg:text-2xl font-extrabold">Received : ৳</span> {rocketPersonal}</p>
-     <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"><span className="text-lg lg:text-2xl font-extrabold">Cashout : ৳</span> {rocketPersonal2}</p>
-     <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"><span className="text-lg lg:text-2xl font-extrabold">Ballence : ৳</span> {rocketPersonal - rocketPersonal2}</p>
+     <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"><span className="text-lg lg:text-2xl font-extrabold"> ৳</span> {rocketPersonal - rocketPersonal2}</p>
    </div>
 
-   <div className="balance-card bg-white rounded-2xl shadow-2xl p-5 text-center transition-transform transform hover:scale-105 border-0">
-     <div>
-       <img className="balance-card-img w-56 h-auto mt-5 " src="https://i.ibb.co/3WVZGdz/PAYO-BIG-aa26e6e0.png" alt="Payoneer" />
-       <span className="balance-card-text text-4xl flex items-center justify-center gap-2">
-       <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"> <span className="text-lg lg:text-2xl font-extrabold text-red-600">$</span>4000</p>
-       <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"> <span className="text-lg lg:text-2xl font-extrabold text-blue-600">/</span></p>
-       <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"> <span className="text-lg lg:text-2xl font-extrabold text-green-600">$</span>{totalSpent}</p>
-       </span>
-      
 
-     
-     
-     </div>
-   </div>
-
-   <div className="balance-card bg-white rounded-2xl shadow-2xl p-5 text-center transition-transform transform hover:scale-105 border-0">
-   <p className="balance-card-text text-lg lg:text-2xl mt-3 font-bold text-gray-700">Total Bill: <span className="text-lg lg:text-2xl font-extrabold"> ৳</span> {totalbill}</p>
-
-     <p className="balance-card-text text-lg lg:text-2xl mt-3 font-bold text-gray-700 ">Total Received: <span className="text-lg lg:text-2xl font-extrabold"> ৳</span> {totalRCV}</p>
-     <p className="balance-card-text text-lg lg:text-2xl mt-3 font-bold text-gray-700">Total Due: <span className="text-lg lg:text-2xl font-extrabold"> ৳</span> {totalbill - totalRCV}</p>
-
-   </div>
 
 
    <div className="balance-card bg-white rounded-2xl shadow-2xl p-5 text-center transition-transform transform hover:scale-105 border-0">
-
-     <p className="balance-card-text text-lg lg:text-2xl mt-3 font-bold text-gray-700 ">Total Received: <span className="text-lg lg:text-2xl font-extrabold"> ৳</span> {totalRCV}</p>
-     <p className="balance-card-text text-lg lg:text-2xl mt-3 font-bold text-gray-700">Total Cashout: <span className="text-lg lg:text-2xl font-extrabold"> ৳</span> {totalPayment}</p>
-
-     <p className="balance-card-text text-lg lg:text-2xl mt-3 font-bold text-gray-700">Total Due: <span className="text-lg lg:text-2xl font-extrabold"> ৳</span> {totalRCV - totalPayment}</p>
-    
+     <img className="balance-card-img" src="https://i.ibb.co/PZc0P4w/brac-bank-seeklogo.png" alt="Rocket" />
+     {/* <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"><span className="text-lg lg:text-2xl font-extrabold">Bank Received : ৳</span> {bankTotal}</p>
+     <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"><span className="text-lg lg:text-2xl font-extrabold">Bank Cashout : ৳</span> {bankTotal2}</p> */}
+     <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"><span className="text-lg lg:text-2xl font-extrabold"> ৳</span> {bankTotal - bankTotal2}</p>
    </div>
-
-  
-  
-   <div className="balance-card bg-white rounded-2xl shadow-2xl p-5 text-center transition-transform transform hover:scale-105 border-0">
-     <img className="balance-card-img" src="https://i.ibb.co/kS0jD01/bank-3d-render-icon-illustration-png.webp" alt="Rocket" />
-     <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"><span className="text-lg lg:text-2xl font-extrabold">Bank Received : ৳</span> {bankTotal}</p>
-     <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"><span className="text-lg lg:text-2xl font-extrabold">Bank Cashout : ৳</span> {bankTotal2}</p>
-   </div>
-
-  
- </div>
-      
-     
-      <div className=" p-2  sm:p-4 ">
-       
-        <div className="overflow-x-auto  ">
-
-        
-      <div className="flex justify-between items-center ">
-
-      <div className="flex justify-start mb-5 text-gray-500 border-b border-opacity-20 mx-2 pb-1 items-center gap-3">
-{
-  ddd?.role === 'admin' ? <></> : <div>
-  <button
-    className="font-avenir px-3 mx-auto py-1 bg-green-800 ml-5 rounded-lg text-white"
-    onClick={() => document.getElementById("my_modal_2").showModal()}
-  >
-    Add Client
-  </button>
-  <dialog id="my_modal_2" className="modal">
-    <div className="modal-box text-black font-bold">
-      <form o onSubmit={handleaddblog}>
-        <div className="flex justify-center items-center gap-3">
-          <div className="mb-4">
-            <label className="block text-black">Client Name</label>
-            <input
-              id="name"
-              name="clientName"
-              type="text"
-              required
-              className="w-full border-2 border-black rounded p-2 mt-1 "
-            />
-          </div>
+   <div className="relative bg-white rounded-2xl shadow-2xl p-6 lg:p-5 text-center transition-transform transform hover:scale-105 border-0 group">
+      <div className="relative py-2 mx-auto">
+        <img className="h-8 w-36 mt-2 mx-auto" src="https://i.ibb.co/3WVZGdz/PAYO-BIG-aa26e6e0.png" alt="Payoneer" />
+        <div className="flex flex-col items-center mt-2  gap-2 relative">
+          <span className="balance-card-text text-4xl flex items-center justify-center gap-2">
+            <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700">
+              <span className="text-lg lg:text-2xl font-extrabold text-green-600">$</span>{ddd?.payoneer || 0}
+            </p>
+          </span>
+          <button 
+            className="absolute top-full mt-0 text-black text-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+            onClick={() => setShowForm(true)}
+          >
+            <FaEdit />
+          </button>
         </div>
-        <div className="flex justify-center items-center gap-3">
-          <div className="mb-4">
-            <label className="block text-black">Client Phone</label>
-            <input
-              id="clientPhone"
-              name="clientPhone"
-              type="number"
-              required
-              className="w-full  border-2 border-black rounded p-2 mt-1 "
-            />
-          </div>
-          <div className="mb-4">
-            <label className="block text-black">Client Email</label>
-            <input
-              id="clientEmail"
-              name="clientEmail"
-              type="email"
-              required
-
-              className="w-full  border-2 border-black rounded p-2 mt-1 "
-            />
-          </div>
-        </div>
-        <button type="submit" className="font-avenir  flex justify-center px-3 mx-auto py-1 bg-green-800 rounded text-white">
-          Submit
-        </button>
-      </form>
-      <div className="modal-action flex justify-end">
-        <form method="dialog">
-          <button className="p-2 rounded-lg bg-red-600 text-white text-center">Close</button>
-        </form>
       </div>
-    </div>
-  </dialog>
-</div>
 
-}
- 
-</div>
-      <div className="flex justify-end mb-6">
+      {showForm && (
+        <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-5 shadow-lg relative">
+            <button 
+              className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
+              onClick={() => setShowForm(false)}
+            >
+              <FaTimes size={20} />
+            </button>
+            <form onSubmit={handleUpdateTotalBudget} className="mt-4">
+              <div className="mb-4">
                 <input
-                  type="text"
-                  placeholder=" Client Phone Number"
-                  className=" rounded-l-lg w-20 placeholder-black border-2 border-black p-2 font-bold text-black sm:w-2/3 text-sm bg-blue-300"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
+                  type="number"
+                  name="tBudged"
+                  value={newBalance}
+                  onChange={(e) => setNewBalance(e.target.value)}
+                  className="border rounded-lg p-2 w-full"
+                  placeholder="Enter new balance"
+                  required
                 />
-                <button
-                  type="button"
-                  className=" w-10 p-2 font-semibold rounded-r-lg sm:w-1/3 bg-[#FF9F0D] dark:bg-[#FF9F0D] text-white"
-                >
-                  <IoIosSearch className="mx-auto font-bold w-6 h-6" />
-                </button>
-      </div>
-</div>
-
-
-      <table className="min-w-full bg-white">
-  <thead className="bg-red-800 text-white">
-    <tr>
-      <th className="p-3 text-center">SL</th>
+              </div>
+              <button type="submit" className="bg-green-600 px-3 py-2 text-white rounded-lg w-full">
+                Update
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
+    </div>
+    <div className="balance-card bg-white rounded-2xl shadow-2xl p-5 text-center transition-transform transform hover:scale-105 border-0">
+     <h1 className="text-xl font-bold text-black py-4">Total BDT</h1>
+     <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"><span className="text-lg lg:text-2xl font-extrabold"> ৳</span> {bankTotal - bankTotal2 || 0}</p>
+   </div>
+   <div className="balance-card bg-white rounded-2xl shadow-2xl p-5 text-center transition-transform transform hover:scale-105 border-0">
+     <h1 className="text-xl font-bold text-black py-4">Total Spend</h1>
     
-      <th className="p-3 text-center">Client Name</th>
-      <th className="p-3 text-center">Client Phone</th>
-      {/* <th className="p-3 text-center">Client Email</th> */}
-      <th className="p-3 text-center">T.Budget</th>
-      <th className="p-3 text-center">T.Spent</th>
-      <th className="p-3 text-center">Total Bill</th>
-      <th className="p-3 text-center">Total Payment Rcv</th>
-      {/* <th className="p-3">Edit</th> */}
-    </tr>
-  </thead>
-  <tbody>
-    {filteredByCategory.map((campaign, index) => (
-      <tr
-        key={campaign._id}
-        className={`${
-          index % 2 === 0
-            ? "text-gray-500 border-b border-opacity-20 hover:text-blue-600"
-            : "text-gray-500 border-b border-opacity-20 hover:text-blue-600"
-        }`}
-      >
-        <td className="p-3 text-center">{index + 1}</td>
-      
-        <Link to={`/dashboard/client/${campaign.clientEmail}`}>
-          <td className="p-3 flex justify-center text-center">{campaign.clientName}</td>
-        </Link>
-        <td className="p-3 text-center">{campaign.clientPhone}</td>
-        <td className="p-3 text-center">$ {campaign.tBudged}</td>
-        <td className="p-3 text-center">$ {campaign.tSpent}</td>
-        <td className="p-3 text-center">৳ {campaign.tBill}</td>
-        <td className="p-3 text-center">৳ {campaign.tPayment}</td>
-        {/* <td className="p-3">
+     <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"><span className="text-lg lg:text-2xl font-extrabold"> $</span> {TSpent}</p>
+   </div>
+   <div className="balance-card bg-white rounded-2xl shadow-2xl p-5 text-center transition-transform transform hover:scale-105 border-0">
+     <h1 className="text-xl font-bold text-black py-4">Payment Rcv</h1>
+     <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"><span className="text-lg lg:text-2xl font-extrabold"> ৳</span> {totalPayment}</p>
+   </div>
+     <div className="balance-card bg-white rounded-2xl shadow-2xl p-5 text-center transition-transform transform hover:scale-105 border-0">
+     <h1 className="text-xl font-bold text-black py-4">Customer Due</h1>
+     <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"><span className="text-lg lg:text-2xl font-extrabold"> ৳</span> {bankTotal - bankTotal2}</p>
+   </div>
 
-        <button
-            className="font-avenir px-3  mx-auto py-1 bg-green-800 ml-10 rounded-lg text-white"
-            onClick={() => document.getElementById("my_modal_7").showModal()}
-          >
-            Edit
-          </button>
-          <dialog id="my_modal_7" className="modal">
-            <div className="modal-box">
-              <form onSubmit={(e) => handleUpdate(e, campaign._id)}>
-                <div className="flex justify-center items-center gap-3">
-                  <div className="mb-4">
-                    <label className="block text-gray-250">
-                      Client Name
-                    </label>
-                    <input
-                      required
-                      type="text"
-                      defaultValue={campaign.clientName}
-                      name="clientName"
-                      placeholder="type here...."
-                      className="w-full border rounded p-2 mt-1"
-                    />
-                  </div>
-                  <div className="mb-4">
-                    <label className="block text-gray-250">Client Phone</label>
-                    <input
-                    required
-                      type="number"
-                      name="clientPhone"
-                      defaultValue={campaign.clientPhone}
-                      placeholder="type here...."
-                      className="w-full border rounded p-2 mt-1"
-                    />
-                  </div>
-                </div>
-                <button
-                  type="submit"
-                  className="font-avenir px-3 mx-auto py-1 rounded-lg flex justify-center text-white bg-green-800"
-                >
-                  Update
-                </button>
-              </form>
-              <div className="modal-action">
-                <form method="dialog">
-                  <button className="p-2 rounded-lg bg-red-600 text-white text-center">Close</button>
-                </form>
-              </div>
-            </div>
-          </dialog>
-        </td> */}
-      </tr>
-    ))}
-    <tr className="bg-green-800  text-sm text-white font-bold">
-      <td className="p-3 text-center"></td>
-      <td className="p-3 text-center"></td>
-      <td className="p-3 text-right" colSpan="1">
-        Total :
-      </td>
-      <td className="p-3 text-center">$ {totalBudged}</td>
-      <td className="p-3 text-center">$ {totalSpent}</td>
-      <td className="p-3 text-center">৳ {totalbill}</td>
-      <td className="p-3 text-center">৳ {totalRCV}</td>
-      {/* <td className="p-3"></td> */}
-    </tr>
-  </tbody>
-</table>
+   
+  
+   
 
-        </div>
-      </div>
+  
+     </div>
 
-
-
-
-
-
-      {/* ///////////////////////////////////////////////////////////////////////////////////////// */}
-      <h6 className="text-center  font-bold text-3xl md:text-5xl text-green-600">
-                    Payment History
-                </h6>
-
-                <div>
-          <button
-            className="font-avenir px-3  mx-auto py-1 bg-green-800 ml-10 rounded-lg text-white"
-            onClick={() => document.getElementById("my_modal_1").showModal()}
-          >
-            Cashout
-          </button>
-          <dialog id="my_modal_1" className="modal">
-            <div className="modal-box text-black font-bold">
-              <form onSubmit={(e) => handlePayment(e)}>
-                <div className="flex justify-center items-center gap-3">
-                  <div className="mb-4">
-                    <label className="block text-gray-250">Pay Amount</label>
-                    <input
-                    required
-                      type="number"
-                      name="payAmount"
-                      defaultValue={0}
-                      className="w-full border-2 border-black rounded p-2 mt-1"
-                    />
-                  </div>
-                  <div className="mb-4">
-                    <label className="block text-gray-250">Note</label>
-                    <input
-                      type="text"
-                      name="note" 
-                      required 
-                      placeholder="type note..." 
-                      className="w-full border-2 border-black rounded p-2 mt-1"
-                    />
-                  </div>
-                </div>
-                <div className="flex justify-center items-center gap-4">
-                  <div className="mb-4">
-                    <label className="block text-gray-250">
-                      Payment Method
-                    </label>
-                    <select
-                     required
-                      name="paymentMethod"
-                      className="w-full border-2 border-black rounded p-2 mt-1"
-                    >
-                      <option value="bkashMarchent">Bkash Marchent</option>
-                      <option value="bkashPersonal">Bkash Personal</option>
-                      <option value="nagadPersonal">Nagad Personal</option>
-                      <option value="rocketPersonal">Rocket Personal</option>
-                      <option value="bank">Bank</option>
-                    </select>
-                  </div>
-                  <div className="mb-4">
-                    <label className="block text-gray-250">Date</label>
-                    <input
-                     required
-                      type="date"
-                      name="date"
-                      className="w-full border-2 border-black rounded p-2 mt-1"
-                    />
-                  </div>
-                </div>
-                <button
-                  type="submit"
-                  className="font-avenir px-3 mx-auto py-1 rounded-lg flex justify-center text-white bg-green-800"
-                >
-                  Send
-                </button>
-              </form>
-              <div className="modal-action">
-                <form method="dialog">
-                  <button className="p-2 rounded-lg bg-red-600 text-white text-center">Close</button>
-                </form>
-              </div>
-            </div>
-          </dialog>
-        </div>
-      <div className="overflow-x-auto mt-6 mx-4">
-                    <table className="min-w-full bg-white">
-                        <thead className="bg-green-800 text-white">
-                            <tr>
-                                <th className="p-3 ">SL</th>
-                                <th className="p-3">Payment Date</th>
-                                <th className="p-3">Payment Amount</th>
-                                <th className="p-3">Payment Method</th>
-                                <th className="p-3"> Note</th>
-                                <th className="p-3">Edit</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {payment.map((payment, index) => (
-                                <tr
-                                    key={index}
-                                    className={`${index % 2 === 0 ? "bg-gray-100" : "bg-white"}`}
-                                >
-                                    <td className="p-3  border-r-2 border-l-2 border-gray-200 text-center">{index + 1}</td>
-                                    <td className="p-3 border-r-2 border-gray-200 text-center">{payment.date}</td>
-                                    <td className="p-3 border-r-2 border-gray-200 text-center">৳ {payment.payAmount}</td>
-                                  
-                                    <td className="p-3 border-r-2 border-gray-200 text-center">
-
-
-                                    
-                                        {payment.paymentMethod === 'bkashMarchent' && <img className="h-10 w-24 flex mx-auto my-auto items-center justify-center" src='https://i.ibb.co/bHMLyvM/b-Kash-Merchant.png' alt="" />
-                                        }
-                                        {payment.paymentMethod === 'bkashPersonal' && <img className="h-10 w-24 flex my-auto items-center mx-auto justify-center" src='https://i.ibb.co/520Py6s/bkash-1.png' alt="" />
-                                        }
-                                        {payment.paymentMethod === 'rocketPersonal' && <img className="h-10 w-24 flex my-auto items-center mx-auto justify-center" src='https://i.ibb.co/QkTM4M3/rocket.png' alt="" />
-                                        }
-                                        {payment.paymentMethod === 'nagadPersonal' && <img className="h-10 w-24 flex my-auto items-center mx-auto justify-center" src='https://i.ibb.co/JQBQBcF/nagad-marchant.png' alt="" /> 
-                                        }
-                                        {payment.paymentMethod === 'bank' && <img className="h-12 w-13 flex my-auto items-center mx-auto justify-center" src='https://i.ibb.co/kS0jD01/bank-3d-render-icon-illustration-png.webp' alt="" />
-                                        }
-                                        </td>
-                                        <td className="p-3 border-r-2 border-gray-200 text-center"> {payment.note}</td>
-                                           <td className="p-3 border-r-2 border-gray-200 text-center">
-
-                                           <button className="font-avenir px-3  mx-auto py-1 bg-green-800 ml-10 rounded-lg text-white" onClick={() => document.getElementById(`modal_${payment._id}`).showModal()}>
-                                            Edit
-                                            </button>
-
-                                          <dialog id={`modal_${payment._id}`} className="modal">
-                                              <div className="modal-box text-black font-bold">
-                                                  <form onSubmit={(e) => handleUpdatePayment(e, payment._id)}>
-                                                      <div className="flex justify-center items-center gap-3">
-                                                      
-                                                          <div className="mb-4">
-                                                              <label className="block text-gray-700"> Previous Amount</label>
-                                                              <input type="number" name="previousAmount" disabled   defaultValue={payment?.payAmount} className="w-full border-2 border-black rounded p-2 mt-1" />
-                                                          </div>
-                                                          <div className="mb-4">
-                                                              <label className="block text-gray-700"> New Amount</label>
-                                                              <input required type="number" name="payAmount"   defaultValue={payment?.payAmount} className="w-full border-2 border-black rounded p-2 mt-1" />
-                                                          </div>
-                                                          
-                                                      </div>
-                                                      <div className="flex justify-center items-center gap-3">
-                                                      <div className="mb-4">
-                                                              <label className="block text-gray-700"> Date</label>
-                                                              <input type="date" defaultValue={payment.date} name='date'  className="w-full border-2 border-black rounded p-2 mt-1" />
-                                                          </div>
-                                                     
-                                                      <div className="mb-4">
-                                                          <label className="block text-gray-700">Method</label>
-                                                          <select required name="paymentMethod" defaultValue={payment.paymentMethod} className="w-full border-2 border-black rounded p-2 mt-1">
-                                                          <option value="bkashMarchent">Bkash Marchent</option>
-                                                             <option value="bkashPersonal">Bkash Personal</option>
-                                                             <option value="nagadPersonal">Nagad Personal</option>
-                                                             <option value="rocketPersonal">Rocket Personal</option>
-                                                             <option value="bank">Bank</option>
-                                                          </select>
-                                                      </div>
-                                                      </div>
-                                                      <div className="mb-4">
-                                                              <label className="block text-gray-700">Note</label>
-                                                              <input required type="text" name="note" defaultValue={payment?.note} className="w-full border-2 border-black rounded p-2 mt-1" />
-                                                          </div>
-                                                      <button onClick={() => document.getElementById(`modal_${payment._id}`).close()} type="submit"  className="font-avenir px-3 mx-auto py-1 rounded-lg flex justify-center text-white bg-green-800">Update</button>
-                                                  </form>
-                                                  <div className="modal-action">
-                                                      <button className="p-2 rounded-lg bg-red-600 text-white text-center" onClick={() => document.getElementById(`modal_${payment._id}`).close()}>Close</button>
-                                                  </div> 
-                                               </div>
-                                          </dialog>
-                                      </td> 
-                                </tr>
-                            ))}
-                            <tr className="bg-green-800 text-white font-bold">
-                                <td className="p-3 text-center" colSpan="2">
-                                    Total Amount =
-                                </td>
-                                <td className="p-3 text-center">৳ {totalPayment}</td>
-                                <td className="p-3 text-center"></td>
-                                <td className="p-3 text-center"></td>
-                                <td className="p-3 text-center"></td>
-                               
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-                <ToastContainer />
+    
+     <ToastContainer />
     </div>
   );
 };
