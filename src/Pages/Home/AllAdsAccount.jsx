@@ -368,7 +368,7 @@ const AllAdsAccount = () => {
                   $ {totalThreshold}
                 </td>
                 <td className="p-3 text-start  border-gray-300 ">
-                  $ {totalSpent}
+                  $ {totalSpent.toFixed(2)}
                 </td>
                 <td className="p-3 border-gray-300 text-center"></td>
                 <td className="p-3 border-gray-300 text-center"></td>
