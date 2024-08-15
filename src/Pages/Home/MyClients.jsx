@@ -9,6 +9,7 @@ import { toast, ToastContainer } from 'react-toastify';
 import Swal from 'sweetalert2';
 import { Helmet } from 'react-helmet-async';
 import { MdDelete, MdEditSquare } from 'react-icons/md';
+import { ImCross } from 'react-icons/im';
 
 const MyClients = () => {
     const { user }=useContext(AuthContext)
@@ -273,6 +274,12 @@ const MyClients = () => {
       <form onSubmit={handleaddblog}>
      
           <div className="mb-4">
+          <h1
+             className=" text-black flex hover:text-red-500  justify-end  text-end"
+             onClick={() => document.getElementById("my_modal_2").close()}
+           >
+            <ImCross />
+           </h1>
             <label className="block text-black">Client Name</label>
             <input
               id="name"
@@ -411,6 +418,15 @@ const MyClients = () => {
   <dialog id={`modal_${index}`} className="modal">
     <div className="modal-box bg-white text-black">
       <form onSubmit={(e) => handleUpdate2(e, campaign._id)}>
+<<<<<<< HEAD
+      <h1
+             className=" text-black flex hover:text-red-500  justify-end  text-end"
+             onClick={() => document.getElementById(`modal_${index}`).close()}
+           >
+            <ImCross />
+           </h1>
+=======
+>>>>>>> 2e76713368f36d3eea9624e7e01855816f427304
         <h1 className="text-md mb-5">
           Client Name:{" "}
           <span className="text-blue-600 text-xl font-bold">
@@ -472,6 +488,7 @@ const MyClients = () => {
                           className="text-center  text-black text-3xl"
                           onClick={() => handledelete(campaign._id)}
                         >
+                          <ToastContainer></ToastContainer>
                           <MdDelete />
                         </button>
                       </div>
