@@ -182,8 +182,8 @@ const AllAdsPayments = () => {
      <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"><span className="text-lg lg:text-2xl font-extrabold"> ৳</span> {bankTotal}</p>
    </div>
      </div>
-      <div className="flex text-black justify-between gap-4 items-center">
-        <div className="flex justify-center items-center gap-5 mb-4 ml-10 mx-auto">
+      <div className="flex text-black justify-between gap-4 mr-5 items-center">
+        <div className="flex justify-start items-center gap-5 mb-4 mx-5">
           <div className="flex flex-col justify-center items-center">
             <label className="">By Month</label>
             <select
@@ -241,16 +241,11 @@ const AllAdsPayments = () => {
           <input
             type="text"
             placeholder="Payment Method"
-            className="rounded-l-lg w-20 placeholder-black border-2 border-black p-2 font-bold text-black sm:w-2/3 text-sm bg-blue-300"
+            className="rounded-lg w-full placeholder-black border-2 border-gray-700 p-2  text-black  bg-white"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
-          <button
-            type="button"
-            className="w-10 p-2 font-semibold rounded-r-lg sm:w-1/3 bg-[#FF9F0D] dark:bg-[#FF9F0D] text-white"
-          >
-            <IoIosSearch className="mx-auto font-bold w-6 h-6" />
-          </button>
+         
         </div>
       </div>
 

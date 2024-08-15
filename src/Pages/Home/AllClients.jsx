@@ -143,7 +143,7 @@ const AxiosPublic =UseAxiosPublic()
                 <input
                   type="text"
                   placeholder=" Client Phone Number"
-                  className=" rounded-lg bg-white placeholder-black border-2 border-black p-2 font-bold text-black  text-sm "
+                  className=" rounded-lg bg-white placeholder-black border-2 border-gray-700 p-2  text-black  text-sm "
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                 />

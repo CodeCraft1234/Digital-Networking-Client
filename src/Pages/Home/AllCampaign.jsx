@@ -318,7 +318,7 @@ const Campaigns = () => {
               <input
                 type="text"
                 placeholder="Search by campaign name"
-                className="bg-blue-200 text-black border-gray-400 rounded p-2 mt-1"
+                className="bg-white border text-black placeholder-black border-gray-700 rounded p-2 mt-1"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />

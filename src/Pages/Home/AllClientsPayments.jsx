@@ -247,16 +247,11 @@ const AllClientsPayments = () => {
           <input
             type="text"
             placeholder="Payment Method"
-            className="rounded-l-lg w-20 placeholder-black border-2 border-black p-2 font-bold text-black sm:w-2/3 text-sm bg-blue-300"
+            className="rounded-lg placeholder-black border-2 border-gray-700 p-2 mr-5 text-black  bg-white"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
-          <button
-            type="button"
-            className="w-10 p-2 font-semibold rounded-r-lg sm:w-1/3 bg-[#FF9F0D] dark:bg-[#FF9F0D] text-white"
-          >
-            <IoIosSearch className="mx-auto font-bold w-6 h-6" />
-          </button>
+       
         </div>
       </div>
 

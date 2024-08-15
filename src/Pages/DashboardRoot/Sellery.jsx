@@ -1,154 +1,95 @@
-import React, { useState, useEffect, useMemo, useCallback } from 'react';
-import useMonthlySpent from "../../Hook/useMonthlySpent";
-import useEmployeePayment from '../../Hook/useEmployeePayment';
+import React, { useState, useEffect } from 'react';
+import useUsers from '../../Hook/useUsers';
 import { Link } from 'react-router-dom';
-import useSellery from '../../Hook/useSellery';
+import { Helmet } from 'react-helmet-async';
+
+const months = [
+  'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'
+];
 
 const Sellery = () => {
-  const [monthlySpent] = useMonthlySpent();
-  const [employeePayment] = useEmployeePayment();
-  const [sellery] = useSellery();
+  const [users] = useUsers();
+  const [employeeData, setEmployeeData] = useState([]);
+  const [selectedMonth, setSelectedMonth] = useState(new Date().toLocaleString('default', { month: 'long' }));
 
-  const [sortMonth, setSortMonth] = useState(new Date().toLocaleString('default', { month: 'long' }));
-  const [sortByEmployeeName, setSortByEmployeeName] = useState("");
-
-  const [aggregatedAccounts, setAggregatedAccounts] = useState([]);
-
-  // Aggregating data only once during initial render or when data changes
   useEffect(() => {
-    const aggregateAccounts = () => {
-      const aggregated = {};
+    // Filter users with role 'employee'
+    const employees = users.filter(user => user.role === 'employee');
 
-      monthlySpent.forEach(account => {
-        const date = new Date(account.date);
-        const month = date.toLocaleString('default', { month: 'long' });
-        const year = date.getFullYear();
-        const key = `${account.employeeName}-${month}-${year}`;
+    // Aggregate totalSpentt and amount for each employee
+    const aggregatedData = employees.map(user => {
+      // Ensure monthlySpent and sellery arrays exist before reducing
+      const monthlySpentData = (user.monthlySpent || []).filter(spent => new Date(spent.date).toLocaleString('default', { month: 'long' }) === selectedMonth);
+      const selleryData = (user.sellery || []).filter(sell => sell.month === selectedMonth);
 
-        if (!aggregated[key]) {
-          aggregated[key] = {
-            employeeName: account.employeeName,
-            totalSpentt: 0,
-            month,
-            year,
-            employeeEmail: account.employeeEmail,
-          };
-        }
-        aggregated[key].totalSpentt += account.totalSpentt;
-      });
+      // Filter adminPay for the selected month
+      const adminPayData = (user.adminPay || []).filter(pay => new Date(pay.date).toLocaleString('default', { month: 'long' }) === selectedMonth);
 
-      setAggregatedAccounts(Object.values(aggregated));
-    };
+      const totalSpent = monthlySpentData.reduce((acc, spent) => acc + spent.totalSpentt, 0);
+      const totalSellery = selleryData.reduce((acc, sell) => acc + sell.amount, 0);
+      const totalBonus = selleryData.reduce((acc, sell) => acc + sell.bonus, 0);
 
-    aggregateAccounts();
-  }, [monthlySpent]);
+      // Aggregate adminPayAmount for the selected month
+      const totalAdminPay = adminPayData.reduce((acc, pay) => acc + pay.adminPayAmount, 0);
 
-  const calculateAdminPay = useCallback((email, month) => {
-    const payments = employeePayment.filter(payment => {
-      const paymentDate = new Date(payment.date);
-      const paymentMonth = paymentDate.toLocaleString('default', { month: 'long' });
-      return paymentMonth === month && payment.employeeEmail === email;
+      return {
+        ...user,
+        totalSpent,
+        totalSellery,
+        totalBonus,
+        totalAdminPay,
+      };
     });
 
-    return payments.reduce((acc, payment) => acc + (parseFloat(payment.payAmount) || 0), 0);
-  }, [employeePayment]);
+    setEmployeeData(aggregatedData);
+  }, [users, selectedMonth]);
 
-  const calculateSelleryAmount = useCallback((email, month) => {
-    const payments = sellery.filter(payment => {
-      const paymentDate = new Date(payment.date);
-      const paymentMonth = paymentDate.toLocaleString('default', { month: 'long' });
-      return paymentMonth === month && payment.email === email;
-    });
+  const handleMonthChange = (event) => {
+    setSelectedMonth(event.target.value);
+  };
 
-    return payments.reduce((acc, payment) => acc + (parseFloat(payment.amount) || 0), 0);
-  }, [sellery]);
-
-  const calculateBonusAmount = useCallback((email, month) => {
-    const payments = sellery.filter(payment => {
-      const paymentDate = new Date(payment.date);
-      const paymentMonth = paymentDate.toLocaleString('default', { month: 'long' });
-      return paymentMonth === month && payment.email === email;
-    });
-
-    return payments.reduce((acc, payment) => acc + (parseFloat(payment.bonus) || 0), 0);
-  }, [sellery]);
-
-  const sortedAccounts = useMemo(() => {
-    return aggregatedAccounts.filter(account =>
-      account.month === sortMonth &&
-      (sortByEmployeeName === "" || account.employeeName === sortByEmployeeName)
-    );
-  }, [aggregatedAccounts, sortMonth, sortByEmployeeName]);
-
-  const totalSpentSum = useMemo(() => {
-    return sortedAccounts.reduce((acc, account) => acc + (parseFloat(account.totalSpentt) || 0), 0);
-  }, [sortedAccounts]);
-
-  const totalBillSum = useMemo(() => totalSpentSum * 140, [totalSpentSum]);
-
-  const totalAdminPay = useMemo(() => {
-    return sortedAccounts.reduce((acc, account) => acc + calculateAdminPay(account.employeeEmail, sortMonth), 0);
-  }, [sortedAccounts, calculateAdminPay, sortMonth]);
-
-  const totalDue = useMemo(() => totalBillSum - totalAdminPay, [totalBillSum, totalAdminPay]);
-
-  const totalSalary = useMemo(() => totalSpentSum * 7, [totalSpentSum]);
-
-  const salaryPaid = useMemo(() => {
-    return sortedAccounts.reduce((acc, account) => acc + calculateSelleryAmount(account.employeeEmail, sortMonth), 0);
-  }, [sortedAccounts, calculateSelleryAmount, sortMonth]);
-
-  const salaryUnpaid = useMemo(() => totalSalary - salaryPaid, [totalSalary, salaryPaid]);
-
-  const bonus = useMemo(() => {
-    return sortedAccounts.reduce((acc, account) => acc + calculateBonusAmount(account.employeeEmail, sortMonth), 0);
-  }, [sortedAccounts, calculateBonusAmount, sortMonth]);
+  // Calculate totals for footer
+  const totalSpent = employeeData.reduce((acc, user) => acc + user.totalSpent, 0);
+  const totalSellery = employeeData.reduce((acc, user) => acc + user.totalSellery, 0);
+  const totalBonus = employeeData.reduce((acc, user) => acc + user.totalBonus, 0);
+  const totalAdminPay = employeeData.reduce((acc, user) => acc + user.totalAdminPay, 0);
+  const totalDue = totalSpent * 140 - totalAdminPay;
 
   return (
     <div className='m-5'>
-      <div className="flex justify-between mb-4">
-        <select
-          className="px-4 py-2 border rounded bg-white text-black border-gray-700"
-          onChange={(e) => setSortByEmployeeName(e.target.value)}
-          value={sortByEmployeeName}
-        >
-          <option value="">Select Employee</option>
-          {[...new Set(aggregatedAccounts.map(account => account.employeeName))].map(employeeName => (
-            <option key={employeeName} value={employeeName}>{employeeName}</option>
-          ))}
-        </select>
-        <select
-          className="px-4 py-2 border rounded bg-white text-black border-gray-700"
-          onChange={(e) => setSortMonth(e.target.value)}
-          value={sortMonth || ""}
-        >
-          <option value="">Select Month</option>
-          {Array.from({ length: 12 }, (_, i) => new Date(0, i).toLocaleString('default', { month: 'long' })).map(month => (
+       <Helmet>
+        <title>Selary | Digital Network </title>
+        <link rel="canonical" href="https://www.example.com/" />
+      </Helmet>
+      <div className="mb-4 ">
+        <label htmlFor="monthSelect" className="mr-2 text-black">Sort by Month:</label>
+        <select id="monthSelect" value={selectedMonth} onChange={handleMonthChange} className="p-2 bg-white text-black border border-gray-700 rounded">
+          {months.map((month) => (
             <option key={month} value={month}>{month}</option>
           ))}
         </select>
       </div>
+
       <div className="overflow-x-auto text-center border border-black">
         <table className="min-w-full text-center bg-white">
           <thead className="bg-[#05a0db] text-white">
             <tr>
               <th className="p-3">SL</th>
-              <th className="p-3">Months</th>
               <th className="p-3">Employee Name</th>
               <th className="p-3">Total Spent</th>
               <th className="p-3">Total Bill</th>
               <th className="p-3">Admin Pay</th>
               <th className="p-3">Total Due</th>
-              <th className="p-3">Total Salary</th>
-              <th className="p-3">Salary Paid</th>
-              <th className="p-3">Salary Unpaid</th>
+              <th className="p-3">Total Sellery</th>
+              <th className="p-3"> Paid</th>
+              <th className="p-3">Unpaid</th>
               <th className="p-3">Bonus</th>
             </tr>
           </thead>
           <tbody>
-            {sortedAccounts.map((account, index) => (
+            {employeeData.map((user, index) => (
               <tr
-                key={index}
+                key={user.email}
                 className={`${
                   index % 2 === 0
                     ? "bg-white text-left text-gray-500 border-b border-opacity-20"
@@ -156,70 +97,49 @@ const Sellery = () => {
                 }`}
               >
                 <td className="p-3 border-r-2 border-gray-300 text-center px-5">{index + 1}</td>
-                <td className="p-3 border-l-2 border-r-2 text-center border-gray-300">
-                  {account.month} {account.years}
-                </td>
                 <td className="p-3 border-r-2 border-gray-300 text-center px-5">
-                  <Link to={`/dashboard/employeerSellery/${account.employeeEmail}`} >
-                  {account?.employeeName}
+                  <Link to={`/dashboard/employeerSellery/${user.email}`}>
+                    {user.name}
                   </Link>
                 </td>
                 <td className="p-3 border-r-2 border-gray-300 text-center">
-                  $ {account.totalSpentt}
+                  ${user.totalSpent}
                 </td>
                 <td className="p-3 border-r-2 border-gray-300 text-center">
-                  $ {(account.totalSpentt * 140).toFixed(2)}
+                  ৳ {user.totalSpent * 140 }
                 </td>
                 <td className="p-3 border-r-2 border-gray-300 text-center">
-                  $ {calculateAdminPay(account.employeeEmail, sortMonth).toFixed(2)}
+                  ৳ {user.totalAdminPay || "00.00"}
                 </td>
                 <td className="p-3 border-r-2 border-gray-300 text-center">
-                  $ {(account.totalSpentt * 140 - calculateAdminPay(account.employeeEmail, sortMonth)).toFixed(2)}
+                  ${user.totalSpent * 140 - user.totalAdminPay || 0}
                 </td>
                 <td className="p-3 border-r-2 border-gray-300 text-center">
-                  $ {(account.totalSpentt * 7).toFixed(2)}
+                  ${user.totalSpent * 7}
                 </td>
                 <td className="p-3 border-r-2 border-gray-300 text-center">
-                  $ {calculateSelleryAmount(account.employeeEmail, sortMonth).toFixed(2)}
+                  ${user.totalSellery}
                 </td>
                 <td className="p-3 border-r-2 border-gray-300 text-center">
-                  $ {(account.totalSpentt * 7 - calculateSelleryAmount(account.employeeEmail, sortMonth)).toFixed(2)}
+                  ${user.totalSpent * 7 - user.totalSellery}
                 </td>
                 <td className="p-3 border-r-2 border-gray-300 text-center">
-                  $ {calculateBonusAmount(account.employeeEmail, sortMonth).toFixed(2)}
+                  ${user.totalBonus}
                 </td>
               </tr>
             ))}
           </tbody>
-          <tfoot>
-            <tr className="bg-[#05a0db] text-white text-center">
-              <td className="p-3 font-semibold text-lg" colSpan="3">
-                Total:
-              </td>
-              <td className="p-3 font-semibold text-lg">
-                $ {totalSpentSum.toFixed(2)}
-              </td>
-              <td className="p-3 font-semibold text-lg">
-                $ {totalBillSum.toFixed(2)}
-              </td>
-              <td className="p-3 font-semibold text-lg">
-                $ {totalAdminPay.toFixed(2)}
-              </td>
-              <td className="p-3 font-semibold text-lg">
-                $ {totalDue.toFixed(2)}
-              </td>
-              <td className="p-3 font-semibold text-lg">
-                $ {totalSalary.toFixed(2)}
-              </td>
-              <td className="p-3 font-semibold text-lg">
-                $ {salaryPaid.toFixed(2)}
-              </td>
-              <td className="p-3 font-semibold text-lg">
-                $ {salaryUnpaid.toFixed(2)}
-              </td>
-              <td className="p-3 font-semibold text-lg">
-                $ {bonus.toFixed(2)}
-              </td>
+          <tfoot className="bg-[#05a0db] text-white">
+            <tr>
+              <td className="p-3 text-right border-gray-300 " colSpan="2">Total</td>
+              <td className="p-3  border-gray-300 r">${totalSpent}</td>
+              <td className="p-3  border-gray-300 r">৳ {totalSpent * 140}</td>
+              <td className="p-3  border-gray-300 r">৳ {totalAdminPay || "00.00"}</td>
+              <td className="p-3  border-gray-300 r">${totalDue}</td>
+              <td className="p-3  border-gray-300 r">${totalSpent * 7}</td>
+              <td className="p-3  border-gray-300 r">${totalSellery}</td>
+              <td className="p-3  border-gray-300 r">${totalSpent * 7 - totalSellery}</td>
+              <td className="p-3  border-gray-300 text-center">${totalBonus}</td>
             </tr>
           </tfoot>
         </table>

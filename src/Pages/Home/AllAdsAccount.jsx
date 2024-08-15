@@ -129,10 +129,12 @@ const AllAdsAccount = () => {
 
   const handleUpdateTotalSpent = (e, id, totalSpents, accountName, employeeEmail, employeeName) => {
     e.preventDefault();
+  
     const totalSpent = e.target.totalSpent.value;
     const date = e.target.date.value;
-    const body = { totalSpent: parseFloat(totalSpent) + parseFloat(totalSpents) };
+    const body = { totalSpent: parseFloat(totalSpent)  };
   
+    // Update the ads account
     axios.put(`https://digital-networking-server.vercel.app/adsAccount/totalSpent/${id}`, body)
       .then((res) => {
         console.log(res.data);
@@ -143,15 +145,23 @@ const AllAdsAccount = () => {
         console.error("Error updating total spent:", error);
       });
   
-    const totalSpentt = parseFloat(totalSpent)
-    const bodyy = { totalSpentt, accountName, employeeEmail, date, employeeName };
-    AxiosPublic.post('/monthlySpent', bodyy)
+    // Prepare data to update or create user
+    const totalSpentt = parseFloat(totalSpent);
+    const monthlySpent = {
+      totalSpentt,
+      accountName,
+      date,
+      employeeName
+    };
+  
+    // Post user data with monthlySpent array
+    AxiosPublic.post('/users/update', { email: employeeEmail, monthlySpent })
       .then(res => {
         console.log(res.data);
         // Optional: Close the modal here if you prefer
       })
       .catch(error => {
-        console.error("Error posting monthly spent:", error);
+        console.error("Error posting user data:", error);
       });
   };
   
@@ -208,13 +218,13 @@ const AllAdsAccount = () => {
           </div>
 
           <div className=" ">
-          <label className="block text-black font-bold">
+          <label className="block text-black ">
                   Search by Ads Account Name
                 </label>
             <input
               type="text"
               placeholder="Ads Account Name..."
-              className="rounded-lg  placeholder-black border-2  p-2 font-bold text-black  text-sm bg-white border-black"
+              className="rounded-lg  placeholder-black border-2  p-2 w-full text-black  text-sm bg-white border-gray-700"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />

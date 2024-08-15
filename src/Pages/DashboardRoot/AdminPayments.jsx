@@ -129,9 +129,29 @@ const AdminPayments = () => {
       .then((res) => {
         toast.success("Send successful!");
         refetch();
-        console.log(red.data);
+        console.log(res.data);
        
       })
+
+      const generateRandomId = () => {
+        return Math.floor(Math.random() * 1e13); // 1e13 generates a number between 0 and 9999999999999 (13 digits)
+      };
+      const id=generateRandomId()
+      const adminPayAmount = parseFloat(payAmount);
+      const adminPay = {
+        id,
+        adminPayAmount,
+        date,
+      };
+    
+      AxiosPublic.post('/users/adminPay', { email: employeeEmail, adminPay })
+        .then(res => {
+          console.log(res.data);
+          // Optional: Close the modal here if you prefer
+        })
+        .catch(error => {
+          console.error("Error posting user data:", error);
+        });
 
 
       const fields = {

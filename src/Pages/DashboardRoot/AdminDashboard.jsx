@@ -12,7 +12,7 @@ import {
   FaUser,
   FaUsers,
 } from "react-icons/fa";
-import { IoMdArrowDropdown, IoMdArrowDropup } from 'react-icons/io';
+import { IoMdArrowDropdown, IoMdArrowDropup, IoMdCash } from 'react-icons/io';
 import { RxDashboard } from "react-icons/rx";
 import { MdAccountCircle, MdCampaign, MdOutlinePayment, MdOutlinePayments } from "react-icons/md";
 import { IoLogOutOutline, IoPeopleSharp, IoSettingsSharp } from "react-icons/io5";
@@ -258,7 +258,7 @@ const AdminDashboard = () => {
             className="text-white hover:bg-[#f89320] hover:text-black py-2 px-4 rounded-lg flex items-center"
             style={({ isActive }) => getActiveStyle(isActive)}
           >
-            <IoSettingsSharp className="w-6 h-6 mr-2" />Salary
+            <IoMdCash  className="w-6 h-6 mr-2" />Salary
           </NavLink>
           <NavLink
             to="/dashboard/settings"
