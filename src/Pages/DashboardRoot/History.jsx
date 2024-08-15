@@ -5,7 +5,7 @@ import axios from 'axios';
 import UseAxiosPublic from '../../Axios/UseAxiosPublic';
 
 const History = () => {
-  const [monthlySpent,refetch] = usemonthlySpent();
+  const [monthlySpent, refetch] = usemonthlySpent();
   const [sortMonth, setSortMonth] = useState('');
   const [sortYear, setSortYear] = useState('');
   const [sortEmployee, setSortEmployee] = useState(null); // State for sorting by employee name
@@ -55,74 +55,73 @@ const History = () => {
   }, [currentMonth, currentYear]);
 
   // Get a unique list of employee names for the dropdown
-  const employeeNames = [...new Set(aggregatedAccounts.map(account => account.employeeName))]
+  const employeeNames = [...new Set(aggregatedAccounts.map(account => account.employeeName))];
 
-
-  const handleUpdate2 = (e, id, ) => {
+  const handleUpdate2 = (e, id) => {
     e.preventDefault();
     const totalSpentt = e.target.totalSpentt.value;
-    const body = { totalSpentt: parseFloat(totalSpentt)};
+    const body = { totalSpentt: parseFloat(totalSpentt) };
   
     axios.patch(`https://digital-networking-server.vercel.app/monthlySpent/totalSpent/${id}`, body)
       .then((res) => {
         console.log(res.data);
         refetch();
-        document.getElementById(`my_modal_${id}`).close(); // Close the modal
+        document.getElementById(`modal_${id}`).close(); // Close the modal
       })
       .catch((error) => {
         console.error("Error updating total spent:", error);
       });
   };
 
-  const AxiosPublic=UseAxiosPublic()
+  const AxiosPublic = UseAxiosPublic();
   const handledelete = (id) => {
     AxiosPublic.delete(`/monthlySpent/${id}`).then((res) => {
       refetch();
     });
-};
+  };
 
+  // Calculate totals for the footer
+  const totalSpent = sortedAccounts.reduce((sum, account) => sum + account.totalSpentt, 0);
+  const totalBill = totalSpent * 140; // Assuming conversion rate
 
   return (
-    <div className='m-5' >
+    <div className='m-5'>
       <div className="flex justify-between mb-4">
         <div>
-        <select
-          className="px-4 py-2 border rounded bg-white  text-black border-black"
-          onChange={(e) => setSortEmployee(e.target.value)}
-          value={sortEmployee || ""}
-        >
-          <option value="">Select Employee</option>
-          {employeeNames.map(employee => (
-            <option key={employee} value={employee}>{employee}</option>
-          ))}
-        </select>
+          <select
+            className="px-4 py-2 border rounded bg-white text-black border-black"
+            onChange={(e) => setSortEmployee(e.target.value)}
+            value={sortEmployee || ""}
+          >
+            <option value="">Select Employee</option>
+            {employeeNames.map(employee => (
+              <option key={employee} value={employee}>{employee}</option>
+            ))}
+          </select>
         </div>
         <div>
-        <select
-          className="mr-4 px-4 py-2 border rounded bg-white  text-black border-black"
-          onChange={(e) => setSortMonth(e.target.value)}
-          value={sortMonth || ""}
-        >
-          <option value="">Select Month</option>
-          {Array.from({ length: 12 }, (_, i) => new Date(0, i).toLocaleString('default', { month: 'long' })).map(month => (
-            <option key={month} value={month}>{month}</option>
-          ))}
-        </select>
+          <select
+            className="mr-4 px-4 py-2 border rounded bg-white text-black border-black"
+            onChange={(e) => setSortMonth(e.target.value)}
+            value={sortMonth || ""}
+          >
+            <option value="">Select Month</option>
+            {Array.from({ length: 12 }, (_, i) => new Date(0, i).toLocaleString('default', { month: 'long' })).map(month => (
+              <option key={month} value={month}>{month}</option>
+            ))}
+          </select>
 
-        <select
-          className=" px-4 py-2 border rounded bg-white  text-black border-black"
-          onChange={(e) => setSortYear(e.target.value)}
-          value={sortYear || ""}
-        >
-          <option value="">Select Year</option>
-          {Array.from({ length: 31 }, (_, i) => 2020 + i).map(year => (
-            <option key={year} value={year}>{year}</option>
-          ))}
-        </select>
+          <select
+            className="px-4 py-2 border rounded bg-white text-black border-black"
+            onChange={(e) => setSortYear(e.target.value)}
+            value={sortYear || ""}
+          >
+            <option value="">Select Year</option>
+            {Array.from({ length: 31 }, (_, i) => 2020 + i).map(year => (
+              <option key={year} value={year}>{year}</option>
+            ))}
+          </select>
         </div>
-
-
-       
       </div>
 
       <div className="overflow-x-auto text-center border border-black">
@@ -150,7 +149,7 @@ const History = () => {
               >
                 <td className="p-3 border-r-2 border-gray-300 text-center px-5">{index + 1}</td>
                 <td className="p-3 border-l-2 border-r-2 text-center border-gray-300">
-                  {account.month} 
+                  {account.month}
                 </td>
                 <td className="p-3 border-r-2 border-gray-300 text-center px-5">
                   {account.employeeName}
@@ -158,18 +157,17 @@ const History = () => {
                 <td className="p-3 border-r-2 border-gray-300 text-start px-5">
                   {account.accountName}
                 </td>
-               
                 <td className="p-3 border-r-2 border-gray-300 text-center">
                   $ {account.totalSpentt}
                 </td>
                 <td className="p-3 border-r-2 border-gray-300 text-center">
-                  ৳  {account.totalSpentt * 140}
+                  ৳ {account.totalSpentt * 140}
                 </td>
                 <td className="p-3 border-r text-center border-gray-400">
-  <div className="flex justify-center items-center gap-3">
-        <div>
+                  <div className="flex justify-center items-center gap-3">
+                    <div>
                       <button
-                        className="text-blue-700  text-3xl"
+                        className="text-blue-700 text-3xl"
                         onClick={() =>
                           document.getElementById(`modal_${index}`).showModal()
                         }
@@ -178,54 +176,56 @@ const History = () => {
                       </button>
                       <dialog id={`modal_${index}`} className="modal">
                         <div className="modal-box bg-white text-black">
-                        <form onSubmit={(e) => handleUpdate2(e, account._id)}>
-
-  <div className="mb-4">
-    <label className="block text-start text-gray-700">Total Spent</label>
-    <input
-      type="text"
-      name="totalSpentt"
-      defaultValue={account.totalSpentt}
-      className="w-full bg-white border-black border rounded p-2 mt-1"
-    />
-  </div>
-
-  <div className="grid grid-cols-2 gap-3">
-    <button
-      onClick={() =>
-        document.getElementById(`modal_${index}`).close()
-      }
-      type="button"
-      className="font-avenir px-3 py-1 bg-red-600 rounded-lg text-white"
-    >
-      Close
-    </button>
-    <button
-      type="submit"
-      className="font-avenir px-3 py-1 bg-[#05a0db] rounded-lg text-white"
-    >
-      Update
-    </button>
-  </div>
-</form>
-
-                        
+                          <form onSubmit={(e) => handleUpdate2(e, account._id)}>
+                            <div className="mb-4">
+                              <label className="block text-start text-gray-700">Total Spent</label>
+                              <input
+                                type="text"
+                                name="totalSpentt"
+                                defaultValue={account.totalSpentt}
+                                className="w-full bg-white border-black border rounded p-2 mt-1"
+                              />
+                            </div>
+                            <div className="grid grid-cols-2 gap-3">
+                              <button
+                                onClick={() =>
+                                  document.getElementById(`modal_${index}`).close()
+                                }
+                                type="button"
+                                className="font-avenir px-3 py-1 bg-red-600 rounded-lg text-white"
+                              >
+                                Close
+                              </button>
+                              <button
+                                type="submit"
+                                className="font-avenir px-3 py-1 bg-[#05a0db] rounded-lg text-white"
+                              >
+                                Update
+                              </button>
+                            </div>
+                          </form>
                         </div>
                       </dialog>
-                      </div>
-                      <button
-                          className="text-center  text-black text-3xl"
-                          onClick={() => handledelete(account._id)}
-                        >
-                          <MdDelete />
-                        </button>
-                      </div>
-
-  </td>
-               
+                    </div>
+                    <button
+                      className="text-center text-black text-3xl"
+                      onClick={() => handledelete(account._id)}
+                    >
+                      <MdDelete />
+                    </button>
+                  </div>
+                </td>
               </tr>
             ))}
           </tbody>
+          <tfoot className="bg-gray-200 text-black">
+            <tr>
+              <td colSpan="4" className="p-3 font-bold text-right">Total</td>
+              <td className="p-3 font-bold text-center">$ {totalSpent}</td>
+              <td className="p-3 font-bold text-center">৳ {totalBill}</td>
+              <td className="p-3"></td>
+            </tr>
+          </tfoot>
         </table>
       </div>
     </div>

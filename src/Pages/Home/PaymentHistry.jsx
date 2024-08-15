@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../../Security/AuthProvider";
-import { useParams } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 import UseAxiosPublic from "../../Axios/UseAxiosPublic";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -99,6 +99,7 @@ const PaymentHistry = () => {
     setTotalBudged(total);
   }, [campaign, param?.email]);
 
+  const location=useLocation()
   const handlePayment = async (e) => {
     e.preventDefault();
     const paymentMethod = e.target.paymentMethod.value;
@@ -122,6 +123,10 @@ const PaymentHistry = () => {
       await AxiosPublic.post(`https://digital-networking-server.vercel.app/MPayment`,body);
       toast.success("Payment successful");
       refetch(); // Automatically refetch after successful payment
+      setTimeout(() => {
+        window.location.reload();
+      }, 500); 
+  
     } catch (error) {
       console.error("Error processing payment:", error);
       toast.error("Failed to process payment");

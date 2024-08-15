@@ -359,11 +359,10 @@ const MyClients = () => {
 <th className="p-3 text-center">SL</th>
 <th className="p-3 text-center">Client Name</th>
 <th className="p-3 text-center">Client Phone</th>
-{/* <th className="p-3 text-center">Client Email</th> */}
 <th className="p-3 text-center">T.Budget</th>
 <th className="p-3 text-center">T.Spent</th>
 <th className="p-3 text-center">Total Bill</th>
-<th className="p-3 text-center">Total Payment Rcv</th>
+<th className="p-3 text-center">Payment Rcv</th>
 <th className="p-3 text-center">Total Due</th>
 <th className="p-3">Action</th>
 </tr>
@@ -378,12 +377,12 @@ const MyClients = () => {
       : "text-gray-500 border-b border-opacity-20 hover:text-blue-600"
   }`}
 >
-  <td className="p-3 border-r border-gray-400 border-l text-center">{index + 1}</td>
+  <td className="p-3 border-r border-gray-400 border-l text-start ">{index + 1}</td>
 
   <Link to={`/dashboard/client/${campaign.clientEmail}`}>
-    <td className="p-3 border-r border-gray-400 flex hover:font-bold hover:bg-yellow-50 justify-center text-center">{campaign.clientName}</td>
+    <td className="p-3 border-r border-gray-400 flex hover:font-bold hover:bg-yellow-50 justify-start text-start">{campaign.clientName}</td>
   </Link>
-  <td className="p-3 border-r border-gray-400  text-center">{campaign.clientPhone}</td>
+  <td className="p-3 border-r border-gray-400  text-start">{campaign.clientPhone}</td>
   <td className="p-3 border-r border-gray-400 text-center">$ {campaign.tBudged}</td>
   <td className="p-3 border-r border-gray-400 text-center">$ {campaign.tSpent}</td>
   <td className="p-3 border-r border-gray-400 text-center">৳ {campaign.tBill}</td>

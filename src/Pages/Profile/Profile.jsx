@@ -38,7 +38,7 @@ const Profile = () => {
   // Utility function to get button class
   
   const getButtonClass = (tab) => 
-    `px-4 py-2 rounded ${activeTab === tab ? 'bg-[#05a0db] text-white font-bold' : 'bg-[#f89320] text-black'}`;
+    `px-4 py-2 rounded ${activeTab === tab ? 'bg-[#05a0db] text-white font-bold' : 'bg-[#f89320] text-black font-bold'}`;
 
   return (
     <div className="my-5">

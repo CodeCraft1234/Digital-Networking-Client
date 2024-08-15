@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import useMonthlySpent from "../../Hook/useMonthlySpent";
 import useEmployeePayment from '../../Hook/useEmployeePayment';
 import { Link } from 'react-router-dom';
@@ -7,79 +7,43 @@ import useSellery from '../../Hook/useSellery';
 const Sellery = () => {
   const [monthlySpent] = useMonthlySpent();
   const [employeePayment] = useEmployeePayment();
-  const [sellery, refetch] = useSellery();
-  
+  const [sellery] = useSellery();
+
   const [sortMonth, setSortMonth] = useState(new Date().toLocaleString('default', { month: 'long' }));
-  const [sortByEmployeeName, setSortByEmployeeName] = useState(null);
-  const [totalPayment, setTotalPayment] = useState(0);
-  const [totalSpent, setTotalSpent] = useState(0);
+  const [sortByEmployeeName, setSortByEmployeeName] = useState("");
 
-  // Function to aggregate totalSpent by employee names and months
-  const aggregateAccountsByEmployee = (data) => {
-    const aggregated = {};
+  const [aggregatedAccounts, setAggregatedAccounts] = useState([]);
 
-    data.forEach(account => {
-      const date = new Date(account.date);
-      const month = date.toLocaleString('default', { month: 'long' });
-      const year = date.getFullYear();
-      const key = `${account.employeeName}-${month}-${year}`;
+  // Aggregating data only once during initial render or when data changes
+  useEffect(() => {
+    const aggregateAccounts = () => {
+      const aggregated = {};
 
-      if (!aggregated[key]) {
-        aggregated[key] = { 
-          employeeName: account.employeeName,
-          accountName: account.accountName,
-          totalSpentt: 0, 
-          month, 
-          year,
-          employeeEmail: account.employeeEmail // Add employeeEmail to key
-        };
-      }
-      aggregated[key].totalSpentt += account.totalSpentt;
-    });
+      monthlySpent.forEach(account => {
+        const date = new Date(account.date);
+        const month = date.toLocaleString('default', { month: 'long' });
+        const year = date.getFullYear();
+        const key = `${account.employeeName}-${month}-${year}`;
 
-    return Object.values(aggregated);
-  };
-
-  // Function to calculate total payment for the given month and employee
-  const calculateTotalPayment = (month, employeeName) => {
-    const currentYear = new Date().getFullYear();
-    let total = 0;
-
-    employeePayment.forEach(payment => {
-      const paymentDate = new Date(payment.date);
-      const paymentMonth = paymentDate.toLocaleString('default', { month: 'long' });
-      const paymentYear = paymentDate.getFullYear();
-      
-      if (paymentMonth === month && paymentYear === currentYear) {
-        if (!employeeName || payment.employeeName === employeeName) {
-          total += parseFloat(payment.payAmount) || 0;
+        if (!aggregated[key]) {
+          aggregated[key] = {
+            employeeName: account.employeeName,
+            totalSpentt: 0,
+            month,
+            year,
+            employeeEmail: account.employeeEmail,
+          };
         }
-      }
-    });
+        aggregated[key].totalSpentt += account.totalSpentt;
+      });
 
-    return total;
-  };
+      setAggregatedAccounts(Object.values(aggregated));
+    };
 
-  // Function to calculate total spent for the given month and employee
-  const calculateTotalSpent = (month, employeeName) => {
-    let total = 0;
+    aggregateAccounts();
+  }, [monthlySpent]);
 
-    monthlySpent.forEach(spent => {
-      const spentDate = new Date(spent.date);
-      const spentMonth = spentDate.toLocaleString('default', { month: 'long' });
-      
-      if (spentMonth === month) {
-        if (!employeeName || spent.employeeName === employeeName) {
-          total += spent.totalSpentt || 0;
-        }
-      }
-    });
-
-    return total;
-  };
-
-  // Function to calculate Admin Pay
-  const calculateAdminPay = (email, month) => {
+  const calculateAdminPay = useCallback((email, month) => {
     const payments = employeePayment.filter(payment => {
       const paymentDate = new Date(payment.date);
       const paymentMonth = paymentDate.toLocaleString('default', { month: 'long' });
@@ -87,56 +51,66 @@ const Sellery = () => {
     });
 
     return payments.reduce((acc, payment) => acc + (parseFloat(payment.payAmount) || 0), 0);
-  };
+  }, [employeePayment]);
 
-  const calculateSelleryAmount = (email, month) => {
+  const calculateSelleryAmount = useCallback((email, month) => {
     const payments = sellery.filter(payment => {
       const paymentDate = new Date(payment.date);
       const paymentMonth = paymentDate.toLocaleString('default', { month: 'long' });
       return paymentMonth === month && payment.email === email;
     });
-  
+
     return payments.reduce((acc, payment) => acc + (parseFloat(payment.amount) || 0), 0);
-  };
+  }, [sellery]);
 
-  const calculateBonusAmount = (email, month) => {
+  const calculateBonusAmount = useCallback((email, month) => {
     const payments = sellery.filter(payment => {
       const paymentDate = new Date(payment.date);
       const paymentMonth = paymentDate.toLocaleString('default', { month: 'long' });
       return paymentMonth === month && payment.email === email;
     });
-  
+
     return payments.reduce((acc, payment) => acc + (parseFloat(payment.bonus) || 0), 0);
-  };
+  }, [sellery]);
 
-  // Filter and aggregate data
-  const aggregatedAccounts = aggregateAccountsByEmployee(monthlySpent);
-  const sortedAccounts = aggregatedAccounts.filter(account => account.month === sortMonth);
-  const currentTotalPayment = calculateTotalPayment(sortMonth, sortByEmployeeName);
-  const currentTotalSpent = calculateTotalSpent(sortMonth, sortByEmployeeName);
+  const sortedAccounts = useMemo(() => {
+    return aggregatedAccounts.filter(account =>
+      account.month === sortMonth &&
+      (sortByEmployeeName === "" || account.employeeName === sortByEmployeeName)
+    );
+  }, [aggregatedAccounts, sortMonth, sortByEmployeeName]);
 
-  // Calculate totals for the footer
-  const totalSpentSum = sortedAccounts.reduce((acc, account) => acc + (parseFloat(account.totalSpentt) || 0), 0);
-  const totalBillSum = totalSpentSum * 140;
-  const totalAdminPay = sortedAccounts.reduce((acc, account) => acc + calculateAdminPay(account.employeeEmail, sortMonth), 0);
-  const totalDue = totalBillSum - totalAdminPay;
-  const totalSalary = totalSpentSum * 7;
-  const salaryPaid = sortedAccounts.reduce((acc, account) => acc + calculateSelleryAmount(account.employeeEmail, sortMonth), 0);
-  const salaryUnpaid = totalSalary - salaryPaid;
-  const bonus = sortedAccounts.reduce((acc, account) => acc + calculateBonusAmount(account.employeeEmail, sortMonth), 0);
+  const totalSpentSum = useMemo(() => {
+    return sortedAccounts.reduce((acc, account) => acc + (parseFloat(account.totalSpentt) || 0), 0);
+  }, [sortedAccounts]);
 
-  useEffect(() => {
-    setTotalPayment(currentTotalPayment);
-    setTotalSpent(currentTotalSpent);
-  }, [sortMonth, sortByEmployeeName, employeePayment, monthlySpent]);
+  const totalBillSum = useMemo(() => totalSpentSum * 140, [totalSpentSum]);
+
+  const totalAdminPay = useMemo(() => {
+    return sortedAccounts.reduce((acc, account) => acc + calculateAdminPay(account.employeeEmail, sortMonth), 0);
+  }, [sortedAccounts, calculateAdminPay, sortMonth]);
+
+  const totalDue = useMemo(() => totalBillSum - totalAdminPay, [totalBillSum, totalAdminPay]);
+
+  const totalSalary = useMemo(() => totalSpentSum * 7, [totalSpentSum]);
+
+  const salaryPaid = useMemo(() => {
+    return sortedAccounts.reduce((acc, account) => acc + calculateSelleryAmount(account.employeeEmail, sortMonth), 0);
+  }, [sortedAccounts, calculateSelleryAmount, sortMonth]);
+
+  const salaryUnpaid = useMemo(() => totalSalary - salaryPaid, [totalSalary, salaryPaid]);
+
+  const bonus = useMemo(() => {
+    return sortedAccounts.reduce((acc, account) => acc + calculateBonusAmount(account.employeeEmail, sortMonth), 0);
+  }, [sortedAccounts, calculateBonusAmount, sortMonth]);
 
   return (
     <div className='m-5'>
       <div className="flex justify-between mb-4">
         <select
-          className="px-4 py-2 border rounded bg-white text-black border-gray-700 "
+          className="px-4 py-2 border rounded bg-white text-black border-gray-700"
           onChange={(e) => setSortByEmployeeName(e.target.value)}
-          value={sortByEmployeeName || ""}
+          value={sortByEmployeeName}
         >
           <option value="">Select Employee</option>
           {[...new Set(aggregatedAccounts.map(account => account.employeeName))].map(employeeName => (
@@ -144,7 +118,7 @@ const Sellery = () => {
           ))}
         </select>
         <select
-          className=" px-4 py-2 border rounded bg-white text-black border-gray-700"
+          className="px-4 py-2 border rounded bg-white text-black border-gray-700"
           onChange={(e) => setSortMonth(e.target.value)}
           value={sortMonth || ""}
         >
@@ -183,7 +157,7 @@ const Sellery = () => {
               >
                 <td className="p-3 border-r-2 border-gray-300 text-center px-5">{index + 1}</td>
                 <td className="p-3 border-l-2 border-r-2 text-center border-gray-300">
-                  {account.month}
+                  {account.month} {account.years}
                 </td>
                 <td className="p-3 border-r-2 border-gray-300 text-center px-5">
                   <Link to={`/dashboard/employeerSellery/${account.employeeEmail}`} >
@@ -218,16 +192,34 @@ const Sellery = () => {
             ))}
           </tbody>
           <tfoot>
-            <tr className="bg-[#05a0db] text-white font-bold">
-              <td className="p-3" colSpan="3">Total</td>
-              <td className="p-3">${totalSpentSum.toFixed(2)}</td>
-              <td className="p-3">৳{totalBillSum.toFixed(2)}</td>
-              <td className="p-3">৳{totalAdminPay.toFixed(2)}</td>
-              <td className="p-3">৳{totalDue.toFixed(2)}</td>
-              <td className="p-3">৳{totalSalary.toFixed(2)}</td>
-              <td className="p-3">৳{salaryPaid.toFixed(2)}</td>
-              <td className="p-3">৳{salaryUnpaid.toFixed(2)}</td>
-              <td className="p-3">৳{bonus.toFixed(2)}</td>
+            <tr className="bg-[#05a0db] text-white text-center">
+              <td className="p-3 font-semibold text-lg" colSpan="3">
+                Total:
+              </td>
+              <td className="p-3 font-semibold text-lg">
+                $ {totalSpentSum.toFixed(2)}
+              </td>
+              <td className="p-3 font-semibold text-lg">
+                $ {totalBillSum.toFixed(2)}
+              </td>
+              <td className="p-3 font-semibold text-lg">
+                $ {totalAdminPay.toFixed(2)}
+              </td>
+              <td className="p-3 font-semibold text-lg">
+                $ {totalDue.toFixed(2)}
+              </td>
+              <td className="p-3 font-semibold text-lg">
+                $ {totalSalary.toFixed(2)}
+              </td>
+              <td className="p-3 font-semibold text-lg">
+                $ {salaryPaid.toFixed(2)}
+              </td>
+              <td className="p-3 font-semibold text-lg">
+                $ {salaryUnpaid.toFixed(2)}
+              </td>
+              <td className="p-3 font-semibold text-lg">
+                $ {bonus.toFixed(2)}
+              </td>
             </tr>
           </tfoot>
         </table>
