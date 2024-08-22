@@ -101,7 +101,7 @@ const Settings = () => {
   };
     return (
         <div>
-           <div className="text-white min-h-screen bg-gradient-to-r from-purple-200 via-pink-100 to-red-100 flex items-center justify-center p-10 overflow-x-hidden">
+           <div className="text-white min-h-screen  flex items-center justify-center p-10 overflow-x-hidden">
       <Helmet>
         <title>Settings | Digital Network </title>
         <link rel="canonical" href="https://www.example.com/" />

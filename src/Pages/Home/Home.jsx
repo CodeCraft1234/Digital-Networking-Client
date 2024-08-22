@@ -6,6 +6,7 @@ import useUsers from "../../Hook/useUsers";
 import MyProfile from "./MyProfile";
 import { Helmet } from "react-helmet-async";
 import AdsDashboardHome from "../DashboardRoot/AdsHome";
+import ClientHome from "./ClientHome";
 
 const Home = () => {
     const { user } = useContext(AuthContext);
@@ -15,7 +16,6 @@ const Home = () => {
     useEffect(() => {
         if (users && user) {
             const foundUser = users.find(u => u.email === user.email);
-            console.log(foundUser);
             setDdd(foundUser || {}); // Update state with found user or an empty object
         }
     }, [users, user]);
@@ -33,12 +33,12 @@ const Home = () => {
                 <div>
                     {ddd?.role === "admin" ? (
                         <Banner />
+                    ) : ddd?.role === "adsAccount" ? (
+                        <AdsDashboardHome />
+                    ) : ddd?.role === "employee" ? (
+                        <MyProfile />
                     ) : (
-                        ddd?.role === "adsAccount" ? (
-                            <AdsDashboardHome />
-                        ) : (
-                            <MyProfile />
-                        )
+                        <ClientHome />
                     )}
                 </div>
             ) : (

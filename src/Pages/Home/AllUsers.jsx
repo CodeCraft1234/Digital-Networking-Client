@@ -73,14 +73,14 @@ const AllUsers = () => {
   };
 
   return (
-    <div className="mt-5 mx-5 dark:text-green-800">
+    <div className="my-5 mx-5 dark:text-green-800">
       <Helmet>
         <title>All Users | Digital Network</title>
         <link rel="canonical" href="https://www.example.com/" />
       </Helmet>
 
-      <div className=" ">
-        <div className="overflow-x-auto">
+      <div className="text-black ">
+        <div className="overflow-x-auto rounded-xl">
           <table className="min-w-full bg-white">
             <thead className="bg-[#05a0db] text-white">
               <tr>
@@ -98,8 +98,8 @@ const AllUsers = () => {
                   key={user._id}
                   className={`${
                     index % 2 === 0
-                      ? "bg-white text-gray-500 border-b border-opacity-20"
-                      : "bg-gray-200 text-gray-500 border-b border-opacity-20"
+                      ? "bg-white text-black border-b border-opacity-20"
+                      : "bg-gray-200 text-black border-b border-opacity-20"
                   }`}
                 >
                   <td className="p-3 border-l-2 border-r-2 border-gray-300 text-center">

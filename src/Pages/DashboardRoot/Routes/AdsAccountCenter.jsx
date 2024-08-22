@@ -164,7 +164,7 @@ const sortedAdsAccounts = [...filteredAdsAccounts].sort((a, b) => {
 });
 
     return (
-        <div className=" p-4 dark:text-green-800">
+        <div className=" p-5 dark:text-green-800">
         <Helmet>
          <title>Ads Account | Digital Network </title>
          <link rel="canonical" href="https://www.example.com/" />
@@ -229,7 +229,7 @@ const sortedAdsAccounts = [...filteredAdsAccounts].sort((a, b) => {
                 />
             </div>
  
-     <div className="overflow-x-auto mt-6">
+     <div className="overflow-x-auto rounded-xl mt-5">
        <table className="min-w-full bg-white">
          <thead className="bg-[#05a0db] text-white">
            <tr>

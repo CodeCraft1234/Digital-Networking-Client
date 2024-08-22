@@ -51,29 +51,29 @@ const AllEmployee = () => {
   };
 
   return (
-    <div className="mt-5 p-4 dark:text-green-800">
+    <div className=" p-5 dark:text-green-800">
       <Helmet>
         <title>All Employee | Digital Network </title>
         <link rel="canonical" href="https://www.example.com/" />
       </Helmet>
 
       <Link to={`/dashboard/addEmployee`}>
-        <button className="text-xl border-black border text-white btn-outline px-2 text-black mx-auto bg-[#05a0db] rounded-lg py-2">
+        <button className="text-xl border-black border text-white btn-outline px-2  mx-auto bg-[#05a0db] rounded-lg py-2">
           <h1>Add An Employee</h1>
         </button>
       </Link>
 
-      <div className="overflow-x-auto mt-5">
+      <div className="overflow-x-auto rounded-xl border border-gray-400 mt-5">
         <table className="min-w-full bg-white border">
           <thead>
             <tr className="w-full bg-blue-500 text-white">
-              <th className="px-6 py-3 border">SL</th>
-              <th className="px-6 py-3 border">Profile</th>
-              <th className="px-6 py-3 border">Full Name</th>
-              <th className="px-6 py-3 border">Email</th>
-              <th className="px-6 py-3 border">Number</th>
-              <th className="px-6 py-3 border">Address</th>
-              <th className="px-6 py-3 border">Action</th>
+              <th className="px-6 py-3 ">SL</th>
+              <th className="px-6 py-3 ">Profile</th>
+              <th className="px-6 py-3 ">Full Name</th>
+              <th className="px-6 py-3 ">Email</th>
+              <th className="px-6 py-3 ">Number</th>
+              <th className="px-6 py-3 ">Address</th>
+              <th className="px-6 py-3 ">Action</th>
             </tr>
           </thead>
           <tbody>

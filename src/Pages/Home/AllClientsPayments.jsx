@@ -6,6 +6,8 @@ import { Helmet } from "react-helmet-async";
 import useMpayment from "../../Hook/UseMpayment";
 import Swal from "sweetalert2";
 import { MdDelete, MdEditSquare } from "react-icons/md";
+import { Link } from "react-router-dom";
+import useUsers from "../../Hook/useUsers";
 
 const AllClientsPayments = () => {
   const [MPayment, refetch] = useMpayment();
@@ -15,18 +17,21 @@ const AllClientsPayments = () => {
   const [selectedCategory, setSelectedCategory] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredData, setFilteredData] = useState([]);
-
+  const [selectedEmployee, setSelectedEmployee] = useState("");
   const [totalPayment, setTotalPayment] = useState(0);
   const [payment, setPayment] = useState([]);
+  const [users]=useUsers()
+  const [employees, setEmployees] = useState([]);
+
 
   useEffect(() => {
-    setPayment(MPayment);
-    const totalBill = MPayment.reduce(
-      (acc, campaign) => acc + parseFloat(campaign.amount),
-      0
-    );
-    setTotalPayment(totalBill);
-  }, [MPayment]);
+    if (users) {
+      const employeeList = users.filter((u) => u.role === "employee");
+      setEmployees(employeeList);
+    }
+  }, [users]);
+
+
 
   // Set default sortMonth to current month when component mounts
   useEffect(() => {
@@ -36,6 +41,10 @@ const AllClientsPayments = () => {
 
   useEffect(() => {
     let filtered = MPayment;
+
+    if (selectedEmployee) {
+      filtered = filtered.filter((c) => c.employeeEmail === selectedEmployee);
+    }
 
     if (sortMonth) {
       filtered = filtered.filter(
@@ -61,7 +70,7 @@ const AllClientsPayments = () => {
     }
 
     setFilteredData(filtered);
-  }, [sortMonth, selectedDate, selectedCategory, searchQuery, MPayment]);
+  }, [sortMonth, selectedDate, selectedCategory, searchQuery, MPayment,selectedEmployee]);
 
   const handleDelete = (id) => {
     AxiosPublic.delete(`/MPayment/${id}`).then((res) => {
@@ -154,14 +163,23 @@ const AllClientsPayments = () => {
   const [itemsToShow, setItemsToShow] = useState(200); // Number of items to show initially
   const displayedItems = showAll ? filteredData : filteredData.slice(0, itemsToShow);
 
+
+  useEffect(() => {
+    setPayment(MPayment);
+    const totalBill = displayedItems.reduce(
+      (acc, campaign) => acc + parseFloat(campaign.amount),
+      0
+    );
+    setTotalPayment(totalBill);
+  }, [MPayment,displayedItems]);
   return (
-    <div className="mt-5">
+    <div className="">
       <Helmet>
         <title>Client Payment | Digital Network </title>
         <link rel="canonical" href="https://www.example.com/" />
       </Helmet>
 
-      <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 mb-3  lg:grid-cols-5 gap-8 mt-4 p-4">
+      <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3  lg:grid-cols-5 gap-8 mt-4 p-5">
    <div className="balance-card bg-white rounded-2xl shadow-lg p-5 text-center  transition-transform transform hover:scale-105 border-0">
      <img className="balance-card-img" src="https://i.ibb.co/bHMLyvM/b-Kash-Merchant.png" alt="bKash" />
      <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"> <span className="text-lg lg:text-2xl font-extrabold"> ৳</span> {bkashMarcent}</p>
@@ -188,12 +206,28 @@ const AllClientsPayments = () => {
      </div>
 
 {/* ///////////////////////////////////////////////////////////////// */}
-      <div className="flex text-black justify-between gap-4 items-center">
-        <div className="flex justify-center items-center gap-5 mb-4 ml-10 mx-auto">
-          <div className="flex flex-col justify-center items-center">
-            <label className="">By Month</label>
+      <div className="flex text-black justify-end gap-5 items-center">
+        <div className="flex justify-center items-center gap-5   ">
+
+        <div className="flex flex-col justify-start text-start items-start">
+         
+         <select
+           className="border bg-white text-black border-gray-400 rounded p-2 mt-1 "
+           value={selectedEmployee}
+           onChange={(e) => setSelectedEmployee(e.target.value)}
+         >
+           <option value="">All Employee</option>
+           {employees.map((employee) => (
+             <option key={employee._id} value={employee.email}>
+               {employee.name}
+             </option>
+           ))}
+         </select>
+       </div>
+          <div className="flex flex-col justify-start items-start">
+           
             <select
-              className="border bg-blue-200 text-black border-gray-400 rounded p-2 mt-1"
+              className="border bg-white text-black border-gray-400 rounded p-2 mt-1"
               value={sortMonth}
               onChange={(e) => setSortMonth(e.target.value)}
             >
@@ -218,19 +252,19 @@ const AllClientsPayments = () => {
               ))}
             </select>
           </div>
-          <div className="flex flex-col justify-center items-center">
-            <label className="block ">By Date</label>
+          <div className="flex flex-col justify-center items-start">
+         
             <input
               type="date"
-              className="border rounded bg-blue-200 text-black border-gray-400 p-2 mt-1"
+              className="border rounded bg-white text-black border-gray-400 p-2 mt-1"
               value={selectedDate}
               onChange={(e) => setSelectedDate(e.target.value)}
             />
           </div>
-          <div className="flex flex-col justify-center items-center">
-            <label className="block ml-2">Payment Method</label>
+          <div className="flex flex-col justify-center items-start">
+         
             <select
-              className="border bg-blue-200 text-black border-gray-400 rounded p-2 mt-1"
+              className="border bg-white text-black border-gray-400 rounded p-2 mt-1"
               value={selectedCategory}
               onChange={(e) => setSelectedCategory(e.target.value)}
             >
@@ -243,11 +277,11 @@ const AllClientsPayments = () => {
             </select>
           </div>
         </div>
-        <div className="flex justify-end">
+        <div className="">
           <input
             type="text"
             placeholder="Payment Method"
-            className="rounded-lg placeholder-black border-2 border-gray-700 p-2 mr-5 text-black  bg-white"
+            className="rounded-lg placeholder-black bg-white border mt-1 border-gray-700 p-2 mr-5 text-black"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
@@ -255,12 +289,13 @@ const AllClientsPayments = () => {
         </div>
       </div>
 
-      <div className="overflow-x-auto mt-6 border-2 border-black mx-4">
+      <div className="overflow-x-auto text-black rounded-xl mt-5 border border-gray-400 mx-5">
         <table className="min-w-full bg-white">
           <thead className="bg-[#05a0db] text-white">
             <tr>
               <th className="p-3">SL</th>
               <th className="p-3">Payment Date</th>
+              <th className="p-3">Client Name</th>
               <th className="p-3">Payment Amount</th>
               <th className="p-3">Payment Method</th>
               <th className="p-3">Note</th>
@@ -278,6 +313,12 @@ const AllClientsPayments = () => {
                 </td>
                 <td className="p-3 border-r-2 border-gray-200 text-center">
                   {new Date(payment.date).toLocaleDateString("en-GB")}
+                </td>
+
+                <td className="p-3 border-r-2 border-gray-200 text-center">
+                <Link to={`/dashboard/client/${payment.clientEmail}`}>
+                {payment.clientName}
+                </Link>
                 </td>
               
                 <td className="p-3 border-r-2 border-gray-200 text-center">
@@ -345,14 +386,14 @@ const AllClientsPayments = () => {
             ))}
           </tbody>
           <tr className="bg-[#05a0db] text-white font-bold">
-              <td className="p-3 text-center" colSpan="1">
+              <td className="p-3 text-right" colSpan="3">
                 Total Amount =
               </td>
               <td className="p-3 text-center">৳ {totalPayment}</td>
               <td className="p-3 text-center"></td>
               <td className="p-3 text-center"></td>
               <td className="p-3 text-center"></td>
-              <td className="p-3 text-center"></td>
+            
             </tr>
         </table>
       </div>
@@ -360,7 +401,7 @@ const AllClientsPayments = () => {
       {isModalOpen && selectedPayment && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
           <div className="bg-white p-6 rounded-lg">
-            <h2 className="text-lg font-medium mb-4 text-black">Edit Payment</h2>
+            <h2 className="text-lg font-medium mb-4 text-center text-black">Edit Payment</h2>
             <form onSubmit={handleUpdate}>
               <div className="mb-4">
                 <label htmlFor="date" className="block text-gray-700">

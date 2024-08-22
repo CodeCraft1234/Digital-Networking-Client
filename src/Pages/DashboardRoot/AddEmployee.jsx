@@ -59,7 +59,7 @@ const AddEmployee = () => {
               value={name}
               onChange={(e) => setName(e.target.value)}
               className="mt-1 block w-full p-2 border bg-white border-gray-300 rounded shadow-sm focus:ring-blue-500 focus:border-blue-500"
-              placeholder="Enter client name"
+              placeholder="Enter employee name..."
               required
             />
           </div>
@@ -109,7 +109,7 @@ const AddEmployee = () => {
             type="submit"
             className="w-full bg-blue-500 text-white p-2 rounded shadow hover:bg-blue-600 transition duration-200"
           >
-            Add Client
+            Add Employee
           </button>
         </form>
       </div>

@@ -9,6 +9,7 @@ import { toast, ToastContainer } from 'react-toastify';
 import Swal from 'sweetalert2';
 import { Helmet } from 'react-helmet-async';
 import { MdDelete, MdEditSquare } from 'react-icons/md';
+import { ImCross } from 'react-icons/im';
 
 const MyClients = () => {
     const { user }=useContext(AuthContext)
@@ -111,11 +112,8 @@ const MyClients = () => {
   
       AxiosPublic.post("https://digital-networking-server.vercel.app/clients", data)
       .then((res) => {
-        // toast.success("Client Added successfully");
-        console.log(res.data);
         refetch();
-        toast.success("Add successful!");
-        
+        Swal.fire("added is Successfully!");
     })
     };
     const [bkashMarcent,setBkashMarcentTotal]=useState(0)
@@ -167,25 +165,6 @@ const MyClients = () => {
       : filteredItems;
   
   
-      const handleUpdate = (e, id) => {
-        e.preventDefault();
-      
-        const clientName = e.target.clientName.value;
-        const clientPhone = e.target.clientPhone.value;
-        const data = { clientName, clientPhone };
-      
-        AxiosPublic.patch(`https://digital-networking-server.vercel.app/clients/${id}`, data)
-          .then(res => {
-            console.log(res.data);
-            refetch(); // Ensure this function is defined and correct
-            toast.success("Client updated successfully");
-          })
-          .catch(error => {
-            console.error("Error updating client:", error);
-            toast.error("Failed to update client");
-          });
-      };
-  
   
       const handledelete = (id) => {
         AxiosPublic.delete(`/clients/${id}`).then((res) => {
@@ -194,9 +173,6 @@ const MyClients = () => {
         });
 
      }
-  console.log(filteredByCategory);
-
-
        const handleUpdate2 = (e, id) => {
         e.preventDefault();
         const clientName = e.target.clientName.value;
@@ -222,7 +198,7 @@ const MyClients = () => {
     return (
         <div className='mx-5'>
            <ToastContainer />
-             <div className="overflow-x-auto   mt-5">
+             <div className="overflow-x-auto   ">
 
       <Helmet>
         <title> My Client | Digital Network</title>
@@ -232,34 +208,37 @@ const MyClients = () => {
 
 
       <div className="grid lg:grid-cols-4 text-black sm:grid-cols-2 gap-5 justify-around py-5">
-        <div className="px-5 py-10 rounded-2xl bg-[#05a0db] text-white shadow-lg text-center">
+        <div className="px-5 py-10 rounded-2xl bg-[#c6e529] text-white shadow-lg text-center">
           <h2 className="text-2xl font-bold">Total Spent</h2>
-          <p className="text-4xl font-bold mt-2"> $ {totalSpent}</p>
+          <p className="text-4xl font-bold mt-2"> $ {totalSpent || 0.00}</p>
         </div>
 
-        <div className="px-5 py-10 rounded-2xl bg-[#05a0db] text-white shadow-lg text-center">
+        <div className="px-5 py-10 rounded-2xl bg-[#5422c0] text-white shadow-lg text-center">
           <h2 className="text-2xl font-bold">Total Bill</h2>
           <p className="text-4xl font-bold mt-2"><span className='font-extrabold text-4xl'> ৳ </span>
-          {totalbill}
+          {totalSpent *140 || 0.00}
           </p>
         </div>
 
         <div className="px-5 py-10 rounded-2xl bg-[#05a0db] text-white shadow-lg text-center">
           <h2 className="text-2xl font-bold">Total Paid</h2>
-          <p className="text-4xl font-bold mt-2"> <span className='font-extrabold text-4xl'> ৳ </span> {totalRCV}</p>
+          <p className="text-4xl font-bold mt-2"> <span className='font-extrabold text-4xl'> ৳ </span> {totalRCV || 0.00}</p>
         </div>
 
-        <div className="px-5 py-10 rounded-2xl bg-[#05a0db] text-white shadow-lg text-center">
+        <div className="px-5 py-10 rounded-2xl  bg-[#ce1a38] text-white shadow-lg text-center">
           <h2 className="text-2xl font-bold">Total DUE</h2>
           <p className="text-4xl font-bold mt-2">
-          <span className='font-extrabold text-4xl'> ৳ </span>{totalDue}
+          <span className='font-extrabold text-4xl'> ৳ </span>{totalDue || 0.00} 
           </p>
         </div>
       </div>
 
+
+     
+
 <div className="flex justify-between items-center ">
 
-<div className="flex justify-start mb-5 text-gray-500 border-b border-opacity-20 mx-2 pb-1 items-center gap-3">
+<div className="flex justify-start  text-gray-500  mx-2 pb-1 items-center gap-5 mb-3">
 {
   ddd?.role === 'admin' ? <></> : <div>
   <button
@@ -273,6 +252,12 @@ const MyClients = () => {
       <form onSubmit={handleaddblog}>
      
           <div className="mb-4">
+          <h1
+             className=" text-black flex hover:text-red-500  justify-end  text-end"
+             onClick={() => document.getElementById("my_modal_2").close()}
+           >
+            <ImCross />
+           </h1>
             <label className="block text-black">Client Name</label>
             <input
               id="name"
@@ -340,11 +325,11 @@ const MyClients = () => {
 </Link>
   </div>
 </div>
-<div className="flex justify-end mb-6">
+<div className="flex justify-end mb-5">
           <input
             type="text"
             placeholder=" Client Phone Number...."
-            className=" rounded-lg w-full placeholder-black border-2 border-black p-2 font-bold text-black text-sm bg-white"
+            className=" rounded-lg w-full placeholder-black border border-gray-700 p-2 font-bold text-black text-sm bg-white"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
@@ -352,8 +337,8 @@ const MyClients = () => {
 </div>
 </div>
 
-
-<table className="min-w-full bg-white">
+<div className="overflow-x-auto text-black mb-5 rounded-lg border-black">
+<table className="min-w-full rounded-xl">
 <thead className="bg-[#05a0db] text-white">
 <tr>
 <th className="p-3 text-center">SL</th>
@@ -373,30 +358,40 @@ const MyClients = () => {
   key={campaign._id}
   className={`${
     index % 2 === 0
-      ? "text-gray-500 border-b border-opacity-20 hover:text-blue-600"
-      : "text-gray-500 border-b border-opacity-20 hover:text-blue-600"
+      ? "text-black border-b border-opacity-20 hover:text-blue-600"
+      : "text-black border-b border-opacity-20 hover:text-blue-600"
   }`}
 >
-  <td className="p-3 border-r border-gray-400 border-l text-start ">{index + 1}</td>
+  <td className="p-3 border-r border-gray-400 border-l text-center ">{index + 1}</td>
 
   <Link to={`/dashboard/client/${campaign.clientEmail}`}>
     <td className="p-3 border-r border-gray-400 flex hover:font-bold hover:bg-yellow-50 justify-start text-start">{campaign.clientName}</td>
   </Link>
-  <td className="p-3 border-r border-gray-400  text-start">{campaign.clientPhone}</td>
-  <td className="p-3 border-r border-gray-400 text-center">$ {campaign.tBudged}</td>
-  <td className="p-3 border-r border-gray-400 text-center">$ {campaign.tSpent}</td>
-  <td className="p-3 border-r border-gray-400 text-center">৳ {campaign.tBill}</td>
-  <td className="p-3 border-r border-gray-400 text-center">৳ {campaign.tPayment}</td>
+  <td className="p-3 border-r border-gray-400 text-start">{campaign.clientPhone}</td>
+<td className="p-3 border-r border-gray-400 text-center">
+  $ {Number(campaign.tBudged).toFixed(2)}
+</td>
+<td className="p-3 border-r border-gray-400 text-center">
+  $ {Number(campaign.tSpent).toFixed(2)}
+</td>
+<td className="p-3 border-r border-gray-400 text-center">
+  ৳ {Number(campaign.tBill).toFixed(2) || 0.00}
+</td>
+<td className="p-3 border-r border-gray-400 text-center">
+  ৳ {Number(campaign.tPayment || 0).toFixed(2) || '0.00'}
+</td>
+
   <td className="p-3 border-r border-gray-400 text-center">
-          ৳ {
-            !isNaN(Number(campaign.tBill)) && !isNaN(Number(campaign.tPaid)) 
-            ? Number(campaign.tBill) - Number(campaign.tPayment) 
-            : 'Invalid Data'
-          }
-        </td>
+  ৳ {
+    !isNaN(Number(campaign.tBill)) && !isNaN(Number(campaign.tPaid)) 
+    ? (Number(campaign.tBill) - Number(campaign.tPayment || 0)).toFixed(2) 
+    : '0.00'
+  }
+</td>
+
 
   <td className="p-3 border-r text-center border-gray-400">
-  <div className="flex justify-center items-center gap-3">
+  <div className="flex justify-center items-center items-center gap-3">
   <div>
   <button
     className="text-blue-700 text-3xl"
@@ -471,6 +466,7 @@ const MyClients = () => {
                           className="text-center  text-black text-3xl"
                           onClick={() => handledelete(campaign._id)}
                         >
+                          <ToastContainer></ToastContainer>
                           <MdDelete />
                         </button>
                       </div>
@@ -494,6 +490,7 @@ const MyClients = () => {
 </tbody>
 </table>
 
+  </div>
   </div>
   
         </div>

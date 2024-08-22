@@ -152,12 +152,12 @@ const AllAdsPayments = () => {
   const displayedItems = showAll ? filteredByCategory : filteredByCategory.slice(0, itemsToShow);
 
   return (
-    <div className="mt-5">
+    <div className="mb-5">
       <Helmet>
         <title>All Payments | Digital Network </title>
         <link rel="canonical" href="https://www.example.com/" />
       </Helmet>
-      <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 mb-3  lg:grid-cols-5 gap-8 mt-4 p-4">
+      <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3   lg:grid-cols-5 gap-5  p-5">
    <div className="balance-card bg-white rounded-2xl shadow-lg p-5 text-center  transition-transform transform hover:scale-105 border-0">
      <img className="balance-card-img" src="https://i.ibb.co/bHMLyvM/b-Kash-Merchant.png" alt="bKash" />
      <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"> <span className="text-lg lg:text-2xl font-extrabold"> ৳</span> {bkashMarcent}</p>
@@ -182,12 +182,12 @@ const AllAdsPayments = () => {
      <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"><span className="text-lg lg:text-2xl font-extrabold"> ৳</span> {bankTotal}</p>
    </div>
      </div>
-      <div className="flex text-black justify-between gap-4 mr-5 items-center">
-        <div className="flex justify-start items-center gap-5 mb-4 mx-5">
-          <div className="flex flex-col justify-center items-center">
-            <label className="">By Month</label>
+      <div className="flex text-black justify-end gap-5 mr-5 items-center">
+        <div className="flex justify-end items-center gap-5">
+          <div className="flex flex-col justify-center items-start">
+           
             <select
-              className="border bg-blue-200 text-black border-gray-400 rounded p-2 mt-1"
+              className="border bg-white text-black border-gray-400 rounded p-2 mt-1"
               value={sortMonth}
               onChange={(e) => setSortMonth(e.target.value)}
             >
@@ -212,19 +212,19 @@ const AllAdsPayments = () => {
               ))}
             </select>
           </div>
-          <div className="flex flex-col justify-center items-center">
-            <label className="block ">By Date</label>
+          <div className="flex flex-col justify-center items-start">
+           
             <input
               type="date"
-              className="border rounded bg-blue-200 text-black border-gray-400 p-2 mt-1"
+              className="border rounded bg-white text-black border-gray-400 p-2 mt-1"
               value={selectedDate}
               onChange={(e) => setSelectedDate(e.target.value)}
             />
           </div>
-          <div className="flex flex-col justify-center items-center">
-            <label className="block ml-2">Payment Method</label>
+          <div className="flex flex-col justify-center items-start">
+          
             <select
-              className="border bg-blue-200 text-black border-gray-400 rounded p-2 mt-1"
+              className="border bg-white text-black border-gray-400 rounded p-2 mt-1"
               value={selectedCategory}
               onChange={(e) => setSelectedCategory(e.target.value)}
             >
@@ -237,11 +237,12 @@ const AllAdsPayments = () => {
             </select>
           </div>
         </div>
-        <div className="flex justify-end">
+        <div className="">
+      
           <input
             type="text"
             placeholder="Payment Method"
-            className="rounded-lg w-full placeholder-black border-2 border-gray-700 p-2  text-black  bg-white"
+            className="rounded-lg w-full bg-white placeholder-black border border-gray-700 p-2  text-black  "
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
@@ -249,7 +250,7 @@ const AllAdsPayments = () => {
         </div>
       </div>
 
-      <div className="overflow-x-auto mt-6 border-2 border-black mx-4">
+      <div className="overflow-x-auto text-black rounded-xl mt-5 border border-black mx-5">
         <table className="min-w-full bg-white">
           <thead className="bg-[#05a0db] text-white">
             <tr>
@@ -337,17 +338,25 @@ const AllAdsPayments = () => {
                 </td>
               </tr>
             ))}
+             <tr className="bg-[#05a0db] text-white font-bold">
+              <td className="p-3 text-right" colSpan="2">
+                Total Amount =
+              </td>
+              <td className="p-3 text-center">৳ {totalPayment}</td>
+              <td className="p-3 text-center"></td>
+              <td className="p-3 text-center"></td>
+              <td className="p-3 text-center"></td>
+              <td className="p-3 text-center"></td>
+            </tr>
           </tbody>
         </table>
       </div>
-      <h1 className="text-2xl font-semibold ml-6 mt-3 text-black">
-        Total Payments: {totalPayment} Taka
-      </h1>
+    
 
       {isModalOpen && selectedPayment && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
           <div className="bg-white p-6 rounded-lg">
-            <h2 className="text-lg font-medium mb-4">Edit Payment</h2>
+            <h2 className="text-lg font-medium text-center text-black mb-4">Edit Payment</h2>
             <form onSubmit={handleUpdate}>
               <div className="mb-4">
                 <label htmlFor="date" className="block text-gray-700">

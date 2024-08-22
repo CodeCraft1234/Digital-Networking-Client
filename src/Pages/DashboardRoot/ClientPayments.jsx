@@ -6,73 +6,70 @@ import { Helmet } from "react-helmet-async";
 import useMpayment from "../../Hook/UseMpayment";
 import Swal from "sweetalert2";
 import { MdDelete, MdEditSquare } from "react-icons/md";
+import { toast } from "react-toastify";
+import { Link } from "react-router-dom";
 
 const ClientPayments = () => {
   const [MPayment, refetch] = useMpayment();
   const AxiosPublic = UseAxiosPublic();
   const { user } = useContext(AuthContext);
   const [data, setData] = useState([]);
-  const [sortMonth, setSortMonth] = useState("");
+  const [sortMonth, setSortMonth] = useState(new Date().getMonth() + 1); // Default to current month
   const [selectedDate, setSelectedDate] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredData, setFilteredData] = useState([]);
-
-
-
+  
   const [totalPayment, setTotalPayment] = useState(0);
   const [payment, setPayment] = useState([]);
-  console.log(payment);
-
+  
   useEffect(() => {
-    const realdata = MPayment.filter(
-      (m) => m.employeeEmail === user?.email
-    );
-    setPayment(realdata)
-    const totalBill = realdata.reduce(
-      (acc, campaign) => acc + parseFloat(campaign.amount),
-      0
-    );
+    const realdata = MPayment.filter((m) => m.employeeEmail === user?.email);
+    setPayment(realdata);
+    
+    const totalBill = filteredData.reduce((acc, campaign) => acc + parseFloat(campaign.amount), 0);
     setTotalPayment(totalBill);
-  }, [MPayment, user?.email]);
-
-  useEffect(() => {
-    const finds = MPayment.filter((f) => f.employeeEmail === user?.email);
-    setData(finds);
-  }, [MPayment, user]);
-
+  }, [MPayment,filteredData, user?.email]);
+  
   useEffect(() => {
     let filtered = data;
-
+  
+    // Apply default month filtering
     if (sortMonth) {
       filtered = filtered.filter(
         (payment) =>
           new Date(payment.date).getMonth() + 1 === parseInt(sortMonth)
       );
     }
-
+  
     if (selectedDate) {
       filtered = filtered.filter((payment) => payment.date === selectedDate);
     }
-
+  
     if (selectedCategory) {
       filtered = filtered.filter(
         (payment) => payment.paymentMethod === selectedCategory
       );
     }
-
+  
     if (searchQuery) {
       filtered = filtered.filter((payment) =>
         payment.paymentMethod.toLowerCase().includes(searchQuery.toLowerCase())
       );
     }
-
+  
     setFilteredData(filtered);
   }, [sortMonth, selectedDate, selectedCategory, searchQuery, data]);
+  
+  useEffect(() => {
+    const finds = MPayment.filter((f) => f.employeeEmail === user?.email);
+    setData(finds);
+  }, [MPayment, user]);
 
   const handleDelete = (id) => {
 
         AxiosPublic.delete(`/MPayment/${id}`).then((res) => {
+          toast.success("Delete successful!");
           refetch();
          
           })
@@ -111,6 +108,7 @@ const ClientPayments = () => {
       `https://digital-networking-server.vercel.app/Mpayment/${selectedPayment._id}`,
       updatedPayment
     ).then((res) => {
+      toast.success("Payment Update successful!");
       handleCancel();
       refetch();
     });
@@ -159,7 +157,7 @@ const ClientPayments = () => {
         <link rel="canonical" href="https://www.example.com/" />
       </Helmet>
 
-      <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 mb-3  lg:grid-cols-5 gap-8 mt-4 p-4">
+      <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3  lg:grid-cols-5 gap-5  p-5">
    <div className="balance-card bg-white rounded-2xl shadow-lg p-5 text-center  transition-transform transform hover:scale-105 border-0">
      <img className="balance-card-img" src="https://i.ibb.co/bHMLyvM/b-Kash-Merchant.png" alt="bKash" />
      <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"> <span className="text-lg lg:text-2xl font-extrabold"> ৳</span> {bkashMarcent}</p>
@@ -186,80 +184,82 @@ const ClientPayments = () => {
      </div>
 
 {/* ///////////////////////////////////////////////////////////////// */}
-      <div className="flex text-black justify-between gap-4 items-center">
-        <div className="flex justify-center items-center gap-5 mb-4 ml-5 mx-auto">
-          <div className="flex flex-col justify-center items-center">
-            <label className="">By Month</label>
-            <select
-              className="border bg-blue-200 text-black border-gray-400 rounded p-2 mt-1"
-              value={sortMonth}
-              onChange={(e) => setSortMonth(e.target.value)}
-            >
-              <option value="">Select Month</option>
-              {[
-                "January",
-                "February",
-                "March",
-                "April",
-                "May",
-                "June",
-                "July",
-                "August",
-                "September",
-                "October",
-                "November",
-                "December",
-              ].map((month, index) => (
-                <option key={index + 1} value={index + 1}>
-                  {month}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div className="flex flex-col justify-center items-center">
-            <label className="block ">By Date</label>
-            <input
-              type="date"
-              className="border rounded bg-blue-200 text-black border-gray-400 p-2 mt-1"
-              value={selectedDate}
-              onChange={(e) => setSelectedDate(e.target.value)}
-            />
-          </div>
-          <div className="flex flex-col justify-center items-center">
-            <label className="block ml-2">Payment Method</label>
-            <select
-              className="border bg-blue-200 text-black border-gray-400 rounded p-2 mt-1"
-              value={selectedCategory}
-              onChange={(e) => setSelectedCategory(e.target.value)}
-            >
-              <option value="">All Methods</option>
-              <option value="bkashPersonal">bKash Personal</option>
-              <option value="bkashMarchent">bKash Marcent</option>
-              <option value="nagadPersonal">Nagad Personal</option>
-              <option value="rocketPersonal">Rocket Personal</option>
-              <option value="bank">Bank</option>
-            </select>
-          </div>
-        </div>
-        <div className="flex mr-5 justify-end">
-          <input
-            type="text"
-            placeholder="Payment Method..."
-            className="rounded-lg placeholder-black border-2 border-black p-2 font-bold text-black  bg-white"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
-        
-        </div>
-      </div>
+<div className="flex justify-end items-end gap-4 text-black">
+  <div className="flex flex-col justify-center items-center mb-5">
+   
+    <select
+      className="border bg-white text-black border-gray-400 rounded p-2 mt-1"
+      value={sortMonth}
+      onChange={(e) => setSortMonth(e.target.value)}
+    >
+      <option value="">Select Month</option>
+      {[
+        "January",
+        "February",
+        "March",
+        "April",
+        "May",
+        "June",
+        "July",
+        "August",
+        "September",
+        "October",
+        "November",
+        "December",
+      ].map((month, index) => (
+        <option key={index + 1} value={index + 1}>
+          {month}
+        </option>
+      ))}
+    </select>
+  </div>
 
-      <div className="overflow-x-auto  border-2 border-black mx-4">
+  <div className="flex flex-col justify-center items-center mb-5">
+    
+    <input
+      type="date"
+      className="border bg-white text-black border-gray-400 rounded p-2 mt-1"
+      value={selectedDate}
+      onChange={(e) => setSelectedDate(e.target.value)}
+    />
+  </div>
+
+  <div className="flex flex-col justify-center items-center mb-5">
+   
+    <select
+      className="border bg-white text-black border-gray-400 rounded p-2 mt-1"
+      value={selectedCategory}
+      onChange={(e) => setSelectedCategory(e.target.value)}
+    >
+      <option value="">All Methods</option>
+      <option value="bkashPersonal">bKash Personal</option>
+      <option value="bkashMarchent">bKash Marcent</option>
+      <option value="nagadPersonal">Nagad Personal</option>
+      <option value="rocketPersonal">Rocket Personal</option>
+      <option value="bank">Bank</option>
+    </select>
+  </div>
+
+  <div className="flex flex-col justify-end items-end mb-5 mr-5">
+    <input
+      type="text"
+      placeholder="Payment Method..."
+      className="border bg-white text-black placeholder:text-black border-gray-400 rounded p-2 mt-1"
+      value={searchQuery}
+      onChange={(e) => setSearchQuery(e.target.value)}
+    />
+  </div>
+</div>
+
+
+      <div className="overflow-x-auto text-black rounded-xl mx-5">
         <table className="min-w-full bg-white">
           <thead className="bg-[#05a0db] text-white">
             <tr>
               <th className="p-3">SL</th>
-              <th className="p-3">Payment Date</th>
-              <th className="p-3">Payment Amount</th>
+              <th className="p-3">Date</th>
+              <th className="p-3">Client Name</th>
+              <th className="p-3">Amount</th>
               <th className="p-3">Payment Method</th>
               <th className="p-3">Note</th>
               <th className="p-3">Action</th>
@@ -277,10 +277,17 @@ const ClientPayments = () => {
                 <td className="p-3 border-r-2 border-gray-200 text-center">
                   {new Date(payment.date).toLocaleDateString("en-GB")}
                 </td>
+                <td className="p-3 border-r-2 border-gray-200 text-center">
+                <Link to={`/dashboard/client/${payment.clientEmail}`}>
+                {payment.clientName}
+                </Link>
+                 
+                </td>
               
                 <td className="p-3 border-r-2 border-gray-200 text-center">
                   ৳ {payment.amount}
                 </td>
+               
                 <td className="p-3 border-r-2 border-gray-200 text-center">
                   {payment.paymentMethod === "bkashMarchent" && (
                     <img
@@ -343,96 +350,105 @@ const ClientPayments = () => {
             ))}
           </tbody>
           <tr className="bg-[#05a0db] text-white font-bold">
-              <td className="p-3 text-center" colSpan="2">
+              <td className="p-3 text-right" colSpan="3">
                 Total Amount =
               </td>
               <td className="p-3 text-center">৳ {totalPayment}</td>
               <td className="p-3 text-center"></td>
               <td className="p-3 text-center"></td>
               <td className="p-3 text-center"></td>
+           
              
             </tr>
         </table>
       </div>
      
       {isModalOpen && selectedPayment && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="bg-white p-6 rounded-lg">
-            <h2 className="text-lg font-medium mb-4">Edit Payment</h2>
-            <form onSubmit={handleUpdate}>
-              <div className="mb-4">
-                <label htmlFor="date" className="block text-gray-700">
-                  Date
-                </label>
-                <input
-                  type="date"
-                  id="date"
-                  name="date"
-                  defaultValue={selectedPayment.date}
-                  className="w-full border bg-white border-black  p-2 rounded-lg"
-                  required
-                />
-              </div>
-              <div className="mb-4">
-                <label htmlFor="amount" className="block text-gray-700">
-                  Payment Amount
-                </label>
-                <input
-                  type="number"
-                  id="amount"
-                  name="amount"
-                  defaultValue={selectedPayment.amount}
-                  className="w-full border bg-white border-black p-2 rounded-lg"
-                  required
-                />
-              </div>
-              <div className="mb-4">
-                <label htmlFor="method" className="block text-gray-700">
-                  Payment Method
-                </label>
-                <select
-                  id="paymentMethod"
-                  name="paymentMethod"
-                  defaultValue={selectedPayment.paymentMethod}
-                  className="w-full border bg-white border-black p-2 rounded-lg"
-                  required
-                >
-                  <option value="bkashPersonal">bKash Personal</option>
-                  <option value="bkashMarchent">bKash Marcent</option>
-                  <option value="nagadPersonal">Nagad Personal</option>
-                  <option value="rocketPersonal">Rocket Personal</option>
-                  <option value="bank">Bank</option>
-                </select>
-              </div>
-              <div className="mb-4">
-                <label htmlFor="note" className="block text-gray-700">
-                  Note
-                </label>
-                <textarea
-                  id="note"
-                  name="note"
-                  defaultValue={selectedPayment.note}
-                  className="w-full border bg-white border-black p-2 rounded-lg"
-                ></textarea>
-              </div>
-              <div className="flex justify-center">
-                <button
-                  type="button"
-                  onClick={handleCancel}
-                  className="bg-gray-300 text-gray-800 px-4 py-2 rounded mr-2"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="bg-blue-500 text-white px-4 py-2 rounded"
-                >
-                  Update
-                </button>
-              </div>
-            </form>
-          </div>
+      <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+      <div className="bg-white p-6 rounded-lg w-96">
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-xl text-center text-black font-semibold">
+            Edit Client Pay Amount
+          </h2>
+          <button onClick={handleCancel} className="text-black text-xl">
+            &times;
+          </button>
         </div>
+        <form onSubmit={handleUpdate}>
+          <div className="mb-4">
+            <label htmlFor="date" className="block text-gray-700 font-medium mb-1">
+              Date
+            </label>
+            <input
+              type="date"
+              id="date"
+              name="date"
+              defaultValue={selectedPayment.date}
+              className="w-full border bg-white text-black border-gray-400 p-2 rounded-md"
+              required
+            />
+          </div>
+          <div className="mb-4">
+            <label htmlFor="amount" className="block text-gray-700 font-medium mb-1">
+              New Amount
+            </label>
+            <input
+              type="number"
+              id="amount"
+              name="amount"
+              defaultValue={selectedPayment.amount}
+              className="w-full border bg-white text-black border-gray-400 p-2 rounded-md"
+              required
+            />
+          </div>
+          <div className="mb-4">
+            <label htmlFor="method" className="block text-gray-700 font-medium mb-1">
+              Method
+            </label>
+            <select
+              id="paymentMethod"
+              name="paymentMethod"
+              defaultValue={selectedPayment.paymentMethod}
+              className="w-full border bg-white text-black border-gray-400 p-2 rounded-md"
+              required
+            >
+              <option value="bkashPersonal">Bkash Personal</option>
+              <option value="bkashMarchent">Bkash Marchent</option>
+              <option value="nagadPersonal">Nagad Personal</option>
+              <option value="rocketPersonal">Rocket Personal</option>
+              <option value="bank">Bank</option>
+            </select>
+          </div>
+          <div className="mb-4">
+            <label htmlFor="note" className="block text-gray-700 font-medium mb-1">
+              Note
+            </label>
+            <textarea
+              id="note"
+              name="note"
+              defaultValue={selectedPayment.note}
+              className="w-full border bg-white text-black border-gray-400 p-2 rounded-md"
+            ></textarea>
+          </div>
+          <div className="flex justify-between gap-3 mt-6">
+            <button
+              type="button"
+              onClick={handleCancel}
+              className="bg-red-500 text-white px-6 w-full py-2 rounded-md font-medium"
+            >
+              Close
+            </button>
+            <button
+              type="submit"
+              className="bg-blue-500 text-white w-full px-6 py-2 rounded-md font-medium"
+            >
+              Update
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+    
       )}
     </div>
   );

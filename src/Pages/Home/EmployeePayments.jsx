@@ -15,13 +15,14 @@ const EmployeePayments = () => {
   const [totalPayment, setTotalPayment] = useState(0);
   const [users] = useUsers();
   const { user } = useContext(AuthContext);
-  const [employees, setEmployees] = useState([]);
   const [filteredClients, setFilteredClients] = useState([]);
   const [sortMonth, setSortMonth] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
   const [selectedEmployee, setSelectedEmployee] = useState("");
   const [selectedDate, setSelectedDate] = useState("");
+  const [employees, setEmployees] = useState([]);
+
 
   useEffect(() => {
     if (users && user) {
@@ -197,14 +198,14 @@ const EmployeePayments = () => {
 
 
   return (
-    <div className="mt-5">
+    <div className="">
       <Helmet>
         <title>All Payments | Digital Network </title>
         <link rel="canonical" href="https://www.example.com/" />
       </Helmet>
 
 
-      <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 mb-3  lg:grid-cols-5 gap-8 mt-4 p-4">
+      <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3   lg:grid-cols-5 gap-5  p-5">
    <div className="balance-card bg-white rounded-2xl shadow-lg p-5 text-center  transition-transform transform hover:scale-105 border-0">
      <img className="balance-card-img" src="https://i.ibb.co/bHMLyvM/b-Kash-Merchant.png" alt="bKash" />
      <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"> <span className="text-lg lg:text-2xl font-extrabold"> ৳</span> {bkashMarcent}</p>
@@ -229,12 +230,12 @@ const EmployeePayments = () => {
      <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"><span className="text-lg lg:text-2xl font-extrabold"> ৳</span> {bankTotal}</p>
    </div>
      </div>
-      <div className="flex text-black justify-between gap-4 items-center">
-        <div className="flex justify-center items-center gap-5 mb-4 ml-10 mx-auto">
-          <div className="flex flex-col justify-center items-center">
-            <label className="">By Employee</label>
+      <div className="flex text-black justify-end  items-center">
+        <div className="flex justify-end items-center gap-5 ">
+          <div className="flex flex-col justify-start text-start items-start">
+         
             <select
-              className="border bg-blue-200 text-black border-gray-400 rounded p-2 mt-1 "
+              className="border bg-white text-black border-gray-400 rounded p-2 mt-1 "
               value={selectedEmployee}
               onChange={(e) => setSelectedEmployee(e.target.value)}
             >
@@ -246,10 +247,10 @@ const EmployeePayments = () => {
               ))}
             </select>
           </div>
-          <div className="flex flex-col justify-center items-center">
-            <label className="">By Month</label>
+          <div className="flex flex-col justify-center items-start">
+         
             <select
-              className="border bg-blue-200 text-black border-gray-400 rounded p-2 mt-1"
+              className="border bg-white text-black border-gray-400 rounded p-2 mt-1"
               value={sortMonth}
               onChange={(e) => setSortMonth(e.target.value)}
             >
@@ -274,19 +275,19 @@ const EmployeePayments = () => {
               ))}
             </select>
           </div>
-          <div className="flex flex-col justify-center items-center">
-            <label className="block ">By Date</label>
+          <div className="flex flex-col justify-center items-start">
+           
             <input
               type="date"
-              className="border rounded bg-blue-200 text-black border-gray-400 p-2 mt-1"
+              className="border rounded bg-white text-black border-gray-400 p-2 mt-1"
               value={selectedDate}
               onChange={(e) => setSelectedDate(e.target.value)}
             />
           </div>
-          <div className="flex flex-col justify-center items-center">
-            <label className="block ml-2">Payment Method</label>
+          <div className="flex flex-col justify-center items-start">
+           
             <select
-              className="border bg-blue-200 text-black border-gray-400 rounded p-2 mt-1"
+              className="border bg-white text-black border-gray-400 rounded p-2 mt-1"
               value={selectedCategory}
               onChange={(e) => setSelectedCategory(e.target.value)}
             >
@@ -299,11 +300,12 @@ const EmployeePayments = () => {
             </select>
           </div>
         </div>
-        <div className="flex justify-end">
+        <div className=" ml-5 mt-1 mr-5">
+   
           <input
             type="text"
-            placeholder="Payment Method"
-            className="rounded-lg w-full placeholder-black border-2 border-gray-700 p-2  text-black mr-4 text-sm bg-white"
+            placeholder="Search by Payment Method...."
+            className="rounded-lg w-full bg-white placeholder-black border border-gray-700 p-2 mr-5 text-black "
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
@@ -311,7 +313,7 @@ const EmployeePayments = () => {
         </div>
       </div>
 
-      <div className="overflow-x-auto mt-6 border-2 border-black mx-4">
+      <div className="overflow-x-auto mt-5 text-black rounded-xl border border-gray-400 mx-5">
         <table className="min-w-full bg-white">
           <thead className="bg-[#05a0db] text-white">
             <tr>
@@ -402,17 +404,25 @@ const EmployeePayments = () => {
                 </td>
               </tr>
             ))}
+ <tr className="bg-[#05a0db] text-white font-bold">
+              <td className="p-3 text-right" colSpan="3">
+                Total Amount :
+              </td>
+              <td className="p-3 text-center">৳ {totalPayment}</td>
+              <td className="p-3 text-center"></td>
+              <td className="p-3 text-center"></td>
+              <td className="p-3 text-center"></td>
+
+            </tr>
           </tbody>
         </table>
       </div>
-      <h1 className="text-2xl font-semibold ml-6 mt-3 text-black">
-        Total Payments: {totalPayment} Taka
-      </h1>
+     
 
       {isModalOpen && selectedPayment && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+        <div className="fixed inset-0 flex items-center text-black justify-center bg-black bg-opacity-50">
           <div className="bg-white p-6 rounded-lg">
-            <h2 className="text-lg font-medium mb-4">Edit Payment</h2>
+            <h2 className="text-lg font-medium text-center text-black mb-4">Edit Payment</h2>
             <form onSubmit={handleUpdate}>
               <div className="mb-4">
                 <label htmlFor="date" className="block text-gray-700">
@@ -469,7 +479,7 @@ const EmployeePayments = () => {
                   className="w-full border bg-white border-gray-300 p-2 rounded-lg"
                 ></textarea>
               </div>
-              <div className="flex justify-end">
+              <div className="flex w-full justify-center">
                 <button
                   type="button"
                   onClick={handleCancel}

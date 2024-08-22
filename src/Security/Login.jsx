@@ -90,7 +90,9 @@ const handleFacebook = () => {
       .then((result) => {
         console.log(result.user);
         navigate(`/`)
+        toast.success(" login successful");
       })
+
   };
 
  const handleForgetPassword=(e)=>{
@@ -157,9 +159,11 @@ const handleFacebook = () => {
               <input type="submit" value="Sign in" />
             </form>
             <div className="group">
-              <btn onClick={handleForgetPassword} className="text-[#F75B5F] " >
+             <Link>
+             <btn onClick={handleForgetPassword} className="text-[#F75B5F] hover:underline hover:text-white " >
                 Forgot Password?
               </btn>
+             </Link>
 
               <Link to="/signup">Sign up</Link>
             </div>

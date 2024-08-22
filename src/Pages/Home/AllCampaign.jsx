@@ -206,13 +206,13 @@ const Campaigns = () => {
   const adjustedStartPage = Math.max(1, endPage - maxPagesToShow + 1);
 
   return (
-    <div className="mt-5">
+    <div className="my-5">
      <Helmet>
         <title>All Campaigns | Digital Network </title>
         <link rel="canonical" href="https://www.example.com/" />
       </Helmet>
 
-      <div className="flex text-black justify-between gap-4 items-center ">
+      <div className="flex text-black justify-end gap-5 items-center mr-5">
 
         
         <form
@@ -222,10 +222,10 @@ const Campaigns = () => {
 
           
           <div className="flex justify-center items-center gap-5 mb-4 ml-5 mx-auto">
-          <div className="flex flex-col justify-center items-center">
-              <label className="">By Employee</label>
+          <div className="flex flex-col justify-center items-start">
+             
               <select
-                className="bg-blue-200 text-black border-gray-400 rounded p-2 mt-1"
+                className="bg-white border text-black border-gray-400 rounded p-2 mt-1"
                 value={selectedClient}
                 onChange={(e) => setSelectedClient(e.target.value)}
               >
@@ -238,10 +238,10 @@ const Campaigns = () => {
               </select>
             </div>
 
-            <div className="flex flex-col justify-center items-center">
-              <label className="">By Client</label>
+            <div className="flex flex-col justify-center items-start">
+            
               <select
-                className="bg-blue-200 text-black border-gray-400 rounded p-2 mt-1"
+                className="bg-white border text-black border-gray-400 rounded p-2 mt-1"
                 value={selectedClient}
                 onChange={(e) => setSelectedClientt(e.target.value)}
               >
@@ -253,11 +253,11 @@ const Campaigns = () => {
                 ))}
               </select>
             </div>
-            <div className="flex flex-col justify-center items-center">
-              <label className="">Sort By Status</label>
+            <div className="flex flex-col justify-center items-start">
+            
               <select
                 name="status"
-                className="border bg-blue-200 text-black border-gray-400 rounded p-2 mt-1"
+                className="border bg-white text-black border-gray-400 rounded p-2 mt-1"
                 value={selectedEmployee}
                 onChange={(e) => setSelectedEmployee(e.target.value)}
               >
@@ -270,10 +270,10 @@ const Campaigns = () => {
               </select>
             </div>
 
-            <div className="flex flex-col justify-center items-center">
-            <label className="">By Month</label>
+            <div className="flex flex-col justify-center items-start">
+           
             <select
-              className="border bg-blue-200 text-black border-gray-400 rounded p-2 mt-1"
+              className="border bg-white text-black border-gray-400 rounded p-2 mt-1"
               value={sortMonth}
               onChange={(e) => setSortMonth(e.target.value)}
             >
@@ -299,11 +299,11 @@ const Campaigns = () => {
             </select>
           </div>
 
-            <div className="flex flex-col justify-center items-center">
-              <label className="">By Date</label>
+            <div className="flex flex-col justify-center items-start">
+            
               <input
                 type="date"
-                className="bg-blue-200 text-black border-gray-400 rounded p-2 mt-1"
+                className="bg-white border text-black border-gray-400 rounded p-2 mt-1"
                 value={selectedDate}
                 onChange={(e) => setSelectedDate(e.target.value)}
               />
@@ -313,12 +313,12 @@ const Campaigns = () => {
 
            
 
-            <div className="flex flex-col justify-center items-center">
-              <label className="">Search</label>
+            <div className="flex flex-col justify-center items-start">
+             
               <input
                 type="text"
                 placeholder="Search by campaign name"
-                className="bg-white border text-black placeholder-black border-gray-700 rounded p-2 mt-1"
+                className=" border bg-white text-black placeholder-black border-gray-700 rounded p-2 mt-1"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
@@ -327,8 +327,8 @@ const Campaigns = () => {
         </form>
       </div>
 
-      <div className="p-2 sm:p-4">
-        <div className="overflow-x-auto border-2 border-black">
+      <div className="px-5 ">
+        <div className="overflow-x-auto rounded-xl  text-black  border-l border-gray-400">
           <table className="min-w-full bg-white">
             <thead className="bg-[#05a0db] text-white">
               <tr>
@@ -348,8 +348,8 @@ const Campaigns = () => {
                   key={campaign._id}
                   className={`${
                     index % 2 === 0
-                      ? "bg-white text-gray-500 border-b border-opacity-20"
-                      : "bg-gray-200 text-gray-500 border-b border-opacity-20"
+                      ? "bg-white text-black border-b border-opacity-20"
+                      : "bg-gray-200 text-black border-b border-opacity-20"
                   }`}
                 >
                   <td className="p-3 border-r-2  border-gray-300 text-start px-5 ">
@@ -408,20 +408,20 @@ const Campaigns = () => {
   <div className="modal-box bg-white text-black">
     <form onSubmit={(e) => handleUpdate(e, campaign._id)}>
       <h1 className="text-md mb-5">
-        Ads Account:{" "}
+        Ads Account: {campaign.adsAccount}
         <span className="text-blue-600 text-xl font-bold">
-          {campaign.adsAccount}
+          {campaign.campaignName}
         </span>
       </h1>
 
       <div className="mb-4">
-        <label className="block text-start  font-bold text-gray-700">Total Budged</label>
+        <label className="block text-start   font-bold text-gray-700">Total Budged</label>
         <input
           type="number"
           name="tBudged"
           defaultValue={campaign.tBudged}
           step="0.01"
-          className="w-full bg-white border rounded p-2 mt-1"
+          className="w-full bg-white border border-gray-400 rounded p-2 mt-1"
         />
       </div>
 
@@ -432,7 +432,7 @@ const Campaigns = () => {
           name="totalSpent"
           defaultValue={campaign.tSpent}
           step="0.01"
-          className="w-full bg-white border rounded p-2 mt-1"
+          className="w-full bg-white border-gray-400 border rounded p-2 mt-1"
         />
       </div>
 
@@ -443,7 +443,7 @@ const Campaigns = () => {
           type="number"
           name="dollerRate"
           defaultValue={campaign.dollerRate}
-          className="w-full bg-white border rounded p-2 mt-1"
+          className="w-full bg-white border-gray-400 border rounded p-2 mt-1"
         />
       </div>
 
@@ -452,7 +452,7 @@ const Campaigns = () => {
         <select
           defaultValue={campaign.status}
           name="status"
-          className="w-full bg-white border rounded p-2 mt-1"
+          className="w-full bg-white border-gray-400 border rounded p-2 mt-1"
         >
           <option value="In Review">In Review</option>
           <option value="Active">Active</option>
@@ -502,7 +502,7 @@ const Campaigns = () => {
                   Total :
                 </td>
                 <td className="p-3 border border-black text-center">
-                  $ {totalBudged || 0}
+                  $ {totalBudged.toFixed(2) || 0}
                 </td>
                 <td className="p-3 border border-black text-center">
   {`$ ${totalSpent.toFixed(2)}`}

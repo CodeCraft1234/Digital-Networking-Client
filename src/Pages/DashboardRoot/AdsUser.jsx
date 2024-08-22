@@ -73,18 +73,18 @@ const AdsUser = () => {
   }, [adsAccountCenter, totalPayment]);
 
   return (
-    <div className="mt-5 p-4 dark:text-green-800">
+    <div className=" px-5 dark:text-green-800">
       <Helmet>
         <title>Ads User | Digital Network</title>
         <link rel="canonical" href="https://www.example.com/" />
       </Helmet>
 
-      <div className="grid lg:grid-cols-4 text-white sm:grid-cols-2 gap-5 justify-around p-5">
-        <div className="px-5 py-10 rounded-2xl bg-[#05a0db] shadow-lg text-center">
+      <div className="grid lg:grid-cols-4 text-white sm:grid-cols-2 gap-5 justify-around py-5">
+        <div className="px-5 py-10 rounded-2xl bg-[#c6e529] shadow-lg text-center">
           <h2 className="text-xl">Total Spent</h2>
           <p className="text-4xl font-bold"> $ {TSpent2.toFixed(2)}</p>
         </div>
-        <div className="px-5 py-10 rounded-2xl bg-[#05a0db] shadow-lg text-center">
+        <div className="px-5 py-10 rounded-2xl bg-[#5422c0] shadow-lg text-center">
           <h2 className="text-xl">Total Bill</h2>
           <p className="text-4xl font-bold"> ৳ {totalBill.toFixed(2)}</p>
         </div>
@@ -92,13 +92,13 @@ const AdsUser = () => {
           <h2 className="text-xl">Total Paid</h2>
           <p className="text-4xl font-bold"> ৳ {totalPayment2.toFixed(2)}</p>
         </div>
-        <div className="px-5 py-10 rounded-2xl bg-[#05a0db] shadow-lg text-center">
+        <div className="px-5 py-10 rounded-2xl bg-[#ce1a38] shadow-lg text-center">
           <h2 className="text-xl">Total Due</h2>
           <p className="text-4xl font-bold"> ৳ {totalDue.toFixed(2)}</p>
         </div>
       </div>
 
-      <div className="overflow-x-auto mt-6">
+      <div className="overflow-x-auto rounded-xl text-black border border-gray-400 ">
         <table className="min-w-full text-xs md:text-base">
           <thead className="bg-[#05a0db] text-white font-bold text-sm md:text-xl">
             <tr>
@@ -138,7 +138,7 @@ const AdsUser = () => {
             return (
               <tbody className="text-black text-sm md:text-xl" key={userr._id}>
                 <tr className={`${index % 2 === 0 ? "bg-gray-100" : "bg-white"} border-b border-opacity-20`}>
-                  <td className="p-3 hover:bg-gradient-to-r from-gray-100 via-gray-300 to-gray-100 hover:text-blue-600 font-bold hover:text-sm md:hover:text-sm sm:hover:text-sm flex flex-col md:flex-row justify-start text-center ml-2 md:ml-10 items-center gap-2 border-r-2 border-gray-300">
+                  <td className="p-3 hover:font-bold  hover:text-blue-600     flex flex-col md:flex-row justify-start text-center ml-2 md:ml-10 items-center gap-2 border-r-2 border-gray-300">
                     <Link to={`/dashboard/userInfo/${userr?.email}`}>
                       <img className="w-10 h-10 rounded-full" src={userr?.photo} alt="" />
                     </Link>

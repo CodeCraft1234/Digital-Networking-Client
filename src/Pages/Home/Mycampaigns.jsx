@@ -11,6 +11,8 @@ import { Helmet } from "react-helmet-async";
 import { FaEdit } from "react-icons/fa";
 import axios from "axios";
 import { MdDelete, MdEditSquare } from "react-icons/md";
+import { ImCross } from "react-icons/im";
+import { toast } from "react-toastify";
 
 const MyCampaigns = () => {
   const [users] = useUsers();
@@ -197,7 +199,7 @@ const [client,setClient]=useState([])
       .then((res) => {
         console.log(res.data);
         refetch();
-        toast.success("Campaign updated successfully");
+        toast.success(`Campaign updated successfully`);
       })
       .catch((error) => {
         console.error("Error updating campaign:", error);
@@ -212,6 +214,7 @@ const [client,setClient]=useState([])
         AxiosPublic.delete(`/campaigns/${id}`)
         .then((res) => {
           refetch();
+          toast.success("campaign delete successful");
         });
 
     }
@@ -219,29 +222,36 @@ const [client,setClient]=useState([])
 
     
   return (
-    <div className="mt-5 mx-5">
+    <div className="mt-3 mx-5">
       <Helmet>
         <title>My Campaign | Digital Network </title>
         <link rel="canonical" href="https://www.example.com/" />
       </Helmet>
-<div className="flex justify-between items-center ">
+<div className="flex justify-end items-end gap-5 ">
 <form className="flex justify-center items-center" onSubmit={handleSort}>
-        <div className="mb-4  mx-auto">
-          <label className="block text-gray-700">Sort By Client</label>
-          <select name="email" className="border border-gray-700 text-black bg-white  rounded p-2 mt-1">
-          <option value="">All Client</option>
-            {client.map(d => <option key={d._id} value={d.clientEmail}>{d.clientName}</option>)}
-          </select>
-          <button type="submit" className="ml-2 px-4 py-2 bg-blue-500 text-white rounded">
-            Search
-          </button>
-        </div>
-      </form>
-      <div className="flex justify-end ">
+  <div className="mb-4 mx-auto">
+    <select 
+      name="email" 
+      className="border border-gray-700 text-black bg-white rounded p-1.5 mt-1"
+      onChange={(e) => {
+        handleSort(e); // Trigger the sort function on selection change
+      }}
+    >
+      <option value="">All Client</option>
+      {client.map(d => (
+        <option key={d._id} value={d.clientEmail}>
+          {d.clientName}
+        </option>
+      ))}
+    </select>
+  </div>
+</form>
+
+      <div className="flex justify-end mb-4">
                 <input
                   type="text"
                   placeholder="Search Campaign Name..."
-                  className=" rounded-lg   placeholder-black border-2 border-black p-2 font-bold text-black  text-sm bg-white"
+                  className=" rounded-lg   placeholder-black border border-black p-2  text-black  text-sm bg-white"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                 />
@@ -253,7 +263,7 @@ const [client,setClient]=useState([])
 
 
       <div className="">
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto rounded-xl">
           <table className="min-w-full bg-white">
             <thead className="bg-[#05a0db] text-white">
               <tr>
@@ -287,20 +297,19 @@ const [client,setClient]=useState([])
   })}
 </td>
       <td className="p-3 border-r-2 border-gray-300 text-left">
-        <Link to={`/client/${campaign.clientEmail}`} className="flex justify-start">
+        
         {campaign.campaignName}
-        </Link>
+        
 
       </td>
       <td className="p-3 border-r-2 border-gray-300 text-center">
-        <Link to={campaign.pageURL} className="flex justify-center">
+       
         {campaign.pageName}
-        </Link>
       </td>        
       <td className="p-3 border-r-2 border-gray-300 text-center">
-        <Link to={campaign.pageURL} className="flex justify-center">
+     
         {campaign.clientName}
-        </Link>
+      
       </td>        
       <td className="p-3 border-r-2 border-gray-300 text-center">
         <div className="relative group flex items-center justify-center">
@@ -426,8 +435,14 @@ const [client,setClient]=useState([])
                       <dialog id={`modal_${index}`} className="modal">
   <div className="modal-box bg-white text-black">
     <form onSubmit={(e) => handleUpdate(e, campaign._id)}>
-      <h1 className="text-md mb-5">
-        Ads Account:{" "}
+    <h1
+             className=" text-black flex hover:text-red-500  justify-end  text-end"
+             onClick={() => document.getElementById(`modal_${index}`).close()}
+           >
+            <ImCross />
+           </h1>
+      <h1 className="text-md mb-5 text-xl mt-4">
+        Campaign Name:{" "} <span className="text-blue-600 text-xl font-bold">{campaign.campaignName}</span>
         <span className="text-blue-600 text-xl font-bold">
           {campaign.adsAccount}
         </span>
@@ -451,7 +466,7 @@ const [client,setClient]=useState([])
           name="totalSpent"
           defaultValue={campaign.tSpent}
           step="0.01"
-          className="w-full bg-white border rounded p-2 mt-1"
+          className="w-full bg-white border border-gray-400 rounded p-2 mt-1"
         />
       </div>
 
@@ -462,7 +477,7 @@ const [client,setClient]=useState([])
           type="number"
           name="dollerRate"
           defaultValue={campaign.dollerRate}
-          className="w-full bg-white border rounded p-2 mt-1"
+          className="w-full bg-white border border-gray-400 rounded p-2 mt-1"
         />
       </div>
 
@@ -471,7 +486,7 @@ const [client,setClient]=useState([])
         <select
           defaultValue={campaign.status}
           name="status"
-          className="w-full bg-white border rounded p-2 mt-1"
+          className="w-full bg-white border border-gray-400 rounded p-2 mt-1"
         >
           <option value="In Review">In Review</option>
           <option value="Active">Active</option>
@@ -479,7 +494,7 @@ const [client,setClient]=useState([])
         </select>
       </div>
 
-      <div className="modal-action grid grid-cols-2 gap-3 mt-4">
+      <div className="modal-action grid grid-cols-2 gap-3 mt-8">
       <button
           type="button"
           className="p-2 rounded-lg bg-red-600 text-white"
@@ -512,14 +527,14 @@ const [client,setClient]=useState([])
     </tr>
   ))}
   <tr className="bg-[#05a0db] text-sm text-white font-bold">
-    <td className="p-3  border-gray-300 text-right" colSpan="4">
+    <td className="p-3  border-gray-300 text-right" colSpan="5">
       Total :
     </td>
     <td className="p-3  border-gray-300 text-start">$ {totalBudged}</td>
     <td className="p-3  border-gray-300 text-start">$ {totalSpent}</td> 
     <td className="p-3  border-gray-300 text-start"></td> 
     <td className="p-3  border-gray-300 text-start"></td> 
-    <td className="p-3  border-gray-300 text-start"></td> 
+
 
   </tr>
 </tbody>

@@ -27,6 +27,7 @@ import { FaPeopleGroup, FaUser } from "react-icons/fa6";
 import { AuthContext } from "../../Security/AuthProvider";
 import { GiClick } from "react-icons/gi";
 import { RiSecurePaymentFill, RiSecurePaymentLine } from "react-icons/ri";
+import { LuActivitySquare } from "react-icons/lu";
 
 const EmployeeDashboard = () => {
   const { user, logOut } = useContext(AuthContext);
@@ -152,14 +153,7 @@ const EmployeeDashboard = () => {
                   <RiSecurePaymentFill className="w-6 h-6 mr-2" />
                   Client Pay
                 </NavLink>
-                <NavLink
-            to={`dashboard/myHistory`}
-            className="text-white hover:bg-[#f89320] hover:text-black py-2 px-4 rounded-lg flex items-center"
-            style={({ isActive }) => getActiveStyle(isActive)}
-          >
-            <FaHistory className="w-6 h-6 mr-2" />
-            My History
-          </NavLink>
+
           <NavLink
             to={`dashboard/mySellery`}
             className="text-white hover:bg-[#f89320] hover:text-black py-2 px-4 rounded-lg flex items-center"
@@ -169,36 +163,15 @@ const EmployeeDashboard = () => {
             My Salary
           </NavLink>
 
+          <NavLink
+            to={`dashboard/myActivity`}
+            className="text-white hover:bg-[#f89320] hover:text-black py-2 px-4 rounded-lg flex items-center"
+            style={({ isActive }) => getActiveStyle(isActive)}
+          >
+            <LuActivitySquare  className="w-6 h-6 mr-2" />
+            Activity
+          </NavLink>
          
-
-          {user?.email ? (
-            <NavLink>
-               <div className="flex my-2 mt-5 justify-start  gap-2 px-4 items-center text-white ">
-              
-                <img className="h-10 w-10 rounded-full" src={user?.photoURL} alt="" />
-                <Link to={'/dashboard/updateProfile'}>
-                <h1>{user?.displayName}</h1>
-                </Link>
-      
-
-        </div>
-              <button
-                onClick={handleLogOut}
-                className="font-avenir mb-10 flex hover:bg-[#f89320] justify-center items-center gap-2 w-full px-3 py-1  text-white rounded "
-              >
-                Logout <IoLogOutOutline />
-              </button>
-            </NavLink>
-          ) : (
-            <NavLink
-              to={`/login`}
-              className="text-white hover:bg-green-300 hover:text-black py-2 px-4 rounded-lg flex items-center"
-            >
-              <button className="font-avenir w-full px-3 py-1 bg-red-700 rounded text-white">
-                Login
-              </button>
-            </NavLink>
-          )}
         </ul>
       </div>
     </div>

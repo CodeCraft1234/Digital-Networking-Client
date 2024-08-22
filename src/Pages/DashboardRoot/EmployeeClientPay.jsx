@@ -29,7 +29,7 @@ const EmployeeClientPay = ({email}) => {
       (m) => m.employeeEmail === email
     );
     setPayment(realdata)
-    const totalBill = realdata.reduce(
+    const totalBill = filteredData.reduce(
       (acc, campaign) => acc + parseFloat(campaign.amount),
       0
     );
@@ -66,6 +66,12 @@ const EmployeeClientPay = ({email}) => {
         payment.paymentMethod.toLowerCase().includes(searchQuery.toLowerCase())
       );
     }
+
+    const totalBill = filtered.reduce(
+      (acc, campaign) => acc + parseFloat(campaign.amount),
+      0
+    );
+    setTotalPayment(totalBill);
 
     setFilteredData(filtered);
   }, [sortMonth, selectedDate, selectedCategory, searchQuery, data]);
@@ -122,13 +128,11 @@ const EmployeeClientPay = ({email}) => {
   const [bkashPersonal,setBkashPersonalTotal]=useState(0)
   const [rocketPersonal,setRocketPersonalTotal]=useState(0)
   const [bankTotal,setBankTotal]=useState(0)
+  const [total,setTotal]=useState(0)
 
   useEffect(()=>{
-      AxiosPublic.get(`https://digital-networking-server.vercel.app/Mpayment`)
-      .then(res => {
-          console.log('sdjkhagjijkhgjkhdsajljkhgdsjkajkjkfjldfgjkgjkgd',res.data);
-          const da=res.data
-          const filtered=da.filter(f=> f.employeeEmail === user?.email) 
+          const da=MPayment
+          const filtered=da.filter(f=> f.employeeEmail === email) 
 
           const filter2=filtered.filter(d=>d.paymentMethod === 'bkashMarchent')
           const total = filter2.reduce((acc, datas) => acc + parseFloat(datas.amount),0);
@@ -149,8 +153,10 @@ const EmployeeClientPay = ({email}) => {
           const filter6=filtered.filter(d=>d.paymentMethod === 'bank')
           const total6 = filter6.reduce((acc, datas) => acc + parseFloat(datas.amount),0);
           setBankTotal(total6)
-      })
-  },[user?.email])
+
+          const total7 = filtered.reduce((acc, datas) => acc + parseFloat(datas.amount),0);
+          setTotal(total7)
+  },[email])
 
   return (
     <div className="mt-5">
@@ -159,7 +165,7 @@ const EmployeeClientPay = ({email}) => {
         <link rel="canonical" href="https://www.example.com/" />
       </Helmet>
 
-      <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 mb-3  lg:grid-cols-5 gap-8 mt-4 p-4">
+      <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3   lg:grid-cols-6 gap-5 mt-5 p-5">
    <div className="balance-card bg-white rounded-2xl shadow-lg p-5 text-center  transition-transform transform hover:scale-105 border-0">
      <img className="balance-card-img" src="https://i.ibb.co/bHMLyvM/b-Kash-Merchant.png" alt="bKash" />
      <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"> <span className="text-lg lg:text-2xl font-extrabold"> ৳</span> {bkashMarcent}</p>
@@ -179,19 +185,22 @@ const EmployeeClientPay = ({email}) => {
 
    <div className="balance-card bg-white rounded-2xl shadow-lg p-5 text-center transition-transform transform hover:scale-105 border-0">
      <img className="balance-card-img" src="https://i.ibb.co/PZc0P4w/brac-bank-seeklogo.png" alt="Rocket" />
-     {/* <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"><span className="text-lg lg:text-2xl font-extrabold">Bank Received : ৳</span> {bankTotal}</p>
-     <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"><span className="text-lg lg:text-2xl font-extrabold">Bank Cashout : ৳</span> {bankTotal2}</p> */}
+  
      <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"><span className="text-lg lg:text-2xl font-extrabold"> ৳</span> {bankTotal}</p>
+   </div>
+   <div className="balance-card bg-white rounded-2xl shadow-lg p-5 pt-8 text-center transition-transform transform hover:scale-105 border-0">
+   <h1 className="text-black text-xl font-bold">Total BDT </h1>
+     <p className="balance-card-text text-lg pt-8 lg:text-2xl font-bold text-gray-700"><span className="text-lg lg:text-2xl font-extrabold"> ৳</span> {total}</p>
    </div>
      </div>
 
 {/* ///////////////////////////////////////////////////////////////// */}
-      <div className="flex text-black justify-between gap-4 items-center">
-        <div className="flex justify-center items-center gap-5 mb-4 ml-5 mx-auto">
-          <div className="flex flex-col justify-center items-center">
-            <label className="">By Month</label>
+      <div className="flex text-black justify-end gap-5 items-center">
+        <div className="flex justify-end items-center gap-5 mb-4 ml-5 ">
+          <div className="flex flex-col justify-end items-center">
+          
             <select
-              className="border bg-blue-200 text-black border-gray-400 rounded p-2 mt-1"
+              className="border bg-white text-black border-gray-400 rounded p-2 mt-1"
               value={sortMonth}
               onChange={(e) => setSortMonth(e.target.value)}
             >
@@ -217,18 +226,18 @@ const EmployeeClientPay = ({email}) => {
             </select>
           </div>
           <div className="flex flex-col justify-center items-center">
-            <label className="block ">By Date</label>
+           
             <input
               type="date"
-              className="border rounded bg-blue-200 text-black border-gray-400 p-2 mt-1"
+              className="border rounded bg-white text-black border-gray-400 p-2 mt-1"
               value={selectedDate}
               onChange={(e) => setSelectedDate(e.target.value)}
             />
           </div>
           <div className="flex flex-col justify-center items-center">
-            <label className="block ml-2">Payment Method</label>
+         
             <select
-              className="border bg-blue-200 text-black border-gray-400 rounded p-2 mt-1"
+              className="border bg-white text-black border-gray-400 rounded p-2 mt-1"
               value={selectedCategory}
               onChange={(e) => setSelectedCategory(e.target.value)}
             >
@@ -241,11 +250,11 @@ const EmployeeClientPay = ({email}) => {
             </select>
           </div>
         </div>
-        <div className="flex mr-5 justify-end">
+        <div className="flex mr-5 mb-3 justify-end">
           <input
             type="text"
             placeholder="Payment Method..."
-            className="rounded-lg placeholder-black border-2 border-black p-2 font-bold text-black  bg-white"
+            className="rounded-lg placeholder-black border border-gray-400 p-2  text-black  bg-white"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
@@ -253,16 +262,20 @@ const EmployeeClientPay = ({email}) => {
         </div>
       </div>
 
-      <div className="overflow-x-auto  border-2 border-black mx-4">
+      <div className="overflow-x-auto rounded-xl border text-black border-gray-400 mx-5">
         <table className="min-w-full bg-white">
           <thead className="bg-[#05a0db] text-white">
             <tr>
               <th className="p-3">SL</th>
               <th className="p-3">Payment Date</th>
+              <th className="p-3">Client Name</th>
               <th className="p-3">Payment Amount</th>
               <th className="p-3">Payment Method</th>
               <th className="p-3">Note</th>
-              <th className="p-3">Action</th>
+           
+                  <th className="p-3">Action</th>
+                
+       
             </tr>
           </thead>
           <tbody>
@@ -278,6 +291,9 @@ const EmployeeClientPay = ({email}) => {
                   {new Date(payment.date).toLocaleDateString("en-GB")}
                 </td>
               
+                <td className="p-3 border-r-2 border-gray-200 text-center">
+                  {payment.clientName}
+                </td>
                 <td className="p-3 border-r-2 border-gray-200 text-center">
                   ৳ {payment.amount}
                 </td>
@@ -321,8 +337,9 @@ const EmployeeClientPay = ({email}) => {
                 <td className="p-3 border-r-2 border-gray-200 text-center">
                   {payment.note}
                 </td>
-                
-                <td className="p-3 border-r-2 flex justify-center items-center border-gray-200 text-center">
+
+              
+                  <td className="p-3 border-r-2 flex justify-center items-center border-gray-200 text-center">
               
                   <button
                           className=" px-4 py-2 text-3xl text-left text-blue-700 "
@@ -339,18 +356,21 @@ const EmployeeClientPay = ({email}) => {
                       
                  
                 </td>
+
+                
               </tr>
             ))}
           </tbody>
           <tr className="bg-[#05a0db] text-white font-bold">
-              <td className="p-3 text-center" colSpan="2">
+              <td className="p-3 text-right" colSpan="3">
                 Total Amount =
               </td>
               <td className="p-3 text-center">৳ {totalPayment}</td>
               <td className="p-3 text-center"></td>
               <td className="p-3 text-center"></td>
+            
               <td className="p-3 text-center"></td>
-             
+            
             </tr>
         </table>
       </div>

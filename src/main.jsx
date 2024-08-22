@@ -51,6 +51,8 @@ import Sellery from "./Pages/DashboardRoot/Sellery";
 import History from "./Pages/DashboardRoot/History";
 import MyHistory from "./Pages/DashboardRoot/MyHistory";
 import EmployeerSellery from "./Pages/DashboardRoot/EmployeerSellery";
+import { ToastContainer } from "react-toastify";
+import Activity from "./Pages/DashboardRoot/Activity";
 
 const router = createBrowserRouter([
   {
@@ -204,8 +206,8 @@ const router = createBrowserRouter([
         element:<EmployeerSellery></EmployeerSellery>
        },
        {
-        path:'dashboard/myHistory',
-        element:<MyHistory></MyHistory>
+        path:'dashboard/myActivity',
+        element:<Activity></Activity>
        },
        {
         path:'dashboard/sellery',
@@ -237,12 +239,15 @@ const router = createBrowserRouter([
 const queryClient = new QueryClient();
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
+    
     <QueryClientProvider client={queryClient}>
     <HelmetProvider>
     <AuthProvider>
           <RouterProvider router={router} />
+        
         </AuthProvider>
     </HelmetProvider> 
+   
     </QueryClientProvider>
   </React.StrictMode>
 );

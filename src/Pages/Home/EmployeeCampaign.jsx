@@ -221,27 +221,31 @@ const [client,setClient]=useState([])
   return (
     <div className="mt-5 mx-5">
       <Helmet>
-        <title>My Campaign | Digital Network </title>
+        <title>Campaign Table | Digital Network </title>
         <link rel="canonical" href="https://www.example.com/" />
       </Helmet>
-<div className="flex justify-between items-center ">
-<form className="flex justify-center items-center" onSubmit={handleSort}>
-        <div className="mb-4  mx-auto">
-          <label className="block text-gray-700">Sort By Client</label>
-          <select name="email" className="border border-gray-700 text-black bg-white  rounded p-2 mt-1">
-          <option value="">All Client</option>
-            {client.map(d => <option key={d._id} value={d.clientEmail}>{d.clientName}</option>)}
-          </select>
-          <button type="submit" className="ml-2 px-4 py-2 bg-blue-500 text-white rounded">
-            Search
-          </button>
-        </div>
-      </form>
+<div className="flex justify-end gap-5 items-center ">
+<form className="flex justify-end items-center">
+  <div className="mb-4 ">
+ 
+    <select 
+      name="email" 
+      className="border border-gray-700 text-black bg-white rounded p-2 mt-1"
+      onChange={handleSort} // Automatically trigger sort when changed
+    >
+      <option value="">All Client</option>
+      {client.map(d => (
+        <option key={d._id} value={d.clientEmail}>{d.clientName}</option>
+      ))}
+    </select>
+  </div>
+</form>
+
       <div className="flex justify-end ">
                 <input
                   type="text"
                   placeholder="Search Campaign Name..."
-                  className=" rounded-lg   placeholder-black border-2 border-black p-2 font-bold text-black  text-sm bg-white"
+                  className=" rounded-lg  mb-3 placeholder-black border border-gray-400 p-2 text-black  text-sm bg-white"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                 />
@@ -253,7 +257,7 @@ const [client,setClient]=useState([])
 
 
       <div className="">
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto rounded-xl">
           <table className="min-w-full bg-white">
             <thead className="bg-[#05a0db] text-white">
               <tr>
@@ -261,11 +265,13 @@ const [client,setClient]=useState([])
                 <th className="p-3 text-center border-2 border-gray-300">Date</th>
                 <th className="p-3 text-center border-2 border-gray-300">Campaign Name</th>
                 <th className="p-3 text-center border-2 border-gray-300">client Name</th>
-                <th className="p-3 text-center border-2 border-gray-300">Page Name</th>
+     
                 <th className="p-3 text-center border-2 border-gray-300">Total Budged</th>
                 <th className="p-3 text-center border-2 border-gray-300">Total spent</th>
                 <th className="p-3 text-center border-2 border-gray-300">Status</th>
+                
                 <th className="p-3 text-center border-2 border-gray-300">Action</th>
+                
               </tr>
             </thead>
             <tbody>
@@ -292,11 +298,7 @@ const [client,setClient]=useState([])
         </Link>
 
       </td>
-      <td className="p-3 border-r-2 border-gray-300 text-center">
-        <Link to={campaign.pageURL} className="flex justify-center">
-        {campaign.pageName}
-        </Link>
-      </td>        
+      
       <td className="p-3 border-r-2 border-gray-300 text-center">
         <Link to={campaign.pageURL} className="flex justify-center">
         {campaign.clientName}
@@ -412,7 +414,8 @@ const [client,setClient]=useState([])
   {campaign.status}
 </td>
 
-      <td className="p-3 border-l-2 border-r-2 border-gray-300 text-center">
+
+                  <td className="p-3 border-l-2 border-r-2 border-gray-300 text-center">
       <div className="flex justify-center gap-3">
         <div>
                       <button
@@ -509,6 +512,9 @@ const [client,setClient]=useState([])
                         </button>
                       </div>
 </td>
+               
+
+      
     </tr>
   ))}
   <tr className="bg-[#05a0db] text-sm text-white font-bold">
@@ -518,8 +524,11 @@ const [client,setClient]=useState([])
     <td className="p-3  border-gray-300 text-start">$ {totalBudged}</td>
     <td className="p-3  border-gray-300 text-start">$ {totalSpent}</td> 
     <td className="p-3  border-gray-300 text-start"></td> 
-    <td className="p-3  border-gray-300 text-start"></td> 
-    <td className="p-3  border-gray-300 text-start"></td> 
+  
+                  <td className="p-3  border-gray-300 text-start"></td> 
+
+           
+ 
 
   </tr>
 </tbody>

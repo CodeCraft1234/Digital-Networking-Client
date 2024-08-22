@@ -319,7 +319,7 @@ const AdsUserAdsAccount = () => {
 
     return (
         <div>
-                   <div className="flex justify-start mb-5 text-gray-500 border-opacity-20 mx-2 pb-1 items-center gap-3">
+                   <div className="flex justify-start  text-gray-500 border-opacity-20 mx-2  items-center gap-3">
   <button
     className="font-avenir px-3 py-1 rounded-lg text-white bg-[#05a0db]"
     onClick={() => document.getElementById("my_modal_3").showModal()}
@@ -351,13 +351,13 @@ const AdsUserAdsAccount = () => {
         <div className="grid lg:grid-cols-2 gap-3 mt-4">
         
           <form method="dialog">
-            <button className="font-avenir px-3 py-1 w-full  rounded-lg  bg-red-600 text-white">
+            <button className="font-avenir px-3 py-3 w-full  rounded-lg  bg-red-600 text-white">
               Close
             </button>
           </form>
           <button
             type="submit"
-            className="font-avenir px-3 py-1 rounded-lg w-full  text-white bg-[#05a0db]"
+            className="font-avenir px-3 py-3 rounded-lg w-full  text-white bg-[#05a0db]"
           >
             Send
           </button>
@@ -366,7 +366,7 @@ const AdsUserAdsAccount = () => {
     </div>
   </dialog>
         </div>
-        <div className="overflow-x-auto mt-6">
+        <div className="overflow-x-auto rounded-xl border border-gray-400 mt-5">
        <table className="min-w-full bg-white">
          <thead className="bg-[#05a0db] text-white">
            <tr>
@@ -452,107 +452,106 @@ const AdsUserAdsAccount = () => {
        </table>
      </div>
      {modalData && (
-         <dialog className="modal" open>
-           <div className="modal-box bg-white text-black">
-             <form onSubmit={(e) => handleUpdate(e, modalData._id)}>
-               <div className="flex justify-center items-center gap-3">
-               <div className="mb-4">
-                           <label className="block text-gray-500">
-                           Account Name
-                           </label>
-                           <input
-                             type="text required"
-                             name="accountName" 
- 
-                             defaultValue={modalData.accountName}
-                             className="w-full border-2 border-black rounded p-2 mt-1 bg-white text-black"
-                           />
-                         </div>
-                 <div className="mb-4">
-                   <label className="block text-gray-500">Current Balance</label>
-                   <input
-                     type="number"
-                     name="currentBallence"
-                     step="0.01"
-                     defaultValue={modalData.currentBallence}
-                     className="w-full border rounded p-2 mt-1 text-black bg-white border-gray-500"
-                   />
-                 </div>
-                 <div className="mb-4">
-                   <label className="block text-gray-500">Threshold</label>
-                   <input
-                     type="number"
-                     name="threshold"
-                     step="0.01"
-                     defaultValue={modalData.threshold}
-                     className="w-full border rounded p-2 mt-1 text-black bg-white border-gray-500"
-                   />
-                 </div>
-               </div>
-               <div className="flex justify-center items-center gap-3">
-                 <div className="mb-4">
-                   <label className="block text-gray-500">Total Spent</label>
-                   <input
-                     type="number"
-                     name="totalSpent"
-                     step="0.01"
-                     defaultValue={modalData.totalSpent}
-                     className="w-full border rounded p-2 mt-1 text-black bg-white border-gray-500"
-                   />
-                 </div>
-                 <div className="mb-4">
-                   <label className="block text-gray-500">Doller Rate</label>
-                   <input
-                     type="number"
-                     name="dollerRate"
-                     step="0.01"
-                     defaultValue={125}
-                     className="w-full border rounded p-2 mt-1 text-black bg-white border-gray-500"
-                   />
-                 </div>
-                
-                 
-               </div>
-              <div className="flex justify-center gap-5 ">
-              <div className="mb-4">
-                   <label className="block text-gray-500">Status</label>
-                   <select
-                     name="status"
-                     defaultValue={modalData.status}
-                     className="w-full border rounded p-2 mt-1 text-black bg-white border-gray-500"
-                   >
-                     <option value="Active">Active</option>
-                     <option value="Disable">Disable</option>
-                   </select>
-                 </div>
-               <div className="mb-4">
-                   <label className="block  text-black ">Payment Date</label>
-                   <input
-                     type="date"
-                     name="paymentDate"
-                     defaultValue={modalData?.paymentDate}
-                     className="w-full border rounded p-2 mt-1 text-black bg-green-200  border-gray-500"
-                   />
-                 </div>
-              </div>
- 
-               <button
-                 type="submit"
-                 className="font-avenir px-3 mx-auto py-1 rounded-lg text-white bg-green-800"
-               >
-                 Update
-               </button>
-             </form>
-             <div className="modal-action">
-               <button
-                 className="p-2 rounded-lg bg-red-600 text-white text-center"
-                 onClick={() => setModalData(null)}
-               >
-                 Close
-               </button>
-             </div>
-           </div>
-         </dialog>
+      <dialog className="modal" open>
+      <div className="modal-box bg-white text-black">
+        <form onSubmit={(e) => handleUpdate(e, modalData._id)}>
+          <div className="mb-4">
+            <label className="block text-black">Payment Date</label>
+            <input
+              type="date"
+              name="paymentDate"
+              defaultValue={modalData?.paymentDate}
+              className="w-full border rounded p-2 mt-1 text-black bg-green-200 border-gray-500"
+            />
+          </div>
+          
+          <div className="mb-4">
+            <label className="block text-gray-500">Account Name</label>
+            <input
+              type="text"
+              name="accountName"
+              defaultValue={modalData.accountName}
+              className="w-full border-2 border-black rounded p-2 mt-1 bg-white text-black"
+              required
+            />
+          </div>
+          
+          <div className="mb-4">
+            <label className="block text-gray-500">Current Balance</label>
+            <input
+              type="number"
+              name="currentBallence"
+              step="0.01"
+              defaultValue={modalData.currentBallence}
+              className="w-full border rounded p-2 mt-1 text-black bg-white border-gray-500"
+            />
+          </div>
+          
+          <div className="mb-4">
+            <label className="block text-gray-500">Threshold</label>
+            <input
+              type="number"
+              name="threshold"
+              step="0.01"
+              defaultValue={modalData.threshold}
+              className="w-full border rounded p-2 mt-1 text-black bg-white border-gray-500"
+            />
+          </div>
+          
+          <div className="mb-4">
+            <label className="block text-gray-500">Total Spent</label>
+            <input
+              type="number"
+              name="totalSpent"
+              step="0.01"
+              defaultValue={modalData.totalSpent}
+              className="w-full border rounded p-2 mt-1 text-black bg-white border-gray-500"
+            />
+          </div>
+          
+          <div className="mb-4">
+            <label className="block text-gray-500">Doller Rate</label>
+            <input
+              type="number"
+              name="dollerRate"
+              step="0.01"
+              defaultValue={125}
+              className="w-full border rounded p-2 mt-1 text-black bg-white border-gray-500"
+            />
+          </div>
+          
+          <div className="mb-4">
+            <label className="block text-gray-500">Status</label>
+            <select
+              name="status"
+              defaultValue={modalData.status}
+              className="w-full border rounded p-2 mt-1 text-black bg-white border-gray-500"
+            >
+              <option value="Active">Active</option>
+              <option value="Disable">Disable</option>
+            </select>
+          </div>
+    
+          <div className="modal-action grid grid-cols-2 gap-3 mt-4">
+            <button
+              type="button"
+              className="p-2 rounded-lg bg-red-600 text-white text-center"
+              onClick={() => setModalData(null)}
+            >
+              Close
+            </button>
+            <button
+              type="submit"
+              className="p-2 rounded-lg bg-[#05a0db] text-white text-center"
+            >
+              Update
+            </button>
+          </div>
+        </form>
+      </div>
+    </dialog>
+    
+      
        )}
         </div>
     );

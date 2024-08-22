@@ -7,6 +7,8 @@ import { FaEdit } from "react-icons/fa";
 import axios from "axios";
 import { MdDelete, MdEditSquare } from "react-icons/md";
 import { ImCross } from "react-icons/im";
+import { ToastContainer } from "react-toastify";
+import { Link } from "react-router-dom";
 
 const AllAdsAccount = () => {
   const [adsAccount, refetch] = useAdsAccount()
@@ -36,19 +38,26 @@ const AllAdsAccount = () => {
   const handleUpdate = (e, id) => {
     e.preventDefault();
     const accountName = e.target.accountName.value;
+    const date = e.target.date.value;
     const currentBallence = e.target.currentBallence.value;
     const threshold = e.target.threshold.value;
     const status = e.target.status.value;
-    const body = { accountName, currentBallence, threshold, status };
+    const body = {date, accountName, currentBallence, threshold, status };
   
     AxiosPublic.patch(`/adsAccount/${id}`, body)
       .then((res) => {
         console.log(res.data);
         refetch(); // Refetch the data to get the updated list
         setModalData(null); // Close the modal upon successful update
+        
+        // Show success toast notification
+        toast.success("Account updated successfully!");
       })
       .catch((error) => {
         console.error("Error updating account:", error);
+        
+        // Show error toast notification
+        toast.error("Failed to update account. Please try again.");
       });
   };
   
@@ -127,6 +136,10 @@ const AllAdsAccount = () => {
     setSortOrder(sortOrder === "asc" ? "desc" : "asc");
   };
 
+  const generateRandomId = () => {
+    return Math.floor(Math.random() * 1e13); 
+  };
+
   const handleUpdateTotalSpent = (e, id, totalSpents, accountName, employeeEmail, employeeName) => {
     e.preventDefault();
   
@@ -134,6 +147,10 @@ const AllAdsAccount = () => {
     const date = e.target.date.value;
     const body = { totalSpent: parseFloat(totalSpent)  };
   
+
+    const ids=generateRandomId()
+ 
+    
     // Update the ads account
     axios.put(`https://digital-networking-server.vercel.app/adsAccount/totalSpent/${id}`, body)
       .then((res) => {
@@ -146,13 +163,18 @@ const AllAdsAccount = () => {
       });
   
     // Prepare data to update or create user
+
+
+
     const totalSpentt = parseFloat(totalSpent);
     const monthlySpent = {
+      ids,
       totalSpentt,
       accountName,
       date,
       employeeName
     };
+
   
     // Post user data with monthlySpent array
     AxiosPublic.post('/users/update', { email: employeeEmail, monthlySpent })
@@ -165,7 +187,11 @@ const AllAdsAccount = () => {
       });
   };
   
+  const sortedAdsAccounts = filteredByCategory.sort((a, b) => {
+    return a.accountName.localeCompare(b.accountName);
+  });
   
+  console.log(sortedAdsAccounts);
 
   return (
     <div>
@@ -173,22 +199,21 @@ const AllAdsAccount = () => {
         <title>All Ads Accounts | Digital Network </title>
         <link rel="canonical" href="https://www.example.com/" />
       </Helmet>
-      <div className="mt-5 p-4 ">
-        <div className="flex justify-between items-center ">
+      <ToastContainer />
+      <div className=" p-5 ">
+        <div className="flex justify-end gap-5 items-center ">
           <div className="flex justify-center items-center">
-            <div className=" flex justify-start mb-5 items-center gap-5 ">
+            <div className=" flex justify-start mb-5 items-center gap-3 ">
               <div>
-                <label className="block text-black font-bold">
-                  Sort By Employee
-                </label>
+              
                 <select
                   name="email"
                   value={selectedEmail}
                   onChange={(e) => setSelectedEmail(e.target.value)}
-                  className="border bg-white text-black border-black rounded p-2 mt-1"
+                  className="border bg-white text-black border-black rounded p-2 "
                 >
                   <option disabled value="">
-                    All
+                  Employee
                   </option>
                   {users
                     ?.filter((u) => u.role === "employee")
@@ -200,46 +225,44 @@ const AllAdsAccount = () => {
                 </select>
               </div>
               <div>
-                <label className="block text-black font-bold">
-                  Sort By Status
-                </label>
+               
                 <select
                   name="status"
                   value={selectedStatus}
                   onChange={(e) => setSelectedStatus(e.target.value)}
-                  className="border bg-white text-black border-black rounded p-2 mt-1"
+                  className="border bg-white px-8 text-black border-black rounded p-2 "
                 >
-                  <option value="">All</option>
+                  <option value="">Status</option>
                   <option value="Active">Active</option>
                   <option value="Disable">Disable</option>
                 </select>
               </div>
-            </div>
-          </div>
-
-          <div className=" ">
-          <label className="block text-black ">
-                  Search by Ads Account Name
-                </label>
+              <div className="">
+        
             <input
               type="text"
               placeholder="Ads Account Name..."
-              className="rounded-lg  placeholder-black border-2  p-2 w-full text-black  text-sm bg-white border-gray-700"
+              className="rounded-lg  placeholder-black border  mr-5  p-2 w-full text-black  text-sm bg-white border-gray-700"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
            
           </div>
+            </div>
+           
+          </div>
+
+
         </div>
 
-        <div className="overflow-x-auto  text-center border border-black">
+        <div className="overflow-x-auto rounded-xl text-black text-center border border-black">
           <table className="min-w-full  text-center bg-white">
             <thead className="bg-[#05a0db] text-white">
               <tr>
                 <th className="p-3">SL</th>
                 <th className="p-3">Payment Date</th>
-                <th className="p-3">Ad Account Name</th>
                 <th className="p-3">Employeer Name</th>
+                <th className="p-3">Ad Account Name</th>
                 <th className="p-3">Current Balance</th>
                 <th className="p-3">Threshold</th>
                 <th className="p-3">Total Spent</th>
@@ -252,18 +275,24 @@ const AllAdsAccount = () => {
               </tr>
             </thead>
             <tbody>
-              {filteredByCategory.map((account, index) => (
+              {sortedAdsAccounts.map((account, index) => (
                 <tr
                   key={account._id}
                   className={`${
                     index % 2 === 0
-                      ? "bg-white text-left text-gray-500 border-b border-opacity-20"
-                      : "bg-gray-200  text-left text-gray-500 border-b border-opacity-20"
+                      ? "bg-white text-left text-black border-b border-opacity-20"
+                      : "bg-gray-200  text-left text-black border-b border-opacity-20"
                   }`}
                 >
                   <td className="p-3 border-r-2  border-gray-300 text-center px-5 ">{index + 1}</td>
                   <td className="p-3 border-l-2 border-r-2 text-center border-gray-300 ">
                     {new Date(account.paymentDate).toLocaleDateString("en-GB")}
+                  </td>
+                  <td className="p-3 border-r-2 hover:text-blue-700 hover:font-bold border-gray-300 text-start px-5 ">
+                    <Link to={`/dashboard/userInfo/${account?.employeeEmail}`}>
+                    {account.employeerName}
+                    </Link>
+                
                   </td>
                   <td className="p-3 border-r-2  border-gray-300 text-start px-5 ">
                     <div className="">
@@ -271,9 +300,7 @@ const AllAdsAccount = () => {
                     
                     </div>
                   </td>
-                  <td className="p-3 border-r-2  border-gray-300 text-center px-5 ">
-                  {account.employeerName}
-                  </td>
+                
                   <td className="p-3 border-r-2 border-gray-300 text-center">
                   $ {account.currentBallence}
                   </td>
@@ -371,11 +398,11 @@ const AllAdsAccount = () => {
                 <td className="p-3  text-right" colSpan="4">
                   Total :
                 </td>
-                <td className="p-3 text-start border-gray-300  ">
-                  $ {totalCurrentBallence}
+                <td className="p-3 text-center border-gray-300  ">
+                  $ {totalCurrentBallence.toFixed(2)}
                 </td>
-                <td className="p-3 text-start  border-gray-300  ">
-                  $ {totalThreshold}
+                <td className="p-3 text-center  border-gray-300  ">
+                  $ {totalThreshold.toFixed(2)}
                 </td>
                 <td className="p-3 text-start  border-gray-300 ">
                   $ {totalSpent.toFixed(2)}
@@ -397,6 +424,17 @@ const AllAdsAccount = () => {
             <ImCross />
            </h1>
        <form onSubmit={(e) => handleUpdate(e, modalData._id)}>
+        <h1 className="text-blue-700 text-center font-bold"> <span >{modalData.accountName}</span></h1>
+        <div className="mb-4">
+             <label className="block text-gray-500">Date</label>
+             <input
+               type="date"
+               required
+               name="date"
+               defaultValue={modalData.date}
+               className="w-full border-2 border-gray-400 rounded p-2 mt-1 bg-green-300 text-black"
+             />
+           </div>
          <div className="mb-4">
            <label className="block text-gray-500">Account Name</label>
            <input

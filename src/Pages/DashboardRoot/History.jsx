@@ -1,107 +1,95 @@
 import React, { useState, useEffect } from 'react';
-import usemonthlySpent from "../../Hook/useMonthlySpent";
+import useUsers from '../../Hook/useUsers';  // Custom hook to fetch users
 import { MdDelete, MdEditSquare } from 'react-icons/md';
 import axios from 'axios';
 import UseAxiosPublic from '../../Axios/UseAxiosPublic';
 
 const History = () => {
-  const [monthlySpent, refetch] = usemonthlySpent();
-  const [sortMonth, setSortMonth] = useState('');
-  const [sortYear, setSortYear] = useState('');
-  const [sortEmployee, setSortEmployee] = useState(null); // State for sorting by employee name
+  const [users] = useUsers(); // Fetch all users
 
-  // Get current month and year
-  const now = new Date();
-  const currentMonth = now.toLocaleString('default', { month: 'long' });
-  const currentYear = now.getFullYear();
+  // Get the current month and year
+  const currentDate = new Date();
+  const currentMonth = currentDate.toLocaleString('default', { month: 'long' });
+  const currentYear = currentDate.getFullYear().toString();
 
-  // Function to aggregate totalSpent by account names, months, and years
-  const aggregateAccountsByMonth = (data) => {
-    const aggregated = {};
+  // Set the default state for month and year
+  const [sortEmployee, setSortEmployee] = useState('');
+  const [sortMonth, setSortMonth] = useState(currentMonth); // Default to current month
+  const [sortYear, setSortYear] = useState(currentYear); // Default to current year
 
-    data.forEach(account => {
-      const date = new Date(account.date);
-      const month = date.toLocaleString('default', { month: 'long' });
-      const year = date.getFullYear();
-      const key = `${account.accountName}-${month}-${year}`;
+  // Flatten the monthlySpent data across all users
+  const flattenedData = users.reduce((acc, user) => {
+    if (user.monthlySpent) {
+      const userSpentData = user.monthlySpent.map(spent => ({
+        ...spent,
+        employeeName: user.name, // Add employee name from user data
+        employeeId: user._id, // Add employee ID for identification
+      }));
+      return [...acc, ...userSpentData];
+    }
+    return acc;
+  }, []);
 
-      if (!aggregated[key]) {
-        aggregated[key] = { ...account, totalSpentt: 0, month, year };
-      }
-      aggregated[key].totalSpentt += account.totalSpentt;
+  // Filter data based on sort criteria (if applicable)
+  const sortedAccounts = flattenedData
+    .filter(account => {
+      const matchEmployee = sortEmployee ? account.employeeName === sortEmployee : true;
+      const matchMonth = sortMonth ? new Date(account.date).toLocaleString('default', { month: 'long' }) === sortMonth : true;
+      const matchYear = sortYear ? new Date(account.date).getFullYear().toString() === sortYear : true;
+      return matchEmployee && matchMonth && matchYear;
     });
-
-    return Object.values(aggregated);
-  };
-
-  const aggregatedAccounts = aggregateAccountsByMonth(monthlySpent);
-
-  // Sorting function
-  const sortAccounts = (accounts, month, year, employee) => {
-    return accounts.filter(account => {
-      const matchesMonth = month ? account.month === month : true;
-      const matchesYear = year ? account.year === parseInt(year) : true;
-      const matchesEmployee = employee ? account.employeeName === employee : true;
-      return matchesMonth && matchesYear && matchesEmployee;
-    });
-  };
-
-  const sortedAccounts = sortAccounts(aggregatedAccounts, sortMonth, sortYear, sortEmployee);
-
-  // Set default sort values to current month and year when component mounts
-  useEffect(() => {
-    setSortMonth(currentMonth);
-    setSortYear(currentYear);
-  }, [currentMonth, currentYear]);
-
-  // Get a unique list of employee names for the dropdown
-  const employeeNames = [...new Set(aggregatedAccounts.map(account => account.employeeName))];
-
-  const handleUpdate2 = (e, id) => {
-    e.preventDefault();
-    const totalSpentt = e.target.totalSpentt.value;
-    const body = { totalSpentt: parseFloat(totalSpentt) };
-  
-    axios.patch(`https://digital-networking-server.vercel.app/monthlySpent/totalSpent/${id}`, body)
-      .then((res) => {
-        console.log(res.data);
-        refetch();
-        document.getElementById(`modal_${id}`).close(); // Close the modal
-      })
-      .catch((error) => {
-        console.error("Error updating total spent:", error);
-      });
-  };
 
   const AxiosPublic = UseAxiosPublic();
-  const handledelete = (id) => {
-    AxiosPublic.delete(`/monthlySpent/${id}`).then((res) => {
-      refetch();
-    });
+
+  // Handle update function
+  const handleUpdate2 = async (e, userId, spentId) => {
+    e.preventDefault();
+    const totalSpent = e.target.totalSpentt.value; 
+    const totalSpentt = parseFloat(totalSpent);
+    
+    try {
+      const response = await AxiosPublic.put(`/updateSpent/${userId}/${spentId}`, {
+        totalSpentt,
+      });
+  
+      if (response.status === 200) {
+        alert('Total spent updated successfully');
+        window.location.reload(); // Optionally reload the page to fetch updated data
+      }
+    } catch (error) {
+      console.error('Error updating total spent:', error);
+      alert('Failed to update total spent');
+    }
   };
 
-  // Calculate totals for the footer
-  const totalSpent = sortedAccounts.reduce((sum, account) => sum + account.totalSpentt, 0);
-  const totalBill = totalSpent * 140; // Assuming conversion rate
-
   return (
-    <div className='m-5'>
-      <div className="flex justify-between mb-4">
+    <div className='mx-5 my-5'>
+      <div className="flex justify-end items-center gap-3 mb-5">
         <div>
+        <div>
+        
+         </div>
           <select
             className="px-4 py-2 border rounded bg-white text-black border-black"
             onChange={(e) => setSortEmployee(e.target.value)}
             value={sortEmployee || ""}
           >
             <option value="">Select Employee</option>
-            {employeeNames.map(employee => (
-              <option key={employee} value={employee}>{employee}</option>
+            {users.map(user => (
+              user.role === 'employee' && (
+                <option key={user._id} value={user.name}>{user.name}</option>
+              )
             ))}
           </select>
         </div>
-        <div>
-          <select
-            className="mr-4 px-4 py-2 border rounded bg-white text-black border-black"
+        <div className='flex justify-end items-center gap-3'>
+         <div>
+         <div>
+          <div>
+        
+         </div>
+         <select
+            className=" px-4 py-2 border rounded bg-white text-black border-black"
             onChange={(e) => setSortMonth(e.target.value)}
             value={sortMonth || ""}
           >
@@ -110,8 +98,15 @@ const History = () => {
               <option key={month} value={month}>{month}</option>
             ))}
           </select>
-
-          <select
+          </div>
+         </div>
+         
+            <div >
+            <div>
+    
+         </div>
+         <div>
+         <select
             className="px-4 py-2 border rounded bg-white text-black border-black"
             onChange={(e) => setSortYear(e.target.value)}
             value={sortYear || ""}
@@ -121,10 +116,13 @@ const History = () => {
               <option key={year} value={year}>{year}</option>
             ))}
           </select>
+         </div>
+            </div>
+       
         </div>
       </div>
 
-      <div className="overflow-x-auto text-center border border-black">
+      <div className="overflow-x-auto text-center rounded-xl border-l border-gray-400">
         <table className="min-w-full text-center bg-white">
           <thead className="bg-[#05a0db] text-white">
             <tr>
@@ -140,16 +138,16 @@ const History = () => {
           <tbody>
             {sortedAccounts.map((account, index) => (
               <tr
-                key={account._id}
+                key={account.ids} // Use `ids` as the key
                 className={`${
                   index % 2 === 0
-                    ? "bg-white text-left text-gray-500 border-b border-opacity-20"
-                    : "bg-gray-200 text-left text-gray-500 border-b border-opacity-20"
+                    ? "bg-white text-left text-black border-b border-opacity-20"
+                    : "bg-gray-200 text-left text-black border-b border-opacity-20"
                 }`}
               >
                 <td className="p-3 border-r-2 border-gray-300 text-center px-5">{index + 1}</td>
                 <td className="p-3 border-l-2 border-r-2 text-center border-gray-300">
-                  {account.month}
+                  {new Date(account.date).toLocaleString('default', { month: 'long'})}
                 </td>
                 <td className="p-3 border-r-2 border-gray-300 text-center px-5">
                   {account.employeeName}
@@ -158,11 +156,12 @@ const History = () => {
                   {account.accountName}
                 </td>
                 <td className="p-3 border-r-2 border-gray-300 text-center">
-                  $ {account.totalSpentt}
-                </td>
-                <td className="p-3 border-r-2 border-gray-300 text-center">
-                  ৳ {account.totalSpentt * 140}
-                </td>
+  $ {account.totalSpentt.toFixed(2)}
+</td>
+<td className="p-3 border-r-2 border-gray-300 text-center">
+  ৳ {(account.totalSpentt * 140).toFixed(2)}
+</td>
+
                 <td className="p-3 border-r text-center border-gray-400">
                   <div className="flex justify-center items-center gap-3">
                     <div>
@@ -176,7 +175,7 @@ const History = () => {
                       </button>
                       <dialog id={`modal_${index}`} className="modal">
                         <div className="modal-box bg-white text-black">
-                          <form onSubmit={(e) => handleUpdate2(e, account._id)}>
+                          <form onSubmit={(e) => handleUpdate2(e, account.employeeId, account.ids)}>
                             <div className="mb-4">
                               <label className="block text-start text-gray-700">Total Spent</label>
                               <input
@@ -209,7 +208,7 @@ const History = () => {
                     </div>
                     <button
                       className="text-center text-black text-3xl"
-                      onClick={() => handledelete(account._id)}
+                      onClick={() => handleDelete(account.ids)} // Ensure correct ID for deletion
                     >
                       <MdDelete />
                     </button>
@@ -218,14 +217,20 @@ const History = () => {
               </tr>
             ))}
           </tbody>
-          <tfoot className="bg-gray-200 text-black">
-            <tr>
-              <td colSpan="4" className="p-3 font-bold text-right">Total</td>
-              <td className="p-3 font-bold text-center">$ {totalSpent}</td>
-              <td className="p-3 font-bold text-center">৳ {totalBill}</td>
-              <td className="p-3"></td>
-            </tr>
-          </tfoot>
+
+          <tfoot className="bg-[#05a0db] border-t border-gray-700 text-white">
+  <tr>
+    <td colSpan="4" className="p-3 font-bold text-right">Total</td>
+    <td className="p-3 font-bold text-center">
+      $ {sortedAccounts.reduce((sum, acc) => sum + acc.totalSpentt, 0).toFixed(2)}
+    </td>
+    <td className="p-3 font-bold text-center">
+      ৳ {(sortedAccounts.reduce((sum, acc) => sum + acc.totalSpentt, 0) * 140).toFixed(2)}
+    </td>
+    <td className="p-3 font-bold text-center"></td>
+  </tr>
+</tfoot>
+
         </table>
       </div>
     </div>

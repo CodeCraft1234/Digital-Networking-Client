@@ -9,6 +9,7 @@ import './BalanceCards.css';
 import { AuthContext } from "../../Security/AuthProvider";
 import useEmployeePayment from "../../Hook/useEmployeePayment";
 import { IoIosSearch } from "react-icons/io";
+import { Helmet } from "react-helmet-async";
 
 const CampaignTable = ({ email }) => {
   const { user }=useContext(AuthContext)
@@ -153,76 +154,36 @@ const CampaignTable = ({ email }) => {
     const totalDue = totalbill - totalRCV;
   return (
 
-    <div className="my-4 ">
-        
+    <div className="my-5 ">
+         <Helmet>
+        <title>Client Table | Digital Network </title>
+        <link rel="canonical" href="https://www.example.com/" />
+      </Helmet>
      <div className="">
-  <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-6 mb-3  lg:grid-cols-6 gap-3 mt-4 p-4 ">
- <div className="balance-card bg-white rounded-2xl shadow-2xl p-5 text-center  transition-transform transform hover:scale-105 border-0">
-   <img className="balance-card-img" src="https://i.ibb.co/bHMLyvM/b-Kash-Merchant.png" alt="bKash" />
-   <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"> <span className="text-lg lg:text-2xl font-extrabold"> ৳</span> {bkashMarcent - bkashMarcent2}</p>
- </div>
- <div className="balance-card bg-white rounded-2xl shadow-2xl p-5 text-center transition-transform transform hover:scale-105 border-0">
-   <img className="balance-card-img" src="https://i.ibb.co/520Py6s/bkash-1.png" alt="bKash" />
-   <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"> <span className="text-lg lg:text-2xl font-extrabold"> ৳</span> {bkashPersonal - bkashPersonal2}</p>
- </div>
- <div className="balance-card bg-white rounded-2xl shadow-2xl p-5 text-center transition-transform transform hover:scale-105 border-0">
-   <img className="balance-card-img" src="https://i.ibb.co/JQBQBcF/nagad-marchant.png" alt="Nagad" />
 
-   <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"><span className="text-lg lg:text-2xl font-extrabold"> ৳</span> {nagadPersonal - nagadPersonal2}</p>
- </div>
- <div className="balance-card bg-white rounded-2xl shadow-2xl p-5 text-center transition-transform transform hover:scale-105 border-0">
-   <img className="balance-card-img" src="https://i.ibb.co/QkTM4M3/rocket.png" alt="Rocket" />
-
-   <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"><span className="text-lg lg:text-2xl font-extrabold"> ৳</span> {rocketPersonal - rocketPersonal2}</p>
- </div>
-
- <div className="balance-card bg-white rounded-2xl shadow-2xl p-5 text-center transition-transform transform hover:scale-105 border-0">
-   <div>
-     <img className="balance-card-img w-56 h-auto mt-5 " src="https://i.ibb.co/3WVZGdz/PAYO-BIG-aa26e6e0.png" alt="Payoneer" />
-     <span className="balance-card-text text-4xl flex items-center justify-center gap-2">
-     <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"> </p>
-     <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"> <span className="text-lg lg:text-2xl font-extrabold text-green-600">$ </span> {totalSpent.toFixed(2)}</p>
-     </span>
-
-   </div>
- </div>
-
- 
- <div className="balance-card bg-white rounded-2xl shadow-2xl p-5 mr-4 text-center transition-transform transform hover:scale-105 border-0">
-   <img className="balance-card-img" src="https://i.ibb.co/PZc0P4w/brac-bank-seeklogo.png" alt="Rocket" />
-   <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"><span className="text-lg lg:text-2xl font-extrabold"> ৳</span> {bankTotal - bankTotal2}</p>
- </div>
-
-
-</div>
     
    
-    <div className=" p-2  sm:p-4 ">
+    <div className=" p-5  ">
      
       <div className="overflow-x-auto  ">
 
       
-    <div className="flex justify-between items-center ">
+  
 
 
-    <div className="flex justify-end mb-6">
+    <div className="flex justify-end mb-5">
               <input
                 type="text"
-                placeholder=" Client Phone Number"
-                className=" rounded-l-lg w-20 placeholder-black border-2 border-black p-2 font-bold text-black sm:w-2/3 text-sm bg-blue-300"
+                placeholder=" Client Phone Number..."
+                className=" rounded-lg w-auto  placeholder-black border border-gray-700 p-2  text-black  bg-white"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
-              <button
-                type="button"
-                className=" w-10 p-2 font-semibold rounded-r-lg sm:w-1/3 bg-[#FF9F0D] dark:bg-[#FF9F0D] text-white"
-              >
-                <IoIosSearch className="mx-auto font-bold w-6 h-6" />
-              </button>
+
     </div>
-</div>
 
 
+<div className="overflow-x-auto rounded-lg border-black">
 <table className="min-w-full bg-white">
 <thead className="bg-[#05a0db] text-white">
 <tr>
@@ -233,7 +194,7 @@ const CampaignTable = ({ email }) => {
 <th className="p-3 text-center">T.Budget</th>
 <th className="p-3 text-center">T.Spent</th>
 <th className="p-3 text-center">Total Bill</th>
-<th className="p-3 text-center">Total Payment Rcv</th>
+<th className="p-3 text-center">Payment Rcv</th>
 <th className="p-3 text-center">Total Due</th>
 
 </tr>
@@ -259,12 +220,13 @@ const CampaignTable = ({ email }) => {
   <td className="p-3 border-r border-gray-400 text-center">৳ {campaign.tBill}</td>
   <td className="p-3 border-r border-gray-400 text-center">৳ {campaign.tPayment}</td>
   <td className="p-3 border-r border-gray-400 text-center">
-          ৳ {
-            !isNaN(Number(campaign.tBill)) && !isNaN(Number(campaign.tPaid)) 
-            ? Number(campaign.tBill) - Number(campaign.tPayment) 
-            : 'Invalid Data'
-          }
-        </td>
+  ৳ {
+    !isNaN(Number(campaign.tBill)) && !isNaN(Number(campaign.tPaid))
+    ? (Number(campaign.tBill) - Number(campaign.tPayment)).toFixed(2)
+    : 'Invalid Data'
+  }
+</td>
+
 
 
 </tr>
@@ -272,19 +234,19 @@ const CampaignTable = ({ email }) => {
 <tr className="bg-[#05a0db] text-sm text-white font-bold">
 <td className="p-3 text-center"></td>
 
-<td className="p-3  text-right" colSpan="1">
+<td className="p-3  text-right" colSpan="2">
   Total :
 </td>
-<td className="p-3  text-center">$ {totalBudged}</td>
-<td className="p-3  text-center">$ {totalSpent}</td>
-<td className="p-3  text-center">৳ {totalbill}</td>
-<td className="p-3  text-center">৳ {totalRCV}</td>
-<td className="p-3 ">Total Due : ৳ {totalDue}</td>
-<td className="p-3 ">Total Due : ৳ {totalDue}</td>
+<td className="p-3  text-center">$ {totalBudged.toFixed(2)}</td>
+<td className="p-3  text-center">$ {totalSpent.toFixed(2)}</td>
+<td className="p-3  text-center">৳ {totalbill.toFixed(2)}</td>
+<td className="p-3  text-center">৳ {totalRCV.toFixed(2)}</td>
+<td className="p-3 ">Total Due : ৳ {totalDue.toFixed(2)}</td>
 </tr>
 </tbody>
 </table>
 
+      </div>
       </div>
     </div>
 

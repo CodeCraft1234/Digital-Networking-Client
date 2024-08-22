@@ -459,37 +459,36 @@ const AdsUserPayments = () => {
     
     return (
         <div>
-                 <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 mb-3  lg:grid-cols-5 gap-8 mt-4 p-4">
+                 <div className="grid grid-cols-2 text-white sm:grid-cols-2 md:grid-cols-3 mb-3  lg:grid-cols-5 gap-5 mt-4 ">
    <div className="balance-card bg-white rounded-2xl shadow-lg p-5 text-center  transition-transform transform hover:scale-105 border-0">
      <img className="balance-card-img" src="https://i.ibb.co/bHMLyvM/b-Kash-Merchant.png" alt="bKash" />
-     <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"> <span className="text-lg lg:text-2xl font-extrabold"> ৳</span> {bkashMarcent2}</p>
+     <p className="balance-card-text text-black text-lg lg:text-2xl font-bold "> <span className="text-lg lg:text-2xl text-white font-extrabold"> ৳</span> {bkashMarcent2}</p>
    </div>
    <div className="balance-card bg-white rounded-2xl shadow-lg p-5 text-center transition-transform transform hover:scale-105 border-0">
      <img className="balance-card-img" src="https://i.ibb.co/520Py6s/bkash-1.png" alt="bKash" />
-     <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"> <span className="text-lg lg:text-2xl font-extrabold"> ৳</span> {bkashPersonal2}</p>
+     <p className="balance-card-text text-black text-lg lg:text-2xl font-bold "> <span className="text-lg lg:text-2xl font-extrabold"> ৳</span> {bkashPersonal2}</p>
    </div>
    <div className="balance-card bg-white rounded-2xl shadow-lg p-5 text-center transition-transform transform hover:scale-105 border-0">
      <img className="balance-card-img" src="https://i.ibb.co/JQBQBcF/nagad-marchant.png" alt="Nagad" />
-     <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"><span className="text-lg lg:text-2xl font-extrabold"> ৳</span> {nagadPersonal2}</p>
+     <p className="balance-card-text text-black text-lg lg:text-2xl font-bold "><span className="text-lg lg:text-2xl font-extrabold"> ৳</span> {nagadPersonal2}</p>
    </div>
    <div className="balance-card bg-white rounded-2xl shadow-lg p-5 text-center transition-transform transform hover:scale-105 border-0">
      <img className="balance-card-img" src="https://i.ibb.co/QkTM4M3/rocket.png" alt="Rocket" />
-     <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"><span className="text-lg lg:text-2xl font-extrabold"> ৳</span> {rocketPersonal2}</p>
+     <p className="balance-card-text text-black text-lg lg:text-2xl font-bold "><span className="text-lg lg:text-2xl font-extrabold"> ৳</span> {rocketPersonal2}</p>
    </div>
 
    <div className="balance-card bg-white rounded-2xl shadow-lg p-5 text-center transition-transform transform hover:scale-105 border-0">
      <img className="balance-card-img" src="https://i.ibb.co/PZc0P4w/brac-bank-seeklogo.png" alt="Rocket" />
-     {/* <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"><span className="text-lg lg:text-2xl font-extrabold">Bank Received : ৳</span> {bankTotal}</p>
-     <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"><span className="text-lg lg:text-2xl font-extrabold">Bank Cashout : ৳</span> {bankTotal2}</p> */}
-     <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"><span className="text-lg lg:text-2xl font-extrabold"> ৳</span> {bankTotal2}</p>
+     
+     <p className="balance-card-text text-black text-lg lg:text-2xl font-bold "><span className="text-lg lg:text-2xl font-extrabold"> ৳</span> {bankTotal2}</p>
    </div>
      </div>
    
 {/* ///////////////////////////////////////////////////////////////// */}
-    <div className="flex mt-5 justify-between items-center gap-5  ml-2 ">
+    <div className="flex mt-4 justify-between items-center gap-5  ml-2 ">
     <div className="">
   <button
-    className="font-avenir px-3 mx-auto py-1 bg-[#05a0db] ml-5 rounded-lg text-white"
+    className="font-avenir px-3 mx-auto py-1 bg-[#05a0db]  rounded-lg text-white"
     onClick={() => document.getElementById("my_modal_1").showModal()}
   >
     Pay Admin
@@ -544,13 +543,13 @@ const AdsUserPayments = () => {
 
         <div className="grid lg:grid-cols-2 gap-3 mt-4">
         <form method="dialog">
-            <button className="font-avenir px-3 py-1 w-full rounded-lg text-white bg-red-600">
+            <button className="font-avenir px-3 py-2 w-full rounded-lg text-white bg-red-600">
               Close
             </button>
           </form>
           <button
             type="submit"
-            className="font-avenir px-3 py-1  w-full rounded-lg text-white bg-[#05a0db]"
+            className="font-avenir px-3 py-2  w-full rounded-lg text-white bg-[#05a0db]"
           >
             Send
           </button>
@@ -563,8 +562,8 @@ const AdsUserPayments = () => {
 
           <div className="flex  justify-end items-center gap-5  ml-2 ">
   
-    <div className="flex flex-col justify-end items-center">
-      <label>By Month</label>
+    <div className="flex flex-col justify-end items-start">
+    
       <select
         className="border bg-blue-200 text-black border-gray-400 rounded p-2 mt-1"
         value={sortMonth}
@@ -591,8 +590,8 @@ const AdsUserPayments = () => {
         ))}
       </select>
     </div>
-    <div className="flex flex-col justify-center items-center">
-      <label className="block">By Date</label>
+    <div className="flex flex-col justify-center items-start">
+     
       <input
         type="date"
         className="border rounded bg-blue-200 text-black border-gray-400 p-2 mt-1"
@@ -600,8 +599,8 @@ const AdsUserPayments = () => {
         onChange={(e) => setSelectedDate(e.target.value)}
       />
     </div>
-    <div className="flex flex-col justify-center items-center">
-      <label className="block ml-2">Payment Method</label>
+    <div className="flex flex-col justify-center items-start">
+     
       <select
         className="border bg-blue-200 text-black border-gray-400 rounded p-2 mt-1"
         value={selectedCategory}
@@ -615,25 +614,21 @@ const AdsUserPayments = () => {
         <option value="bank">Bank</option>
       </select>
     </div>
-    <div className="mt-6 flex justify-center items-center mr-5">
+    <div className="flex flex-col justify-center items-start">
+   
     <input
       type="text"
       placeholder="Payment Method"
-      className="rounded-l-lg w-20 placeholder-black border-2 border-black p-2 font-bold text-black sm:w-2/3 text-sm bg-blue-300"
+      className="rounded-lg  placeholder-black border border-gray-700 py-2 px-8  text-black mr-5 text-sm bg-blue-300"
       value={searchQuery}
       onChange={(e) => setSearchQuery(e.target.value)}
     />
-    <button
-      type="button"
-      className="w-10 p-2 font-semibold rounded-r-lg sm:w-1/3 bg-[#FF9F0D] dark:bg-[#FF9F0D] text-white"
-    >
-      <IoIosSearch className="mx-auto  font-bold w-6 h-6" />
-    </button>
+  
   </div>
           </div>
   
      </div>
-      <div className="overflow-x-auto mt-6 mx-4">
+      <div className="overflow-x-auto rounded-xl border border-gray-400 mt-5 ">
         <table className="min-w-full bg-white">
           <thead className="bg-[#05a0db] text-white">
             <tr>
@@ -787,14 +782,14 @@ const AdsUserPayments = () => {
       <div className="flex gap-3 mt-4">
       <button
           type="button"
-          className="font-avenir px-3 py-1 rounded-lg text-white bg-red-600 flex-1"
+          className="font-avenir px-3 py-2 rounded-lg text-white bg-red-600 flex-1"
           onClick={() => document.getElementById(`modal_${payment._id}`).close()}
         >
           Close
         </button>
         <button
           type="submit"
-          className="font-avenir px-3 py-1 rounded-lg text-white bg-green-800 flex-1"
+          className="font-avenir px-3 py-2 rounded-lg text-white bg-[#05a0db] flex-1"
         >
           Update
         </button>

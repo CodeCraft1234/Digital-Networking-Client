@@ -141,7 +141,7 @@ const PaymentHistry = () => {
     .then((res) => {
         console.log(res.data);
         refetch(); // Ensure this function is defined and correct
-        toast.success("Campaign updated successfully");
+        // toast.success("Campaign updated successfully");
       })
       .catch((error) => {
         console.error("Error updating campaign:", error);
@@ -174,11 +174,11 @@ const PaymentHistry = () => {
   const handleUpdatePayment = (e, id) => {
     e.preventDefault();
     const amount = parseFloat(e.target.amount.value);
-    const previousAmount = parseFloat(e.target.previousAmount.value);
     const date = e.target.date.value;
     const note = e.target.note.value;
     const paymentMethod = e.target.paymentMethod.value;
     const body = { note, amount, date, paymentMethod };
+
     AxiosPublic.patch(
       `https://digital-networking-server.vercel.app/Mpayment/${id}`,
       body
@@ -186,7 +186,7 @@ const PaymentHistry = () => {
       .then((res) => {
         console.log(res.data);
         refetch();
-        toast.success("Campaign updated successfully");
+        // toast.success("Campaign updated successfully");
       })
       .catch((error) => {
         console.error("Error updating campaign:", error);
@@ -208,7 +208,7 @@ const PaymentHistry = () => {
       .then((res) => {
         console.log(res.data);
         refetch(); // Ensure this function is defined and correct
-        toast.success("Campaign updated successfully");
+        toast.success("Payment updated successfully");
         // window.location.reload(); // Generally better to avoid reloading the page
       })
       .catch((error) => {
@@ -219,7 +219,7 @@ const PaymentHistry = () => {
 
   const handledelete = (id) => {
     AxiosPublic.delete(`/Mpayment/${id}`).then((res) => {
-      toast.success("Delete successfully");
+      toast.success("Payment Delete successfully");
       refetch();
     });
 
@@ -233,7 +233,7 @@ const PaymentHistry = () => {
         </h6>
         <div>
   <button
-    className="font-avenir px-3 mx-auto py-1 bg-[#05a0db]  rounded-lg text-white"
+    className="font-avenir px-6 mx-auto py-2 bg-[#05a0db]  rounded-lg text-white"
     onClick={() => document.getElementById("my_modal_8").showModal()}
   >
     Pay Now
@@ -249,7 +249,7 @@ const PaymentHistry = () => {
               type="date"
               name="date"
               defaultValue={0}
-              className="w-full border-2 border-black bg-green-300 text-black rounded p-2 mt-1"
+              className="w-full border border-gray-600 text-black bg-green-300 rounded p-2 mt-1"
             />
           </div>
           <div className="mb-4">
@@ -258,7 +258,7 @@ const PaymentHistry = () => {
               required
               type="number"
               name="amount"
-              className="w-full border-2 bg-white border-black rounded p-2 mt-1"
+              className="w-full border border-gray-600 text-black bg-white rounded p-2 mt-1"
             />
           </div>
           <div className="mb-4">
@@ -267,7 +267,7 @@ const PaymentHistry = () => {
               required
               type="text"
               name="note"
-              className="w-full border-2 bg-white border-black rounded p-2 mt-1"
+              className="w-full border border-gray-600 text-black bg-white rounded p-2 mt-1"
             />
           </div>
  
@@ -276,7 +276,7 @@ const PaymentHistry = () => {
             <label className="block text-gray-700">Payment Method</label>
             <select
               name="paymentMethod"
-              className="w-full border-2 border-black bg-white rounded p-2 mt-1"
+              className="w-full border border-gray-600 text-black bg-white rounded p-2 mt-1"
             >
               <option disabled value="">
                 Select a Method
@@ -292,7 +292,7 @@ const PaymentHistry = () => {
      
 
         {/* Buttons at the bottom in a two-grid layout */}
-        <div className="grid grid-cols-2 gap-3 mt-4">
+        <div className="grid grid-cols-2 gap-3 mt-8">
           <button
             type="button"
             className="p-2 rounded-lg bg-red-600 text-white text-center"
@@ -312,7 +312,7 @@ const PaymentHistry = () => {
   </dialog>
 </div>
 
-        <div className="overflow-x-auto mt-6">
+        <div className="overflow-x-auto mt-5 rounded-xl ">
           <table className="min-w-full bg-white">
             <thead className="bg-[#05a0db] text-white">
               <tr>
@@ -405,40 +405,31 @@ const PaymentHistry = () => {
     <dialog id={`modal_${payment._id}`} className="modal">
       <div className="modal-box text-black bg-white font-bold">
         <form onSubmit={(e) => handleUpdatePayment(e, payment._id)}>
-          <div className="mb-4">
-            <label className="block text-gray-700">Previous Amount</label>
-            <input
-              type="number"
-              name="previousAmount"
-              disabled
-              defaultValue={payment?.amount}
-              className="w-full border-2 bg-white border-black rounded p-2 mt-1"
-            />
-          </div>
-          <div className="mb-4">
-            <label className="block text-gray-700">New Amount</label>
-            <input
-              type="number"
-              name="amount"
-              defaultValue={payment.amount}
-              className="w-full border-2 bg-white border-black rounded p-2 mt-1"
-            />
-          </div>
-          <div className="mb-4">
-            <label className="block text-gray-700">Date</label>
+        <div className="mb-4">
+            <label className="block text-left text-gray-700">Date</label>
             <input
               type="date"
               defaultValue={payment.date}
               name="date"
-              className="w-full border-2 border-black bg-green-300 rounded p-2 mt-1"
+              className="w-full border bg-green-300 border-black p-2 rounded-lg"
             />
           </div>
           <div className="mb-4">
-            <label className="block text-gray-700">Method</label>
+            <label className="block text-left text-gray-700">Amount</label>
+            <input
+              type="number"
+              name="amount"
+              defaultValue={payment.amount}
+              className="w-full border bg-white border-black p-2 rounded-lg"
+            />
+          </div>
+          
+          <div className="mb-4">
+            <label className="block text-left text-gray-700">Method</label>
             <select
               name="paymentMethod"
               defaultValue={payment.paymentMethod}
-              className="w-full border-2 border-black bg-white rounded p-2 mt-1"
+              className="w-full border bg-white border-black p-2 rounded-lg"
             >
               <option value="bkashMarchent">Bkash Marchent</option>
               <option value="bkashPersonal">Bkash Personal</option>
@@ -448,12 +439,12 @@ const PaymentHistry = () => {
             </select>
           </div>
           <div className="mb-4">
-            <label className="block text-gray-700">Note</label>
+            <label className="block text-left text-gray-700">Note</label>
             <input
               type="text"
               name="note"
               defaultValue={payment?.note}
-              className="w-full border-2 border-black bg-white rounded p-2 mt-1"
+              className="w-full border bg-white border-black p-2 rounded-lg"
             />
           </div>
 

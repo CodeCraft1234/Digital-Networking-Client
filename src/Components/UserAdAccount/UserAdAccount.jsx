@@ -8,6 +8,7 @@ import useUsers from "../../Hook/useUsers";
 import { Helmet } from "react-helmet-async";
 import { toast, ToastContainer } from "react-toastify";
 import { MdDelete, MdEditSquare } from "react-icons/md";
+import { ImCross } from "react-icons/im";
 
 const UserAdAccount = ({email}) => {
 
@@ -89,19 +90,20 @@ useEffect(() => {
 }, [adsAccounts]);
 
 const [modalData, setModalData] = useState(null);
+
 const handleUpdate = (e, id) => {
   e.preventDefault();
   const accountName = e.target.accountName.value;
+  const date = e.target.date.value;
   const currentBallence = e.target.currentBallence.value;
   const threshold = e.target.threshold.value;
-  const totalSpent = e.target.totalSpent.value;
   const status = e.target.status.value;
   const paymentDate=new Date()
-  const body = { accountName,currentBallence,paymentDate, threshold, totalSpent, status };
+  const body = {date, accountName,currentBallence,paymentDate, threshold, status };
   AxiosPublic.patch(`/adsAccount/${id}`,body
   )
     .then((res) => {
-      toast.success("Update successful!");
+      toast.success("Ads Account Update successful!");
       refetch()
     });
 };
@@ -110,7 +112,7 @@ const handleDelete=(id)=>[
   AxiosPublic.delete(`/adsAccount/${id}`)
     .then(res=>{
       console.log(res.data);
-      toast.success("Delete successful!");
+      toast.success("Ads Account Delete successful!");
       refetch()
       })
 ]
@@ -119,8 +121,23 @@ const [searchQuery, setSearchQuery] = useState("");
 const filteredAdsAccounts = adsAccounts.filter(account =>
   account.accountName.toLowerCase().includes(searchQuery.toLowerCase())
 );
+
+
+const filteredAdsAccountss = filteredAdsAccounts
+.filter(account =>
+  account.accountName.toLowerCase().includes(searchQuery.toLowerCase())
+)
+.sort((a, b) => (a.status === "Active" ? -1 : 1)); // Sort "Active" status first
+
+const sortedAdsAccounts = filteredAdsAccountss.sort((a, b) => {
+  return a.accountName.localeCompare(b.accountName);
+});
+
+console.log(sortedAdsAccounts);
+
+
   return (
-    <div className=" p-5 dark:text-green-800">
+    <div className=" px-5 dark:text-green-800">
        <ToastContainer />
        <Helmet>
         <title>Ads Account | Digital Network </title>
@@ -129,72 +146,80 @@ const filteredAdsAccounts = adsAccounts.filter(account =>
      
 
 
-      <div className="flex justify-between mb-5 text-gray-500 pb-1 items-center gap-3">
-       <div>
-         <button
-          className="font-avenir px-3 py-1 rounded-lg text-white bg-[#05a0db]"
-          onClick={() => document.getElementById("my_modal_3").showModal()}
-        >
-          Add Ads Account
-        </button>
-        
-        <dialog id="my_modal_3" className="modal">
-  <div className="modal-box bg-white">
-    <form onSubmit={(e) => handleAddAdsAcount(e)}>
-      <div className="mb-4">
-        <label className="block text-black">Payment Date</label>
-        <input
-          required
-          type="date"
-          name="paymentDate"
-          className="w-full border bg-green-300 border-gray-600 text-black rounded p-2 mt-1"
-        />
-      </div>
-      <div className="mb-4">
-        <label className="block text-black">Account Name</label>
-        <input
-          type="text"
-          required
-          name="accountName"
-          placeholder="type here..."
-          className="w-full border border-gray-600 text-black bg-white rounded p-2 mt-1"
-        />
-      </div>
-      
-      <div className="modal-action grid grid-cols-2 gap-4">
-      <form method="dialog" className="w-full">
-          <button className="p-2 rounded-lg bg-red-600 text-white text-center w-full">
-            Close
-          </button>
-        </form>
+     <div className="flex justify-between  text-gray-500  items-center gap-5">
+      <div>
         <button
-          type="submit"
-          className="font-avenir px-3 py-2 rounded-lg text-white bg-[#05a0db] w-full"
-        >
-          Send
-        </button>
-        
-      </div>
-    </form>
-  </div>
+         className="font-avenir px-6 p-2 rounded-lg text-white bg-[#05a0db]"
+         onClick={() => document.getElementById("my_modal_3").showModal()}
+       >
+         Add an Ads Account
+       </button>
+       
+       <dialog id="my_modal_3" className="modal">
+ <div className="modal-box bg-white">
+   <form onSubmit={(e) => handleAddAdsAcount(e)}>
+     <div className="mb-4">
+     <h1
+            className=" text-black flex hover:text-red-500  justify-end  text-end"
+            onClick={() => document.getElementById(`my_modal_3`).close()}
+          >
+           <ImCross />
+          </h1>
+       <label className="block text-black">Date</label>
+       <input
+         required
+         type="date"
+         name="paymentDate"
+         className="w-full border bg-green-300 border-gray-600 text-black rounded p-2 mt-1"
+       />
+     </div>
+     <div className="mb-4">
+       <label className="block text-black">Account Name</label>
+       <input
+         type="text"
+         required
+         name="accountName"
+         placeholder="type here..."
+         className="w-full border border-gray-600 text-black bg-white rounded p-2 mt-1"
+       />
+     </div>
+     
+     <div className="modal-action grid grid-cols-2 gap-4">
+     <form method="dialog" className="w-full">
+         <button className="p-2 rounded-lg bg-red-600 text-white text-center w-full">
+           Close
+         </button>
+       </form>
+       <button
+         type="submit"
+         className="font-avenir px-3 py-2 rounded-lg text-white bg-[#05a0db] w-full"
+       >
+         Send
+       </button>
+       
+     </div>
+   </form>
+ </div>
 </dialog>
 
 
-     </div>
-     <div className="flex  justify-end">
-          <input
-           type="text"
-           placeholder="Search by account name..."
-           value={searchQuery}
-           onChange={(e) => setSearchQuery(e.target.value)} 
-            className="rounded-lg placeholder-black border-2 border-black p-2 font-bold text-black  bg-white"
-          
-          />
-        
-        </div>
+    </div>
+    <div className="flex  justify-end">
+         <input
+          type="text"
+          placeholder="Search by account name..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)} 
+           className="rounded-lg placeholder-black border border-black p-2  text-black  bg-white"
+         
+         />
+       
+       </div>
 
-      </div>    
-    <div className="overflow-x-auto mt-6">
+     </div>  
+    
+
+    <div className="overflow-x-auto mt-5 rounded-xl ">
       <table className="min-w-full bg-white">
         <thead className="bg-[#05a0db] text-white">
           <tr>
@@ -203,14 +228,17 @@ const filteredAdsAccounts = adsAccounts.filter(account =>
             <th className="p-3">Ad Account Name</th>
             <th className="p-3">Current Balance</th>
             <th className="p-3">Threshold</th>
-            <th className="p-3">Total Spent</th>
+            <th className="p-3">Spent</th>
             <th className="p-3">Status</th>
-            <th className="p-3">Action</th>
+       
+   
+      <th className="p-3">Action</th>
+     
         
           </tr>
         </thead>
         <tbody>
-          {filteredAdsAccounts.map((account, index) => (
+          {sortedAdsAccounts.map((account, index) => (
             <tr
             key={account._id}
             className={`${
@@ -221,7 +249,7 @@ const filteredAdsAccounts = adsAccounts.filter(account =>
             >
               <td className="p-3 border-r-2 border-l-2 border-gray-300 text-center">{index + 1}</td>
               <td className="p-3 border border-gray-300 text-center"> {new Date(account?.paymentDate).toLocaleDateString("en-GB")}</td>
-              <td className="p-3 border-r-2  border-gray-300 text-start px-5 ">
+              <td className="p-3 border-r-2  border-gray-300 text-center px-5 ">
                     <div className="">
                       <h1> {account.accountName}</h1>
                   
@@ -238,24 +266,26 @@ const filteredAdsAccounts = adsAccounts.filter(account =>
                   >
                     {account.status} 
                     </td>
-           
-              <td className="p-3 border border-gray-300 text-center"> 
-              <div className="flex justify-center gap-3">
-                        <button
-                          className="text-blue-600 text-3xl"
-                          onClick={() => setModalData(account)}
-                        >
-                         <MdEditSquare />
-                        </button>
-                        <button
-                          className="text-start flex justify-start text-black text-3xl"
-                          onClick={() => handleDelete(account._id)}
-                        >
-                          <MdDelete />
-                        </button>
-                        
-                      </div>
-              </td>
+                 
+      <td className="p-3 border border-gray-300 text-center"> 
+      <div className="flex justify-center gap-3">
+                <button
+                  className="text-blue-600 text-3xl"
+                  onClick={() => setModalData(account)}
+                >
+                 <MdEditSquare />
+                </button>
+                <button
+                  className="text-start flex justify-start text-black text-3xl"
+                  onClick={() => handleDelete(account._id)}
+                >
+                  <MdDelete />
+                </button>
+                
+              </div>
+      </td>
+      
+             
 
             </tr>
           ))}
@@ -264,11 +294,15 @@ const filteredAdsAccounts = adsAccounts.filter(account =>
     <td className="p-3  text-right" colSpan="3">
       Total :
     </td>
-    <td className="p-3  border-gray-300 text-center">$ {currentTotal}</td>
-    <td className="p-3  text-center">$ {tSpent}</td> 
-    <td className="p-3  text-center">$ {TSpent}</td> 
+    <td className="p-3  border-gray-300 text-center">$ {currentTotal.toFixed(2)}</td>
+    <td className="p-3  text-center">$ {tSpent.toFixed(2)}</td> 
+    <td className="p-3  text-center">$ {TSpent.toFixed(2)}</td> 
     <td className="p-3  text-center"></td> 
-    <td className="p-3  text-center"></td> 
+  
+
+      <td className="p-3  text-center"></td> 
+      
+   
 
    
     
@@ -281,6 +315,22 @@ const filteredAdsAccounts = adsAccounts.filter(account =>
        <dialog className="modal" open>
        <div className="modal-box bg-white text-black">
          <form onSubmit={(e) => handleUpdate(e, modalData._id)}>
+         <h1
+             className=" text-black flex hover:text-red-500  justify-end  text-end"
+             onClick={() => setModalData(null)}
+           >
+            <ImCross />
+           </h1>
+           <div className="mb-4">
+             <label className="block text-gray-500">Date</label>
+             <input
+               type="date"
+               required
+               name="date"
+               defaultValue={modalData.date}
+               className="w-full border-2 border-gray-400 rounded p-2 mt-1 bg-green-300 text-black"
+             />
+           </div>
            <div className="mb-4">
              <label className="block text-gray-500">Account Name</label>
              <input
@@ -288,7 +338,7 @@ const filteredAdsAccounts = adsAccounts.filter(account =>
                required
                name="accountName"
                defaultValue={modalData.accountName}
-               className="w-full border-2 border-black rounded p-2 mt-1 bg-white text-black"
+               className="w-full border-2 border-gray-400 rounded p-2 mt-1 bg-white text-black"
              />
            </div>
            <div className="mb-4">
@@ -311,16 +361,7 @@ const filteredAdsAccounts = adsAccounts.filter(account =>
                className="w-full border rounded p-2 mt-1 text-black bg-white border-gray-500"
              />
            </div>
-           <div className="mb-4">
-             <label className="block text-gray-500">Total Spent</label>
-             <input
-               type="number"
-               name="totalSpent"
-               step="0.01"
-               defaultValue={modalData.totalSpent}
-               className="w-full border rounded p-2 mt-1 text-black bg-white border-gray-500"
-             />
-           </div>
+
            <div className="mb-4">
              <label className="block text-gray-500">Status</label>
              <select

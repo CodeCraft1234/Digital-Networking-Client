@@ -28,7 +28,7 @@ const Dashboard = ({ showSidebar }) => {
 
   return (
     <div
-      className={`bg-[#1b1b1b] w-52 min-h-screen lg:fixed text-white ${
+      className={`bg-gray-900 w-52 min-h-screen lg:fixed text-white ${
         showSidebar ? "block" : "hidden"
       } md:block`}
     >
@@ -36,7 +36,7 @@ const Dashboard = ({ showSidebar }) => {
         {
           currentUser?.role === 'admin' ? 
             <AdminDashboard /> : 
-            (currentUser?.role === 'adsAccount' ? <AdsDashboard></AdsDashboard>  : <EmployeeDashboard />)
+            (currentUser?.role === 'adsAccount' ? <AdsDashboard></AdsDashboard>  :  <EmployeeDashboard />)
         }
       </ul>
     </div>

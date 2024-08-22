@@ -5,6 +5,7 @@ import useUsers from "../../Hook/useUsers";
 import Profile3 from "./Profile3";
 import CampaignTable2 from "./CampaignTable2";
 import { FaEdit } from "react-icons/fa";
+import Banner from "./Banner";
 
 
 const MyProfile = () => {
@@ -91,80 +92,11 @@ const handleUpdateTotalBudget = (e, id) => {
     });
 };
     return (
-        <div className=" mt-5 ">
+        <div className=" ">
            
           <CampaignTable2></CampaignTable2>
           <div className="">
-     <div className="overflow-x-auto mt-6">
-     <table className="min-w-full text-xs md:text-base">
-        <thead className="bg-[#05a0db] text-white font-bold text-sm md:text-xl">
-          <tr>
-            <th className="p-3 text-center">Employee Name</th>
-         
-          
-               
-                <th className="p-3 text-center">
-                  <img className="w-18 h-9 mx-auto" src="https://i.ibb.co/bHMLyvM/b-Kash-Merchant.png" alt="bKash Merchant" />
-                </th>
-                <th className="p-3 text-center">
-                  <img className="w-18 h-9 mx-auto" src="https://i.ibb.co/520Py6s/bkash-1.png" alt="bKash Personal" />
-                </th>
-                <th className="p-3 text-center">
-                  <img className="w-18 h-9 mx-auto" src="https://i.ibb.co/JQBQBcF/nagad-marchant.png" alt="Nagad Personal" />
-                </th>
-                <th className="p-3 text-center">
-                  <img className="w-18 h-9 mx-auto" src="https://i.ibb.co/QkTM4M3/rocket.png" alt="Rocket Personal" />
-                </th>
-                <th className="p-3 text-center">
-                  <img className="w-28 h-6 mx-auto" src="https://i.ibb.co/3WVZGdz/PAYO-BIG-aa26e6e0.png" alt="Payoneer" />
-                </th>
-               
-               
-          
-          </tr>
-        </thead>
-        {employee.map((userr, index) => (
-          <tbody className="text-black text-sm md:text-xl" key={userr._id}>
-            <tr className={`${index % 2 === 0 ? "bg-gray-100" : "bg-white"} border-b border-opacity-20`}>
-              <td className="p-3 hover:bg-gradient-to-r from-gray-100 via-gray-300 to-gray-100 hover:text-blue-600 font-bold hover:text-sm md:hover:text-sm sm:hover:text-sm flex flex-col md:flex-row justify-start text-center ml-2 md:ml-10 items-center gap-2  border-r-2 border-gray-300">
-                <Link to={`/dashboard/userInfo/${userr?.email}`}>
-                  <img className="w-10 h-10 rounded-full" src={userr?.photo} alt="" />
-                </Link>
-                <Link to={`/dashboard/userInfo/${userr?.email}`}>{userr.name}</Link>
-              </td>
-           
-             
-                  
-                  <td className="p-3 text-center  border-r-2 border-gray-300">৳ {userr.bkashMarchent}
-                  </td>
-                  <td className="p-3 text-center  border-r-2 border-gray-300">৳ {userr. bkashPersonal}</td>
-                 
-                  <td className="p-3 text-center  border-r-2 border-gray-300">৳ {userr.nagadPersonal}</td>
-                  <td className="p-3 text-center  border-r-2 border-gray-300">৳ {userr.rocketPersonal}</td>
-                  <td className="p-3 border-r-2 border-gray-300 text-center ">$ {userr?.payoneer}
-                   
-                  </td>
-                  
-                 
-             
-            </tr>
-          </tbody>
-        ))}
-        <tfoot>
-     
-            <tr className="border-b border-opacity-20 bg-[#05a0db] font-bold p-5 text-white text-sm md:text-lg">
-
-              <td className="p-3 text-center">Total BDT</td>
-              <td className="p-3 text-center">৳ {bkashMarchentTotal}</td>
-              <td className="p-3 text-center">৳ {bkashPersonalTotal2}</td>
-              <td className="p-3 text-center">৳ {nagadPersonalTotal2}</td>
-              <td className="p-3 text-center">৳ {rocketPersonalTotal2}</td>
-              <td className="p-3 text-center">$ {payoneerTotal}</td>
-            </tr>
-     
-        </tfoot>
-      </table>
-    </div>
+        <Banner></Banner>
       </div>
       
       

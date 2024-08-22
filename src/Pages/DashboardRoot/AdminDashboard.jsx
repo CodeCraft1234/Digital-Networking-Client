@@ -14,7 +14,7 @@ import {
 } from "react-icons/fa";
 import { IoMdArrowDropdown, IoMdArrowDropup, IoMdCash } from 'react-icons/io';
 import { RxDashboard } from "react-icons/rx";
-import { MdAccountCircle, MdCampaign, MdOutlinePayment, MdOutlinePayments } from "react-icons/md";
+import { MdAccountCircle, MdCampaign, MdOutlinePayment, MdOutlinePayments, MdPayments } from "react-icons/md";
 import { IoLogOutOutline, IoPeopleSharp, IoSettingsSharp } from "react-icons/io5";
 import { FaPeopleGroup } from "react-icons/fa6";
 import { useContext, useEffect, useState } from "react";
@@ -23,6 +23,7 @@ import { AiFillDashboard, AiTwotoneDashboard } from "react-icons/ai";
 import { Menu } from "@headlessui/react";
 import { AuthContext } from "../../Security/AuthProvider";
 import { RiSecurePaymentFill, RiSecurePaymentLine } from "react-icons/ri";
+import { LuActivitySquare } from "react-icons/lu";
 
 const AdminDashboard = () => {
   const [logo, setLogo] = useLogo();
@@ -196,56 +197,41 @@ const AdminDashboard = () => {
           </NavLink>
 
 
-          <div className="relative" onMouseLeave={handleMouseLeave2}>
-            <NavLink
-           to="dashboard/employeePayment"
-              className="text-white  py-2 px-4 rounded-lg flex items-center"
-              onMouseEnter={handleMouseEnter2}
-            >
-              <MdOutlinePayments className="w-6 h-6 mr-2" />
-              Payments
-              {isOpenTwo ? (
-                <IoMdArrowDropup className="w-6 h-6 ml-2" />
-              ) : (
-                <IoMdArrowDropdown className="w-6 h-6 ml-2" />
-              )}
-            </NavLink>
-            {isOpenTwo && (
-              <div
-                className="absolute top-full left-0 w-48 bg-gray-600 rounded-lg shadow-lg py-2 z-50 animate-dropdown"
-                onMouseEnter={handleMouseEnter2}
-                onMouseLeave={handleMouseLeave2}
-              >
-                <NavLink
-                  to="dashboard/employeePayment"
-                  className="text-white hover:bg-[#f89320] hover:text-black py-2 px-4 rounded-lg flex items-center"
-                  style={({ isActive }) => getActiveStyle2(isActive)}
-                >
-                  <RiSecurePaymentLine className="w-6 h-6 mr-2" />
-                  Employee Pay
-                </NavLink>
-                <NavLink
-                  to="dashboard/AllClientsPayments"
-                  className="text-white hover:bg-[#f89320] hover:text-black py-2 px-4 rounded-lg flex items-center"
-                  style={({ isActive }) => getActiveStyle2(isActive)}
-                >
-                  <RiSecurePaymentFill className="w-6 h-6 mr-2" />
-                  Clients Pay
-                </NavLink>
-                <NavLink
-                  to="dashboard/allAdsPayments"
-                  className="text-white hover:bg-[#f89320] hover:text-black py-2 px-4 rounded-lg flex items-center"
-                  style={({ isActive }) => getActiveStyle2(isActive)}
-                >
-                  <RiSecurePaymentFill className="w-6 h-6 mr-2" />
-                  Ads Pay
-                </NavLink>
-               
-               
-              </div>
-            )}
-          </div>
 
+
+          <NavLink
+              to="dashboard/employeePayment"
+            className="text-white hover:bg-[#f89320] hover:text-black py-2 px-4 rounded-lg flex items-center"
+            style={({ isActive }) => getActiveStyle(isActive)}
+          >
+           <MdOutlinePayment  className="w-6 h-6 mr-2" />
+            Employee Pay
+          </NavLink>
+          <NavLink
+            to="dashboard/AllClientsPayments"
+            className="text-white hover:bg-[#f89320] hover:text-black py-2 px-4 rounded-lg flex items-center"
+            style={({ isActive }) => getActiveStyle(isActive)}
+          >
+          <MdPayments  className="w-6 h-6 mr-2" />
+            Clients Pay
+          </NavLink>
+          <NavLink
+           to="dashboard/allAdsPayments"
+            className="text-white hover:bg-[#f89320] hover:text-black py-2 px-4 rounded-lg flex items-center"
+            style={({ isActive }) => getActiveStyle(isActive)}
+          >
+            <MdOutlinePayments  className="w-6 h-6 mr-2" />
+            Ads Payment
+          </NavLink>
+
+          <NavLink
+            to={`dashboard/myActivity`}
+            className="text-white hover:bg-[#f89320] hover:text-black py-2 px-4 rounded-lg flex items-center"
+            style={({ isActive }) => getActiveStyle(isActive)}
+          >
+            <LuActivitySquare  className="w-6 h-6 mr-2" />
+            Activity
+          </NavLink>
           <NavLink
             to="/dashboard/history"
             className="text-white hover:bg-[#f89320] hover:text-black py-2 px-4 rounded-lg flex items-center"
@@ -260,44 +246,11 @@ const AdminDashboard = () => {
           >
             <IoMdCash  className="w-6 h-6 mr-2" />Salary
           </NavLink>
-          <NavLink
-            to="/dashboard/settings"
-            className="text-white hover:bg-[#f89320] hover:text-black py-2 px-4 rounded-lg flex items-center"
-            style={({ isActive }) => getActiveStyle(isActive)}
-          >
-            <IoSettingsSharp className="w-6 h-6 mr-2" /> Settings
-          </NavLink>
+        
 
          
 
-          {user?.email ? (
-            <NavLink>
-               <div className="flex my-2 mt-5 justify-start   gap-2 px-4 items-center text-white ">
-              
-                <img className="h-10 w-10 rounded-full" src={user?.photoURL} alt="" />
-                <Link to={'/dashboard/updateProfile'}>
-                <h1>{user?.displayName}</h1>
-                </Link>
-      
 
-        </div>
-              <button
-                onClick={handleLogOut}
-                className="font-avenir mb-10 flex hover:bg-[#f89320] justify-center items-center gap-2 w-full px-3 py-1  text-white rounded "
-              >
-                Logout <IoLogOutOutline />
-              </button>
-            </NavLink>
-          ) : (
-            <NavLink
-              to={`/login`}
-              className="text-white hover:bg-green-300 hover:text-black py-2 px-4 rounded-lg flex items-center"
-            >
-              <button className="font-avenir w-full px-3 py-1 bg-red-700 rounded text-white">
-                Login
-              </button>
-            </NavLink>
-          )}
 
           
         </ul>

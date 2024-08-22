@@ -243,7 +243,7 @@ const  AllAdsPayments = () => {
         <title>Admin Payment | Digital Network </title>
         <link rel="canonical" href="https://www.example.com/" />
       </Helmet>
-     <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 mb-3  lg:grid-cols-5 gap-8 mt-4 p-4">
+     <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3   lg:grid-cols-5 gap-5 mt-5 p-5">
    <div className="balance-card bg-white rounded-2xl shadow-lg p-5 text-center  transition-transform transform hover:scale-105 border-0">
      <img className="balance-card-img" src="https://i.ibb.co/bHMLyvM/b-Kash-Merchant.png" alt="bKash" />
      <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"> <span className="text-lg lg:text-2xl font-extrabold"> ৳</span> {bkashMarcent2}</p>
@@ -270,7 +270,7 @@ const  AllAdsPayments = () => {
      </div>
    
 {/* ///////////////////////////////////////////////////////////////// */}
-    <div className="flex mt-5 justify-between items-center gap-5  ml-2 ">
+    <div className="flex  justify-between items-center gap-5  ">
          <div className="">
         <button
           className="font-avenir px-3  mx-auto py-1 bg-[#05a0db] ml-5 rounded-lg text-white"
@@ -281,7 +281,15 @@ const  AllAdsPayments = () => {
         <dialog id="my_modal_1" className="modal">
           <div className="modal-box bg-white text-black font-bold">
             <form onSubmit={(e) => handlePayment(e)}>
-              <div className="flex  justify-center items-center gap-3">
+            <div className="mb-4">
+                  <label className="block text-gray-250">Date</label>
+                  <input
+                    required
+                    type="date"
+                    name="date"
+                    className="w-full border-2 bg-green-300 text-black border-black rounded p-2 mt-1"
+                  />
+                </div>
                 <div className="mb-4">
                   <label className="block text-gray-250">Pay Amount</label>
                   <input
@@ -302,8 +310,8 @@ const  AllAdsPayments = () => {
                     className="w-full border-2 bg-white border-black rounded p-2 mt-1"
                   />
                 </div>
-              </div>
-              <div className="flex justify-center items-center gap-4">
+              
+             
                 <div className="mb-4">
                   <label className="block text-gray-250">Payment Method</label>
                   <select
@@ -318,29 +326,24 @@ const  AllAdsPayments = () => {
                     <option value="bank">Bank</option>
                   </select>
                 </div>
-                <div className="mb-4">
-                  <label className="block text-gray-250">Date</label>
-                  <input
-                    required
-                    type="date"
-                    name="date"
-                    className="w-full border-2 bg-green-300 text-black border-black rounded p-2 mt-1"
-                  />
-                </div>
-              </div>
-              <button
-                type="submit"
-                className="font-avenir px-3 mx-auto py-1 rounded-lg flex justify-center text-white bg-[#05a0db]"
-              >
-                Send
-              </button>
-            </form>
-            <div className="modal-action">
-              <form method="dialog">
-                <button className="p-2 rounded-lg bg-red-600 text-white text-center">
+               
+            <div className="grid lg:grid-cols-2 gap-3">
+            <form method="dialog">
+                <button className="p-2 rounded-lg w-full bg-red-600 text-white text-center">
                   Close
                 </button>
               </form>
+              <button
+                type="submit"
+                className="font-avenir px-3 w-full mx-auto pt-2 py-1 rounded-lg flex justify-center text-white bg-[#05a0db]"
+              >
+                Send
+              </button>
+            </div>
+              
+            </form>
+            <div className="modal-action">
+            
             </div>
           </div>
         </dialog>
@@ -348,9 +351,9 @@ const  AllAdsPayments = () => {
           <div className="flex  justify-end items-center gap-5  ml-2 ">
   
     <div className="flex flex-col justify-end items-center">
-      <label>By Month</label>
+   
       <select
-        className="border bg-blue-200 text-black border-gray-400 rounded p-2 mt-1"
+        className="border bg-white text-black border-gray-400 rounded p-2 mt-1"
         value={sortMonth}
         onChange={(e) => setSortMonth(e.target.value)}
       >
@@ -376,18 +379,18 @@ const  AllAdsPayments = () => {
       </select>
     </div>
     <div className="flex flex-col justify-center items-center">
-      <label className="block">By Date</label>
+   
       <input
         type="date"
-        className="border rounded bg-blue-200 text-black border-gray-400 p-2 mt-1"
+        className="border rounded bg-white text-black border-gray-400 p-2 mt-1"
         value={selectedDate}
         onChange={(e) => setSelectedDate(e.target.value)}
       />
     </div>
     <div className="flex flex-col justify-center items-center">
-      <label className="block ml-2">Payment Method</label>
+    
       <select
-        className="border bg-blue-200 text-black border-gray-400 rounded p-2 mt-1"
+        className="border bg-white text-black border-gray-400 rounded p-2 mt-1"
         value={selectedCategory}
         onChange={(e) => setSelectedCategory(e.target.value)}
       >
@@ -399,20 +402,15 @@ const  AllAdsPayments = () => {
         <option value="bank">Bank</option>
       </select>
     </div>
-    <div className="mt-6 flex justify-center items-center mr-5">
+    <div className=" flex justify-center items-center mr-5">
     <input
       type="text"
       placeholder="Payment Method"
-      className="rounded-l-lg w-20 placeholder-black border-2 border-black p-2 font-bold text-black sm:w-2/3 text-sm bg-blue-300"
+      className="rounded-lg bg-white placeholder-black border border-gray-700 p-2  text-black "
       value={searchQuery}
       onChange={(e) => setSearchQuery(e.target.value)}
     />
-    <button
-      type="button"
-      className="w-10 p-2 font-semibold rounded-r-lg sm:w-1/3 bg-[#FF9F0D] dark:bg-[#FF9F0D] text-white"
-    >
-      <IoIosSearch className="mx-auto  font-bold w-6 h-6" />
-    </button>
+ 
   </div>
           </div>
   
@@ -421,7 +419,7 @@ const  AllAdsPayments = () => {
 
 
 
-      <div className="overflow-x-auto mt-6 mx-4">
+      <div className="overflow-x-auto rounded-xl mt-5  mx-5">
         <table className="min-w-full bg-white">
           <thead className="bg-[#05a0db] text-white">
             <tr>

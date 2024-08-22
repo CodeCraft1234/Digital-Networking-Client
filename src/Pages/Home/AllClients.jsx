@@ -12,14 +12,14 @@ import { MdDelete } from "react-icons/md";
 const AllClients = () => {
   const [users] = useUsers();
   const { user } = useContext(AuthContext);
-  const [ddd, setDdd] = useState([]);
+  const [employees, setEmployees] = useState([]);
   const [clients, refetch] = useClients();
   const [filteredClients, setFilteredClients] = useState([]);
 
   useEffect(() => {
     if (users && user) {
-      const employees = users.filter(u => u.role === 'employee');
-      setDdd(employees);
+      const employeeList = users.filter((u) => u.role === "employee");
+      setEmployees(employeeList);
     }
   }, [users, user]);
 
@@ -30,12 +30,14 @@ const AllClients = () => {
   }, [clients]);
 
   const handleSort = (e) => {
-    e.preventDefault();
-    const email = e.target.email.value;
-    const filtered = clients.filter(c => c.employeeEmail === email);
-    setFilteredClients(filtered);
+    const email = e.target.value;
+    if (email === "") {
+      setFilteredClients(clients); // If no employee is selected, reset the list to all clients
+    } else {
+      const filtered = clients.filter((c) => c.employeeEmail === email);
+      setFilteredClients(filtered);
+    }
   };
-
 
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
@@ -50,17 +52,12 @@ const AllClients = () => {
       )
     : filteredItems;
 
-
-    const [totalSpent, setTotalSpent] = useState(0);
+  const [totalSpent, setTotalSpent] = useState(0);
   const [totalBudged, setTotalBudged] = useState(0);
   const [totalRCV, setTotalRCV] = useState(0);
   const [totalbill, setTotalBill] = useState(0);
 
-  console.log(totalSpent, totalBudged, totalRCV, totalbill);
-
   useEffect(() => {
-
-
     const totalRcv = filteredByCategory.reduce((acc, campaign) => {
       const payment = parseFloat(campaign.tPayment);
       return acc + (isNaN(payment) ? 0 : payment);
@@ -84,10 +81,9 @@ const AllClients = () => {
       0
     );
     setTotalBill(totalBill);
-
   }, [filteredByCategory]);
 
-const AxiosPublic =UseAxiosPublic()
+  const AxiosPublic = UseAxiosPublic();
   const handledelete = (id) => {
     Swal.fire({
       title: "Are you sure?",
@@ -99,8 +95,7 @@ const AxiosPublic =UseAxiosPublic()
       confirmButtonText: "Yes, delete blog",
     }).then((result) => {
       if (result.isConfirmed) {
-        AxiosPublic.delete(`/clients/${id}`)
-        .then((res) => {
+        AxiosPublic.delete(`/clients/${id}`).then((res) => {
           refetch();
           if (res.data.deletedCount > 0) {
             Swal.fire({
@@ -114,47 +109,40 @@ const AxiosPublic =UseAxiosPublic()
     });
   };
 
-
-  const [activeDropdown, setActiveDropdown] = useState(null);
-  const toggleDropdown = (orderId) => {
-    setActiveDropdown(activeDropdown === orderId ? null : orderId);
-  };
-
   return (
     <div className="mt-5">
       <Helmet>
         <title>All Clients | Digital Network </title>
         <link rel="canonical" href="https://www.example.com/" />
       </Helmet>
-<div className="flex mx-5 justify-between items-center ">
-<form className="flex justify-center items-center" onSubmit={handleSort}>
-        <div className="mb-4  mx-auto">
-          <label className="block text-gray-700">Sort By Employee</label>
-          <select name="email" className="border bg-white border-black text-black rounded p-2 mt-1">
-          <option value="">All Employee</option>
-            {ddd.map(d => <option key={d._id} value={d.email}>{d.name}</option>)}
+
+      <div className="flex gap-5 mr-5 justify-end items-center">
+        <div className=" ">
+          <select
+            name="email"
+            className="border bg-white border-black text-black rounded p-2 mt-1"
+            onChange={handleSort}
+          >
+            <option value="">Employee</option>
+            {employees.map((employee) => (
+              <option key={employee._id} value={employee.email}>
+                {employee.name}
+              </option>
+            ))}
           </select>
-          <button type="submit" className="ml-2 px-4 py-2 bg-blue-500 text-white rounded">
-            Search
-          </button>
         </div>
-      </form>
-      <div className="flex justify-end ">
-                <input
-                  type="text"
-                  placeholder=" Client Phone Number"
-                  className=" rounded-lg bg-white placeholder-black border-2 border-gray-700 p-2  text-black  text-sm "
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                />
-               
+        <div className="flex justify-end">
+          <input
+            type="text"
+            placeholder="Search by Phone..."
+            className="rounded-lg bg-white placeholder-black border-2 border-gray-700 px-5 p-2 text-black text-sm"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+        </div>
       </div>
-</div>
 
-
-
-
-      <div className="p-2 sm:p-4">
+      <div className="p-5 ">
         <div className="overflow-x-auto rounded-lg border-black">
           <table className="min-w-full bg-white">
             <thead className="bg-[#05a0db] text-white">
@@ -167,64 +155,76 @@ const AxiosPublic =UseAxiosPublic()
                 <th className="p-3 text-center">Total Bill</th>
                 <th className="p-3 text-center">Total Payment Rcv</th>
                 <th className="p-3 text-center">Action</th>
-              
               </tr>
             </thead>
             <tbody>
-  {filteredByCategory.map((campaign, index) => (
-    <tr
-      key={campaign._id}
-      className={`${
-        index % 2 === 0
-          ? "bg-white text-gray-500 border-b border-opacity-20"
-          : "bg-gray-200 text-gray-500 border-b border-opacity-20"
-      }`}
-    >
-      <td className="p-3 border-l-2 border-r-2 border-gray-300 text-center">{index + 1}</td>
-      <td className="p-3 border-r-2 border-gray-300 text-center">
-        <Link to={`/dashboard/client/${campaign.clientEmail}`} className="flex justify-center">
-          {campaign.clientName}
-        </Link>
-      </td>
-      <td className="p-3 border-r-2 border-gray-300 text-center">{campaign.clientPhone}</td>
-      <td className="p-3 border-r-2 border-gray-300 text-center">$ {campaign.tBudged}</td>
-      <td className="p-3 border-r-2 border-gray-300 text-center">
-  ${parseFloat(campaign.tSpent).toFixed(2)}
-</td>
-<td className="p-3 border-r-2 border-gray-300 text-center">
-  ৳{parseFloat(campaign.tBill).toFixed(2)}
-</td>
-
-      <td className="p-3 border-r-2 border-gray-300 text-center">৳ {campaign.tPayment}</td>
-      <td className="p-3 border-r-2 border-gray-200 text-center">
-      <button
-                          className="text-center  text-black text-3xl"
-                          onClick={() => handledelete(campaign._id)}
-                        >
-                          <MdDelete />
-                        </button>
+              {filteredByCategory.map((campaign, index) => (
+                <tr
+                  key={campaign._id}
+                  className={`${
+                    index % 2 === 0
+                      ? "bg-white text-gray-500 border-b border-opacity-20"
+                      : "bg-gray-200 text-gray-500 border-b border-opacity-20"
+                  }`}
+                >
+                  <td className="p-3 border-l-2 border-r-2 border-gray-300 text-center">
+                    {index + 1}
+                  </td>
+                  <td className="p-3 border-r-2 border-gray-300 text-center">
+                    <Link
+                      to={`/dashboard/client/${campaign.clientEmail}`}
+                      className="flex justify-center"
+                    >
+                      {campaign.clientName}
+                    </Link>
+                  </td>
+                  <td className="p-3 border-r-2 border-gray-300 text-center">
+                    {campaign.clientPhone}
+                  </td>
+                  <td className="p-3 border-r-2 border-gray-300 text-center">
+                    $ {parseFloat(campaign.tBudged).toFixed(2)}
+                  </td>
+                  <td className="p-3 border-r-2 border-gray-300 text-center">
+                    $ {parseFloat(campaign.tSpent).toFixed(2)}
+                  </td>
+                  <td className="p-3 border-r-2 border-gray-300 text-center">
+                    ৳ {parseFloat(campaign.tBill).toFixed(2)}
+                  </td>
+                  <td className="p-3 border-r-2 border-gray-300 text-center">
+                    ৳ {parseFloat(campaign.tPayment).toFixed(2)}
+                  </td>
+                  <td className="p-3 border-r-2 border-gray-200 text-center">
+                    <button
+                      className="text-center text-black text-3xl"
+                      onClick={() => handledelete(campaign._id)}
+                    >
+                      <MdDelete />
+                    </button>
+                  </td>
+                </tr>
+              ))}
+              <tr className="bg-[#05a0db] text-sm text-white font-bold">
+                <td className="p-3 border-black text-right" colSpan="3">
+                  Total :
                 </td>
-      
-    </tr>
-  ))}
-  <tr className="bg-[#05a0db] text-sm text-white font-bold">
-    <td className="p-3  border-black text-right" colSpan="3">
-      Total :
-    </td>
-    <td className="p-3  border-black text-center">$ {totalBudged}</td>
-    <td className="p-3  border-black text-center">$ {totalSpent}</td>
-    <td className="p-3  border-black text-center">৳ {totalbill}</td>
-    <td className="p-3  border-black text-center">৳ {totalRCV}</td>
-    <td className="p-3  border-black text-center"></td>
-   
-  </tr>
-</tbody>
-
+                <td className="p-3 border-black text-center">
+                  $ {totalBudged.toFixed(2)}
+                </td>
+                <td className="p-3 border-black text-center">
+                  $ {totalSpent.toFixed(2)}
+                </td>
+                <td className="p-3 border-black text-center">
+                  ৳ {totalbill.toFixed(2)}
+                </td>
+                <td className="p-3 border-black text-center">
+                  ৳ {totalRCV.toFixed(2)}
+                </td>
+                <td className="p-3 border-black text-center"></td>
+              </tr>
+            </tbody>
           </table>
-          
         </div>
       </div>
-      
     </div>
   );
 };
