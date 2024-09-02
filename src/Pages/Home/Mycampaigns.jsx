@@ -20,15 +20,11 @@ const MyCampaigns = () => {
   const [ddd, setDdd] = useState([]);
   const [clients] = useClients();
   const [campaigns,refetch]=useCampaings()
-  const [isBudgetModalOpen, setIsBudgetModalOpen] = useState(false);
-  const [isSpentModalOpen, setIsSpentModalOpen] = useState(false);
   const [totalSpent, setTotalSpent] = useState(0);
   const [totalBudged, setTotalBudged] = useState(0);
   const [totalRCV, setTotalRCV] = useState(0);
   const [totalbill, setTotalBill] = useState(0);
-
-
-const [client,setClient]=useState([])
+  const [client,setClient]=useState([])
 
   useEffect(() => {
     const filtered = clients.filter(
@@ -59,24 +55,15 @@ const [client,setClient]=useState([])
   console.log(campaigns);
 
 
-  const handleOpenBudgetModal = () => {
-    setIsBudgetModalOpen(true);
-  };
-
-  const handleOpenSpentModal = () => {
-    setIsSpentModalOpen(true);
-  };
-
-  const handleCancel = () => {
-    setIsBudgetModalOpen(false);
-    setIsSpentModalOpen(false);
-  };
-
-  const handleSort = (e) => {
-    e.preventDefault();
-    const email = e.target.email.value;
-    const filtered = campaigns.filter(c => c.clientEmail === email);
-    setFilteredClients(filtered);
+  const handleSort = (email) => {
+    if (!email) {
+      // If "All Clients" is selected (email is empty), show all campaigns
+      setFilteredClients(campaigns);
+    } else {
+      // Filter campaigns by the selected client's email
+      const filtered = campaigns.filter((c) => c.clientEmail === email);
+      setFilteredClients(filtered);
+    }
   };
 
 
@@ -125,72 +112,13 @@ const [client,setClient]=useState([])
 
   }, [filteredByCategory]);
 
-  const handleUpdateTotalBudget = (e, id) => {
-    e.preventDefault();
-    const tBudged = e.target.tBudged.value;
 
-    const body = { tBudged: tBudged };
-    console.log(body);
-
-    axios
-      .put(`https://digital-networking-server.vercel.app/campaings/totalBudged/${id}`, body)
-      .then((res) => {
-        console.log(res.data);
-        refetch();
-        Swal.fire({
-          title: "Good job!",
-          text: "Total Budget updated!",
-          icon: "success",
-        });
-        setTotalBudged(null);
-      })
-      .catch((error) => {
-        console.error("Error updating account:", error);
-        Swal.fire({
-          icon: "error",
-          title: "Oops...",
-          text: "Failed to update account!",
-        });
-      });
-  };
-
-  const handleUpdateTotalSpent = (e, id) => {
-    e.preventDefault();
-    const tSpent = e.target.tSpent.value;
-
-    const body = { tSpent: tSpent };
-    console.log(body);
-
-    axios
-      .put(`https://digital-networking-server.vercel.app/campaings/totalSpent/${id}`, body)
-      .then((res) => {
-        console.log(res.data);
-        refetch();
-        Swal.fire({
-          title: "Good job!",
-          text: "Total Spent updated!",
-          icon: "success",
-        });
-        setTotalSpent(totalSpent);
-      })
-      .catch((error) => {
-        console.error("Error updating account:", error);
-        Swal.fire({
-          icon: "error",
-          title: "Oops...",
-          text: "Failed to update account!",
-        });
-      });
-  };
- 
- 
   const handleUpdate = (e, id) => {
     e.preventDefault();
     const tSpent = e.target.totalSpent.value;
-    const status = e.target.status.value;
     const dollerRate = e.target.dollerRate.value;
     const tBudged = e.target.tBudged.value;
-    const body = { tSpent, status, dollerRate, tBudged };
+    const body = { tSpent, dollerRate, tBudged };
 
     AxiosPublic.patch(
       `https://digital-networking-server.vercel.app/campaings/${id}`,
@@ -209,6 +137,21 @@ const [client,setClient]=useState([])
  
 
 
+  const handleUpdate2 = (id, newStatus) => {
+    const body = { status: newStatus };
+
+    AxiosPublic.patch(`https://digital-networking-server.vercel.app/campaings/status/${id}`, body)
+      .then((res) => {
+        console.log(res.data);
+        refetch();
+        toast.success(`Campaign updated successfully`);
+      })
+      .catch((error) => {
+        console.error("Error updating campaign:", error);
+        toast.error("Failed to update campaign");
+      });
+  };
+
   const AxiosPublic =UseAxiosPublic()
   const handledelete = (id) => {
         AxiosPublic.delete(`/campaigns/${id}`)
@@ -220,66 +163,79 @@ const [client,setClient]=useState([])
     }
 
 
+    const sortedAdsAccounts = filteredByCategory.sort((a, b) => {
+      return a.campaignName.localeCompare(b.campaignName);
+    });
+
     
   return (
-    <div className="mt-3 mx-5">
+    <div className="lg:mt-5 mt-0 mb-10 mx-5">
       <Helmet>
         <title>My Campaign | Digital Network </title>
         <link rel="canonical" href="https://www.example.com/" />
       </Helmet>
-<div className="flex justify-end items-end gap-5 ">
-<form className="flex justify-center items-center" onSubmit={handleSort}>
-  <div className="mb-4 mx-auto">
-    <select 
-      name="email" 
-      className="border border-gray-700 text-black bg-white rounded p-1.5 mt-1"
-      onChange={(e) => {
-        handleSort(e); // Trigger the sort function on selection change
-      }}
-    >
-      <option value="">All Client</option>
-      {client.map(d => (
-        <option key={d._id} value={d.clientEmail}>
-          {d.clientName}
+      <div className="flex flex-col mb-0 lg:mb-5 sm:flex-row justify-between items-center gap-5">
+  <form
+    className="flex justify-center items-center w-full sm:w-auto"
+    onSubmit={(e) => {
+      e.preventDefault();
+      handleSort(e.target.email.value); // Pass the selected email directly
+    }}
+  >
+    <div className=" sm:mb-0 mx-auto w-full sm:w-auto">
+      <select
+        name="email"
+        className="border border-gray-700 text-black bg-white rounded p-1.5 mt-1 w-full sm:w-auto"
+        onChange={(e) => {
+          handleSort(e.target.value); // Trigger the sort function on selection change
+        }}
+      >
+        <option disabled selected value="">
+          All Clients
         </option>
-      ))}
-    </select>
-  </div>
-</form>
+        {client.map((d) => (
+          <option key={d._id} value={d.clientEmail}>
+            {d.clientName}
+          </option>
+        ))}
+      </select>
+    </div>
+  </form>
 
-      <div className="flex justify-end mb-4">
-                <input
-                  type="text"
-                  placeholder="Search Campaign Name..."
-                  className=" rounded-lg   placeholder-black border border-black p-2  text-black  text-sm bg-white"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                />
-              
-      </div>
+  <div className="flex justify-end w-full mb-5 lg:mb-0 sm:w-auto">
+    <input
+      type="text"
+      placeholder="Search Campaign Name..."
+      className="rounded-lg placeholder-black border border-black p-2 text-black text-sm bg-white w-full sm:w-auto"
+      value={searchQuery}
+      onChange={(e) => setSearchQuery(e.target.value)}
+    />
+  </div>
 </div>
 
 
 
 
-      <div className="">
+
+      <div className="mb-5">
         <div className="overflow-x-auto rounded-xl">
           <table className="min-w-full bg-white">
             <thead className="bg-[#05a0db] text-white">
               <tr>
-                <th className="p-3 text-center border-2 border-gray-300">SL</th>
-                <th className="p-3 text-center border-2 border-gray-300">Date</th>
-                <th className="p-3 text-center border-2 border-gray-300">Campaign Name</th>
-                <th className="p-3 text-center border-2 border-gray-300">client Name</th>
-                <th className="p-3 text-center border-2 border-gray-300">Page Name</th>
-                <th className="p-3 text-center border-2 border-gray-300">Total Budged</th>
-                <th className="p-3 text-center border-2 border-gray-300">Total spent</th>
-                <th className="p-3 text-center border-2 border-gray-300">Status</th>
-                <th className="p-3 text-center border-2 border-gray-300">Action</th>
+                <th className="p-3 text-center  border-gray-300">OFF/ON</th>
+                {/* <th className="p-3 text-center border-2 border-gray-300">SL</th> */}
+                <th className="p-3 text-center  border-gray-300">Date</th>
+                <th className="p-3 text-center  border-gray-300">Campaign Name</th>
+                <th className="p-3 text-center  border-gray-300">Client Name</th>
+                <th className="p-3 text-center  border-gray-300">Page Name</th>
+                <th className="p-3 text-center  border-gray-300">Total Budged</th>
+                <th className="p-3 text-center  border-gray-300">Total spent</th>
+                <th className="p-3 text-center  border-gray-300">Status</th>
+                <th className="p-3 text-center  border-gray-300">Action</th>
               </tr>
             </thead>
             <tbody>
-  {filteredByCategory.map((campaign, index) => (
+  {sortedAdsAccounts.map((campaign, index) => (
     <tr
       key={campaign._id}
       className={`${
@@ -288,7 +244,31 @@ const [client,setClient]=useState([])
           : "bg-gray-200 text-black border-b border-opacity-20"
       }`}
     >
-      <td className="p-3 border-r-2 border-l-2 border-gray-200 text-center">{index + 1}</td>
+      
+      <td className="p-3 border-r-2 border-l-2 border-gray-200 text-center">  <label className="inline-flex items-center cursor-pointer">
+  <input
+    type="checkbox"
+    className="sr-only"
+    checked={campaign.status === "Active"}
+    onChange={() => {
+      const newStatus = campaign.status === "Active" ? "Complete" : "Active";
+      handleUpdate2(campaign._id, newStatus);
+    }}
+  />
+  <div
+    className={`relative w-12 h-6 transition duration-200 ease-linear rounded-full ${
+      campaign.status === "Active" ? "bg-blue-700" : "bg-gray-500"
+    }`}
+  >
+    <span
+      className={`absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition-transform duration-200 ease-linear transform ${
+        campaign.status === "Active" ? "translate-x-6" : ""
+      }`}
+    ></span>
+  </div>
+</label>
+</td>
+      {/* <td className="p-3 border-r-2 border-l-2 border-gray-200 text-center">{index + 1}</td> */}
       <td className="p-3 border-l-2 border-r-2 border-gray-300 text-center">
   {new Date(campaign.date).toLocaleDateString("en-US", {
     year: "numeric",
@@ -296,15 +276,17 @@ const [client,setClient]=useState([])
     day: "2-digit",
   })}
 </td>
-      <td className="p-3 border-r-2 border-gray-300 text-left">
+      <td className="p-3 border-r-2 border-gray-300 text-center">
         
         {campaign.campaignName}
         
 
       </td>
       <td className="p-3 border-r-2 border-gray-300 text-center">
+       <Link to={`/dashboard/client/${campaign.clientEmail}`}>
+       {campaign.pageName}
+       </Link>
        
-        {campaign.pageName}
       </td>        
       <td className="p-3 border-r-2 border-gray-300 text-center">
      
@@ -312,6 +294,11 @@ const [client,setClient]=useState([])
       
       </td>        
       <td className="p-3 border-r-2 border-gray-300 text-center">
+     
+      $ {campaign.tBudged}
+      
+      </td>        
+      {/* <td className="p-3 border-r-2 border-gray-300 text-center">
         <div className="relative group flex items-center justify-center">
           <h1>$ {campaign.tBudged}</h1>
           <button
@@ -358,11 +345,16 @@ const [client,setClient]=useState([])
             </div>
           )}
         </div>
-      </td>
+      </td> */}
 
       <td className="p-3 border-r-2 border-gray-300 text-center">
+       
+      $ {campaign.tSpent}
+     </td>    
+
+      {/* <td className="p-3 border-r-2 border-gray-300 text-center">
         <div className="relative group flex items-center justify-center">
-          <h1>$ {campaign.tSpent}</h1>
+          <h1></h1>
           <button
             className="text-black px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
             onClick={handleOpenSpentModal}
@@ -407,30 +399,30 @@ const [client,setClient]=useState([])
             </div>
           )}
         </div>
-      </td>
-      
-      <td
-  className={`p-3 border text-center border-gray-300 ${
-    campaign.status === "Active"
-      ? "text-green-700 font-bold"
-      : campaign.status === "Complete"
-      ? "text-black font-bold"
-      : "text-red-600 font-bold"
+      </td> */}
+     <td
+  className={`p-3 text-center ${
+    campaign.status === "Active" ? "text-green-800 font-bold" : "text-black font-bold"
   }`}
 >
   {campaign.status}
 </td>
 
+
+
+
+
+
       <td className="p-3 border-l-2 border-r-2 border-gray-300 text-center">
       <div className="flex justify-center gap-3">
         <div>
                       <button
-                        className="text-blue-700  text-3xl"
+                        className="bg-green-700 hover:bg-blue-700 text-white px-2 py-1 rounded"
                         onClick={() =>
                           document.getElementById(`modal_${index}`).showModal()
                         }
                       >
-                        <MdEditSquare />
+                        Edit
                       </button>
                       <dialog id={`modal_${index}`} className="modal">
   <div className="modal-box bg-white text-black">
@@ -441,12 +433,17 @@ const [client,setClient]=useState([])
            >
             <ImCross />
            </h1>
-      <h1 className="text-md mb-5 text-xl mt-4">
-        Campaign Name:{" "} <span className="text-blue-600 text-xl font-bold">{campaign.campaignName}</span>
-        <span className="text-blue-600 text-xl font-bold">
-          {campaign.adsAccount}
-        </span>
-      </h1>
+           <div className="mb-4">
+        <label className="block text-start  font-bold text-gray-700">Campaign Name</label>
+        <input
+          type="text"
+          name="campaignName"
+          defaultValue={campaign.campaignName}
+          disabled
+       
+          className="w-full bg-white  border-gray-700 border rounded p-2 mt-1"
+        />
+      </div>
 
       <div className="mb-4">
         <label className="block text-start  font-bold text-gray-700">Total Budged</label>
@@ -455,9 +452,10 @@ const [client,setClient]=useState([])
           name="tBudged"
           defaultValue={campaign.tBudged}
           step="0.01"
-          className="w-full bg-white border rounded p-2 mt-1"
+          className="w-full bg-white border border-gray-700 rounded p-2 mt-1"
         />
       </div>
+      
 
       <div className="mb-4">
         <label className="block text-start  font-bold text-gray-700">Total Spent</label>
@@ -466,7 +464,7 @@ const [client,setClient]=useState([])
           name="totalSpent"
           defaultValue={campaign.tSpent}
           step="0.01"
-          className="w-full bg-white border border-gray-400 rounded p-2 mt-1"
+          className="w-full bg-white border  border-gray-700 rounded p-2 mt-1"
         />
       </div>
 
@@ -477,27 +475,27 @@ const [client,setClient]=useState([])
           type="number"
           name="dollerRate"
           defaultValue={campaign.dollerRate}
-          className="w-full bg-white border border-gray-400 rounded p-2 mt-1"
+          className="w-full bg-white border  border-gray-700 rounded p-2 mt-1"
+        />
+      </div>
+      <div className="mb-4">
+        <label className="block text-start  font-bold text-gray-700">Status</label>
+        <input
+          
+          type="text"
+          name="status"
+          disabled
+          defaultValue={campaign.status}
+          className="w-full bg-white border  border-gray-700 rounded p-2 mt-1"
         />
       </div>
 
-      <div className="mb-4">
-        <label className="block text-start  font-bold text-gray-700">Status</label>
-        <select
-          defaultValue={campaign.status}
-          name="status"
-          className="w-full bg-white border border-gray-400 rounded p-2 mt-1"
-        >
-          <option value="In Review">In Review</option>
-          <option value="Active">Active</option>
-          <option value="Complete">Complete</option>
-        </select>
-      </div>
+
 
       <div className="modal-action grid grid-cols-2 gap-3 mt-8">
       <button
           type="button"
-          className="p-2 rounded-lg bg-red-600 text-white"
+          className="p-2 hover:bg-red-700 rounded-lg bg-red-600 text-white"
           onClick={() =>
             document.getElementById(`modal_${index}`).close()
           }
@@ -506,7 +504,7 @@ const [client,setClient]=useState([])
         </button>
         <button
           type="submit"
-          className="font-avenir px-3 py-1 bg-[#05a0db] rounded-lg text-white"
+          className="font-avenir hover:bg-indigo-700 px-3 py-1 bg-[#05a0db] rounded-lg text-white"
         >
           Update
         </button>
@@ -517,10 +515,10 @@ const [client,setClient]=useState([])
 </dialog>
                       </div>
                         <button
-                          className="text-start flex justify-start text-black text-3xl"
+                           className="bg-red-700 hover:bg-blue-700 text-white px-2 py-1 rounded"
                           onClick={() => handledelete(campaign._id)}
                         >
-                          <MdDelete />
+                          Delete
                         </button>
                       </div>
 </td>
@@ -530,8 +528,8 @@ const [client,setClient]=useState([])
     <td className="p-3  border-gray-300 text-right" colSpan="5">
       Total :
     </td>
-    <td className="p-3  border-gray-300 text-start">$ {totalBudged}</td>
-    <td className="p-3  border-gray-300 text-start">$ {totalSpent}</td> 
+    <td className="p-3  border-gray-300 text-center">$ {totalBudged}</td>
+    <td className="p-3  border-gray-300 text-center">$ {totalSpent}</td> 
     <td className="p-3  border-gray-300 text-start"></td> 
     <td className="p-3  border-gray-300 text-start"></td> 
 

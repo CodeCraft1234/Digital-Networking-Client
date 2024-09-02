@@ -5,6 +5,7 @@ import { FaEdit } from 'react-icons/fa';
 import UseAxiosPublic from '../../Axios/UseAxiosPublic';
 import useEmployeePayment from '../../Hook/useEmployeePayment';
 import { AuthContext } from '../../Security/AuthProvider';
+import { Helmet } from 'react-helmet-async';
 
 const months = [
   'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'
@@ -12,8 +13,9 @@ const months = [
 
 const MySellery = () => {
   const [employeePayment] = useEmployeePayment();
+  const { user }=useContext(AuthContext)
+  const  email  = user?.email
   const [users, refetch] = useUsers();
-  const {user}=useContext(AuthContext)
   const [employeeData, setEmployeeData] = useState([]);
   const [selectedMonth, setSelectedMonth] = useState(''); // State to track the selected month
 
@@ -22,13 +24,13 @@ const MySellery = () => {
     const employees = users.filter(user => user.role === 'employee');
 
     // Find the specific user based on the email
-    const filteredUser = employees.find(user => user.email === user?.email);
+    const filteredUser = employees.find(user => user.email === email);
 
     if (filteredUser) {
       const { monthlySpent, sellery } = filteredUser;
 
       // Filter employee payments by email
-      const employeePayments = employeePayment.filter(payment => payment.employeeEmail === user?.email);
+      const employeePayments = employeePayment.filter(payment => payment.employeeEmail === email);
 
       // Create a mapping of total payAmount by month
       const paymentByMonth = months.reduce((acc, month) => {
@@ -61,10 +63,46 @@ const MySellery = () => {
 
       setEmployeeData(monthlyData);
     }
-  }, [users, user?.email, employeePayment]);
+  }, [users, email, employeePayment]);
+
+  const AxiosPublic = UseAxiosPublic();
+
+  const handleSellery = (e) => {
+    e.preventDefault();
+    const amount = parseFloat(e.target.amount.value);
+    const bonus = parseFloat(e.target.bonus.value);
+    const date = new Date(`${selectedMonth} 1, ${new Date().getFullYear()}`); // Create a date based on the selected month
+
+    const generateRandomId = () => {
+      return Math.floor(Math.random() * 1e13); // 1e13 generates a number between 0 and 9999999999999 (13 digits)
+    };
+    const id = generateRandomId();
+    const selleryData = {
+      id,
+      amount,
+      bonus,
+      date,
+      month: selectedMonth, // Use the selected month
+      email
+    };
+
+    AxiosPublic.post('/users/updateSellery', { email, selleryData })
+      .then(res => {
+        console.log(res.data);
+        refetch();
+        // Optional: Close the modal or do additional actions here
+      })
+      .catch(error => {
+        console.error("Error posting user data:", error);
+      });
+  };
 
   return (
     <div className='m-5'>
+       <Helmet>
+        <title>E.M Sellery | Digital Network </title>
+        <link rel="canonical" href="https://www.example.com/" />
+      </Helmet>
       <div className="overflow-x-auto text-center rounded-xl border-l border-gray-400">
         <table className="min-w-full text-center bg-white">
           <thead className="bg-[#05a0db] text-white">
@@ -72,13 +110,14 @@ const MySellery = () => {
               <th className="p-3">SL</th>
               <th className="p-3">Month</th>
               <th className="p-3">Spent</th>
-              <th className="p-3">T. Bill</th>
+              {/* <th className="p-3">T. Bill</th>
               <th className="p-3">Admin Pay</th>
-              <th className="p-3">T. Due</th>
+              <th className="p-3">T. Due</th> */}
               <th className="p-3">T. Sellery</th>
-              <th className="p-3">Paid</th>
+              <th className="p-3">Paid Amount</th>
               <th className="p-3">Unpaid</th>
               <th className="p-3">Bonus</th>
+       
             </tr>
           </thead>
           <tbody>
@@ -98,7 +137,7 @@ const MySellery = () => {
                 <td className="p-3 border-r-2 border-gray-300 text-center">
                   ${data.totalSpent.toFixed(2)}
                 </td>
-                <td className="p-3 border-r-2 border-gray-300 text-center">
+                {/* <td className="p-3 border-r-2 border-gray-300 text-center">
                   ৳ {data.totalBill.toFixed(2)}
                 </td>
                 <td className="p-3 border-r-2 border-gray-300 text-center">
@@ -106,7 +145,7 @@ const MySellery = () => {
                 </td>
                 <td className="p-3 border-r-2 border-gray-300 text-center">
                   ৳ {data.totalDue.toFixed(2)}
-                </td>
+                </td> */}
                 <td className="p-3 border-r-2 border-gray-300 text-center">
                   ৳ {(data.totalSpent * 7).toFixed(2)}
                 </td>
@@ -114,12 +153,14 @@ const MySellery = () => {
                 ৳{data.totalSellery.toFixed(2)}
                 
                 </td>
+               
                 <td className="p-3 border-r-2 border-gray-300 text-center">
                   ৳ {data.totalSelleryPaid.toFixed(2)}
                 </td>
                 <td className="p-3 border-r-2 border-gray-300 text-center">
                   ৳ {data.totalBonus.toFixed(2)}
                 </td>
+              
               </tr>
             ))}
           </tbody>
@@ -129,7 +170,7 @@ const MySellery = () => {
               <td className="p-3 border-gray-300">
                 ${employeeData.reduce((acc, data) => acc + data.totalSpent, 0).toFixed(2)}
               </td>
-              <td className="p-3 border-gray-300">
+              {/* <td className="p-3 border-gray-300">
                 ৳ {(employeeData.reduce((acc, data) => acc + data.totalBill, 0)).toFixed(2)}
               </td>
               <td className="p-3 border-gray-300">
@@ -137,7 +178,7 @@ const MySellery = () => {
               </td>
               <td className="p-3 border-gray-300">
                 ৳ {(employeeData.reduce((acc, data) => acc + data.totalDue, 0)).toFixed(2)}
-              </td>
+              </td> */}
               <td className="p-3 border-gray-300">
                 ৳ {(employeeData.reduce((acc, data) => acc + data.totalSpent * 7, 0)).toFixed(2)}
               </td>
@@ -151,6 +192,7 @@ const MySellery = () => {
               <td className="p-3 border-gray-300">
                 ৳ {(employeeData.reduce((acc, data) => acc + data.totalBonus, 0)).toFixed(2)}
               </td>
+            
             </tr>
           </tfoot>
         </table>

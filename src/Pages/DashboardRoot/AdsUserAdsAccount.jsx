@@ -6,6 +6,8 @@ import useAdsAccountCenter from '../../Hook/useAdsAccountCenter';
 import UseAxiosPublic from '../../Axios/UseAxiosPublic';
 import useAdsPayment from '../../Hook/useAdsPayment';
 import { MdDelete, MdEditSquare } from 'react-icons/md';
+import Swal from 'sweetalert2';
+import { toast } from 'react-toastify';
 
 const AdsUserAdsAccount = () => {
     const { user } = useContext(AuthContext);
@@ -317,6 +319,20 @@ const AdsUserAdsAccount = () => {
     },[])
 
 
+    const handleUpdate2 = (id, newStatus) => {
+      const body = { status: newStatus };
+    
+      AxiosPublic.patch(`/adsAccountCenter/status/${id}`, body)
+        .then((res) => {
+          console.log(res.data);
+          refetch();
+          toast.success(`Campaign updated successfully`);
+        })
+        .catch((error) => {
+          console.error("Error updating campaign:", error);
+          toast.error("Failed to update campaign");
+        });
+    };
     return (
         <div>
                    <div className="flex justify-start  text-gray-500 border-opacity-20 mx-2  items-center gap-3">
@@ -392,7 +408,29 @@ const AdsUserAdsAccount = () => {
                  : "bg-gray-200  text-left text-gray-500 border-b border-opacity-20"
              }`}
              >
-               <td className="p-3 border-r-2 border-l-2 border-gray-300 text-center">{index + 1}</td>
+               <td className="p-3 border-r-2 border-l-2 border-gray-200 text-center">  <label className="inline-flex items-center cursor-pointer">
+  <input
+    type="checkbox"
+    className="sr-only"
+    checked={account.status === "Active"}
+    onChange={() => {
+      const newStatus = account.status === "Active" ? "Disable" : "Active";
+      handleUpdate2(account._id, newStatus);
+    }}
+  />
+  <div
+    className={`relative w-12 h-6 transition duration-200 ease-linear rounded-full ${
+      account.status === "Active" ? "bg-blue-700" : "bg-gray-500"
+    }`}
+  >
+    <span
+      className={`absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition-transform duration-200 ease-linear transform ${
+        account.status === "Active" ? "translate-x-6" : ""
+      }`}
+    ></span>
+  </div>
+</label>
+</td>
                <td className="p-3 border border-gray-300 text-center"> {new Date(account?.paymentDate).toLocaleDateString("en-GB")}</td>
               
                <td className="p-3 border-r-2  border-gray-300 text-start px-5 ">
@@ -416,16 +454,16 @@ const AdsUserAdsAccount = () => {
                <td className={`p-3 border flex justify-center gap-2 text-center border-gray-300  `}
                    >
                     <button
-                           className="text-blue-600 text-3xl"
+                          className="bg-green-700 hover:bg-blue-700 text-white px-2 py-1 rounded"
                            onClick={() => setModalData(account)}
                          >
-                         <MdEditSquare />
+                         Edit
                          </button>
                          <button
-                          className="text-start flex justify-start text-black text-3xl"
+                         className="bg-red-700 hover:bg-blue-700 text-white px-2 py-1 rounded"
                           onClick={() => handleDelete(account._id)}
                         >
-                          <MdDelete />
+                          Delete
                         </button>
                         
                      </td>

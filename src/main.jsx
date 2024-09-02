@@ -19,7 +19,6 @@ import AddClient from "./Pages/Home/AddClient";
 import UserProfile from "./Pages/Home/UserProfile";
 import Profile2 from "./Pages/Home/Profile2";
 import AllClients from "./Pages/Home/AllClients";
-import AllAdsAccount from "./Pages/Home/AllAdsAccount";
 import EmployeeMonthlySalary from "./Pages/Home/EmployeerMouthlySelery";
 import AllCampaign from "./Pages/Home/AllCampaign";
 import MyCampaigns from "./Pages/Home/Mycampaigns";
@@ -30,7 +29,6 @@ import DashboardRoot from "./Pages/DashboardRoot/DashboardRoot";
 import Banner from "./Pages/Home/Banner";
 import AllUsers from "./Pages/Home/AllUsers";
 import CampaignTable2 from "./Pages/Home/CampaignTable2";
-
 import Settings from "./Pages/DashboardRoot/Routes/Settings";
 import Users from "./Pages/DashboardRoot/Users";
 import AddClientTwo from "./Pages/DashboardRoot/AddClient";
@@ -51,8 +49,12 @@ import Sellery from "./Pages/DashboardRoot/Sellery";
 import History from "./Pages/DashboardRoot/History";
 import MyHistory from "./Pages/DashboardRoot/MyHistory";
 import EmployeerSellery from "./Pages/DashboardRoot/EmployeerSellery";
-import { ToastContainer } from "react-toastify";
-import Activity from "./Pages/DashboardRoot/Activity";
+import MySummery from "./Pages/DashboardRoot/MySummery";
+import EmployeeClients from "./Pages/Home/EmployeeClients";
+import AllSummery from "./Pages/DashboardRoot/AllSummery";
+import PaymentHistory from "./Pages/Home/PaymentHistory";
+import AdsAccount from "./Pages/Home/AdsAccount";
+import MyPayments from "./Pages/Home/MyPayments";
 
 const router = createBrowserRouter([
   {
@@ -159,7 +161,11 @@ const router = createBrowserRouter([
        },
        {
         path:'dashboard/allAdSAccount',
-        element:<AllAdsAccount></AllAdsAccount>
+        element:<AdsAccount></AdsAccount>
+      },
+      {
+        path:'dashboard/allAdSAccount',
+        element:<AdsAccount></AdsAccount>
       },
       {
         path:'dashboard/allClients',
@@ -202,12 +208,28 @@ const router = createBrowserRouter([
         element:<History></History>
        },
        {
+        path:'dashboard/myHistory',
+        element:<MyHistory></MyHistory>
+       },
+       {
         path:'dashboard/employeerSellery/:email',
         element:<EmployeerSellery></EmployeerSellery>
        },
        {
-        path:'dashboard/myActivity',
-        element:<Activity></Activity>
+        path:'dashboard/mySummery',
+        element:<MySummery></MySummery>
+       },
+       {
+        path:'dashboard/paymentHistory',
+        element:<PaymentHistory></PaymentHistory>
+       },
+       {
+        path:'dashboard/AllSummery',
+        element:<AllSummery></AllSummery>
+       },
+       {
+        path:'dashboard/allEmployeeClients/:email',
+        element:<EmployeeClients></EmployeeClients>
        },
        {
         path:'dashboard/sellery',
@@ -216,6 +238,10 @@ const router = createBrowserRouter([
        {
         path:'dashboard/mySellery',
         element:<MySellery></MySellery>
+       },
+       {
+        path:'dashboard/myPayments',
+        element:<MyPayments></MyPayments>
        },
        {
         path:'dashboard/employeeMonthlySelary',

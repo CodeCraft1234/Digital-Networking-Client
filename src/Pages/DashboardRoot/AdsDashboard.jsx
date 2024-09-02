@@ -123,34 +123,7 @@ const AdsDashboard = () => {
           </NavLink>
 
 
-          {user?.email ? (
-            <NavLink>
-               <div className="flex my-2 mt-16 justify-start gap-2 px-4 items-center text-white ">
-              
-                <img className="h-10 w-10 rounded-full" src={user?.photoURL} alt="" />
-                <Link to={'/dashboard/updateProfile'}>
-                <h1>{user?.displayName}</h1>
-                </Link>
-      
 
-        </div>
-              <button
-                onClick={handleLogOut}
-                className="font-avenir flex hover:bg-[#f89320] justify-center items-center gap-2 w-full px-3 py-1  text-white rounded "
-              >
-                Logout <IoLogOutOutline />
-              </button>
-            </NavLink>
-          ) : (
-            <NavLink
-              to={`/login`}
-              className="text-white hover:bg-green-300 hover:text-black py-2 px-4 rounded-lg flex items-center"
-            >
-              <button className="font-avenir w-full px-3 py-1 bg-red-700 rounded text-white">
-                Login
-              </button>
-            </NavLink>
-          )}
         </ul>
       </div>
     </div>

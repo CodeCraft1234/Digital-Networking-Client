@@ -1,14 +1,10 @@
 import { useContext, useEffect, useState } from "react";
 import useEmployeePayment from "../../Hook/useEmployeePayment";
-import Swal from "sweetalert2";
 import { AuthContext } from "../../Security/AuthProvider";
 import UseAxiosPublic from "../../Axios/UseAxiosPublic";
 import useUsers from "../../Hook/useUsers";
-import { IoIosSearch } from "react-icons/io";
-import axios from "axios";
 import { Helmet } from "react-helmet-async";
 import { toast, ToastContainer } from "react-toastify";
-import { MdDelete, MdEditSquare } from "react-icons/md";
 import { ImCross } from "react-icons/im";
 
 const AdminPayments = () => {
@@ -16,17 +12,18 @@ const AdminPayments = () => {
   const [employeePayment, refetch] = useEmployeePayment();
   const AxiosPublic = UseAxiosPublic();
   const [users] = useUsers();
-  
   const [payment, setPayment] = useState([]);
-  const [employees, setEmployees] = useState([]);
-  const [filteredClients, setFilteredClients] = useState([]);
-  const [sortMonth, setSortMonth] = useState(new Date().getMonth() + 1); // Default to current month
-  const [searchQuery, setSearchQuery] = useState("");
+  const [filteredClients, setFilteredClients] = useState([])
   const [selectedCategory, setSelectedCategory] = useState("");
-  const [selectedEmployee, setSelectedEmployee] = useState("");
   const [selectedDate, setSelectedDate] = useState("");
-  
   const [totalPayment, setTotalPayment] = useState(0);
+  const initialTab = localStorage.getItem("activeTabadminpayMont") || "All";
+  const [sortMonth, setSortMonth] = useState(initialTab || new Date().getMonth() + 1)
+
+  const changeTab = (tab) => {
+    setSortMonth(tab);
+    localStorage.setItem("activeTabadminpayMont", tab); 
+  };
   
   useEffect(() => {
     const realdata = employeePayment.filter(
@@ -38,26 +35,13 @@ const AdminPayments = () => {
       0
     );
     setTotalPayment(totalBill);
-  }, [employeePayment, user?.email]);
-  
-  useEffect(() => {
     if (payment) {
       setFilteredClients(payment);
     }
-  }, [payment]);
-  
-  useEffect(() => {
-    let filtered = payment;
-  
-    if (selectedEmployee) {
-      filtered = filtered.filter((c) => c.employeeEmail === selectedEmployee);
-    }
-  
-    const currentMonth = sortMonth || new Date().getMonth() + 1;
-  
-    filtered = filtered.filter((c) => {
+
+    let filtered = payment.filter((c) => {
       const month = new Date(c.date).getMonth() + 1;
-      return month === parseInt(currentMonth);
+      return month === parseInt(sortMonth);
     });
   
     if (selectedDate) {
@@ -72,20 +56,26 @@ const AdminPayments = () => {
       });
     }
   
-    setFilteredClients(filtered);
-  }, [selectedEmployee, sortMonth, selectedDate, employeePayment]);
+    // Step 4: Filter by selected category if applicable
+    if (selectedCategory) {
+      filtered = filtered.filter(
+        (item) =>
+          item.paymentMethod.toLowerCase() === selectedCategory.toLowerCase()
+      );
+    }
   
-  const filteredItems = filteredClients.filter((item) =>
-    item.paymentMethod.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+    setFilteredClients(filtered);
+  }, [employeePayment, user?.email,sortMonth, selectedDate, selectedCategory, payment]);
+  
   
   const filteredByCategory = selectedCategory
-    ? filteredItems.filter(
+    ? filteredClients.filter(
         (item) =>
           item.paymentMethod.toLowerCase() === selectedCategory.toLowerCase()
       )
-    : filteredItems;
+    : filteredClients;
   
+    
   useEffect(() => {
     const totalBill = filteredByCategory.reduce(
       (acc, campaign) => acc + parseFloat(campaign.payAmount),
@@ -123,6 +113,7 @@ const AdminPayments = () => {
       note,
       paymentMethod,
       date,
+      status:'pending'
     };
 
     AxiosPublic.post(
@@ -156,11 +147,6 @@ const AdminPayments = () => {
   };
 
   
-  const [activeDropdown, setActiveDropdown] = useState(null);
-  const toggleDropdown = (orderId) => {
-    setActiveDropdown(activeDropdown === orderId ? null : orderId);
-  };
-
 
   const handleDelete = (id) => {
     AxiosPublic.delete(`/employeePayment/${id}`).then((res) => {
@@ -212,13 +198,13 @@ const AdminPayments = () => {
   }, [payment]);
 
   return (
-    <div>
+    <div className="mb-5">
       <ToastContainer />
       <Helmet>
         <title>Admin Payment | Digital Network </title>
         <link rel="canonical" href="https://www.example.com/" />
       </Helmet>
-      <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3   lg:grid-cols-6 gap-5 mt-4 p-5">
+      <div onClick={() => setSelectedCategory('bkashMarchent')} className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3   lg:grid-cols-6 gap-5  p-5">
         <div className="balance-card bg-white rounded-2xl shadow-lg p-5 text-center  transition-transform transform hover:scale-105 border-0">
           <img
             className="balance-card-img"
@@ -231,7 +217,7 @@ const AdminPayments = () => {
             {bkashMarcent2}
           </p>
         </div>
-        <div className="balance-card bg-white rounded-2xl shadow-lg p-5 text-center transition-transform transform hover:scale-105 border-0">
+        <div onClick={(e) => setSelectedCategory('bkashPersonal')} className="balance-card bg-white rounded-2xl shadow-lg p-5 text-center transition-transform transform hover:scale-105 border-0">
           <img
             className="balance-card-img"
             src="https://i.ibb.co/520Py6s/bkash-1.png"
@@ -243,7 +229,7 @@ const AdminPayments = () => {
             {bkashPersonal2}
           </p>
         </div>
-        <div className="balance-card bg-white rounded-2xl shadow-lg p-5 text-center transition-transform transform hover:scale-105 border-0">
+        <div onClick={(e) => setSelectedCategory('nagadPersonal')} className="balance-card bg-white rounded-2xl shadow-lg p-5 text-center transition-transform transform hover:scale-105 border-0">
           <img
             className="balance-card-img"
             src="https://i.ibb.co/JQBQBcF/nagad-marchant.png"
@@ -254,7 +240,7 @@ const AdminPayments = () => {
             {nagadPersonal2}
           </p>
         </div>
-        <div className="balance-card bg-white rounded-2xl shadow-lg p-5 text-center transition-transform transform hover:scale-105 border-0">
+        <div onClick={(e) => setSelectedCategory('rocketPersonal')} className="balance-card bg-white rounded-2xl shadow-lg p-5 text-center transition-transform transform hover:scale-105 border-0">
           <img
             className="balance-card-img"
             src="https://i.ibb.co/QkTM4M3/rocket.png"
@@ -266,7 +252,7 @@ const AdminPayments = () => {
           </p>
         </div>
 
-        <div className="balance-card bg-white rounded-2xl shadow-lg p-5 text-center transition-transform transform hover:scale-105 border-0">
+        <div onClick={(e) => setSelectedCategory('bank')} className="balance-card bg-white rounded-2xl shadow-lg p-5 text-center transition-transform transform hover:scale-105 border-0">
           <img
             className="balance-card-img"
             src="https://i.ibb.co/PZc0P4w/brac-bank-seeklogo.png"
@@ -284,169 +270,132 @@ const AdminPayments = () => {
 
           <p className="balance-card-text mt-9 text-lg lg:text-2xl font-bold text-gray-700">
             <span className="text-lg lg:text-2xl font-extrabold"> ৳</span>{" "}
-            {totalPayment}
+            {bankTotal2+nagadPersonal2+rocketPersonal2+bkashMarcent2+bkashPersonal2}
           </p>
         </div>
       </div>
 
       {/* ///////////////////////////////////////////////////////////////// */}
-      <div className="flex  justify-between items-center gap-5   ">
-        <div className="">
-          <button
-            className="font-avenir px-6  mx-auto py-2 bg-[#05a0db] ml-5 rounded-lg text-white"
-            onClick={() => document.getElementById("my_modal_1").showModal()}
-          > 
-            Pay Admin
-          </button>
-          <dialog id="my_modal_1" className="modal">
-            <div className="modal-box bg-white text-black font-bold">
-              <form onSubmit={(e) => handlePayment(e)}>
-
-                <div className="mb-4">
-                  <h1
-                    className=" text-black flex hover:text-red-500  justify-end  text-end"
-                    onClick={() =>
-                      document.getElementById(`my_modal_1`).close()
-                    }
-                  >
-                    <ImCross />
-                  </h1>
-                  <div className="mb-4">
-                  <label className="block text-gray-250">Date</label>
-                  <input
-                    required
-                    type="date"
-                    name="date"
-                    className="w-full border bg-green-300 border-black rounded p-2 mt-1"
-                  />
-                </div>
-
-                  <label className="block text-gray-250">Pay Amount</label>
-                  <input
-                    required
-                    type="number"
-                    name="payAmount"
-                    defaultValue={0}
-                    className="w-full border bg-white border-black rounded p-2 mt-1"
-                  />
-                </div>
-               
-
-                <div className="mb-4">
-                  <label className="block text-gray-250">Payment Method</label>
-                  <select
-                    required
-                    name="paymentMethod"
-                    className="w-full border bg-white border-black rounded p-2 mt-1"
-                  >
-                    <option value="bkashMarchent">Bkash Marchent</option>
-                    <option value="bkashPersonal">Bkash Personal</option>
-                    <option value="nagadPersonal">Nagad Personal</option>
-                    <option value="rocketPersonal">Rocket Personal</option>
-                    <option value="bank">Bank</option>
-                  </select>
-                </div>
-
-                <div className="mb-4">
-                  <label className="block text-gray-250">Note</label>
-                  <input
-                    type="text"
-                    name="note"
-                    required
-                    placeholder="type note..."
-                    className="w-full border bg-white border-black rounded p-2 mt-1"
-                  />
-                </div>
-               
-
-                <div className="grid mt-8 lg:grid-cols-2 gap-3">
-                <form method="dialog">
-                  <button className="p-2 w-full rounded-lg bg-red-600 text-white text-center">
-                    Close
-                  </button>
-                </form>
-                <button
-                  type="submit"
-                  className="font-avenir w-full px-3  pt-2 rounded-lg flex justify-center text-white bg-[#05a0db]"
-                >
-                  Send
-                </button>
-                <div className="modal-action">
-               
-              </div>
-                </div>
-         
-              </form>
-            
+      <div className="flex flex-col md:flex-row justify-start lg:justify-between items-center gap-5 lg:px-5 lg:p-0 px-5">
+  <div className="flex justify-start">
+    <button
+      className="font-avenir px-6 hover:bg-indigo-700 py-2 bg-[#05a0db] rounded-lg text-white"
+      onClick={() => document.getElementById("my_modal_1").showModal()}
+    >
+      Pay Admin
+    </button>
+    <dialog id="my_modal_1" className="modal">
+      <div className="modal-box bg-white text-black font-bold">
+        <form onSubmit={(e) => handlePayment(e)}>
+          <div className="mb-4">
+            <h1
+              className="text-black flex hover:text-red-500 justify-end text-end cursor-pointer"
+              onClick={() => document.getElementById("my_modal_1").close()}
+            >
+              <ImCross />
+            </h1>
+            <div className="mb-4">
+              <label className="block text-gray-250">Date</label>
+              <input
+                required
+                type="date"
+                name="date"
+                className="w-full border bg-green-300 border-black rounded p-2 mt-1"
+              />
             </div>
-          </dialog>
-        </div>
-        <div className="flex  justify-end items-center gap-5  mx-5 ">
-          <div className="flex flex-col justify-center items-center">
-          
+            <label className="block text-gray-250">Pay Amount</label>
             <input
-              type="date"
-              className="border rounded bg-white text-black border-gray-400 p-2 "
-              value={selectedDate}
-              onChange={(e) => setSelectedDate(e.target.value)}
+              required
+              type="number"
+              name="payAmount"
+              placeholder="0"
+              className="w-full border bg-white border-black rounded p-2 mt-1"
             />
           </div>
-
-          <div className="flex flex-col justify-end items-center">
-          
+          <div className="mb-4">
+            <label className="block text-gray-250">Payment Method</label>
             <select
-              className="border bg-white text-black border-gray-400 rounded p-2 "
-              value={sortMonth}
-              onChange={(e) => setSortMonth(e.target.value)}
+              required
+              name="paymentMethod"
+              className="w-full border bg-white border-black rounded p-2 mt-1"
             >
-              <option value="">Select Month</option>
-              {[
-                "January",
-                "February",
-                "March",
-                "April",
-                "May",
-                "June",
-                "July",
-                "August",
-                "September",
-                "October",
-                "November",
-                "December",
-              ].map((month, index) => (
-                <option key={index + 1} value={index + 1}>
-                  {month}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div className="flex flex-col justify-center items-center">
-        
-            <select
-              className="border bg-white text-black border-gray-400 rounded p-2 "
-              value={selectedCategory}
-              onChange={(e) => setSelectedCategory(e.target.value)}
-            >
-              <option value="">All Methods</option>
-              <option value="bkashPersonal">bKash Personal</option>
-              <option value="bkashMarchent">bKash Merchant</option>
+              <option value="bkashMarchent">Bkash Marchent</option>
+              <option value="bkashPersonal">Bkash Personal</option>
               <option value="nagadPersonal">Nagad Personal</option>
               <option value="rocketPersonal">Rocket Personal</option>
               <option value="bank">Bank</option>
             </select>
           </div>
-          <div className=" flex justify-right items-right">
+          <div className="mb-4">
+            <label className="block text-gray-250">Note</label>
             <input
               type="text"
-              placeholder="Payment Method"
-              className="border bg-white placeholder:text-black text-black border-gray-400 rounded p-2 "
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+              name="note"
+              required
+              placeholder="type note..."
+              className="w-full border bg-white border-black rounded p-2 mt-1"
             />
           </div>
-        </div>
+          <div className="grid mt-8 lg:grid-cols-2 gap-3">
+            <form method="dialog">
+              <button className="p-2 w-full hover:bg-red-700 rounded-lg bg-red-600 text-white text-center">
+                Close
+              </button>
+            </form>
+            <button
+              type="submit"
+              className="font-avenir w-full hover:bg-indigo-700 px-3 pt-2 rounded-lg flex justify-center text-white bg-[#05a0db]"
+            >
+              Send
+            </button>
+          </div>
+        </form>
       </div>
+    </dialog>
+  </div>
+
+  {/* Sort Options */}
+  <div className="flex   justify-start items-center gap-5">
+  
+      <select
+        className="border bg-white text-black border-gray-400 rounded p-2"
+        value={sortMonth}
+        onChange={(e) => changeTab(e.target.value)}
+      >
+        <option value="">Select Month</option>
+        {[
+          "January",
+          "February",
+          "March",
+          "April",
+          "May",
+          "June",
+          "July",
+          "August",
+          "September",
+          "October",
+          "November",
+          "December",
+        ].map((month, index) => (
+          <option key={index + 1} value={index + 1}>
+            {month}
+          </option>
+        ))}
+      </select>
+ 
+
+   
+      <input
+        type="date"
+        className="border rounded bg-green-300 text-black border-gray-400 p-2"
+        value={selectedDate}
+        onChange={(e) => setSelectedDate(e.target.value)}
+      />
+
+  </div>
+</div>
+
+
 
       <div className="overflow-x-auto border text-black border-gray-300 rounded-xl mt-5 mx-5 ">
         <table className="min-w-full bg-white">
@@ -457,6 +406,7 @@ const AdminPayments = () => {
               <th className="p-3">Amount</th>
               <th className="p-3">Payment Method</th>
               <th className="p-3"> Note</th>
+              <th className="p-3">Status</th>
               <th className="p-3">Action</th>
             </tr>
           </thead>
@@ -464,7 +414,7 @@ const AdminPayments = () => {
             {filteredByCategory.map((payment, index) => (
               <tr
                 key={index}
-                className={`${index % 2 === 0 ? "bg-gray-100" : "bg-white"}`}
+                className={`${index % 2 === 0 ? "bg-gray-200" : "bg-white"}`}
               >
                 <td className="p-3  border-r-2 border-l-2 border-gray-200 text-center">
                   {index + 1}
@@ -517,17 +467,21 @@ const AdminPayments = () => {
                   {" "}
                   {payment.note}
                 </td>
+                <td className="p-3 border-r-2 border-gray-200 text-center">
+                  {" "}
+                  {payment.status === 'pending' ? <p className="text-blue-700 font-bold">Pending</p> : <p className="text-green-800 font-bold">Approved</p>}
+                </td>
 
                 <td className="p-3 border-r-2 flex justify-center gap-3 items-center border-gray-200 text-center">
                   <button
-                    className="font-avenir text-3xl  py-1 px-4 rounded-lg text-blue-700"
+                  className="bg-green-700 hover:bg-blue-700 text-white px-2 py-1 rounded"
                     onClick={() =>
                       document
                         .getElementById(`modal_${payment._id}`)
                         .showModal()
                     }
                   >
-                    <MdEditSquare />
+                    Edit
                   </button>
                   <dialog id={`modal_${payment._id}`} className="modal">
                     <div className="modal-box bg-white text-black font-bold">
@@ -615,7 +569,7 @@ const AdminPayments = () => {
                         <div className="modal-action grid grid-cols-2 gap-3 mt-4">
                           <button
                             type="button"
-                            className="p-2 rounded-lg bg-red-600 text-white"
+                            className="p-2 hover:bg-red-700 rounded-lg bg-red-600 text-white"
                             onClick={() =>
                               document
                                 .getElementById(`modal_${payment._id}`)
@@ -626,7 +580,7 @@ const AdminPayments = () => {
                           </button>
                           <button
                             type="submit"
-                            className="font-avenir px-3 py-1 bg-[#05a0db] rounded-lg text-white"
+                            className="font-avenir hover:bg-indigo-700 px-3 py-1 bg-[#05a0db] rounded-lg text-white"
                           >
                             Update
                           </button>
@@ -635,10 +589,10 @@ const AdminPayments = () => {
                     </div>
                   </dialog>
                   <button
-                    className="text-start flex justify-start text-black text-3xl"
+                   className="bg-red-700 hover:bg-blue-700 text-white px-2 py-1 rounded"
                     onClick={() => handleDelete(payment._id)}
                   >
-                    <MdDelete />
+                    Delete
                   </button>
                 </td>
               </tr>
@@ -648,6 +602,7 @@ const AdminPayments = () => {
                 Total Amount :
               </td>
               <td className="p-3 text-center">৳ {totalPayment}</td>
+              <td className="p-3 text-center"></td>
               <td className="p-3 text-center"></td>
               <td className="p-3 text-center"></td>
               <td className="p-3 text-center"></td>

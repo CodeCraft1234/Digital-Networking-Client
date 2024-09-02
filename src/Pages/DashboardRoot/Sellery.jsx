@@ -87,7 +87,37 @@ const Sellery = () => {
         <title>Sellery | Digital Network</title>
         <link rel="canonical" href="https://www.example.com/" />
       </Helmet>
+
+      <div className="grid grid-cols-2 md:grid-cols-2 mb-5 lg:grid-cols-4 text-black sm:grid-cols-2 gap-5 justify-around ">
+        <div className="px-5 py-10 rounded-2xl  bg-[#91a33a] text-white shadow-lg text-center">
+          <h2 className="text-xl font-bold">Total Spent</h2>
+          <p className="text-2xl font-bold mt-2"> $ {totalSpent.toFixed(2)}</p>
+        </div>
+
+        <div className="px-5 py-10 rounded-2xl bg-[#5422c0] text-white shadow-lg text-center">
+          <h2 className="text-xl font-bold">Total Sellery</h2>
+          <p className="text-2xl font-bold mt-2">
+             <span className="text-2xl font-extrabold">৳</span> {(totalSpent * 7).toFixed(2)}
+          </p>
+        </div>
+
+        <div className="px-5 py-10 rounded-2xl  bg-[#05a0db] text-white shadow-lg text-center">
+          <h2 className="text-xl font-bold">Paid</h2>
+          <p className="text-2xl font-bold mt-2"> <span className="text-2xl font-extrabold">৳</span>{totalSellery.toFixed(2)} </p>
+        </div>
+
+        <div className="px-5 py-10 rounded-2xl  bg-[#ce1a38] text-white shadow-lg text-center">
+          <h2 className="text-xl font-bold">Unpaidy</h2>
+          <p className="text-2xl font-bold mt-2">
+          <span className="text-2xl font-extrabold">৳</span> {(totalSpent * 7 - totalSellery).toFixed(2)}
+          </p>
+        </div>
+
+      
+      </div>
       <div className="mb-5 flex justify-end gap-5 items-center">
+
+    
         <div>
           
           <select id="monthSelect" value={selectedMonth} onChange={handleMonthChange} className="p-2 bg-white text-black border border-gray-700 rounded">
@@ -112,11 +142,11 @@ const Sellery = () => {
           <thead className="bg-[#05a0db] text-white">
             <tr>
               <th className="p-3">SL</th>
-              <th className="p-3">Name</th>
-              <th className="p-3">Spent</th>
-              <th className="p-3">T. Bill</th>
-              <th className="p-3">Admin Pay</th>
-              <th className="p-3">T. Due</th>
+              <th className="p-3 text-start">Employee Name</th>
+                <th className="p-3">Spent</th>
+              {/* <th className="p-3">T. Bill</th>
+              <th className="p-3">Admin Pay</th> */} 
+              {/* <th className="p-3">T. Due</th> */}
               <th className="p-3">T. Sellery</th>
               <th className="p-3">Paid</th>
               <th className="p-3">Unpaid</th>
@@ -130,10 +160,10 @@ const Sellery = () => {
                 <td className="p-3 border-r-2 hover:text-blue-700 hover:font-bold border-gray-300 text-start px-5">
                   <Link to={`/dashboard/employeerSellery/${user.email}`}>{user.name}</Link>
                 </td>
-                <td className="p-3 border-r-2 border-gray-300 text-center">${user.totalSpent.toFixed(2)}</td>
-                <td className="p-3 border-r-2 border-gray-300 text-center">৳ {(user.totalSpent * 140).toFixed(2)}</td>
-                <td className="p-3 border-r-2 border-gray-300 text-center">৳ {user.totalPayAmount.toFixed(2)}</td>
-                <td className="p-3 border-r-2 border-gray-300 text-center">৳ {(user.totalSpent * 140 - user.totalAdminPay).toFixed(2)}</td>
+                 <td className="p-3 border-r-2 border-gray-300 text-center">${user.totalSpent.toFixed(2)}</td>
+                {/* <td className="p-3 border-r-2 border-gray-300 text-center">৳ {(user.totalSpent * 140).toFixed(2)}</td>
+                <td className="p-3 border-r-2 border-gray-300 text-center">৳ {user.totalPayAmount.toFixed(2)}</td>  */}
+                {/* <td className="p-3 border-r-2 border-gray-300 text-center">৳ {(user.totalSpent * 140 - user.totalAdminPay).toFixed(2)}</td> */}
                 <td className="p-3 border-r-2 border-gray-300 text-center">৳ {(user.totalSpent * 7).toFixed(2)}</td>
                 <td className="p-3 border-r-2 border-gray-300 text-center">৳ {user.totalSellery.toFixed(2)}</td>
                 <td className="p-3 border-r-2 border-gray-300 text-center">৳ {(user.totalSpent * 7 - user.totalSellery).toFixed(2)}</td>
@@ -144,10 +174,10 @@ const Sellery = () => {
           <tfoot className="bg-[#05a0db] font-bold text-white">
             <tr>
               <td className="p-3 text-right border-gray-300" colSpan="2">Total:</td>
-              <td className="p-3 border-gray-300 text-center">${totalSpent.toFixed(2)}</td>
-              <td className="p-3 border-gray-300 text-center">৳ {(totalSpent * 140).toFixed(2)}</td>
-              <td className="p-3 border-gray-300 text-center">৳ {totalPayAmount.toFixed(2)}</td>
-              <td className="p-3 border-gray-300 text-center">৳ {totalDue.toFixed(2)}</td>
+              <td className="p-3 border-gray-300 text-center">${totalSpent.toFixed(2)}</td> 
+              {/* <td className="p-3 border-gray-300 text-center">৳ {(totalSpent * 140).toFixed(2)}</td>
+              <td className="p-3 border-gray-300 text-center">৳ {totalPayAmount.toFixed(2)}</td>  */}
+              {/* <td className="p-3 border-gray-300 text-center">৳ {totalDue.toFixed(2)}</td> */}
               <td className="p-3 border-gray-300 text-center">৳ {(totalSpent * 7).toFixed(2)}</td>
               <td className="p-3 border-gray-300 text-center">৳ {totalSellery.toFixed(2)}</td>
               <td className="p-3 border-gray-300 text-center">৳ {(totalSpent * 7 - totalSellery).toFixed(2)}</td>

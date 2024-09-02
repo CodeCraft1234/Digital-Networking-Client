@@ -30,7 +30,7 @@ const UpdateProfile = () => {
   const [fullName, setFullName] = useState("");
   const [fullAddress, setFullAddress] = useState("");
   const [companyName, setCompanyName] = useState("");
-  const [contactNumber, setContactNumber] = useState("");
+  const [number, setNumber] = useState("");
   const [facebookID, setFacebookID] = useState("");
   const [instagramID, setInstagramID] = useState("");
   const [linkedinID, setLinkedinID] = useState("");
@@ -72,7 +72,7 @@ const UpdateProfile = () => {
       companyLogo: companyLogo || ddd?.companyLogo,
       fullAddress: fullAddress || ddd?.fullAddress,
       companyName: companyName || ddd?.companyName,
-      contactNumber: contactNumber || ddd?.contactNumber,
+      number: number || ddd?.number,
       facebookID: facebookID || ddd?.facebookID,
       instagramID: instagramID || ddd?.instagramID,
       linkedinID: linkedinID || ddd?.linkedinID,
@@ -112,7 +112,7 @@ const UpdateProfile = () => {
           <div className="mx-auto md:py-0 md:px-6">
             <h1 className="text-4xl font-bold">Update Your Info</h1>
             <p className="pt-2 pb-4">Fill in the form to update your profile</p>
-            <div className="overflow-x-auto">
+            <div className="overflow-x-auto shadow-xl rounded-lg p-3">
             <div className="border border-gray-300 p-3">
             <img
                         className="w-20 h-20 flex justify-center  m-3 mx-auto rounded-full"
@@ -175,7 +175,7 @@ const UpdateProfile = () => {
 
           <form
             onSubmit={handleSubmit}
-            className="flex flex-col text-black py-6 space-y-6 md:py-0 md:px-6"
+            className="flex flex-col px-5 text-black shadow-2xl rounded-xl py-6 space-y-6 md:py-0 md:px-6"
             action="#"
             method="post"
           >
@@ -189,7 +189,7 @@ const UpdateProfile = () => {
                 name="fullName"
                 defaultValue={ddd?.fullName}
                 placeholder="Full Name"
-                className="block bg-white py-3 px-3 border w-full rounded-md shadow-sm focus:ring focus:ring-blue-500 focus:border-blue-500"
+                className="block bg-white py-3 px-3 border w-full border-gray-700 rounded-md shadow-sm focus:ring focus:ring-blue-500 focus:border-blue-500"
                 onChange={(e) => setFullName(e.target.value)}
               />
             </label>
@@ -203,13 +203,27 @@ const UpdateProfile = () => {
                 name="companyName"
                 defaultValue={ddd?.name}
                 placeholder="Company Name"
-                className="block bg-white py-3 px-3 border w-full rounded-md shadow-sm focus:ring focus:ring-blue-500 focus:border-blue-500"
+                className="block bg-white py-3 px-3 border w-full border-gray-700 rounded-md shadow-sm focus:ring focus:ring-blue-500 focus:border-blue-500"
                 onChange={(e) => setCompanyName(e.target.value)}
               />
             </label>
               </div>
 
             </div>
+            <div>
+              <label className="block">
+              <span className="mb-1">Mobile Number</span>
+              <input
+                type="number"
+                id="number"
+                name="number"
+                placeholder="Number..."
+                defaultValue={ddd?.number}
+                className="block bg-white py-3 px-3 border w-full border-gray-700 rounded-md shadow-sm focus:ring focus:ring-blue-500 focus:border-blue-500"
+                onChange={(e) => setNumber(e.target.value)}
+              />
+            </label>
+              </div>
             <div>
               <label className="block">
               <span className="mb-1">Full Address</span>
@@ -219,7 +233,7 @@ const UpdateProfile = () => {
                 name="fullAddress"
                 placeholder="Full Address"
                 defaultValue={ddd?.fullAddress}
-                className="block bg-white py-3 px-3 border w-full rounded-md shadow-sm focus:ring focus:ring-blue-500 focus:border-blue-500"
+                className="block bg-white py-3 px-3 border w-full border-gray-700 rounded-md shadow-sm focus:ring focus:ring-blue-500 focus:border-blue-500"
                 onChange={(e) => setFullAddress(e.target.value)}
               />
             </label>
@@ -234,7 +248,7 @@ const UpdateProfile = () => {
                 name="facebookID"
                 defaultValue={ddd?.facebookID}
                 placeholder="Facebook ID"
-                className="block bg-white py-3 px-3 border w-full rounded-md shadow-sm focus:ring focus:ring-blue-500 focus:border-blue-500"
+                className="block bg-white py-3 px-3 border w-full border-gray-700 rounded-md shadow-sm focus:ring focus:ring-blue-500 focus:border-blue-500"
                 onChange={(e) => setFacebookID(e.target.value)}
               />
             </label>
@@ -249,7 +263,7 @@ const UpdateProfile = () => {
                 name="instagramID"
                 defaultValue={ddd?.instagramID}
                 placeholder="Instagram ID"
-                className="block bg-white py-3 px-3 border w-full rounded-md shadow-sm focus:ring focus:ring-blue-500 focus:border-blue-500"
+                className="block bg-white py-3 px-3 border w-full border-gray-700 rounded-md shadow-sm focus:ring focus:ring-blue-500 focus:border-blue-500"
                 onChange={(e) => setInstagramID(e.target.value)}
               />
             </label>
@@ -263,7 +277,7 @@ const UpdateProfile = () => {
                 name="linkedinID"
                 defaultValue={ddd?.linkedinID}
                 placeholder="LinkedIn ID"
-                className="block bg-white py-3 px-3 border w-full rounded-md shadow-sm focus:ring focus:ring-blue-500 focus:border-blue-500"
+                className="block bg-white py-3 px-3 border w-full border-gray-700 rounded-md shadow-sm focus:ring focus:ring-blue-500 focus:border-blue-500"
                 onChange={(e) => setLinkedinID(e.target.value)}
               />
             </label>
@@ -278,7 +292,7 @@ const UpdateProfile = () => {
                 name="twitterID"
                 defaultValue={ddd?.twitterID}
                 placeholder="Twitter ID"
-                className="block bg-white py-3 px-3 border w-full rounded-md shadow-sm focus:ring focus:ring-blue-500 focus:border-blue-500"
+                className="block bg-white py-3 px-3 border w-full border-gray-700 rounded-md shadow-sm focus:ring focus:ring-blue-500 focus:border-blue-500"
                 onChange={(e) => setTwitterID(e.target.value)}
               />
             </label>
@@ -292,7 +306,7 @@ const UpdateProfile = () => {
                 name="youtubeID"
                 defaultValue={ddd?.youtubeID}
                 placeholder="YouTube ID"
-                className="block bg-white py-3 px-3 border w-full rounded-md shadow-sm focus:ring focus:ring-blue-500 focus:border-blue-500"
+                className="block bg-white py-3 px-3 border w-full border-gray-700 rounded-md shadow-sm focus:ring focus:ring-blue-500 focus:border-blue-500"
                 onChange={(e) => setYoutubeID(e.target.value)}
               />
             </label>
@@ -306,7 +320,7 @@ const UpdateProfile = () => {
                 name="whatsappID"
                 defaultValue={ddd?.whatsappID}
                 placeholder="WhatsApp ID"
-                className="block bg-white py-3 px-3 border w-full rounded-md shadow-sm focus:ring focus:ring-blue-500 focus:border-blue-500"
+                className="block bg-white py-3 px-3 border w-full border-gray-700 rounded-md shadow-sm focus:ring focus:ring-blue-500 focus:border-blue-500"
                 onChange={(e) => setWhatsappID(e.target.value)}
               />
             </label>
@@ -321,7 +335,7 @@ const UpdateProfile = () => {
                 name="file"
                 accept="image/*"
                 onChange={handleImageChange}
-                className="block w-full text-sm py-3 px-3 text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none"
+                className="block w-full text-sm py-3 px-3 text-gray-900 border-gray-700 border  rounded-lg cursor-pointer bg-gray-50 focus:outline-none"
               />
             </label>
               </div>
@@ -333,10 +347,10 @@ const UpdateProfile = () => {
           
           
          
-            <div className="flex justify-center mt-6">
+            <div className="flex justify-center pb-5 mt-6">
               <button
                 type="submit"
-                className="px-6 py-2 font-bold text-white bg-blue-600 rounded-md hover:bg-blue-700"
+                className="px-6 py-2 font-bold text-white bg-blue-600 border-gray-700 rounded-md hover:bg-blue-700"
               >
                 Update Profile
               </button>

@@ -1,11 +1,8 @@
 import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../../Security/AuthProvider";
-import { IoIosSearch } from "react-icons/io";
 import UseAxiosPublic from "../../Axios/UseAxiosPublic";
 import { Helmet } from "react-helmet-async";
 import useMpayment from "../../Hook/UseMpayment";
-import Swal from "sweetalert2";
-import { MdDelete, MdEditSquare } from "react-icons/md";
 import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
 
@@ -14,27 +11,25 @@ const ClientPayments = () => {
   const AxiosPublic = UseAxiosPublic();
   const { user } = useContext(AuthContext);
   const [data, setData] = useState([]);
-  const [sortMonth, setSortMonth] = useState(new Date().getMonth() + 1); // Default to current month
   const [selectedDate, setSelectedDate] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
-  const [searchQuery, setSearchQuery] = useState("");
   const [filteredData, setFilteredData] = useState([]);
-  
   const [totalPayment, setTotalPayment] = useState(0);
-  const [payment, setPayment] = useState([]);
+  const initialTab = localStorage.getItem("activeTabclientpayMont") || "All";
+  const [sortMonth, setSortMonth] = useState(initialTab || new Date().getMonth() + 1)
+
+  const changeTab = (tab) => {
+    setSortMonth(tab);
+    localStorage.setItem("activeTabclientpayMont", tab); 
+  };
   
   useEffect(() => {
-    const realdata = MPayment.filter((m) => m.employeeEmail === user?.email);
-    setPayment(realdata);
-    
     const totalBill = filteredData.reduce((acc, campaign) => acc + parseFloat(campaign.amount), 0);
     setTotalPayment(totalBill);
   }, [MPayment,filteredData, user?.email]);
   
   useEffect(() => {
     let filtered = data;
-  
-    // Apply default month filtering
     if (sortMonth) {
       filtered = filtered.filter(
         (payment) =>
@@ -51,15 +46,9 @@ const ClientPayments = () => {
         (payment) => payment.paymentMethod === selectedCategory
       );
     }
-  
-    if (searchQuery) {
-      filtered = filtered.filter((payment) =>
-        payment.paymentMethod.toLowerCase().includes(searchQuery.toLowerCase())
-      );
-    }
-  
+
     setFilteredData(filtered);
-  }, [sortMonth, selectedDate, selectedCategory, searchQuery, data]);
+  }, [sortMonth, selectedDate, selectedCategory, data]);
   
   useEffect(() => {
     const finds = MPayment.filter((f) => f.employeeEmail === user?.email);
@@ -67,19 +56,11 @@ const ClientPayments = () => {
   }, [MPayment, user]);
 
   const handleDelete = (id) => {
-
         AxiosPublic.delete(`/MPayment/${id}`).then((res) => {
           toast.success("Delete successful!");
           refetch();
-         
           })
         }
-    
-
-  const [activeDropdown, setActiveDropdown] = useState(null);
-  const toggleDropdown = (orderId) => {
-    setActiveDropdown(activeDropdown === orderId ? null : orderId);
-  };
 
   const [selectedPayment, setSelectedPayment] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -151,108 +132,87 @@ const ClientPayments = () => {
   },[user?.email])
 
   return (
-    <div className="mt-5">
+    <div className="">
       <Helmet>
         <title>Client Payment | Digital Network </title>
         <link rel="canonical" href="https://www.example.com/" />
       </Helmet>
 
-      <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3  lg:grid-cols-5 gap-5  p-5">
-   <div className="balance-card bg-white rounded-2xl shadow-lg p-5 text-center  transition-transform transform hover:scale-105 border-0">
+      <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3  lg:grid-cols-6 gap-5  p-5">
+   <div onClick={(e) => setSelectedCategory('bkashMarchent')} className="balance-card bg-white rounded-2xl shadow-lg p-5 text-center  transition-transform transform hover:scale-105 border-0">
      <img className="balance-card-img" src="https://i.ibb.co/bHMLyvM/b-Kash-Merchant.png" alt="bKash" />
      <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"> <span className="text-lg lg:text-2xl font-extrabold"> ৳</span> {bkashMarcent}</p>
    </div>
-   <div className="balance-card bg-white rounded-2xl shadow-lg p-5 text-center transition-transform transform hover:scale-105 border-0">
+   <div onClick={(e) => setSelectedCategory('bkashPersonal')} className="balance-card bg-white rounded-2xl shadow-lg p-5 text-center transition-transform transform hover:scale-105 border-0">
      <img className="balance-card-img" src="https://i.ibb.co/520Py6s/bkash-1.png" alt="bKash" />
      <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"> <span className="text-lg lg:text-2xl font-extrabold"> ৳</span> {bkashPersonal}</p>
    </div>
-   <div className="balance-card bg-white rounded-2xl shadow-lg p-5 text-center transition-transform transform hover:scale-105 border-0">
+   <div onClick={(e) => setSelectedCategory('nagadPersonal')} className="balance-card bg-white rounded-2xl shadow-lg p-5 text-center transition-transform transform hover:scale-105 border-0">
      <img className="balance-card-img" src="https://i.ibb.co/JQBQBcF/nagad-marchant.png" alt="Nagad" />
      <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"><span className="text-lg lg:text-2xl font-extrabold"> ৳</span> {nagadPersonal}</p>
    </div>
-   <div className="balance-card bg-white rounded-2xl shadow-lg p-5 text-center transition-transform transform hover:scale-105 border-0">
+   <div  onClick={(e) => setSelectedCategory('rocketPersonal')} className="balance-card bg-white rounded-2xl shadow-lg p-5 text-center transition-transform transform hover:scale-105 border-0">
      <img className="balance-card-img" src="https://i.ibb.co/QkTM4M3/rocket.png" alt="Rocket" />
      <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"><span className="text-lg lg:text-2xl font-extrabold"> ৳</span> {rocketPersonal}</p>
    </div>
 
-   <div className="balance-card bg-white rounded-2xl shadow-lg p-5 text-center transition-transform transform hover:scale-105 border-0">
+   <div  onClick={(e) => setSelectedCategory('bank')}  className="balance-card bg-white rounded-2xl shadow-lg p-5 text-center transition-transform transform hover:scale-105 border-0">
      <img className="balance-card-img" src="https://i.ibb.co/PZc0P4w/brac-bank-seeklogo.png" alt="Rocket" />
-     {/* <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"><span className="text-lg lg:text-2xl font-extrabold">Bank Received : ৳</span> {bankTotal}</p>
-     <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"><span className="text-lg lg:text-2xl font-extrabold">Bank Cashout : ৳</span> {bankTotal2}</p> */}
      <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"><span className="text-lg lg:text-2xl font-extrabold"> ৳</span> {bankTotal}</p>
+   </div>
+   <div  onClick={(e) => setSelectedCategory('bank')}  className="balance-card bg-white rounded-2xl shadow-lg p-5 text-center transition-transform transform hover:scale-105 border-0">
+     <h1 className="text-2xl text-black font-bold">Total BDT</h1>
+     <p className="balance-card-text mt-9 text-lg lg:text-2xl font-bold text-gray-700"><span className="text-lg lg:text-2xl font-extrabold"> ৳</span> {bankTotal+rocketPersonal+bkashMarcent+bkashPersonal+nagadPersonal}</p>
    </div>
      </div>
 
 {/* ///////////////////////////////////////////////////////////////// */}
-<div className="flex justify-end items-end gap-4 text-black">
-  <div className="flex flex-col justify-center items-center mb-5">
-   
-    <select
-      className="border bg-white text-black border-gray-400 rounded p-2 mt-1"
-      value={sortMonth}
-      onChange={(e) => setSortMonth(e.target.value)}
-    >
-      <option value="">Select Month</option>
-      {[
-        "January",
-        "February",
-        "March",
-        "April",
-        "May",
-        "June",
-        "July",
-        "August",
-        "September",
-        "October",
-        "November",
-        "December",
-      ].map((month, index) => (
-        <option key={index + 1} value={index + 1}>
-          {month}
-        </option>
-      ))}
-    </select>
-  </div>
 
-  <div className="flex flex-col justify-center items-center mb-5">
-    
-    <input
-      type="date"
-      className="border bg-white text-black border-gray-400 rounded p-2 mt-1"
-      value={selectedDate}
-      onChange={(e) => setSelectedDate(e.target.value)}
-    />
-  </div>
 
-  <div className="flex flex-col justify-center items-center mb-5">
-   
-    <select
-      className="border bg-white text-black border-gray-400 rounded p-2 mt-1"
-      value={selectedCategory}
-      onChange={(e) => setSelectedCategory(e.target.value)}
-    >
-      <option value="">All Methods</option>
-      <option value="bkashPersonal">bKash Personal</option>
-      <option value="bkashMarchent">bKash Marcent</option>
-      <option value="nagadPersonal">Nagad Personal</option>
-      <option value="rocketPersonal">Rocket Personal</option>
-      <option value="bank">Bank</option>
-    </select>
-  </div>
+<div className="flex flex-wrap lg:justify-end justify-center ml-5 items-center gap-5 mr-5 mb-5">
+  <select
+    className="border bg-white text-black border-gray-400 rounded p-2 mt-1"
+    value={sortMonth}
+    onChange={(e) => changeTab(e.target.value)}
+  >
+    <option value="">Select Month</option>
+    {[
+      "January",
+      "February",
+      "March",
+      "April",
+      "May",
+      "June",
+      "July",
+      "August",
+      "September",
+      "October",
+      "November",
+      "December",
+    ].map((month, index) => (
+      <option key={index + 1} value={index + 1}>
+        {month}
+      </option>
+    ))}
+  </select>
 
-  <div className="flex flex-col justify-end items-end mb-5 mr-5">
-    <input
-      type="text"
-      placeholder="Payment Method..."
-      className="border bg-white text-black placeholder:text-black border-gray-400 rounded p-2 mt-1"
-      value={searchQuery}
-      onChange={(e) => setSearchQuery(e.target.value)}
-    />
-  </div>
+  <input
+    type="date"
+    className="border bg-green-300 text-black border-gray-400 rounded p-2 mt-1"
+    value={selectedDate}
+    onChange={(e) => setSelectedDate(e.target.value)}
+  />
 </div>
 
 
-      <div className="overflow-x-auto text-black rounded-xl mx-5">
+
+
+
+
+  
+
+
+      <div className="overflow-x-auto text-black rounded-xl mb-5 mx-5">
         <table className="min-w-full bg-white">
           <thead className="bg-[#05a0db] text-white">
             <tr>
@@ -269,7 +229,7 @@ const ClientPayments = () => {
             {filteredData.map((payment, index) => (
               <tr
                 key={index}
-                className={index % 2 === 0 ? "bg-gray-100" : "bg-white"}
+                className={index % 2 === 0 ? "bg-gray-200" : "bg-white"}
               >
                 <td className="p-3 border-r-2 border-l-2 border-gray-200 text-center">
                   {index + 1}
@@ -277,7 +237,7 @@ const ClientPayments = () => {
                 <td className="p-3 border-r-2 border-gray-200 text-center">
                   {new Date(payment.date).toLocaleDateString("en-GB")}
                 </td>
-                <td className="p-3 border-r-2 border-gray-200 text-center">
+                <td className="p-3 hover:text-blue-700 hover:font-bold border-r-2 border-gray-200 text-center">
                 <Link to={`/dashboard/client/${payment.clientEmail}`}>
                 {payment.clientName}
                 </Link>
@@ -329,19 +289,19 @@ const ClientPayments = () => {
                   {payment.note}
                 </td>
                 
-                <td className="p-3 border-r-2 flex justify-center items-center border-gray-200 text-center">
+                <td className="p-3 border-r-2 gap-3 flex justify-center items-center border-gray-200 text-center">
               
                   <button
-                          className=" px-4 py-2 text-3xl text-left text-blue-700 "
+                          className="bg-green-700 hover:bg-blue-700 text-white px-2 py-1 rounded"
                           onClick={() => handleEditClick(payment)}
                         >
-                       <MdEditSquare />
+                       Edit
                         </button>
                         <button
-                          className="text-start flex justify-start text-black text-3xl"
+                          className="bg-red-700 hover:bg-blue-700 text-white px-2 py-1 rounded"
                           onClick={() => handleDelete(payment._id)}
                         >
-                          <MdDelete />
+                          Delete
                         </button>
                       
                  
@@ -434,13 +394,13 @@ const ClientPayments = () => {
             <button
               type="button"
               onClick={handleCancel}
-              className="bg-red-500 text-white px-6 w-full py-2 rounded-md font-medium"
+              className="bg-red-500 hover:bg-red-700 text-white px-6 w-full py-2 rounded-md font-medium"
             >
               Close
             </button>
             <button
               type="submit"
-              className="bg-blue-500 text-white w-full px-6 py-2 rounded-md font-medium"
+              className="bg-blue-500 hover:bg-indigo-700 text-white w-full px-6 py-2 rounded-md font-medium"
             >
               Update
             </button>

@@ -33,7 +33,7 @@ const Home = () => {
                 <div>
                     {ddd?.role === "admin" ? (
                         <Banner />
-                    ) : ddd?.role === "adsAccount" ? (
+                    ) : ddd?.role === "contributor" ? (
                         <AdsDashboardHome />
                     ) : ddd?.role === "employee" ? (
                         <MyProfile />

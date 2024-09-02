@@ -1,22 +1,22 @@
-import React, { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import useClients from '../../Hook/useClient';
 import { AuthContext } from '../../Security/AuthProvider';
 import UseAxiosPublic from '../../Axios/UseAxiosPublic';
 import useUsers from '../../Hook/useUsers';
-import { IoIosSearch } from 'react-icons/io';
-import { Form, Link } from 'react-router-dom';
+import { Link, } from 'react-router-dom';
 import { toast, ToastContainer } from 'react-toastify';
-import Swal from 'sweetalert2';
 import { Helmet } from 'react-helmet-async';
-import { MdDelete, MdEditSquare } from 'react-icons/md';
 import { ImCross } from 'react-icons/im';
+import useCampaings from '../../Hook/useCampaign';
+import useMpayment from '../../Hook/UseMpayment';
 
 const MyClients = () => {
     const { user }=useContext(AuthContext)
     const [clients, refetch] = useClients();
     const AxiosPublic = UseAxiosPublic();
     const [filteredCampaigns, setFilteredCampaigns] = useState([]);
-
+    const [campaigns]=useCampaings()
+    const [Mpayment]=useMpayment()
   
   
   
@@ -79,11 +79,6 @@ const MyClients = () => {
     }, [clients, user?.email]);
   
   
-    
-  
-  
-  
-  
     const handleaddblog = (e) => {
       e.preventDefault();
       const clientName = e.target.clientName.value;
@@ -95,7 +90,8 @@ const MyClients = () => {
       const tBill = 0;
       const tDue = 0;
       const tPaid = 0;
-      const date = new Date()
+      const date = new Date();
+    
       const data = {
         clientName,
         clientEmail,
@@ -108,14 +104,23 @@ const MyClients = () => {
         tDue,
         tPaid,
       };
-      console.log(data);
-  
+    
       AxiosPublic.post("https://digital-networking-server.vercel.app/clients", data)
-      .then((res) => {
-        refetch();
-        Swal.fire("added is Successfully!");
-    })
+        .then((res) => {
+          refetch();
+          window.location.reload();
+        })
+        .catch((error) => {
+          if (error.response && error.response.status === 400) {
+            alert("Client with the same email or phone number already exists.");
+          } else {
+            console.error("Error adding client:", error);
+          }
+        });
     };
+    
+
+
     const [bkashMarcent,setBkashMarcentTotal]=useState(0)
     const [nagadPersonal,setNagadPersonalTotal]=useState(0)
     const [bkashPersonal,setBkashPersonalTotal]=useState(0)
@@ -155,8 +160,10 @@ const MyClients = () => {
     const [selectedCategory, setSelectedCategory] = useState("");
   
     const filteredItems = filteredCampaigns.filter((item) =>
-      item.clientPhone.toLowerCase().includes(searchQuery.toLowerCase())
+      item.clientPhone.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      item.clientName.toLowerCase().includes(searchQuery.toLowerCase())
     );
+    
   
     const filteredByCategory = selectedCategory
       ? filteredItems.filter(
@@ -185,7 +192,6 @@ const MyClients = () => {
           body
         )
           .then((res) => {
-            console.log(res.data);
             refetch();
             toast.success("client updated successfully");
           })
@@ -195,6 +201,12 @@ const MyClients = () => {
           });
       };
      
+      const sortedAdsAccounts = filteredByCategory.sort((a, b) => {
+        return a.clientName.localeCompare(b.clientName);
+      });
+
+
+      
     return (
         <div className='mx-5'>
            <ToastContainer />
@@ -207,28 +219,28 @@ const MyClients = () => {
 
 
 
-      <div className="grid lg:grid-cols-4 text-black sm:grid-cols-2 gap-5 justify-around py-5">
-        <div className="px-5 py-10 rounded-2xl bg-[#c6e529] text-white shadow-lg text-center">
-          <h2 className="text-2xl font-bold">Total Spent</h2>
-          <p className="text-4xl font-bold mt-2"> $ {totalSpent || 0.00}</p>
+      <div className="grid lg:grid-cols-4 grid-cols-2 text-black sm:grid-cols-2 gap-5 justify-around lg:py-5 pb-5">
+        <div className="px-5 py-10 rounded-2xl bg-[#b7cc50] text-white shadow-lg text-center">
+          <h2 className="lg:text-2xl text-xl font-bold">Total Spent</h2>
+          <p className="lg:text-4x md:text-3xl text-md font-bold mt-2"> $ {totalSpent.toFixed(2) || 0.00}</p>
         </div>
 
         <div className="px-5 py-10 rounded-2xl bg-[#5422c0] text-white shadow-lg text-center">
-          <h2 className="text-2xl font-bold">Total Bill</h2>
-          <p className="text-4xl font-bold mt-2"><span className='font-extrabold text-4xl'> ৳ </span>
-          {totalSpent *140 || 0.00}
+          <h2 className="lg:text-2xl text-xl font-bold">Total Bill</h2>
+          <p className="lg:text-4x md:text-3xl text-md font-bold mt-2"><span className='font-extrabold lg:text-4x text-md'> ৳ </span>
+          {totalbill.toFixed(2)}
           </p>
         </div>
 
         <div className="px-5 py-10 rounded-2xl bg-[#05a0db] text-white shadow-lg text-center">
-          <h2 className="text-2xl font-bold">Total Paid</h2>
-          <p className="text-4xl font-bold mt-2"> <span className='font-extrabold text-4xl'> ৳ </span> {totalRCV || 0.00}</p>
+          <h2 className="lg:text-2xl text-xl font-bold">Total Paid</h2>
+          <p className="lg:text-4x md:text-3xl text-md font-bold mt-2"> <span className='font-extrabold lg:text-4x text-md'> ৳ </span> {totalRCV.toFixed(2) || 0.00}</p>
         </div>
 
         <div className="px-5 py-10 rounded-2xl  bg-[#ce1a38] text-white shadow-lg text-center">
-          <h2 className="text-2xl font-bold">Total DUE</h2>
-          <p className="text-4xl font-bold mt-2">
-          <span className='font-extrabold text-4xl'> ৳ </span>{totalDue || 0.00} 
+          <h2 className="lg:text-2xl text-xl font-bold">Total DUE</h2>
+          <p className="lg:text-4x md:text-3xl text-md font-bold mt-2">
+          <span className='font-extrabold text-md'> ৳ </span>{totalDue.toFixed(2) || 0.00} 
           </p>
         </div>
       </div>
@@ -236,106 +248,105 @@ const MyClients = () => {
 
      
 
-<div className="flex justify-between items-center ">
+      <div className="flex flex-col lg:flex-row justify-between items-center">
+  <div className="flex justify-between lg:mb-5 items-center w-full lg:w-auto  ">
+    <div className="flex lg:justify-center justify-center mb-4 lg:mb-0 text-gray-500 lg:mx-2 pb-1 items-center gap-5">
+    <div className='flex justify-center'>
+    {
+        ddd?.role === 'admin' ? null : (
+          <div>
+            <button
+              className="font-avenir hover:bg-red-700 px-3 text-sm mx-auto py-1.5 bg-[#05a0db] rounded-lg text-white"
+              onClick={() => document.getElementById("my_modal_2").showModal()}
+            >
+              Add Client
+            </button>
+            <dialog id="my_modal_2" className="modal">
+              <div className="modal-box bg-white text-black font-bold">
+                <form onSubmit={handleaddblog}>
+                  <div className="mb-4">
+                    <h1
+                      className="text-black flex hover:text-red-500 justify-end text-end"
+                      onClick={() => document.getElementById("my_modal_2").close()}
+                    >
+                      <ImCross />
+                    </h1>
+                    <label className="block text-black">Client Name</label>
+                    <input
+                      id="name"
+                      name="clientName"
+                      type="text"
+                      required
+                      className="w-full bg-white border-2 border-black rounded p-2 mt-1"
+                    />
+                  </div>
 
-<div className="flex justify-start  text-gray-500  mx-2 pb-1 items-center gap-5 mb-3">
-{
-  ddd?.role === 'admin' ? <></> : <div>
-  <button
-    className="font-avenir px-3 mx-auto py-1 bg-[#05a0db] rounded-lg text-white"
-    onClick={() => document.getElementById("my_modal_2").showModal()}
-  >
-    Add Client
-  </button>
-  <dialog id="my_modal_2" className="modal">
-    <div className="modal-box bg-white text-black font-bold">
-      <form onSubmit={handleaddblog}>
-     
-          <div className="mb-4">
-          <h1
-             className=" text-black flex hover:text-red-500  justify-end  text-end"
-             onClick={() => document.getElementById("my_modal_2").close()}
-           >
-            <ImCross />
-           </h1>
-            <label className="block text-black">Client Name</label>
-            <input
-              id="name"
-              name="clientName"
-              type="text"
-              required
-              className="w-full bg-white border-2 border-black rounded p-2 mt-1"
-            />
-          </div>
-   
-       
-          <div className="mb-4">
-            <label className="block text-black">Client Phone</label>
-            <input
-              id="clientPhone"
-              name="clientPhone"
-              type="number"
-              required
-              className="w-full bg-white border-2 border-black rounded p-2 mt-1"
-            />
-          </div>
-          <div className="mb-4">
-            <label className="block text-black">Client Email</label>
-            <input
-              id="clientEmail"
-              name="clientEmail"
-              type="email"
-              required
-              className="w-full bg-white border-2 border-black rounded p-2 mt-1"
-            />
-          </div>
-    
+                  <div className="mb-4">
+                    <label className="block text-black">Client Phone</label>
+                    <input
+                      id="clientPhone"
+                      name="clientPhone"
+                      type="number"
+                      required
+                      className="w-full bg-white border-2 border-black rounded p-2 mt-1"
+                    />
+                  </div>
+                  <div className="mb-4">
+                    <label className="block text-black">Client Email</label>
+                    <input
+                      id="clientEmail"
+                      name="clientEmail"
+                      type="email"
+                      required
+                      className="w-full bg-white border-2 border-black rounded p-2 mt-1"
+                    />
+                  </div>
 
-        <div className="grid mt-8 grid-cols-2 gap-3">
-        <button
-            type="button"
-            onClick={() => document.getElementById("my_modal_2").close()}
-            className="p-2 rounded-lg bg-red-600 text-white text-center"
-          >
-            Close
-          </button>
+                  <div className="grid mt-8 grid-cols-2 gap-3">
+                    <button
+                      type="button"
+                      onClick={() => document.getElementById("my_modal_2").close()}
+                      className="p-2 hover:bg-red-700 rounded-lg bg-red-600 text-white text-center"
+                    >
+                      Close
+                    </button>
+                    <button
+                      type="submit"
+                      className="font-avenir hover:bg-indigo-700 px-3 py-1 bg-[#05a0db] rounded text-white"
+                    >
+                      Submit
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </dialog>
+          </div>
+        )
+      }
+     </div>
+      <div>
+        <Link to={'/dashboard/AddClients'}>
           <button
-            type="submit"
-            className="font-avenir px-3 py-1 bg-[#05a0db] rounded text-white"
+            className="font-avenir hover:bg-red-700 px-3 mx-auto py-1 bg-[#f89320] rounded-lg text-white"
           >
-            Submit
+            Client Access
           </button>
-         
-        </div>
-      </form>
+        </Link>
+      </div>
     </div>
-  </dialog>
-</div>
+  </div>
 
-
-}
- <div> 
-<Link to={'/dashboard/AddClients'}>
-<button
-    className="font-avenir px-3 mx-auto py-1 bg-[#f89320]  rounded-lg text-white"
-   
-  >
-    Client Access
-  </button>
-</Link>
+  <div className="w-full lg:w-auto">
+    <input
+      type="text"
+      placeholder="Search ...."
+      className="rounded-lg w-full mb-5 lg:mb-5 placeholder-black border border-gray-700 p-2 font-bold text-black text-sm bg-white"
+      value={searchQuery}
+      onChange={(e) => setSearchQuery(e.target.value)}
+    />
   </div>
 </div>
-<div className="flex justify-end mb-5">
-          <input
-            type="text"
-            placeholder=" Client Phone Number...."
-            className=" rounded-lg w-full placeholder-black border border-gray-700 p-2 font-bold text-black text-sm bg-white"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
-        
-</div>
-</div>
+
 
 <div className="overflow-x-auto text-black mb-5 rounded-lg border-black">
 <table className="min-w-full rounded-xl">
@@ -353,7 +364,7 @@ const MyClients = () => {
 </tr>
 </thead>
 <tbody>
-{filteredByCategory.map((campaign, index) => (
+{sortedAdsAccounts.map((campaign, index) => (
 <tr
   key={campaign._id}
   className={`${
@@ -364,21 +375,81 @@ const MyClients = () => {
 >
   <td className="p-3 border-r border-gray-400 border-l text-center ">{index + 1}</td>
 
-  <Link to={`/dashboard/client/${campaign.clientEmail}`}>
-    <td className="p-3 border-r border-gray-400 flex hover:font-bold hover:bg-yellow-50 justify-start text-start">{campaign.clientName}</td>
+  <td className="p-3 border-r border-gray-400 flex hover:font-bold hover:text-blue-700 justify-start text-start">
+  <Link to={`/dashboard/client/${campaign.clientEmail}`} className="w-full">
+
+   
+    <h1 className='text-black'>
+      {campaigns.filter(ca => ca.clientEmail === campaign.clientEmail && ca.status === 'Active').length > 0 
+        ?   <div className='flex justify-start items-center gap-2'> <div >
+       
+       <span> {campaign.clientName}</span>
+        </div>
+        <span><img className='h-5 w-5   rounded-full' src="https://i.ibb.co/C6CGqfk/check-512.webp" alt="" /></span>
+
+  </div> 
+        :   <span className='flex justify-start gap-2'> {campaign.clientName}</span>
+      }
+    </h1>
   </Link>
-  <td className="p-3 border-r border-gray-400 text-start">{campaign.clientPhone}</td>
+</td>
+
+
+  
+  <td className="p-3 border-r border-gray-400 text-start">
+    {campaign.clientPhone}
+    </td>
 <td className="p-3 border-r border-gray-400 text-center">
-  $ {Number(campaign.tBudged).toFixed(2)}
+  $ {Number(campaign.tBudged).toFixed(2)} 
+{/* || 
+{
+  (
+    campaigns
+      .filter(payment => payment.clientEmail === campaign.clientEmail)
+      .reduce((acc, payment) => acc + parseFloat(payment?.tBudged || 0), 0) 
+  ) 
+} */}
+
 </td>
 <td className="p-3 border-r border-gray-400 text-center">
   $ {Number(campaign.tSpent).toFixed(2)}
+  {/* ||
+  {
+  (
+    campaigns
+      .filter(payment => payment.clientEmail === campaign.clientEmail)
+      .reduce((acc, payment) => acc + parseFloat(payment?.tSpent || 0), 0) 
+  ) 
+} */}
 </td>
 <td className="p-3 border-r border-gray-400 text-center">
   ৳ {Number(campaign.tBill).toFixed(2) || 0.00}
+{/* ||
+৳ 
+  {
+  (
+    campaigns
+      .filter(payment => payment.clientEmail === campaign.clientEmail)
+      .reduce((acc, payment) => acc + parseFloat(payment?.tSpent || 0), 0) 
+  ) * (
+    campaigns
+      .filter(payment => payment.clientEmail === campaign.clientEmail)
+      .reduce((acc, payment) => acc + parseFloat(payment?.dollerRate ), 0) 
+  )
+} */}
+
 </td>
 <td className="p-3 border-r border-gray-400 text-center">
   ৳ {Number(campaign.tPayment || 0).toFixed(2) || '0.00'}
+  {/* ||
+  ৳ 
+  {
+  (
+    Mpayment
+      .filter(payment => payment.clientEmail === campaign.clientEmail)
+      .reduce((acc, payment) => acc + parseFloat(payment?.amount || 0), 0) 
+  ) 
+} */}
 </td>
 
   <td className="p-3 border-r border-gray-400 text-center">
@@ -387,19 +458,40 @@ const MyClients = () => {
     ? (Number(campaign.tBill) - Number(campaign.tPayment || 0)).toFixed(2) 
     : '0.00'
   }
+{/* ৳
+{
+  (
+    (
+      campaigns
+        .filter(payment => payment.clientEmail === campaign.clientEmail)
+        .reduce((acc, payment) => acc + parseFloat((payment?.tSpent || 0)), 0) 
+    ) * (
+      campaigns
+        .filter(payment => payment.clientEmail === campaign.clientEmail)
+        .reduce((acc, payment) => acc + parseFloat(payment?.dollerRate || 0), 0) 
+    )
+  )
+  -
+  (
+    Mpayment
+      .filter(payment => payment.clientEmail === campaign.clientEmail)
+      .reduce((acc, payment) => acc + parseFloat(payment?.amount || 0), 0) 
+  )
+} */}
+
 </td>
 
 
   <td className="p-3 border-r text-center border-gray-400">
-  <div className="flex justify-center items-center items-center gap-3">
+  <div className="flex justify-center  items-center gap-3">
   <div>
   <button
-    className="text-blue-700 text-3xl"
+ className="bg-green-700 hover:bg-blue-700 text-white px-2 py-1 rounded"
     onClick={() =>
       document.getElementById(`modal_${index}`).showModal()
     }
   >
-    <MdEditSquare />
+    Edit
   </button>
 
   <dialog id={`modal_${index}`} className="modal">
@@ -435,6 +527,7 @@ const MyClients = () => {
           <input
             type="email"
             name="clientEmail"
+            disabled
             defaultValue={campaign?.clientEmail}
             className="w-full border-black bg-white border rounded p-2 mt-1"
           />
@@ -446,13 +539,13 @@ const MyClients = () => {
               document.getElementById(`modal_${index}`).close()
             }
             type="button"
-            className="font-avenir px-3 py-1 bg-red-600 rounded-lg text-white"
+            className="font-avenir hover:bg-red-700 px-3 py-1 bg-red-600 rounded-lg text-white"
           >
             Close
           </button>
           <button
             type="submit"
-            className="font-avenir px-3 py-1 bg-[#05a0db] rounded-lg text-white"
+            className="font-avenir hover:bg-indigo-700 px-3 py-1 bg-[#05a0db] rounded-lg text-white"
           >
             Update
           </button>
@@ -463,11 +556,11 @@ const MyClients = () => {
 </div>
 
                       <button
-                          className="text-center  text-black text-3xl"
+                           className="bg-red-700 hover:bg-blue-700 text-white px-2 py-1 rounded"
                           onClick={() => handledelete(campaign._id)}
                         >
                           <ToastContainer></ToastContainer>
-                          <MdDelete />
+                          Delete
                         </button>
                       </div>
 
@@ -480,11 +573,11 @@ const MyClients = () => {
 <td className="p-3  text-right" colSpan="2">
   Total :
 </td>
-<td className="p-3  text-center">$ {totalBudged}</td>
-<td className="p-3  text-center">$ {totalSpent}</td>
-<td className="p-3  text-center">৳ {totalbill}</td>
-<td className="p-3  text-center">৳ {totalRCV}</td>
-<td className="p-3 text-center"> ৳ {totalDue}</td>
+<td className="p-3  text-center">$ {totalBudged.toFixed(2)}</td>
+<td className="p-3  text-center">$ {totalSpent.toFixed(2)}</td>
+<td className="p-3  text-center">৳ {totalbill.toFixed(2)}</td>
+<td className="p-3  text-center">৳ {totalRCV.toFixed(2)}</td>
+<td className="p-3 text-center"> ৳ {totalDue.toFixed(2)}</td>
 <td className="p-3 "></td>
 </tr>
 </tbody>

@@ -9,14 +9,20 @@ const months = [
   'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'
 ];
 
-const Activity = () => {
+const AllSummery = () => {
   const [users] = useUsers();
   const { user } = useContext(AuthContext);
   const [employeePayment] = useEmployeePayment();
   const [Mpayment] = useMpayment();
 
   const [employees, setEmployees] = useState([]);
-  const [selectedEmployee, setSelectedEmployee] = useState("");
+  const initialTab = localStorage.getItem("activeTabsummeryEmployee") || "allEmployee";
+  const [selectedEmployee, setSelectedEmployee] = useState(initialTab);
+
+  const changeTab = (tab) => {
+    setSelectedEmployee(tab);
+    localStorage.setItem("activeTabsummeryEmployee", tab); // Store the active tab in local storage
+  };
 
   useEffect(() => {
     if (users && user) {
@@ -38,17 +44,21 @@ const Activity = () => {
   const recentMonths = getRecentMonths();
 
   const employeeData = useMemo(() => {
-    const relevantUsers = selectedEmployee
+    const relevantUsers = selectedEmployee !== "allEmployee"
       ? users.filter(u => u.role === 'employee' && u.email === selectedEmployee)
       : users.filter(u => u.role === 'employee');
 
     return relevantUsers.flatMap(user => {
       const employeePayments = employeePayment.filter(
-        payment => selectedEmployee ? payment.employeeEmail === selectedEmployee : payment.employeeEmail === user.email
+        payment => selectedEmployee !== "allEmployee"
+          ? payment.employeeEmail === selectedEmployee
+          : payment.employeeEmail === user.email
       );
 
       const mPayments = Mpayment.filter(
-        payment => selectedEmployee ? payment.employeeEmail === selectedEmployee : payment.employeeEmail === user.email
+        payment => selectedEmployee !== "allEmployee"
+          ? payment.employeeEmail === selectedEmployee
+          : payment.employeeEmail === user.email
       );
 
       const paymentByMonth = employeePayments.reduce((acc, payment) => {
@@ -90,6 +100,12 @@ const Activity = () => {
     });
   }, [users, selectedEmployee, employeePayment, Mpayment, recentMonths]);
 
+  // Calculate totals for the footer
+  const totalSpentSum = employeeData.reduce((acc, data) => acc + data.totalSpent, 0);
+  const totalBillSum = employeeData.reduce((acc, data) => acc + data.totalBill, 0);
+  const totalClientPaySum = employeeData.reduce((acc, data) => acc + data.totalClientPay, 0);
+  const totalAdminPaySum = employeeData.reduce((acc, data) => acc + data.totalAdminPay, 0);
+
   return (
     <div className='m-5'>
       <Helmet>
@@ -100,37 +116,37 @@ const Activity = () => {
       <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-6 text-black sm:grid-cols-2 gap-5 justify-around ">
         <div className="px-5 py-10 rounded-2xl  bg-[#91a33a] text-white shadow-lg text-center">
           <h2 className="text-xl font-bold">Total Spent</h2>
-          <p className="text-2xl font-bold mt-2"> $ {employeeData.reduce((acc, data) => acc + data.totalSpent, 0).toFixed(2)}</p>
+          <p className="text-2xl font-bold mt-2"> $ {totalSpentSum.toFixed(2)}</p>
         </div>
 
         <div className="px-5 py-10 rounded-2xl bg-[#5422c0] text-white shadow-lg text-center">
           <h2 className="text-xl font-bold">Total BDT</h2>
           <p className="text-2xl font-bold mt-2">
-             <span className="text-2xl font-extrabold">৳</span> {employeeData.reduce((acc, data) => acc + data.totalBill, 0).toFixed(2)}
+             <span className="text-2xl font-extrabold">৳</span> {totalBillSum.toFixed(2)}
           </p>
         </div>
 
         <div className="px-5 py-10 rounded-2xl  bg-[#05a0db] text-white shadow-lg text-center">
           <h2 className="text-xl font-bold">Client Pay</h2>
-          <p className="text-2xl font-bold mt-2"> <span className="text-2xl font-extrabold">৳</span>{employeeData.reduce((acc, data) => acc + data.totalClientPay, 0).toFixed(2)} </p>
+          <p className="text-2xl font-bold mt-2"> <span className="text-2xl font-extrabold">৳</span>{totalClientPaySum.toFixed(2)} </p>
         </div>
 
         <div className="px-5 py-10 rounded-2xl  bg-[#ce1a38] text-white shadow-lg text-center">
           <h2 className="text-xl font-bold">Employee Pay</h2>
           <p className="text-2xl font-bold mt-2">
-          <span className="text-2xl font-extrabold">৳</span> {employeeData.reduce((acc, data) => acc + data.totalAdminPay, 0).toFixed(2)}
+          <span className="text-2xl font-extrabold">৳</span> {totalAdminPaySum.toFixed(2)}
           </p>
         </div>
         <div className="px-5 py-10 rounded-2xl  bg-[#ce1a38] text-white shadow-lg text-center">
           <h2 className="text-xl font-bold">Employee Due</h2>
           <p className="text-2xl font-bold mt-2">
-          <span className="text-2xl font-extrabold">৳</span> {(employeeData.reduce((acc, data) => acc + data.totalClientPay, 0) - employeeData.reduce((acc, data) => acc + data.totalAdminPay, 0)).toFixed(2)}
+          <span className="text-2xl font-extrabold">৳</span> {(totalClientPaySum - totalAdminPaySum).toFixed(2)}
           </p>
         </div>
         <div className="px-5 py-10 rounded-2xl  bg-[#ce1a38] text-white shadow-lg text-center">
           <h2 className="text-xl font-bold">Client Due</h2>
           <p className="text-2xl font-bold mt-2">
-          <span className="text-2xl font-extrabold">৳</span> {(employeeData.reduce((acc, data) => acc + data.totalBill, 0) - employeeData.reduce((acc, data) => acc + data.totalClientPay, 0)).toFixed(2)}
+          <span className="text-2xl font-extrabold">৳</span> {(totalBillSum - totalClientPaySum).toFixed(2)}
           </p>
         </div>
       </div>
@@ -139,9 +155,9 @@ const Activity = () => {
         <select
           className="border bg-white text-black border-gray-400 rounded p-2 mt-1"
           value={selectedEmployee}
-          onChange={(e) => setSelectedEmployee(e.target.value)}
+          onChange={(e) => changeTab(e.target.value)}
         >
-          <option value="">All Employees</option>
+          <option value="allEmployee">All Employees</option>
           {employees.map((employee) => (
             <option key={employee._id} value={employee.email}>
               {employee.name}
@@ -150,39 +166,66 @@ const Activity = () => {
         </select>
       </div>
       <div className="overflow-x-auto text-black text-center mt-5 rounded-xl border border-gray-600">
-        <table className="min-w-full text-center bg-white">
-          <thead className="bg-[#05a0db] text-white">
-            <tr>
-              <th className="p-3">SL</th>
-              <th className="p-3">Month</th>
-              <th className="p-3">Total Spent</th>
-              <th className="p-3">Total BDT</th>
-              <th className="p-3">Client Pay</th>
-              <th className="p-3">Employee Pay</th>
-              <th className="p-3">Due</th>
-            </tr>
-          </thead>
-          <tbody>
-          {employeeData.map((data, index) => (
-    <tr
-      key={index}
-      className={index % 2 === 0 ? "bg-gray-200 py-2" : "bg-white py-2"}
-    >
-      <td className="p-3 border border-gray-300">{index + 1}</td>
-      <td className="p-3 border border-gray-300">{data.month}</td>
-      <td className="p-3 border border-gray-300">${data.totalSpent.toFixed(2)}</td>
-      <td className="p-3 border border-gray-300">৳{data.totalBill.toFixed(2)}</td>
-      <td className="p-3 border border-gray-300">৳{data.totalClientPay.toFixed(2)}</td>
-      <td className="p-3 border border-gray-300">৳{data.totalAdminPay.toFixed(2)}</td>
-      <td className="p-3 border border-gray-300">৳{(data.totalClientPay - data.totalAdminPay).toFixed(2)}</td>
+  <table className="min-w-full text-center bg-white">
+    <thead className="bg-[#05a0db] text-white">
+      <tr>
+        <th className="p-3">SL</th>
+        <th className="p-3">Month</th>
+        <th className="p-3">Total Spent</th>
+        <th className="p-3">Total BDT</th>
+        <th className="p-3">Client Pay</th>
+        <th className="p-3">Employee Pay</th>
+        <th className="p-3">Employee Due</th>
+        <th className="p-3">Client Due</th>
+      </tr>
+    </thead>
+    <tbody>
+  {employeeData.map((data, index) => (
+    <tr key={index} className={index % 2 === 0 ? "bg-gray-100" : "bg-white"}>
+      <td className="p-3 border">{index + 1}</td>
+      <td className="p-3 border">{data.month}</td>
+      <td className="p-3 border">{data.totalSpent.toFixed(2)}</td>
+      <td className="p-3 border">{data.totalBill.toFixed(2)}</td>
+      <td className="p-3 border">{data.totalClientPay.toFixed(2)}</td>
+      <td className="p-3 border">{data.totalAdminPay.toFixed(2)}</td>
+      <td className="p-3 border">{(data.totalClientPay - data.totalAdminPay).toFixed(2)}</td>
+      <td className="p-3 border">{(data.totalBill - data.totalClientPay).toFixed(2)}</td>
     </tr>
   ))}
 </tbody>
 
-        </table>
-      </div>
+    <tfoot>
+      <tr className="bg-[#05a0db] text-white">
+      <td className="p-3 text-right" colSpan="2">
+                Total :
+              </td>
+        
+        <td className="p-3  font-semibold">
+          {employeeData.reduce((acc, data) => acc + data.totalSpent, 0).toFixed(2)}
+        </td>
+        <td className="p-3  font-semibold">
+          {employeeData.reduce((acc, data) => acc + data.totalBill, 0).toFixed(2)}
+        </td>
+        <td className="p-3  font-semibold">
+          {employeeData.reduce((acc, data) => acc + data.totalClientPay, 0).toFixed(2)}
+        </td>
+        <td className="p-3  font-semibold">
+          {employeeData.reduce((acc, data) => acc + data.totalAdminPay, 0).toFixed(2)}
+        </td>
+        <td className="p-3  font-semibold">
+          {(employeeData.reduce((acc, data) => acc + data.totalClientPay - data.totalAdminPay, 0)).toFixed(2)}
+        </td>
+        <td className="p-3 font-semibold">
+          {(employeeData.reduce((acc, data) => acc + data.totalBill - data.totalClientPay, 0)).toFixed(2)}
+        </td>
+      </tr>
+    
+    </tfoot>
+  </table>
+</div>
+
     </div>
   );
 };
 
-export default Activity;
+export default AllSummery;

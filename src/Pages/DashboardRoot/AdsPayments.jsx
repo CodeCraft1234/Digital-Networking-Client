@@ -1,32 +1,36 @@
 import { useContext, useEffect, useState } from "react";
-import useEmployeePayment from "../../Hook/useEmployeePayment";
 import Swal from "sweetalert2";
 import { AuthContext } from "../../Security/AuthProvider";
 import UseAxiosPublic from "../../Axios/UseAxiosPublic";
 import useUsers from "../../Hook/useUsers";
-import { IoIosSearch } from "react-icons/io";
 import axios from "axios";
 import { Helmet } from "react-helmet-async";
-import useAdsAccount from "../../Hook/useAdAccount";
 import useAdsPayment from "../../Hook/useAdsPayment";
+import { toast } from "react-toastify";
 
 const  AllAdsPayments = () => {
   const { user } = useContext(AuthContext);
   const [adsPayment, refetch] = useAdsPayment();
   const AxiosPublic = UseAxiosPublic();
   const [users] = useUsers();
-
   const [payment, setPayment] = useState([]);
-
-  const [employees, setEmployees] = useState([]);
   const [filteredClients, setFilteredClients] = useState([]);
   const [sortMonth, setSortMonth] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
   const [selectedEmployee, setSelectedEmployee] = useState("");
   const [selectedDate, setSelectedDate] = useState("");
-
   const [totalPayment, setTotalPayment] = useState(0);
+
+  const [ddd, setDdd] = useState(null);
+
+  useEffect(() => {
+      if (users && user) {
+          const foundUser = users.find(u => u.email === user?.email);
+          setDdd(foundUser || {}); // Update state with found user or an empty object
+      }
+  }, [users, user]);
+
   useEffect(() => {
     const realdata = adsPayment.filter(
       (m) => m.employeeEmail === user?.email
@@ -120,6 +124,7 @@ const  AllAdsPayments = () => {
       note,
       paymentMethod,
       date,
+      status:'pending'
     };
 
     AxiosPublic.post(
@@ -127,7 +132,9 @@ const  AllAdsPayments = () => {
       data
     )
       .then((res) => {
+        toast.success('pay successfully')
         refetch();
+     
       })
 
       const fields = {
@@ -188,18 +195,8 @@ const  AllAdsPayments = () => {
     setActiveDropdown(activeDropdown === orderId ? null : orderId);
   };
 
-  const [selectedPayment, setSelectedPayment] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const handleEditClick = (payment) => {
-    setSelectedPayment(payment);
-    setIsModalOpen(true);
-  };
 
-  const handleCancel = () => {
-    setIsModalOpen(false);
-    setSelectedPayment(null);
-  };
   
 
   const handleDelete = (id) => {
@@ -243,37 +240,42 @@ const  AllAdsPayments = () => {
         <title>Admin Payment | Digital Network </title>
         <link rel="canonical" href="https://www.example.com/" />
       </Helmet>
-     <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3   lg:grid-cols-5 gap-5 mt-5 p-5">
-   <div className="balance-card bg-white rounded-2xl shadow-lg p-5 text-center  transition-transform transform hover:scale-105 border-0">
+     <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3   lg:grid-cols-6 gap-5 mt-5 p-5">
+   <div onClick={(e) => setSelectedCategory('bkashMarchent')} className="balance-card bg-white rounded-2xl shadow-lg p-5 text-center  transition-transform transform hover:scale-105 border-0">
      <img className="balance-card-img" src="https://i.ibb.co/bHMLyvM/b-Kash-Merchant.png" alt="bKash" />
      <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"> <span className="text-lg lg:text-2xl font-extrabold"> ৳</span> {bkashMarcent2}</p>
    </div>
-   <div className="balance-card bg-white rounded-2xl shadow-lg p-5 text-center transition-transform transform hover:scale-105 border-0">
+   <div onClick={(e) => setSelectedCategory('bkashPersonal')} className="balance-card bg-white rounded-2xl shadow-lg p-5 text-center transition-transform transform hover:scale-105 border-0">
      <img className="balance-card-img" src="https://i.ibb.co/520Py6s/bkash-1.png" alt="bKash" />
      <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"> <span className="text-lg lg:text-2xl font-extrabold"> ৳</span> {bkashPersonal2}</p>
    </div>
-   <div className="balance-card bg-white rounded-2xl shadow-lg p-5 text-center transition-transform transform hover:scale-105 border-0">
+   <div onClick={(e) => setSelectedCategory('nagadPersonal')} className="balance-card bg-white rounded-2xl shadow-lg p-5 text-center transition-transform transform hover:scale-105 border-0">
      <img className="balance-card-img" src="https://i.ibb.co/JQBQBcF/nagad-marchant.png" alt="Nagad" />
      <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"><span className="text-lg lg:text-2xl font-extrabold"> ৳</span> {nagadPersonal2}</p>
    </div>
-   <div className="balance-card bg-white rounded-2xl shadow-lg p-5 text-center transition-transform transform hover:scale-105 border-0">
+   <div onClick={(e) => setSelectedCategory('rocketPersonal')} className="balance-card bg-white rounded-2xl shadow-lg p-5 text-center transition-transform transform hover:scale-105 border-0">
      <img className="balance-card-img" src="https://i.ibb.co/QkTM4M3/rocket.png" alt="Rocket" />
      <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"><span className="text-lg lg:text-2xl font-extrabold"> ৳</span> {rocketPersonal2}</p>
    </div>
 
-   <div className="balance-card bg-white rounded-2xl shadow-lg p-5 text-center transition-transform transform hover:scale-105 border-0">
+   <div onClick={(e) => setSelectedCategory('bank')} className="balance-card bg-white rounded-2xl shadow-lg p-5 text-center transition-transform transform hover:scale-105 border-0">
      <img className="balance-card-img" src="https://i.ibb.co/PZc0P4w/brac-bank-seeklogo.png" alt="Rocket" />
      {/* <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"><span className="text-lg lg:text-2xl font-extrabold">Bank Received : ৳</span> {bankTotal}</p>
      <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"><span className="text-lg lg:text-2xl font-extrabold">Bank Cashout : ৳</span> {bankTotal2}</p> */}
      <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"><span className="text-lg lg:text-2xl font-extrabold"> ৳</span> {bankTotal2}</p>
+   </div>
+   <div  className="balance-card bg-white rounded-2xl shadow-lg p-5 text-center transition-transform transform hover:scale-105 border-0">
+<h1 className="text-2xl font-bold text-black">Total</h1>
+     <p className="balance-card-text text-lg mt-9 lg:text-2xl font-bold text-gray-700"><span className="text-lg lg:text-2xl font-extrabold"> ৳</span> {bkashMarcent2+bankTotal2+bkashPersonal2+nagadPersonal2+rocketPersonal2}</p>
    </div>
      </div>
    
 {/* ///////////////////////////////////////////////////////////////// */}
     <div className="flex  justify-between items-center gap-5  ">
          <div className="">
+          
         <button
-          className="font-avenir px-3  mx-auto py-1 bg-[#05a0db] ml-5 rounded-lg text-white"
+          className="font-avenir px-3 hover:bg-indigo-700  mx-auto py-1 bg-[#05a0db] ml-5 rounded-lg text-white"
           onClick={() => document.getElementById("my_modal_1").showModal()}
         >
          Pay Admin
@@ -296,7 +298,7 @@ const  AllAdsPayments = () => {
                     required
                     type="number"
                     name="payAmount"
-                    defaultValue={0}
+                    placeholder="0"
                     className="w-full border-2 bg-white border-black rounded p-2 mt-1"
                   />
                 </div>
@@ -329,13 +331,13 @@ const  AllAdsPayments = () => {
                
             <div className="grid lg:grid-cols-2 gap-3">
             <form method="dialog">
-                <button className="p-2 rounded-lg w-full bg-red-600 text-white text-center">
+                <button className="p-2 hover:bg-red-700 rounded-lg w-full bg-red-600 text-white text-center">
                   Close
                 </button>
               </form>
               <button
                 type="submit"
-                className="font-avenir px-3 w-full mx-auto pt-2 py-1 rounded-lg flex justify-center text-white bg-[#05a0db]"
+                className="font-avenir hover:bg-indigo-700 px-3 w-full mx-auto pt-2 py-1 rounded-lg flex justify-center text-white bg-[#05a0db]"
               >
                 Send
               </button>
@@ -382,36 +384,13 @@ const  AllAdsPayments = () => {
    
       <input
         type="date"
-        className="border rounded bg-white text-black border-gray-400 p-2 mt-1"
+        className="border rounded bg-green-300 mr-5 text-black border-gray-400 p-2 mt-1"
         value={selectedDate}
         onChange={(e) => setSelectedDate(e.target.value)}
       />
     </div>
-    <div className="flex flex-col justify-center items-center">
-    
-      <select
-        className="border bg-white text-black border-gray-400 rounded p-2 mt-1"
-        value={selectedCategory}
-        onChange={(e) => setSelectedCategory(e.target.value)}
-      >
-        <option value="">All Methods</option>
-        <option value="bkashPersonal">bKash Personal</option>
-        <option value="bkashMarchent">bKash Merchant</option>
-        <option value="nagadPersonal">Nagad Personal</option>
-        <option value="rocketPersonal">Rocket Personal</option>
-        <option value="bank">Bank</option>
-      </select>
-    </div>
-    <div className=" flex justify-center items-center mr-5">
-    <input
-      type="text"
-      placeholder="Payment Method"
-      className="rounded-lg bg-white placeholder-black border border-gray-700 p-2  text-black "
-      value={searchQuery}
-      onChange={(e) => setSearchQuery(e.target.value)}
-    />
- 
-  </div>
+   
+
           </div>
   
      </div>
@@ -419,7 +398,7 @@ const  AllAdsPayments = () => {
 
 
 
-      <div className="overflow-x-auto rounded-xl mt-5  mx-5">
+      <div className="overflow-x-auto text-black border mb-5 border-gray-300 rounded-xl mt-5  mx-5">
         <table className="min-w-full bg-white">
           <thead className="bg-[#05a0db] text-white">
             <tr>
@@ -435,17 +414,17 @@ const  AllAdsPayments = () => {
             {filteredByCategory.map((payment, index) => (
               <tr
                 key={index}
-                className={`${index % 2 === 0 ? "bg-gray-100" : "bg-white"}`}
+                className={`${index % 2 === 0 ? "bg-gray-200" : "bg-white"}`}
               >
-                <td className="p-3  border-r-2 border-l-2 border-gray-200 text-center">
+                <td className="p-3  border-r-2 border-l-2 border-gray-400 text-center">
                   {index + 1}
                 </td>
                
-                <td className="p-3 border-r-2 border-gray-200 text-center">
+                <td className="p-3 border-r-2 border-gray-400 text-center">
                   ৳ {payment.payAmount}
                 </td>
 
-                <td className="p-3 border-r-2 border-gray-200 text-center">
+                <td className="p-3 border-r-2 border-gray-400 text-center">
                   {payment.paymentMethod === "bkashMarchent" && (
                     <img
                       className="h-10 w-24 flex mx-auto my-auto items-center justify-center"
@@ -482,27 +461,19 @@ const  AllAdsPayments = () => {
                     />
                   )}
                 </td>
-                <td className="p-3 border-r-2 border-gray-200 text-center">
+                <td className="p-3 border-r-2 border-gray-400 text-center">
                   {" "}
                   {payment.note}
                 </td>
 
-                <td className="p-3 border-r-2 border-gray-200 text-center">
+                <td className="p-3 border-r-2 border-gray-400 text-center">
                 {new Date(payment.date).toLocaleDateString("en-GB")}
                 </td>
 
-                <td className="p-3 border-r-2 border-gray-200 text-center">
-                  <div className=" inline-block">
-                    <button
-                      onClick={() => toggleDropdown(payment._id)}
-                      className=" focus:outline-none"
-                    >
-                      &#8226;&#8226;&#8226;
-                    </button>
-                    {activeDropdown === payment._id && (
-                      <div className="absolute text-start  right-4 z-20 w-40 py-2 mt-2 bg-white border border-gray-300 rounded-md shadow-xl">
-                         <button
-                    className="font-avenir  py-1 px-4 rounded-lg text-black"
+                <td className="p-3 border-r-2 border-gray-400 text-center">
+<div className="fles justify-center items-center gap-3">
+<button
+                    className="bg-green-700 mr-3 hover:bg-blue-700 text-white px-2 py-1 rounded"
                     onClick={() =>
                       document
                         .getElementById(`modal_${payment._id}`)
@@ -511,15 +482,21 @@ const  AllAdsPayments = () => {
                   >
                    Edit
                   </button>
-                  
-                  <dialog id={`modal_${payment._id}`} className="modal">
+                  <button
+                        className="bg-red-700 hover:bg-blue-700 text-white px-2 py-1 rounded"
+                          onClick={() => handleDelete(payment._id)}
+                        >
+                          Delete
+                        </button>
+</div>
+                        <dialog id={`modal_${payment._id}`} className="modal">
                     <div className="modal-box bg-white text-black font-bold">
                       <form
                         onSubmit={(e) => handleUpdatePayment(e, payment._id)}
                       >
                         <div className="flex justify-center items-center gap-3">
                           <div className="mb-4">
-                            <label className="block text-gray-700">
+                            <label  className="block text-start text-gray-700">
                               {" "}
                               Previous Amount
                             </label>
@@ -532,7 +509,7 @@ const  AllAdsPayments = () => {
                             />
                           </div>
                           <div className="mb-4">
-                            <label className="block text-gray-700">
+                            <label className="block text-start text-gray-700">
                               {" "}
                               New Amount
                             </label>
@@ -545,9 +522,9 @@ const  AllAdsPayments = () => {
                             />
                           </div>
                         </div>
-                        <div className="flex justify-center items-center gap-3">
+                       
                           <div className="mb-4">
-                            <label className="block text-gray-700"> Date</label>
+                            <label className="block text-start text-gray-700"> Date</label>
                             <input
                               type="date"
                               defaultValue={payment.date}
@@ -557,7 +534,7 @@ const  AllAdsPayments = () => {
                           </div>
 
                           <div className="mb-4">
-                            <label className="block text-gray-700">
+                            <label className="block text-start text-gray-700">
                               Method
                             </label>
                             <select
@@ -581,9 +558,9 @@ const  AllAdsPayments = () => {
                               <option value="bank">Bank</option>
                             </select>
                           </div>
-                        </div>
+                        
                         <div className="mb-4">
-                          <label className="block text-gray-700">Note</label>
+                          <label className="block text-start text-gray-700">Note</label>
                           <input
                             required
                             type="text"
@@ -592,21 +569,10 @@ const  AllAdsPayments = () => {
                             className="w-full border-2 bg-white border-black rounded p-2 mt-1"
                           />
                         </div>
+                        <div>
+                        <div className="modal-action grid lg:grid-cols-2 gap-3">
                         <button
-                          onClick={() =>
-                            document
-                              .getElementById(`modal_${payment._id}`)
-                              .close()
-                          }
-                          type="submit"
-                          className="font-avenir px-3 mx-auto py-1 rounded-lg flex justify-center text-white bg-green-800"
-                        >
-                          Update
-                        </button>
-                      </form>
-                      <div className="modal-action">
-                        <button
-                          className="p-2 rounded-lg bg-red-600 text-white text-center"
+                          className="p-2 hover:bg-red-700  rounded-lg bg-red-600 text-white text-center"
                           onClick={() =>
                             document
                               .getElementById(`modal_${payment._id}`)
@@ -615,18 +581,24 @@ const  AllAdsPayments = () => {
                         >
                           Close
                         </button>
-                      </div>
-                    </div>
-                  </dialog>
                         <button
-                          className="block w-full px-4 py-2 text-left text-gray-800 hover:bg-gray-200"
-                          onClick={() => handleDelete(payment._id)}
+                          onClick={() =>
+                            document
+                              .getElementById(`modal_${payment._id}`)
+                              .close()
+                          }
+                          type="submit"
+                          className="font-avenir px-3 mx-auto py-1 rounded-lg flex justify-center text-white bg-blue-500 hover:bg-blue-700 pt-2"
                         >
-                          Delete
+                          Update
                         </button>
                       </div>
-                    )}
-                  </div>
+                        </div>
+                       
+                      </form>
+                     
+                    </div>
+                  </dialog>
                 </td>
 
 
@@ -637,7 +609,7 @@ const  AllAdsPayments = () => {
             ))}
             <tr className="bg-[#05a0db] text-white font-bold">
               <td className="p-3 text-center" colSpan="1">
-                Total Amount :
+                Total Amount:
               </td>
               <td className="p-3 text-center">৳ {totalPayment}</td>
               <td className="p-3 text-center"></td>

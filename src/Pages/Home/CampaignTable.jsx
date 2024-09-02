@@ -161,6 +161,7 @@ const CampaignTable = ({ email }) => {
       </Helmet>
      <div className="">
 
+
     
    
     <div className=" p-5  ">
@@ -215,10 +216,10 @@ const CampaignTable = ({ email }) => {
     <td className="p-3 border-r border-gray-400 flex justify-center text-center">{campaign.clientName}</td>
   </Link>
   <td className="p-3 border-r border-gray-400 text-center">{campaign.clientPhone}</td>
-  <td className="p-3 border-r border-gray-400 text-center">$ {campaign.tBudged}</td>
-  <td className="p-3 border-r border-gray-400 text-center">$ {campaign.tSpent}</td>
-  <td className="p-3 border-r border-gray-400 text-center">৳ {campaign.tBill}</td>
-  <td className="p-3 border-r border-gray-400 text-center">৳ {campaign.tPayment}</td>
+  <td className="p-3 border-r border-gray-400 text-center">$ {parseFloat(campaign.tBudged).toFixed(2)}</td>
+  <td className="p-3 border-r border-gray-400 text-center">$ {parseFloat(campaign.tSpent).toFixed(2)}</td>
+  <td className="p-3 border-r border-gray-400 text-center">৳ {parseFloat(campaign.tBill).toFixed(2)}</td>
+  <td className="p-3 border-r border-gray-400 text-center">৳ {parseFloat(campaign.tPayment).toFixed(2)}</td>
   <td className="p-3 border-r border-gray-400 text-center">
   ৳ {
     !isNaN(Number(campaign.tBill)) && !isNaN(Number(campaign.tPaid))

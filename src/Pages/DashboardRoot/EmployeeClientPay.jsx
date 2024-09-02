@@ -166,29 +166,29 @@ const EmployeeClientPay = ({email}) => {
       </Helmet>
 
       <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3   lg:grid-cols-6 gap-5 mt-5 p-5">
-   <div className="balance-card bg-white rounded-2xl shadow-lg p-5 text-center  transition-transform transform hover:scale-105 border-0">
+   <div onClick={() => setSelectedCategory('bkashMarchent')} className="balance-card bg-white rounded-2xl shadow-lg p-5 text-center  transition-transform transform hover:scale-105 border-0">
      <img className="balance-card-img" src="https://i.ibb.co/bHMLyvM/b-Kash-Merchant.png" alt="bKash" />
      <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"> <span className="text-lg lg:text-2xl font-extrabold"> ৳</span> {bkashMarcent}</p>
    </div>
-   <div className="balance-card bg-white rounded-2xl shadow-lg p-5 text-center transition-transform transform hover:scale-105 border-0">
+   <div onClick={() => setSelectedCategory('bkashPersonal')} className="balance-card bg-white rounded-2xl shadow-lg p-5 text-center transition-transform transform hover:scale-105 border-0">
      <img className="balance-card-img" src="https://i.ibb.co/520Py6s/bkash-1.png" alt="bKash" />
      <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"> <span className="text-lg lg:text-2xl font-extrabold"> ৳</span> {bkashPersonal}</p>
    </div>
-   <div className="balance-card bg-white rounded-2xl shadow-lg p-5 text-center transition-transform transform hover:scale-105 border-0">
+   <div onClick={() => setSelectedCategory('nagadPersonal')} className="balance-card bg-white rounded-2xl shadow-lg p-5 text-center transition-transform transform hover:scale-105 border-0">
      <img className="balance-card-img" src="https://i.ibb.co/JQBQBcF/nagad-marchant.png" alt="Nagad" />
      <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"><span className="text-lg lg:text-2xl font-extrabold"> ৳</span> {nagadPersonal}</p>
    </div>
-   <div className="balance-card bg-white rounded-2xl shadow-lg p-5 text-center transition-transform transform hover:scale-105 border-0">
+   <div onClick={() => setSelectedCategory('rocketPersonal')} className="balance-card bg-white rounded-2xl shadow-lg p-5 text-center transition-transform transform hover:scale-105 border-0">
      <img className="balance-card-img" src="https://i.ibb.co/QkTM4M3/rocket.png" alt="Rocket" />
      <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"><span className="text-lg lg:text-2xl font-extrabold"> ৳</span> {rocketPersonal}</p>
    </div>
 
-   <div className="balance-card bg-white rounded-2xl shadow-lg p-5 text-center transition-transform transform hover:scale-105 border-0">
+   <div onClick={() => setSelectedCategory('bank')} className="balance-card bg-white rounded-2xl shadow-lg p-5 text-center transition-transform transform hover:scale-105 border-0">
      <img className="balance-card-img" src="https://i.ibb.co/PZc0P4w/brac-bank-seeklogo.png" alt="Rocket" />
   
      <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"><span className="text-lg lg:text-2xl font-extrabold"> ৳</span> {bankTotal}</p>
    </div>
-   <div className="balance-card bg-white rounded-2xl shadow-lg p-5 pt-8 text-center transition-transform transform hover:scale-105 border-0">
+   <div  className="balance-card bg-white rounded-2xl shadow-lg p-5 pt-8 text-center transition-transform transform hover:scale-105 border-0">
    <h1 className="text-black text-xl font-bold">Total BDT </h1>
      <p className="balance-card-text text-lg pt-8 lg:text-2xl font-bold text-gray-700"><span className="text-lg lg:text-2xl font-extrabold"> ৳</span> {total}</p>
    </div>
@@ -225,32 +225,7 @@ const EmployeeClientPay = ({email}) => {
               ))}
             </select>
           </div>
-          <div className="flex flex-col justify-center items-center">
-           
-            <input
-              type="date"
-              className="border rounded bg-white text-black border-gray-400 p-2 mt-1"
-              value={selectedDate}
-              onChange={(e) => setSelectedDate(e.target.value)}
-            />
-          </div>
-          <div className="flex flex-col justify-center items-center">
-         
-            <select
-              className="border bg-white text-black border-gray-400 rounded p-2 mt-1"
-              value={selectedCategory}
-              onChange={(e) => setSelectedCategory(e.target.value)}
-            >
-              <option value="">All Methods</option>
-              <option value="bkashPersonal">bKash Personal</option>
-              <option value="bkashMarchent">bKash Marcent</option>
-              <option value="nagadPersonal">Nagad Personal</option>
-              <option value="rocketPersonal">Rocket Personal</option>
-              <option value="bank">Bank</option>
-            </select>
-          </div>
-        </div>
-        <div className="flex mr-5 mb-3 justify-end">
+          <div className="flex mt-1  justify-end">
           <input
             type="text"
             placeholder="Payment Method..."
@@ -260,6 +235,17 @@ const EmployeeClientPay = ({email}) => {
           />
         
         </div>
+          <div className="flex flex-col mr-5 justify-center items-center">
+           
+            <input
+              type="date"
+              className="border rounded bg-green-300 text-black border-gray-400 p-2 mt-1"
+              value={selectedDate}
+              onChange={(e) => setSelectedDate(e.target.value)}
+            />
+          </div>
+        </div>
+        
       </div>
 
       <div className="overflow-x-auto rounded-xl border text-black border-gray-400 mx-5">
@@ -337,21 +323,18 @@ const EmployeeClientPay = ({email}) => {
                 <td className="p-3 border-r-2 border-gray-200 text-center">
                   {payment.note}
                 </td>
-
-              
                   <td className="p-3 border-r-2 flex justify-center items-center border-gray-200 text-center">
-              
                   <button
-                          className=" px-4 py-2 text-3xl text-left text-blue-700 "
+                         className="bg-greeb-700 text-white px-2  py-1 rounded"
                           onClick={() => handleEditClick(payment)}
                         >
-                       <MdEditSquare />
+                       Edit
                         </button>
                         <button
-                          className="text-start flex justify-start text-black text-3xl"
+                           className="bg-red-700 text-white px-2  py-1 rounded"
                           onClick={() => handleDelete(payment._id)}
                         >
-                          <MdDelete />
+                        Delete
                         </button>
                       
                  
@@ -368,9 +351,7 @@ const EmployeeClientPay = ({email}) => {
               <td className="p-3 text-center">৳ {totalPayment}</td>
               <td className="p-3 text-center"></td>
               <td className="p-3 text-center"></td>
-            
               <td className="p-3 text-center"></td>
-            
             </tr>
         </table>
       </div>

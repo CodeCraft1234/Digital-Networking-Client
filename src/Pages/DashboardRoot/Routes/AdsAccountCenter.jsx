@@ -7,6 +7,7 @@ import { Helmet } from "react-helmet-async";
 import { useParams } from "react-router-dom";
 import useAdsAccountCenter from "../../../Hook/useAdsAccountCenter";
 import Swal from "sweetalert2";
+import { toast } from "react-toastify";
 
 
 const AdsAccountCenter = () => {
@@ -163,6 +164,21 @@ const sortedAdsAccounts = [...filteredAdsAccounts].sort((a, b) => {
     }
 });
 
+
+const handleUpdate2 = (id, newStatus) => {
+  const body = { status: newStatus };
+
+  AxiosPublic.patch(`/adsAccountCenter/status/${id}`, body)
+    .then((res) => {
+      console.log(res.data);
+      refetch();
+      toast.success(`Campaign updated successfully`);
+    })
+    .catch((error) => {
+      console.error("Error updating campaign:", error);
+      toast.error("Failed to update campaign");
+    });
+};
     return (
         <div className=" p-5 dark:text-green-800">
         <Helmet>
@@ -252,7 +268,29 @@ const sortedAdsAccounts = [...filteredAdsAccounts].sort((a, b) => {
                  : "bg-gray-200  text-left text-gray-500 border-b border-opacity-20"
              }`}
              >
-               <td className="p-3 border-r-2 border-l-2 border-gray-300 text-center">{index + 1}</td>
+               <td className="p-3 border-r-2 border-l-2 border-gray-200 text-center">  <label className="inline-flex items-center cursor-pointer">
+  <input
+    type="checkbox"
+    className="sr-only"
+    checked={account.status === "Active"}
+    onChange={() => {
+      const newStatus = account.status === "Active" ? "Disable" : "Active";
+      handleUpdate2(account._id, newStatus);
+    }}
+  />
+  <div
+    className={`relative w-12 h-6 transition duration-200 ease-linear rounded-full ${
+      account.status === "Active" ? "bg-blue-700" : "bg-gray-500"
+    }`}
+  >
+    <span
+      className={`absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition-transform duration-200 ease-linear transform ${
+        account.status === "Active" ? "translate-x-6" : ""
+      }`}
+    ></span>
+  </div>
+</label>
+</td>
               
                <td className="p-3 border-r-2 border-gray-300 text-start px-5">
                <h1>{account.accountName}</h1>

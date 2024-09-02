@@ -1,42 +1,14 @@
-import { Link, NavLink, useNavigate } from "react-router-dom";
-import {
-  FaBlog,
-  FaBlogger,
-  FaBorderAll,
-  FaDAndD,
-  FaEmpire,
-  FaHistory,
-  FaHome,
-  FaUsers,
-} from "react-icons/fa";
-
+import { Link, NavLink } from "react-router-dom";
+import { FaHistory} from "react-icons/fa";
 import { RxDashboard } from "react-icons/rx";
-
-import { MdAccountCircle, MdCampaign, MdOutlinePayments, MdOutlineSummarize } from "react-icons/md";
-import { IoLogOutOutline, IoPeopleSharp } from "react-icons/io5";
-
-
-import { IoIosAddCircleOutline, IoIosPeople, IoMdArrowDropdown, IoMdArrowDropup } from "react-icons/io";
-import { useContext, useState } from "react";
-
-import { FaPeopleGroup, FaUser } from "react-icons/fa6";
-
-
-
-
+import { MdAccountCircle, MdCampaign, MdOutlineSummarize } from "react-icons/md";
+import { useContext } from "react";
+import { FaPeopleGroup } from "react-icons/fa6";
 import { AuthContext } from "../../Security/AuthProvider";
-import { GiClick } from "react-icons/gi";
-import { RiSecurePaymentFill, RiSecurePaymentLine } from "react-icons/ri";
 import { LuActivitySquare } from "react-icons/lu";
 
 const EmployeeDashboard = () => {
-  const { user, logOut } = useContext(AuthContext);
-  const navigate = useNavigate();
-  const handleLogOut = () => {
-    logOut().then().catch();
-    navigate("/login");
-  };
-
+  const { user } = useContext(AuthContext);
 
   const getActiveStyle = (isActive) => (
     isActive
@@ -44,48 +16,6 @@ const EmployeeDashboard = () => {
       : {}
   );
 
-  const getActiveStyle2 = (isActive) => (
-    isActive
-      ? { backgroundColor: '#f89320', color: 'white' }
-      : {}
-  );
-  const [isOpen, setIsOpen] = useState(false);
-  const [isOpen2, setIsOpen2] = useState(false);
-  const [isOpenTwo, setIsOpenTwo] = useState(false);
-
-
-
-
-
-
-
-
-
-
-  const toggleDropdown = () => {
-    setIsOpen(!isOpen);
-  };
-  const toggleDropdown2 = () => {
-    setIsOpen(!isOpen2);
-  };
-  const toggleDropdownTwo = () => {
-    setIsOpenTwo(!isOpenTwo);
-  };
-
-  const handleMouseEnter = () => {
-    setIsOpen(true);
-  };
-
-  const handleMouseLeave2 = () => {
-    setIsOpen2(false);
-  };
-  const handleMouseEnter2 = () => {
-    setIsOpen2(true);
-  };
-
-  const handleMouseLeave = () => {
-    setIsOpen(false);
-  };
 
   return (
     <div className=" h-screen">
@@ -117,9 +47,6 @@ const EmployeeDashboard = () => {
                   <FaPeopleGroup className="w-6 h-6 mr-2" />
                   My Clients
                 </NavLink>
-
-
-
           <NavLink
             to="dashboard/myCampaigns"
             className="text-white hover:bg-[#f89320] hover:text-black py-2 px-4 rounded-lg flex items-center"
@@ -138,22 +65,13 @@ const EmployeeDashboard = () => {
             Ads Accounts
           </NavLink>
           <NavLink
-                  to="dashboard/adminPayments"
-                  className="text-white hover:bg-[#f89320] hover:text-black py-2 px-4 rounded-lg flex items-center"
-                  style={({ isActive }) => getActiveStyle2(isActive)}
-                >
-                  <RiSecurePaymentLine className="w-6 h-6 mr-2" />
-                  Admin Pay
-                </NavLink>
-                <NavLink
-                  to="dashboard/clientPayments"
-                  className="text-white hover:bg-[#f89320] hover:text-black py-2 px-4 rounded-lg flex items-center"
-                  style={({ isActive }) => getActiveStyle2(isActive)}
-                >
-                  <RiSecurePaymentFill className="w-6 h-6 mr-2" />
-                  Client Pay
-                </NavLink>
-
+            to={`dashboard/myPayments`}
+            className="text-white hover:bg-[#f89320] hover:text-black py-2 px-4 rounded-lg flex items-center"
+            style={({ isActive }) => getActiveStyle(isActive)}
+          >
+            <MdAccountCircle className="w-6 h-6 mr-2" />
+           My Payments
+          </NavLink>
           <NavLink
             to={`dashboard/mySellery`}
             className="text-white hover:bg-[#f89320] hover:text-black py-2 px-4 rounded-lg flex items-center"
@@ -162,14 +80,22 @@ const EmployeeDashboard = () => {
             <MdOutlineSummarize className="w-6 h-6 mr-2" />
             My Salary
           </NavLink>
+          <NavLink
+            to={`dashboard/myhistory`}
+            className="text-white hover:bg-[#f89320] hover:text-black py-2 px-4 rounded-lg flex items-center"
+            style={({ isActive }) => getActiveStyle(isActive)}
+          >
+            <FaHistory className="w-6 h-6 mr-2" />
+            My History
+          </NavLink>
 
           <NavLink
-            to={`dashboard/myActivity`}
+            to={`dashboard/mySummery`}
             className="text-white hover:bg-[#f89320] hover:text-black py-2 px-4 rounded-lg flex items-center"
             style={({ isActive }) => getActiveStyle(isActive)}
           >
             <LuActivitySquare  className="w-6 h-6 mr-2" />
-            Activity
+           My Summery
           </NavLink>
          
         </ul>

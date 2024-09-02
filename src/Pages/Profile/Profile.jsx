@@ -1,52 +1,39 @@
 import "./profile.css";
 import { useLoaderData } from "react-router-dom";
 import useUsers from "../../Hook/useUsers";
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import CampaignTable from "../Home/CampaignTable";
 import UseAxiosPublic from "../../Axios/UseAxiosPublic";
-import { AuthContext } from "../../Security/AuthProvider";
 import UserAdAccount from "../../Components/UserAdAccount/UserAdAccount";
 import EmployeerSellery from "../DashboardRoot/EmployeerSellery";
 import { Helmet } from "react-helmet-async";
 import EmployeeAdminPay from "../Home/EmployeeAdminPay";
 import EmployeeClientPay from "../DashboardRoot/EmployeeClientPay";
 import EmployeeCampaign from "../Home/EmployeeCampaign";
-import useClients from "../../Hook/useClient";
 import useEmployeePayment from "../../Hook/useEmployeePayment";
 
 const Profile = () => {
   const [users] = useUsers(); 
-  const { user } = useContext(AuthContext);
-  const [currentUser, setCurrentUser] = useState({});
   const userr = useLoaderData();
   const AxiosPublic = UseAxiosPublic();
-  const [data, setData] = useState([]);
-  
-  // State to control which component to show
-  const [activeTab, setActiveTab] = useState('adsAccount'); // Default to 'userAdAccount'
 
-  useEffect(() => {
-    const filtered = users.find(e => e.email === user?.email);
-    setCurrentUser(filtered || {});
-  }, [users, user]);
 
-  useEffect(() => {
-    AxiosPublic.get(`https://digital-networking-server.vercel.app/users/${userr.email}`)
-      .then(res => {
-        setData(res.data);
-      });
-  }, [userr.email, AxiosPublic]);
+  const initialTab = localStorage.getItem("activeTabProfile") || "adsAccount";
+  const [activeTab, setActiveTab] = useState(initialTab); // Default to 'userAdAccount'
 
-  // Utility function to get button class
-  
+
   const getButtonClass = (tab) => 
     `px-4 py-2 rounded ${activeTab === tab ? 'bg-[#05a0db] text-white font-bold' : 'bg-[#f89320] text-black font-bold'}`;
 
 
-  const [clients, refetch] = useClients();
+  const changeTab = (tab) => {
+    setActiveTab(tab);
+    localStorage.setItem("activeTabProfile", tab); // Store the active tab in local storage
+  };
+
+
   const [employeePayment] = useEmployeePayment();
-  console.log(employeePayment)
-  const [filteredCampaigns, setFilteredCampaigns] = useState([]);
+
     const [ddd, setDdd] = useState(null);
     useEffect(() => {
         if (users && userr.email) {
@@ -57,52 +44,11 @@ const Profile = () => {
     }, [users, userr.email]);
 
     const [payment, setPayment] = useState([]);
-    const [totalPayment, setTotalPayment] = useState([]);
 
     useEffect(() => {
           const realdata = employeePayment.filter(m => m.employeeEmail === userr.email);
           setPayment(realdata);
-          console.log(realdata);
-          const totalBill = realdata.reduce((acc, campaign) => acc + parseFloat(campaign.payAmount), 0);
-          setTotalPayment(totalBill);
     }, [employeePayment, userr.email]);
-
-  const [totalSpent, setTotalSpent] = useState(0);
-  const [totalBudged, setTotalBudged] = useState(0);
-  const [totalRCV, setTotalRCV] = useState(0);
-  const [totalbill, setTotalBill] = useState(0);
-
-  useEffect(() => {
-    const filtered = clients.filter(
-      (campaign) => campaign.employeeEmail === userr.email
-    );
-
-    const totalRcv = filtered.reduce((acc, campaign) => {
-      const payment = parseFloat(campaign.tPayment);
-      return acc + (isNaN(payment) ? 0 : payment);
-    }, 0);
-    setTotalRCV(totalRcv);
-
-    const tspent = filtered.reduce(
-      (acc, campaign) => acc + parseFloat(campaign.tSpent),
-      0
-    );
-    setTotalSpent(tspent);
-
-    const total = filtered.reduce(
-      (acc, campaign) => acc + parseFloat(campaign.tBudged),
-      0
-    );
-    setTotalBudged(total);
-
-    const totalBill = filtered.reduce(
-      (acc, campaign) => acc + parseFloat(campaign.tBill),
-      0
-    );
-    setTotalBill(totalBill);
-
-    setFilteredCampaigns(filtered);
-  }, [clients, userr.email]);
 
   const [bkashMarcent,setBkashMarcentTotal]=useState(0)
   const [nagadPersonal,setNagadPersonalTotal]=useState(0)
@@ -136,7 +82,7 @@ const Profile = () => {
           const total6 = filter6.reduce((acc, datas) => acc + parseFloat(datas.amount),0);
           setBankTotal(total6)
       })
-  },[userr?.email])
+  },[userr?.email,])
 
   const [bkashMarcent2,setBkashMarcentTotal2]=useState(0)
   const [nagadPersonal2,setNagadPersonalTotal2]=useState(0)
@@ -165,20 +111,6 @@ const Profile = () => {
           setBankTotal2(total6)
   },[payment])
 
-  const [searchQuery, setSearchQuery] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("");
-
-  const filteredItems = filteredCampaigns.filter((item) =>
-    item.clientPhone.toLowerCase().includes(searchQuery.toLowerCase())
-  );
-
-  const filteredByCategory = selectedCategory
-    ? filteredItems.filter(
-        (item) => item.category.toLowerCase() === selectedCategory.toLowerCase()
-      )
-    : filteredItems;
-
-    const totalDue = totalbill - totalRCV;
   return (
     <div className="my-5">
       <Helmet>
@@ -223,7 +155,7 @@ const Profile = () => {
      <img className="balance-card-img w-56 h-auto mt-5 " src="https://i.ibb.co/3WVZGdz/PAYO-BIG-aa26e6e0.png" alt="Payoneer" />
      <span className="balance-card-text text-4xl flex items-center justify-center gap-2">
      <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"> </p>
-     <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"> <span className="text-lg lg:text-2xl font-extrabold text-green-600">$ </span> {totalSpent.toFixed(2)}</p>
+     <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"> <span className="text-lg lg:text-2xl font-extrabold text-green-600">$ </span> {ddd?.payoneer || 0}</p>
      </span>
 
    </div>
@@ -241,13 +173,13 @@ const Profile = () => {
       <div className="flex justify-center items-center gap-5 mt-5">
       <button 
           className={getButtonClass('adsAccount')}
-          onClick={() => setActiveTab('adsAccount')}
+          onClick={() => changeTab('adsAccount')}
         >
           Ads Account
         </button>
       <button 
           className={getButtonClass('client')}
-          onClick={() => setActiveTab('client')}
+          onClick={() => changeTab('client')}
         >
           Client Table
         </button>
@@ -255,26 +187,26 @@ const Profile = () => {
 
         <button 
           className={getButtonClass('campaign')}
-          onClick={() => setActiveTab('campaign')}
+          onClick={() => changeTab('campaign')}
         >
           Campaign Table
         </button>
 
         <button 
           className={getButtonClass('adminPay')}
-          onClick={() => setActiveTab('adminPay')}
+          onClick={() => changeTab('adminPay')}
         >
           Admin Pay
         </button>
         <button 
           className={getButtonClass('clientPay')}
-          onClick={() => setActiveTab('clientPay')}
+          onClick={() => changeTab('clientPay')}
         >
           Client Pay
         </button>
         <button 
           className={getButtonClass('sellery')}
-          onClick={() => setActiveTab('sellery')}
+          onClick={() => changeTab('sellery')}
         >
           Sellery
         </button>

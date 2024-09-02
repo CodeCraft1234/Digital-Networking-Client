@@ -9,12 +9,22 @@ import UseAxiosPublic from "../../Axios/UseAxiosPublic";
 import { Helmet } from "react-helmet-async";
 import { MdDelete } from "react-icons/md";
 
-const AllClients = () => {
+const AllClients = ({}) => {
   const [users] = useUsers();
   const { user } = useContext(AuthContext);
   const [employees, setEmployees] = useState([]);
   const [clients, refetch] = useClients();
   const [filteredClients, setFilteredClients] = useState([]);
+
+
+  const initialTab = localStorage.getItem("activeTaballClients") ;
+  const [selectedClient, setSelectedClient] = useState(initialTab);
+  
+
+  const activeTab = (tab) => {
+    setSelectedClient(tab);
+    localStorage.setItem("activeTaballClients", tab); 
+  };
 
   useEffect(() => {
     if (users && user) {
@@ -27,17 +37,17 @@ const AllClients = () => {
     if (clients) {
       setFilteredClients(clients);
     }
-  }, [clients]);
 
-  const handleSort = (e) => {
-    const email = e.target.value;
+    const email = selectedClient
     if (email === "") {
       setFilteredClients(clients); // If no employee is selected, reset the list to all clients
     } else {
       const filtered = clients.filter((c) => c.employeeEmail === email);
       setFilteredClients(filtered);
     }
-  };
+  }, [clients,selectedClient]);
+
+
 
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
@@ -87,12 +97,12 @@ const AllClients = () => {
   const handledelete = (id) => {
     Swal.fire({
       title: "Are you sure?",
-      text: "You want to delete this Blog!",
+      text: "You want to delete this client!",
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#3085d6",
       cancelButtonColor: "#d33",
-      confirmButtonText: "Yes, delete blog",
+      confirmButtonText: "Yes, delete client",
     }).then((result) => {
       if (result.isConfirmed) {
         AxiosPublic.delete(`/clients/${id}`).then((res) => {
@@ -100,7 +110,7 @@ const AllClients = () => {
           if (res.data.deletedCount > 0) {
             Swal.fire({
               title: "Deleted!",
-              text: "Your blog has been deleted.",
+              text: "Your client has been deleted.",
               icon: "success",
             });
           }
@@ -121,9 +131,10 @@ const AllClients = () => {
           <select
             name="email"
             className="border bg-white border-black text-black rounded p-2 mt-1"
-            onChange={handleSort}
+            onChange={(e) => activeTab(e.target.value)}
+            value={selectedClient}
           >
-            <option value="">Employee</option>
+            <option value="">All Employee</option>
             {employees.map((employee) => (
               <option key={employee._id} value={employee.email}>
                 {employee.name}
@@ -142,18 +153,18 @@ const AllClients = () => {
         </div>
       </div>
 
-      <div className="p-5 ">
-        <div className="overflow-x-auto rounded-lg border-black">
-          <table className="min-w-full bg-white">
+      <div className="p-5  text-black">
+        <div className="overflow-x-auto rounded-lg text-black border-black">
+          <table className="min-w-full text-black bg-white">
             <thead className="bg-[#05a0db] text-white">
               <tr>
                 <th className="p-3 text-center">SL</th>
-                <th className="p-3 text-center">Client Name</th>
+                <th className="p-3 text-start">Client Name</th>
                 <th className="p-3 text-center">Client Phone</th>
-                <th className="p-3 text-center">T.Budget</th>
-                <th className="p-3 text-center">T.Spent</th>
+
                 <th className="p-3 text-center">Total Bill</th>
                 <th className="p-3 text-center">Total Payment Rcv</th>
+                <th className="p-3 text-center">Total Due</th>
                 <th className="p-3 text-center">Action</th>
               </tr>
             </thead>
@@ -163,35 +174,32 @@ const AllClients = () => {
                   key={campaign._id}
                   className={`${
                     index % 2 === 0
-                      ? "bg-white text-gray-500 border-b border-opacity-20"
-                      : "bg-gray-200 text-gray-500 border-b border-opacity-20"
+                      ? "bg-white  border-b border-opacity-20"
+                      : "bg-gray-200  border-b border-opacity-20"
                   }`}
                 >
                   <td className="p-3 border-l-2 border-r-2 border-gray-300 text-center">
                     {index + 1}
                   </td>
-                  <td className="p-3 border-r-2 border-gray-300 text-center">
+                  <td className="p-3 border-r-2 hover:text-blue-700 hover:font-bold text-start border-gray-300 ">
                     <Link
                       to={`/dashboard/client/${campaign.clientEmail}`}
-                      className="flex justify-center"
+                      className="flex justify-start"
                     >
                       {campaign.clientName}
                     </Link>
                   </td>
                   <td className="p-3 border-r-2 border-gray-300 text-center">
                     {campaign.clientPhone}
-                  </td>
-                  <td className="p-3 border-r-2 border-gray-300 text-center">
-                    $ {parseFloat(campaign.tBudged).toFixed(2)}
-                  </td>
-                  <td className="p-3 border-r-2 border-gray-300 text-center">
-                    $ {parseFloat(campaign.tSpent).toFixed(2)}
-                  </td>
+                    </td>
                   <td className="p-3 border-r-2 border-gray-300 text-center">
                     ৳ {parseFloat(campaign.tBill).toFixed(2)}
                   </td>
                   <td className="p-3 border-r-2 border-gray-300 text-center">
                     ৳ {parseFloat(campaign.tPayment).toFixed(2)}
+                  </td>
+                  <td className="p-3 border-r-2 border-gray-300 text-center">
+                    ৳ {(parseFloat(campaign.tBill) - parseFloat(campaign.tPayment)).toFixed(2)}
                   </td>
                   <td className="p-3 border-r-2 border-gray-200 text-center">
                     <button
@@ -207,14 +215,12 @@ const AllClients = () => {
                 <td className="p-3 border-black text-right" colSpan="3">
                   Total :
                 </td>
-                <td className="p-3 border-black text-center">
-                  $ {totalBudged.toFixed(2)}
-                </td>
-                <td className="p-3 border-black text-center">
-                  $ {totalSpent.toFixed(2)}
-                </td>
+               
                 <td className="p-3 border-black text-center">
                   ৳ {totalbill.toFixed(2)}
+                </td>
+                <td className="p-3 border-black text-center">
+                  ৳ {(totalbill - totalRCV).toFixed(2)}
                 </td>
                 <td className="p-3 border-black text-center">
                   ৳ {totalRCV.toFixed(2)}

@@ -1,11 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import  { useState,  } from 'react';
 import useUsers from '../../Hook/useUsers';  // Custom hook to fetch users
-import { MdDelete, MdEditSquare } from 'react-icons/md';
-import axios from 'axios';
+
 import UseAxiosPublic from '../../Axios/UseAxiosPublic';
+import { toast } from 'react-toastify';
+import Swal from 'sweetalert2';
+import { Link } from 'react-router-dom';
 
 const History = () => {
-  const [users] = useUsers(); // Fetch all users
+  const [users,refetch] = useUsers(); // Fetch all users
 
   // Get the current month and year
   const currentDate = new Date();
@@ -13,9 +15,20 @@ const History = () => {
   const currentYear = currentDate.getFullYear().toString();
 
   // Set the default state for month and year
-  const [sortEmployee, setSortEmployee] = useState('');
   const [sortMonth, setSortMonth] = useState(currentMonth); // Default to current month
   const [sortYear, setSortYear] = useState(currentYear); // Default to current year
+
+
+
+  const initialTab = localStorage.getItem("activeTaballhistory") ;
+  const [sortEmployee, setSortEmployee] = useState(initialTab);
+  
+
+  const changeTab = (tab) => {
+    setSortEmployee(tab);
+    localStorage.setItem("activeTaballhistory", tab); 
+  };
+
 
   // Flatten the monthlySpent data across all users
   const flattenedData = users.reduce((acc, user) => {
@@ -23,6 +36,7 @@ const History = () => {
       const userSpentData = user.monthlySpent.map(spent => ({
         ...spent,
         employeeName: user.name, // Add employee name from user data
+        employeeEmail: user.email, // Add employee name from user data
         employeeId: user._id, // Add employee ID for identification
       }));
       return [...acc, ...userSpentData];
@@ -61,6 +75,31 @@ const History = () => {
       alert('Failed to update total spent');
     }
   };
+  const handleDelete = (e, userId, spentId) => {
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You want to delete this data!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        AxiosPublic.delete(`/users/historyDelete/${userId}/${spentId}`).then((res) => {
+          refetch();
+          console.log(res.data);
+          if (res.data.deletedCount > 0) {
+            Swal.fire({
+              title: "Deleted!",
+              text: "Your histroy has been deleted.",
+              icon: "success",
+            });
+          }
+        });
+      }
+    });
+  };
 
   return (
     <div className='mx-5 my-5'>
@@ -71,7 +110,7 @@ const History = () => {
          </div>
           <select
             className="px-4 py-2 border rounded bg-white text-black border-black"
-            onChange={(e) => setSortEmployee(e.target.value)}
+            onChange={(e) => changeTab(e.target.value)}
             value={sortEmployee || ""}
           >
             <option value="">Select Employee</option>
@@ -127,7 +166,7 @@ const History = () => {
           <thead className="bg-[#05a0db] text-white">
             <tr>
               <th className="p-3">SL</th>
-              <th className="p-3">Payment Month</th>
+              <th className="p-3">Month</th>
               <th className="p-3">Employee Name</th>
               <th className="p-3">Ad Account Name</th>
               <th className="p-3">Total Spent</th>
@@ -149,8 +188,11 @@ const History = () => {
                 <td className="p-3 border-l-2 border-r-2 text-center border-gray-300">
                   {new Date(account.date).toLocaleString('default', { month: 'long'})}
                 </td>
-                <td className="p-3 border-r-2 border-gray-300 text-center px-5">
-                  {account.employeeName}
+                <td className="p-3 border-r-2 hover:text-blue-700 hover:font-bold border-gray-300 text-start px-5">
+                <Link to={`/dashboard/userInfo/${account?.employeeEmail}`}>
+                {account.employeeName}
+                </Link>
+                
                 </td>
                 <td className="p-3 border-r-2 border-gray-300 text-start px-5">
                   {account.accountName}
@@ -166,12 +208,12 @@ const History = () => {
                   <div className="flex justify-center items-center gap-3">
                     <div>
                       <button
-                        className="text-blue-700 text-3xl"
+                      className="bg-green-700 hover:bg-blue-700 text-white px-2 py-1 rounded"
                         onClick={() =>
                           document.getElementById(`modal_${index}`).showModal()
                         }
                       >
-                        <MdEditSquare />
+                        Edit
                       </button>
                       <dialog id={`modal_${index}`} className="modal">
                         <div className="modal-box bg-white text-black">
@@ -207,10 +249,10 @@ const History = () => {
                       </dialog>
                     </div>
                     <button
-                      className="text-center text-black text-3xl"
-                      onClick={() => handleDelete(account.ids)} // Ensure correct ID for deletion
+                      className="bg-red-700 hover:bg-blue-700 text-white px-2 py-1 rounded"
+                      onClick={(e) => handleDelete(e, account.employeeId, account.ids)} // Ensure correct ID for deletion
                     >
-                      <MdDelete />
+                      Delete
                     </button>
                   </div>
                 </td>

@@ -12,7 +12,7 @@ import axios from "axios";
 import Swal from "sweetalert2";
 import { MdDelete, MdEditSquare } from "react-icons/md";
 
-const PaymentHistry = () => {
+const ClientPaymentHistry = () => {
   const { user } = useContext(AuthContext);
   const [ users ]=useUsers()
   const param = useParams();
@@ -228,12 +228,10 @@ const PaymentHistry = () => {
     <div>
 
       <div className=" p-2 sm:p-4 dark:text-green-600">
-        <h6 className="text-center font-bold text-xl md:text-5xl text-green-600">
-          Payment History
-        </h6>
+       
         <div>
   <button
-    className="font-avenir px-6 mx-auto py-2 bg-[#05a0db]  rounded-lg text-white"
+    className="font-avenir hover:bg-indigo-700 px-6 mx-auto py-2 bg-[#05a0db]  rounded-lg text-white"
     onClick={() => document.getElementById("my_modal_8").showModal()}
   >
     Pay Now
@@ -295,14 +293,14 @@ const PaymentHistry = () => {
         <div className="grid grid-cols-2 gap-3 mt-8">
           <button
             type="button"
-            className="p-2 rounded-lg bg-red-600 text-white text-center"
+            className="p-2 hover:bg-red-700 rounded-lg bg-red-600 text-white text-center"
             onClick={() => document.getElementById("my_modal_8").close()}
           >
             Close
           </button>
           <button
             type="submit"
-            className="font-avenir px-3 py-2 bg-[#05a0db] rounded-lg text-white text-center"
+            className="font-avenir hover:bg-indigo-700 px-3 py-2 bg-[#05a0db] rounded-lg text-white text-center"
           >
             Pay Now
           </button>
@@ -391,15 +389,15 @@ const PaymentHistry = () => {
                   </td>
               
                   <td className="p-3 border-r-2 border-gray-200 text-center">
-                  <div className="flex justify-start items-center gap-3">
+                  <div className="flex justify-center items-center gap-3">
   <div>
     <button
-      className="text-blue-700 text-3xl"
+     className="bg-green-700 hover:bg-blue-700 text-white px-2 py-1 rounded"
       onClick={() =>
         document.getElementById(`modal_${payment._id}`).showModal()
       }
     >
-      <MdEditSquare />
+      Edit
     </button>
 
     <dialog id={`modal_${payment._id}`} className="modal">
@@ -452,14 +450,14 @@ const PaymentHistry = () => {
           <div className="grid grid-cols-2 gap-3 mt-4">
             <button
               type="button"
-              className="p-2 rounded-lg bg-red-600 text-white text-center"
+              className="p-2 rounded-lg hover:bg-red-700 bg-red-600 text-white text-center"
               onClick={() => document.getElementById(`modal_${payment._id}`).close()}
             >
               Close
             </button>
             <button
               type="submit"
-              className="font-avenir px-3 py-2 bg-[#05a0db] rounded-lg text-white text-center"
+              className="font-avenir hover:bg-indigo-700 px-3 py-2 bg-[#05a0db] rounded-lg text-white text-center"
             >
               Update
             </button>
@@ -469,10 +467,10 @@ const PaymentHistry = () => {
     </dialog>
   </div>
   <button
-    className="text-start flex justify-start text-black text-3xl"
+    className="bg-red-700 hover:bg-blue-700 text-white px-2 py-1 rounded"
     onClick={() => handledelete(payment._id)}
   >
-    <MdDelete />
+    Delete
   </button>
 </div>
 
@@ -501,4 +499,4 @@ const PaymentHistry = () => {
   );
 };
 
-export default PaymentHistry;
+export default ClientPaymentHistry;

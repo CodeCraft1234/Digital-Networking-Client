@@ -234,7 +234,7 @@ useEffect(() => {
       </Helmet>
 
 
-    <div className="grid grid-cols-2 md:grid-cols-1  items-center sm:grid-cols-2   lg:grid-cols-5 gap-5  p-5">
+    <div className="grid grid-cols-2 md:grid-cols-1  items-center sm:grid-cols-2   lg:grid-cols-6 gap-5  p-5">
    <div className="balance-card bg-white rounded-2xl shadow-2xl p-5 text-center  transition-transform transform hover:scale-105 border-0">
      <img className="balance-card-img" src="https://i.ibb.co/bHMLyvM/b-Kash-Merchant.png" alt="bKash" />
 
@@ -310,11 +310,15 @@ useEffect(() => {
         </div>
       )}
     </div>
-    <div className="balance-card bg-white rounded-2xl shadow-2xl p-5 text-center transition-transform transform hover:scale-105 border-0">
+    {/* <div className="balance-card bg-white rounded-2xl shadow-2xl p-5 text-center transition-transform transform hover:scale-105 border-0">
      <h1 className="text-xl font-bold text-black py-4">Total BDT</h1>
      <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"><span className="text-lg lg:text-2xl font-extrabold"> ৳</span> {bankTotal - bankTotal2 || 0}</p>
-   </div>
-   <div className="balance-card bg-white rounded-2xl shadow-2xl p-5 text-center transition-transform transform hover:scale-105 border-0">
+   </div> */}
+  
+
+     </div>
+     <div className="grid lg:grid-cols-3 gap-5 mb-5 mx-5">
+     <div className="balance-card bg-white rounded-2xl shadow-2xl p-5 text-center transition-transform transform hover:scale-105 border-0">
      <h1 className="text-xl font-bold text-black py-4">Total Spend</h1>
     
      <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"><span className="text-lg lg:text-2xl font-extrabold"> $</span> {TSpent}</p>
@@ -327,7 +331,6 @@ useEffect(() => {
      <h1 className="text-xl font-bold text-black py-4">Customer Due</h1>
      <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"><span className="text-lg lg:text-2xl font-extrabold"> ৳</span> {bankTotal - bankTotal2}</p>
    </div>
-
      </div>
 
     

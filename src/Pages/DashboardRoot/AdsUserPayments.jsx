@@ -487,12 +487,17 @@ const AdsUserPayments = () => {
 {/* ///////////////////////////////////////////////////////////////// */}
     <div className="flex mt-4 justify-between items-center gap-5  ml-2 ">
     <div className="">
-  <button
-    className="font-avenir px-3 mx-auto py-1 bg-[#05a0db]  rounded-lg text-white"
-    onClick={() => document.getElementById("my_modal_1").showModal()}
-  >
-    Pay Admin
-  </button>
+
+    {
+            ddd?.role !== 'contributor' ?   <button
+            className="font-avenir px-3 mx-auto py-1 bg-[#05a0db]  rounded-lg text-white"
+            onClick={() => document.getElementById("my_modal_1").showModal()}
+          >
+            Pay Admin
+          </button> : <></>
+          }
+
+ 
   <dialog id="my_modal_1" className="modal">
     <div className="modal-box bg-white text-black font-bold">
       <form onSubmit={(e) => handlePayment(e)}>
@@ -628,7 +633,7 @@ const AdsUserPayments = () => {
           </div>
   
      </div>
-      <div className="overflow-x-auto rounded-xl border border-gray-400 mt-5 ">
+      <div className="overflow-x-auto text-black rounded-xl border border-gray-700 mt-5 ">
         <table className="min-w-full bg-white">
           <thead className="bg-[#05a0db] text-white">
             <tr>

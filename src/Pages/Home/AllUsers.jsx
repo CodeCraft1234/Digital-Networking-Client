@@ -6,46 +6,74 @@ import UseAxiosPublic from "../../Axios/UseAxiosPublic";
 import Swal from "sweetalert2";
 import { Helmet } from "react-helmet-async";
 import { MdDelete } from "react-icons/md";
+import EmployeeClientPay from "../DashboardRoot/EmployeeClientPay";
+import useClients from "../../Hook/useClient";
+import { Link } from "react-router-dom";
+import Profile from "../Profile/Profile";
+import { IoIosAddCircle } from "react-icons/io";
+import useAdsPayment from "../../Hook/useAdsPayment";
+import useAdsAccountCenter from "../../Hook/useAdsAccountCenter";
 
 const AllUsers = () => {
-  const [users, refetch] = useUsers();
-  const { user } = useContext(AuthContext);
-  const [currentUser, setCurrentUser] = useState(null);
-  const [employees, setEmployees] = useState([]);
+  const [users, refetch] = useUsers(); // Fetch users data
+  const { user } = useContext(AuthContext); // Get current user
+  const [employees, setEmployees] = useState([]); // State to hold filtered employees
+  const [employees2, setEmployees2] = useState([]); // State to hold filtered employees
+  const [employees3, setEmployees3] = useState([]); // State to hold filtered employees
+  const [employees4, setEmployees4] = useState([]); // State to hold filtered employees
+  const [employees5, setEmployees5] = useState([]); // State to hold filtered employees
+  const [employees6, setEmployees6] = useState([]); // State to hold filtered employees
+  const [employees7, setEmployees7] = useState([]); // State to hold filtered employees
+  
+  // Get the initial tab from local storage or default to 'all'
+  const initialTab = localStorage.getItem("activeTab") || "all";
+  const [activeTab, setActiveTab] = useState(initialTab);
+  console.log(activeTab);
 
   useEffect(() => {
-    if (users && user) {
-      const foundUser = users.find((u) => u.email === user.email);
-      setCurrentUser(foundUser || {});
-      const employeeList = users.filter((u) => u.role === "employee");
-      setEmployees(employeeList || []);
+    if (users && activeTab !== 'all') {
+      const employeeList = users.filter((u) => u.role === activeTab);
+      setEmployees(employeeList);
+      const employeeList2 = users.filter((u) => u.role === 'graphicDesigner');
+      setEmployees2(employeeList2);
+      const employeeList3 = users.filter((u) => u.role === 'admin');
+      setEmployees3(employeeList3);
+      const employeeList4 = users.filter((u) => u.role === 'employee');
+      setEmployees4(employeeList4);
+      const employeeList5 = users.filter((u) => u.role === 'webDeveloper');
+      setEmployees5(employeeList5);
+      const employeeList6 = users.filter((u) => u.role === 'contributor');
+      setEmployees6(employeeList6);
+      const employeeList7 = users.filter((u) => u.role === 'client');
+      setEmployees7(employeeList7);
+    } else {
+      setEmployees(users); // Show all users if 'all' is selected
     }
-  }, [users, user]);
+  }, [users, activeTab]);
 
   const AxiosPublic = UseAxiosPublic();
 
   const handleDelete = (id) => {
     Swal.fire({
       title: "Are you sure?",
-      text: "You want to delete this employee!",
+      text: "You want to delete this user!",
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#3085d6",
       cancelButtonColor: "#d33",
-      confirmButtonText: "Yes, delete employee",
+      confirmButtonText: "Yes, delete user",
     }).then((result) => {
       if (result.isConfirmed) {
-        AxiosPublic.delete(`/users/${id}`)
-          .then((res) => {
-            refetch();
-            if (res.data.deletedCount > 0) {
-              Swal.fire({
-                title: "Deleted!",
-                text: "The employee has been deleted.",
-                icon: "success",
-              });
-            }
-          });
+        AxiosPublic.delete(`/users/${id}`).then((res) => {
+          if (res.data.deletedCount > 0) {
+            Swal.fire({
+              title: "Deleted!",
+              text: "The user has been deleted.",
+              icon: "success",
+            });
+            refetch(); // Refetch users after deletion
+          }
+        });
       }
     });
   };
@@ -54,7 +82,7 @@ const AllUsers = () => {
     AxiosPublic.put(`/users/role/${id}`, { role: newRole })
       .then((res) => {
         if (res.data.modifiedCount > 0) {
-          refetch();
+          refetch(); // Refetch users after role update
         }
       })
       .catch((error) => {
@@ -67,10 +95,42 @@ const AllUsers = () => {
       });
   };
 
-  const [activeDropdown, setActiveDropdown] = useState(null);
-  const toggleDropdown = (id) => {
-    setActiveDropdown(activeDropdown === id ? null : id);
+  // Update the active tab and save it to local storage
+  const changeTab = (tab) => {
+    setActiveTab(tab);
+    localStorage.setItem("activeTab", tab); // Store the active tab in local storage
   };
+
+  const getButtonClass = (tab) => 
+    `px-1 py-2 rounded ${activeTab === tab ? ' text-blue-700 font-bold' : ' text-black font-md'}`;
+
+  const [clients] = useClients();
+  const [adsPayment] = useAdsPayment();
+  const [adsAccountCenter] = useAdsAccountCenter();
+
+  // Calculate the total clients for employees
+  const totalClientsForEmployees = activeTab === 'employee'
+    ? employees.reduce((total, employee) => 
+        total + clients.filter(client => client.employeeEmail === employee.email).length
+      , 0)
+    : 0;
+
+
+
+    const totalDueForContributors = activeTab === 'contributor'
+    ? employees.reduce((total, employee) => 
+        total + (
+          adsAccountCenter
+            .filter(payment => payment.employeeEmail === employee.email)
+            .reduce((acc, payment) => acc + parseFloat(payment.totalSpent || 0) * parseFloat(payment.dollerRate || 0), 0) 
+          - (
+            adsPayment
+              .filter(payment => payment.employeeEmail === employee.email)
+              .reduce((acc, payment) => acc + parseFloat(payment.payAmount || 0), 0)
+          )
+        )
+      , 0)
+    : 0;
 
   return (
     <div className="my-5 mx-5 dark:text-green-800">
@@ -79,7 +139,62 @@ const AllUsers = () => {
         <link rel="canonical" href="https://www.example.com/" />
       </Helmet>
 
-      <div className="text-black ">
+      <div className="flex justify-between items-center">
+        <div className="flex justify-start items-center gap-1 my-5">
+          <button 
+            className={getButtonClass('all')}
+            onClick={() => changeTab('all')}
+          >
+            All Users ({users.length})
+          </button>
+          |
+          <button 
+            className={getButtonClass('admin')}
+            onClick={() => changeTab('admin')}
+          >
+            Administrator ({employees3.length})
+          </button>
+          |
+          <button 
+            className={getButtonClass('employee')}
+            onClick={() => changeTab('employee')}
+          >
+            Employees ({employees4.length})
+          </button>
+          |
+          <button 
+            className={getButtonClass('webDeveloper')}
+            onClick={() => changeTab('webDeveloper')}
+          >
+            Web Developer ({employees5.length})
+          </button>
+          |
+          <button 
+            className={getButtonClass('graphicDesigner')}
+            onClick={() => changeTab('graphicDesigner')}
+          >
+            Graphic Designer ({employees2.length})
+          </button>
+          |
+          <button 
+            className={getButtonClass('contributor')}
+            onClick={() => changeTab('contributor')}
+          >
+            Contributor ({employees6.length})
+          </button>
+          |
+          <button 
+            className={getButtonClass('client')}
+            onClick={() => changeTab('client')}
+          >
+            Users ({employees7.length})
+          </button>
+        </div>
+      </div>
+
+      {activeTab === 'clientPay' && <EmployeeClientPay email={user?.email} />}
+
+      <div className="text-black">
         <div className="overflow-x-auto rounded-xl">
           <table className="min-w-full bg-white">
             <thead className="bg-[#05a0db] text-white">
@@ -87,13 +202,20 @@ const AllUsers = () => {
                 <th className="p-3 text-center">Sl</th>
                 <th className="p-3 text-center">Profile</th>
                 <th className="p-3 text-center">Name</th>
+                <th className="p-3 text-center">Mobile</th>
                 <th className="p-3 text-center">Email</th>
+                {activeTab === 'employee' && (
+                  <th className="p-3 text-center">Client</th>
+                )}
+                {activeTab === 'contributor' && (
+                  <th className="p-3 text-center">Due</th>
+                )}
                 <th className="p-3 text-center">Role</th>
                 <th className="p-3 text-center">Action</th>
               </tr>
             </thead>
             <tbody>
-              {users.map((user, index) => (
+              {employees.map((user, index) => (
                 <tr
                   key={user._id}
                   className={`${
@@ -112,35 +234,138 @@ const AllUsers = () => {
                       alt=""
                     />
                   </td>
+                  <td className="p-3 hover:text-indigo-700 hover:font-bold border-r-2 border-gray-300 text-start">
+                    {
+                      user.role === 'contributor' ? <Link to={`/dashboard/adsuserInfo/${user?.email}`}>
+                      {user.name}
+                      </Link> : <Link to={`/dashboard/userinfo/${user?.email}`}>
+                      {user.name}
+                      </Link>
+                    }
+                  </td>
                   <td className="p-3 border-r-2 border-gray-300 text-center">
-                    {user.name}
+                    {user.mobile}
                   </td>
                   <td className="p-3 border-r-2 border-gray-300 text-center">
                     {user.email}
                   </td>
+
+                                 {activeTab === 'contributor' && (
+ <td className="p-3 border-r-2 border-gray-300 text-center">
+  <span className="mr-1 text-xl font-bold">৳</span> 
+ {
+    (
+     adsAccountCenter
+       .filter(payment => payment.employeeEmail === user.email)
+       .reduce((acc, payment) => acc + parseFloat(payment.totalSpent || 0) * parseFloat(payment.dollerRate || 0), 0)
+   ) - (
+    adsPayment
+      .filter(payment => payment.employeeEmail === user.email)
+      .reduce((acc, payment) => acc + parseFloat(payment.payAmount || 0), 0) 
+  )
+ }
+</td>
+
+)}
+
+
+
+
+
+
+
+
+
+                  {activeTab === 'employee' && (
+                       <td className="p-3 border-r-2 hover:text-blue-700 hover:font-bold border-gray-300 text-center">  <Link to={`/dashboard/allEmployeeClients/${user?.email}`}>
+                       {clients.filter(c => c.employeeEmail === user.email).length}
+                       </Link></td>
+                     )}
+
+                 
+                 
                   <td className="p-3 border-r-2 border-gray-300 text-center">
                     <select
+                      className="p-2 bg-gray-100 border border-gray-300 rounded"
                       value={user.role}
                       onChange={(e) => handleRoleChange(user._id, e.target.value)}
-                      className="p-2 border bg-white text-black border-gray-300 rounded"
                     >
                       <option value="admin">Admin</option>
                       <option value="employee">Employee</option>
+                      <option value="webDeveloper">Web Developer</option>
+                      <option value="graphicDesigner">Graphic Designer</option>
+                      <option value="contributor">Contributor</option>
                       <option value="client">Client</option>
-                      <option value="adsAccount">Ads Account</option>
                     </select>
                   </td>
-                  <td className="p-3 border-r-2 border-gray-200 text-center">
-                  <button
-                          className="text-center  text-black text-3xl"
-                          onClick={() => handleDelete(user._id)}
-                        >
-                          <MdDelete />
-                        </button>
+                  <td className="p-3 text-center border-r-2 border-gray-300">
+                    <button
+                      onClick={() => handleDelete(user._id)}
+                      className="bg-red-100 text-red-500 hover:bg-red-200 p-2 rounded-full"
+                    >
+                      <MdDelete size={20} />
+                    </button>
                   </td>
                 </tr>
               ))}
             </tbody>
+            {activeTab === 'employee' && (
+  <tfoot>
+    <tr className="bg-[#05a0db] text-white py-5">
+      <td
+        colSpan={5}
+        className="text-right py-3 text-white font-bold"
+      >
+        Total :
+      </td>
+      <td
+        colSpan={1}
+        className="text-center font-bold"
+      >
+        {totalClientsForEmployees}
+      </td>
+      <td></td>
+      <td></td>
+      <td></td>
+    </tr>
+  </tfoot>
+)}
+
+{activeTab === 'contributor' && (
+  <tfoot className="bg-[#05a0db] text-white">
+    <tr>
+      <td colSpan="5" className="p-3 text-right">
+        Total: 
+      </td>
+      <td className="text-center">{totalDueForContributors.toFixed(2)}</td>
+      <td></td>
+      <td></td>
+    </tr>
+  </tfoot>
+)}
+
+{activeTab !== 'employee' && activeTab !== 'contributor' && (
+  <tfoot>
+    <tr className="bg-[#05a0db] text-white py-5">
+      <td
+        colSpan={5}
+        className="text-right py-3 text-white font-bold"
+      >
+        -
+      </td>
+      <td
+        colSpan={1}
+        className="text-center font-bold"
+      >
+        -
+      </td>
+      <td></td>
+      <td></td>
+      <td></td>
+    </tr>
+  </tfoot>
+)}
+
           </table>
         </div>
       </div>

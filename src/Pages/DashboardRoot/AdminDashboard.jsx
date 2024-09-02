@@ -111,142 +111,103 @@ const AdminDashboard = () => {
 
           <NavLink
             to="/"
-            className="text-white hover:bg-[#f89320] hover:text-black py-2 px-4 rounded-lg flex items-center"
+            className="text-white hover:bg-[#f89320] hover:text-black py-2 px-3 rounded-lg flex items-center"
             style={({ isActive }) => getActiveStyle(isActive)}
           >
             <RxDashboard className="w-6 h-6 mr-2" />
             Dashboard
           </NavLink>
 
-
-
           <NavLink
             to="dashboard/allAdSAccount"
-            className="text-white hover:bg-[#f89320] hover:text-black py-2 px-4 rounded-lg flex items-center"
+            className="text-white hover:bg-[#f89320] hover:text-black py-2 px-3 rounded-lg flex items-center"
             style={({ isActive }) => getActiveStyle(isActive)}
           >
             <MdAccountCircle className="w-6 h-6 mr-2" /> Ads Accounts
           </NavLink>
+          <NavLink
+            to="dashboard/allCampaign"
+            className="text-white hover:bg-[#f89320] hover:text-black py-2 px-3 rounded-lg flex items-center"
+            style={({ isActive }) => getActiveStyle(isActive)}
+          >
+            <MdCampaign className="w-6 h-6 mr-2" />All Campaigns
+          </NavLink>
+
+         
+         
 
          
 
-          <div className="relative" onMouseLeave={handleMouseLeave}>
-            <NavLink
-              to="dashboard/allUsers"
-              className="text-white hover:bg-[#f89320] hover:text-black py-2 px-4 rounded-lg flex items-center"
-              style={({ isActive }) => getActiveStyle(isActive)}
-              onMouseEnter={handleMouseEnter}
-            >
-              <FaPeopleGroup className="w-6 h-6 mr-2" />
-              Users
-              {isOpen ? (
-                <IoMdArrowDropup className="w-6 h-6 ml-2" />
-              ) : (
-                <IoMdArrowDropdown className="w-6 h-6 ml-2" />
-              )}
-            </NavLink>
-            {isOpen && (
-              <div
-                className="absolute top-full left-0 w-48 bg-gray-600 rounded-lg shadow-lg py-2 z-50 animate-dropdown"
-                onMouseEnter={handleMouseEnter}
-                onMouseLeave={handleMouseLeave}
-              >
-                <NavLink
+         
+         
+          {/* <NavLink
+                  to="dashboard/adsUser"
+                  className="text-white hover:bg-[#f89320] hover:text-black py-2 px-3 rounded-lg flex items-center"
+                  style={({ isActive }) => getActiveStyle(isActive)}
+                >
+                  <FaPeopleGroup className="w-6 h-6 mr-2" />
+                  Ads User
+                </NavLink> */}
+             
+         
+
+
+
+
+        
+        
+        
+         
+          
+         
+          <NavLink
                   to="dashboard/allUsers"
-                  className="text-white hover:bg-[#f89320] hover:text-black py-2 px-4 rounded-lg flex items-center"
+                  className="text-white hover:bg-[#f89320] hover:text-black py-2 px-3 rounded-lg flex items-center"
                   style={({ isActive }) => getActiveStyle(isActive)}
                 >
                   <FaPeopleGroup className="w-6 h-6 mr-2" />
                   All Users
                 </NavLink>
-                <NavLink
+          <NavLink
                   to="dashboard/allClients"
-                  className="text-white hover:bg-[#f89320] hover:text-black py-2 px-4 rounded-lg flex items-center"
+                  className="text-white hover:bg-[#f89320] hover:text-black py-2 px-3 rounded-lg flex items-center"
                   style={({ isActive }) => getActiveStyle(isActive)}
                 >
                   <IoPeopleSharp className="w-6 h-6 mr-2" />
-                  Clients
+                 All Clients
                 </NavLink>
-              
-                <NavLink
-                  to="dashboard/allEmployee"
-                  className="text-white hover:bg-[#f89320] hover:text-black py-2 px-4 rounded-lg flex items-center"
-                  style={({ isActive }) => getActiveStyle(isActive)}
-                >
-                  <FaPeopleGroup className="w-6 h-6 mr-2" />
-                  Employees
-                </NavLink>
-                <NavLink
-                  to="dashboard/adsUser"
-                  className="text-white hover:bg-[#f89320] hover:text-black py-2 px-4 rounded-lg flex items-center"
-                  style={({ isActive }) => getActiveStyle(isActive)}
-                >
-                  <FaPeopleGroup className="w-6 h-6 mr-2" />
-                  Ads User
-                </NavLink>
-              </div>
-            )}
-          </div>
-
           <NavLink
-            to="dashboard/allCampaign"
-            className="text-white hover:bg-[#f89320] hover:text-black py-2 px-4 rounded-lg flex items-center"
-            style={({ isActive }) => getActiveStyle(isActive)}
-          >
-            <MdCampaign className="w-6 h-6 mr-2" /> Campaigns
-          </NavLink>
-
-
-
-
-          <NavLink
-              to="dashboard/employeePayment"
-            className="text-white hover:bg-[#f89320] hover:text-black py-2 px-4 rounded-lg flex items-center"
-            style={({ isActive }) => getActiveStyle(isActive)}
-          >
-           <MdOutlinePayment  className="w-6 h-6 mr-2" />
-            Employee Pay
-          </NavLink>
-          <NavLink
-            to="dashboard/AllClientsPayments"
-            className="text-white hover:bg-[#f89320] hover:text-black py-2 px-4 rounded-lg flex items-center"
-            style={({ isActive }) => getActiveStyle(isActive)}
-          >
-          <MdPayments  className="w-6 h-6 mr-2" />
-            Clients Pay
-          </NavLink>
-          <NavLink
-           to="dashboard/allAdsPayments"
-            className="text-white hover:bg-[#f89320] hover:text-black py-2 px-4 rounded-lg flex items-center"
+           to="dashboard/paymentHistory"
+            className="text-white hover:bg-[#f89320] hover:text-black py-2 px-3 rounded-lg flex items-center"
             style={({ isActive }) => getActiveStyle(isActive)}
           >
             <MdOutlinePayments  className="w-6 h-6 mr-2" />
-            Ads Payment
+            Pay History
           </NavLink>
-
+       
           <NavLink
-            to={`dashboard/myActivity`}
-            className="text-white hover:bg-[#f89320] hover:text-black py-2 px-4 rounded-lg flex items-center"
+            to={`dashboard/AllSummery`}
+            className="text-white hover:bg-[#f89320] hover:text-black py-2 px-3 rounded-lg flex items-center"
             style={({ isActive }) => getActiveStyle(isActive)}
           >
             <LuActivitySquare  className="w-6 h-6 mr-2" />
-            Activity
+           All Summery
           </NavLink>
+         
           <NavLink
             to="/dashboard/history"
-            className="text-white hover:bg-[#f89320] hover:text-black py-2 px-4 rounded-lg flex items-center"
+            className="text-white hover:bg-[#f89320] hover:text-black py-2 px-3 rounded-lg flex items-center"
             style={({ isActive }) => getActiveStyle(isActive)}
           >
            <FaHistory className="w-6 h-6 mr-2" />History
           </NavLink>
           <NavLink
             to="/dashboard/sellery"
-            className="text-white hover:bg-[#f89320] hover:text-black py-2 px-4 rounded-lg flex items-center"
+            className="text-white hover:bg-[#f89320] hover:text-black py-2 px-3 rounded-lg flex items-center"
             style={({ isActive }) => getActiveStyle(isActive)}
           >
             <IoMdCash  className="w-6 h-6 mr-2" />Salary
           </NavLink>
-        
 
          
 

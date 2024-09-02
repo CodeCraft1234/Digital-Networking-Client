@@ -20,9 +20,9 @@ const AllClientsPayments = () => {
   const [selectedEmployee, setSelectedEmployee] = useState("");
   const [totalPayment, setTotalPayment] = useState(0);
   const [payment, setPayment] = useState([]);
-  const [users]=useUsers()
+  const [users] = useUsers();
   const [employees, setEmployees] = useState([]);
-
+  const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
 
   useEffect(() => {
     if (users) {
@@ -31,9 +31,6 @@ const AllClientsPayments = () => {
     }
   }, [users]);
 
-
-
-  // Set default sortMonth to current month when component mounts
   useEffect(() => {
     const currentMonth = new Date().getMonth() + 1; // Months are 0-indexed
     setSortMonth(currentMonth);
@@ -69,12 +66,45 @@ const AllClientsPayments = () => {
       );
     }
 
-    setFilteredData(filtered);
-  }, [sortMonth, selectedDate, selectedCategory, searchQuery, MPayment,selectedEmployee]);
+    if (selectedYear) {
+      filtered = filtered.filter(
+        (payment) =>
+          new Date(payment.date).getFullYear() === parseInt(selectedYear)
+      );
+    }
 
+    setFilteredData(filtered);
+  }, [
+    sortMonth,
+    selectedDate,
+    selectedCategory,
+    searchQuery,
+    MPayment,
+    selectedEmployee,
+    selectedYear,
+  ]);
   const handleDelete = (id) => {
-    AxiosPublic.delete(`/MPayment/${id}`).then((res) => {
-      refetch();
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You want to delete this payment!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        AxiosPublic.delete(`/MPayment/${id}`).then((res) => {
+          refetch();
+          if (res.data.deletedCount > 0) {
+            Swal.fire({
+              title: "Deleted!",
+              text: "Your payment has been deleted.",
+              icon: "success",
+            });
+          }
+        });
+      }
     });
   };
 
@@ -172,36 +202,42 @@ const AllClientsPayments = () => {
     );
     setTotalPayment(totalBill);
   }, [MPayment,displayedItems]);
+
+  
+
+
   return (
     <div className="">
       <Helmet>
-        <title>Client Payment | Digital Network </title>
+        <title>Clients Payment | Digital Network </title>
         <link rel="canonical" href="https://www.example.com/" />
       </Helmet>
 
-      <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3  lg:grid-cols-5 gap-8 mt-4 p-5">
-   <div className="balance-card bg-white rounded-2xl shadow-lg p-5 text-center  transition-transform transform hover:scale-105 border-0">
+      <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3  lg:grid-cols-6 gap-5  p-5">
+   <div onClick={() => setSelectedCategory('bkashMarchent')} className="balance-card bg-white rounded-2xl shadow-lg p-5 text-center  transition-transform transform hover:scale-105 border-0">
      <img className="balance-card-img" src="https://i.ibb.co/bHMLyvM/b-Kash-Merchant.png" alt="bKash" />
      <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"> <span className="text-lg lg:text-2xl font-extrabold"> ৳</span> {bkashMarcent}</p>
    </div>
-   <div className="balance-card bg-white rounded-2xl shadow-lg p-5 text-center transition-transform transform hover:scale-105 border-0">
+   <div onClick={() => setSelectedCategory('bkashPersonal')} className="balance-card bg-white rounded-2xl shadow-lg p-5 text-center transition-transform transform hover:scale-105 border-0">
      <img className="balance-card-img" src="https://i.ibb.co/520Py6s/bkash-1.png" alt="bKash" />
      <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"> <span className="text-lg lg:text-2xl font-extrabold"> ৳</span> {bkashPersonal}</p>
    </div>
-   <div className="balance-card bg-white rounded-2xl shadow-lg p-5 text-center transition-transform transform hover:scale-105 border-0">
+   <div onClick={() => setSelectedCategory('nagadPersonal')} className="balance-card bg-white rounded-2xl shadow-lg p-5 text-center transition-transform transform hover:scale-105 border-0">
      <img className="balance-card-img" src="https://i.ibb.co/JQBQBcF/nagad-marchant.png" alt="Nagad" />
      <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"><span className="text-lg lg:text-2xl font-extrabold"> ৳</span> {nagadPersonal}</p>
    </div>
-   <div className="balance-card bg-white rounded-2xl shadow-lg p-5 text-center transition-transform transform hover:scale-105 border-0">
+   <div onClick={() => setSelectedCategory('rocketPersonal')} className="balance-card bg-white rounded-2xl shadow-lg p-5 text-center transition-transform transform hover:scale-105 border-0">
      <img className="balance-card-img" src="https://i.ibb.co/QkTM4M3/rocket.png" alt="Rocket" />
      <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"><span className="text-lg lg:text-2xl font-extrabold"> ৳</span> {rocketPersonal}</p>
    </div>
 
-   <div className="balance-card bg-white rounded-2xl shadow-lg p-5 text-center transition-transform transform hover:scale-105 border-0">
+   <div onClick={() => setSelectedCategory('bank')} className="balance-card bg-white rounded-2xl shadow-lg p-5 text-center transition-transform transform hover:scale-105 border-0">
      <img className="balance-card-img" src="https://i.ibb.co/PZc0P4w/brac-bank-seeklogo.png" alt="Rocket" />
-     {/* <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"><span className="text-lg lg:text-2xl font-extrabold">Bank Received : ৳</span> {bankTotal}</p>
-     <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"><span className="text-lg lg:text-2xl font-extrabold">Bank Cashout : ৳</span> {bankTotal2}</p> */}
      <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"><span className="text-lg lg:text-2xl font-extrabold"> ৳</span> {bankTotal}</p>
+   </div>
+   <div className="balance-card bg-white rounded-2xl shadow-lg p-5 text-center transition-transform transform hover:scale-105 border-0">
+     <h1 className="text-3xl font-bold text-black">Total BDT</h1>
+     <p className="balance-card-text text-lg lg:text-2xl mt-8 font-bold text-gray-700"><span className="text-lg lg:text-2xl font-extrabold"> ৳</span> {bkashPersonal + bkashMarcent + nagadPersonal + rocketPersonal + bankTotal}</p>
    </div>
      </div>
 
@@ -252,51 +288,43 @@ const AllClientsPayments = () => {
               ))}
             </select>
           </div>
-          <div className="flex flex-col justify-center items-start">
+          <div className="flex text-black justify-end gap-5 items-center ">
+        <div className="flex flex-col justify-start items-start">
+          <select
+            className="border bg-white text-black border-gray-400 rounded p-2 mt-1"
+            value={selectedYear}
+            onChange={(e) => setSelectedYear(e.target.value)}
+          >
+            {Array.from({ length: 31 }, (_, i) => 2020 + i).map((year) => (
+              <option key={year} value={year}>
+                {year}
+              </option>
+            ))}
+          </select>
+        </div>
+      </div>
+          <div className="flex flex-col mr-5  justify-center items-start">
          
             <input
               type="date"
-              className="border rounded bg-white text-black border-gray-400 p-2 mt-1"
+              className="border rounded bg-green-300 text-black border-gray-400 p-2 mt-1"
               value={selectedDate}
               onChange={(e) => setSelectedDate(e.target.value)}
             />
           </div>
-          <div className="flex flex-col justify-center items-start">
          
-            <select
-              className="border bg-white text-black border-gray-400 rounded p-2 mt-1"
-              value={selectedCategory}
-              onChange={(e) => setSelectedCategory(e.target.value)}
-            >
-              <option value="">All Methods</option>
-              <option value="bkashPersonal">bKash Personal</option>
-              <option value="bkashMarchent">bKash Marcent</option>
-              <option value="nagadPersonal">Nagad Personal</option>
-              <option value="rocketPersonal">Rocket Personal</option>
-              <option value="bank">Bank</option>
-            </select>
-          </div>
         </div>
-        <div className="">
-          <input
-            type="text"
-            placeholder="Payment Method"
-            className="rounded-lg placeholder-black bg-white border mt-1 border-gray-700 p-2 mr-5 text-black"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
        
-        </div>
       </div>
 
-      <div className="overflow-x-auto text-black rounded-xl mt-5 border border-gray-400 mx-5">
+      <div className="overflow-x-auto text-black rounded-xl my-5 border border-gray-400 mx-5">
         <table className="min-w-full bg-white">
           <thead className="bg-[#05a0db] text-white">
             <tr>
               <th className="p-3">SL</th>
               <th className="p-3">Payment Date</th>
               <th className="p-3">Client Name</th>
-              <th className="p-3">Payment Amount</th>
+              <th className="p-3"> Amount</th>
               <th className="p-3">Payment Method</th>
               <th className="p-3">Note</th>
               <th className="p-3">Action</th>
@@ -315,7 +343,7 @@ const AllClientsPayments = () => {
                   {new Date(payment.date).toLocaleDateString("en-GB")}
                 </td>
 
-                <td className="p-3 border-r-2 border-gray-200 text-center">
+                <td className="p-3 hover:text-blue-700 hover:font-bold border-r-2 border-gray-200 text-start">
                 <Link to={`/dashboard/client/${payment.clientEmail}`}>
                 {payment.clientName}
                 </Link>
@@ -365,19 +393,19 @@ const AllClientsPayments = () => {
                   {payment.note}
                 </td>
                
-                <td className="p-3 border-r-2 flex justify-center items-center border-gray-200 text-center">
+                <td className="p-3 border-r-2 flex gap-3 justify-center items-center border-gray-200 text-center">
                
                        <button
-                          className=" px-4 py-2 text-3xl text-left text-blue-700 "
+                          className="bg-green-700 hover:bg-blue-700 text-white px-2 py-1 rounded"
                           onClick={() => handleEditClick(payment)}
                         >
-                       <MdEditSquare />
+                       Edit
                         </button>
                         <button
-                          className="text-start flex justify-start text-black text-3xl"
+                         className="bg-red-700 hover:bg-blue-700 text-white px-2 py-1 rounded"
                           onClick={() => handleDelete(payment._id)}
                         >
-                          <MdDelete />
+                          Delete
                         </button>
                   
                 
@@ -462,13 +490,13 @@ const AllClientsPayments = () => {
                 <button
                   type="button"
                   onClick={handleCancel}
-                  className="bg-gray-300 text-gray-800 px-4 py-2 rounded mr-2"
+                  className="bg-red-500 text-white hover:bg-red-700  px-4 py-2 rounded mr-2"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="bg-blue-500 text-white px-4 py-2 rounded"
+                  className="bg-blue-500 hover:bg-indigo-700 text-white px-4 py-2 rounded"
                 >
                   Update
                 </button>

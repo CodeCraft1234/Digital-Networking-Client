@@ -5,23 +5,25 @@ import useUsers from "../../Hook/useUsers";
 import { Helmet } from "react-helmet-async";
 import { FaEdit } from "react-icons/fa";
 import axios from "axios";
-import { MdDelete, MdEditSquare } from "react-icons/md";
 import { ImCross } from "react-icons/im";
-import { ToastContainer } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import { Link } from "react-router-dom";
 
 const AllAdsAccount = () => {
   const [adsAccount, refetch] = useAdsAccount()
-  console.log(adsAccount);
-  console.log(adsAccount);
   const [adsAccounts, setAdsAccounts] = useState([]);
   const [filteredAdsAccounts, setFilteredAdsAccounts] = useState([]);
   const [modalData, setModalData] = useState(null);
   const [selectedEmail, setSelectedEmail] = useState("");
-  const [selectedStatus, setSelectedStatus] = useState("");
   const [users] = useUsers();
   const AxiosPublic = UseAxiosPublic();
-  const [sortOrder, setSortOrder] = useState("asc");
+  const initialTab = localStorage.getItem("activeTabAlladsAccountStatus") || "Active";
+  const [selectedStatus, setSelectedStatus] = useState(initialTab);
+
+  const changeTab = (tab) => {
+    setSelectedStatus(tab);
+    localStorage.setItem("activeTabAlladsAccountStatus", tab); 
+  };
 
   useEffect(() => {
     if (adsAccount) {
@@ -35,88 +37,75 @@ const AllAdsAccount = () => {
     }
   }, [adsAccount]);
 
-  const handleUpdate = (e, id) => {
-    e.preventDefault();
-    const accountName = e.target.accountName.value;
-    const date = e.target.date.value;
-    const currentBallence = e.target.currentBallence.value;
-    const threshold = e.target.threshold.value;
-    const status = e.target.status.value;
-    const body = {date, accountName, currentBallence, threshold, status };
-  
-    AxiosPublic.patch(`/adsAccount/${id}`, body)
-      .then((res) => {
-        console.log(res.data);
-        refetch(); // Refetch the data to get the updated list
-        setModalData(null); // Close the modal upon successful update
-        
-        // Show success toast notification
-        toast.success("Account updated successfully!");
-      })
-      .catch((error) => {
-        console.error("Error updating account:", error);
-        
-        // Show error toast notification
-        toast.error("Failed to update account. Please try again.");
-      });
-  };
-  
   const handleFilter = () => {
     let filtered = adsAccounts;
-    if (selectedEmail) {
-      filtered = filtered.filter(
+ 
+    const   filteredemail = filtered.filter(
         (account) => account.employeeEmail === selectedEmail
       );
-    }
-    if (selectedStatus) {
-      filtered = filtered.filter(
-        (account) => account.status === selectedStatus
-      );
-    }
-    const sortedFiltered = filtered.slice().sort((a, b) => {
-      if (a.status === "Active" && b.status !== "Active") return -1;
-      if (a.status !== "Active" && b.status === "Active") return 1;
-      return 0;
-    });
-    setFilteredAdsAccounts(sortedFiltered);
+    setFilteredAdsAccounts(filteredemail);
   };
-
   useEffect(() => {
     handleFilter();
-  }, [selectedEmail, selectedStatus]);
-
-  const [totalSpent, setTotalSpent] = useState(0);
-  const [totalCurrentBallence, setTotalCurrentBallence] = useState(0);
-  const [totalThreshold, setTotalThreshold] = useState(0);
-
-  useEffect(() => {
-    const tspent = filteredAdsAccounts.reduce((acc, campaign) => {
-      const currentBallence = parseFloat(campaign.currentBallence);
-      return acc + (isNaN(currentBallence) ? 0 : currentBallence);
-    }, 0);
-    setTotalCurrentBallence(tspent);
-
-    const total = filteredAdsAccounts.reduce((acc, campaign) => {
-      const threshold = parseFloat(campaign.threshold);
-      return acc + (isNaN(threshold) ? 0 : threshold);
-    }, 0);
-    setTotalThreshold(total);
-
-    const totalBill = filteredAdsAccounts.reduce((acc, campaign) => {
-      const totalSpent = parseFloat(campaign.totalSpent);
-      return acc + (isNaN(totalSpent) ? 0 : totalSpent);
-    }, 0);
-    setTotalSpent(totalBill);
-  }, [filteredAdsAccounts]);
+  }, [selectedEmail]);
 
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("");
-
-  const filteredByCategory = selectedCategory
+  const filteredByCategory = searchQuery
     ? filteredAdsAccounts.filter(
-        (item) => item.category.toLowerCase() === selectedCategory.toLowerCase()
+        (item) => item.accountName.toLowerCase() === searchQuery.toLowerCase()
       )
     : filteredAdsAccounts;
+
+    const filterByStatus=filteredByCategory.filter(f=>f.status === selectedStatus)
+    const sortedAdsAccounts = filterByStatus.sort((a, b) => {
+      return a.accountName.localeCompare(b.accountName);
+    });
+
+    const [totalSpent, setTotalSpent] = useState(0);
+    const [totalCurrentBallence, setTotalCurrentBallence] = useState(0);
+    const [totalThreshold, setTotalThreshold] = useState(0);
+  
+    useEffect(() => {
+      const tspent = sortedAdsAccounts.reduce((acc, campaign) => {
+        const currentBallence = parseFloat(campaign.currentBallence);
+        return acc + (isNaN(currentBallence) ? 0 : currentBallence);
+      }, 0);
+      setTotalCurrentBallence(tspent);
+  
+      const total = sortedAdsAccounts.reduce((acc, campaign) => {
+        const threshold = parseFloat(campaign.threshold);
+        return acc + (isNaN(threshold) ? 0 : threshold);
+      }, 0);
+      setTotalThreshold(total);
+  
+      const totalBill = sortedAdsAccounts.reduce((acc, campaign) => {
+        const totalSpent = parseFloat(campaign.totalSpent);
+        return acc + (isNaN(totalSpent) ? 0 : totalSpent);
+      }, 0);
+      setTotalSpent(totalBill);
+    }, [sortedAdsAccounts]);
+
+    const handleUpdate = (e, id) => {
+      e.preventDefault();
+      const accountName = e.target.accountName.value;
+      const date = e.target.date.value;
+      const currentBallence = e.target.currentBallence.value;
+      const threshold = e.target.threshold.value;
+      const status = e.target.status.value;
+      const body = {date, accountName, currentBallence, threshold, status };
+    
+      AxiosPublic.patch(`/adsAccount/${id}`, body)
+        .then((res) => {
+          console.log(res.data);
+          refetch(); // Refetch the data to get the updated list
+          setModalData(null); // Close the modal upon successful update
+          toast.success("Account updated successfully!");
+        })
+        .catch((error) => {
+          console.error("Error updating account:", error);
+          toast.error("Failed to update account. Please try again.");
+        });
+    };
 
   const handleDelete = (id) => {
         AxiosPublic.delete(`/adsAccount/${id}`).then((res) => {
@@ -124,34 +113,17 @@ const AllAdsAccount = () => {
         });
   };
 
-  const handleSort = () => {
-    const sortedAds = [...filteredAdsAccounts].sort((a, b) => {
-      if (sortOrder === "desc") {
-        return a.status.localeCompare(b.status);
-      } else {
-        return b.status.localeCompare(a.status);
-      }
-    });
-    setFilteredAdsAccounts(sortedAds);
-    setSortOrder(sortOrder === "asc" ? "desc" : "asc");
-  };
-
   const generateRandomId = () => {
     return Math.floor(Math.random() * 1e13); 
   };
 
-  const handleUpdateTotalSpent = (e, id, totalSpents, accountName, employeeEmail, employeeName) => {
+  const handleUpdateTotalSpent = (e, id,  accountName, employeeEmail, employeeName) => {
     e.preventDefault();
-  
     const totalSpent = e.target.totalSpent.value;
     const date = e.target.date.value;
     const body = { totalSpent: parseFloat(totalSpent)  };
-  
-
     const ids=generateRandomId()
  
-    
-    // Update the ads account
     axios.put(`https://digital-networking-server.vercel.app/adsAccount/totalSpent/${id}`, body)
       .then((res) => {
         console.log(res.data);
@@ -162,10 +134,6 @@ const AllAdsAccount = () => {
         console.error("Error updating total spent:", error);
       });
   
-    // Prepare data to update or create user
-
-
-
     const totalSpentt = parseFloat(totalSpent);
     const monthlySpent = {
       ids,
@@ -175,23 +143,28 @@ const AllAdsAccount = () => {
       employeeName
     };
 
-  
-    // Post user data with monthlySpent array
     AxiosPublic.post('/users/update', { email: employeeEmail, monthlySpent })
       .then(res => {
         console.log(res.data);
-        // Optional: Close the modal here if you prefer
       })
       .catch(error => {
         console.error("Error posting user data:", error);
       });
   };
-  
-  const sortedAdsAccounts = filteredByCategory.sort((a, b) => {
-    return a.accountName.localeCompare(b.accountName);
-  });
-  
-  console.log(sortedAdsAccounts);
+
+  const handleUpdate2 = (id, newStatus) => {
+    const body = { status: newStatus };
+    AxiosPublic.patch(`/adsAccount/status/${id}`, body)
+      .then((res) => {
+        console.log(res.data);
+        refetch();
+        toast.success(`Campaign updated successfully`);
+      })
+      .catch((error) => {
+        console.error("Error updating campaign:", error);
+        toast.error("Failed to update campaign");
+      });
+  };
 
   return (
     <div>
@@ -205,7 +178,6 @@ const AllAdsAccount = () => {
           <div className="flex justify-center items-center">
             <div className=" flex justify-start mb-5 items-center gap-3 ">
               <div>
-              
                 <select
                   name="email"
                   value={selectedEmail}
@@ -225,20 +197,18 @@ const AllAdsAccount = () => {
                 </select>
               </div>
               <div>
-               
                 <select
                   name="status"
                   value={selectedStatus}
-                  onChange={(e) => setSelectedStatus(e.target.value)}
+                  onChange={(e) => changeTab(e.target.value)}
                   className="border bg-white px-8 text-black border-black rounded p-2 "
                 >
-                  <option value="">Status</option>
+                  <option value="">All Status</option>
                   <option value="Active">Active</option>
                   <option value="Disable">Disable</option>
                 </select>
               </div>
               <div className="">
-        
             <input
               type="text"
               placeholder="Ads Account Name..."
@@ -246,30 +216,25 @@ const AllAdsAccount = () => {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
-           
           </div>
             </div>
-           
           </div>
-
-
         </div>
-
         <div className="overflow-x-auto rounded-xl text-black text-center border border-black">
           <table className="min-w-full  text-center bg-white">
             <thead className="bg-[#05a0db] text-white">
               <tr>
-                <th className="p-3">SL</th>
+                <th className="p-3">OFF/ON</th>
                 <th className="p-3">Payment Date</th>
                 <th className="p-3">Employeer Name</th>
                 <th className="p-3">Ad Account Name</th>
                 <th className="p-3">Current Balance</th>
                 <th className="p-3">Threshold</th>
-                <th className="p-3">Total Spent</th>
-                <th className="p-3 cursor-pointer" onClick={handleSort}>
+                <th className="p-3">Spent</th>
+                <th className="p-3 " >
                   Status
                 </th>
-                <th className="p-3 cursor-pointer" onClick={handleSort}>
+                <th className="p-3 " >
                   Action
                 </th>
               </tr>
@@ -284,10 +249,33 @@ const AllAdsAccount = () => {
                       : "bg-gray-200  text-left text-black border-b border-opacity-20"
                   }`}
                 >
-                  <td className="p-3 border-r-2  border-gray-300 text-center px-5 ">{index + 1}</td>
+                   <td className="p-3 border-r-2 border-l-2 border-gray-200 text-center">  <label className="inline-flex items-center cursor-pointer">
+  <input
+    type="checkbox"
+    className="sr-only"
+    checked={account.status === "Active"}
+    onChange={() => {
+      const newStatus = account.status === "Active" ? "Disable" : "Active";
+      handleUpdate2(account._id, newStatus);
+    }}
+  />
+  <div
+    className={`relative w-12 h-6 transition duration-200 ease-linear rounded-full ${
+      account.status === "Active" ? "bg-blue-700" : "bg-gray-500"
+    }`}
+  >
+    <span
+      className={`absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition-transform duration-200 ease-linear transform ${
+        account.status === "Active" ? "translate-x-6" : ""
+      }`}
+    ></span>
+  </div>
+</label>
+</td>
                   <td className="p-3 border-l-2 border-r-2 text-center border-gray-300 ">
                     {new Date(account.paymentDate).toLocaleDateString("en-GB")}
                   </td>
+
                   <td className="p-3 border-r-2 hover:text-blue-700 hover:font-bold border-gray-300 text-start px-5 ">
                     <Link to={`/dashboard/userInfo/${account?.employeeEmail}`}>
                     {account.employeerName}
@@ -325,7 +313,7 @@ const AllAdsAccount = () => {
   <div className="modal-box bg-white">
     <form
       onSubmit={(e) =>
-        handleUpdateTotalSpent(e, account._id, account.totalSpent, account.accountName, account.employeeEmail, account.employeerName)
+        handleUpdateTotalSpent(e, account._id, account.accountName, account.employeeEmail, account.employeerName)
       }
     >
       <h1 className="text-black font-bold text-start">Date</h1>
@@ -376,16 +364,16 @@ const AllAdsAccount = () => {
                   >
                <div className="flex justify-center gap-3">
                         <button
-                          className="text-blue-600 text-3xl"
+                          className="bg-green-700 hover:bg-blue-700 text-white px-2 py-1 rounded"
                           onClick={() => setModalData(account)}
                         >
-                          <MdEditSquare />
+                          Edit
                         </button>
                         <button
-                          className="text-start flex justify-start text-black text-3xl"
+                          className="bg-red-700 hover:bg-blue-700 text-white px-2 py-1 rounded"
                           onClick={() => handleDelete(account._id)}
                         >
-                          <MdDelete />
+                         Delete
                         </button>
                       
                       </div>
@@ -424,7 +412,8 @@ const AllAdsAccount = () => {
             <ImCross />
            </h1>
        <form onSubmit={(e) => handleUpdate(e, modalData._id)}>
-        <h1 className="text-blue-700 text-center font-bold"> <span >{modalData.accountName}</span></h1>
+        <h1 className="text-black text-center d">Old Account Name: <span className="text-blue-700 text-center font-bold" >{modalData.accountName}</span></h1>
+        
         <div className="mb-4">
              <label className="block text-gray-500">Date</label>
              <input
@@ -470,6 +459,7 @@ const AllAdsAccount = () => {
            <select
              name="status"
              defaultValue={modalData.status}
+             disabled
              className="w-full border rounded p-2 mt-1 text-black bg-white border-gray-500"
            >
              <option value="Active">Active</option>
@@ -479,14 +469,14 @@ const AllAdsAccount = () => {
    
          <div className="grid grid-cols-2 gap-3">
          <button
-             className="p-2 rounded-lg bg-red-600 text-white text-center"
+             className="p-2 hover:bg-red-700 rounded-lg bg-red-600 text-white text-center"
              onClick={() => setModalData(null)}
            >
              Close
            </button>
            <button
              type="submit"
-             className="font-avenir px-3 py-1 rounded-lg text-white bg-[#05a0db]"
+             className="font-avenir hover:bg-indigo-700 px-3 py-1 rounded-lg text-white bg-[#05a0db]"
            >
              Update
            </button>

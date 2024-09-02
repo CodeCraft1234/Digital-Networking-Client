@@ -22,7 +22,7 @@ const AdsUser = () => {
   const [employee, setEmployee] = useState([]);
   useEffect(() => {
     if (users && user) {
-      const fff = users.filter(u => u.role === 'adsAccount');
+      const fff = users.filter(u => u.role === 'contributor');
       setEmployee(fff || []);
     }
   }, [users, user]);
@@ -160,7 +160,7 @@ const AdsUser = () => {
               <tr className="bg-[#05a0db] text-white font-bold text-sm md:text-xl">
                 <td className="p-3 text-center">Total</td>
                 <td className="p-3 text-center"> $ {TSpent2.toFixed(2)}</td>
-                <td className="p-3 text-center">৳ {totalBill.toFixed(2)}</td>
+                <td className="p-3 text-center"> ৳ {totalBill.toFixed(2)}</td>
                 <td className="p-3 text-center"> ৳ {totalPayment2.toFixed(2)}</td>
                 <td className="p-3 text-center"> ৳ {totalDue.toFixed(2)}</td>
               </tr>
