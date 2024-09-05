@@ -71,27 +71,27 @@ const AdsDashboardHome = () => {
   }, [adsAccounts, totalPayment]);
 
   return (
-    <div className="my-4 mb-24">
+    <div className="mt-4 ">
       <Helmet>
         <title>Dashboard | Digital Network</title>
         <link rel="canonical" href="https://www.tacobell.com/" />
       </Helmet>
-      <div className="grid lg:grid-cols-4 text-white sm:grid-cols-2 gap-5 justify-around p-5">
+      <div className="grid lg:grid-cols-4 text-white grid-cols-2 gap-3 lg:gap-5 justify-around p-5">
         <div className="px-5 py-10 rounded-2xl bg-[#c6e529] shadow-lg text-center">
           <h2 className="text-xl">Total Spent</h2>
-          <p className="text-4xl font-bold"> $ {TSpent.toFixed(2)}</p>
+          <p className="lg:text-4xl text-sm font-bold"> $ {TSpent.toFixed(2)}</p>
         </div>
         <div className="px-5 py-10 rounded-2xl bg-[#5422c0] shadow-lg text-center">
           <h2 className="text-xl">Total Bill</h2>
-          <p className="text-4xl font-bold"> ৳ {totalBill.toFixed(2)}</p>
+          <p className="lg:text-4xl text-sm font-bold"> ৳ {totalBill.toFixed(2)}</p>
         </div>
         <div className="px-5 py-10 rounded-2xl bg-[#05a0db] shadow-lg text-center">
           <h2 className="text-xl">Total Paid</h2>
-          <p className="text-4xl font-bold"> ৳ {totalPayment.toFixed(2)}</p>
+          <p className="lg:text-4xl text-sm font-bold"> ৳ {totalPayment.toFixed(2)}</p>
         </div>
         <div className="px-5 py-10 rounded-2xl bg-[#ce1a38] shadow-lg text-center">
           <h2 className="text-xl ">Total Due</h2>
-          <p className=" text-4xl font-bold"> ৳ {totalDue.toFixed(2)}</p>
+          <p className=" lg:text-4xl text-sm font-bold"> ৳ {totalDue.toFixed(2)}</p>
         </div>
       </div>
 

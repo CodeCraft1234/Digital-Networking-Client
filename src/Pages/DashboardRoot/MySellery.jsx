@@ -98,7 +98,7 @@ const MySellery = () => {
   };
 
   return (
-    <div className='m-5'>
+    <div className='m-5 mt-7'>
        <Helmet>
         <title>E.M Sellery | Digital Network </title>
         <link rel="canonical" href="https://www.example.com/" />

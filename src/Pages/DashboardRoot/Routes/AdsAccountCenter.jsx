@@ -235,13 +235,13 @@ const handleUpdate2 = (id, newStatus) => {
        }
     
      
- <div className="mb-5 flex justify-end">
+ <div className="mb-5 flex justify-center lg:justify-end">
                 <input
                     type="text"
                     placeholder="Search by account name..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="border bg-white text-black border-black p-2 rounded"
+                    className="border w-full lg:w-auto bg-white text-black border-black p-2 rounded"
                 />
             </div>
  

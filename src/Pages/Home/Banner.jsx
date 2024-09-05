@@ -107,12 +107,12 @@ const Banner = () => {
       </Helmet>
 
       {
-        ddd?.role === 'admin' && <div className="grid grid-cols-2  sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-5 mt-5 mb-5">
+        ddd?.role === 'admin' && <div className="grid grid-cols-2  sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 lg:gap-5 mt-5 mb-5">
         <div className="balance-card bg-white rounded-2xl p-5 text-center shadow-xl transition-transform transform hover:scale-105 border-0">
           <img className="balance-card-img" src="https://i.ibb.co/bHMLyvM/b-Kash-Merchant.png" alt="bKash" />
           <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700">
             <span className="text-lg lg:text-2xl font-extrabold">৳</span>{
-                                            employee.reduce((total, userr) => total + parseFloat(calculateTotalByPaymentMethod(userr.email, 'bkashMarchent')), 0).toFixed(2)
+                                            employee.reduce((total, userr) => total + parseFloat(calculateTotalByPaymentMethod(userr.email, 'bkashMarchent')), 0)
                                         }
           </p>
         </div>
@@ -120,7 +120,7 @@ const Banner = () => {
           <img className="balance-card-img" src="https://i.ibb.co/520Py6s/bkash-1.png" alt="bKash" />
           <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700">
             <span className="text-lg lg:text-2xl font-extrabold">৳</span>{
-                                            employee.reduce((total, userr) => total + parseFloat(calculateTotalByPaymentMethod(userr.email, 'bkashPersonal')), 0).toFixed(2)
+                                            employee.reduce((total, userr) => total + parseFloat(calculateTotalByPaymentMethod(userr.email, 'bkashPersonal')), 0)
                                         }
           </p>
         </div>
@@ -128,7 +128,7 @@ const Banner = () => {
           <img className="balance-card-img" src="https://i.ibb.co/JQBQBcF/nagad-marchant.png" alt="Nagad" />
           <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700">
             <span className="text-lg lg:text-2xl font-extrabold">৳</span>{
-                                            employee.reduce((total, userr) => total + parseFloat(calculateTotalByPaymentMethod(userr.email, 'nagadPersonal')), 0).toFixed(2)
+                                            employee.reduce((total, userr) => total + parseFloat(calculateTotalByPaymentMethod(userr.email, 'nagadPersonal')), 0)
                                         }
           </p>
         </div>
@@ -136,7 +136,7 @@ const Banner = () => {
           <img className="balance-card-img" src="https://i.ibb.co/QkTM4M3/rocket.png" alt="Rocket" />
           <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700">
             <span className="text-lg lg:text-2xl font-extrabold">৳</span>{
-                                            employee.reduce((total, userr) => total + parseFloat(calculateTotalByPaymentMethod(userr.email, 'rocketPersonal')), 0).toFixed(2)
+                                            employee.reduce((total, userr) => total + parseFloat(calculateTotalByPaymentMethod(userr.email, 'rocketPersonal')), 0)
                                         }
           </p>
         </div>
@@ -144,7 +144,7 @@ const Banner = () => {
           <img className="balance-card-img" src="https://i.ibb.co/PZc0P4w/brac-bank-seeklogo.png" alt="Rocket" />
           <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700">
             <span className="text-lg lg:text-2xl font-extrabold">৳</span>{
-                                            employee.reduce((total, userr) => total + parseFloat(calculateTotalByPaymentMethod(userr.email, 'bank')), 0).toFixed(2)
+                                            employee.reduce((total, userr) => total + parseFloat(calculateTotalByPaymentMethod(userr.email, 'bank')), 0)
                                         }
           </p>
         </div>
@@ -171,7 +171,9 @@ const Banner = () => {
                   </th>
                  
                     <th className="p-3 text-center">Employee Name</th>
-                    <th className="p-3 text-center">
+                  {
+                    ddd?.role === 'admin' && <>
+                                        <th className="p-3 text-center">
                       <img className="w-18 h-9 mx-auto" src="https://i.ibb.co/bHMLyvM/b-Kash-Merchant.png" alt="bKash Merchant" />
                     </th>
                     <th className="p-3 text-center">
@@ -186,6 +188,8 @@ const Banner = () => {
                     <th className="p-3 text-center">
                       <img className="w-28 h-10 mx-auto" src="https://i.ibb.co/PZc0P4w/brac-bank-seeklogo.png" alt="bank" />
                     </th>
+                    </>
+                  }
                     <th className="p-3 text-center">
                       <img className="w-28 h-8 mx-auto" src="https://i.ibb.co/3WVZGdz/PAYO-BIG-aa26e6e0.png" alt="Payoneer" />
                     </th>
@@ -216,7 +220,9 @@ const Banner = () => {
           </>
         )}
       </td>
-      <td className="p-3 border border-gray-300 text-center">
+      {
+                    ddd?.role === 'admin' && <>
+                     <td className="p-3 border border-gray-300 text-center">
         ৳ {calculateTotalByPaymentMethod2(userr.email, 'bkashMarchent') - calculateTotalByPaymentMethod(userr.email, 'bkashMarchent')}
       </td>
       <td className="p-3 border border-gray-300 text-center">
@@ -231,6 +237,10 @@ const Banner = () => {
       <td className="p-3 border border-gray-300 text-center">
         ৳ {calculateTotalByPaymentMethod2(userr.email, 'bank') - calculateTotalByPaymentMethod(userr.email, 'bank')}
       </td>
+                    </>
+
+      }
+     
       <td className="p-3 border border-gray-300 text-center">
         <div className="relative group flex items-center justify-center">
           <h1 className="ml-10">$ {userr?.payoneer}</h1>
@@ -281,22 +291,30 @@ const Banner = () => {
 
         <td className="p-3 text-center font-bold"></td>
         <td className="p-3 text-center font-bold">Total</td>
+
+
+        {
+                    ddd?.role === 'admin' && <>
+                     <td className="p-3 text-center font-bold">৳ {
+                                            employee.reduce((total, userr) => total + parseFloat(calculateTotalByPaymentMethod(userr.email, 'bkashMarchent')), 0)
+                                        }</td>
+                                        <td className="p-3 text-center font-bold">৳ {
+                                            employee.reduce((total, userr) => total + parseFloat(calculateTotalByPaymentMethod(userr.email, 'bkashPersonal')), 0)
+                                        }</td>
+                                        <td className="p-3 text-center font-bold">৳ {
+                                            employee.reduce((total, userr) => total + parseFloat(calculateTotalByPaymentMethod(userr.email, 'nagadPersonal')), 0)
+                                        }</td>
+                                        <td className="p-3 text-center font-bold">৳ {
+                                            employee.reduce((total, userr) => total + parseFloat(calculateTotalByPaymentMethod(userr.email, 'rocketPersonal')), 0)
+                                        }</td>
+                                        <td className="p-3 text-center font-bold">৳ {
+                                            employee.reduce((total, userr) => total + parseFloat(calculateTotalByPaymentMethod(userr.email, 'bank')), 0)
+                                        }</td>
+                    </>
+
+        }
   
-                                       <td className="p-3 text-center font-bold">৳ {
-                                            employee.reduce((total, userr) => total + parseFloat(calculateTotalByPaymentMethod(userr.email, 'bkashMarchent')), 0).toFixed(2)
-                                        }</td>
-                                        <td className="p-3 text-center font-bold">৳ {
-                                            employee.reduce((total, userr) => total + parseFloat(calculateTotalByPaymentMethod(userr.email, 'bkashPersonal')), 0).toFixed(2)
-                                        }</td>
-                                        <td className="p-3 text-center font-bold">৳ {
-                                            employee.reduce((total, userr) => total + parseFloat(calculateTotalByPaymentMethod(userr.email, 'nagadPersonal')), 0).toFixed(2)
-                                        }</td>
-                                        <td className="p-3 text-center font-bold">৳ {
-                                            employee.reduce((total, userr) => total + parseFloat(calculateTotalByPaymentMethod(userr.email, 'rocketPersonal')), 0).toFixed(2)
-                                        }</td>
-                                        <td className="p-3 text-center font-bold">৳ {
-                                            employee.reduce((total, userr) => total + parseFloat(calculateTotalByPaymentMethod(userr.email, 'bank')), 0).toFixed(2)
-                                        }</td>
+                                      
             <td className="p-3 text-center font-bold">$ {payoneerTotal}</td>
             <td className="p-3 text-center font-bold">৳ {calculateTotalThreshold()}</td>
       

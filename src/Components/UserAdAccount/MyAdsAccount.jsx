@@ -1,42 +1,70 @@
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import useAdsAccount from "../../Hook/useAdAccount";
 import UseAxiosPublic from "../../Axios/UseAxiosPublic";
-// import { toast } from "react-toastify";
-import Swal from 'sweetalert2'
-import { AuthContext } from "../../Security/AuthProvider";
 import useUsers from "../../Hook/useUsers";
 import { Helmet } from "react-helmet-async";
 import { toast, ToastContainer } from "react-toastify";
-import { MdDelete, MdEditSquare } from "react-icons/md";
 import { ImCross } from "react-icons/im";
 
-const UserAdAccount = ({email}) => {
-
-
-  const { user } = useContext(AuthContext);
+const MyAdsAccount = ({email}) => {
   const [users] = useUsers();
   const [ddd, setDdd] = useState(null);
-  console.log(ddd);
-
-  useEffect(() => {
-      if (users && user) {
-          const fff = users.find(u => u.email === email);
-          console.log(fff);
-          setDdd(fff || {}); // Update state with found user or an empty object
-      }
-  }, [users, user]);
-
-  
-
+  const [currentTotal,setCurrentTotal]=useState(0)
+  const [tSpent,setthreshold]=useState(0)
+  const [TSpent,setTSpent]=useState(0)
   const [adsAccount, refetch] = useAdsAccount();
   const [adsAccounts, setAdsAccounts] = useState([]);
+  const [modalData, setModalData] = useState(null);
+  const AxiosPublic=UseAxiosPublic()
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const initialTab = localStorage.getItem("activeTabMyadsAccountStatuss") || "Active";
+  const [selectedStatus, setSelectedStatus] = useState(initialTab);
+    
+  const changeTab = (tab) => {
+    setSelectedStatus(tab);
+    localStorage.setItem("activeTabMyadsAccountStatuss", tab); 
+  };
 
   useEffect(() => {
-    const filterdata = adsAccount.filter((m) => m.employeeEmail === email);
-    console.log(filterdata);
-    setAdsAccounts(filterdata);
+          const fff = users.find(u => u.email === email);
+          setDdd(fff || {}); 
+          const filterdata = adsAccount.filter((m) => m.employeeEmail === email);
+          setAdsAccounts(filterdata);
+  }, [users, email,adsAccount]);
 
-  }, [adsAccount, email]);
+
+
+  useEffect(() => {
+ 
+    const total = adsAccounts.reduce(
+      (acc, campaign) => acc + parseFloat(campaign.currentBallence),
+      0
+    );
+    setCurrentTotal(total);
+  
+    const totalBill = adsAccounts.reduce(
+      (acc, campaign) => acc + parseFloat(campaign.threshold),
+      0
+    );
+    setthreshold(totalBill);
+  
+    const totalBilll = adsAccounts.reduce(
+      (acc, campaign) => acc + parseFloat(campaign.totalSpent),
+      0
+    );
+    setTSpent(totalBilll);
+  
+  }, [adsAccounts]);
+
+
+  const sortedAdsAccounts = adsAccount.filter((account) =>
+    (selectedStatus ? account.status === selectedStatus : true) &&
+    (searchQuery ? account.accountName.toLowerCase().includes(searchQuery.toLowerCase()) : true)
+  ).sort((a, b) => a.accountName.localeCompare(b.accountName));
+
+
+
 
   const handleAddAdsAcount = (e) => {
     e.preventDefault();
@@ -49,7 +77,6 @@ const UserAdAccount = ({email}) => {
     const totalSpent=0
     const status='Active'
 
-
     const data = { accountName,totalSpent,currentBallence,threshold, paymentDate,status, employeeEmail,employeerName };
 
     AxiosPublic.post("/adsAccount", data).then((res) => {
@@ -61,35 +88,10 @@ const UserAdAccount = ({email}) => {
     });
   };
 
-const AxiosPublic=UseAxiosPublic()
 
-const [currentTotal,setCurrentTotal]=useState(0)
-const [tSpent,setthreshold]=useState(0)
- const [TSpent,setTSpent]=useState(0)
 
-useEffect(() => {
- 
-  const total = adsAccounts.reduce(
-    (acc, campaign) => acc + parseFloat(campaign.currentBallence),
-    0
-  );
-  setCurrentTotal(total);
 
-  const totalBill = adsAccounts.reduce(
-    (acc, campaign) => acc + parseFloat(campaign.threshold),
-    0
-  );
-  setthreshold(totalBill);
 
-  const totalBilll = adsAccounts.reduce(
-    (acc, campaign) => acc + parseFloat(campaign.totalSpent),
-    0
-  );
-  setTSpent(totalBilll);
-
-}, [adsAccounts]);
-
-const [modalData, setModalData] = useState(null);
 
 const handleUpdate = (e, id) => {
   e.preventDefault();
@@ -115,24 +117,7 @@ const handleDelete=(id)=>[
       refetch()
       })
 ]
-const [searchQuery, setSearchQuery] = useState("");
-// Filter ads accounts based on the search query
-const filteredAdsAccounts = adsAccounts.filter(account =>
-  account.accountName.toLowerCase().includes(searchQuery.toLowerCase())
-);
 
-
-const filteredAdsAccountss = filteredAdsAccounts
-.filter(account =>
-  account.accountName.toLowerCase().includes(searchQuery.toLowerCase())
-)
-.sort((a, b) => (a.status === "Active" ? -1 : 1)); // Sort "Active" status first
-
-const sortedAdsAccounts = filteredAdsAccountss.sort((a, b) => {
-  return a.accountName.localeCompare(b.accountName);
-});
-
-console.log(sortedAdsAccounts);
 
 
 const handleUpdate2 = (id, newStatus) => {
@@ -154,7 +139,7 @@ const handleUpdate2 = (id, newStatus) => {
     <div className=" px-5 dark:text-green-800">
        <ToastContainer />
        <Helmet>
-        <title>Ads Account | Digital Network </title>
+        <title>My Ads Account | Digital Network </title>
         <link rel="canonical" href="https://www.example.com/" />
       </Helmet>
      
@@ -217,8 +202,22 @@ const handleUpdate2 = (id, newStatus) => {
       </div>
     </dialog>
   </div>
-  
-  <div className="flex w-full sm:w-auto justify-end">
+
+  <div className="flex justify-end items-center gap-3">
+    <div className="flex text-sm lg:mb-0  justify-center">
+                <select
+                  name="status"
+                  value={selectedStatus}
+                  onChange={(e) => changeTab(e.target.value)}
+                  className="border text-sm bg-white px-4 text-black border-black rounded p-2 "
+                >
+                  <option value="">All Status</option>
+                  <option value="Active">Active</option>
+                  <option value="Disable">Disable</option>
+                </select>
+              </div>
+ 
+    <div className="flex w-full sm:w-auto justify-end">
     <input
       type="text"
       placeholder="Search by account name..."
@@ -227,6 +226,9 @@ const handleUpdate2 = (id, newStatus) => {
       className="rounded-lg placeholder-black border border-black p-2 text-black bg-white w-full sm:w-auto"
     />
   </div>
+  </div>
+  
+
 </div>
 
     
@@ -240,7 +242,7 @@ const handleUpdate2 = (id, newStatus) => {
             <th className="p-3">Ad Account Name</th>
             <th className="p-3">Current Balance</th>
             <th className="p-3">Threshold</th>
-            <th className="p-3">Spent</th>
+            {/* <th className="p-3">Spent</th> */}
             <th className="p-3">Status</th>
        
    
@@ -291,7 +293,7 @@ const handleUpdate2 = (id, newStatus) => {
                   </td>
               <td className="p-3 border border-gray-300  text-center">$ {account.currentBallence}</td>
               <td className="p-3 border border-gray-300 text-center">$ {account.threshold}</td>
-              <td className="p-3 border border-gray-300 text-center">$ {account.totalSpent}</td>
+              {/* <td className="p-3 border border-gray-300 text-center">$ {account.totalSpent}</td> */}
               <td className={`p-3 border  text-center border-gray-300  ${
                       account.status === "Active"
                         ? "text-green-700 font-bold"
@@ -330,7 +332,7 @@ const handleUpdate2 = (id, newStatus) => {
     </td>
     <td className="p-3  border-gray-300 text-center">$ {currentTotal.toFixed(2)}</td>
     <td className="p-3  text-center">$ {tSpent.toFixed(2)}</td> 
-    <td className="p-3  text-center">$ {TSpent.toFixed(2)}</td> 
+    {/* <td className="p-3  text-center">$ {TSpent.toFixed(2)}</td>  */}
     <td className="p-3  text-center"></td> 
   
 
@@ -433,4 +435,4 @@ const handleUpdate2 = (id, newStatus) => {
   );
 };
 
-export default UserAdAccount;
+export default MyAdsAccount;

@@ -1,5 +1,5 @@
 
-import CampaignTable2 from "./CampaignTable2";
+import CampaignTable2 from "./EmployeeHome";
 import Banner from "./Banner";
 
 

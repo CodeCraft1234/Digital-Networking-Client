@@ -107,53 +107,53 @@ const AllSummery = () => {
   const totalAdminPaySum = employeeData.reduce((acc, data) => acc + data.totalAdminPay, 0);
 
   return (
-    <div className='m-5'>
+    <div className='m-3 lg:m-5'>
       <Helmet>
         <title>Activity | Digital Network </title>
         <link rel="canonical" href="https://www.example.com/" />
       </Helmet>
 
-      <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-6 text-black sm:grid-cols-2 gap-5 justify-around ">
+      <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-6 text-black sm:grid-cols-2 gap-3 lg:gap-5 justify-around ">
         <div className="px-5 py-10 rounded-2xl  bg-[#91a33a] text-white shadow-lg text-center">
-          <h2 className="text-xl font-bold">Total Spent</h2>
-          <p className="text-2xl font-bold mt-2"> $ {totalSpentSum.toFixed(2)}</p>
+          <h2 className="lg:text-xl text-sm font-bold">Total Spent</h2>
+          <p className="lg:text-2xl text-xm font-bold mt-2"> $ {totalSpentSum.toFixed(2)}</p>
         </div>
 
         <div className="px-5 py-10 rounded-2xl bg-[#5422c0] text-white shadow-lg text-center">
-          <h2 className="text-xl font-bold">Total BDT</h2>
-          <p className="text-2xl font-bold mt-2">
-             <span className="text-2xl font-extrabold">৳</span> {totalBillSum.toFixed(2)}
+          <h2 className="lg:text-xl text-sm  font-bold">Total BDT</h2>
+          <p className="lg:text-2xl text-xm font-bold mt-2">
+             <span className="lg:text-2xl text-xmfont-extrabold">৳</span> {totalBillSum.toFixed(2)}
           </p>
         </div>
 
         <div className="px-5 py-10 rounded-2xl  bg-[#05a0db] text-white shadow-lg text-center">
-          <h2 className="text-xl font-bold">Client Pay</h2>
-          <p className="text-2xl font-bold mt-2"> <span className="text-2xl font-extrabold">৳</span>{totalClientPaySum.toFixed(2)} </p>
+          <h2 className="lg:text-xl text-sm font-bold">Client Pay</h2>
+          <p className="lg:text-2xl text-xm font-bold mt-2"> <span className="lg:text-2xl text-xm font-extrabold">৳</span>{totalClientPaySum.toFixed(2)} </p>
         </div>
 
         <div className="px-5 py-10 rounded-2xl  bg-[#ce1a38] text-white shadow-lg text-center">
-          <h2 className="text-xl font-bold">Employee Pay</h2>
-          <p className="text-2xl font-bold mt-2">
-          <span className="text-2xl font-extrabold">৳</span> {totalAdminPaySum.toFixed(2)}
+          <h2 className="lg:text-xl text-sm font-bold">Employee Pay</h2>
+          <p className="lg:text-2xl text-xm font-bold mt-2">
+          <span className="lg:text-2xl text-xm font-extrabold">৳</span> {totalAdminPaySum.toFixed(2)}
           </p>
         </div>
         <div className="px-5 py-10 rounded-2xl  bg-[#ce1a38] text-white shadow-lg text-center">
-          <h2 className="text-xl font-bold">Employee Due</h2>
-          <p className="text-2xl font-bold mt-2">
-          <span className="text-2xl font-extrabold">৳</span> {(totalClientPaySum - totalAdminPaySum).toFixed(2)}
+          <h2 className="lg:text-xl text-sm font-bold">Employee Due</h2>
+          <p className="lg:text-2xl text-xm font-bold mt-2">
+          <span className="lg:text-2xl text-xm font-extrabold">৳</span> {(totalClientPaySum - totalAdminPaySum).toFixed(2)}
           </p>
         </div>
         <div className="px-5 py-10 rounded-2xl  bg-[#ce1a38] text-white shadow-lg text-center">
-          <h2 className="text-xl font-bold">Client Due</h2>
-          <p className="text-2xl font-bold mt-2">
-          <span className="text-2xl font-extrabold">৳</span> {(totalBillSum - totalClientPaySum).toFixed(2)}
+          <h2 className="lg:text-xl text-sm font-bold">Client Due</h2>
+          <p className="lg:text-2xl text-xm font-bold mt-2">
+          <span className="lg:text-2xl text-xm font-extrabold">৳</span> {(totalBillSum - totalClientPaySum).toFixed(2)}
           </p>
         </div>
       </div>
 
-      <div className="flex flex-col mt-5 ml-1 justify-start text-start items-start">
+      <div className="flex mt-3 lg:mt-5 ml-1 lg:justify-end justify-center ">
         <select
-          className="border bg-white text-black border-gray-400 rounded p-2 mt-1"
+          className="border bg-white text-black lg:w-56 w-full border-gray-400 rounded p-2 mt-1"
           value={selectedEmployee}
           onChange={(e) => changeTab(e.target.value)}
         >
@@ -165,7 +165,7 @@ const AllSummery = () => {
           ))}
         </select>
       </div>
-      <div className="overflow-x-auto text-black text-center mt-5 rounded-xl border border-gray-600">
+      <div className="overflow-x-auto text-black text-center mt-3 lg:mt-5 rounded-xl border border-gray-600">
   <table className="min-w-full text-center bg-white">
     <thead className="bg-[#05a0db] text-white">
       <tr>

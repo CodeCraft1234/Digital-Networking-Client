@@ -1,105 +1,41 @@
-import React from 'react';
 import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../../Security/AuthProvider";
-import { Form, useLoaderData, useParams } from "react-router-dom";
+import { Form, useParams } from "react-router-dom";
 import UseAxiosPublic from "../../Axios/UseAxiosPublic";
 import useCampaings from "../../Hook/useCampaign";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import useClients from "../../Hook/useClient";
 import useUsers from "../../Hook/useUsers";
 import useAdsAccount from "../../Hook/useAdAccount";
-import PaymentHistry from "./ClientPaymentHistry";
-import axios from "axios";
-import Swal from "sweetalert2";
-import { FaEdit } from "react-icons/fa";
-import { MdDelete, MdEditSquare } from "react-icons/md";
-import { Helmet } from "react-helmet-async";
 
 const ClientCampaign = () => {
     const { user } = useContext(AuthContext);
-    const userr = useLoaderData();
     const param = useParams();
-    console.log(param?.email);
-  
     const [clients]=useClients()
     const [datas,setdatas]=useState()
-    console.log(datas);
-    useEffect(() => {
-    if (param?.email) {
-        const realdata = clients.find((m) => m.clientEmail === param?.email);
-        setdatas(realdata)
-      }
-    }, [param?.email, clients]);
-  
     const AxiosPublic = UseAxiosPublic();
-    const [data, setData] = useState({});
-  
     const [campaign, refetch] = useCampaings();
-  
     const [totalSpent, setTotalSpent] = useState(0);
     const [totalBills, setTotalBills] = useState(0);
-    const [dollerRate, setDollerRate] = useState(0);
-    const [totalBudged, setTotalBudged] = useState(0);
-    const [totalPaymeent, setTotalPayment] = useState([]);
-    const [Histry, setHistry] = useState([]);
-    console.log(Histry);
-  
     const [users] = useUsers();
     const [ddd, setDdd] = useState(null);
-  
-    useEffect(() => {
-      if (users && user) {
-        const fff = users.find((u) => u.email === user?.email);
-        console.log(fff);
-        setDdd(fff || {}); 
-      }
-    }, [users, user]);
-  
-    console.log(ddd?.role);
-  
-    useEffect(() => {
-      AxiosPublic.get(
-        `https://digital-networking-server.vercel.app/users/${userr.email}`
-      )
-        .then((res) => {
-          console.log(res.data);
-          setData(res.data);
-        })
-        .catch((error) => {
-          console.error("Error fetching user data:", error);
-          toast.error("Failed to fetch user data");
-        });
-  
-      AxiosPublic.get(`https://digital-networking-server.vercel.app/MPayment`)
-        .then((res) => {
-          const mdata = res.data;
-          console.log(mdata);
-  
-          const realdata = mdata.filter((m) => m.clientEmail === param?.email);
-          setHistry(realdata);
-          const totalBill = realdata.reduce(
-            (acc, campaign) => acc + parseFloat(campaign.amount),
-            0
-          );
-          setTotalPayment(totalBill);
-        })
-        .catch((error) => {
-          console.error("Error fetching payment data:", error);
-          toast.error("Failed to fetch payment data");
-        });
-    }, [param?.email]);
-  
-  
-  
     const [dataa2, setData2] = useState([]);
-    console.log(param?.email);
+    const [adsAccount] = useAdsAccount();
+    const [adsAccounts, setAdsAccounts] = useState([]);
+
     useEffect(() => {
+        const realdata = clients.find((m) => m.clientEmail === param?.email);
+        setdatas(realdata)
+
+        const fff = users.find((u) => u.email === user?.email);
+        setDdd(fff || {}); 
+
       const filtered = campaign.filter(
         (campaign) => campaign.clientEmail === param?.email
       );
       setData2(filtered);
-    
+
       const totalBill = filtered.reduce(
         (acc, campaign) => acc + parseFloat(campaign.tSpent) * parseFloat(campaign.dollerRate),
         0
@@ -111,25 +47,15 @@ const ClientCampaign = () => {
         0
       );
       setTotalSpent(totalSpent);
-    
-      const dollerRate = filtered.reduce(
-        (acc, campaign) => acc + parseFloat(campaign.dollerRate),
-        0
+
+      const filterdata = adsAccount.filter(
+        (m) => m.employeeEmail === user?.email
       );
-      const averageDollerRate = dollerRate / filtered.length;
-      setDollerRate(averageDollerRate);
+      setAdsAccounts(filterdata);
+
+    }, [clients,users, user,campaign, param?.email,adsAccount, user?.email]);
+
     
-      const totalBudged = filtered.reduce(
-        (acc, campaign) => acc + parseFloat(campaign.tBudged),
-        0
-      );
-      setTotalBudged(totalBudged);
-    }, [campaign, param?.email]);
-    
-  
-  
-  
-  
     const handleUpdate = (e, id) => {
       e.preventDefault();
       const tSpent = e.target.totalSpent.value;
@@ -185,53 +111,23 @@ const ClientCampaign = () => {
       };
       console.log(data);
   
-      AxiosPublic.post(
-        "https://digital-networking-server.vercel.app/campaigns",
-        data
-      ).then((res) => {
+      AxiosPublic.post("/campaigns",data)
+      .then((res) => {
         console.log(res.data);
+        document.getElementById(`my_modal_2`).close();
         refetch();
-        toast.success("add successful");
       });
     };
-  
-    const [dataa22, setData22] = useState([]);
-    console.log(dataa2);
-  
-    useEffect(() => {
-      const filtered = clients.filter(
-        (campaign) => campaign.email === user?.email
-      );
-      console.log(filtered);
-      setData22(filtered);
-    }, [clients, user?.email]);
   
     const handledelete = (id) => {
           AxiosPublic.delete(`/campaigns/${id}`).then((res) => {
             refetch();
             toast.success("delete successful");
           });
-  
        }
-   
-  
-    const [adsAccount, refetchh] = useAdsAccount();
-    const [adsAccounts, setAdsAccounts] = useState([]);
-    console.log(adsAccounts);
-  
-    useEffect(() => {
-      const filterdata = adsAccount.filter(
-        (m) => m.employeeEmail === user?.email
-      );
-      console.log(filterdata);
-      setAdsAccounts(filterdata);
-    }, [adsAccount, user?.email]);
-  
-  
-  
+
     const handleUpdate2 = (id, newStatus) => {
       const body = { status: newStatus };
-  
       AxiosPublic.patch(`https://digital-networking-server.vercel.app/campaings/status/${id}`, body)
         .then((res) => {
           console.log(res.data);
@@ -242,15 +138,15 @@ const ClientCampaign = () => {
           console.error("Error updating campaign:", error);
           toast.error("Failed to update campaign");
         });
-    };
+       };
+
     return (
         <div>
             <div className="p-4">
         
-        <div className="flex  text-start justify-start items-center ">
   <div>
     <button
-      className="font-avenir hover:bg-indigo-700 px-6 mx-auto py-2 bg-[#05a0db] rounded-lg text-white"
+      className="font-avenir hover:bg-indigo-700 px-6 lg:w-auto w-full mx-auto  py-2 bg-[#05a0db] rounded-lg text-white"
       onClick={() => document.getElementById("my_modal_2").showModal()}
     >
       Add Campaign
@@ -292,8 +188,6 @@ const ClientCampaign = () => {
                   className="w-full border border-gray-600 text-black bg-white rounded p-2 mt-1"
                 />
               </div>
-             
-              
               <div className="mb-4">
                 <label className="block text-black">Ads Account</label>
                 <select
@@ -354,7 +248,6 @@ const ClientCampaign = () => {
               </div>
             </div>
 
-            {/* Buttons at the bottom in a two-grid layout */}
             <div className="grid grid-cols-2 gap-3 mt-4">
             <button
                 type="button"
@@ -376,26 +269,21 @@ const ClientCampaign = () => {
       </div>
     </dialog>
   </div>
-</div>
-
 
         <div className="overflow-x-auto text-black rounded-xl mt-5">
           <table className="min-w-full bg-white">
             <thead className="bg-[#05a0db] text-white">
               <tr>
-                <th className="p-3">OFF/ON</th>
-                
+                <th className="p-3">OFF/ON</th>    
                 <th className="p-3">Date</th>
                 <th className="p-3">Campaign Name</th>
                 <th className="p-3">Page Name</th>
                 <th className="p-3">Ads Account</th>
-
                 <th className="p-3">T. Budget</th>
                 <th className="p-3">T. Spent</th>
                 <th className="p-3">Total Bill</th>
                 <th className="p-3">Status</th>
                 <th className="p-3">Action</th>
-               
               </tr>
             </thead>
             <tbody>
@@ -482,9 +370,6 @@ const ClientCampaign = () => {
   <dialog id={`modal_${work._id}`} className="modal">
     <div className="modal-box bg-white text-black">
       <form onSubmit={(e) => handleUpdate(e, work._id)}>
-      
-
-        
         <div className="mb-4">
           <label className="block text-left text-gray-700">
             Campaign Name
@@ -611,8 +496,6 @@ const ClientCampaign = () => {
                   <span className="text-md mr-1 font-extrabold">৳</span>{" "}
                   {totalBills}
                 </td>
-
-
                 {ddd?.role === "admin" ? (
                   <>
                     <td className="p-3 text-center"></td>
@@ -622,11 +505,8 @@ const ClientCampaign = () => {
                   <>
                    <td className="p-3 text-center"></td>
                   <td className="p-3 text-center"></td>
-                
                   </>
-                 
                 )}
-                 
               </tr>
             </tbody>
           </table>

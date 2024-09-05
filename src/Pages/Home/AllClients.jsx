@@ -120,17 +120,17 @@ const AllClients = ({}) => {
   };
 
   return (
-    <div className="mt-5">
+    <div className="mt-10">
       <Helmet>
         <title>All Clients | Digital Network </title>
         <link rel="canonical" href="https://www.example.com/" />
       </Helmet>
 
-      <div className="flex gap-5 mr-5 justify-end items-center">
-        <div className=" ">
+      <div className="lg:flex gap-5 mr-5 lg:justify-end  items-center">
+        <div className="flex justify-center ">
           <select
             name="email"
-            className="border bg-white border-black text-black rounded p-2 mt-1"
+            className="border bg-white w-full ml-5 lg:ml-0 border-gray-700 text-black rounded p-2 mt-1"
             onChange={(e) => activeTab(e.target.value)}
             value={selectedClient}
           >
@@ -142,11 +142,11 @@ const AllClients = ({}) => {
             ))}
           </select>
         </div>
-        <div className="flex justify-end">
+        <div className="flex justify-center mt-5 lg:mt-0">
           <input
             type="text"
             placeholder="Search by Phone..."
-            className="rounded-lg bg-white placeholder-black border-2 border-gray-700 px-5 p-2 text-black text-sm"
+            className="rounded-lg bg-white w-full ml-5 lg:ml-0 placeholder-black border border-gray-700 px-5 p-2 text-black text-sm"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />

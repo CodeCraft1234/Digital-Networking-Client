@@ -8,18 +8,33 @@ import useAdsPayment from "../../Hook/useAdsPayment";
 import { Link } from "react-router-dom";
 
 const AllAdsPayments = () => {
+
+
+
+
   const [adsPayment, refetch] = useAdsPayment();
   const AxiosPublic = UseAxiosPublic();
   const [totalPayment, setTotalPayment] = useState(0);
   const [users] = useUsers();
   const { user } = useContext(AuthContext);
   const [filteredClients, setFilteredClients] = useState([]);
-  const [sortMonth, setSortMonth] = useState(new Date().getMonth() + 1); // Default to current month
+  const [sortMonth, setSortMonth] = useState(new Date().getMonth() + 1); 
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
   const [selectedEmployee, setSelectedEmployee] = useState("");
   const [selectedDate, setSelectedDate] = useState("");
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
+  const [contributors, setContributors] = useState([]);
+  const [activeDropdown, setActiveDropdown] = useState(null);
+  const [selectedPayment, setSelectedPayment] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [showAll, setShowAll] = useState(false);
+  const [itemsToShow, setItemsToShow] = useState(40);
+  const [bkashMarcent, setBkashMarcentTotal] = useState(0);
+  const [nagadPersonal, setNagadPersonalTotal] = useState(0);
+  const [bkashPersonal, setBkashPersonalTotal] = useState(0);
+  const [rocketPersonal, setRocketPersonalTotal] = useState(0);
+  const [bankTotal, setBankTotal] = useState(0);
 
   const [ddd, setDdd] = useState(null);
 
@@ -29,72 +44,111 @@ const AllAdsPayments = () => {
           setDdd(datas); 
       }
   }, [users, user]);
-
+  
+  // Set contributors
   useEffect(() => {
-    if (adsPayment) {
-      setFilteredClients(adsPayment);
-    }
-  }, [adsPayment]);
-
+    setContributors(users?.filter((u) => u.role === 'contributor') || []);
+  }, [users, user]);
+  
+  // Set filtered clients
+  useEffect(() => setFilteredClients(adsPayment || []), [adsPayment]);
+  
   useEffect(() => {
-    let filtered = adsPayment;
-
-    if (selectedEmployee) {
-      filtered = filtered.filter((c) => c.employeeEmail === selectedEmployee);
-    }
-
-    if (sortMonth) {
-      filtered = filtered.filter((c) => {
-        const month = new Date(c.date).getMonth() + 1;
-        return month === parseInt(sortMonth);
-      });
-    }
-
-    if (selectedDate) {
-      filtered = filtered.filter((c) => {
-        const paymentDate = new Date(c.date);
-        const selected = new Date(selectedDate);
-        return (
-          paymentDate.getDate() === selected.getDate() &&
-          paymentDate.getMonth() === selected.getMonth() &&
-          paymentDate.getFullYear() === selected.getFullYear()
-        );
-      });
-    }
-
+    const filtered = adsPayment.filter((payment) => {
+      const paymentDate = new Date(payment.date);
+  
+      return (
+        (selectedEmployee === 'all' || selectedEmployee === payment.employeeEmail) &&
+        (sortMonth === 'all' || paymentDate.getMonth() + 1 === parseInt(sortMonth)) &&
+        (selectedDate ? paymentDate.toDateString() === new Date(selectedDate).toDateString() : true) &&
+        (selectedCategory ? payment.paymentMethod.toLowerCase().includes(selectedCategory.toLowerCase()) : true) &&
+        (selectedYear ? paymentDate.getFullYear() === parseInt(selectedYear) : true)
+      );
+    });
+  
     setFilteredClients(filtered);
-  }, [selectedEmployee, sortMonth, selectedDate, adsPayment]);
-
+  }, [selectedEmployee, sortMonth, selectedDate, selectedCategory, selectedYear, adsPayment]);
+  
+  
+  // Search and filter by category
   const filteredItems = filteredClients.filter((item) =>
     item.paymentMethod.toLowerCase().includes(searchQuery.toLowerCase())
   );
-
-  const filteredByCategory = selectedCategory 
-    ? filteredItems.filter(
-        (item) =>
-          item.status === selectedCategory
-      )
-    : filteredItems;
-
+  const filteredByCategory = selectedCategory ? filteredItems.filter((item) => item.status === selectedCategory) : filteredItems;
+  
+  // Calculate total payment
   useEffect(() => {
-    const totalBill = filteredByCategory.reduce(
-      (acc, campaign) => acc + parseFloat(campaign.payAmount),
-      0
-    );
-    setTotalPayment(totalBill);
+    setTotalPayment(filteredByCategory.reduce((acc, campaign) => acc + parseFloat(campaign.payAmount), 0));
   }, [filteredByCategory]);
-
-
-  const years = Array.from({ length: 31 }, (_, i) => 2020 + i);
-
-  // Filter employee payments by selected year
+  
+  // Filter by year
   useEffect(() => {
-    const filteredByYear =adsPayment.filter(payment => {
-      const paymentYear = new Date(payment.date).getFullYear();
-      return paymentYear === selectedYear;
-    });
+    const filteredByYear = adsPayment?.filter((payment) => new Date(payment.date).getFullYear() === selectedYear) || [];
     setFilteredClients(filteredByYear);
   }, [adsPayment, selectedYear]);
+  
+  // Edit functionality
+  const handleEditClick = (payment) => {
+    setSelectedPayment(payment);
+    setIsModalOpen(true);
+  };
+  const handleCancel = () => {
+    setIsModalOpen(false);
+    setSelectedPayment(null);
+  };
+  
+  // Payment totals by method
+  useEffect(() => {
+    const calculateTotal = (method) =>
+      adsPayment?.filter((d) => d.paymentMethod === method).reduce((acc, d) => acc + parseFloat(d.payAmount), 0) || 0;
+    setBkashMarcentTotal(calculateTotal('bkashMarchent'));
+    setNagadPersonalTotal(calculateTotal('nagadPersonal'));
+    setBkashPersonalTotal(calculateTotal('bkashPersonal'));
+    setRocketPersonalTotal(calculateTotal('rocketPersonal'));
+    setBankTotal(calculateTotal('bank'));
+  }, [adsPayment]);
+  
+  // Show all data or limited items
+  const displayedItems = showAll ? filteredByCategory : filteredByCategory.slice(0, itemsToShow);
+  
+  // Dropdown toggle
+  const toggleDropdown = (orderId) => setActiveDropdown(activeDropdown === orderId ? null : orderId);
+  
+  // Year selection
+  const years = Array.from({ length: 31 }, (_, i) => 2020 + i);
+  
+
+  const handleUpdate2 = (id, newStatus) => {
+    const body = { status: newStatus };
+  
+    AxiosPublic.patch(`/adsPayment/status/${id}`, body)
+      .then((res) => {
+        console.log(res.data);
+        refetch();
+      })
+      .catch((error) => {
+        console.error("Error updating campaign:", error);
+      });
+  };
+
+  const handleUpdate = (e) => {
+    e.preventDefault();
+    const updatedPayment = {
+      ...selectedPayment,
+      date: e.target.date.value,
+      payAmount: parseFloat(e.target.amount.value),
+      paymentMethod: e.target.method.value,
+      note: e.target.note.value,
+    };
+
+    AxiosPublic.patch(
+      `https://digital-networking-server.vercel.app/adsPayment/${selectedPayment._id}`,
+      updatedPayment
+    ).then((res) => {
+      handleCancel();
+      refetch();
+    });
+  };
 
 
   const handleDelete = (id) => {
@@ -122,88 +176,6 @@ const AllAdsPayments = () => {
     });
   };
 
-  const [activeDropdown, setActiveDropdown] = useState(null);
-  const toggleDropdown = (orderId) => {
-    setActiveDropdown(activeDropdown === orderId ? null : orderId);
-  };
-
-  const [selectedPayment, setSelectedPayment] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
-  const handleEditClick = (payment) => {
-    setSelectedPayment(payment);
-    setIsModalOpen(true);
-  };
-
-  const handleCancel = () => {
-    setIsModalOpen(false);
-    setSelectedPayment(null);
-  };
-
-  const handleUpdate = (e) => {
-    e.preventDefault();
-    const updatedPayment = {
-      ...selectedPayment,
-      date: e.target.date.value,
-      payAmount: parseFloat(e.target.amount.value),
-      paymentMethod: e.target.method.value,
-      note: e.target.note.value,
-    };
-
-    AxiosPublic.patch(
-      `https://digital-networking-server.vercel.app/adsPayment/${selectedPayment._id}`,
-      updatedPayment
-    ).then((res) => {
-      handleCancel();
-      refetch();
-    });
-  };
-
-  const [bkashMarcent, setBkashMarcentTotal] = useState(0);
-  const [nagadPersonal, setNagadPersonalTotal] = useState(0);
-  const [bkashPersonal, setBkashPersonalTotal] = useState(0);
-  const [rocketPersonal, setRocketPersonalTotal] = useState(0);
-  const [bankTotal, setBankTotal] = useState(0);
-
-  useEffect(() => {
-    const filtered = adsPayment;
-    const filter2 = filtered.filter(d => d.paymentMethod === 'bkashMarchent');
-    const total = filter2.reduce((acc, datas) => acc + parseFloat(datas.payAmount), 0);
-    setBkashMarcentTotal(total);
-
-    const filter3 = filtered.filter(d => d.paymentMethod === 'nagadPersonal');
-    const total3 = filter3.reduce((acc, datas) => acc + parseFloat(datas.payAmount), 0);
-    setNagadPersonalTotal(total3);
-
-    const filter4 = filtered.filter(d => d.paymentMethod === 'bkashPersonal');
-    const total4 = filter4.reduce((acc, datas) => acc + parseFloat(datas.payAmount), 0);
-    setBkashPersonalTotal(total4);
-
-    const filter5 = filtered.filter(d => d.paymentMethod === 'rocketPersonal');
-    const total5 = filter5.reduce((acc, datas) => acc + parseFloat(datas.payAmount), 0);
-    setRocketPersonalTotal(total5);
-
-    const filter6 = filtered.filter(d => d.paymentMethod === 'bank');
-    const total6 = filter6.reduce((acc, datas) => acc + parseFloat(datas.payAmount), 0);
-    setBankTotal(total6);
-  }, [adsPayment]);
-
-  const [showAll, setShowAll] = useState(false); // State to handle showing all data
-  const [itemsToShow, setItemsToShow] = useState(40); // Number of items to show initially
-  const displayedItems = showAll ? filteredByCategory : filteredByCategory.slice(0, itemsToShow);
-
-  const handleUpdate2 = (id, newStatus) => {
-    const body = { status: newStatus };
-  
-    AxiosPublic.patch(`/adsPayment/status/${id}`, body)
-      .then((res) => {
-        console.log(res.data);
-        refetch();
-      })
-      .catch((error) => {
-        console.error("Error updating campaign:", error);
-      });
-  };
 
   return (
     <div className="mb-5">
@@ -211,7 +183,7 @@ const AllAdsPayments = () => {
         <title>Contributor Payments | Digital Network </title>
         <link rel="canonical" href="https://www.example.com/" />
       </Helmet>
-      <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3   lg:grid-cols-6 gap-5  p-5">
+      <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3   lg:grid-cols-6 gap-3 lg:gap-5   px-5 pb-5">
    <div onClick={() => setSearchQuery('bkashMarchent')} className="balance-card bg-white rounded-2xl shadow-lg p-5 text-center  transition-transform transform hover:scale-105 border-0">
      <img className="balance-card-img" src="https://i.ibb.co/bHMLyvM/b-Kash-Merchant.png" alt="bKash" />
      <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"> <span className="text-lg lg:text-2xl font-extrabold"> ৳</span> {bkashMarcent}</p>
@@ -238,15 +210,16 @@ const AllAdsPayments = () => {
      <p className="balance-card-text text-lg lg:text-2xl mt-8 font-bold text-gray-700"><span className="text-lg lg:text-2xl font-extrabold"> ৳</span> {bkashPersonal + bkashMarcent + nagadPersonal + rocketPersonal + bankTotal}</p>
    </div>
      </div>
-      <div className="flex text-black justify-end gap-5 mr-5 items-center">
-        <div className="flex justify-end items-center gap-5">
-        <div className="flex flex-col  ml-1 justify-start text-start items-start">
+      <div className="lg:flex text-black lg:justify-end  gap-5 mr-5 items-center">
+     
+      <div className="flex justify-center gap-5 items-center">
+      <div className="flex justify-center  items-center">
         <select
-          className="border bg-white text-black border-gray-400 rounded p-2 mt-1"
+          className="border bg-white text-black w-full lg:ml-0 ml-5 border-gray-400 rounded p-2 mt-1"
           value={selectedEmployee}
           onChange={(e) => setSelectedEmployee(e.target.value)}
         >
-          <option value="allContributor">All Contributor</option>
+          <option value="all">All Contributor</option>
           {ddd?.map((employee) => (
             <option key={employee._id} value={employee.email}>
               {employee.name}
@@ -254,13 +227,28 @@ const AllAdsPayments = () => {
           ))}
         </select>
       </div>
-          <div className="flex flex-col justify-center items-start">
+      <div className="flex justify-center  items-center">
+        <select
+          value={selectedYear}
+          onChange={(e) => setSelectedYear(parseInt(e.target.value))}
+          className="year-selector py-2 px-6 border border-gray-600 mt-1 bg-white text-black"
+        >
+          {years.map((year) => (
+            <option className="bg-white text-black" key={year} value={year}>
+              {year}
+            </option>
+          ))}
+        </select>
+      </div>
+      </div>
+          <div className="flex justify-center mt-4 lg:mt-0 items-center gap-5">
+          <div className="flex justify-center  items-center">
             <select
               className="border bg-white text-black border-gray-400 rounded p-2 mt-1"
               value={sortMonth}
               onChange={(e) => setSortMonth(e.target.value)}
             >
-              <option value="">Select Month</option>
+              <option value="all">All Month</option>
               {[
                 "January",
                 "February",
@@ -281,20 +269,8 @@ const AllAdsPayments = () => {
               ))}
             </select>
           </div>
-          <div className="filter-options">
-        <select
-          value={selectedYear}
-          onChange={(e) => setSelectedYear(parseInt(e.target.value))}
-          className="year-selector py-2 px-6 border border-gray-600 mt-1 bg-white text-black"
-        >
-          {years.map((year) => (
-            <option className="bg-white text-black" key={year} value={year}>
-              {year}
-            </option>
-          ))}
-        </select>
-      </div>
-      <div className="flex flex-col justify-center items-start">
+         
+      <div className="flex justify-center  items-center">
            <input
              type="date"
              className="border rounded  bg-green-300 text-black border-gray-400 p-2 mt-1"
@@ -302,8 +278,9 @@ const AllAdsPayments = () => {
              onChange={(e) => setSelectedDate(e.target.value)}
            />
          </div>
+          </div>
         </div>
-      </div>
+     
 
       <div className="overflow-x-auto text-black rounded-xl mt-5 border border-black mx-5">
         <table className="min-w-full bg-white">

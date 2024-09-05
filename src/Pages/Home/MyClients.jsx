@@ -208,7 +208,7 @@ const MyClients = () => {
 
       
     return (
-        <div className='mx-5'>
+        <div className='mx-5 mt-5'>
            <ToastContainer />
              <div className="overflow-x-auto   ">
 
@@ -219,7 +219,7 @@ const MyClients = () => {
 
 
 
-      <div className="grid lg:grid-cols-4 grid-cols-2 text-black sm:grid-cols-2 gap-5 justify-around lg:py-5 pb-5">
+      <div className="grid lg:grid-cols-4 grid-cols-2 text-black sm:grid-cols-2 gap-3 lg:gap-5 justify-around lg:py-5 pb-5">
         <div className="px-5 py-10 rounded-2xl bg-[#b7cc50] text-white shadow-lg text-center">
           <h2 className="lg:text-2xl text-xl font-bold">Total Spent</h2>
           <p className="lg:text-4x md:text-3xl text-md font-bold mt-2"> $ {totalSpent.toFixed(2) || 0.00}</p>
@@ -412,74 +412,72 @@ const MyClients = () => {
 
 </td>
 <td className="p-3 border-r border-gray-400 text-center">
-  $ {Number(campaign.tSpent).toFixed(2)}
-  {/* ||
+
+  {/* $ {Number(campaign.tSpent).toFixed(2)}
+ */}
+
   {
   (
     campaigns
       .filter(payment => payment.clientEmail === campaign.clientEmail)
-      .reduce((acc, payment) => acc + parseFloat(payment?.tSpent || 0), 0) 
+      .reduce((acc, payment) => acc + parseFloat(payment?.tSpent || 0), 0).toFixed(2) 
   ) 
-} */}
+}
+
 </td>
 <td className="p-3 border-r border-gray-400 text-center">
-  ৳ {Number(campaign.tBill).toFixed(2) || 0.00}
-{/* ||
+  {/* ৳ {Number(campaign.tBill).toFixed(2) || 0.00}
+
+  ------------ */}
+
 ৳ 
   {
   (
     campaigns
       .filter(payment => payment.clientEmail === campaign.clientEmail)
-      .reduce((acc, payment) => acc + parseFloat(payment?.tSpent || 0), 0) 
-  ) * (
-    campaigns
-      .filter(payment => payment.clientEmail === campaign.clientEmail)
-      .reduce((acc, payment) => acc + parseFloat(payment?.dollerRate ), 0) 
-  )
-} */}
+      .reduce(
+        (acc, campaign) => acc + parseFloat(campaign.tSpent) * parseFloat(campaign.dollerRate),
+        0
+           ).toFixed(2)
+   )
+}
 
 </td>
 <td className="p-3 border-r border-gray-400 text-center">
-  ৳ {Number(campaign.tPayment || 0).toFixed(2) || '0.00'}
-  {/* ||
+  {/* ৳ {Number(campaign.tPayment || 0).toFixed(2) || '0.00'}
+  ------- */}
   ৳ 
   {
   (
     Mpayment
       .filter(payment => payment.clientEmail === campaign.clientEmail)
-      .reduce((acc, payment) => acc + parseFloat(payment?.amount || 0), 0) 
+      .reduce((acc, payment) => acc + parseFloat(payment?.amount || 0), 0).toFixed(2) 
   ) 
-} */}
+}
 </td>
 
-  <td className="p-3 border-r border-gray-400 text-center">
-  ৳ {
-    !isNaN(Number(campaign.tBill)) && !isNaN(Number(campaign.tPaid)) 
-    ? (Number(campaign.tBill) - Number(campaign.tPayment || 0)).toFixed(2) 
-    : '0.00'
-  }
-{/* ৳
-{
-  (
+<td className="p-3 border-r border-gray-400 text-center">
+  ৳
+  {
     (
-      campaigns
-        .filter(payment => payment.clientEmail === campaign.clientEmail)
-        .reduce((acc, payment) => acc + parseFloat((payment?.tSpent || 0)), 0) 
-    ) * (
-      campaigns
-        .filter(payment => payment.clientEmail === campaign.clientEmail)
-        .reduce((acc, payment) => acc + parseFloat(payment?.dollerRate || 0), 0) 
-    )
-  )
-  -
-  (
-    Mpayment
-      .filter(payment => payment.clientEmail === campaign.clientEmail)
-      .reduce((acc, payment) => acc + parseFloat(payment?.amount || 0), 0) 
-  )
-} */}
-
+      (
+        campaigns
+          .filter(payment => payment.clientEmail === campaign.clientEmail)
+          .reduce(
+            (acc, campaign) => acc + parseFloat(campaign.tSpent) * parseFloat(campaign.dollerRate),
+            0
+          )
+      )
+      -
+      (
+        Mpayment
+          .filter(payment => payment.clientEmail === campaign.clientEmail)
+          .reduce((acc, payment) => acc + parseFloat(payment?.amount || 0), 0)
+      )
+    ).toFixed(2)
+  }
 </td>
+
 
 
   <td className="p-3 border-r text-center border-gray-400">
@@ -567,19 +565,55 @@ const MyClients = () => {
   </td>
 </tr>
 ))}
-<tr className="bg-[#05a0db] text-sm text-white font-bold">
-<td className="p-3 text-center"></td>
 
-<td className="p-3  text-right" colSpan="2">
-  Total :
+      <tr className='bg-[#05a0db] text-white'>
+        <td className="p-3 text-center font-bold">Total</td>
+        <td className="p-3"></td>
+        <td className="p-3"></td>
+        <td className="p-3 text-center font-bold">
+          $ {sortedAdsAccounts.reduce((acc, campaign) => acc + parseFloat(campaign.tBudged || 0), 0).toFixed(2)}
+        </td>
+        <td className="p-3 text-center font-bold">
+          {sortedAdsAccounts.reduce((acc, campaign) => acc + campaigns
+            .filter(payment => payment.clientEmail === campaign.clientEmail)
+            .reduce((acc, payment) => acc + parseFloat(payment?.tSpent || 0), 0), 0).toFixed(2)}
+        </td>
+        <td className="p-3 text-center font-bold">
+          ৳ {sortedAdsAccounts.reduce((acc, campaign) => acc + campaigns
+            .filter(payment =>  payment.email === user?.email)
+            .reduce(
+              (acc, campaign) => acc + parseFloat(campaign.tSpent) * parseFloat(campaign.dollerRate),
+              0
+            ), 0).toFixed(2)}
+        </td>
+        <td className="p-3 text-center font-bold">
+          ৳ { Mpayment
+            .filter(payment => payment.employeeEmail === user?.email)
+            .reduce((acc, payment) => acc + parseFloat(payment?.amount || 0), 0).toFixed(2)
+            }
+        </td>
+        <td className="p-3 text-center font-bold">
+  ৳ {(
+    sortedAdsAccounts.reduce((acc, campaign) => 
+      acc + campaigns
+        .filter(payment => payment.email === user?.email)
+        .reduce(
+          (innerAcc, campaign) => innerAcc + parseFloat(campaign.tSpent) * parseFloat(campaign.dollerRate),
+          0
+        ),
+      0
+    ) - 
+    Mpayment
+      .filter(payment => payment.employeeEmail === user?.email)
+      .reduce((acc, payment) => acc + parseFloat(payment?.amount || 0), 0)
+  ).toFixed(2)}
 </td>
-<td className="p-3  text-center">$ {totalBudged.toFixed(2)}</td>
-<td className="p-3  text-center">$ {totalSpent.toFixed(2)}</td>
-<td className="p-3  text-center">৳ {totalbill.toFixed(2)}</td>
-<td className="p-3  text-center">৳ {totalRCV.toFixed(2)}</td>
-<td className="p-3 text-center"> ৳ {totalDue.toFixed(2)}</td>
-<td className="p-3 "></td>
-</tr>
+
+
+
+        <td className="p-3"></td>
+      </tr>
+ 
 </tbody>
 </table>
 

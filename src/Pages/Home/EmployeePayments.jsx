@@ -18,81 +18,62 @@ const EmployeePayments = () => {
   const [users] = useUsers();
   const { user } = useContext(AuthContext);
   const [filteredClients, setFilteredClients] = useState([]);
-  const [sortMonth, setSortMonth] = useState("");
-  const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
   const [selectedStatus, setSelectedStatus] = useState("");
-  const [selectedEmployee, setSelectedEmployee] = useState("");
   const [selectedDate, setSelectedDate] = useState("");
   const [employees, setEmployees] = useState([]);
-
+  
+  // Get active month and employee from localStorage
+  const initialTab = localStorage.getItem("activeTabemployeepayMont");
+  const [sortMonth, setSortMonth] = useState(initialTab);
+  
+  const initialTab2 = localStorage.getItem("activeTabSelectedemployee")
+  const [selectedEmployee, setSelectedEmployee] = useState(initialTab2 )
+  
+  // Change month tab
+  const changeTab = (tab) => {
+    setSortMonth(tab);
+    localStorage.setItem("activeTabemployeepayMont", tab);
+  };
+  
+  // Change employee tab
+  const changeTab2 = (tab) => {
+    setSelectedEmployee(tab);
+    localStorage.setItem("activeTabSelectedemployee", tab);
+  };
+  
+  // Fetch employee list when users data is available
   useEffect(() => {
     if (users && user) {
       const employeeList = users.filter((u) => u.role === "employee");
       setEmployees(employeeList);
     }
   }, [users, user]);
-
+  
+  // Filter employee payment based on selected filters
   useEffect(() => {
-    if (employeePayment) {
-      setFilteredClients(employeePayment);
-    }
-  }, [employeePayment]);
-
-  useEffect(() => {
-    const currentMonth = new Date().getMonth() + 1;
-    if (!sortMonth) {
-      setSortMonth(currentMonth.toString());
-    }
-  }, [sortMonth]);
-
-  useEffect(() => {
-    let filtered = employeePayment;
-
-    if (selectedEmployee) {
-      filtered = filtered.filter((c) => c.employeeEmail === selectedEmployee);
-    }
-
-    if (sortMonth !== "") {
-      filtered = filtered.filter((c) => {
-        const month = new Date(c.date).getMonth() + 1;
-        return month === parseInt(sortMonth);
-      });
-    }
-
-    if (selectedDate) {
-      filtered = filtered.filter((c) => {
-        const paymentDate = new Date(c.date);
-        const selected = new Date(selectedDate);
-        return (
-          paymentDate.getDate() === selected.getDate() &&
-          paymentDate.getMonth() === selected.getMonth() &&
-          paymentDate.getFullYear() === selected.getFullYear()
-        );
-      });
-    }
-
-    if (selectedStatus) {
-      filtered = filtered.filter((c) => c.status === selectedStatus);
-    }
-
-    setFilteredClients(filtered);
-  }, [selectedEmployee, sortMonth, selectedDate, selectedStatus, employeePayment]);
-
-  const filteredByCategory = selectedCategory
-    ? filteredClients.filter(
-        (item) =>
-          item.paymentMethod.toLowerCase() === selectedCategory.toLowerCase()
-      )
-    : filteredClients;
-
-  useEffect(() => {
+    const filtered = employeePayment
+      .filter((payment) =>
+        (selectedEmployee === "all" || payment.employeeEmail === selectedEmployee) &&
+        (!sortMonth || new Date(payment.date).getMonth() + 1 === parseInt(sortMonth)) &&
+        (!selectedDate || new Date(payment.date).toLocaleDateString() === new Date(selectedDate).toLocaleDateString()) &&
+        (!selectedStatus || payment.status === selectedStatus)
+      );
+  
+    const filteredByCategory = selectedCategory
+      ? filtered.filter((item) => item.paymentMethod.toLowerCase() === selectedCategory.toLowerCase())
+      : filtered;
+  
     const totalBill = filteredByCategory.reduce(
-      (acc, campaign) => acc + parseFloat(campaign.payAmount),
+      (acc, payment) => acc + parseFloat(payment.payAmount),
       0
     );
+  
+    setFilteredClients(filteredByCategory);
     setTotalPayment(totalBill);
-  }, [filteredByCategory]);
+  }, [employeePayment, selectedEmployee, sortMonth, selectedDate, selectedStatus, selectedCategory]);
+  
+  
 
   const handleDelete = (id) => {
     Swal.fire({
@@ -226,7 +207,7 @@ const EmployeePayments = () => {
   }, [employeePayment, selectedYear]);
 
   // Sorted items
-  const sortedItems = sortByDateDescending(filteredByCategory);
+  const sortedItems = sortByDateDescending(filteredClients);
 
   const [showAll, setShowAll] = useState(false); // State to handle showing all data
   const [itemsToShow, setItemsToShow] = useState(200); // Number of items to show initially
@@ -242,7 +223,7 @@ const EmployeePayments = () => {
       </Helmet>
 
 
-      <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3   lg:grid-cols-6 gap-5  p-5">
+      <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-3 lg:gap-5  lg:grid-cols-6  px-5">
    <div  onClick={() => setSelectedCategory('bkashMarchent')} className="balance-card bg-white rounded-2xl shadow-lg p-5 text-center  transition-transform transform hover:scale-105 border-0">
      <img className="balance-card-img" src="https://i.ibb.co/bHMLyvM/b-Kash-Merchant.png" alt="bKash" />
      <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"> <span className="text-lg lg:text-2xl font-extrabold"> ৳</span> {bkashMarcent}</p>
@@ -274,15 +255,16 @@ const EmployeePayments = () => {
      <p className="balance-card-text text-lg lg:text-2xl mt-8 font-bold text-gray-700"><span className="text-lg lg:text-2xl font-extrabold"> ৳</span> {bkashPersonal + bkashMarcent + nagadPersonal + rocketPersonal + bankTotal}</p>
    </div>
      </div>
-      <div className="flex text-black justify-between ml-5  items-center">
-      <div className="flex flex-col justify-start text-start items-start">
+      <div className="lg:flex text-black lg:justify-end ml-5  items-center">
+        <div className="flex justify-center items-center lg:mr-5 gap-5">
+        <div className="flex  justify-center text-center items-center">
          
          <select
-           className="border bg-white text-black border-gray-400 rounded p-2 mt-1 "
+           className="border bg-white w-full     text-black border-gray-400 rounded p-2 mt-1 "
            value={selectedEmployee}
-           onChange={(e) => setSelectedEmployee(e.target.value)}
+           onChange={(e) => changeTab2(e.target.value)}
          >
-           <option value="">All Employee</option>
+           <option value="all">All Employee</option>
            {employees.map((employee) => (
              <option key={employee._id} value={employee.email}>
                {employee.name}
@@ -290,14 +272,28 @@ const EmployeePayments = () => {
            ))}
          </select>
        </div>
-        <div className="flex justify-end items-center gap-5 ">
+       <div className="flex  justify-center text-center items-center">
+        <select
+          value={selectedYear}
+          onChange={(e) => setSelectedYear(parseInt(e.target.value))}
+          className="year-selector py-2 px-6 border border-gray-600  bg-white text-black"
+        >
+          {years.map((year) => (
+            <option className="bg-white text-black" key={year} value={year}>
+              {year}
+            </option>
+          ))}
+        </select>
+      </div>
+        </div>
+        <div className="flex mt-4 lg:mt-0 justify-center text-center gap-5 items-center">
          
-          <div className="flex flex-col justify-center items-start">
+          <div className="flex  justify-center text-center items-center">
          
             <select
-              className="border bg-white text-black border-gray-400 rounded p-2 mt-1"
+              className="border bg-white w-full  lg:mr-5   lg:my-5  text-black border-gray-400 rounded p-2 "
               value={sortMonth}
-              onChange={(e) => setSortMonth(e.target.value)}
+              onChange={(e) => changeTab(e.target.value)}
             >
               <option value="">Select Month</option>
               {[
@@ -320,35 +316,22 @@ const EmployeePayments = () => {
               ))}
             </select>
           </div>
-
-          <div className="filter-options">
-        <select
-          value={selectedYear}
-          onChange={(e) => setSelectedYear(parseInt(e.target.value))}
-          className="year-selector py-2 px-6 border border-gray-600 mt-1 bg-white text-black"
-        >
-          {years.map((year) => (
-            <option className="bg-white text-black" key={year} value={year}>
-              {year}
-            </option>
-          ))}
-        </select>
-      </div>
-          <div className="flex flex-col justify-center items-start">
+          <div className="flex  justify-center text-center items-center">
            
             <input
               type="date"
-              className="border mr-5 rounded bg-green-300 text-black border-gray-400 p-2 mt-1"
+              className="border mr-5 rounded bg-green-300 text-black border-gray-400 p-2 "
               value={selectedDate}
               onChange={(e) => setSelectedDate(e.target.value)}
             />
           </div>
 
+
         </div>
 
       </div>
 
-      <div className="overflow-x-auto mt-5 text-black rounded-xl border border-gray-400 mx-5">
+      <div className="overflow-x-auto  text-black rounded-xl border border-gray-400 mx-5">
         <table className="min-w-full bg-white">
           <thead className="bg-[#05a0db] text-white">
             <tr>
@@ -581,7 +564,8 @@ const EmployeePayments = () => {
           </div>
         </div>
       )}
-      {!showAll && filteredByCategory.length > itemsToShow && (
+      {!showAll && filteredClients.length > itemsToShow && (
+
   <button
     onClick={() => setShowAll(true)}
     className="mt-4 p-2  mx-auto flex justify-center my-10 bg-blue-500 text-white rounded"

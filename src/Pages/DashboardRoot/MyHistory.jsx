@@ -112,7 +112,7 @@ const MyHistory = () => {
   };
 
   return (
-    <div className='mx-5 lg:my-5 mb-5'>
+    <div className='mx-5 mt-5 lg:my-5 mb-5'>
       <div className="flex justify-center lg:justify-end items-center gap-3 mb-5">
         <div>
           <select

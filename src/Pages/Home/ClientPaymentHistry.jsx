@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../../Security/AuthProvider";
-import { useLocation, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import UseAxiosPublic from "../../Axios/UseAxiosPublic";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -8,103 +8,39 @@ import useMpayment from "../../Hook/UseMpayment";
 import useCampaings from "../../Hook/useCampaign";
 import useClients from "../../Hook/useClient";
 import useUsers from "../../Hook/useUsers";
-import axios from "axios";
-import Swal from "sweetalert2";
-import { MdDelete, MdEditSquare } from "react-icons/md";
 
 const ClientPaymentHistry = () => {
   const { user } = useContext(AuthContext);
-  const [ users ]=useUsers()
+  const [users] = useUsers();
   const param = useParams();
-  console.log(param);
   const [MPayment, refetch] = useMpayment();
   const AxiosPublic = UseAxiosPublic();
   const [totalPayment, setTotalPayment] = useState(0);
-  const [Histry, setHistry] = useState([]);
   const [Histryy, setHistryy] = useState([]);
- 
-  const [userdata,setUserData]=useState()
-  console.log(userdata);
-
-
-  useEffect(() => {
-    // Sort the Histry array by date in descending order
-    const sortedHistry = [...Histry].sort((a, b) => new Date(b.date) - new Date(a.date));
-    setHistryy(sortedHistry);
-  }, [Histry]);
-
-  useEffect(() => {
-    if (param?.email) {
-      const realdata = MPayment.filter((m) => m.clientEmail === param.email);
-      setHistry(realdata);
-      console.log("Filtered Data:", realdata);
-      const totalBill = realdata.reduce(
-        (acc, campaign) => acc + parseFloat(campaign.amount),
-        0
-      );
-      setTotalPayment(totalBill);
-    }
- 
-  }, [param?.email, MPayment]);
-
-  useEffect(()=>{
-    const finder=users.find(use=>use.email === user?.email)
-    setUserData(finder)
-  },[users,user?.email])
-
-
-    const [clients]=useClients()
-    const [datas,setdatas]=useState()
-    console.log(datas);
-    useEffect(() => {
-    if (param?.email) {
-        const realdata = clients.find((m) => m.clientEmail === param?.email);
-        setdatas(realdata)
-      }
-    }, [param?.email, clients]);
-
-  const [dataa2, setData2] = useState([]);
-
+  const [datas, setdatas] = useState();
+  const [clients] = useClients();
   const [campaign] = useCampaings();
-
-  const [totalSpent, setTotalSpent] = useState(0);
-  const [dollerRate, setDollerRate] = useState(0);
-  const [totalBudged, setTotalBudged] = useState(0);
-  console.log(param?.email);
-
+  
   useEffect(() => {
-    const filtered = campaign.filter(
-      (campaign) => campaign.clientEmail === param?.email
-    );
-    console.log("hdjklhgsfdakgDSAOPJGIOJFDJGJHJFD", filtered);
-    setData2(filtered);
-
-    const totalBill = filtered.reduce(
-      (acc, campaign) => acc + parseFloat(campaign.tSpent),
-      0
-    );
-    setTotalSpent(totalBill);
-
-    const dollerRate = filtered.reduce(
-      (acc, campaign) => acc + parseFloat(campaign.dollerRate),
-      0
-    );
-    const vag = dollerRate / filtered.length;
-    setDollerRate(vag);
-
-    const total = filtered.reduce(
-      (acc, campaign) => acc + parseFloat(campaign.tBudged),
-      0
-    );
-    setTotalBudged(total);
-  }, [campaign, param?.email]);
-
-  const location=useLocation()
+    if (param?.email) {
+      // Filter and sort only when the email param changes
+      const filteredData = MPayment.filter((m) => m.clientEmail === param.email);
+      const sortedHistry = filteredData.sort((a, b) => new Date(b.date) - new Date(a.date));
+      setHistryy(sortedHistry);
+  
+      const totalBill = filteredData.reduce((acc, campaign) => acc + parseFloat(campaign.amount), 0);
+      setTotalPayment(totalBill);
+  
+      const clientData = clients.find((m) => m.clientEmail === param.email);
+      setdatas(clientData);
+    }
+  }, [param?.email, MPayment, clients]);
+  
   const handlePayment = async (e) => {
     e.preventDefault();
     const paymentMethod = e.target.paymentMethod.value;
     const amount = parseFloat(e.target.amount.value);
-    const date = e.target.date.value;
+    const date = new Date();
     const note = e.target.note.value;
     const clientEmail = param?.email;
     const clientName = datas?.clientName;
@@ -118,138 +54,63 @@ const ClientPaymentHistry = () => {
       employeeEmail,
       date,
     };
-    console.log(body);
-    try {
-      await AxiosPublic.post(`https://digital-networking-server.vercel.app/MPayment`,body);
-      toast.success("Payment successful");
-      refetch(); // Automatically refetch after successful payment
-      setTimeout(() => {
-        window.location.reload();
-      }, 500); 
   
+    try {
+      await AxiosPublic.post(`/MPayment`, body);
+      toast.success("Payment successful");
+      refetch();
+      document.getElementById("my_modal_8").close();
     } catch (error) {
-      console.error("Error processing payment:", error);
-      toast.error("Failed to process payment");
+      console.error("Error adding payment:", error);
+      toast.error("Failed to add payment");
     }
-
-    const tSpent = totalSpent;
-    const tBill = totalSpent * dollerRate;
-    const tPayment = totalPayment + amount; // Ensure this variable is defined and correct
-    const tBudged = totalBudged;
-    const data = { tSpent, tBill, tPayment, tBudged };
-    AxiosPublic.patch(`https://digital-networking-server.vercel.app/clients/${param?.email}`,data)
-    .then((res) => {
-        console.log(res.data);
-        refetch(); // Ensure this function is defined and correct
-        // toast.success("Campaign updated successfully");
-      })
-      .catch((error) => {
-        console.error("Error updating campaign:", error);
-        toast.error("Failed to update campaign");
-      });
-
-      const fields = {
-        bkashMarchent: (userdata.bkashMarchent || 0) + amount + (paymentMethod === 'bkashMarchent' ? amount : 0),
-        bkashPersonal: (userdata.bkashPersonal || 0) + amount,
-        nagadPersonal: (userdata.nagadPersonal || 0) + amount,
-        rocketPersonal: (userdata.rocketPersonal || 0) + amount,
-      };
-    
-      if (!fields[paymentMethod]) {
-        console.error("Invalid payment method");
-        return;
-      }
-    
-      const body2 = { [paymentMethod]: fields[paymentMethod] };
-    
-      try {
-        const res = await axios.put(`https://digital-networking-server.vercel.app/users/${paymentMethod}/${userdata._id}`, body2);
-        console.log(res.data);
-        refetch();  // Make sure this function correctly refetches the updated data
-      } catch (error) {
-        console.error("Error updating account:", error);
-      }
   };
-
-  const handleUpdatePayment = (e, id) => {
+  
+  const handleUpdatePayment = async (e, id) => {
     e.preventDefault();
     const amount = parseFloat(e.target.amount.value);
     const date = e.target.date.value;
     const note = e.target.note.value;
     const paymentMethod = e.target.paymentMethod.value;
     const body = { note, amount, date, paymentMethod };
-
-    AxiosPublic.patch(
-      `https://digital-networking-server.vercel.app/Mpayment/${id}`,
-      body
-    )
-      .then((res) => {
-        console.log(res.data);
-        refetch();
-        // toast.success("Campaign updated successfully");
-      })
-      .catch((error) => {
-        console.error("Error updating campaign:", error);
-        toast.error("Failed to update campaign");
-      });
-
-    const calculate = amount - previousAmount;
-    const tSpent = totalSpent;
-    const tBill = totalSpent * dollerRate;
-    const tPayment = totalPayment + calculate; // Ensure this variable is defined and correct
-    const tBudged = totalBudged;
-
-    const data = { tSpent, tBill, tPayment, tBudged };
-
-    AxiosPublic.patch(
-      `https://digital-networking-server.vercel.app/clients/${param?.email}`,
-      data
-    )
-      .then((res) => {
-        console.log(res.data);
-        refetch(); // Ensure this function is defined and correct
-        toast.success("Payment updated successfully");
-        // window.location.reload(); // Generally better to avoid reloading the page
-      })
-      .catch((error) => {
-        console.error("Error updating campaign:", error);
-        toast.error("Failed to update campaign");
-      });
-  };
-
-  const handledelete = (id) => {
-    AxiosPublic.delete(`/Mpayment/${id}`).then((res) => {
-      toast.success("Payment Delete successfully");
+  
+    try {
+      await AxiosPublic.patch(`/Mpayment/${id}`, body);
       refetch();
-    });
+      document.getElementById(`modal_${id}`).close();
+    } catch (error) {
+      console.error("Error updating payment:", error);
+      toast.error("Failed to update payment");
+    }
+  };
+  
+  const handleDelete = async (id) => {
+    try {
+      await AxiosPublic.delete(`/Mpayment/${id}`);
+      toast.success("Payment deleted successfully");
+      refetch();
+    } catch (error) {
+      console.error("Error deleting payment:", error);
+      toast.error("Failed to delete payment");
+    }
+  };
+  
 
- }
   return (
     <div>
-
       <div className=" p-2 sm:p-4 dark:text-green-600">
-       
         <div>
-  <button
-    className="font-avenir hover:bg-indigo-700 px-6 mx-auto py-2 bg-[#05a0db]  rounded-lg text-white"
-    onClick={() => document.getElementById("my_modal_8").showModal()}
-  >
-    Pay Now
+      <button
+         className="font-avenir hover:bg-indigo-700 px-6 w-full lg:w-auto mx-auto py-2 bg-[#05a0db]  rounded-lg text-white"
+          onClick={() => document.getElementById("my_modal_8").showModal()}
+        >
+           Pay Now
   </button>
   <dialog id="my_modal_8" className="modal">
     <div className="modal-box text-black bg-white font-bold">
       <form onSubmit={(e) => handlePayment(e)}>
        
-      <div className="mb-4">
-            <label className="block text-gray-700">Date</label>
-            <input
-              required
-              type="date"
-              name="date"
-              defaultValue={0}
-              className="w-full border border-gray-600 text-black bg-green-300 rounded p-2 mt-1"
-            />
-          </div>
+
           <div className="mb-4">
             <label className="block text-gray-700">New Amount</label>
             <input
@@ -400,14 +261,14 @@ const ClientPaymentHistry = () => {
       Edit
     </button>
 
-    <dialog id={`modal_${payment._id}`} className="modal">
+    <dialog id={`modal_${payment?._id}`} className="modal">
       <div className="modal-box text-black bg-white font-bold">
-        <form onSubmit={(e) => handleUpdatePayment(e, payment._id)}>
+        <form onSubmit={(e) => handleUpdatePayment(e, payment?._id)}>
         <div className="mb-4">
             <label className="block text-left text-gray-700">Date</label>
             <input
               type="date"
-              defaultValue={payment.date}
+              defaultValue={payment?.date}
               name="date"
               className="w-full border bg-green-300 border-black p-2 rounded-lg"
             />
@@ -417,7 +278,7 @@ const ClientPaymentHistry = () => {
             <input
               type="number"
               name="amount"
-              defaultValue={payment.amount}
+              defaultValue={payment?.amount}
               className="w-full border bg-white border-black p-2 rounded-lg"
             />
           </div>
@@ -426,7 +287,7 @@ const ClientPaymentHistry = () => {
             <label className="block text-left text-gray-700">Method</label>
             <select
               name="paymentMethod"
-              defaultValue={payment.paymentMethod}
+              defaultValue={payment?.paymentMethod}
               className="w-full border bg-white border-black p-2 rounded-lg"
             >
               <option value="bkashMarchent">Bkash Marchent</option>

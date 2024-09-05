@@ -337,7 +337,7 @@ const AdsUserAdsAccount = () => {
         <div>
                    <div className="flex justify-start  text-gray-500 border-opacity-20 mx-2  items-center gap-3">
   <button
-    className="font-avenir px-3 py-1 rounded-lg text-white bg-[#05a0db]"
+    className="font-avenir px-3 w-full lg:w-auto mt-5 lg:mt-0 py-1 rounded-lg text-white bg-[#05a0db]"
     onClick={() => document.getElementById("my_modal_3").showModal()}
   >
     Add Ads Account

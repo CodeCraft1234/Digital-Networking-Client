@@ -8,7 +8,7 @@ import EmployeerMouthlySelery from "./EmployeerMouthlySelery";
 import useClients from "../../Hook/useClient";
 import { Form, Link, NavLink } from "react-router-dom";
 import useAdsAccount from "../../Hook/useAdAccount";
-import UserAdAccount from "../../Components/UserAdAccount/UserAdAccount";
+import UserAdAccount from "../../Components/UserAdAccount/MyAdsAccount";
 
 const Selary = ({ email }) => {
   console.log(email);

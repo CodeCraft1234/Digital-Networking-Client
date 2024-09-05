@@ -163,13 +163,13 @@ const MyCampaigns = () => {
     }
 
 
-    const sortedAdsAccounts = filteredByCategory.sort((a, b) => {
-      return a.campaignName.localeCompare(b.campaignName);
+    const sortedAdsAccounts = filteredByCategory?.sort((a, b) => {
+      return a.campaignName?.localeCompare(b.campaignName);
     });
 
     
   return (
-    <div className="lg:mt-5 mt-0 mb-10 mx-5">
+    <div className="lg:mt-5 mt-5 mb-10 mx-5">
       <Helmet>
         <title>My Campaign | Digital Network </title>
         <link rel="canonical" href="https://www.example.com/" />

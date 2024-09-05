@@ -8,7 +8,7 @@ import UseAxiosPublic from "../../Axios/UseAxiosPublic";
 import { AuthContext } from "../../Security/AuthProvider";
 import Selary from "./Selary";
 import EmployeerMouthlySelery from "./EmployeerMouthlySelery";
-import UserAdAccount from "../../Components/UserAdAccount/UserAdAccount";
+import UserAdAccount from "../../Components/UserAdAccount/MyAdsAccount";
 import { Helmet } from "react-helmet-async";
 
 
@@ -29,18 +29,6 @@ const Profile2 = () => {
   },[users,user])
 
   const userr=useLoaderData()
-  console.log(userr)
-  const AxiosPublic=UseAxiosPublic()
-const [data,setData]=useState([])
-console.log(data)
-
-    useEffect(()=>{
-      AxiosPublic.get(`https://digital-networking-server.vercel.app/users/${userr.email}`)
-      .then(res=>{
-        console.log(res.data)
-        setData(res.data)
-      })
-    },[])
 
   return (
     <div className="mt-5   ">
@@ -49,11 +37,6 @@ console.log(data)
               <link rel="canonical" href="https://www.tacobell.com/" />
                </Helmet>
       
-       {/* <div >
-            <img className="rounded-full mx-auto w-72 h-72" src={userr.photo} alt=""/>
-      </div> */}
-    {/* <CampaignTable email={userr?.email}></CampaignTable> */}
-    {/* <Selary email={userr?.email}> </Selary> */}
     <UserAdAccount email={userr?.email}></UserAdAccount>
     </div>
   );

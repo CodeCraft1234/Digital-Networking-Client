@@ -1,19 +1,29 @@
-import { useEffect, useState } from "react";
+import {  useEffect, useState } from "react";
 import UseAxiosPublic from "../../Axios/UseAxiosPublic";
 import { Helmet } from "react-helmet-async";
 import useEmployeePayment from "../../Hook/useEmployeePayment";
 import { toast } from "react-toastify";
+import { ImCross } from "react-icons/im";
+import useUsers from "../../Hook/useUsers";
 
 const EmployeeAdminPay = ({email}) => {
   const [employeePayment,refetch] = useEmployeePayment();
   const AxiosPublic = UseAxiosPublic();
   const [data, setData] = useState([]);
-  const [sortMonth, setSortMonth] = useState("");
+  const [data2, setData2] = useState([]);
   const [selectedDate, setSelectedDate] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
-  const [searchQuery, setSearchQuery] = useState("");
   const [filteredData, setFilteredData] = useState([]);
   const [totalPayment, setTotalPayment] = useState(0);
+  const [users]=useUsers()
+
+  const initialTab = localStorage.getItem("activeTabadminpayMonts") || "All";
+  const [sortMonth, setSortMonth] = useState(initialTab || new Date().getMonth() + 1)
+
+  const changeTab = (tab) => {
+    setSortMonth(tab);
+    localStorage.setItem("activeTabadminpayMonts", tab); 
+  };
 
   useEffect(() => {
     const totalBill = filteredData.reduce(
@@ -26,7 +36,9 @@ const EmployeeAdminPay = ({email}) => {
   useEffect(() => {
     const finds = employeePayment.filter((f) => f.employeeEmail === email);
     setData(finds);
-  }, [employeePayment, email]);
+    const finds2 = users.filter((f) => f.email === email);
+    setData2(finds2);
+  }, [employeePayment,users, email]);
 
   useEffect(() => {
 
@@ -48,12 +60,6 @@ const EmployeeAdminPay = ({email}) => {
       );
     }
 
-    if (searchQuery) {
-      filtered = filtered.filter((payment) =>
-        payment.paymentMethod.toLowerCase().includes(searchQuery.toLowerCase())
-      );
-    }
-
     const totalBill = filtered.reduce(
       (acc, campaign) => acc + parseFloat(campaign.payAmount),
       0
@@ -61,7 +67,7 @@ const EmployeeAdminPay = ({email}) => {
     setTotalPayment(totalBill);
 
     setFilteredData(filtered);
-  }, [sortMonth, selectedDate, selectedCategory, searchQuery, data]);
+  }, [sortMonth, selectedDate, selectedCategory,  data]);
 
 
   const [selectedPayment, setSelectedPayment] = useState(null);
@@ -86,16 +92,12 @@ const EmployeeAdminPay = ({email}) => {
         const paymentMethod = e.target.paymentMethod.value;
         const body = { note, payAmount, date, paymentMethod };
     
-        AxiosPublic.patch(
-          `https://digital-networking-server.vercel.app/employeePayment/${id}`,
-          body
+        AxiosPublic.patch(`/employeePayment/${id}`,body
         ).then((res) => {
           refetch();
           toast.success("Update successful!");
         });
       };
-    
-    
     
       const handleDelete = (id) => {
         AxiosPublic.delete(`/employeePayment/${id}`).then((res) => {
@@ -112,8 +114,8 @@ const EmployeeAdminPay = ({email}) => {
   const [total,setTotal]=useState(0)
 
   useEffect(()=>{
-          const da=employeePayment
-          const filtered=da.filter(f=> f.employeeEmail === email) 
+          const da=filteredData
+          const filtered=filteredData
 
           const filter2=filtered.filter(d=>d.paymentMethod === 'bkashMarchent')
           const total = filter2.reduce((acc, datas) => acc + parseFloat(datas.payAmount),0);
@@ -139,6 +141,39 @@ const EmployeeAdminPay = ({email}) => {
           setTotal(total7)
   },[employeePayment,email])
 
+
+  const handlePayment = async (e) => {
+    e.preventDefault();
+    const employeeName = data2?.name;
+    const employeeEmail = email;
+    const payAmount = e.target.payAmount.value;
+    const paymentMethod = e.target.paymentMethod.value;
+    const note = e.target.note.value;
+    const date = e.target.date.value;
+
+    const data = {
+      employeeName,
+      employeeEmail,
+      payAmount,
+      note,
+      paymentMethod,
+      date,
+      status:'pending'
+    };
+
+    AxiosPublic.post(
+      "https://digital-networking-server.vercel.app/employeePayment",
+      data
+    )
+      .then((res) => {
+        toast.success("Send successful!");
+        refetch();
+        console.log(res.data);
+       
+      })
+
+  };
+
   return (
     <div className="mt-5">
       <Helmet>
@@ -146,7 +181,7 @@ const EmployeeAdminPay = ({email}) => {
         <link rel="canonical" href="https://www.example.com/" />
       </Helmet>
 
-      <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-5 mt-5 p-5">
+      <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 lg:gap-5 mt-5 p-5">
    <div onClick={() => setSelectedCategory('bkashMarchent')} className="balance-card bg-white rounded-2xl shadow-lg p-5 text-center  transition-transform transform hover:scale-105 border-0">
      <img className="balance-card-img" src="https://i.ibb.co/bHMLyvM/b-Kash-Merchant.png" alt="bKash" />
      <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"> <span className="text-lg lg:text-2xl font-extrabold"> ৳</span> {bkashMarcent}</p>
@@ -177,20 +212,89 @@ const EmployeeAdminPay = ({email}) => {
      </div>
 
 {/* ///////////////////////////////////////////////////////////////// */}
-      <div className="flex text-black justify-end mb-5 gap-5 items-center">
-         <div className="flex items-center  justify-end">
-          <input
-            type="text"
-            placeholder="Payment Method..."
-            className="rounded-lg placeholder-black border mt-1  border-gray-400 p-2  text-black  bg-white"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
-        </div>
-        <select
+      <div className="flex text-black justify-center lg:justify-between ml-5 mb-5 gap-5 items-center">
+      <div className="flex justify-start">
+    <button
+      className="font-avenir px-6 hover:bg-indigo-700 py-2 bg-[#05a0db] rounded-lg text-white"
+      onClick={() => document.getElementById("my_modal_1").showModal()}
+    >
+      Pay Admin
+    </button>
+    <dialog id="my_modal_1" className="modal">
+      <div className="modal-box bg-white text-black font-bold">
+        <form onSubmit={(e) => handlePayment(e)}>
+          <div className="mb-4">
+            <h1
+              className="text-black flex hover:text-red-500 justify-end text-end cursor-pointer"
+              onClick={() => document.getElementById("my_modal_1").close()}
+            >
+              <ImCross />
+            </h1>
+            <div className="mb-4">
+              <label className="block text-gray-250">Date</label>
+              <input
+                required
+                type="date"
+                name="date"
+                className="w-full border bg-green-300 border-black rounded p-2 mt-1"
+              />
+            </div>
+            <label className="block text-gray-250">Pay Amount</label>
+            <input
+              required
+              type="number"
+              name="payAmount"
+              placeholder="0"
+              className="w-full border bg-white border-black rounded p-2 mt-1"
+            />
+          </div>
+          <div className="mb-4">
+            <label className="block text-gray-250">Payment Method</label>
+            <select
+              required
+              name="paymentMethod"
+              className="w-full border bg-white border-black rounded p-2 mt-1"
+            >
+              <option value="bkashMarchent">Bkash Marchent</option>
+              <option value="bkashPersonal">Bkash Personal</option>
+              <option value="nagadPersonal">Nagad Personal</option>
+              <option value="rocketPersonal">Rocket Personal</option>
+              <option value="bank">Bank</option>
+            </select>
+          </div>
+          <div className="mb-4">
+            <label className="block text-gray-250">Note</label>
+            <input
+              type="text"
+              name="note"
+              required
+              placeholder="type note..."
+              className="w-full border bg-white border-black rounded p-2 mt-1"
+            />
+          </div>
+          <div className="grid mt-8 lg:grid-cols-2 gap-3">
+            <form method="dialog">
+              <button className="p-2 w-full hover:bg-red-700 rounded-lg bg-red-600 text-white text-center">
+                Close
+              </button>
+            </form>
+            <button
+              type="submit"
+              className="font-avenir w-full hover:bg-indigo-700 px-3 pt-2 rounded-lg flex justify-center text-white bg-[#05a0db]"
+            >
+              Send
+            </button>
+          </div>
+        </form>
+      </div>
+    </dialog>
+  </div>
+
+     <div className="flex justify-end gap-3 lg:gap-5">
+     <select
               className="border bg-white text-black border-gray-400 rounded p-2 mt-1"
               value={sortMonth}
-              onChange={(e) => setSortMonth(e.target.value)}
+              onChange={(e) => changeTab(e.target.value)}
             >
               <option value="">Select Month</option>
               {[
@@ -220,6 +324,7 @@ const EmployeeAdminPay = ({email}) => {
              onChange={(e) => setSelectedDate(e.target.value)}
            />
          </div>
+     </div>
       </div>
 
       <div className="overflow-x-auto rounded-xl text-black border border-black mx-5">

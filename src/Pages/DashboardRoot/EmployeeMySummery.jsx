@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState, useMemo } from 'react';
+import  { useContext, useEffect, useState, useMemo } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { AuthContext } from '../../Security/AuthProvider';
 import useUsers from '../../Hook/useUsers';
@@ -9,21 +9,12 @@ const months = [
   'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'
 ];
 
-const MySummery = () => {
+const EmployeeMySummery = ({email}) => {
   const [users] = useUsers();
-  const { user } = useContext(AuthContext);
   const [employeePayment] = useEmployeePayment();
   const [Mpayment] = useMpayment();
 
-  const [employees, setEmployees] = useState([]);
-  const [selectedEmployee, setSelectedEmployee] = useState(user.email);
-
-  useEffect(() => {
-    if (users && user) {
-      const employeeList = users.filter((u) => u.role === "employee");
-      setEmployees(employeeList);
-    }
-  }, [users, user]);
+  const [selectedEmployee, setSelectedEmployee] = useState(email);
 
   const getRecentMonths = () => {
     const today = new Date();
@@ -44,11 +35,11 @@ const MySummery = () => {
 
     return relevantUsers.flatMap(user => {
       const employeePayments = employeePayment.filter(
-        payment => selectedEmployee ? payment.employeeEmail === selectedEmployee : payment.employeeEmail === user.email
+        payment => selectedEmployee ? payment.employeeEmail === selectedEmployee : payment.employeeEmail === email
       );
 
       const mPayments = Mpayment.filter(
-        payment => selectedEmployee ? payment.employeeEmail === selectedEmployee : payment.employeeEmail === user.email
+        payment => selectedEmployee ? payment.employeeEmail === selectedEmployee : payment.employeeEmail === email
       );
 
       const paymentByMonth = employeePayments.reduce((acc, payment) => {
@@ -195,4 +186,4 @@ const MySummery = () => {
   );
 };
 
-export default MySummery;
+export default EmployeeMySummery;

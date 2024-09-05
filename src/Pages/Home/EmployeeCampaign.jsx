@@ -1,9 +1,6 @@
 import { Link } from "react-router-dom";
 import useClients from "../../Hook/useClient";
-import useUsers from "../../Hook/useUsers";
-import { useContext, useEffect, useState } from "react";
-import { AuthContext } from "../../Security/AuthProvider";
-import { IoIosSearch } from "react-icons/io";
+import { useEffect, useState } from "react";
 import useCampaings from "../../Hook/useCampaign";
 import UseAxiosPublic from "../../Axios/UseAxiosPublic";
 import Swal from "sweetalert2";
@@ -11,51 +8,32 @@ import { Helmet } from "react-helmet-async";
 import { FaEdit } from "react-icons/fa";
 import axios from "axios";
 import { MdDelete, MdEditSquare } from "react-icons/md";
+import { toast } from "react-toastify";
 
 const EmployeeCampaign = ({email}) => {
-  const [users] = useUsers();
-  const { user } = useContext(AuthContext);
-  const [ddd, setDdd] = useState([]);
   const [clients] = useClients();
   const [campaigns,refetch]=useCampaings()
   const [isBudgetModalOpen, setIsBudgetModalOpen] = useState(false);
   const [isSpentModalOpen, setIsSpentModalOpen] = useState(false);
   const [totalSpent, setTotalSpent] = useState(0);
   const [totalBudged, setTotalBudged] = useState(0);
-  const [totalRCV, setTotalRCV] = useState(0);
-  const [totalbill, setTotalBill] = useState(0);
-
-
-const [client,setClient]=useState([])
+  const [client,setClient]=useState([])
+  const [filteredClients, setFilteredClients] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
+  const AxiosPublic=UseAxiosPublic()
 
   useEffect(() => {
     const filtered = clients.filter(
       (campaign) => campaign.employeeEmail === email
     );
-    console.log(filtered);
     setClient(filtered)
 
-  }, [clients, email]);
-
-  const [filteredClients, setFilteredClients] = useState([]);
-
-  useEffect(() => {
-    if (users && user) {
-      const employees = users.filter(u => u.role === 'employee');
-      setDdd(employees);
-    }
-  }, [users, email]);
-
-
-  useEffect(() => {
-    const filtered=campaigns.filter(c=>c?.email === email )
+    const filtered2=campaigns.filter(c=>c?.email === email )
     if (filtered) {
-      setFilteredClients(filtered);
-      console.log(filtered);
+      setFilteredClients(filtered2);
     }
-  }, [campaigns,email]);
-  console.log(campaigns);
 
+  }, [clients, email,campaigns]);
 
   const handleOpenBudgetModal = () => {
     setIsBudgetModalOpen(true);
@@ -77,61 +55,33 @@ const [client,setClient]=useState([])
     setFilteredClients(filtered);
   };
 
-
-  const [searchQuery, setSearchQuery] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("");
-
   const filteredItems = filteredClients.filter((item) =>
     item?._id.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const filteredByCategory = selectedCategory
-    ? filteredItems.filter(
-        (item) => item?.campaignName.toLowerCase() === selectedCategory.toLowerCase()
-      )
-    : filteredItems;
-
-
-   
-
-  console.log(totalSpent, totalBudged, totalRCV, totalbill);
-
   useEffect(() => {
-    const totalRcv = filteredByCategory.reduce((acc, campaign) => {
-      const payment = parseFloat(campaign.tPayment);
-      return acc + (isNaN(payment) ? 0 : payment);
-    }, 0);
-    setTotalRCV(totalRcv);
-
-    const tspent = filteredByCategory.reduce(
+    const tspent = filteredItems.reduce(
       (acc, campaign) => acc + parseFloat(campaign.tSpent),
       0
     );
     setTotalSpent(tspent);
 
-    const total = filteredByCategory.reduce(
+    const total = filteredItems.reduce(
       (acc, campaign) => acc + parseFloat(campaign.tBudged),
       0
     );
     setTotalBudged(total);
 
-    const totalBill = filteredByCategory.reduce(
-      (acc, campaign) => acc + parseFloat(campaign.tBill),
-      0
-    );
-    setTotalBill(totalBill);
+  }, [filteredItems]);
 
-  }, [filteredByCategory]);
 
   const handleUpdateTotalBudget = (e, id) => {
     e.preventDefault();
     const tBudged = e.target.tBudged.value;
-
     const body = { tBudged: tBudged };
     console.log(body);
 
-    axios
-      .put(`https://digital-networking-server.vercel.app/campaings/totalBudged/${id}`, body)
+    AxiosPublic.put(`/campaings/totalBudged/${id}`, body)
       .then((res) => {
         console.log(res.data);
         refetch();
@@ -159,8 +109,7 @@ const [client,setClient]=useState([])
     const body = { tSpent: tSpent };
     console.log(body);
 
-    axios
-      .put(`https://digital-networking-server.vercel.app/campaings/totalSpent/${id}`, body)
+      AxiosPublic.put(`/campaings/totalSpent/${id}`, body)
       .then((res) => {
         console.log(res.data);
         refetch();
@@ -181,7 +130,7 @@ const [client,setClient]=useState([])
       });
   };
  
- 
+
   const handleUpdate = (e, id) => {
     e.preventDefault();
     const tSpent = e.target.totalSpent.value;
@@ -190,8 +139,7 @@ const [client,setClient]=useState([])
     const tBudged = e.target.tBudged.value;
     const body = { tSpent, status, dollerRate, tBudged };
 
-    AxiosPublic.patch(
-      `https://digital-networking-server.vercel.app/campaings/${id}`,
+    AxiosPublic.patch(`/campaings/${id}`,
       body
     )
       .then((res) => {
@@ -206,8 +154,6 @@ const [client,setClient]=useState([])
   };
  
 
-
-  const AxiosPublic =UseAxiosPublic()
   const handledelete = (id) => {
         AxiosPublic.delete(`/campaigns/${id}`)
         .then((res) => {
@@ -215,6 +161,21 @@ const [client,setClient]=useState([])
         });
 
     }
+
+    const handleUpdate2 = (id, newStatus) => {
+      const body = { status: newStatus };
+  
+      AxiosPublic.patch(`/campaings/status/${id}`, body)
+        .then((res) => {
+          console.log(res.data);
+          refetch();
+          toast.success(`Campaign updated successfully`);
+        })
+        .catch((error) => {
+          console.error("Error updating campaign:", error);
+          toast.error("Failed to update campaign");
+        });
+    };
 
 
     
@@ -224,8 +185,8 @@ const [client,setClient]=useState([])
         <title>Campaign Table | Digital Network </title>
         <link rel="canonical" href="https://www.example.com/" />
       </Helmet>
-<div className="flex justify-end gap-5 items-center ">
-<form className="flex justify-end items-center">
+<div className="lg:flex  lg:justify-end gap-5 items-center ">
+<form className="flex justify-center items-center">
   <div className="mb-4 ">
  
     <select 
@@ -241,11 +202,11 @@ const [client,setClient]=useState([])
   </div>
 </form>
 
-      <div className="flex justify-end ">
+      <div className="flex justify-center ">
                 <input
                   type="text"
                   placeholder="Search Campaign Name..."
-                  className=" rounded-lg  mb-3 placeholder-black border border-gray-400 p-2 text-black  text-sm bg-white"
+                  className=" rounded-lg w-full  mb-3 placeholder-black border border-gray-400 p-2 text-black  text-sm bg-white"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                 />
@@ -275,7 +236,7 @@ const [client,setClient]=useState([])
               </tr>
             </thead>
             <tbody>
-  {filteredByCategory.map((campaign, index) => (
+  {filteredItems.map((campaign, index) => (
     <tr
       key={campaign._id}
       className={`${
@@ -284,7 +245,29 @@ const [client,setClient]=useState([])
           : "bg-gray-200 text-black border-b border-opacity-20"
       }`}
     >
-      <td className="p-3 border-r-2 border-l-2 border-gray-200 text-center">{index + 1}</td>
+<td className="p-3 border-r-2 border-l-2 border-gray-200 text-center">  <label className="inline-flex items-center cursor-pointer">
+  <input
+    type="checkbox"
+    className="sr-only"
+    checked={campaign.status === "Active"}
+    onChange={() => {
+      const newStatus = campaign.status === "Active" ? "Complete" : "Active";
+      handleUpdate2(campaign._id, newStatus);
+    }}
+  />
+  <div
+    className={`relative w-12 h-6 transition duration-200 ease-linear rounded-full ${
+      campaign.status === "Active" ? "bg-blue-700" : "bg-gray-500"
+    }`}
+  >
+    <span
+      className={`absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition-transform duration-200 ease-linear transform ${
+        campaign.status === "Active" ? "translate-x-6" : ""
+      }`}
+    ></span>
+  </div>
+</label>
+</td>
       <td className="p-3 border-l-2 border-r-2 border-gray-300 text-center">
   {new Date(campaign.date).toLocaleDateString("en-US", {
     year: "numeric",

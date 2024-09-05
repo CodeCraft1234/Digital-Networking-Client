@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import  { useState, useEffect } from 'react';
 import useUsers from '../../Hook/useUsers';
 import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
@@ -7,39 +7,42 @@ import useEmployeePayment from '../../Hook/useEmployeePayment';
 const months = [
   'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'
 ];
-
 const years = Array.from({ length: 31 }, (_, index) => 2020 + index); // Creates an array of years from 2020 to 2050
 
 const Sellery = () => {
   const [employeePayment] = useEmployeePayment();
   const [users] = useUsers();
   const [employeeData, setEmployeeData] = useState([]);
-  const [selectedMonth, setSelectedMonth] = useState(new Date().toLocaleString('default', { month: 'long' }));
+  const currentMonth = new Date().toLocaleString('default', { month: 'long' })
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
 
-  useEffect(() => {
-    // Filter users with role 'employee'
-    const employees = users.filter(user => user.role === 'employee');
+  const initialTab2 = localStorage.getItem("activeTaballselleryMonth") ;
+  const [sortMonth, setSortMonth] = useState(initialTab2 || currentMonth);
+  
+  const changeTab2 = (tab) => {
+    setSortMonth(tab);
+    localStorage.setItem("activeTaballselleryMonth", tab); 
+  };
 
-    // Aggregate totalSpent, sellery, and total pay for each employee
+  useEffect(() => {
+    const employees = users.filter(user => user.role === 'employee');
     const aggregatedData = employees.map(user => {
       const monthlySpentData = (user.monthlySpent || []).filter(spent => {
         const spentDate = new Date(spent.date);
-        return spentDate.toLocaleString('default', { month: 'long' }) === selectedMonth && spentDate.getFullYear() === selectedYear;
+        return spentDate.toLocaleString('default', { month: 'long' }) === sortMonth && spentDate.getFullYear() === selectedYear;
       });
 
-      const selleryData = (user.sellery || []).filter(sell => sell.month === selectedMonth);
-
+      const selleryData = (user.sellery || []).filter(sell => sell.month === sortMonth);
       const adminPayData = (user.adminPay || []).filter(pay => {
         const payDate = new Date(pay.date);
-        return payDate.toLocaleString('default', { month: 'long' }) === selectedMonth && payDate.getFullYear() === selectedYear;
+        return payDate.toLocaleString('default', { month: 'long' }) === sortMonth && payDate.getFullYear() === selectedYear;
       });
 
       const employeePaymentData = employeePayment.filter(payment => {
         const paymentDate = new Date(payment.date);
         return (
           payment.employeeEmail === user.email &&
-          paymentDate.toLocaleString('default', { month: 'long' }) === selectedMonth &&
+          paymentDate.toLocaleString('default', { month: 'long' }) === sortMonth &&
           paymentDate.getFullYear() === selectedYear
         );
       });
@@ -48,8 +51,6 @@ const Sellery = () => {
       const totalSellery = selleryData.reduce((acc, sell) => acc + sell.amount, 0);
       const totalBonus = selleryData.reduce((acc, sell) => acc + sell.bonus, 0);
       const totalAdminPay = adminPayData.reduce((acc, pay) => acc + pay.adminPayAmount, 0);
-
-      // Calculate total pay amount for the selected month and year
       const totalPayAmount = employeePaymentData.reduce((acc, payment) => acc + parseFloat(payment.payAmount), 0);
 
       return {
@@ -63,23 +64,17 @@ const Sellery = () => {
     });
 
     setEmployeeData(aggregatedData);
-  }, [users, employeePayment, selectedMonth, selectedYear]);
+  }, [users, employeePayment, sortMonth, selectedYear]);
 
-  const handleMonthChange = (event) => {
-    setSelectedMonth(event.target.value);
-  };
+
 
   const handleYearChange = (event) => {
     setSelectedYear(parseInt(event.target.value, 10));
   };
 
-  // Calculate totals for footer
   const totalSpent = employeeData.reduce((acc, user) => acc + user.totalSpent, 0);
   const totalSellery = employeeData.reduce((acc, user) => acc + user.totalSellery, 0);
   const totalBonus = employeeData.reduce((acc, user) => acc + user.totalBonus, 0);
-  const totalAdminPay = employeeData.reduce((acc, user) => acc + user.totalAdminPay, 0);
-  const totalPayAmount = employeeData.reduce((acc, user) => acc + user.totalPayAmount, 0);
-  const totalDue = totalSpent * 140 - totalAdminPay;
 
   return (
     <div className='m-5 text-black'>
@@ -88,39 +83,36 @@ const Sellery = () => {
         <link rel="canonical" href="https://www.example.com/" />
       </Helmet>
 
-      <div className="grid grid-cols-2 md:grid-cols-2 mb-5 lg:grid-cols-4 text-black sm:grid-cols-2 gap-5 justify-around ">
+      <div className="grid grid-cols-2 md:grid-cols-2 mb-5 lg:grid-cols-4 text-black sm:grid-cols-2 gap-3 justify-around ">
         <div className="px-5 py-10 rounded-2xl  bg-[#91a33a] text-white shadow-lg text-center">
-          <h2 className="text-xl font-bold">Total Spent</h2>
-          <p className="text-2xl font-bold mt-2"> $ {totalSpent.toFixed(2)}</p>
+          <h2 className="lg:text-xl text-sm font-bold">Total Spent</h2>
+          <p className="lg:text-xl text-sm font-bold mt-2"> $ {totalSpent.toFixed(2)}</p>
         </div>
 
         <div className="px-5 py-10 rounded-2xl bg-[#5422c0] text-white shadow-lg text-center">
-          <h2 className="text-xl font-bold">Total Sellery</h2>
-          <p className="text-2xl font-bold mt-2">
-             <span className="text-2xl font-extrabold">৳</span> {(totalSpent * 7).toFixed(2)}
+          <h2 className="lg:text-xl text-sm font-bold">Total Sellery</h2>
+          <p className="lg:text-xl text-sm font-bold mt-2">
+             <span className="lg:text-xl text-sm font-extrabold">৳</span> {(totalSpent * 7).toFixed(2)}
           </p>
         </div>
 
         <div className="px-5 py-10 rounded-2xl  bg-[#05a0db] text-white shadow-lg text-center">
-          <h2 className="text-xl font-bold">Paid</h2>
-          <p className="text-2xl font-bold mt-2"> <span className="text-2xl font-extrabold">৳</span>{totalSellery.toFixed(2)} </p>
+          <h2 className="lg:text-xl text-sm font-bold">Paid</h2>
+          <p className="lg:text-xl text-sm font-bold mt-2"> <span className="lg:text-xl text-sm font-extrabold">৳</span>{totalSellery.toFixed(2)} </p>
         </div>
 
         <div className="px-5 py-10 rounded-2xl  bg-[#ce1a38] text-white shadow-lg text-center">
-          <h2 className="text-xl font-bold">Unpaidy</h2>
-          <p className="text-2xl font-bold mt-2">
-          <span className="text-2xl font-extrabold">৳</span> {(totalSpent * 7 - totalSellery).toFixed(2)}
+          <h2 className="lg:text-xl text-sm font-bold">Unpaidy</h2>
+          <p className="lg:text-xl text-sm font-bold mt-2">
+          <span className="lg:text-xl text-sm font-extrabold">৳</span> {(totalSpent * 7 - totalSellery).toFixed(2)}
           </p>
         </div>
 
       
       </div>
-      <div className="mb-5 flex justify-end gap-5 items-center">
-
-    
-        <div>
-          
-          <select id="monthSelect" value={selectedMonth} onChange={handleMonthChange} className="p-2 bg-white text-black border border-gray-700 rounded">
+      <div className="mb-5 flex justify-center lg:justify-end gap-5 items-center">
+        <div> 
+          <select id="monthSelect" value={sortMonth}  onChange={(e) => changeTab2(e.target.value)} className="p-2 bg-white text-black border border-gray-700 rounded">
             {months.map((month) => (
               <option key={month} value={month}>{month}</option>
             ))}

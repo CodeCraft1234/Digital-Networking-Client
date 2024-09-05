@@ -4,15 +4,17 @@ import useUsers from "../../Hook/useUsers";
 import { useEffect, useState } from "react";
 import CampaignTable from "../Home/CampaignTable";
 import UseAxiosPublic from "../../Axios/UseAxiosPublic";
-import UserAdAccount from "../../Components/UserAdAccount/UserAdAccount";
+import UserAdAccount from "../../Components/UserAdAccount/MyAdsAccount";
 import EmployeerSellery from "../DashboardRoot/EmployeerSellery";
 import { Helmet } from "react-helmet-async";
 import EmployeeAdminPay from "../Home/EmployeeAdminPay";
 import EmployeeClientPay from "../DashboardRoot/EmployeeClientPay";
 import EmployeeCampaign from "../Home/EmployeeCampaign";
 import useEmployeePayment from "../../Hook/useEmployeePayment";
+import EmployeeMyHistory from "../Home/EmployeeMyHistory";
+import EmployeeMySummery from "../DashboardRoot/EmployeeMySummery";
 
-const Profile = () => {
+const EmployeeProfile = () => {
   const [users] = useUsers(); 
   const userr = useLoaderData();
   const AxiosPublic = UseAxiosPublic();
@@ -23,7 +25,7 @@ const Profile = () => {
 
 
   const getButtonClass = (tab) => 
-    `px-4 py-2 rounded ${activeTab === tab ? 'bg-[#05a0db] text-white font-bold' : 'bg-[#f89320] text-black font-bold'}`;
+    `px-1 py-2 rounded ${activeTab === tab ? ' text-blue-700 font-bold' : ' text-black font-md'}`;
 
 
   const changeTab = (tab) => {
@@ -120,7 +122,7 @@ const Profile = () => {
       
       <div className="">
         <img 
-          className="rounded-full border-2 p-2 border-black mx-auto sm:w-24 h-24 lg:w-52 lg:h-52" 
+          className="rounded-full border-2 p-2 border-black mx-auto sm:w-20 h-20 lg:w-32 lg:h-32" 
           src={userr?.photo} 
           alt="" 
         />
@@ -130,7 +132,7 @@ const Profile = () => {
       </div>
       
 
-      <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-6   lg:grid-cols-6 gap-5 mt-5 px-5 ">
+      <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-6   lg:grid-cols-6 gap-3 lg:gap-5 mt-5 px-5 ">
  <div className="balance-card bg-white rounded-2xl shadow-xl p-5 text-center  transition-transform transform hover:scale-105 border-0">
    <img className="balance-card-img" src="https://i.ibb.co/bHMLyvM/b-Kash-Merchant.png" alt="bKash" />
    <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"> <span className="text-lg lg:text-2xl font-extrabold"> ৳</span> {bkashMarcent - bkashMarcent2}</p>
@@ -170,39 +172,55 @@ const Profile = () => {
 
 </div>
 
-      <div className="flex justify-center items-center gap-5 mt-5">
+      <div className="lg:flex lg:justify-center grid grid-cols-3 px-3  mb-3 lg:mb-0  items-center gap-5 mt-5">
       <button 
           className={getButtonClass('adsAccount')}
           onClick={() => changeTab('adsAccount')}
         >
           Ads Account
         </button>
+        <p className='font-extrabold hidden lg:visible text-blue text-2xl'>|</p>
       <button 
           className={getButtonClass('client')}
           onClick={() => changeTab('client')}
         >
-          Client Table
+          Clients
         </button>
-      
+        <p className='font-extrabold hidden lg:visible text-blue text-2xl'>|</p>
 
         <button 
           className={getButtonClass('campaign')}
           onClick={() => changeTab('campaign')}
         >
-          Campaign Table
+          Campaigns
         </button>
-
+        <p className='font-extrabold hidden lg:visible text-blue text-2xl'>|</p>
         <button 
           className={getButtonClass('adminPay')}
           onClick={() => changeTab('adminPay')}
         >
           Admin Pay
         </button>
+        <p className='font-extrabold hidden lg:visible text-blue text-2xl'>|</p>
         <button 
           className={getButtonClass('clientPay')}
           onClick={() => changeTab('clientPay')}
         >
           Client Pay
+        </button>
+        <p className='font-extrabold hidden lg:visible text-blue text-2xl'>|</p>
+    
+        <button 
+          className={getButtonClass('history')}
+          onClick={() => changeTab('history')}
+        >
+          History
+        </button>
+        <button 
+          className={getButtonClass('summery')}
+          onClick={() => changeTab('summery')}
+        >
+          Summery
         </button>
         <button 
           className={getButtonClass('sellery')}
@@ -218,8 +236,10 @@ const Profile = () => {
       {activeTab === 'sellery' && <EmployeerSellery />}
       {activeTab === 'adminPay' && <EmployeeAdminPay email={userr?.email} />}
       {activeTab === 'clientPay' && <EmployeeClientPay email={userr?.email} />}
+      {activeTab === 'history' && <EmployeeMyHistory email={userr?.email} />}
+      {activeTab === 'summery' && <EmployeeMySummery email={userr?.email} />}
     </div>
   );
 };
 
-export default Profile;
+export default EmployeeProfile;

@@ -165,7 +165,7 @@ const EmployeeClientPay = ({email}) => {
         <link rel="canonical" href="https://www.example.com/" />
       </Helmet>
 
-      <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3   lg:grid-cols-6 gap-5 mt-5 p-5">
+      <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3   lg:grid-cols-6 gap-3 lg:gap-5 mt-5 p-5">
    <div onClick={() => setSelectedCategory('bkashMarchent')} className="balance-card bg-white rounded-2xl shadow-lg p-5 text-center  transition-transform transform hover:scale-105 border-0">
      <img className="balance-card-img" src="https://i.ibb.co/bHMLyvM/b-Kash-Merchant.png" alt="bKash" />
      <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"> <span className="text-lg lg:text-2xl font-extrabold"> ৳</span> {bkashMarcent}</p>
@@ -195,9 +195,8 @@ const EmployeeClientPay = ({email}) => {
      </div>
 
 {/* ///////////////////////////////////////////////////////////////// */}
-      <div className="flex text-black justify-end gap-5 items-center">
-        <div className="flex justify-end items-center gap-5 mb-4 ml-5 ">
-          <div className="flex flex-col justify-end items-center">
+        <div className="flex lg:justify-end justify-center items-center gap-5 mb-4  ">
+          <div >
           
             <select
               className="border bg-white text-black border-gray-400 rounded p-2 mt-1"
@@ -225,17 +224,7 @@ const EmployeeClientPay = ({email}) => {
               ))}
             </select>
           </div>
-          <div className="flex mt-1  justify-end">
-          <input
-            type="text"
-            placeholder="Payment Method..."
-            className="rounded-lg placeholder-black border border-gray-400 p-2  text-black  bg-white"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
-        
-        </div>
-          <div className="flex flex-col mr-5 justify-center items-center">
+          <div >
            
             <input
               type="date"
@@ -246,7 +235,7 @@ const EmployeeClientPay = ({email}) => {
           </div>
         </div>
         
-      </div>
+    
 
       <div className="overflow-x-auto rounded-xl border text-black border-gray-400 mx-5">
         <table className="min-w-full bg-white">

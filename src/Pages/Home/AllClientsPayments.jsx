@@ -1,88 +1,88 @@
-import { useContext, useEffect, useState } from "react";
-import { AuthContext } from "../../Security/AuthProvider";
-import { IoIosSearch } from "react-icons/io";
+import { useEffect, useState } from "react";
 import UseAxiosPublic from "../../Axios/UseAxiosPublic";
 import { Helmet } from "react-helmet-async";
 import useMpayment from "../../Hook/UseMpayment";
 import Swal from "sweetalert2";
-import { MdDelete, MdEditSquare } from "react-icons/md";
 import { Link } from "react-router-dom";
 import useUsers from "../../Hook/useUsers";
 
 const AllClientsPayments = () => {
   const [MPayment, refetch] = useMpayment();
   const AxiosPublic = UseAxiosPublic();
-  const [sortMonth, setSortMonth] = useState(""); // Default is empty
+
   const [selectedDate, setSelectedDate] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
-  const [searchQuery, setSearchQuery] = useState("");
   const [filteredData, setFilteredData] = useState([]);
-  const [selectedEmployee, setSelectedEmployee] = useState("");
+
   const [totalPayment, setTotalPayment] = useState(0);
-  const [payment, setPayment] = useState([]);
   const [users] = useUsers();
   const [employees, setEmployees] = useState([]);
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
+  const [showAll, setShowAll] = useState(false);
+  const [itemsToShow] = useState(200); 
+  const displayedItems = showAll ? filteredData : filteredData.slice(0, itemsToShow);
+  const [selectedPayment, setSelectedPayment] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
+
+  const initialTab = localStorage.getItem("activeTaballClientspays") ;
+  const [sortMonth, setSortMonth] = useState(initialTab); 
+  
+  const changeTab = (tab) => {
+    setSortMonth(tab);
+    localStorage.setItem("activeTaballClientspays", tab); 
+  };
+
+  const initialTab2 = localStorage.getItem("activeTaballClientsemp") ;
+  const [selectedEmployee, setSelectedEmployee] = useState(initialTab2); 
+  
+  const changeTab2 = (tab) => {
+    setSelectedEmployee(tab);
+    localStorage.setItem("activeTaballClientsemp", tab); 
+  };
+
+  
+  // Fetch employees when users are available
   useEffect(() => {
     if (users) {
-      const employeeList = users.filter((u) => u.role === "employee");
-      setEmployees(employeeList);
+      setEmployees(users.filter((u) => u.role === "employee"));
     }
   }, [users]);
-
+  
+  // Filter MPayment data based on selected filters
   useEffect(() => {
-    const currentMonth = new Date().getMonth() + 1; // Months are 0-indexed
-    setSortMonth(currentMonth);
-  }, []);
-
-  useEffect(() => {
-    let filtered = MPayment;
-
-    if (selectedEmployee) {
-      filtered = filtered.filter((c) => c.employeeEmail === selectedEmployee);
-    }
-
-    if (sortMonth) {
-      filtered = filtered.filter(
-        (payment) =>
-          new Date(payment.date).getMonth() + 1 === parseInt(sortMonth)
-      );
-    }
-
-    if (selectedDate) {
-      filtered = filtered.filter((payment) => payment.date === selectedDate);
-    }
-
-    if (selectedCategory) {
-      filtered = filtered.filter(
-        (payment) => payment.paymentMethod === selectedCategory
-      );
-    }
-
-    if (searchQuery) {
-      filtered = filtered.filter((payment) =>
-        payment.paymentMethod.toLowerCase().includes(searchQuery.toLowerCase())
-      );
-    }
-
-    if (selectedYear) {
-      filtered = filtered.filter(
-        (payment) =>
-          new Date(payment.date).getFullYear() === parseInt(selectedYear)
-      );
-    }
-
+    const filtered = MPayment.filter((payment) =>
+      (selectedEmployee ? payment.employeeEmail === selectedEmployee : true) &&
+      (sortMonth ? new Date(payment.date).getMonth() + 1 === parseInt(sortMonth) : true) &&
+      (selectedDate ? payment.date === selectedDate : true) &&
+      (selectedCategory ? payment.paymentMethod === selectedCategory : true) &&
+      (selectedYear ? new Date(payment.date).getFullYear() === parseInt(selectedYear) : true)
+    );
+  
     setFilteredData(filtered);
-  }, [
-    sortMonth,
-    selectedDate,
-    selectedCategory,
-    searchQuery,
-    MPayment,
-    selectedEmployee,
-    selectedYear,
-  ]);
+  }, [sortMonth, selectedDate, selectedCategory,  MPayment, selectedEmployee, selectedYear]);
+  
+  // Calculate total payment based on displayed items
+  useEffect(() => {
+    const totalBill = displayedItems.reduce(
+      (acc, campaign) => acc + parseFloat(campaign.amount),
+      0
+    );
+    setTotalPayment(totalBill);
+  }, [MPayment, displayedItems]);
+  
+  // Open and close modal for payment editing
+  const handleEditClick = (payment) => {
+    setSelectedPayment(payment);
+    setIsModalOpen(true);
+  };
+  
+  const handleCancel = () => {
+    setIsModalOpen(false);
+    setSelectedPayment(null);
+  };
+  
+
   const handleDelete = (id) => {
     Swal.fire({
       title: "Are you sure?",
@@ -108,23 +108,6 @@ const AllClientsPayments = () => {
     });
   };
 
-  const [activeDropdown, setActiveDropdown] = useState(null);
-  const toggleDropdown = (orderId) => {
-    setActiveDropdown(activeDropdown === orderId ? null : orderId);
-  };
-
-  const [selectedPayment, setSelectedPayment] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
-  const handleEditClick = (payment) => {
-    setSelectedPayment(payment);
-    setIsModalOpen(true);
-  };
-
-  const handleCancel = () => {
-    setIsModalOpen(false);
-    setSelectedPayment(null);
-  };
 
   const handleUpdate = (e) => {
     e.preventDefault();
@@ -189,19 +172,7 @@ const AllClientsPayments = () => {
       });
   }, []);
 
-  const [showAll, setShowAll] = useState(false); // State to handle showing all data
-  const [itemsToShow, setItemsToShow] = useState(200); // Number of items to show initially
-  const displayedItems = showAll ? filteredData : filteredData.slice(0, itemsToShow);
 
-
-  useEffect(() => {
-    setPayment(MPayment);
-    const totalBill = displayedItems.reduce(
-      (acc, campaign) => acc + parseFloat(campaign.amount),
-      0
-    );
-    setTotalPayment(totalBill);
-  }, [MPayment,displayedItems]);
 
   
 
@@ -213,7 +184,7 @@ const AllClientsPayments = () => {
         <link rel="canonical" href="https://www.example.com/" />
       </Helmet>
 
-      <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3  lg:grid-cols-6 gap-5  p-5">
+      <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3  lg:grid-cols-6 gap-3 lg:gap-5   px-5 pb-5">
    <div onClick={() => setSelectedCategory('bkashMarchent')} className="balance-card bg-white rounded-2xl shadow-lg p-5 text-center  transition-transform transform hover:scale-105 border-0">
      <img className="balance-card-img" src="https://i.ibb.co/bHMLyvM/b-Kash-Merchant.png" alt="bKash" />
      <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"> <span className="text-lg lg:text-2xl font-extrabold"> ৳</span> {bkashMarcent}</p>
@@ -242,15 +213,16 @@ const AllClientsPayments = () => {
      </div>
 
 {/* ///////////////////////////////////////////////////////////////// */}
-      <div className="flex text-black justify-end gap-5 items-center">
-        <div className="flex justify-center items-center gap-5   ">
+      <div className="lg:flex text-black lg:justify-end gap-5 items-center">
+        <div className="lg:flex space-y-5 lg:space-y-0 lg:justify-center items-center gap-5   ">
 
-        <div className="flex flex-col justify-start text-start items-start">
+        <div className="flex justify-center gap-5">
+        <div className="flex  justify-center text-start items-start">
          
          <select
            className="border bg-white text-black border-gray-400 rounded p-2 mt-1 "
            value={selectedEmployee}
-           onChange={(e) => setSelectedEmployee(e.target.value)}
+           onChange={(e) => changeTab2(e.target.value)}
          >
            <option value="">All Employee</option>
            {employees.map((employee) => (
@@ -260,58 +232,72 @@ const AllClientsPayments = () => {
            ))}
          </select>
        </div>
-          <div className="flex flex-col justify-start items-start">
-           
-            <select
-              className="border bg-white text-black border-gray-400 rounded p-2 mt-1"
-              value={sortMonth}
-              onChange={(e) => setSortMonth(e.target.value)}
-            >
-              <option value="">Select Month</option>
-              {[
-                "January",
-                "February",
-                "March",
-                "April",
-                "May",
-                "June",
-                "July",
-                "August",
-                "September",
-                "October",
-                "November",
-                "December",
-              ].map((month, index) => (
-                <option key={index + 1} value={index + 1}>
-                  {month}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div className="flex text-black justify-end gap-5 items-center ">
-        <div className="flex flex-col justify-start items-start">
-          <select
-            className="border bg-white text-black border-gray-400 rounded p-2 mt-1"
-            value={selectedYear}
-            onChange={(e) => setSelectedYear(e.target.value)}
-          >
-            {Array.from({ length: 31 }, (_, i) => 2020 + i).map((year) => (
-              <option key={year} value={year}>
-                {year}
-              </option>
-            ))}
-          </select>
+
+     
+
+
+
+     <div className="flex text-black justify-center gap-5 items-center ">
+        
+        <select
+          className="border bg-white text-black border-gray-400 rounded p-2 mt-1"
+          value={selectedYear}
+          onChange={(e) => setSelectedYear(e.target.value)}
+        >
+          {Array.from({ length: 31 }, (_, i) => 2020 + i).map((year) => (
+            <option key={year} value={year}>
+              {year}
+            </option>
+          ))}
+        </select>
+  
+    </div>
+
         </div>
-      </div>
-          <div className="flex flex-col mr-5  justify-center items-start">
-         
-            <input
-              type="date"
-              className="border rounded bg-green-300 text-black border-gray-400 p-2 mt-1"
-              value={selectedDate}
-              onChange={(e) => setSelectedDate(e.target.value)}
-            />
-          </div>
+        
+              <div className="flex justify-center gap-5">
+
+
+    <div className="flex  justify-center items-start">
+           
+           <select
+             className="border bg-white text-black border-gray-400 rounded p-2 mt-1"
+             value={sortMonth}
+             onChange={(e) => changeTab(e.target.value)}
+           >
+             <option value="">Select Month</option>
+             {[
+               "January",
+               "February",
+               "March",
+               "April",
+               "May",
+               "June",
+               "July",
+               "August",
+               "September",
+               "October",
+               "November",
+               "December",
+             ].map((month, index) => (
+               <option key={index + 1} value={index + 1}>
+                 {month}
+               </option>
+             ))}
+           </select>
+         </div>
+         <div className="flex  mr-5  justify-center items-start">
+       
+       <input
+         type="date"
+         className="border rounded bg-green-300 text-black border-gray-400 p-2 mt-1"
+         value={selectedDate}
+         onChange={(e) => setSelectedDate(e.target.value)}
+       />
+     </div>
+      
+              </div>
+             
          
         </div>
        

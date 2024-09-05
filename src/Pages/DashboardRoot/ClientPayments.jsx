@@ -105,7 +105,6 @@ const ClientPayments = () => {
   useEffect(()=>{
       AxiosPublic.get(`https://digital-networking-server.vercel.app/Mpayment`)
       .then(res => {
-          console.log('sdjkhagjijkhgjkhdsajljkhgdsjkajkjkfjldfgjkgjkgd',res.data);
           const da=res.data
           const filtered=da.filter(f=> f.employeeEmail === user?.email) 
 

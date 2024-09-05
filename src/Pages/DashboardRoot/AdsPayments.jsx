@@ -240,7 +240,7 @@ const  AllAdsPayments = () => {
         <title>Admin Payment | Digital Network </title>
         <link rel="canonical" href="https://www.example.com/" />
       </Helmet>
-     <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3   lg:grid-cols-6 gap-5 mt-5 p-5">
+     <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3   lg:grid-cols-6 gap-3 lg:gap-5 mt-4 lg:mt-5 p-5">
    <div onClick={(e) => setSelectedCategory('bkashMarchent')} className="balance-card bg-white rounded-2xl shadow-lg p-5 text-center  transition-transform transform hover:scale-105 border-0">
      <img className="balance-card-img" src="https://i.ibb.co/bHMLyvM/b-Kash-Merchant.png" alt="bKash" />
      <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"> <span className="text-lg lg:text-2xl font-extrabold"> ৳</span> {bkashMarcent2}</p>
@@ -271,11 +271,11 @@ const  AllAdsPayments = () => {
      </div>
    
 {/* ///////////////////////////////////////////////////////////////// */}
-    <div className="flex  justify-between items-center gap-5  ">
-         <div className="">
+    <div className="lg:flex  lg:justify-between items-center gap-5  ">
+         <div className="flex justify-center items-center">
           
         <button
-          className="font-avenir px-3 hover:bg-indigo-700  mx-auto py-1 bg-[#05a0db] ml-5 rounded-lg text-white"
+          className="font-avenir px-3 hover:bg-indigo-700 w-full lg:w-auto mr-5 py-2 lg:mr-0  mx-auto  bg-[#05a0db] ml-5 rounded-lg text-white"
           onClick={() => document.getElementById("my_modal_1").showModal()}
         >
          Pay Admin
@@ -350,9 +350,9 @@ const  AllAdsPayments = () => {
           </div>
         </dialog>
          </div>
-          <div className="flex  justify-end items-center gap-5  ml-2 ">
+          <div className="flex  mt-4 lg:mt-0 justify-center lg:mr-5 lg:justify-end items-center gap-5   ">
   
-    <div className="flex flex-col justify-end items-center">
+    <div className="flex justify-center   lg:justify-end items-center">
    
       <select
         className="border bg-white text-black border-gray-400 rounded p-2 mt-1"
@@ -384,7 +384,7 @@ const  AllAdsPayments = () => {
    
       <input
         type="date"
-        className="border rounded bg-green-300 mr-5 text-black border-gray-400 p-2 mt-1"
+        className="border rounded bg-green-300  text-black border-gray-400 p-2 mt-1"
         value={selectedDate}
         onChange={(e) => setSelectedDate(e.target.value)}
       />

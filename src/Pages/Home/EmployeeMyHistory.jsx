@@ -1,41 +1,42 @@
-import  { useState,  } from 'react';
-import useUsers from '../../Hook/useUsers';  // Custom hook to fetch users
+import { useEffect, useState } from 'react';
+import useUsers from '../../Hook/useUsers';  
 import UseAxiosPublic from '../../Axios/UseAxiosPublic';
+import { toast } from 'react-toastify';
 import Swal from 'sweetalert2';
-import { Link } from 'react-router-dom';
 
-const History = () => {
-  const [users,refetch] = useUsers(); 
+const EmployeeMyHistory = ({email}) => {
+  const [users, refetch] = useUsers(); // Fetch all users
+  const [ddd, setDdd] = useState(null);
+
+  const initialTab = localStorage.getItem("activeTabadhistoryMont") || "All";
+  const [sortMonth, setSortMonth] = useState(initialTab || new Date().getMonth() + 1)
+
+  const changeTab = (tab) => {
+    setSortMonth(tab);
+    localStorage.setItem("activeTabadhistoryMont", tab); 
+  };
+
+  useEffect(() => {
+      const foundUser = users.find(u => u.email === email);
+      setDdd(foundUser || {}); // Update state with found user or an empty object
+  }, [users, email]);
+
+  // Get the current month and year
   const currentDate = new Date();
   const currentMonth = currentDate.toLocaleString('default', { month: 'long' });
   const currentYear = currentDate.getFullYear().toString();
-  const [sortYear, setSortYear] = useState(currentYear);
 
-  const initialTab = localStorage.getItem("activeTaballhistory") ;
-  const [sortEmployee, setSortEmployee] = useState(initialTab);
-  
-  const changeTab = (tab) => {
-    setSortEmployee(tab);
-    localStorage.setItem("activeTaballhistory", tab); 
-  };
-
-  const initialTab2 = localStorage.getItem("activeTaballhistoryMonth") ;
-  const [sortMonth, setSortMonth] = useState(initialTab2 || currentMonth);
-  
-  const changeTab2 = (tab) => {
-    setSortMonth(tab);
-    localStorage.setItem("activeTaballhistoryMonth", tab); 
-  };
-
+  // Set the default state for month and year
+  const [sortEmployee, setSortEmployee] = useState(email || ''); // Default to logged-in user's email
+  const [sortYear, setSortYear] = useState(currentYear); // Default to current year
 
   // Flatten the monthlySpent data across all users
   const flattenedData = users.reduce((acc, user) => {
     if (user.monthlySpent) {
       const userSpentData = user.monthlySpent.map(spent => ({
         ...spent,
-        employeeName: user.name, // Add employee name from user data
-        employeeEmail: user.email, // Add employee name from user data
-        employeeId: user._id, // Add employee ID for identification
+        employeeName: user.email, // Add employee email from user data
+        employeeId: ddd?._id, // Add employee ID for identification
       }));
       return [...acc, ...userSpentData];
     }
@@ -51,6 +52,10 @@ const History = () => {
       return matchEmployee && matchMonth && matchYear;
     });
 
+  // Calculate totals
+  const totalSpent = sortedAccounts.reduce((sum, account) => sum + account.totalSpentt, 0);
+  const totalBill = totalSpent * 140; // Assuming conversion rate of 140
+
   const AxiosPublic = UseAxiosPublic();
 
   // Handle update function
@@ -65,14 +70,15 @@ const History = () => {
       });
   
       if (response.status === 200) {
-        alert('Total spent updated successfully');
-        window.location.reload(); // Optionally reload the page to fetch updated data
+        toast.success('Total spent updated successfully');
+        refetch(); // Refresh data
       }
     } catch (error) {
       console.error('Error updating total spent:', error);
-      alert('Failed to update total spent');
+      toast.error('Failed to update total spent');
     }
   };
+
   const handleDelete = (e, userId, spentId) => {
     Swal.fire({
       title: "Are you sure?",
@@ -90,7 +96,7 @@ const History = () => {
           if (res.data.deletedCount > 0) {
             Swal.fire({
               title: "Deleted!",
-              text: "Your histroy has been deleted.",
+              text: "Your history has been deleted.",
               icon: "success",
             });
           }
@@ -100,28 +106,12 @@ const History = () => {
   };
 
   return (
-    <div className='mx-5 my-5'>
-      <div className="lg:flex lg:justify-end items-center gap-3 mb-5">
-        <div className='flex justify-center items-center'>
+    <div className='mx-5 mt-5 lg:my-5 mb-5'>
+      <div className="flex justify-center lg:justify-end items-center gap-3 mb-5">
+        <div>
           <select
             className="px-4 py-2 border rounded bg-white text-black border-black"
             onChange={(e) => changeTab(e.target.value)}
-            value={sortEmployee || ""}
-          >
-            <option value="">Select Employee</option>
-            {users.map(user => (
-              user.role === 'employee' && (
-                <option key={user._id} value={user.name}>{user.name}</option>
-              )
-            ))}
-          </select>
-        </div>
-      
-        <div className='flex justify-center mt-5 lg:mt-0 gap-5 items-center'>
-        <div>
-         <select
-            className=" px-4 py-2 border rounded bg-white text-black border-black"
-            onChange={(e) => changeTab2(e.target.value)}
             value={sortMonth || ""}
           >
             <option value="">Select Month</option>
@@ -129,9 +119,10 @@ const History = () => {
               <option key={month} value={month}>{month}</option>
             ))}
           </select>
-          </div>
-         <div>
-         <select
+        </div>
+
+        <div>
+          <select
             className="px-4 py-2 border rounded bg-white text-black border-black"
             onChange={(e) => setSortYear(e.target.value)}
             value={sortYear || ""}
@@ -141,7 +132,6 @@ const History = () => {
               <option key={year} value={year}>{year}</option>
             ))}
           </select>
-         </div>
         </div>
       </div>
 
@@ -150,8 +140,8 @@ const History = () => {
           <thead className="bg-[#05a0db] text-white">
             <tr>
               <th className="p-3">SL</th>
-              <th className="p-3">Month</th>
-              <th className="p-3">Employee Name</th>
+              <th className="p-3">Payment Month</th>
+            
               <th className="p-3">Ad Account Name</th>
               <th className="p-3">Total Spent</th>
               <th className="p-3">Total Bill</th>
@@ -172,27 +162,22 @@ const History = () => {
                 <td className="p-3 border-l-2 border-r-2 text-center border-gray-300">
                   {new Date(account.date).toLocaleString('default', { month: 'long'})}
                 </td>
-                <td className="p-3 border-r-2 hover:text-blue-700 hover:font-bold border-gray-300 text-start px-5">
-                <Link to={`/dashboard/userInfo/${account?.employeeEmail}`}>
-                {account.employeeName}
-                </Link>
                 
-                </td>
                 <td className="p-3 border-r-2 border-gray-300 text-start px-5">
                   {account.accountName}
                 </td>
                 <td className="p-3 border-r-2 border-gray-300 text-center">
-  $ {account.totalSpentt.toFixed(2)}
-</td>
-<td className="p-3 border-r-2 border-gray-300 text-center">
-  ৳ {(account.totalSpentt * 140).toFixed(2)}
-</td>
+                  $ {account.totalSpentt.toFixed(2)}
+                </td>
+                <td className="p-3 border-r-2 border-gray-300 text-center">
+                  ৳ {(account.totalSpentt * 140).toFixed(2)}
+                </td>
 
                 <td className="p-3 border-r text-center border-gray-400">
                   <div className="flex justify-center items-center gap-3">
                     <div>
                       <button
-                      className="bg-green-700 hover:bg-blue-700 text-white px-2 py-1 rounded"
+                        className="bg-green-700 hover:bg-blue-700 text-white px-2 py-1 rounded"
                         onClick={() =>
                           document.getElementById(`modal_${index}`).showModal()
                         }
@@ -216,14 +201,14 @@ const History = () => {
                                 onClick={() =>
                                   document.getElementById(`modal_${index}`).close()
                                 }
+                                className="bg-gray-300 text-black px-4 py-2 rounded hover:bg-gray-400"
                                 type="button"
-                                className="font-avenir px-3 py-1 bg-red-600 rounded-lg text-white"
                               >
                                 Close
                               </button>
                               <button
                                 type="submit"
-                                className="font-avenir px-3 py-1 bg-[#05a0db] rounded-lg text-white"
+                                className="bg-green-700 text-white px-4 py-2 rounded hover:bg-green-800"
                               >
                                 Update
                               </button>
@@ -233,8 +218,8 @@ const History = () => {
                       </dialog>
                     </div>
                     <button
-                      className="bg-red-700 hover:bg-blue-700 text-white px-2 py-1 rounded"
-                      onClick={(e) => handleDelete(e, account.employeeId, account.ids)} // Ensure correct ID for deletion
+                      className="bg-red-700 hover:bg-red-800 text-white px-2 py-1 rounded"
+                      onClick={(e) => handleDelete(e, account.employeeId, account.ids)}
                     >
                       Delete
                     </button>
@@ -243,24 +228,24 @@ const History = () => {
               </tr>
             ))}
           </tbody>
-
-          <tfoot className="bg-[#05a0db] border-t border-gray-700 text-white">
-  <tr>
-    <td colSpan="4" className="p-3 font-bold text-right">Total</td>
-    <td className="p-3 font-bold text-center">
-      $ {sortedAccounts.reduce((sum, acc) => sum + acc.totalSpentt, 0).toFixed(2)}
-    </td>
-    <td className="p-3 font-bold text-center">
-      ৳ {(sortedAccounts.reduce((sum, acc) => sum + acc.totalSpentt, 0) * 140).toFixed(2)}
-    </td>
-    <td className="p-3 font-bold text-center"></td>
-  </tr>
-</tfoot>
-
+          <tfoot>
+            <tr className='bg-[#05a0db] text-white'>
+              <td colSpan="3" className="p-3  border-gray-300 text-center font-bold">
+                Totals
+              </td>
+              <td className="p-3  border-gray-300 text-center font-bold">
+                $ {totalSpent.toFixed(2)}
+              </td>
+              <td className="p-3 border-gray-300 text-center font-bold">
+                ৳ {totalBill.toFixed(2)}
+              </td>
+              <td className="p-3 border-r-2 border-gray-300"></td>
+            </tr>
+          </tfoot>
         </table>
       </div>
     </div>
   );
 };
 
-export default History;
+export default EmployeeMyHistory;

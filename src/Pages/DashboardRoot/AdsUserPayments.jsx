@@ -459,7 +459,7 @@ const AdsUserPayments = () => {
     
     return (
         <div>
-                 <div className="grid grid-cols-2 text-white sm:grid-cols-2 md:grid-cols-3 mb-3  lg:grid-cols-5 gap-5 mt-4 ">
+                 <div className="grid grid-cols-2 text-white sm:grid-cols-2 md:grid-cols-3 mb-3  lg:grid-cols-5 gap-3 lg:gap-5 mt-4 ">
    <div className="balance-card bg-white rounded-2xl shadow-lg p-5 text-center  transition-transform transform hover:scale-105 border-0">
      <img className="balance-card-img" src="https://i.ibb.co/bHMLyvM/b-Kash-Merchant.png" alt="bKash" />
      <p className="balance-card-text text-black text-lg lg:text-2xl font-bold "> <span className="text-lg lg:text-2xl text-white font-extrabold"> ৳</span> {bkashMarcent2}</p>
@@ -481,6 +481,11 @@ const AdsUserPayments = () => {
      <img className="balance-card-img" src="https://i.ibb.co/PZc0P4w/brac-bank-seeklogo.png" alt="Rocket" />
      
      <p className="balance-card-text text-black text-lg lg:text-2xl font-bold "><span className="text-lg lg:text-2xl font-extrabold"> ৳</span> {bankTotal2}</p>
+   </div>
+   <div className="balance-card bg-white rounded-2xl shadow-lg p-5 text-center transition-transform transform hover:scale-105 border-0">
+     <h1 className='text-2xl text-black font-bold'>Total</h1>
+     
+     <p className="balance-card-text pt-8 text-black text-lg lg:text-2xl font-bold "><span className="text-lg lg:text-2xl font-extrabold"> ৳</span> {bankTotal2+nagadPersonal2+rocketPersonal2+bkashMarcent2+bkashPersonal2}</p>
    </div>
      </div>
    
@@ -565,9 +570,9 @@ const AdsUserPayments = () => {
   </dialog>
 </div>
 
-          <div className="flex  justify-end items-center gap-5  ml-2 ">
+
   
-    <div className="flex flex-col justify-end items-start">
+    <div className="flex justify-center items-center lg:justify-end ">
     
       <select
         className="border bg-blue-200 text-black border-gray-400 rounded p-2 mt-1"
@@ -595,7 +600,7 @@ const AdsUserPayments = () => {
         ))}
       </select>
     </div>
-    <div className="flex flex-col justify-center items-start">
+    <div className="flex  justify-center items-center">
      
       <input
         type="date"
@@ -630,7 +635,7 @@ const AdsUserPayments = () => {
     />
   
   </div>
-          </div>
+         
   
      </div>
       <div className="overflow-x-auto text-black rounded-xl border border-gray-700 mt-5 ">

@@ -33,7 +33,7 @@ const MyPayments = () => {
 
     return (
         <div>
-                         <div className="flex justify-start items-center gap-1 lg:mt-5 mt-0 mx-5">
+                         <div className="flex justify-start items-center gap-1 lg:mt-5 mt-5 mx-5">
       <button 
           className={getButtonClass('adminPay')}
           onClick={() => changeTab('adminPay')}

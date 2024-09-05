@@ -142,6 +142,7 @@ const AdminPayments = () => {
       body
     ).then((res) => {
       refetch();
+      document.getElementById(`modal_${id}`).close()
       toast.success("Update successful!");
     });
   };

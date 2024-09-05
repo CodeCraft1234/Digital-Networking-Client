@@ -12,12 +12,13 @@ const AdsAccount = () => {
     const [adsAccount, refetch] = useAdsAccount();
     const [users] = useUsers();
     const [searchQuery, setSearchQuery] = useState("");
-    const initialTab = localStorage.getItem("activeTabAlladsAccountStatus") || "Active";
-    const initialTab2 = localStorage.getItem("activeTabAlladsAccountEmail") || "all";
-    const [selectedStatus, setSelectedStatus] = useState(initialTab);
-    const [selectedEmail, setSelectedEmail] = useState(initialTab2 );
     const AxiosPublic = UseAxiosPublic();
     const [modalData, setModalData] = useState(null);
+    
+    const initialTab = localStorage.getItem("activeTabAlladsAccountStatus") || "Active";
+    const initialTab2 = localStorage.getItem("activeTabAlladsAccountEmail") || "all";
+    const [selectedEmail, setSelectedEmail] = useState(initialTab2 );
+    const [selectedStatus, setSelectedStatus] = useState(initialTab);
     
     const changeTab = (tab) => {
       setSelectedStatus(tab);
@@ -119,28 +120,16 @@ const AdsAccount = () => {
     return (
         <div className="m-5">
            
-            <div className=" lg:flex lg:justify-end  mx-auto  mb-5 items-center gap-3 ">
-            <div className="flex justify-center gap-3">
-            <div className="flex justify-center">
-                <select
-                  name="status"
-                  value={selectedStatus}
-                  onChange={(e) => changeTab(e.target.value)}
-                  className="border bg-white px-8 text-black border-black rounded p-2 "
-                >
-                  <option value="">All Status</option>
-                  <option value="Active">Active</option>
-                  <option value="Disable">Disable</option>
-                </select>
-              </div>
-            <div className="flex justify-center">
+            <div className=" flex justify-center lg:justify-end lg:mb-5  mx-auto mb-3  items-center gap-3 ">
+
+            <div className="flex  lg:mb-0 justify-center">
       <select
         name="email"
         value={selectedEmail}
         onChange={(e) => changeTab2(e.target.value)}
-        className="border bg-white text-black  border-black rounded p-2"
+        className="border bg-white text-black  text-sm border-black rounded p-2"
       >
-        <option value="all">All Ads Account</option>
+        <option className="text-sm" value="all">All Employees</option>
         {users
           ?.filter((u) => u.role === "employee")
           .map((user) => (
@@ -153,32 +142,37 @@ const AdsAccount = () => {
       <div>
         {selectedEmail === "all"
           ? adsAccount.map((account) => (
-              <div key={account.id}> {/* Replace account.id with the unique identifier of adsAccount */}
-                {/* Render your adsAccount details here */}
-                <p>{account.name}</p> {/* Example rendering */}
+              <div key={account.id}> 
+                <p>{account.name}</p> 
               </div>
             ))
           : adsAccount
               .filter((account) => account.userEmail === selectedEmail)
               .map((account) => (
-                <div key={account.id}> {/* Replace account.id with the unique identifier of adsAccount */}
-                  {/* Render your adsAccount details here */}
-                  <p>{account.name}</p> {/* Example rendering */}
+                <div key={account.id}> 
+                  <p>{account.name}</p> 
                 </div>
               ))}
       </div>
     </div>
+            <div className="flex  justify-center gap-3">
+            <div className="flex text-sm lg:mb-0  justify-center">
+                <select
+                  name="status"
+                  value={selectedStatus}
+                  onChange={(e) => changeTab(e.target.value)}
+                  className="border text-sm bg-white px-4 text-black border-black rounded p-2 "
+                >
+                  <option value="">All Status</option>
+                  <option value="Active">Active</option>
+                  <option value="Disable">Disable</option>
+                </select>
+              </div>
+          
             </div>
+          
 
-              <div className="mt-5 lg:mt-0">
-            <input
-              type="text"
-              placeholder="Ads Account Name..."
-              className="rounded-lg  placeholder-black border   p-2 w-full text-black  text-sm bg-white border-gray-700"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-          </div>
+
             </div>
          
             <div className="overflow-x-auto rounded-xl text-black text-center border border-black">

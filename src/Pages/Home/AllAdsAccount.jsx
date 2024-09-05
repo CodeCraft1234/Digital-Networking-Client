@@ -346,7 +346,7 @@ const AllAdsAccount = () => {
       </button>
     </form>
   </div>
-</dialog>
+                      </dialog>
 
                     </div>
                   </td>

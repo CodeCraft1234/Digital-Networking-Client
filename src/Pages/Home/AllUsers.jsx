@@ -9,7 +9,7 @@ import { MdDelete } from "react-icons/md";
 import EmployeeClientPay from "../DashboardRoot/EmployeeClientPay";
 import useClients from "../../Hook/useClient";
 import { Link } from "react-router-dom";
-import Profile from "../Profile/Profile";
+import Profile from "../Profile/EmployeeProfile";
 import { IoIosAddCircle } from "react-icons/io";
 import useAdsPayment from "../../Hook/useAdsPayment";
 import useAdsAccountCenter from "../../Hook/useAdsAccountCenter";
@@ -132,6 +132,23 @@ const AllUsers = () => {
       , 0)
     : 0;
 
+
+
+    const handleUpdate = (e, id) => {
+      e.preventDefault();
+      const name = e.target.name.value;
+      const contactNumber = e.target.contactNumber.value;
+      const body = { name,contactNumber };
+
+      AxiosPublic.patch(`/users/2/${id}`,
+        body
+      )
+        .then((res) => {
+          refetch();
+          document.getElementById(`my_modal_${id}`).close();
+        })
+    };
+
   return (
     <div className="my-5 mx-5 dark:text-green-800">
       <Helmet>
@@ -140,57 +157,60 @@ const AllUsers = () => {
       </Helmet>
 
       <div className="flex justify-between items-center">
-        <div className="flex justify-start items-center gap-1 my-5">
-          <button 
-            className={getButtonClass('all')}
-            onClick={() => changeTab('all')}
-          >
-            All Users ({users.length})
-          </button>
-          |
-          <button 
-            className={getButtonClass('admin')}
-            onClick={() => changeTab('admin')}
-          >
-            Administrator ({employees3.length})
-          </button>
-          |
-          <button 
-            className={getButtonClass('employee')}
-            onClick={() => changeTab('employee')}
-          >
-            Employees ({employees4.length})
-          </button>
-          |
-          <button 
-            className={getButtonClass('webDeveloper')}
-            onClick={() => changeTab('webDeveloper')}
-          >
-            Web Developer ({employees5.length})
-          </button>
-          |
-          <button 
-            className={getButtonClass('graphicDesigner')}
-            onClick={() => changeTab('graphicDesigner')}
-          >
-            Graphic Designer ({employees2.length})
-          </button>
-          |
-          <button 
-            className={getButtonClass('contributor')}
-            onClick={() => changeTab('contributor')}
-          >
-            Contributor ({employees6.length})
-          </button>
-          |
-          <button 
-            className={getButtonClass('client')}
-            onClick={() => changeTab('client')}
-          >
-            Users ({employees7.length})
-          </button>
-        </div>
-      </div>
+  <div  className="grid grid-cols-2 gap-4 my-5 lg:flex lg:justify-start lg:items-center lg:gap-1 lg:my-5 lg:mx-5">
+    <button 
+      className={getButtonClass('all')}
+      onClick={() => changeTab('all')}
+    >
+      All Users ({users.length})
+    </button>
+    <button 
+      className={getButtonClass('admin')}
+      onClick={() => changeTab('admin')}
+    >
+      Administrator ({employees3.length})
+    </button>
+    <button 
+      className={getButtonClass('employee')}
+      onClick={() => changeTab('employee')}
+    >
+      Employees ({employees4.length})
+    </button>
+    <button 
+      className={getButtonClass('webDeveloper')}
+      onClick={() => changeTab('webDeveloper')}
+    >
+      Web Developer ({employees5.length})
+    </button>
+    <button 
+      className={getButtonClass('graphicDesigner')}
+      onClick={() => changeTab('graphicDesigner')}
+    >
+      Graphic Designer ({employees2.length})
+    </button>
+    <button 
+      className={getButtonClass('contributor')}
+      onClick={() => changeTab('contributor')}
+    >
+      Contributor ({employees6.length})
+    </button>
+    <button 
+      className={getButtonClass('client')}
+      onClick={() => changeTab('client')}
+    >
+      Users ({employees7.length})
+    </button>
+   
+  </div>
+  <Link to={'/dashboard/addEmployee'} 
+      className="flex justify-end items-center"
+      onClick={() => changeTab('client')}
+    >
+      <span ><IoIosAddCircle /></span><span >Add User</span>
+    </Link>
+</div>
+
+
 
       {activeTab === 'clientPay' && <EmployeeClientPay email={user?.email} />}
 
@@ -244,7 +264,7 @@ const AllUsers = () => {
                     }
                   </td>
                   <td className="p-3 border-r-2 border-gray-300 text-center">
-                    {user.mobile}
+                    {user.contactNumber}
                   </td>
                   <td className="p-3 border-r-2 border-gray-300 text-center">
                     {user.email}
@@ -299,11 +319,61 @@ const AllUsers = () => {
                     </select>
                   </td>
                   <td className="p-3 text-center border-r-2 border-gray-300">
+                  <button
+                        className="bg-green-700 mr-3 hover:bg-blue-700 text-white px-2 py-1 rounded"
+                        onClick={() =>
+                          document
+                            .getElementById(`my_modal_${user._id}`)
+                            .showModal()
+                        }
+                      >
+                       Edit
+                      </button>
+
+                      <dialog id={`my_modal_${user._id}`} className="modal">
+  <div className="modal-box bg-white">
+    <form
+      onSubmit={(e) =>
+        handleUpdate(e, user?._id, )
+      }
+    >
+      <h1 className="text-black font-bold text-start">Name</h1>
+      <input
+        className="text-black inline-block w-full mb-5 p-3 border border-black bg-white"
+        type="text"
+        name="name"
+        required
+        defaultValue={user?.name}
+        id=""
+      />
+      <h1 className="text-black font-bold text-start">Contact Number</h1>
+      <input
+        type="number"
+        name="contactNumber"
+        placeholder="01..."
+        defaultValue={user?.contactNumber}
+        className="w-full rounded p-2 mt-3 bg-white text-black border border-gray-700"
+      />
+
+      <button
+        type="submit"
+        className="mt-4 font-avenir px-3 mx-auto py-1 rounded-lg text-white bg-[#05a0db]"
+      >
+        Update
+      </button>
+    </form>
+    <form method="dialog">
+      <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
+        ✕
+      </button>
+    </form>
+  </div>
+                      </dialog>
                     <button
                       onClick={() => handleDelete(user._id)}
-                      className="bg-red-100 text-red-500 hover:bg-red-200 p-2 rounded-full"
+                       className="bg-green-700 hover:bg-blue-700 text-white px-2 py-1 rounded"
                     >
-                      <MdDelete size={20} />
+                      Delete
                     </button>
                   </td>
                 </tr>

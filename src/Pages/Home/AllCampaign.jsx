@@ -15,8 +15,6 @@ const Campaigns = () => {
   const [clients] = useClients();
   const [campaigns, refetch] = useCampaings();
   const [filteredClients, setFilteredClients] = useState([]);
-  const [sortMonth, setSortMonth] = useState("");
-  const [selectedDate, setSelectedDate] = useState("");
   const [selectedClientt, setSelectedClientt] = useState("");
   const initialTab = localStorage.getItem("activeTaballcampaignClient") ;
   const [selectedClient, setSelectedClient] = useState(initialTab);
@@ -25,6 +23,15 @@ const Campaigns = () => {
   const changeTab = (tab) => {
     setSelectedClient(tab);
     localStorage.setItem("activeTaballcampaignClient", tab); 
+  };
+
+  const initialTab2 = localStorage.getItem("activeTaballcampaignmonthsss") ;
+  const [sortMonth, setSortMonth] = useState(initialTab2 || '' );
+  
+
+  const changeTab2 = (tab) => {
+    setSortMonth(tab);
+    localStorage.setItem("activeTaballcampaignmonthsss", tab); 
   };
   
   useEffect(() => {
@@ -41,18 +48,6 @@ const Campaigns = () => {
       });
     }
 
-    if (selectedDate) {
-      filtered = filtered.filter((c) => {
-        const paymentDate = new Date(c.date);
-        const selected = new Date(selectedDate);
-        return (
-          paymentDate.getDate() === selected.getDate() &&
-          paymentDate.getMonth() === selected.getMonth() &&
-          paymentDate.getFullYear() === selected.getFullYear()
-        );
-      });
-    }
-
     if (selectedClient) {
       filtered = filtered.filter((c) => c.email === selectedClient);
     }
@@ -62,7 +57,7 @@ const Campaigns = () => {
     }
 
     setFilteredClients(filtered);
-  }, [sortMonth, selectedDate, selectedClient, selectedClientt, campaigns]);
+  }, [sortMonth,  selectedClient, selectedClientt, campaigns]);
 
   const handleSort = (e) => {
     e.preventDefault();
@@ -153,7 +148,7 @@ const Campaigns = () => {
   useEffect(() => {
     const clientf = users.filter((f) => f.role === 'employee');
     setClientss(clientf);
-  }, [clients, user]);
+  }, [clients, users]);
 
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 50;
@@ -242,7 +237,7 @@ const Campaigns = () => {
             <select
               className="border bg-white text-black border-gray-400 rounded p-2 mt-1"
               value={sortMonth}
-              onChange={(e) => setSortMonth(e.target.value)}
+              onChange={(e) => changeTab2(e.target.value)}
             >
               <option value="">Select Month</option>
               {[
@@ -265,35 +260,26 @@ const Campaigns = () => {
               ))}
             </select>
           </div>
-          <div className="flex flex-col justify-center items-start"> 
-            <input
-              type="date"
-              className="bg-green-300 border text-black border-gray-400 rounded p-1.5 mt-1"
-              value={selectedDate}
-              onChange={(e) => setSelectedDate(e.target.value)}
-            />
-          </div>
         </div>
-            <div className="ml-5 flex mb-5 lg:mb-0 justify-center">
-  <input
-    type="text"
-    placeholder="Search by campaign name"
-    className="border bg-white  text-black placeholder-gray-500 border-gray-700 rounded-l-lg p-2 flex-1"
-    value={searchQuery}
-    onChange={(e) => setSearchQuery(e.target.value)}
-  />
-  <button
-    className="bg-black  text-white border border-black shadow-2xl rounded-r-lg p-2 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
-    onClick={() => {/* Add search functionality here */}}
-  >
-    Search
-  </button>
-</div>
 
-
-       
+    <div className="ml-5 flex mb-5 lg:mb-0 justify-center">
+   <input
+     type="text"
+     placeholder="Search by campaign name"
+     className="border bg-white  text-black placeholder-gray-500 border-gray-700 rounded-l-lg p-2 flex-1"
+     value={searchQuery}
+     onChange={(e) => setSearchQuery(e.target.value)}
+    />
+    <button
+     className="bg-black  text-white border border-black shadow-2xl rounded-r-lg p-2 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
+     onClick={() => {/* Add search functionality here */}}
+    >
+     Search
+    </button>
+  </div>
         </form>
       </div>
+      
       <div className="px-5 ">
         <div className="overflow-x-auto rounded-xl  text-black  border-l border-gray-400">
           <table className="min-w-full bg-white">
