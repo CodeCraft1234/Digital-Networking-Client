@@ -1,5 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
-import AdsAccountCenter from './Routes/AdsAccountCenter';
+import { useContext, useEffect, useState } from 'react';
 import { AuthContext } from '../../Security/AuthProvider';
 import useUsers from '../../Hook/useUsers';
 import { useLoaderData, useParams } from 'react-router-dom';
@@ -7,10 +6,11 @@ import useAdsAccountCenter from '../../Hook/useAdsAccountCenter';
 import UseAxiosPublic from '../../Axios/UseAxiosPublic';
 import { Helmet } from 'react-helmet-async';
 import useAdsPayment from '../../Hook/useAdsPayment';
-import { IoIosSearch } from 'react-icons/io';
-import { MdDelete, MdEditSquare } from 'react-icons/md';
 import AdsUserPayments from './AdsUserPayments';
 import AdsUserAdsAccount from './AdsUserAdsAccount';
+import ContributorHistory from './ContributorHistory';
+import ContributorSummery from './ContributorSummery';
+
 
 const AdsProfile = () => {
     const { user } = useContext(AuthContext);
@@ -387,7 +387,7 @@ const AdsProfile = () => {
         </h1>
       </div>
 
-       <div className="grid lg:grid-cols-4 text-white grid-cols-2 gap-3 lg:gap-5 justify-around mt-5">
+       {/* <div className="grid lg:grid-cols-4 text-white grid-cols-2 gap-3 lg:gap-5 justify-around mt-5">
         <div className="px-5 py-10 rounded-2xl bg-[#c6e529] shadow-lg text-center">
           <h2 className="text-xl">Total Spent</h2>
           <p className="lg:text-4xl text-sm font-bold"> $ {TSpent2.toFixed(2)}</p>
@@ -404,7 +404,7 @@ const AdsProfile = () => {
           <h2 className="text-xl ">Total Due</h2>
           <p className=" lg:text-4xl text-sm font-bold"> ৳ {totalDue.toFixed(2)}</p>
         </div>
-        </div>
+        </div> */}
 
 
 
@@ -424,11 +424,27 @@ const AdsProfile = () => {
         >
           Ads Account
         </button>
+        <p className='text-2xl font-bold'>|</p>
+        <button 
+          className={getButtonClass('history')}
+          onClick={() => setActiveTab('history')}
+        >
+          History
+        </button>
+        <p className='text-2xl font-bold'>|</p>
+        <button 
+          className={getButtonClass('summery')}
+          onClick={() => setActiveTab('summery')}
+        >
+          Summery
+        </button>
 
       </div>
 
       {activeTab === 'payment' && <AdsUserPayments email={email} />}
       {activeTab === 'adsAccount' && <AdsUserAdsAccount email={email} />}
+      {activeTab === 'history' && <ContributorHistory email={email} />}
+      {activeTab === 'summery' && <ContributorSummery email={email} />}
 
 
 

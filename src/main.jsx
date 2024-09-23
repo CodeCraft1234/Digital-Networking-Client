@@ -55,6 +55,8 @@ import AllSummery from "./Pages/DashboardRoot/AllSummery";
 import PaymentHistory from "./Pages/Home/PaymentHistory";
 import AdsAccount from "./Pages/Home/AdsAccount";
 import MyPayments from "./Pages/Home/MyPayments";
+import Notification from "./Pages/DashboardRoot/Notification";
+import BankInfo from "./Pages/Home/BankInfo";
 
 const router = createBrowserRouter([
   {
@@ -126,6 +128,14 @@ const router = createBrowserRouter([
        {
         path:'/dashboard/adsPayments',
         element:<AdsPayments></AdsPayments>
+       },
+       {
+        path:'/dashboard/notification',
+        element:<Notification></Notification>
+       },
+       {
+        path:'/dashboard/bankInfo',
+        element:<BankInfo></BankInfo>
        },
        {
         path:'/dashboard/adsUser',
@@ -220,7 +230,7 @@ const router = createBrowserRouter([
         element:<MySummery></MySummery>
        },
        {
-        path:'dashboard/paymentHistory',
+        path:'dashboard/allPayments',
         element:<PaymentHistory></PaymentHistory>
        },
        {
@@ -249,7 +259,7 @@ const router = createBrowserRouter([
        },
     
        {
-        path:'dashboard/adsAccount/:email',
+        path:'dashboard/myAdsAccount/:email',
         element:<Profile2></Profile2>,
         loader: ({ params }) => fetch(`https://digital-networking-server.vercel.app/users/${params.email}`)
        },

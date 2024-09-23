@@ -3,18 +3,22 @@ import { AuthContext } from "../../Security/AuthProvider";
 import UseAxiosPublic from "../../Axios/UseAxiosPublic";
 import { Helmet } from "react-helmet-async";
 import useMpayment from "../../Hook/UseMpayment";
-import { toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import { Link } from "react-router-dom";
+import Swal from "sweetalert2";
 
 const ClientPayments = () => {
   const [MPayment, refetch] = useMpayment();
   const AxiosPublic = UseAxiosPublic();
   const { user } = useContext(AuthContext);
   const [data, setData] = useState([]);
+  const [selectedPayment, setSelectedPayment] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedDate, setSelectedDate] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
   const [filteredData, setFilteredData] = useState([]);
   const [totalPayment, setTotalPayment] = useState(0);
+  
   const initialTab = localStorage.getItem("activeTabclientpayMont") || "All";
   const [sortMonth, setSortMonth] = useState(initialTab || new Date().getMonth() + 1)
 
@@ -56,14 +60,31 @@ const ClientPayments = () => {
   }, [MPayment, user]);
 
   const handleDelete = (id) => {
-        AxiosPublic.delete(`/MPayment/${id}`).then((res) => {
-          toast.success("Delete successful!");
-          refetch();
+    // Show confirmation dialog
+    Swal.fire({
+      title: 'Are you sure?',
+      text: "You won't be able to revert this!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, delete it!'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        // Proceed with delete
+        AxiosPublic.delete(`/MPayment/${id}`)
+          .then((res) => {
+            toast.success("Delete successful!");
+            refetch();
           })
-        }
+          .catch((error) => {
+            toast.error("Failed to delete. Please try again.");
+          });
+      }
+    });
+  };
 
-  const [selectedPayment, setSelectedPayment] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+
 
   const handleEditClick = (payment) => {
     setSelectedPayment(payment);
@@ -90,8 +111,8 @@ const ClientPayments = () => {
       updatedPayment
     ).then((res) => {
       toast.success("Payment Update successful!");
-      handleCancel();
       refetch();
+      handleCancel();
     });
   };
 
@@ -132,6 +153,7 @@ const ClientPayments = () => {
 
   return (
     <div className="">
+      <ToastContainer />
       <Helmet>
         <title>Client Payment | Digital Network </title>
         <link rel="canonical" href="https://www.example.com/" />

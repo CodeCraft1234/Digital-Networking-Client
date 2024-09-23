@@ -5,6 +5,7 @@ import useUsers from "../../Hook/useUsers";
 import { Helmet } from "react-helmet-async";
 import { toast, ToastContainer } from "react-toastify";
 import { ImCross } from "react-icons/im";
+import Swal from "sweetalert2";
 
 const MyAdsAccount = ({email}) => {
   const [users] = useUsers();
@@ -58,7 +59,7 @@ const MyAdsAccount = ({email}) => {
   }, [adsAccounts]);
 
 
-  const sortedAdsAccounts = adsAccount.filter((account) =>
+  const sortedAdsAccounts = adsAccounts.filter((account) =>
     (selectedStatus ? account.status === selectedStatus : true) &&
     (searchQuery ? account.accountName.toLowerCase().includes(searchQuery.toLowerCase()) : true)
   ).sort((a, b) => a.accountName.localeCompare(b.accountName));
@@ -84,7 +85,7 @@ const MyAdsAccount = ({email}) => {
       // toast.success("add successful");
       toast.success("Post created successfully!");
       refetch()
-      
+      document.getElementById("my_modal_3").close()
     });
   };
 
@@ -99,8 +100,7 @@ const handleUpdate = (e, id) => {
   const paymentDate = e.target.paymentDate.value;
   const currentBallence = e.target.currentBallence.value;
   const threshold = e.target.threshold.value;
-  const status = e.target.status.value;
-  const body = { accountName,currentBallence,paymentDate, threshold, status };
+  const body = { accountName,currentBallence,paymentDate, threshold };
   AxiosPublic.patch(`/adsAccount/${id}`,body
   )
     .then((res) => {
@@ -109,14 +109,31 @@ const handleUpdate = (e, id) => {
     });
 };
 
-const handleDelete=(id)=>[
-  AxiosPublic.delete(`/adsAccount/${id}`)
-    .then(res=>{
-      console.log(res.data);
-      toast.success("Ads Account Delete successful!");
-      refetch()
-      })
-]
+const handleDelete = (id) => {
+  // Show confirmation dialog
+  Swal.fire({
+    title: 'Are you sure?',
+    text: "You won't be able to revert this!",
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#3085d6',
+    cancelButtonColor: '#d33',
+    confirmButtonText: 'Yes, delete it!'
+  }).then((result) => {
+    if (result.isConfirmed) {
+      // Proceed with delete
+      AxiosPublic.delete(`/adsAccount/${id}`)
+        .then((res) => {
+          console.log(res.data);
+          toast.success("Ads Account deleted successfully!");
+          refetch();
+        })
+        .catch((error) => {
+          toast.error("Failed to delete Ads Account");
+        });
+    }
+  });
+};
 
 
 
@@ -350,6 +367,7 @@ const handleUpdate2 = (id, newStatus) => {
     {modalData && (
        <dialog className="modal" open>
        <div className="modal-box bg-white text-black">
+        <h1 className="text-center font-bold text-xl">{modalData.accountName}</h1>
          <form onSubmit={(e) => handleUpdate(e, modalData._id)}>
          <h1
              className=" text-black flex hover:text-red-500  justify-end  text-end"
@@ -398,18 +416,7 @@ const handleUpdate2 = (id, newStatus) => {
              />
            </div>
 
-           <div className="mb-4">
-             <label className="block text-gray-500">Status</label>
-             <select
-               name="status"
-               defaultValue={modalData.status}
-               disabled
-               className="w-full border rounded p-2 mt-1 text-black bg-white border-gray-500"
-             >
-               <option value="Active">Active</option>
-               <option value="Disable">Disable</option>
-             </select>
-           </div>
+         
      
            <div className="modal-action grid grid-cols-2 gap-4">
            <button

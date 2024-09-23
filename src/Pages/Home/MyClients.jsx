@@ -9,6 +9,7 @@ import { Helmet } from 'react-helmet-async';
 import { ImCross } from 'react-icons/im';
 import useCampaings from '../../Hook/useCampaign';
 import useMpayment from '../../Hook/UseMpayment';
+import Swal from 'sweetalert2';
 
 const MyClients = () => {
     const { user }=useContext(AuthContext)
@@ -17,11 +18,12 @@ const MyClients = () => {
     const [filteredCampaigns, setFilteredCampaigns] = useState([]);
     const [campaigns]=useCampaings()
     const [Mpayment]=useMpayment()
-  
-  
-  
-      const [users] = useUsers();
-      const [ddd, setDdd] = useState(null);
+    const [users] = useUsers();
+    const [ddd, setDdd] = useState(null);
+    const [totalSpent, setTotalSpent] = useState(0);
+    const [totalRCV, setTotalRCV] = useState(0);
+    const [totalbill, setTotalBill] = useState(0);
+    const totalDue = totalbill - totalRCV;
   
       useEffect(() => {
           if (users && user) {
@@ -30,20 +32,6 @@ const MyClients = () => {
               setDdd(fff || {}); // Update state with found user or an empty object
           }
       }, [users, user]);
-  
-     
-  
-  
-     
-   
-  
-    const [totalSpent, setTotalSpent] = useState(0);
-    const [totalBudged, setTotalBudged] = useState(0);
-    const [totalRCV, setTotalRCV] = useState(0);
-    const [totalbill, setTotalBill] = useState(0);
-    const totalDue = totalbill - totalRCV;
-  
-
   
     useEffect(() => {
       const filtered = clients.filter(
@@ -62,12 +50,6 @@ const MyClients = () => {
         0
       );
       setTotalSpent(tspent);
-  
-      const total = filtered.reduce(
-        (acc, campaign) => acc + parseFloat(campaign.tBudged),
-        0
-      );
-      setTotalBudged(total);
   
       const totalBill = filtered.reduce(
         (acc, campaign) => acc + parseFloat(campaign.tBill),
@@ -119,43 +101,6 @@ const MyClients = () => {
         });
     };
     
-
-
-    const [bkashMarcent,setBkashMarcentTotal]=useState(0)
-    const [nagadPersonal,setNagadPersonalTotal]=useState(0)
-    const [bkashPersonal,setBkashPersonalTotal]=useState(0)
-    const [rocketPersonal,setRocketPersonalTotal]=useState(0)
-    console.log(bkashMarcent,rocketPersonal,nagadPersonal,bkashPersonal)
-  
-    useEffect(()=>{
-        AxiosPublic.get(`https://digital-networking-server.vercel.app/Mpayment`)
-        .then(res => {
-            console.log('sdjkhagjijkhgjkhdsajljkhgdsjkajkjkfjldfgjkgjkgd',res.data);
-            const da=res.data
-            const filtered=da.filter(f=> f.employeeEmail === user?.email) 
-  
-            const filter2=filtered.filter(d=>d.paymentMethod === 'bkashMarchent')
-            const total = filter2.reduce((acc, datas) => acc + parseFloat(datas.amount),0);
-            setBkashMarcentTotal(total)
-  
-            const filter3=filtered.filter(d=>d.paymentMethod === 'nagadPersonal')
-            const total3 = filter3.reduce((acc, datas) => acc + parseFloat(datas.amount),0);
-            setNagadPersonalTotal(total3)
-  
-            const filter4=filtered.filter(d=>d.paymentMethod === 'bkashPersonal')
-            const total4 = filter4.reduce((acc, datas) => acc + parseFloat(datas.amount),0);
-            setBkashPersonalTotal(total4)
-  
-            const filter5=filtered.filter(d=>d.paymentMethod === 'rocketPersonal')
-            const total5 = filter5.reduce((acc, datas) => acc + parseFloat(datas.amount),0);
-            setRocketPersonalTotal(total5)
-        })
-    },[user?.email])
-  
-    
-  
-  
-  
     const [searchQuery, setSearchQuery] = useState("");
     const [selectedCategory, setSelectedCategory] = useState("");
   
@@ -174,32 +119,79 @@ const MyClients = () => {
   
   
       const handledelete = (id) => {
-        AxiosPublic.delete(`/clients/${id}`).then((res) => {
-          refetch();
-          toast.success("delete successful");
+        // Show confirmation dialog
+        Swal.fire({
+          title: 'Are you sure?',
+          text: "You won't be able to revert this!",
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#d33',
+          confirmButtonText: 'Yes, delete it!'
+        }).then((result) => {
+          if (result.isConfirmed) {
+            // Proceed with delete
+            AxiosPublic.delete(`/clients/${id}`)
+              .then((res) => {
+                refetch();
+                toast.success("Delete successful");
+              })
+              .catch((error) => {
+                toast.error("Delete failed");
+              });
+          }
         });
+      };
 
-     }
-       const handleUpdate2 = (e, id) => {
+
+
+      const handleUpdate2 = (e, id, campaign) => {
         e.preventDefault();
+    
+        // Get the updated client information from the form
         const clientName = e.target.clientName.value;
         const clientPhone = e.target.clientPhone.value;
-        const clientEmail = e.target.clientEmail.value;
-        const body = { clientName, clientEmail,  clientPhone };
+        const clientEmail = e.target.clientEmail.value; // although email is disabled, we still fetch it
     
-        AxiosPublic.patch(
-          `https://digital-networking-server.vercel.app/client/update/${id}`,
-          body
-        )
-          .then((res) => {
-            refetch();
-            toast.success("client updated successfully");
-          })
-          .catch((error) => {
-            console.error("Error updating campaign:", error);
-            toast.error("Failed to update campaign");
-          });
-      };
+        const body = { clientName, clientPhone };
+    
+        // Send the update request
+        AxiosPublic.patch(`/client/update/${id}`, body)
+            .then((res) => {
+                document.getElementById(`modal_${id}`).close();
+                refetch();
+            })
+            .catch((error) => {
+                console.error("Error updating campaign:", error);
+                toast.error("Failed to update campaign");
+            });
+    
+        // Prepare the data for the edit history, including the previous data
+        const data = {
+            title: 'Client info Edit',
+            email:user?.email,
+            date:new Date(),
+            name:user?.displayName,
+            status:'unread',
+            newChange: [clientEmail, clientName, clientPhone],
+            previousData: [
+                campaign.clientEmail, // Original email
+                campaign.clientName,  // Original name
+                campaign.clientPhone  // Original phone
+            ]
+        };
+    
+        // Post the edit information
+        AxiosPublic.post("/notification", data)
+            .then((res) => {
+                refetch();
+            })
+            .catch((error) => {
+                console.error("Error posting edit history:", error);
+                toast.error("Failed to log edit history");
+            });
+    };
+    
      
       const sortedAdsAccounts = filteredByCategory.sort((a, b) => {
         return a.clientName.localeCompare(b.clientName);
@@ -375,22 +367,36 @@ const MyClients = () => {
 >
   <td className="p-3 border-r border-gray-400 border-l text-center ">{index + 1}</td>
 
-  <td className="p-3 border-r border-gray-400 flex hover:font-bold hover:text-blue-700 justify-start text-start">
-  <Link to={`/dashboard/client/${campaign.clientEmail}`} className="w-full">
+  <td className="p-3 border-r-2 hover:text-blue-700 hover:font-bold text-start border-gray-300 ">
+  <Link to={`/dashboard/client/${campaign.clientEmail}`} className="flex justify-start items-center">
+    {campaign.clientName}
+    {
+      (() => {
+        const balance = (
+          (
+            campaigns
+              .filter(payment => payment.clientEmail === campaign.clientEmail)
+              .reduce(
+                (acc, campaign) => acc + parseFloat(campaign.tSpent) * parseFloat(campaign.dollerRate),
+                0
+              )
+          ) -
+          (
+            Mpayment
+              .filter(payment => payment.clientEmail === campaign.clientEmail)
+              .reduce((acc, payment) => acc + parseFloat(payment?.amount || 0), 0)
+          )
+        ).toFixed(2);
 
-   
-    <h1 className='text-black'>
-      {campaigns.filter(ca => ca.clientEmail === campaign.clientEmail && ca.status === 'Active').length > 0 
-        ?   <div className='flex justify-start items-center gap-2'> <div >
-       
-       <span> {campaign.clientName}</span>
-        </div>
-        <span><img className='h-5 w-5   rounded-full' src="https://i.ibb.co/C6CGqfk/check-512.webp" alt="" /></span>
-
-  </div> 
-        :   <span className='flex justify-start gap-2'> {campaign.clientName}</span>
-      }
-    </h1>
+        if (balance > 0) {
+          return <span className="ml-2 px-2 py-1 bg-red-100 text-red-600 text-xs font-semibold rounded-full">Due</span>;
+        } else if (balance < 0) {
+          return <span className="ml-2 px-2 py-1 bg-green-100 text-green-600 text-xs font-semibold rounded-full">Advance</span>;
+        } else {
+          return <span className="ml-2 px-2 py-1 bg-blue-200 text-green-600 text-xs font-semibold rounded-full">Clear</span>
+        }
+      })()
+    }
   </Link>
 </td>
 
@@ -401,20 +407,9 @@ const MyClients = () => {
     </td>
 <td className="p-3 border-r border-gray-400 text-center">
   $ {Number(campaign.tBudged).toFixed(2)} 
-{/* || 
-{
-  (
-    campaigns
-      .filter(payment => payment.clientEmail === campaign.clientEmail)
-      .reduce((acc, payment) => acc + parseFloat(payment?.tBudged || 0), 0) 
-  ) 
-} */}
 
 </td>
 <td className="p-3 border-r border-gray-400 text-center">
-
-  {/* $ {Number(campaign.tSpent).toFixed(2)}
- */}
 
   {
   (
@@ -426,9 +421,6 @@ const MyClients = () => {
 
 </td>
 <td className="p-3 border-r border-gray-400 text-center">
-  {/* ৳ {Number(campaign.tBill).toFixed(2) || 0.00}
-
-  ------------ */}
 
 ৳ 
   {
@@ -444,8 +436,7 @@ const MyClients = () => {
 
 </td>
 <td className="p-3 border-r border-gray-400 text-center">
-  {/* ৳ {Number(campaign.tPayment || 0).toFixed(2) || '0.00'}
-  ------- */}
+
   ৳ 
   {
   (
@@ -486,15 +477,15 @@ const MyClients = () => {
   <button
  className="bg-green-700 hover:bg-blue-700 text-white px-2 py-1 rounded"
     onClick={() =>
-      document.getElementById(`modal_${index}`).showModal()
+      document.getElementById(`modal_${campaign._id}`).showModal()
     }
   >
     Edit
   </button>
 
-  <dialog id={`modal_${index}`} className="modal">
+  <dialog id={`modal_${campaign._id}`} className="modal">
     <div className="modal-box bg-white text-black">
-      <form onSubmit={(e) => handleUpdate2(e, campaign._id)}>
+      <form  onSubmit={(e) => handleUpdate2(e, campaign._id, campaign)}>
         <h1 className="text-md mb-5">
           Client Name:{" "}
           <span className="text-blue-600 text-xl font-bold">
@@ -534,7 +525,7 @@ const MyClients = () => {
         <div className="grid grid-cols-2 gap-3">
           <button
             onClick={() =>
-              document.getElementById(`modal_${index}`).close()
+              document.getElementById(`modal_${campaign._id}`).close()
             }
             type="button"
             className="font-avenir hover:bg-red-700 px-3 py-1 bg-red-600 rounded-lg text-white"

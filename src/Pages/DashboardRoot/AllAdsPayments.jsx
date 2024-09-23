@@ -8,24 +8,16 @@ import useAdsPayment from "../../Hook/useAdsPayment";
 import { Link } from "react-router-dom";
 
 const AllAdsPayments = () => {
-
-
-
-
   const [adsPayment, refetch] = useAdsPayment();
   const AxiosPublic = UseAxiosPublic();
   const [totalPayment, setTotalPayment] = useState(0);
   const [users] = useUsers();
   const { user } = useContext(AuthContext);
   const [filteredClients, setFilteredClients] = useState([]);
-  const [sortMonth, setSortMonth] = useState(new Date().getMonth() + 1); 
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
-  const [selectedEmployee, setSelectedEmployee] = useState("");
   const [selectedDate, setSelectedDate] = useState("");
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
-  const [contributors, setContributors] = useState([]);
-  const [activeDropdown, setActiveDropdown] = useState(null);
   const [selectedPayment, setSelectedPayment] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [showAll, setShowAll] = useState(false);
@@ -35,8 +27,24 @@ const AllAdsPayments = () => {
   const [bkashPersonal, setBkashPersonalTotal] = useState(0);
   const [rocketPersonal, setRocketPersonalTotal] = useState(0);
   const [bankTotal, setBankTotal] = useState(0);
-
   const [ddd, setDdd] = useState(null);
+
+  const initialTab = localStorage.getItem("activeTabclientpayMontc") || "All";
+  const [sortMonth, setSortMonth] = useState(initialTab || new Date().getMonth() + 1)
+
+  const changeTab = (tab) => {
+    setSortMonth(tab);
+    localStorage.setItem("activeTabclientpayMontc", tab); 
+  };
+
+  const initialTab2 = localStorage.getItem("activeTaballClientsempe") ;
+  const [selectedEmployee, setSelectedEmployee] = useState(initialTab2); 
+  
+  const changeTab2 = (tab) => {
+    setSelectedEmployee(tab);
+    localStorage.setItem("activeTaballClientsempe", tab); 
+  };
+  
 
   useEffect(() => {
       if (users && user) {
@@ -45,11 +53,8 @@ const AllAdsPayments = () => {
       }
   }, [users, user]);
   
-  // Set contributors
-  useEffect(() => {
-    setContributors(users?.filter((u) => u.role === 'contributor') || []);
-  }, [users, user]);
-  
+
+
   // Set filtered clients
   useEffect(() => setFilteredClients(adsPayment || []), [adsPayment]);
   
@@ -109,12 +114,7 @@ const AllAdsPayments = () => {
   }, [adsPayment]);
   
   // Show all data or limited items
-  const displayedItems = showAll ? filteredByCategory : filteredByCategory.slice(0, itemsToShow);
-  
-  // Dropdown toggle
-  const toggleDropdown = (orderId) => setActiveDropdown(activeDropdown === orderId ? null : orderId);
-  
-  // Year selection
+  const displayedItems = showAll ? filteredByCategory : filteredByCategory.slice(0, 40);
   const years = Array.from({ length: 31 }, (_, i) => 2020 + i);
   
 
@@ -210,76 +210,76 @@ const AllAdsPayments = () => {
      <p className="balance-card-text text-lg lg:text-2xl mt-8 font-bold text-gray-700"><span className="text-lg lg:text-2xl font-extrabold"> ৳</span> {bkashPersonal + bkashMarcent + nagadPersonal + rocketPersonal + bankTotal}</p>
    </div>
      </div>
-      <div className="lg:flex text-black lg:justify-end  gap-5 mr-5 items-center">
-     
-      <div className="flex justify-center gap-5 items-center">
-      <div className="flex justify-center  items-center">
-        <select
-          className="border bg-white text-black w-full lg:ml-0 ml-5 border-gray-400 rounded p-2 mt-1"
-          value={selectedEmployee}
-          onChange={(e) => setSelectedEmployee(e.target.value)}
-        >
-          <option value="all">All Contributor</option>
-          {ddd?.map((employee) => (
-            <option key={employee._id} value={employee.email}>
-              {employee.name}
-            </option>
-          ))}
-        </select>
-      </div>
-      <div className="flex justify-center  items-center">
-        <select
-          value={selectedYear}
-          onChange={(e) => setSelectedYear(parseInt(e.target.value))}
-          className="year-selector py-2 px-6 border border-gray-600 mt-1 bg-white text-black"
-        >
-          {years.map((year) => (
-            <option className="bg-white text-black" key={year} value={year}>
-              {year}
-            </option>
-          ))}
-        </select>
-      </div>
-      </div>
-          <div className="flex justify-center mt-4 lg:mt-0 items-center gap-5">
-          <div className="flex justify-center  items-center">
-            <select
-              className="border bg-white text-black border-gray-400 rounded p-2 mt-1"
-              value={sortMonth}
-              onChange={(e) => setSortMonth(e.target.value)}
-            >
-              <option value="all">All Month</option>
-              {[
-                "January",
-                "February",
-                "March",
-                "April",
-                "May",
-                "June",
-                "July",
-                "August",
-                "September",
-                "October",
-                "November",
-                "December",
-              ].map((month, index) => (
-                <option key={index + 1} value={index + 1}>
-                  {month}
-                </option>
-              ))}
-            </select>
-          </div>
-         
-      <div className="flex justify-center  items-center">
-           <input
-             type="date"
-             className="border rounded  bg-green-300 text-black border-gray-400 p-2 mt-1"
-             value={selectedDate}
-             onChange={(e) => setSelectedDate(e.target.value)}
-           />
-         </div>
-          </div>
-        </div>
+     <div className="lg:flex text-black lg:justify-end gap-5 mr-5 items-center">
+  <div className="flex justify-center gap-5 items-center">
+    <div className="flex justify-center items-center">
+      <select
+        className="border bg-white text-black w-full lg:ml-0 ml-5 border-gray-400 rounded p-2 mt-1"
+        value={selectedEmployee}
+        onChange={(e) => changeTab2(e.target.value)}
+      >
+        <option value="all">All Contributor</option>
+        {ddd?.map((employee) => (
+          <option key={employee._id} value={employee.email}>
+            {employee.name}
+          </option>
+        ))}
+      </select>
+    </div>
+    <div className="flex justify-center items-center">
+      <select
+        value={sortMonth}
+        onChange={(e) => changeTab(e.target.value)}
+        className="border bg-white text-black border-gray-400 rounded p-2 mt-1"
+      >
+        <option value="all">All Month</option>
+        {[
+          "January",
+          "February",
+          "March",
+          "April",
+          "May",
+          "June",
+          "July",
+          "August",
+          "September",
+          "October",
+          "November",
+          "December",
+        ].map((month, index) => (
+          <option key={index + 1} value={index + 1}>
+            {month}
+          </option>
+        ))}
+      </select>
+    </div>
+  </div>
+  {/* Hidden on mobile, visible on large screens */}
+  <div className="hidden lg:flex justify-center items-center gap-5">
+    <div className="flex justify-center items-center">
+      <select
+        value={selectedYear}
+        onChange={(e) => setSelectedYear(parseInt(e.target.value))}
+        className="year-selector py-2 px-6 border border-gray-600 mt-1 bg-white text-black"
+      >
+        {years.map((year) => (
+          <option className="bg-white text-black" key={year} value={year}>
+            {year}
+          </option>
+        ))}
+      </select>
+    </div>
+    <div className="flex justify-center items-center">
+      <input
+        type="date"
+        className="border rounded bg-green-300 text-black border-gray-400 p-2 mt-1"
+        value={selectedDate}
+        onChange={(e) => setSelectedDate(e.target.value)}
+      />
+    </div>
+  </div>
+</div>
+
      
 
       <div className="overflow-x-auto text-black rounded-xl mt-5 border border-black mx-5">
@@ -290,7 +290,7 @@ const AllAdsPayments = () => {
               <th className="p-3">Date</th>
               <th className="p-3">Contributor Name</th>
               <th className="p-3">Amount</th>
-              <th className="p-3">Payment Method</th>
+              <th className="p-3">Method</th>
               <th className="p-3">Note</th>
               <th className="p-3">Status</th>
               <th className="p-3">Action</th>

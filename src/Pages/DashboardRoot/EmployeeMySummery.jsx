@@ -91,37 +91,37 @@ const EmployeeMySummery = ({email}) => {
       <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-6 text-black sm:grid-cols-2 gap-5 justify-around ">
         <div className="px-5 py-10 rounded-2xl  bg-[#91a33a] text-white shadow-lg text-center">
           <h2 className="text-xl font-bold">Total Spent</h2>
-          <p className="lg:text-2xl text-xl font-bold mt-2"> $ {employeeData.reduce((acc, data) => acc + data.totalSpent, 0).toFixed(2)}</p>
+          <p className="lg:text-xl text-xl font-bold mt-2"> $ {employeeData.reduce((acc, data) => acc + data.totalSpent, 0).toFixed(2)}</p>
         </div>
 
         <div className="px-5 py-10 rounded-2xl bg-[#5422c0] text-white shadow-lg text-center">
           <h2 className="text-xl font-bold">Total BDT</h2>
-          <p className="lg:text-2xl text-xl font-bold mt-2">
-             <span className="lg:text-2xl text-xl font-extrabold">৳</span> {employeeData.reduce((acc, data) => acc + data.totalBill, 0).toFixed(2)}
+          <p className="lg:text-xl text-xl font-bold mt-2">
+             <span className="lg:text-xl text-xl font-extrabold">৳</span> {employeeData.reduce((acc, data) => acc + data.totalBill, 0).toFixed(2)}
           </p>
         </div>
 
         <div className="px-5 py-10 rounded-2xl  bg-[#05a0db] text-white shadow-lg text-center">
-          <h2 className="lg:text-2xl text-xl font-bold">Client Pay</h2>
-          <p className="lg:text-2xl text-xl font-bold mt-2"> <span className="text-2xl font-extrabold">৳</span>{employeeData.reduce((acc, data) => acc + data.totalClientPay, 0).toFixed(2)} </p>
+          <h2 className="lg:text-xl text-xl font-bold">Client Pay</h2>
+          <p className="lg:text-xl text-xl font-bold mt-2"> <span className="text-2xl font-extrabold">৳</span>{employeeData.reduce((acc, data) => acc + data.totalClientPay, 0).toFixed(2)} </p>
         </div>
 
         <div className="px-5 py-10 rounded-2xl  bg-[#ce1a38] text-white shadow-lg text-center">
           <h2 className="text-xl font-bold">Employee Pay</h2>
-          <p className="lg:text-2xl text-xl font-bold mt-2">
-          <span className="lg:text-2xl text-xl font-extrabold">৳</span> {employeeData.reduce((acc, data) => acc + data.totalAdminPay, 0).toFixed(2)}
+          <p className="lg:text-xl text-xl font-bold mt-2">
+          <span className="lg:text-xl text-xl font-extrabold">৳</span> {employeeData.reduce((acc, data) => acc + data.totalAdminPay, 0).toFixed(2)}
           </p>
         </div>
-        <div className="px-5 py-10 rounded-2xl  bg-[#ce1a38] text-white shadow-lg text-center">
+        <div className="px-5 py-10 rounded-2xl  bg-[#504491] text-white shadow-lg text-center">
           <h2 className="text-xl font-bold">Employee Due</h2>
-          <p className="lg:text-2xl text-xl font-bold mt-2">
-          <span className="lg:text-2xl text-xl font-extrabold">৳</span> {(employeeData.reduce((acc, data) => acc + data.totalClientPay, 0) - employeeData.reduce((acc, data) => acc + data.totalAdminPay, 0)).toFixed(2)}
+          <p className="lg:text-xl text-xl font-bold mt-2">
+          <span className="lg:text-xl text-xl font-extrabold">৳</span> {(employeeData.reduce((acc, data) => acc + data.totalClientPay, 0) - employeeData.reduce((acc, data) => acc + data.totalAdminPay, 0)).toFixed(2)}
           </p>
         </div>
-        <div className="px-5 py-10 rounded-2xl  bg-[#ce1a38] text-white shadow-lg text-center">
+        <div className="px-5 py-10 rounded-2xl  bg-[#a6d427] text-white shadow-lg text-center">
           <h2 className="text-xl font-bold">Client Due</h2>
-          <p className="lg:text-2xl text-xl font-bold mt-2">
-          <span className="lg:text-2xl text-xl font-extrabold">৳</span> {(employeeData.reduce((acc, data) => acc + data.totalBill, 0) - employeeData.reduce((acc, data) => acc + data.totalClientPay, 0)).toFixed(2)}
+          <p className="lg:text-xl text-xl font-bold mt-2">
+          <span className="lg:text-xl text-xl font-extrabold">৳</span> {(employeeData.reduce((acc, data) => acc + data.totalBill, 0) - employeeData.reduce((acc, data) => acc + data.totalClientPay, 0)).toFixed(2)}
           </p>
         </div>
       </div>

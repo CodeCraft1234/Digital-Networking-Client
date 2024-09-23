@@ -371,7 +371,7 @@ const AllUsers = () => {
                       </dialog>
                     <button
                       onClick={() => handleDelete(user._id)}
-                       className="bg-green-700 hover:bg-blue-700 text-white px-2 py-1 rounded"
+                       className="bg-red-700 hover:bg-blue-700 text-white px-2 py-1 rounded"
                     >
                       Delete
                     </button>

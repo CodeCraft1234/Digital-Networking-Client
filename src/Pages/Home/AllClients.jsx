@@ -3,11 +3,12 @@ import useClients from "../../Hook/useClient";
 import useUsers from "../../Hook/useUsers";
 import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../../Security/AuthProvider";
-import { IoIosSearch } from "react-icons/io";
 import Swal from "sweetalert2";
 import UseAxiosPublic from "../../Axios/UseAxiosPublic";
 import { Helmet } from "react-helmet-async";
-import { MdDelete } from "react-icons/md";
+import { toast, ToastContainer } from "react-toastify";
+import useCampaings from "../../Hook/useCampaign";
+import useMpayment from "../../Hook/UseMpayment";
 
 const AllClients = ({}) => {
   const [users] = useUsers();
@@ -15,12 +16,9 @@ const AllClients = ({}) => {
   const [employees, setEmployees] = useState([]);
   const [clients, refetch] = useClients();
   const [filteredClients, setFilteredClients] = useState([]);
-
-
   const initialTab = localStorage.getItem("activeTaballClients") ;
   const [selectedClient, setSelectedClient] = useState(initialTab);
   
-
   const activeTab = (tab) => {
     setSelectedClient(tab);
     localStorage.setItem("activeTaballClients", tab); 
@@ -31,6 +29,8 @@ const AllClients = ({}) => {
       const employeeList = users.filter((u) => u.role === "employee");
       setEmployees(employeeList);
     }
+
+
   }, [users, user]);
 
   useEffect(() => {
@@ -40,14 +40,12 @@ const AllClients = ({}) => {
 
     const email = selectedClient
     if (email === "") {
-      setFilteredClients(clients); // If no employee is selected, reset the list to all clients
+      setFilteredClients(clients); 
     } else {
       const filtered = clients.filter((c) => c.employeeEmail === email);
       setFilteredClients(filtered);
     }
   }, [clients,selectedClient]);
-
-
 
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
@@ -62,8 +60,6 @@ const AllClients = ({}) => {
       )
     : filteredItems;
 
-  const [totalSpent, setTotalSpent] = useState(0);
-  const [totalBudged, setTotalBudged] = useState(0);
   const [totalRCV, setTotalRCV] = useState(0);
   const [totalbill, setTotalBill] = useState(0);
 
@@ -73,18 +69,6 @@ const AllClients = ({}) => {
       return acc + (isNaN(payment) ? 0 : payment);
     }, 0);
     setTotalRCV(totalRcv);
-
-    const tspent = filteredByCategory.reduce(
-      (acc, campaign) => acc + parseFloat(campaign.tSpent),
-      0
-    );
-    setTotalSpent(tspent);
-
-    const total = filteredByCategory.reduce(
-      (acc, campaign) => acc + parseFloat(campaign.tBudged),
-      0
-    );
-    setTotalBudged(total);
 
     const totalBill = filteredByCategory.reduce(
       (acc, campaign) => acc + parseFloat(campaign.tBill),
@@ -119,12 +103,65 @@ const AllClients = ({}) => {
     });
   };
 
+  const handleUpdate = (e, id) => {
+    e.preventDefault();
+    const clientName = e.target.clientName.value;
+    const clientPhone = e.target.clientPhone.value;
+    const clientEmail = e.target.clientEmail.value;
+    const body = { clientName, clientEmail,  clientPhone };
+
+    AxiosPublic.patch(
+      `https://digital-networking-server.vercel.app/client/update/${id}`,
+      body
+    )
+      .then((res) => {
+        refetch();
+        toast.success("client updated successfully");
+        document.getElementById(`modal_${id}`).close()
+      })
+      .catch((error) => {
+        console.error("Error updating campaign:", error);
+        toast.error("Failed to update campaign");
+      });
+  };
+
+
+  const [campaigns]=useCampaings()
+  const [Mpayment]=useMpayment()
+  
+
+  const totalSpent = campaigns.reduce(
+    (acc, campaign) => acc + parseFloat(campaign.tSpent) * parseFloat(campaign.dollerRate),
+    0
+  );
+  
+  const totalPayment = Mpayment.reduce(
+    (acc, payment) => acc + parseFloat(payment?.amount || 0),
+    0
+  );
+
+  const total = (totalSpent - totalPayment).toFixed(2);
+  
   return (
     <div className="mt-10">
+      <ToastContainer></ToastContainer>
       <Helmet>
         <title>All Clients | Digital Network </title>
         <link rel="canonical" href="https://www.example.com/" />
       </Helmet>
+      <div className="grid grid-cols-2 justify-center items-center gap-5 px-5 text-white pb-5">
+
+  <div className="bg-blue-600 rounded-lg p-5">
+
+  </div>
+
+  <div className="bg-red-600 p-5 rounded-lg">
+   
+  </div>
+</div>
+
+
+
 
       <div className="lg:flex gap-5 mr-5 lg:justify-end  items-center">
         <div className="flex justify-center ">
@@ -161,7 +198,6 @@ const AllClients = ({}) => {
                 <th className="p-3 text-center">SL</th>
                 <th className="p-3 text-start">Client Name</th>
                 <th className="p-3 text-center">Client Phone</th>
-
                 <th className="p-3 text-center">Total Bill</th>
                 <th className="p-3 text-center">Total Payment Rcv</th>
                 <th className="p-3 text-center">Total Due</th>
@@ -181,32 +217,165 @@ const AllClients = ({}) => {
                   <td className="p-3 border-l-2 border-r-2 border-gray-300 text-center">
                     {index + 1}
                   </td>
-                  <td className="p-3 border-r-2 hover:text-blue-700 hover:font-bold text-start border-gray-300 ">
-                    <Link
-                      to={`/dashboard/client/${campaign.clientEmail}`}
-                      className="flex justify-start"
-                    >
-                      {campaign.clientName}
-                    </Link>
-                  </td>
+<td className="p-3 border-r-2 hover:text-blue-700 hover:font-bold text-start border-gray-300 ">
+  <Link to={`/dashboard/client/${campaign.clientEmail}`} className="flex justify-start items-center">
+    {campaign.clientName}
+    {
+      (() => {
+        const balance = (
+          (
+            campaigns
+              .filter(payment => payment.clientEmail === campaign.clientEmail)
+              .reduce(
+                (acc, campaign) => acc + parseFloat(campaign.tSpent) * parseFloat(campaign.dollerRate),
+                0
+              )
+          ) -
+          (
+            Mpayment
+              .filter(payment => payment.clientEmail === campaign.clientEmail)
+              .reduce((acc, payment) => acc + parseFloat(payment?.amount || 0), 0)
+          )
+        ).toFixed(2);
+
+        if (balance > 0) {
+          return <span className="ml-2 px-2 py-1 bg-red-100 text-red-600 text-xs font-semibold rounded-full">Due</span>;
+        } else if (balance < 0) {
+          return <span className="ml-2 px-2 py-1 bg-green-100 text-green-600 text-xs font-semibold rounded-full">Advance</span>;
+        } else {
+          return <span className="ml-2 px-2 py-1 bg-blue-200 text-green-600 text-xs font-semibold rounded-full">Clear</span>
+        }
+      })()
+    }
+  </Link>
+</td>
+
                   <td className="p-3 border-r-2 border-gray-300 text-center">
                     {campaign.clientPhone}
                     </td>
-                  <td className="p-3 border-r-2 border-gray-300 text-center">
-                    ৳ {parseFloat(campaign.tBill).toFixed(2)}
-                  </td>
-                  <td className="p-3 border-r-2 border-gray-300 text-center">
-                    ৳ {parseFloat(campaign.tPayment).toFixed(2)}
-                  </td>
-                  <td className="p-3 border-r-2 border-gray-300 text-center">
-                    ৳ {(parseFloat(campaign.tBill) - parseFloat(campaign.tPayment)).toFixed(2)}
-                  </td>
+                    <td className="p-3 border-r border-gray-400 text-center">
+
+৳ 
+  {
+  (
+    campaigns
+      .filter(payment => payment.clientEmail === campaign.clientEmail)
+      .reduce(
+        (acc, campaign) => acc + parseFloat(campaign.tSpent) * parseFloat(campaign.dollerRate),
+        0
+           ).toFixed(2)
+   )
+}
+
+</td>
+                  <td className="p-3 border-r border-gray-400 text-center">
+  
+  ৳ 
+  {
+  (
+    Mpayment
+      .filter(payment => payment.clientEmail === campaign.clientEmail)
+      .reduce((acc, payment) => acc + parseFloat(payment?.amount || 0), 0).toFixed(2) 
+  ) 
+}
+</td>
+
+     <td className="p-3 border-r border-gray-400 text-center">
+  ৳
+  {
+    (
+      (
+        campaigns
+          .filter(payment => payment.clientEmail === campaign.clientEmail)
+          .reduce(
+            (acc, campaign) => acc + parseFloat(campaign.tSpent) * parseFloat(campaign.dollerRate),
+            0
+          )
+      )
+      -
+      (
+        Mpayment
+          .filter(payment => payment.clientEmail === campaign.clientEmail)
+          .reduce((acc, payment) => acc + parseFloat(payment?.amount || 0), 0)
+      )
+    ).toFixed(2)
+  }
+</td>
+
                   <td className="p-3 border-r-2 border-gray-200 text-center">
+                  <button
+ className="bg-green-700 hover:bg-blue-700 mr-3 text-white px-2 py-1 rounded"
+    onClick={() =>
+      document.getElementById(`modal_${campaign._id}`).showModal()
+    }
+  >
+    Edit
+  </button>
+
+  <dialog id={`modal_${campaign._id}`} className="modal">
+    <div className="modal-box bg-white text-black">
+      <form onSubmit={(e) => handleUpdate(e, campaign._id)}>
+        <h1 className="text-md mb-5">
+          Client Name:{" "}
+          <span className="text-blue-600 text-xl font-bold">
+            {campaign.clientName}
+          </span>
+        </h1>
+
+        <div className="mb-4">
+          <label className="block text-start text-gray-700">Client Name</label>
+          <input
+            type="text"
+            name="clientName"
+            defaultValue={campaign?.clientName}
+            className="w-full border-black bg-white border rounded p-2 mt-1"
+          />
+        </div>
+        <div className="mb-4">
+          <label className="block text-start text-gray-700">Phone</label>
+          <input
+            type="text"
+            name="clientPhone"
+            defaultValue={campaign?.clientPhone}
+            className="w-full bg-white border-black border rounded p-2 mt-1"
+          />
+        </div>
+        <div className="mb-4">
+          <label className="block text-start text-gray-700">Email</label>
+          <input
+            type="email"
+            name="clientEmail"
+            disabled
+            defaultValue={campaign?.clientEmail}
+            className="w-full border-black bg-white border rounded p-2 mt-1"
+          />
+        </div>
+
+        <div className="grid grid-cols-2 gap-3">
+          <button
+            onClick={() =>
+              document.getElementById(`modal_${campaign._id}`).close()
+            }
+            type="button"
+            className="font-avenir hover:bg-red-700 px-3 py-1 bg-red-600 rounded-lg text-white"
+          >
+            Close
+          </button>
+          <button
+            type="submit"
+            className="font-avenir hover:bg-indigo-700 px-3 py-1 bg-[#05a0db] rounded-lg text-white"
+          >
+            Update
+          </button>
+        </div>
+      </form>
+    </div>
+  </dialog>
                     <button
-                      className="text-center text-black text-3xl"
+                       className="bg-red-700 text-white px-2 py-1 rounded"
                       onClick={() => handledelete(campaign._id)}
                     >
-                      <MdDelete />
+                      Delete
                     </button>
                   </td>
                 </tr>

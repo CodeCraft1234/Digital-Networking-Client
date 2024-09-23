@@ -8,6 +8,7 @@ import useMpayment from "../../Hook/UseMpayment";
 import useCampaings from "../../Hook/useCampaign";
 import useClients from "../../Hook/useClient";
 import useUsers from "../../Hook/useUsers";
+import Swal from "sweetalert2";
 
 const ClientPaymentHistry = () => {
   const { user } = useContext(AuthContext);
@@ -45,6 +46,7 @@ const ClientPaymentHistry = () => {
     const clientEmail = param?.email;
     const clientName = datas?.clientName;
     const employeeEmail = user?.email;
+  
     const body = {
       paymentMethod,
       amount,
@@ -63,6 +65,32 @@ const ClientPaymentHistry = () => {
     } catch (error) {
       console.error("Error adding payment:", error);
       toast.error("Failed to add payment");
+    }
+  
+    // If payment method is 'bank', then post to employeePayment
+    if (paymentMethod === "bank") {
+      const employeeName = user?.displayName;
+      const payAmount = e.target.amount.value;  // Use the amount for payAmount
+      const bankData = {
+        employeeName,
+        employeeEmail,
+        payAmount,
+        note,
+        paymentMethod,
+        date,
+        status: 'pending'
+      };
+  
+      try {
+        const response = await AxiosPublic.post("https://digital-networking-server.vercel.app/employeePayment", bankData);
+        toast.success("Bank payment request sent successfully!");
+        refetch();
+        console.log(response.data);
+        document.getElementById("my_modal_1").close();
+      } catch (error) {
+        console.error("Error posting bank payment:", error);
+        toast.error("Failed to send bank payment request");
+      }
     }
   };
   
@@ -84,17 +112,29 @@ const ClientPaymentHistry = () => {
     }
   };
   
-  const handleDelete = async (id) => {
-    try {
-      await AxiosPublic.delete(`/Mpayment/${id}`);
-      toast.success("Payment deleted successfully");
-      refetch();
-    } catch (error) {
-      console.error("Error deleting payment:", error);
-      toast.error("Failed to delete payment");
+  const handledelete = async (id) => {
+    // Show confirmation dialog
+    const result = await Swal.fire({
+      title: 'Are you sure?',
+      text: "You won't be able to revert this!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, delete it!',
+    });
+  
+    if (result.isConfirmed) {
+      try {
+        await AxiosPublic.delete(`/Mpayment/${id}`);
+        toast.success("Payment deleted successfully");
+        refetch(); // Update the data after deletion
+      } catch (error) {
+        console.error("Error deleting payment:", error);
+        toast.error("Failed to delete payment");
+      }
     }
   };
-  
 
   return (
     <div>

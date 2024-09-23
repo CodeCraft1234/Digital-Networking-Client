@@ -4,12 +4,13 @@ import UseAxiosPublic from '../../Axios/UseAxiosPublic';
 import Swal from 'sweetalert2';
 import { Link } from 'react-router-dom';
 
-const History = () => {
+const ContributorHistory = () => {
   const [users,refetch] = useUsers(); 
   const currentDate = new Date();
   const currentMonth = currentDate.toLocaleString('default', { month: 'long' });
   const currentYear = currentDate.getFullYear().toString();
   const [sortYear, setSortYear] = useState(currentYear);
+
 
   const initialTab = localStorage.getItem("activeTaballhistory") ;
   const [sortEmployee, setSortEmployee] = useState(initialTab);
@@ -30,7 +31,7 @@ const History = () => {
   
 
   // Flatten the monthlySpent data across all users
-  const flattenedData = users.filter(u=>u.role === 'employee').reduce((acc, user) => {
+  const flattenedData = users.filter(u=>u.role === 'contributor').reduce((acc, user) => {
     if (user.monthlySpent) {
       const userSpentData = user.monthlySpent.map(spent => ({
         ...spent,
@@ -57,23 +58,29 @@ const History = () => {
   // Handle update function
   const handleUpdate2 = async (e, userId, spentId) => {
     e.preventDefault();
+
     const totalSpent = e.target.totalSpentt.value; 
-    const totalSpentt = parseFloat(totalSpent);
-    
+    const dollerRateS = e.target.dollerRate.value; 
+    const totalSpentt = parseFloat(totalSpent);  // Convert to float
+    const dollerRate = parseFloat(dollerRateS);  // Convert to float
+
+    const data = {
+        totalSpentt,  // Correct key
+        dollerRate    // Correct key
+    };
+
     try {
-      const response = await AxiosPublic.put(`/updateSpent/${userId}/${spentId}`, {
-        totalSpentt,
-      });
-  
-      if (response.status === 200) {
-        alert('Total spent updated successfully');
-        window.location.reload(); // Optionally reload the page to fetch updated data
-      }
+        const response = await AxiosPublic.put(`/updateSpentt/${userId}/${spentId}`, data);  // Send data directly
+        if (response.status === 200) {
+            alert('Total spent updated successfully');
+            refetch();  // Call refetch to update the UI after the change
+        }
     } catch (error) {
-      console.error('Error updating total spent:', error);
-      alert('Failed to update total spent');
+        console.error('Error updating total spent:', error);
+        alert('Failed to update total spent');
     }
-  };
+};
+
   const handleDelete = (e, userId, spentId) => {
     Swal.fire({
       title: "Are you sure?",
@@ -199,7 +206,7 @@ const History = () => {
   $ {account.totalSpentt.toFixed(2)}
 </td>
 <td className="p-3 border-r-2 border-gray-300 text-center">
-  ৳ {(account.totalSpentt * 140).toFixed(2)}
+  ৳ {(account.totalSpentt * parseInt(account?.dollerRate)).toFixed(2)}
 </td>
 
                 <td className="p-3 border-r text-center border-gray-400">
@@ -222,6 +229,15 @@ const History = () => {
                                 type="text"
                                 name="totalSpentt"
                                 defaultValue={account.totalSpentt}
+                                className="w-full bg-white border-black border rounded p-2 mt-1"
+                              />
+                            </div>
+                            <div className="mb-4">
+                              <label className="block text-start text-gray-700">Doller Rate</label>
+                              <input
+                                type="text"
+                                name="dollerRate"
+                                defaultValue={account.dollerRate}
                                 className="w-full bg-white border-black border rounded p-2 mt-1"
                               />
                             </div>
@@ -277,4 +293,4 @@ const History = () => {
   );
 };
 
-export default History;
+export default ContributorHistory;

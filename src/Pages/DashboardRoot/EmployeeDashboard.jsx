@@ -6,6 +6,7 @@ import { useContext } from "react";
 import { FaPeopleGroup } from "react-icons/fa6";
 import { AuthContext } from "../../Security/AuthProvider";
 import { LuActivitySquare } from "react-icons/lu";
+import { CiBank } from "react-icons/ci";
 
 const EmployeeDashboard = () => {
   const { user } = useContext(AuthContext);
@@ -57,7 +58,7 @@ const EmployeeDashboard = () => {
           </NavLink>
          
           <NavLink
-            to={`dashboard/adsAccount/${user?.email}`}
+            to={`dashboard/myAdsAccount/${user?.email}`}
             className="text-white hover:bg-[#f89320] hover:text-black py-2 px-4 rounded-lg flex items-center"
             style={({ isActive }) => getActiveStyle(isActive)}
           >
@@ -96,6 +97,14 @@ const EmployeeDashboard = () => {
           >
             <LuActivitySquare  className="w-6 h-6 mr-2" />
            My Summery
+          </NavLink>
+          <NavLink
+            to={`dashboard/bankInfo`}
+            className="text-white hover:bg-[#f89320] hover:text-black py-2 px-4 rounded-lg flex items-center"
+            style={({ isActive }) => getActiveStyle(isActive)}
+          >
+           <CiBank   className="w-6 h-6 mr-2" />
+           Bank Info
           </NavLink>
          
         </ul>

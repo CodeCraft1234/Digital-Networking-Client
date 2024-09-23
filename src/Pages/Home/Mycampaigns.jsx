@@ -154,13 +154,29 @@ const MyCampaigns = () => {
 
   const AxiosPublic =UseAxiosPublic()
   const handledelete = (id) => {
+    // Show confirmation dialog
+    Swal.fire({
+      title: 'Are you sure?',
+      text: "You won't be able to revert this!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, delete it!'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        // Proceed with delete
         AxiosPublic.delete(`/campaigns/${id}`)
-        .then((res) => {
-          refetch();
-          toast.success("campaign delete successful");
-        });
-
-    }
+          .then((res) => {
+            refetch();
+            toast.success("Campaign deleted successfully");
+          })
+          .catch((error) => {
+            toast.error("Failed to delete campaign");
+          });
+      }
+    });
+  };
 
 
     const sortedAdsAccounts = filteredByCategory?.sort((a, b) => {

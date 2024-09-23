@@ -132,7 +132,7 @@ const EmployeeProfile = () => {
       </div>
       
 
-      <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-6   lg:grid-cols-6 gap-3 lg:gap-5 mt-5 px-5 ">
+      {/* <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-6   lg:grid-cols-6 gap-3 lg:gap-5 mt-5 px-5 ">
  <div className="balance-card bg-white rounded-2xl shadow-xl p-5 text-center  transition-transform transform hover:scale-105 border-0">
    <img className="balance-card-img" src="https://i.ibb.co/bHMLyvM/b-Kash-Merchant.png" alt="bKash" />
    <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"> <span className="text-lg lg:text-2xl font-extrabold"> ৳</span> {bkashMarcent - bkashMarcent2}</p>
@@ -170,7 +170,7 @@ const EmployeeProfile = () => {
  </div>
 
 
-</div>
+</div> */}
 
       <div className="lg:flex lg:justify-center grid grid-cols-3 px-3  mb-3 lg:mb-0  items-center gap-5 mt-5">
       <button 

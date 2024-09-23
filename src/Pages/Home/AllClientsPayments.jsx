@@ -213,32 +213,26 @@ const AllClientsPayments = () => {
      </div>
 
 {/* ///////////////////////////////////////////////////////////////// */}
-      <div className="lg:flex text-black lg:justify-end gap-5 items-center">
-        <div className="lg:flex space-y-5 lg:space-y-0 lg:justify-center items-center gap-5   ">
+<div className="lg:flex text-black lg:justify-end gap-5 items-center">
+  <div className="flex flex-wrap lg:flex-nowrap gap-3 lg:gap-5 justify-center items-center">
 
-        <div className="flex justify-center gap-5">
-        <div className="flex  justify-center text-start items-start">
-         
-         <select
-           className="border bg-white text-black border-gray-400 rounded p-2 mt-1 "
-           value={selectedEmployee}
-           onChange={(e) => changeTab2(e.target.value)}
-         >
-           <option value="">All Employee</option>
-           {employees.map((employee) => (
-             <option key={employee._id} value={employee.email}>
-               {employee.name}
-             </option>
-           ))}
-         </select>
-       </div>
+    <div className="flex flex-wrap gap-3 lg:gap-5 justify-center items-start">
+      <div className="flex justify-center text-start items-start">
+        <select
+          className="border bg-white text-black border-gray-400 rounded p-2 mt-1"
+          value={selectedEmployee}
+          onChange={(e) => changeTab2(e.target.value)}
+        >
+          <option value="">All Employee</option>
+          {employees.map((employee) => (
+            <option key={employee._id} value={employee.email}>
+              {employee.name}
+            </option>
+          ))}
+        </select>
+      </div>
 
-     
-
-
-
-     <div className="flex text-black justify-center gap-5 items-center ">
-        
+      <div className="hidden lg:flex text-black justify-center items-center">
         <select
           className="border bg-white text-black border-gray-400 rounded p-2 mt-1"
           value={selectedYear}
@@ -250,58 +244,52 @@ const AllClientsPayments = () => {
             </option>
           ))}
         </select>
-  
+      </div>
     </div>
 
-        </div>
-        
-              <div className="flex justify-center gap-5">
-
-
-    <div className="flex  justify-center items-start">
-           
-           <select
-             className="border bg-white text-black border-gray-400 rounded p-2 mt-1"
-             value={sortMonth}
-             onChange={(e) => changeTab(e.target.value)}
-           >
-             <option value="">Select Month</option>
-             {[
-               "January",
-               "February",
-               "March",
-               "April",
-               "May",
-               "June",
-               "July",
-               "August",
-               "September",
-               "October",
-               "November",
-               "December",
-             ].map((month, index) => (
-               <option key={index + 1} value={index + 1}>
-                 {month}
-               </option>
-             ))}
-           </select>
-         </div>
-         <div className="flex  mr-5  justify-center items-start">
-       
-       <input
-         type="date"
-         className="border rounded bg-green-300 text-black border-gray-400 p-2 mt-1"
-         value={selectedDate}
-         onChange={(e) => setSelectedDate(e.target.value)}
-       />
-     </div>
-      
-              </div>
-             
-         
-        </div>
-       
+    <div className="flex flex-wrap gap-3 lg:gap-5 justify-center items-start">
+      <div className="flex justify-center items-start">
+        <select
+          className="border bg-white text-black border-gray-400 rounded p-2 mt-1"
+          value={sortMonth}
+          onChange={(e) => changeTab(e.target.value)}
+        >
+          <option value="">Select Month</option>
+          {[
+            "January",
+            "February",
+            "March",
+            "April",
+            "May",
+            "June",
+            "July",
+            "August",
+            "September",
+            "October",
+            "November",
+            "December",
+          ].map((month, index) => (
+            <option key={index + 1} value={index + 1}>
+              {month}
+            </option>
+          ))}
+        </select>
       </div>
+
+      <div className="hidden lg:flex mr-5 justify-center items-start">
+        <input
+          type="date"
+          className="border rounded bg-green-300 text-black border-gray-400 p-2 mt-1"
+          value={selectedDate}
+          onChange={(e) => setSelectedDate(e.target.value)}
+        />
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
 
       <div className="overflow-x-auto text-black rounded-xl my-5 border border-gray-400 mx-5">
         <table className="min-w-full bg-white">

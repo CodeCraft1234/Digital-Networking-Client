@@ -8,6 +8,8 @@ import useAdsPayment from '../../Hook/useAdsPayment';
 import { MdDelete, MdEditSquare } from 'react-icons/md';
 import Swal from 'sweetalert2';
 import { toast } from 'react-toastify';
+import { FaEdit } from 'react-icons/fa';
+import axios from 'axios';
 
 const AdsUserAdsAccount = () => {
     const { user } = useContext(AuthContext);
@@ -333,6 +335,51 @@ const AdsUserAdsAccount = () => {
           toast.error("Failed to update campaign");
         });
     };
+
+    const generateRandomId = () => {
+      return Math.floor(Math.random() * 1e13); 
+    };
+
+
+    const handleUpdateTotalSpent = (e, id,  accountName, employeeEmail, employeeName) => {
+      e.preventDefault();
+      const totalSpent = e.target.totalSpent.value;
+      const dollerRate = e.target.dollerRate.value;
+      const date = e.target.date.value;
+      const body = { totalSpent: parseFloat(totalSpent)  };
+      const ids=generateRandomId()
+   
+      axios.put(`https://digital-networking-server.vercel.app/adsAccountCenter/totalSpent/${id}`, body)
+        .then((res) => {
+          console.log(res.data);
+          refetch();
+          document.getElementById(`my_modal_${id}`).close(); // Close the modal
+        })
+        .catch((error) => {
+          console.error("Error updating total spent:", error);
+        });
+    
+      const totalSpentt = parseFloat(totalSpent);
+      const monthlySpent = {
+        ids,
+        totalSpentt,
+        accountName,
+        date,
+        employeeName,
+        dollerRate
+      };
+  
+      AxiosPublic.post('/users/update', { email: employeeEmail, monthlySpent })
+        .then(res => {
+          console.log(res.data);
+        })
+        .catch(error => {
+          console.error("Error posting user data:", error);
+        });
+    };
+
+
+
     return (
         <div>
                    <div className="flex justify-start  text-gray-500 border-opacity-20 mx-2  items-center gap-3">
@@ -441,7 +488,70 @@ const AdsUserAdsAccount = () => {
                    </td>
                <td className="p-3 border border-gray-300  text-center">$ {account.currentBallence}</td>
                <td className="p-3 border border-gray-300 text-center">$ {account.threshold}</td>
-               <td className="p-3 border border-gray-300 text-center">$ {account.totalSpent}</td>
+               <td className="p-3 border-r-2 border-gray-300 text-center ">
+                    <div className="relative group flex items-center justify-center ">
+                      <h1>$ {account.totalSpent}</h1>
+                      <button
+                        className=" text-black text-right px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                        onClick={() =>
+                          document
+                            .getElementById(`my_modal_${account._id}`)
+                            .showModal()
+                        }
+                      >
+                        <FaEdit />
+                      </button>
+
+                      <dialog id={`my_modal_${account._id}`} className="modal">
+  <div className="modal-box bg-white">
+    <form
+      onSubmit={(e) =>
+        handleUpdateTotalSpent(e, account._id, account.accountName, account.employeeEmail, account.employeerName)
+      }
+    >
+      <h1 className='text-xl font-bold text-blue-700 text-center'>{account.accountName}</h1>
+      <h1 className="text-black font-bold text-start">Date</h1>
+      <input
+        className="text-black inline-block w-full mb-5 p-2 border border-black bg-red-200"
+        type="date"
+        name="date"
+        required
+        id=""
+      />
+      <h1 className="text-black font-bold text-start">Total Spent</h1>
+      <input
+        type="number"
+        name="totalSpent"
+        step="0.01"
+        placeholder="0"
+        className="w-full rounded p-2 mt-3 bg-white text-black border border-gray-700"
+      />
+      <h1 className="text-black font-bold text-start">Doller Rate</h1>
+      <input
+        type="number"
+        name="dollerRate"
+        step="0.01"
+        defaultValue={125}
+        className="w-full rounded p-2 mt-3 bg-white text-black border border-gray-700"
+      />
+
+      <button
+        type="submit"
+        className="mt-4 font-avenir px-3 mx-auto py-1 rounded-lg text-white bg-[#05a0db]"
+      >
+        Update
+      </button>
+    </form>
+    <form method="dialog">
+      <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
+        ✕
+      </button>
+    </form>
+  </div>
+                      </dialog>
+
+                    </div>
+                  </td>
                <td className="p-3 border border-gray-300 text-center">$ {account.totalSpent * account.dollerRate}</td>
                <td className={`p-3 border  text-center border-gray-300  ${
                        account.status === "Active"
@@ -514,7 +624,7 @@ const AdsUserAdsAccount = () => {
             />
           </div>
           
-          <div className="mb-4">
+           <div className="mb-4">
             <label className="block text-gray-500">Current Balance</label>
             <input
               type="number"
@@ -523,9 +633,9 @@ const AdsUserAdsAccount = () => {
               defaultValue={modalData.currentBallence}
               className="w-full border rounded p-2 mt-1 text-black bg-white border-gray-500"
             />
-          </div>
+          </div> 
           
-          <div className="mb-4">
+           <div className="mb-4">
             <label className="block text-gray-500">Threshold</label>
             <input
               type="number"
@@ -536,7 +646,7 @@ const AdsUserAdsAccount = () => {
             />
           </div>
           
-          <div className="mb-4">
+          {/* <div className="mb-4">
             <label className="block text-gray-500">Total Spent</label>
             <input
               type="number"
@@ -556,9 +666,9 @@ const AdsUserAdsAccount = () => {
               defaultValue={125}
               className="w-full border rounded p-2 mt-1 text-black bg-white border-gray-500"
             />
-          </div>
+          </div> */}
           
-          <div className="mb-4">
+          {/* <div className="mb-4">
             <label className="block text-gray-500">Status</label>
             <select
               name="status"
@@ -568,7 +678,7 @@ const AdsUserAdsAccount = () => {
               <option value="Active">Active</option>
               <option value="Disable">Disable</option>
             </select>
-          </div>
+          </div> */}
     
           <div className="modal-action grid grid-cols-2 gap-3 mt-4">
             <button

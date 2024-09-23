@@ -151,7 +151,7 @@ const MyHistory = () => {
               <th className="p-3">Ad Account Name</th>
               <th className="p-3">Total Spent</th>
               <th className="p-3">Total Bill</th>
-              <th className="p-3">Action</th>
+              {/* <th className="p-3">Action</th> */}
             </tr>
           </thead>
           <tbody>
@@ -179,7 +179,7 @@ const MyHistory = () => {
                   ৳ {(account.totalSpentt * 140).toFixed(2)}
                 </td>
 
-                <td className="p-3 border-r text-center border-gray-400">
+                {/* <td className="p-3 border-r text-center border-gray-400">
                   <div className="flex justify-center items-center gap-3">
                     <div>
                       <button
@@ -230,7 +230,7 @@ const MyHistory = () => {
                       Delete
                     </button>
                   </div>
-                </td>
+                </td> */}
               </tr>
             ))}
           </tbody>
@@ -245,7 +245,7 @@ const MyHistory = () => {
               <td className="p-3 border-gray-300 text-center font-bold">
                 ৳ {totalBill.toFixed(2)}
               </td>
-              <td className="p-3 border-r-2 border-gray-300"></td>
+              {/* <td className="p-3 border-r-2 border-gray-300"></td> */}
             </tr>
           </tfoot>
         </table>

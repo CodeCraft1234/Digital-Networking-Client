@@ -8,6 +8,7 @@ import "react-toastify/dist/ReactToastify.css";
 import useClients from "../../Hook/useClient";
 import useUsers from "../../Hook/useUsers";
 import useAdsAccount from "../../Hook/useAdAccount";
+import Swal from "sweetalert2";
 
 const ClientCampaign = () => {
     const { user } = useContext(AuthContext);
@@ -118,13 +119,30 @@ const ClientCampaign = () => {
         refetch();
       });
     };
-  
     const handledelete = (id) => {
-          AxiosPublic.delete(`/campaigns/${id}`).then((res) => {
-            refetch();
-            toast.success("delete successful");
-          });
-       }
+      // Show confirmation dialog
+      Swal.fire({
+        title: 'Are you sure?',
+        text: "You won't be able to revert this!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, delete it!'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          // Proceed with delete
+          AxiosPublic.delete(`/campaigns/${id}`)
+            .then((res) => {
+              toast.success("Delete successful!");
+              refetch(); // Update the data after deletion
+            })
+            .catch((error) => {
+              toast.error("Failed to delete. Please try again."); // Handle errors
+            });
+        }
+      });
+    };
 
     const handleUpdate2 = (id, newStatus) => {
       const body = { status: newStatus };

@@ -63,7 +63,10 @@ const Sellery = () => {
       };
     });
 
-    setEmployeeData(aggregatedData);
+    const sortedData = aggregatedData.sort((a, b) => b.totalSpent - a.totalSpent);
+
+    setEmployeeData(sortedData);
+
   }, [users, employeePayment, sortMonth, selectedYear]);
 
 
@@ -76,6 +79,11 @@ const Sellery = () => {
   const totalSellery = employeeData.reduce((acc, user) => acc + user.totalSellery, 0);
   const totalBonus = employeeData.reduce((acc, user) => acc + user.totalBonus, 0);
 
+
+  const changeTab = (tab) => {
+    localStorage.setItem("activeTabProfile", tab); // Store the active tab in local storage
+  };
+
   return (
     <div className='m-5 text-black'>
       <Helmet>
@@ -86,25 +94,25 @@ const Sellery = () => {
       <div className="grid grid-cols-2 md:grid-cols-2 mb-5 lg:grid-cols-4 text-black sm:grid-cols-2 gap-3 justify-around ">
         <div className="px-5 py-10 rounded-2xl  bg-[#91a33a] text-white shadow-lg text-center">
           <h2 className="lg:text-xl text-sm font-bold">Total Spent</h2>
-          <p className="lg:text-xl text-sm font-bold mt-2"> $ {totalSpent.toFixed(2)}</p>
+          <p className="lg:text-xl text-sm font-bold mt-2"> $ {totalSpent.toFixed(0)}</p>
         </div>
 
         <div className="px-5 py-10 rounded-2xl bg-[#5422c0] text-white shadow-lg text-center">
           <h2 className="lg:text-xl text-sm font-bold">Total Sellery</h2>
           <p className="lg:text-xl text-sm font-bold mt-2">
-             <span className="lg:text-xl text-sm font-extrabold">৳</span> {(totalSpent * 7).toFixed(2)}
+             <span className="lg:text-xl text-sm font-extrabold">৳</span> {(totalSpent * 7).toFixed(0)}
           </p>
         </div>
 
         <div className="px-5 py-10 rounded-2xl  bg-[#05a0db] text-white shadow-lg text-center">
           <h2 className="lg:text-xl text-sm font-bold">Paid</h2>
-          <p className="lg:text-xl text-sm font-bold mt-2"> <span className="lg:text-xl text-sm font-extrabold">৳</span>{totalSellery.toFixed(2)} </p>
+          <p className="lg:text-xl text-sm font-bold mt-2"> <span className="lg:text-xl text-sm font-extrabold">৳</span>{totalSellery.toFixed(0)} </p>
         </div>
 
         <div className="px-5 py-10 rounded-2xl  bg-[#ce1a38] text-white shadow-lg text-center">
-          <h2 className="lg:text-xl text-sm font-bold">Unpaidy</h2>
+          <h2 className="lg:text-xl text-sm font-bold">Unpaid</h2>
           <p className="lg:text-xl text-sm font-bold mt-2">
-          <span className="lg:text-xl text-sm font-extrabold">৳</span> {(totalSpent * 7 - totalSellery).toFixed(2)}
+          <span className="lg:text-xl text-sm font-extrabold">৳</span> {(totalSpent * 7 - totalSellery).toFixed(0)}
           </p>
         </div>
 
@@ -135,10 +143,7 @@ const Sellery = () => {
             <tr>
               <th className="p-3">SL</th>
               <th className="p-3 text-start">Employee Name</th>
-                <th className="p-3">Spent</th>
-              {/* <th className="p-3">T. Bill</th>
-              <th className="p-3">Admin Pay</th> */} 
-              {/* <th className="p-3">T. Due</th> */}
+              <th className="p-3">Spent</th>
               <th className="p-3">T. Sellery</th>
               <th className="p-3">Paid</th>
               <th className="p-3">Unpaid</th>
@@ -148,14 +153,11 @@ const Sellery = () => {
           <tbody className='text-black'>
             {employeeData.map((user, index) => (
               <tr key={user.email} className={`${index % 2 === 0 ? "bg-white" : "bg-gray-200"} text-black border-b border-opacity-20`}>
-                <td className="p-3 border-r-2 text-black border-gray-300 text-center px-5">{index + 1}</td>
-                <td className="p-3 border-r-2 hover:text-blue-700 hover:font-bold border-gray-300 text-start px-5">
-                  <Link to={`/dashboard/employeerSellery/${user.email}`}>{user.name}</Link>
+                 <td className="p-3 border-r-2 border-gray-300 text-center">{index + 1}</td>
+                <td onClick={() => changeTab('sellery')} className="p-3 border-r-2 hover:text-blue-700 hover:font-bold border-gray-300 font-bold text-start pl-5">
+                  <Link className='flex justify-start items-center gap-2' to={`/dashboard/userInfo/${user?.email}`}><img className='h-10 w-10 rounded-full flex justify-center' src={user.photo} alt="" /><span>{user.name}</span></Link>
                 </td>
                  <td className="p-3 border-r-2 border-gray-300 text-center">${user.totalSpent.toFixed(2)}</td>
-                {/* <td className="p-3 border-r-2 border-gray-300 text-center">৳ {(user.totalSpent * 140).toFixed(2)}</td>
-                <td className="p-3 border-r-2 border-gray-300 text-center">৳ {user.totalPayAmount.toFixed(2)}</td>  */}
-                {/* <td className="p-3 border-r-2 border-gray-300 text-center">৳ {(user.totalSpent * 140 - user.totalAdminPay).toFixed(2)}</td> */}
                 <td className="p-3 border-r-2 border-gray-300 text-center">৳ {(user.totalSpent * 7).toFixed(2)}</td>
                 <td className="p-3 border-r-2 border-gray-300 text-center">৳ {user.totalSellery.toFixed(2)}</td>
                 <td className="p-3 border-r-2 border-gray-300 text-center">৳ {(user.totalSpent * 7 - user.totalSellery).toFixed(2)}</td>

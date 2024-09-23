@@ -12,7 +12,7 @@ import {
   FaUser,
   FaUsers,
 } from "react-icons/fa";
-import { IoMdArrowDropdown, IoMdArrowDropup, IoMdCash } from 'react-icons/io';
+import { IoMdArrowDropdown, IoMdArrowDropup, IoMdCash, IoMdNotifications } from 'react-icons/io';
 import { RxDashboard } from "react-icons/rx";
 import { MdAccountCircle, MdCampaign, MdOutlinePayment, MdOutlinePayments, MdPayments } from "react-icons/md";
 import { IoLogOutOutline, IoPeopleSharp, IoSettingsSharp } from "react-icons/io5";
@@ -24,6 +24,8 @@ import { Menu } from "@headlessui/react";
 import { AuthContext } from "../../Security/AuthProvider";
 import { RiSecurePaymentFill, RiSecurePaymentLine } from "react-icons/ri";
 import { LuActivitySquare } from "react-icons/lu";
+import useNotification from "../../Hook/useNotification";
+import { CiBank } from "react-icons/ci";
 
 const AdminDashboard = () => {
   const [logo, setLogo] = useLogo();
@@ -93,6 +95,8 @@ const AdminDashboard = () => {
       : {}
   );
 
+  const [notification,refetch]=useNotification()
+
   return (
     <div className=" bg-gray-900 h-screen">
       <div className="w-[200px]">
@@ -133,33 +137,6 @@ const AdminDashboard = () => {
             <MdCampaign className="w-6 h-6 mr-2" />All Campaigns
           </NavLink>
 
-         
-         
-
-         
-
-         
-         
-          {/* <NavLink
-                  to="dashboard/adsUser"
-                  className="text-white hover:bg-[#f89320] hover:text-black py-2 px-3 rounded-lg flex items-center"
-                  style={({ isActive }) => getActiveStyle(isActive)}
-                >
-                  <FaPeopleGroup className="w-6 h-6 mr-2" />
-                  Ads User
-                </NavLink> */}
-             
-         
-
-
-
-
-        
-        
-        
-         
-          
-         
           <NavLink
                   to="dashboard/allUsers"
                   className="text-white hover:bg-[#f89320] hover:text-black py-2 px-3 rounded-lg flex items-center"
@@ -177,12 +154,12 @@ const AdminDashboard = () => {
                  All Clients
                 </NavLink>
           <NavLink
-           to="dashboard/paymentHistory"
+           to="dashboard/allPayments"
             className="text-white hover:bg-[#f89320] hover:text-black py-2 px-3 rounded-lg flex items-center"
             style={({ isActive }) => getActiveStyle(isActive)}
           >
             <MdOutlinePayments  className="w-6 h-6 mr-2" />
-            Pay History
+            Payments
           </NavLink>
        
           <NavLink
@@ -209,11 +186,15 @@ const AdminDashboard = () => {
             <IoMdCash  className="w-6 h-6 mr-2" />Salary
           </NavLink>
 
-         
+<NavLink
+            to={`dashboard/bankInfo`}
+            className="text-white hover:bg-[#f89320] hover:text-black py-2 px-4 rounded-lg flex items-center"
+            style={({ isActive }) => getActiveStyle(isActive)}
+          >
+           <CiBank   className="w-6 h-6 mr-2" />
+           Bank Info
+          </NavLink>
 
-
-
-          
         </ul>
       </div>
     </div>

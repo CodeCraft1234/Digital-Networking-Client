@@ -1,23 +1,31 @@
-
-import React, { useContext, useEffect, useState } from 'react';
-import AdsAccountCenter from './Routes/AdsAccountCenter';
+import  { useContext, useEffect, useState } from 'react';
 import { AuthContext } from '../../Security/AuthProvider';
 import useUsers from '../../Hook/useUsers';
 import { useLoaderData, useParams } from 'react-router-dom';
 import useAdsAccountCenter from '../../Hook/useAdsAccountCenter';
 import UseAxiosPublic from '../../Axios/UseAxiosPublic';
-import { Helmet } from 'react-helmet-async';
 import useAdsPayment from '../../Hook/useAdsPayment';
-import { IoIosSearch } from 'react-icons/io';
 import { MdDelete, MdEditSquare } from 'react-icons/md';
+import Swal from 'sweetalert2';
+import axios from 'axios';
 
 const AdsUserPayments = () => {
     const { user } = useContext(AuthContext);
     const [users] = useUsers();
     const [ddd, setDdd] = useState(null);
-    console.log(ddd);
     const {email}=useParams()
-    console.log(email);
+    const AxiosPublic=UseAxiosPublic()
+    const [adsPayment,refetch] = useAdsPayment();
+    const [payment, setPayment] = useState([]);
+    const [filteredClients, setFilteredClients] = useState([]);
+    const [sortMonth, setSortMonth] = useState("");
+    const [selectedCategory, setSelectedCategory] = useState("");
+    const [totalPayment, setTotalPayment] = useState(0);
+    const [searchQuery, setSearchQuery] = useState("");
+    const [selectedEmployee, setSelectedEmployee] = useState("");
+    const [selectedDate, setSelectedDate] = useState("");
+    const [userdata,setUserData]=useState()
+  
   
     useEffect(() => {
         if (users && user) {
@@ -25,106 +33,21 @@ const AdsUserPayments = () => {
             console.log(fff);
             setDdd(fff || {}); // Update state with found user or an empty object
         }
-    }, [users, user,email]);
-  
     
-  
-    const [adsAccountCenter, refetch] = useAdsAccountCenter();
-    const [adsAccounts, setAdsAccounts] = useState([]);
-  
-    useEffect(() => {
-      const filterdata = adsAccountCenter.filter((m) => m.employeeEmail === email);
-      console.log(filterdata);
-      setAdsAccounts(filterdata);
-  
-    }, [adsAccountCenter, user?.email]);
-  
-    const handleAddAdsAcount = (e) => {
-      e.preventDefault();
-      const accountName = e.target.accountName.value;
-      const paymentDate = e.target.paymentDate.value;
-      const employeeEmail = email;
-      const employeerName = ddd?.name;
-      const currentBallence=0
-      const threshold=0
-      const totalSpent=0
-      const dollerRate=125
-      const status='Active'
-  
-  
-      const data = { accountName,dollerRate,totalSpent,currentBallence,threshold, paymentDate,status, employeeEmail,employeerName };
-  
-      AxiosPublic.post("/adsAccountCenter", data).then((res) => {
-        console.log(res.data);
-        // toast.success("add successful");
-        refetch()
-        
-      });
-    };
-  
-  const AxiosPublic=UseAxiosPublic()
-  
-  const [currentTotal,setCurrentTotal]=useState(0)
-  const [tSpent,setthreshold]=useState(0)
-   const [TSpent,setTSpent]=useState(0)
-  
-  useEffect(() => {
-   
-    const total = adsAccounts.reduce(
-      (acc, campaign) => acc + parseFloat(campaign.currentBallence),
-      0
-    );
-    setCurrentTotal(total);
-  
-    const totalBill = adsAccounts.reduce(
-      (acc, campaign) => acc + parseFloat(campaign.threshold),
-      0
-    );
-    setthreshold(totalBill);
-  
-    const totalBilll = adsAccounts.reduce(
-      (acc, campaign) => acc + parseFloat(campaign.totalSpent),
-      0
-    );
-    setTSpent(totalBilll);
-  
-  }, [adsAccounts]);
-  
-  const [modalData, setModalData] = useState(null);
-  const handleUpdate = (e, id) => {
-    e.preventDefault();
-    const accountName = e.target.accountName.value;
-    const currentBallence = e.target.currentBallence.value;
-    const threshold = e.target.threshold.value;
-    const totalSpent = e.target.totalSpent.value;
-    const dollerRate = e.target.dollerRate.value;
-    const status = e.target.status.value;
-    const paymentDate = e.target.paymentDate.value;
-    const body = { accountName,currentBallence,paymentDate,dollerRate, threshold, totalSpent, status };
-    AxiosPublic.patch(`/adsAccountCenter/${id}`,body
-    )
-      .then((res) => {
-        console.log(res.body);
-        refetch();
-        Swal.fire({
-          title: "Good job!",
-          text: "Add Account success!",
-          icon: "success",
-        });
-  
-        setModalData(null);
-      })
-      .catch((error) => {
-        console.error("Error adding account:", error);
-        Swal.fire({
-          icon: "error",
-          title: "Oops...",
-          text: "Failed to add account!",
-        });
-      });
-  };
+        const realdata = adsPayment.filter(
+          (m) => m.employeeEmail === email
+        );
+        setPayment(realdata);
+        const totalBill = realdata.reduce(
+          (acc, campaign) => acc + parseFloat(campaign.payAmount),
+          0
+        );
+        setTotalPayment(totalBill);
 
+    }, [users, user,adsPayment, email]);
+  
 
+  
   const handleDelete = (id) => {
     Swal.fire({
       title: "Are you sure?",
@@ -151,38 +74,14 @@ const AdsUserPayments = () => {
   };
 
 
-  const [adsPayment] = useAdsPayment();
 
-
-  const [payment, setPayment] = useState([]);
-  const [filteredClients, setFilteredClients] = useState([]);
-  const [sortMonth, setSortMonth] = useState("");
-  const [searchQuery, setSearchQuery] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("");
-  const [selectedEmployee, setSelectedEmployee] = useState("");
-  const [selectedDate, setSelectedDate] = useState("");
-
-  const [totalPayment, setTotalPayment] = useState(0);
-  useEffect(() => {
-    const realdata = adsPayment.filter(
-      (m) => m.employeeEmail === email
-    );
-    setPayment(realdata);
-    const totalBill = realdata.reduce(
-      (acc, campaign) => acc + parseFloat(campaign.payAmount),
-      0
-    );
-    setTotalPayment(totalBill);
-  }, [adsPayment, email]);
 
 
   useEffect(() => {
     if (payment) {
       setFilteredClients(payment);
     }
-  }, [payment]);
 
-  useEffect(() => {
     let filtered = payment;
 
     if (selectedEmployee) {
@@ -209,7 +108,7 @@ const AdsUserPayments = () => {
     }
 
     setFilteredClients(filtered);
-  }, [selectedEmployee, sortMonth, selectedDate, adsPayment]);
+  }, [selectedEmployee, sortMonth, selectedDate,payment, adsPayment]);
 
   const filteredItems = filteredClients.filter((item) =>
     item.paymentMethod.toLowerCase().includes(searchQuery.toLowerCase())
@@ -222,27 +121,20 @@ const AdsUserPayments = () => {
       )
     : filteredItems;
 
-  useEffect(() => {
+  useEffect(()=>{
     const totalBill = filteredByCategory.reduce(
       (acc, campaign) => acc + parseFloat(campaign.payAmount),
       0
     );
     setTotalPayment(totalBill);
-  }, [filteredByCategory]);
 
-
-
-  const [userdata,setUserData]=useState()
-  console.log(userdata);
-
-  useEffect(()=>{
     const finder=users.find(use=>use.email === user?.email)
     setUserData(finder)
-  },[users,user?.email])
+  },[users,user?.email,filteredByCategory])
 
   const handlePayment =async (e) => {
     e.preventDefault();
-    const employeeName=user?.displayName
+    const employeeName=ddd?.name
     const employeeEmail = email;
     const payAmount = e.target.payAmount.value;
     const paymentMethod = e.target.paymentMethod.value;
@@ -264,7 +156,7 @@ const AdsUserPayments = () => {
     )
       .then((res) => {
         refetch();
-
+        document.getElementById("my_modal_1").close()
       })
 
 
@@ -321,31 +213,6 @@ const AdsUserPayments = () => {
       });
   };
 
-  const [activeDropdown, setActiveDropdown] = useState(null);
-  const toggleDropdown = (orderId) => {
-    setActiveDropdown(activeDropdown === orderId ? null : orderId);
-  };
-
-  const [selectedPayment, setSelectedPayment] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
-  const handleEditClick = (payment) => {
-    setSelectedPayment(payment);
-    setIsModalOpen(true);
-  };
-
-  const handleCancel = () => {
-    setIsModalOpen(false);
-    setSelectedPayment(null);
-  };
-  
-
-  const handleDelete2 = (id) => {
-      AxiosPublic.delete(`/employeePayment/${id}`).then((res) => {
-          refetch();
-        });
-      }
-
 
   const [bkashMarcent2,setBkashMarcentTotal2]=useState(0)
   const [nagadPersonal2,setNagadPersonalTotal2]=useState(0)
@@ -375,16 +242,9 @@ const AdsUserPayments = () => {
   
   },[payment])
 
-  const [userss,setUser]=useState([])
-  console.log(userss?.email)
-  useEffect(()=>{
-    const filtered=users.find(e=>e.email === user?.email) 
-    console.log('sdahjgj',filtered)
-    setUser(filtered)
-  },[users,user])
+
 
   const userr=useLoaderData()
-  console.log(userr)
  const [data,setData]=useState([])
   console.log(data)
 
@@ -397,87 +257,39 @@ const AdsUserPayments = () => {
     },[])
 
 
-
-    const [payment2, setPayment2] = useState([]);
-    const [totalPayment2, setTotalPayment2] = useState(0);
-    const [adsAccounts2, setAdsAccounts2] = useState([]);
-    const [TSpent2, setTSpent2] = useState(0);
-    const [averageDollarRate, setAverageDollarRate] = useState(0);
-    const [totalBill, setTotalBill] = useState(0);
-    const [totalDue, setTotalDue] = useState(0);
-  
-    useEffect(() => {
-      if (user) {
-        const realdata = adsPayment.filter(
-          (m) => m.employeeEmail === email
-        );
-        setPayment2(realdata);
-        const totalBill = realdata.reduce(
-          (acc, campaign) => acc + parseFloat(campaign.payAmount || 0),
-          0
-        );
-        setTotalPayment2(totalBill);
-      }
-    }, [adsPayment, user]);
-  
-    useEffect(() => {
-      if (user) {
-        const filterdata = adsAccountCenter.filter((m) => m.employeeEmail === email);
-        setAdsAccounts2(filterdata);
-      }
-    }, [adsAccountCenter, email]);
-  
-    useEffect(() => {
-      const totalSpent = adsAccounts.reduce(
-        (acc, campaign) => acc + parseFloat(campaign.totalSpent || 0),
-        0
-      );
-      setTSpent2(totalSpent);
-  
-      const totalDollarRate = adsAccounts.reduce(
-        (acc, campaign) => acc + parseFloat(campaign.dollerRate), // Convert string to number and add to accumulator
-        0 // Initial value of accumulator
-      );
-      
-      console.log(adsAccounts.length, totalDollarRate);
-      const averageDollarRate = adsAccounts.length ? totalDollarRate / adsAccounts.length : 0;
-      setAverageDollarRate(averageDollarRate);
-  
-      const totalBill = totalSpent * averageDollarRate;
-      setTotalBill(totalBill);
-  
-      const totalDue = totalBill - totalPayment;
-      setTotalDue(totalDue);
-  
-      // Debugging statements
-      console.log('Total Spent:', totalSpent);
-      console.log('Average Dollar Rate:', averageDollarRate);
-      console.log('Total Bill:', totalBill);
-      console.log('Total Payment:', totalPayment);
-      console.log('Total Due:', totalDue);
-    }, [adsAccounts, totalPayment]);
+    const handleUpdate2 = (id, newStatus) => {
+      const body = { status: newStatus };
+      AxiosPublic.patch(`/adsPayment/status/${id}`, body)
+        .then((res) => {
+          console.log(res.data);
+          refetch();
+        })
+        .catch((error) => {
+          console.error("Error updating campaign:", error);
+        });
+    };
     
     return (
         <div>
-                 <div className="grid grid-cols-2 text-white sm:grid-cols-2 md:grid-cols-3 mb-3  lg:grid-cols-5 gap-3 lg:gap-5 mt-4 ">
-   <div className="balance-card bg-white rounded-2xl shadow-lg p-5 text-center  transition-transform transform hover:scale-105 border-0">
+                 <div className="grid grid-cols-2 text-white sm:grid-cols-2 md:grid-cols-3 mb-3  lg:grid-cols-6 gap-3 lg:gap-5 mt-4 ">
+   <div onClick={(e) => setSelectedCategory('bkashMarchent')} className="balance-card bg-white rounded-2xl shadow-lg p-5 text-center  transition-transform transform hover:scale-105 border-0">
      <img className="balance-card-img" src="https://i.ibb.co/bHMLyvM/b-Kash-Merchant.png" alt="bKash" />
      <p className="balance-card-text text-black text-lg lg:text-2xl font-bold "> <span className="text-lg lg:text-2xl text-white font-extrabold"> ৳</span> {bkashMarcent2}</p>
    </div>
-   <div className="balance-card bg-white rounded-2xl shadow-lg p-5 text-center transition-transform transform hover:scale-105 border-0">
+   <div onClick={(e) => setSelectedCategory('bkashPersonal')} className="balance-card bg-white rounded-2xl shadow-lg p-5 text-center transition-transform transform hover:scale-105 border-0">
      <img className="balance-card-img" src="https://i.ibb.co/520Py6s/bkash-1.png" alt="bKash" />
      <p className="balance-card-text text-black text-lg lg:text-2xl font-bold "> <span className="text-lg lg:text-2xl font-extrabold"> ৳</span> {bkashPersonal2}</p>
    </div>
-   <div className="balance-card bg-white rounded-2xl shadow-lg p-5 text-center transition-transform transform hover:scale-105 border-0">
+   <div onClick={(e) => setSelectedCategory('nagadPersonal')} className="balance-card bg-white rounded-2xl shadow-lg p-5 text-center transition-transform transform hover:scale-105 border-0">
      <img className="balance-card-img" src="https://i.ibb.co/JQBQBcF/nagad-marchant.png" alt="Nagad" />
      <p className="balance-card-text text-black text-lg lg:text-2xl font-bold "><span className="text-lg lg:text-2xl font-extrabold"> ৳</span> {nagadPersonal2}</p>
    </div>
-   <div className="balance-card bg-white rounded-2xl shadow-lg p-5 text-center transition-transform transform hover:scale-105 border-0">
+   <div onClick={(e) => setSelectedCategory('rocketPersonal')} className="balance-card bg-white rounded-2xl shadow-lg p-5 text-center transition-transform transform hover:scale-105 border-0">
      <img className="balance-card-img" src="https://i.ibb.co/QkTM4M3/rocket.png" alt="Rocket" />
      <p className="balance-card-text text-black text-lg lg:text-2xl font-bold "><span className="text-lg lg:text-2xl font-extrabold"> ৳</span> {rocketPersonal2}</p>
    </div>
 
-   <div className="balance-card bg-white rounded-2xl shadow-lg p-5 text-center transition-transform transform hover:scale-105 border-0">
+   <div onClick={(e) => setSelectedCategory('bank')} className="balance-card bg-white rounded-2xl shadow-lg p-5 text-center transition-transform transform hover:scale-105 border-0">
      <img className="balance-card-img" src="https://i.ibb.co/PZc0P4w/brac-bank-seeklogo.png" alt="Rocket" />
      
      <p className="balance-card-text text-black text-lg lg:text-2xl font-bold "><span className="text-lg lg:text-2xl font-extrabold"> ৳</span> {bankTotal2}</p>
@@ -490,163 +302,128 @@ const AdsUserPayments = () => {
      </div>
    
 {/* ///////////////////////////////////////////////////////////////// */}
-    <div className="flex mt-4 justify-between items-center gap-5  ml-2 ">
-    <div className="">
+<div className="flex lg:justify-between flex-col lg:flex-row my-5 gap-5 mx-2">
+  <div className="w-full lg:w-auto">
+    <button
+      className="font-avenir px-5 mt-1 py-2 bg-[#05a0db] rounded-lg text-white w-full lg:w-auto"
+      onClick={() => document.getElementById("my_modal_1").showModal()}
+    >
+      Pay Now
+    </button>
 
-    {
-            ddd?.role !== 'contributor' ?   <button
-            className="font-avenir px-3 mx-auto py-1 bg-[#05a0db]  rounded-lg text-white"
-            onClick={() => document.getElementById("my_modal_1").showModal()}
-          >
-            Pay Admin
-          </button> : <></>
-          }
-
- 
-  <dialog id="my_modal_1" className="modal">
-    <div className="modal-box bg-white text-black font-bold">
-      <form onSubmit={(e) => handlePayment(e)}>
-      <div className="mb-4">
-          <label className="block text-gray-250">Date</label>
-          <input
-            required
-            type="date"
-            name="date"
-            className="w-full border-2 bg-green-300 text-black border-black rounded p-2 mt-1"
-          />
-        </div>
-        <div className="mb-4">
-          <label className="block text-gray-250">Pay Amount</label>
-          <input
-            required
-            type="number"
-            name="payAmount"
-            defaultValue={0}
-            className="w-full border-2 bg-white border-black rounded p-2 mt-1"
-          />
-        </div>
-        <div className="mb-4">
-          <label className="block text-gray-250">Note</label>
-          <input
-            type="text"
-            name="note"
-            required
-            placeholder="type note..."
-            className="w-full border-2 bg-white border-black rounded p-2 mt-1"
-          />
-        </div>
-        <div className="mb-4">
-          <label className="block text-gray-250">Payment Method</label>
-          <select
-            required
-            name="paymentMethod"
-            className="w-full border-2 bg-white border-black rounded p-2 mt-1"
-          >
-            <option value="bkashMarchent">Bkash Marchent</option>
-            <option value="bkashPersonal">Bkash Personal</option>
-            <option value="nagadPersonal">Nagad Personal</option>
-            <option value="rocketPersonal">Rocket Personal</option>
-            <option value="bank">Bank</option>
-          </select>
-        </div>
-       
-
-        <div className="grid lg:grid-cols-2 gap-3 mt-4">
-        <form method="dialog">
-            <button className="font-avenir px-3 py-2 w-full rounded-lg text-white bg-red-600">
+    <dialog id="my_modal_1" className="modal">
+      <div className="modal-box bg-white text-black font-bold">
+        <form onSubmit={(e) => handlePayment(e)}>
+          <div className="mb-4">
+            <label className="block text-gray-700">Date</label>
+            <input
+              required
+              type="date"
+              name="date"
+              className="w-full border-2 bg-green-300 border-black rounded p-2 mt-1"
+            />
+          </div>
+          <div className="mb-4">
+            <label className="block text-gray-700">Pay Amount</label>
+            <input
+              required
+              type="number"
+              name="payAmount"
+              placeholder='0'
+              className="w-full border-2 bg-white border-black rounded p-2 mt-1"
+            />
+          </div>
+          <div className="mb-4">
+            <label className="block text-gray-700">Note</label>
+            <input
+              type="text"
+              name="note"
+              required
+              placeholder="type note..."
+              className="w-full border-2 bg-white border-black rounded p-2 mt-1"
+            />
+          </div>
+          <div className="mb-4">
+            <label className="block text-gray-700">Payment Method</label>
+            <select
+              required
+              name="paymentMethod"
+              className="w-full border-2 bg-white border-black rounded p-2 mt-1"
+            >
+              <option value="bkashMarchent">Bkash Marchent</option>
+              <option value="bkashPersonal">Bkash Personal</option>
+              <option value="nagadPersonal">Nagad Personal</option>
+              <option value="rocketPersonal">Rocket Personal</option>
+              <option value="bank">Bank</option>
+            </select>
+          </div>
+          <div className="grid grid-cols-2 gap-3 mt-4">
+            <button
+              type="button"
+              className="font-avenir px-3 py-2 w-full rounded-lg text-white bg-red-600"
+              onClick={() => document.getElementById("my_modal_1").close()}
+            >
               Close
             </button>
-          </form>
-          <button
-            type="submit"
-            className="font-avenir px-3 py-2  w-full rounded-lg text-white bg-[#05a0db]"
-          >
-            Send
-          </button>
-       
-        </div>
-      </form>
-    </div>
-  </dialog>
+            <button
+              type="submit"
+              className="font-avenir px-3 py-2 w-full rounded-lg text-white bg-[#05a0db]"
+            >
+              Send
+            </button>
+          </div>
+        </form>
+      </div>
+    </dialog>
+  </div>
+
+  <div className="hidden lg:flex flex-col lg:flex-row gap-3 w-full lg:w-auto">
+    <select
+      className="border bg-blue-200 text-black border-gray-400 rounded p-2 mt-1 w-full"
+      value={sortMonth}
+      onChange={(e) => setSortMonth(e.target.value)}
+    >
+      <option value="">Select Month</option>
+      {[
+        "January",
+        "February",
+        "March",
+        "April",
+        "May",
+        "June",
+        "July",
+        "August",
+        "September",
+        "October",
+        "November",
+        "December",
+      ].map((month, index) => (
+        <option key={index + 1} value={index + 1}>
+          {month}
+        </option>
+      ))}
+    </select>
+
+    <input
+      type="date"
+      className="border rounded bg-blue-200 text-black border-gray-400 p-2 mt-1 w-full"
+      value={selectedDate}
+      onChange={(e) => setSelectedDate(e.target.value)}
+    />
+  </div>
 </div>
 
 
-  
-    <div className="flex justify-center items-center lg:justify-end ">
-    
-      <select
-        className="border bg-blue-200 text-black border-gray-400 rounded p-2 mt-1"
-        value={sortMonth}
-        onChange={(e) => setSortMonth(e.target.value)}
-      >
-        <option value="">Select Month</option>
-        {[
-          "January",
-          "February",
-          "March",
-          "April",
-          "May",
-          "June",
-          "July",
-          "August",
-          "September",
-          "October",
-          "November",
-          "December",
-        ].map((month, index) => (
-          <option key={index + 1} value={index + 1}>
-            {month}
-          </option>
-        ))}
-      </select>
-    </div>
-    <div className="flex  justify-center items-center">
-     
-      <input
-        type="date"
-        className="border rounded bg-blue-200 text-black border-gray-400 p-2 mt-1"
-        value={selectedDate}
-        onChange={(e) => setSelectedDate(e.target.value)}
-      />
-    </div>
-    <div className="flex flex-col justify-center items-start">
-     
-      <select
-        className="border bg-blue-200 text-black border-gray-400 rounded p-2 mt-1"
-        value={selectedCategory}
-        onChange={(e) => setSelectedCategory(e.target.value)}
-      >
-        <option value="">All Methods</option>
-        <option value="bkashPersonal">bKash Personal</option>
-        <option value="bkashMarchent">bKash Merchant</option>
-        <option value="nagadPersonal">Nagad Personal</option>
-        <option value="rocketPersonal">Rocket Personal</option>
-        <option value="bank">Bank</option>
-      </select>
-    </div>
-    <div className="flex flex-col justify-center items-start">
-   
-    <input
-      type="text"
-      placeholder="Payment Method"
-      className="rounded-lg  placeholder-black border border-gray-700 py-2 px-8  text-black mr-5 text-sm bg-blue-300"
-      value={searchQuery}
-      onChange={(e) => setSearchQuery(e.target.value)}
-    />
-  
-  </div>
-         
-  
-     </div>
       <div className="overflow-x-auto text-black rounded-xl border border-gray-700 mt-5 ">
         <table className="min-w-full bg-white">
           <thead className="bg-[#05a0db] text-white">
             <tr>
-              <th className="p-3 ">SL</th>
+              <th className="p-3 ">OFF/ON</th>
               <th className="p-3">Payment Date</th>
               <th className="p-3">Payment Amount</th>
               <th className="p-3">Payment Method</th>
               <th className="p-3"> Note</th>
+              <th className="p-3"> Status</th>
               <th className="p-3">Edit</th>
             </tr>
           </thead>
@@ -656,9 +433,34 @@ const AdsUserPayments = () => {
                 key={index}
                 className={`${index % 2 === 0 ? "bg-gray-100" : "bg-white"}`}
               >
-                <td className="p-3  border-r-2 border-l-2 border-gray-200 text-center">
-                  {index + 1}
-                </td>
+
+
+
+           <td className="p-3 border-r-2 border-l-2 border-gray-200 text-center">  <label className="inline-flex items-center cursor-pointer">
+  <input
+    type="checkbox"
+    className="sr-only"
+    checked={payment.status !== "pending"}
+    onChange={() => {
+      const newStatus = payment.status !== "pending" ? "pending" : "Approved";
+      handleUpdate2(payment._id, newStatus);
+    }}
+  />
+  <div
+    className={`relative w-12 h-6 transition duration-200 ease-linear rounded-full ${
+      payment.status !== "pending" ? "bg-blue-700" : "bg-gray-500"
+    }`}
+  >
+    <span
+      className={`absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition-transform duration-200 ease-linear transform ${
+        payment.status !== "pending" ? "translate-x-6" : ""
+      }`}
+    ></span>
+  </div>
+</label>
+</td>
+
+
                 <td className="p-3 border-r-2 border-gray-200 text-center">
                 {new Date(payment.date).toLocaleDateString("en-GB")}
                 </td>
@@ -708,26 +510,43 @@ const AdsUserPayments = () => {
                   {" "}
                   {payment.note}
                 </td>
+                <td className="p-3 border-r-2 border-gray-200 text-center">
+                {payment.status !== 'pending' ? (
+    <button
+     
+      className="text-green-700 font-bold px-2 py-1 rounded"
+    >
+      Approve
+    </button>
+  ) : (
+    <button
+     
+      className="text-blue-700 font-bold px-2 py-1 rounded"
+    >
+      Pending
+    </button>
+  )}
+                </td>
 
                
 
                 <td className="p-3 border-r-2 border-gray-200 text-center">
-                <div className='flex gap-3 items-center'>
+                <div className='flex gap-3 justify-center items-center'>
                 <button
-                    className="font-avenir text-3xl  py-1 px-4 rounded-lg text-blue-700"
+                   className="bg-green-700 hover:bg-blue-700 text-white px-2 py-1 rounded"
                     onClick={() =>
                       document
                         .getElementById(`modal_${payment._id}`)
                         .showModal()
                     }
                   >
-                  <MdEditSquare />
+                  Edit
                   </button>
                   <button
-                          className="text-start flex justify-start text-black text-3xl"
+                          className="bg-red-700 hover:bg-blue-700 text-white px-2 py-1 rounded"
                           onClick={() => handleDelete(payment._id)}
                         >
-                          <MdDelete />
+                          Delete
                         </button>
                 </div>
                 
@@ -823,6 +642,7 @@ const AdsUserPayments = () => {
                 Total Amount :
               </td>
               <td className="p-3 text-center">৳ {totalPayment}</td>
+              <td className="p-3 text-center"></td>
               <td className="p-3 text-center"></td>
               <td className="p-3 text-center"></td>
               <td className="p-3 text-center"></td>

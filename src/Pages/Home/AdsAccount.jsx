@@ -266,6 +266,7 @@ const AdsAccount = () => {
 
                       <dialog id={`my_modal_${account._id}`} className="modal">
   <div className="modal-box bg-white">
+    <h1 className="text-black font-bold text-ceter">{account.accountName}</h1>
     <form
       onSubmit={(e) =>
         handleUpdateTotalSpent(e, account._id, account.accountName, account.employeeEmail, account.employeerName)

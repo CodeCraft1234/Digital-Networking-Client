@@ -21,7 +21,7 @@ const PaymentHistory = () => {
       };
 
     const getButtonClass = (tab) => 
-        `px-1 py-2 rounded ${activeTab === tab ? ' text-blue-700 font-bold' : ' text-black font-md'}`;
+        `px-1 py-2 text-sm lg:text-xl rounded ${activeTab === tab ? ' text-blue-700 font-bold' : ' text-black font-md'}`;
     
     return (
         <div>
@@ -34,22 +34,24 @@ const PaymentHistory = () => {
           className={getButtonClass('employeerPay')}
           onClick={() => changeTab('employeerPay')}
         >
-          Employeer Pay ({employeePayment.length})
+          Employeer Pay 
         </button>
         <p className='font-extrabold text-blue text-2xl'>|</p>
       <button 
           className={getButtonClass('clientsPay')}
           onClick={() => changeTab('clientsPay')}
         >
-          Clients Pay ({MPayment.length})
+          Clients Pay 
         </button>
         <p className='font-extrabold text-blue text-2xl'>|</p>
         <button 
           className={getButtonClass('contributorPay')}
           onClick={() => changeTab('contributorPay')}
         >
-          Contributor Pay ({adsPayment.length})
+          Contributor Pay 
         </button>
+        <p className='font-extrabold text-blue text-2xl'>|</p>
+      
 
        
       </div>
@@ -57,6 +59,7 @@ const PaymentHistory = () => {
       {activeTab === 'contributorPay' && <AllAdsPayments></AllAdsPayments>}
       {activeTab === 'employeerPay' && <EmployeePayments></EmployeePayments>}
       {activeTab === 'clientsPay' && <AllClientsPayments></AllClientsPayments>}
+   
 
         </div>
     );
