@@ -1,160 +1,113 @@
 import { Link } from "react-router-dom";
 import useClients from "../../Hook/useClient";
-import useUsers from "../../Hook/useUsers";
 import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../../Security/AuthProvider";
-import { IoIosSearch } from "react-icons/io";
 import useCampaings from "../../Hook/useCampaign";
 import UseAxiosPublic from "../../Axios/UseAxiosPublic";
 import Swal from "sweetalert2";
 import { Helmet } from "react-helmet-async";
-import { FaEdit } from "react-icons/fa";
-import axios from "axios";
-import { MdDelete, MdEditSquare } from "react-icons/md";
 import { ImCross } from "react-icons/im";
 import { toast } from "react-toastify";
 
 const MyCampaigns = () => {
-  const [users] = useUsers();
   const { user } = useContext(AuthContext);
-  const [ddd, setDdd] = useState([]);
   const [clients] = useClients();
-  const [campaigns,refetch]=useCampaings()
+  const [campaigns, refetch] = useCampaings();
   const [totalSpent, setTotalSpent] = useState(0);
   const [totalBudged, setTotalBudged] = useState(0);
-  const [totalRCV, setTotalRCV] = useState(0);
-  const [totalbill, setTotalBill] = useState(0);
-  const [client,setClient]=useState([])
-
-  useEffect(() => {
-    const filtered = clients.filter(
-      (campaign) => campaign.employeeEmail === user?.email
-    );
-    console.log(filtered);
-    setClient(filtered)
-
-  }, [clients, user?.email]);
-
+  const [client, setClient] = useState([]);
   const [filteredClients, setFilteredClients] = useState([]);
-
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("");
+  
   useEffect(() => {
-    if (users && user) {
-      const employees = users.filter(u => u.role === 'employee');
-      setDdd(employees);
+    if (clients.length && user?.email) {
+      const filtered = clients.filter(campaign => campaign.employeeEmail === user.email);
+      setClient(filtered);
     }
-  }, [users, user]);
-
-
+  }, [clients, user?.email]);
+  
+  // useEffect to filter campaigns based on user email
   useEffect(() => {
-    const filtered=campaigns.filter(c=>c?.email === user?.email )
-    if (filtered) {
+    if (campaigns.length && user?.email) {
+      const filtered = campaigns.filter(c => c?.email === user.email);
       setFilteredClients(filtered);
-      console.log(filtered);
     }
-  }, [campaigns,user?.email]);
-  console.log(campaigns);
-
-
+  }, [campaigns, user?.email]);
+  
+  // Sorting campaigns based on client email
   const handleSort = (email) => {
     if (!email) {
-      // If "All Clients" is selected (email is empty), show all campaigns
-      setFilteredClients(campaigns);
+      setFilteredClients(campaigns); // Reset to all campaigns
     } else {
-      // Filter campaigns by the selected client's email
-      const filtered = campaigns.filter((c) => c.clientEmail === email);
+      const filtered = campaigns.filter(c => c.clientEmail === email);
       setFilteredClients(filtered);
     }
   };
-
-
-  const [searchQuery, setSearchQuery] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("");
-
-  const filteredItems = filteredClients.filter((item) =>
+  
+  // Filter campaigns based on search query
+  const filteredItems = filteredClients.filter(item =>
     item?._id.toLowerCase().includes(searchQuery.toLowerCase())
   );
-
+  
+  // Filter by category if selected
   const filteredByCategory = selectedCategory
-    ? filteredItems.filter(
-        (item) => item?.campaignName.toLowerCase() === selectedCategory.toLowerCase()
+    ? filteredItems.filter(item =>
+        item?.campaignName.toLowerCase() === selectedCategory.toLowerCase()
       )
     : filteredItems;
-
-
-   
-
-  console.log(totalSpent, totalBudged, totalRCV, totalbill);
-
+  
+  // useEffect to calculate total spent and budged
   useEffect(() => {
-    const totalRcv = filteredByCategory.reduce((acc, campaign) => {
-      const payment = parseFloat(campaign.tPayment);
-      return acc + (isNaN(payment) ? 0 : payment);
-    }, 0);
-    setTotalRCV(totalRcv);
-
-    const tspent = filteredByCategory.reduce(
-      (acc, campaign) => acc + parseFloat(campaign.tSpent),
-      0
-    );
-    setTotalSpent(tspent);
-
-    const total = filteredByCategory.reduce(
-      (acc, campaign) => acc + parseFloat(campaign.tBudged),
-      0
-    );
-    setTotalBudged(total);
-
-    const totalBill = filteredByCategory.reduce(
-      (acc, campaign) => acc + parseFloat(campaign.tBill),
-      0
-    );
-    setTotalBill(totalBill);
-
+    if (filteredByCategory.length) {
+      const totals = filteredByCategory.reduce(
+        (acc, { tSpent, tBudged }) => ({
+          spent: acc.spent + parseFloat(tSpent),
+          budged: acc.budged + parseFloat(tBudged),
+        }),
+        { spent: 0, budged: 0 }
+      );
+      setTotalSpent(totals.spent);
+      setTotalBudged(totals.budged);
+    }
   }, [filteredByCategory]);
-
+  
+  // Sort campaigns by name
+  const sortedAdsAccounts = filteredByCategory?.sort((a, b) =>
+    a.campaignName?.localeCompare(b.campaignName)
+  );
+  
 
   const handleUpdate = (e, id) => {
     e.preventDefault();
     const tSpent = e.target.totalSpent.value;
     const dollerRate = e.target.dollerRate.value;
+    const campaignName= e.target.campaignName.value;
     const tBudged = e.target.tBudged.value;
-    const body = { tSpent, dollerRate, tBudged };
+    const body = { tSpent, dollerRate, tBudged,campaignName };
 
-    AxiosPublic.patch(
-      `https://digital-networking-server.vercel.app/campaings/${id}`,
+    AxiosPublic.patch(`/campaings/${id}`,
       body
     )
       .then((res) => {
-        console.log(res.data);
         refetch();
+        document.getElementById(`modal_${id}`).close()
         toast.success(`Campaign updated successfully`);
       })
-      .catch((error) => {
-        console.error("Error updating campaign:", error);
-        toast.error("Failed to update campaign");
-      });
   };
  
-
-
   const handleUpdate2 = (id, newStatus) => {
     const body = { status: newStatus };
 
-    AxiosPublic.patch(`https://digital-networking-server.vercel.app/campaings/status/${id}`, body)
+    AxiosPublic.patch(`/campaings/status/${id}`, body)
       .then((res) => {
-        console.log(res.data);
         refetch();
         toast.success(`Campaign updated successfully`);
       })
-      .catch((error) => {
-        console.error("Error updating campaign:", error);
-        toast.error("Failed to update campaign");
-      });
   };
 
   const AxiosPublic =UseAxiosPublic()
   const handledelete = (id) => {
-    // Show confirmation dialog
     Swal.fire({
       title: 'Are you sure?',
       text: "You won't be able to revert this!",
@@ -165,25 +118,15 @@ const MyCampaigns = () => {
       confirmButtonText: 'Yes, delete it!'
     }).then((result) => {
       if (result.isConfirmed) {
-        // Proceed with delete
         AxiosPublic.delete(`/campaigns/${id}`)
           .then((res) => {
             refetch();
             toast.success("Campaign deleted successfully");
           })
-          .catch((error) => {
-            toast.error("Failed to delete campaign");
-          });
       }
     });
   };
 
-
-    const sortedAdsAccounts = filteredByCategory?.sort((a, b) => {
-      return a.campaignName?.localeCompare(b.campaignName);
-    });
-
-    
   return (
     <div className="lg:mt-5 mt-5 mb-10 mx-5">
       <Helmet>
@@ -435,17 +378,17 @@ const MyCampaigns = () => {
                       <button
                         className="bg-green-700 hover:bg-blue-700 text-white px-2 py-1 rounded"
                         onClick={() =>
-                          document.getElementById(`modal_${index}`).showModal()
+                          document.getElementById(`modal_${campaign._id}`).showModal()
                         }
                       >
                         Edit
                       </button>
-                      <dialog id={`modal_${index}`} className="modal">
+                      <dialog id={`modal_${campaign._id}`} className="modal">
   <div className="modal-box bg-white text-black">
     <form onSubmit={(e) => handleUpdate(e, campaign._id)}>
     <h1
              className=" text-black flex hover:text-red-500  justify-end  text-end"
-             onClick={() => document.getElementById(`modal_${index}`).close()}
+             onClick={() => document.getElementById(`modal_${campaign._id}`).close()}
            >
             <ImCross />
            </h1>
@@ -455,7 +398,6 @@ const MyCampaigns = () => {
           type="text"
           name="campaignName"
           defaultValue={campaign.campaignName}
-          disabled
        
           className="w-full bg-white  border-gray-700 border rounded p-2 mt-1"
         />
@@ -494,17 +436,7 @@ const MyCampaigns = () => {
           className="w-full bg-white border  border-gray-700 rounded p-2 mt-1"
         />
       </div>
-      <div className="mb-4">
-        <label className="block text-start  font-bold text-gray-700">Status</label>
-        <input
-          
-          type="text"
-          name="status"
-          disabled
-          defaultValue={campaign.status}
-          className="w-full bg-white border  border-gray-700 rounded p-2 mt-1"
-        />
-      </div>
+     
 
 
 
@@ -513,7 +445,7 @@ const MyCampaigns = () => {
           type="button"
           className="p-2 hover:bg-red-700 rounded-lg bg-red-600 text-white"
           onClick={() =>
-            document.getElementById(`modal_${index}`).close()
+            document.getElementById(`modal_${campaign._id}`).close()
           }
         >
           Close

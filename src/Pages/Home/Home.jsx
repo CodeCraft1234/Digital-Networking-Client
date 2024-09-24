@@ -35,10 +35,10 @@ const Home = () => {
                         <Banner />
                     ) : ddd?.role === "contributor" ? (
                         <AdsDashboardHome />
-                    ) : ddd?.role === "employee" ? (
-                        <MyProfile />
-                    ) : (
+                    ) : ddd?.role === "client" ? (
                         <ClientHome />
+                    ) : (
+                        <MyProfile />
                     )}
                 </div>
             ) : (

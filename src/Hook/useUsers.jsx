@@ -9,7 +9,6 @@ const useUsers = () => {
             return res.data
         }
     })
-        console.log(users)
         return [users,refetch]
 }
 export default useUsers;

@@ -8,9 +8,9 @@ import { Helmet } from "react-helmet-async";
 const AddClient = () => {
   const AxiosPublic=UseAxiosPublic()
   const {user}=useContext(AuthContext)
+
     const handleaddblog=(e)=>{
         e.preventDefault()
-    
         const clientName=e.target.clientName.value
         const clientPhone=e.target.clientPhone.value
         const clientEmail=e.target.clientEmail.value
@@ -23,7 +23,7 @@ const AddClient = () => {
         const date=e.target.date.value
         const data={clientName,clientEmail,clientPhone,tBudged,email,tSpent,tBill,date, tDue,tPaid}
        console.log(data)
-       AxiosPublic.post('https://digital-networking-server.vercel.app/clients',data)
+       AxiosPublic.post('/clients',data)
        .then(res=>{
         console.log(res.data)
         Swal.fire({

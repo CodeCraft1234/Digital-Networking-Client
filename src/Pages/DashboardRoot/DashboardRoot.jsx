@@ -126,10 +126,10 @@ const DashboardRoot = () => {
         <div className="bg-white font-bold mx-auto shadow-xl border fixed z-50 w-full mr-1 p-3 hidden md:block">
   <div className="flex left-0 text-black items-center justify-center gap-5">
     <div className="flex justify-start items-center gap-5">
-      {ddd?.role === 'admin' ? (
+
+
+      {ddd?.role === 'admin' && (
         <>
-
-
           <Link
             className="flex justify-start gap-0 hover:text-blue-600"
             to="dashboard/allPayments"
@@ -172,39 +172,61 @@ const DashboardRoot = () => {
 </NavLink>
 
   
-        </>
-      ) : (
-        <>
-          <Link
-            className="hover:text-blue-600 flex justify-start gap-0"
-            to={`/dashboard/myAdsAccount/${user?.email}`}
-          >
-            <IoAddCircle className="w-6 h-6 mr-2" />
-            <span> Ads Accounts</span>
-          </Link>
-          <Link
-            className="hover:text-blue-600 flex justify-start gap-0"
-            to="/dashboard/myClients"
-          >
-            <FaPeopleRoof className="w-6 h-6 mr-2" />
-            <span> My Clients </span>
-          </Link>
-          <Link
-            className="hover:text-blue-600 flex justify-start gap-0"
-            to="/dashboard/adminPayments"
-          >
-            <MdCampaign className="w-6 h-6 mr-2" />
-            <span> Campaigns</span>
-          </Link>
-          <Link
-            className="hover:text-blue-600 flex justify-start gap-0"
-            to="/dashboard/myPayments"
-          >
-            <RiSecurePaymentLine className="w-6 h-6 mr-2" />
-            <span> My Payments</span>
-          </Link>
-        </>
+        </> 
       )}
+
+      {
+        ddd?.role === "employee" &&    <>
+        <Link
+          className="hover:text-blue-600 flex justify-start gap-0"
+          to={`/dashboard/myAdsAccount/${user?.email}`}
+        >
+          <IoAddCircle className="w-6 h-6 mr-2" />
+          <span> Ads Accounts</span>
+        </Link>
+
+        <Link
+          className="hover:text-blue-600 flex justify-start gap-0"
+          to="/dashboard/myClients"
+        >
+          <FaPeopleRoof className="w-6 h-6 mr-2" />
+          <span> My Clients </span>
+        </Link>
+
+        <Link
+          className="hover:text-blue-600 flex justify-start gap-0"
+          to="/dashboard/adminPayments"
+        >
+          <MdCampaign className="w-6 h-6 mr-2" />
+          <span> Campaigns</span>
+        </Link>
+        <Link
+          className="hover:text-blue-600 flex justify-start gap-0"
+          to="/dashboard/myPayments"
+        >
+          <RiSecurePaymentLine className="w-6 h-6 mr-2" />
+          <span> My Payments</span>
+        </Link>
+      </>
+      }
+      {
+        ddd?.role === 'client' && <>
+         <Link
+          className="hover:text-blue-600 flex justify-start gap-0"
+          to="/dashboard/clientCampaigns"
+        >
+          <MdCampaign className="w-6 h-6 mr-2" />
+          <span> Campaigns</span>
+        </Link>
+        <Link
+          className="hover:text-blue-600 flex justify-start gap-0"
+          to="/dashboard/clientPayments"
+        >
+          <RiSecurePaymentLine className="w-6 h-6 mr-2" />
+          <span> Payments</span>
+        </Link>
+        </>
+      }
     </div>
     <div className="flex justify-start ml-28 gap-2">
     <h1 className="my-2">
@@ -438,6 +460,20 @@ const DashboardRoot = () => {
       
       </>
      }
+     {
+      ddd?.role === 'client' && <>
+            <Link to={'/dashboard/clientCampaigns'}>
+        <p className={` ${isActive('/dashboard/clientCampaigns') ? 'text-red-500 border-b-2 border-white' : 'text-white'}`}>
+          <MdCampaign />
+        </p>
+      </Link>
+      <Link to={'/dashboard/clientPayments'}>
+        <p className={` ${isActive('/dashboard/clientPayments') ? 'text-red-500 border-b-2 border-white' : 'text-white'}`}>
+          <MdOutlinePayments />
+        </p>
+      </Link>
+      </>
+     }
 
 
     </div>
@@ -534,6 +570,12 @@ const DashboardRoot = () => {
                     }
                     {
                       ddd.role === 'contributor' && <>
+
+                      
+                      </>
+                    }
+                    {
+                      ddd.role === 'client' && <>
 
                       
                       </>

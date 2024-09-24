@@ -52,6 +52,7 @@ const AdminPayments = () => {
         (!sortMonth || paymentDate.getMonth() + 1 === parseInt(sortMonth)) &&
 
         (selectedCategory === 'All' || selectedCategory === '' || payment.paymentMethod === selectedCategory) &&
+        
         (!selectedYear || paymentDate.getFullYear() === parseInt(selectedYear))
       );
     });

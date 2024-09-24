@@ -174,6 +174,47 @@ const EmployeerSellery = () => {
         <title>E.M Sellery | Digital Network </title>
         <link rel="canonical" href="https://www.example.com/" />
       </Helmet>
+
+      <div className="grid my-5 grid-cols-2 md:grid-cols-2 lg:grid-cols-6 text-black sm:grid-cols-2 gap-5 justify-around ">
+        <div className="px-5 py-10 rounded-2xl  bg-[#91a33a] text-white shadow-lg text-center">
+          <h2 className="text-xl font-bold">Total Spent</h2>
+          <p className="lg:text-xl text-xl font-bold mt-2"> $ {employeeData.reduce((acc, data) => acc + data.totalSpent, 0).toFixed(2)}</p>
+        </div>
+
+        <div className="px-5 py-10 rounded-2xl bg-[#5422c0] text-white shadow-lg text-center">
+          <h2 className="text-xl font-bold">Total Salery</h2>
+          <p className="lg:text-xl text-xl font-bold mt-2">
+             <span className="lg:text-xl text-xl font-extrabold">৳</span> {(employeeData.reduce((acc, data) => acc + data.totalSpent * 7, 0)).toFixed(2)}
+          </p>
+        </div>
+
+        <div className="px-5 py-10 rounded-2xl  bg-[#05a0db] text-white shadow-lg text-center">
+          <h2 className="lg:text-xl text-xl font-bold">Total Paid</h2>
+          <p className="lg:text-xl text-xl font-bold mt-2"> <span className="text-2xl font-extrabold">৳</span>{employeeData.reduce((acc, data) => acc + data.totalSellery, 0).toFixed(2)} </p>
+        </div>
+
+        <div className="px-5 py-10 rounded-2xl  bg-[#ce1a38] text-white shadow-lg text-center">
+          <h2 className="text-xl font-bold">Total Unpaid</h2>
+          <p className="lg:text-xl text-xl font-bold mt-2">
+          <span className="lg:text-xl text-xl font-extrabold">৳</span>  {employeeData.reduce((acc, data) => acc + data.totalSelleryPaid, 0).toFixed(2)}
+          </p>
+        </div>
+        <div className="px-5 py-10 rounded-2xl  bg-[#504491] text-white shadow-lg text-center">
+          <h2 className="text-xl font-bold">Total Due</h2>
+          <p className="lg:text-xl text-xl font-bold mt-2">
+          <span className="lg:text-xl text-xl font-extrabold">৳</span> {employeeData.reduce((acc, data) => acc + data.totalSellery, 0).toFixed(2) - employeeData.reduce((acc, data) => acc + data.totalSelleryPaid, 0).toFixed(2)}
+          </p>
+        </div>
+        <div className="px-5 py-10 rounded-2xl  bg-[#a6d427] text-white shadow-lg text-center">
+          <h2 className="text-xl font-bold">Total Bonus</h2>
+          <p className="lg:text-xl text-xl font-bold mt-2">
+          <span className="lg:text-xl text-xl font-extrabold">৳</span> {employeeData.reduce((acc, data) => acc + data.totalBonus, 0).toFixed(2)}
+          </p>
+        </div>
+      </div>
+
+
+
       <div className="overflow-x-auto text-center rounded-xl border-l border-gray-400">
         <table className="min-w-full text-center bg-white">
           <thead className="bg-[#05a0db] text-white">
@@ -228,13 +269,32 @@ const EmployeerSellery = () => {
               </tr>
             ))}
           </tbody>
+          <tfoot className="bg-[#05a0db] font-bold text-white">
+          <tr>
+            <td className="p-3 text-right" colSpan="2">Total</td>
+            <td className="p-3">
+              ${employeeData.reduce((acc, data) => acc + data.totalSpent, 0).toFixed(2)}
+            </td>
+            <td className="p-3">
+              ৳ {(employeeData.reduce((acc, data) => acc + data.totalSpent * 7, 0)).toFixed(2)}
+            </td>
+            <td className="p-3">
+              ৳ 
+            </td>
+            <td className="p-3">
+              ৳ {employeeData.reduce((acc, data) => acc + data.totalSelleryPaid, 0).toFixed(2)}
+            </td>
+            <td className="p-3">
+              ৳ {employeeData.reduce((acc, data) => acc + data.totalBonus, 0).toFixed(2)}
+            </td>
+            <td className="p-3"></td> {/* Empty for Action column */}
+          </tr>
+        </tfoot>
         </table>
       </div>
 
-      {/* Monthly Data Modal */}
       <dialog id="monthlyModal2" className="modal">
   <div className="relative modal-box bg-white text-black">
-    {/* Close Icon for Main Modal (Top-Right) */}
     <button
       onClick={() => document.getElementById('monthlyModal2').close()}
       className="absolute top-2 right-2 bg-transparent text-gray-600 hover:text-black"

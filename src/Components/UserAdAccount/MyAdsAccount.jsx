@@ -12,7 +12,6 @@ const MyAdsAccount = ({email}) => {
   const [ddd, setDdd] = useState(null);
   const [currentTotal,setCurrentTotal]=useState(0)
   const [tSpent,setthreshold]=useState(0)
-  const [TSpent,setTSpent]=useState(0)
   const [adsAccount, refetch] = useAdsAccount();
   const [adsAccounts, setAdsAccounts] = useState([]);
   const [modalData, setModalData] = useState(null);
@@ -28,44 +27,29 @@ const MyAdsAccount = ({email}) => {
   };
 
   useEffect(() => {
-          const fff = users.find(u => u.email === email);
-          setDdd(fff || {}); 
-          const filterdata = adsAccount.filter((m) => m.employeeEmail === email);
-          setAdsAccounts(filterdata);
-  }, [users, email,adsAccount]);
-
-
-
-  useEffect(() => {
- 
-    const total = adsAccounts.reduce(
+    const fff = users.find((u) => u.email === email);
+    setDdd(fff || {});
+  
+    const filterdata = adsAccount.filter((m) => m.employeeEmail === email);
+    setAdsAccounts(filterdata);
+  
+    const total = filterdata.reduce(
       (acc, campaign) => acc + parseFloat(campaign.currentBallence),
       0
     );
     setCurrentTotal(total);
   
-    const totalBill = adsAccounts.reduce(
+    const totalBill = filterdata.reduce(
       (acc, campaign) => acc + parseFloat(campaign.threshold),
       0
     );
     setthreshold(totalBill);
+  }, [users, email, adsAccount]); 
   
-    const totalBilll = adsAccounts.reduce(
-      (acc, campaign) => acc + parseFloat(campaign.totalSpent),
-      0
-    );
-    setTSpent(totalBilll);
-  
-  }, [adsAccounts]);
-
-
   const sortedAdsAccounts = adsAccounts.filter((account) =>
     (selectedStatus ? account.status === selectedStatus : true) &&
     (searchQuery ? account.accountName.toLowerCase().includes(searchQuery.toLowerCase()) : true)
   ).sort((a, b) => a.accountName.localeCompare(b.accountName));
-
-
-
 
   const handleAddAdsAcount = (e) => {
     e.preventDefault();
@@ -77,22 +61,14 @@ const MyAdsAccount = ({email}) => {
     const threshold=0
     const totalSpent=0
     const status='Active'
-
     const data = { accountName,totalSpent,currentBallence,threshold, paymentDate,status, employeeEmail,employeerName };
 
     AxiosPublic.post("/adsAccount", data).then((res) => {
-      console.log(res.data);
-      // toast.success("add successful");
       toast.success("Post created successfully!");
       refetch()
       document.getElementById("my_modal_3").close()
     });
   };
-
-
-
-
-
 
 const handleUpdate = (e, id) => {
   e.preventDefault();
@@ -101,6 +77,7 @@ const handleUpdate = (e, id) => {
   const currentBallence = e.target.currentBallence.value;
   const threshold = e.target.threshold.value;
   const body = { accountName,currentBallence,paymentDate, threshold };
+
   AxiosPublic.patch(`/adsAccount/${id}`,body
   )
     .then((res) => {
@@ -110,7 +87,6 @@ const handleUpdate = (e, id) => {
 };
 
 const handleDelete = (id) => {
-  // Show confirmation dialog
   Swal.fire({
     title: 'Are you sure?',
     text: "You won't be able to revert this!",
@@ -121,35 +97,23 @@ const handleDelete = (id) => {
     confirmButtonText: 'Yes, delete it!'
   }).then((result) => {
     if (result.isConfirmed) {
-      // Proceed with delete
+
       AxiosPublic.delete(`/adsAccount/${id}`)
         .then((res) => {
-          console.log(res.data);
           toast.success("Ads Account deleted successfully!");
           refetch();
         })
-        .catch((error) => {
-          toast.error("Failed to delete Ads Account");
-        });
     }
   });
 };
 
-
-
 const handleUpdate2 = (id, newStatus) => {
   const body = { status: newStatus };
-
   AxiosPublic.patch(`/adsAccount/status/${id}`, body)
     .then((res) => {
-      console.log(res.data);
       refetch();
       toast.success(`Campaign updated successfully`);
     })
-    .catch((error) => {
-      console.error("Error updating campaign:", error);
-      toast.error("Failed to update campaign");
-    });
 };
 
   return (
@@ -160,8 +124,6 @@ const handleUpdate2 = (id, newStatus) => {
         <link rel="canonical" href="https://www.example.com/" />
       </Helmet>
      
-
-
       <div className="flex flex-col sm:flex-row justify-between items-center gap-5 text-gray-500">
   <div className="w-full sm:w-auto">
     <button
@@ -278,7 +240,7 @@ const handleUpdate2 = (id, newStatus) => {
                 : "bg-gray-200  text-left text-gray-500 border-b border-opacity-20"
             }`}
             >
-               <td className="p-3 border-r-2 border-l-2 border-gray-200 text-center">  <label className="inline-flex items-center cursor-pointer">
+         <td className="p-3 border-r-2 border-l-2 border-gray-200 text-center">  <label className="inline-flex items-center cursor-pointer">
   <input
     type="checkbox"
     className="sr-only"

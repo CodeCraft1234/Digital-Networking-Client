@@ -61,13 +61,11 @@ const ClientCampaign = () => {
       e.preventDefault();
       const tSpent = e.target.totalSpent.value;
       const campaignName = e.target.campaignName.value;
-      const status = e.target.status.value;
       const dollerRate = e.target.dollerRate.value;
       const tBudged = e.target.tBudged.value;
-      const body = { tSpent,campaignName, status, dollerRate, tBudged };
+      const body = { tSpent,campaignName, dollerRate, tBudged };
   
-      AxiosPublic.patch(
-        `https://digital-networking-server.vercel.app/campaings/${id}`,
+      AxiosPublic.patch(`/campaings/${id}`,
         body
       )
         .then((res) => {
@@ -163,12 +161,17 @@ const ClientCampaign = () => {
             <div className="p-4">
         
   <div>
-    <button
+
+    {
+      ddd?.role ==='employee' && 
+      <button
       className="font-avenir hover:bg-indigo-700 px-6 lg:w-auto w-full mx-auto  py-2 bg-[#05a0db] rounded-lg text-white"
       onClick={() => document.getElementById("my_modal_2").showModal()}
     >
       Add Campaign
     </button>
+    }
+   
     <dialog id="my_modal_2" className="modal overflow-hidden">
       <div className="modal-box bg-white">
         <section className="dark:text-gray-100">
@@ -301,7 +304,11 @@ const ClientCampaign = () => {
                 <th className="p-3">T. Spent</th>
                 <th className="p-3">Total Bill</th>
                 <th className="p-3">Status</th>
-                <th className="p-3">Action</th>
+                {
+      ddd?.role ==='employee' && 
+      <th className="p-3">Action</th>
+      }
+              
               </tr>
             </thead>
             <tbody>
@@ -371,133 +378,123 @@ const ClientCampaign = () => {
                   >
                     {work.status}
                   </td>
-                  <td
-                    className={`p-3 text-center border-r-2 border-gray-200`}
-                  >
-                   <div className="flex justify-center gap-3">
 
-                   <div>
-  <button
-    className="bg-green-700 hover:bg-blue-700 text-white px-2 py-1 rounded"
-    onClick={() =>
-      document.getElementById(`modal_${work._id}`).showModal()
-    }
-  >
-      Edit
-  </button>
-  <dialog id={`modal_${work._id}`} className="modal">
-    <div className="modal-box bg-white text-black">
-      <form onSubmit={(e) => handleUpdate(e, work._id)}>
-        <div className="mb-4">
-          <label className="block text-left text-gray-700">
-            Campaign Name
-          </label>
-          <input
-            type="text"
-            name="campaignName"
-            defaultValue={work.campaignName}
-         
-            className="w-full bg-white border border-gray-700 rounded p-2 mt-1"
-          />
-        </div>
-        <div className="mb-4">
-          <label className="block text-left text-gray-700">
-            Account Name
-          </label>
-          <input
-            type="text"
-            name="adsAccount"
-            defaultValue={work.adsAccount}
-          disabled
-            className="w-full bg-white border border-gray-700 rounded p-2 mt-1"
-          />
-        </div>
+                  {
+      ddd?.role ==='employee' && 
+      <td
+      className={`p-3 text-center border-r-2 border-gray-200`}
+    >
+     <div className="flex justify-center gap-3">
 
-        <div className="mb-4">
-          <label className="block text-left text-gray-700">
-            Total Budged
-          </label>
-          <input
-            type="number"
-            name="tBudged"
-            defaultValue={work.tBudged}
-            step="0.01"
-            className="w-full bg-white border border-gray-700 rounded p-2 mt-1"
-          />
-        </div>
-        <div className="mb-4">
-          <label className="block text-left text-gray-700">
-            Total Spent
-          </label>
-          <input
-            type="number"
-            name="totalSpent"
-            defaultValue={work.tSpent}
-            step="0.01"
-            className="w-full bg-white border border-gray-700 rounded p-2 mt-1"
-          />
-        </div>
+     <div>
+<button
+className="bg-green-700 hover:bg-blue-700 text-white px-2 py-1 rounded"
+onClick={() =>
+document.getElementById(`modal_${work._id}`).showModal()
+}
+>
+Edit
+</button>
+<dialog id={`modal_${work._id}`} className="modal">
+<div className="modal-box bg-white text-black">
+<form onSubmit={(e) => handleUpdate(e, work._id)}>
+<div className="mb-4">
+<label className="block text-left text-gray-700">
+Campaign Name
+</label>
+<input
+type="text"
+name="campaignName"
+defaultValue={work.campaignName}
 
-        <div className="mb-4">
-          <label className="block text-left text-gray-700">
-            Dollers Rate
-          </label>
-          <input
-            step="0.01"
-            type="number"
-            name="dollerRate"
-            defaultValue={work.dollerRate}
-            className="w-full bg-white border border-gray-700 rounded p-2 mt-1"
-          />
-        </div>
-        <div className="mb-4">
-          <label className="block text-left text-gray-700">
-            Status
-          </label>
-          <select
-            defaultValue={work.status}
-            name="status"
-            className="w-full bg-white border border-gray-700 rounded p-2 mt-1"
-          >
-            <option value="In Review">In Review</option>
-            <option value="Active">Active</option>
-            <option value="Complete">Complete</option>
-          </select>
-        </div>
+className="w-full bg-white border border-gray-700 rounded p-2 mt-1"
+/>
+</div>
+<div className="mb-4">
+<label className="block text-left text-gray-700">
+Account Name
+</label>
+<input
+type="text"
+name="adsAccount"
+defaultValue={work.adsAccount}
+disabled
+className="w-full bg-white border border-gray-700 rounded p-2 mt-1"
+/>
+</div>
 
-        {/* Buttons at the bottom in a two-grid layout */}
-        <div className="grid grid-cols-2 gap-3 mt-4">
-        <button
-            type="button"
-            className="p-2 hover:bg-red-700 rounded-lg bg-red-600 text-white text-center"
-            onClick={() =>
-              document.getElementById(`modal_${work._id}`).close()
-            }
-          >
-            Close
-          </button>
-          <button
-            type="submit"
-            className="font-avenir hover:bg-indigo-700 px-3 py-2 bg-[#05a0db] rounded-lg text-white text-center"
-          >
-            Update
-          </button>
-        
-        </div>
-      </form>
-    </div>
-  </dialog>
+<div className="mb-4">
+<label className="block text-left text-gray-700">
+Total Budged
+</label>
+<input
+type="number"
+name="tBudged"
+defaultValue={work.tBudged}
+step="0.01"
+className="w-full bg-white border border-gray-700 rounded p-2 mt-1"
+/>
+</div>
+<div className="mb-4">
+<label className="block text-left text-gray-700">
+Total Spent
+</label>
+<input
+type="number"
+name="totalSpent"
+defaultValue={work.tSpent}
+step="0.01"
+className="w-full bg-white border border-gray-700 rounded p-2 mt-1"
+/>
+</div>
+
+<div className="mb-4">
+<label className="block text-left text-gray-700">
+Dollers Rate
+</label>
+<input
+step="0.01"
+type="number"
+name="dollerRate"
+defaultValue={work.dollerRate}
+className="w-full bg-white border border-gray-700 rounded p-2 mt-1"
+/>
+</div>
+
+<div className="grid grid-cols-2 gap-3 mt-4">
+<button
+type="button"
+className="p-2 hover:bg-red-700 rounded-lg bg-red-600 text-white text-center"
+onClick={() =>
+document.getElementById(`modal_${work._id}`).close()
+}
+>
+Close
+</button>
+<button
+type="submit"
+className="font-avenir hover:bg-indigo-700 px-3 py-2 bg-[#05a0db] rounded-lg text-white text-center"
+>
+Update
+</button>
+
+</div>
+</form>
+</div>
+</dialog>
 </div>
 
 <button
-                          className="bg-red-700 hover:bg-blue-700 text-white px-2 py-1 rounded"
-                          onClick={() => handledelete(work._id)}
-                        >
-                        Delete
-                        </button>
+            className="bg-red-700 hover:bg-blue-700 text-white px-2 py-1 rounded"
+            onClick={() => handledelete(work._id)}
+          >
+          Delete
+          </button>
 
 </div>
-                  </td>
+    </td>
+      }
+                 
                  
                 </tr>
               ))}
@@ -522,7 +519,11 @@ const ClientCampaign = () => {
                 ) : (
                   <>
                    <td className="p-3 text-center"></td>
-                  <td className="p-3 text-center"></td>
+                   {
+      ddd?.role ==='employee' && 
+      <td className="p-3 text-center"></td>
+      }
+                 
                   </>
                 )}
               </tr>

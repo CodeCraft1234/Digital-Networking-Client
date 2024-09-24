@@ -57,6 +57,11 @@ import AdsAccount from "./Pages/Home/AdsAccount";
 import MyPayments from "./Pages/Home/MyPayments";
 import Notification from "./Pages/DashboardRoot/Notification";
 import BankInfo from "./Pages/Home/BankInfo";
+import ClientHome from "./Pages/Home/ClientHome";
+import ClientCampaign2 from "./Pages/Home/ClientCampaign2";
+import PaymentsClient from "./Pages/Home/PaymentsClient";
+import ClientPaymentHistry2 from "./Pages/Home/ClientPaymentHistry2";
+
 
 const router = createBrowserRouter([
   {
@@ -184,6 +189,18 @@ const router = createBrowserRouter([
       {
         path:'dashboard/allUsers',
         element:<AllUsers></AllUsers>
+      },
+      {
+        path:'dashboard',
+        element:<ClientHome></ClientHome>
+      },
+      {
+        path:'dashboard/clientCampaigns',
+        element:<ClientCampaign2></ClientCampaign2>
+      },
+      {
+        path:'dashboard/paymentsClient',
+        element:<ClientPaymentHistry2></ClientPaymentHistry2>
       },
       {
         path:'dashboard/AddClients',

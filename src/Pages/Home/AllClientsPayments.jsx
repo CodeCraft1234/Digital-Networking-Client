@@ -9,11 +9,9 @@ import useUsers from "../../Hook/useUsers";
 const AllClientsPayments = () => {
   const [MPayment, refetch] = useMpayment();
   const AxiosPublic = UseAxiosPublic();
-
   const [selectedDate, setSelectedDate] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
   const [filteredData, setFilteredData] = useState([]);
-
   const [totalPayment, setTotalPayment] = useState(0);
   const [users] = useUsers();
   const [employees, setEmployees] = useState([]);
@@ -23,46 +21,39 @@ const AllClientsPayments = () => {
   const displayedItems = showAll ? filteredData : filteredData.slice(0, itemsToShow);
   const [selectedPayment, setSelectedPayment] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-
-
   const initialTab = localStorage.getItem("activeTaballClientspays") ;
   const [sortMonth, setSortMonth] = useState(initialTab); 
+  const initialTab2 = localStorage.getItem("activeTaballClientsemp") ;
+  const [selectedEmployee, setSelectedEmployee] = useState(initialTab2);
   
   const changeTab = (tab) => {
     setSortMonth(tab);
     localStorage.setItem("activeTaballClientspays", tab); 
   };
 
-  const initialTab2 = localStorage.getItem("activeTaballClientsemp") ;
-  const [selectedEmployee, setSelectedEmployee] = useState(initialTab2); 
-  
   const changeTab2 = (tab) => {
     setSelectedEmployee(tab);
     localStorage.setItem("activeTaballClientsemp", tab); 
   };
 
-  
-  // Fetch employees when users are available
   useEffect(() => {
     if (users) {
       setEmployees(users.filter((u) => u.role === "employee"));
     }
   }, [users]);
   
-  // Filter MPayment data based on selected filters
   useEffect(() => {
     const filtered = MPayment.filter((payment) =>
       (selectedEmployee ? payment.employeeEmail === selectedEmployee : true) &&
       (sortMonth ? new Date(payment.date).getMonth() + 1 === parseInt(sortMonth) : true) &&
       (selectedDate ? payment.date === selectedDate : true) &&
-      (selectedCategory ? payment.paymentMethod === selectedCategory : true) &&
+      (selectedCategory === 'All' || selectedCategory === '' || payment.paymentMethod === selectedCategory) &&
       (selectedYear ? new Date(payment.date).getFullYear() === parseInt(selectedYear) : true)
     );
   
     setFilteredData(filtered);
   }, [sortMonth, selectedDate, selectedCategory,  MPayment, selectedEmployee, selectedYear]);
   
-  // Calculate total payment based on displayed items
   useEffect(() => {
     const totalBill = displayedItems.reduce(
       (acc, campaign) => acc + parseFloat(campaign.amount),
@@ -71,7 +62,6 @@ const AllClientsPayments = () => {
     setTotalPayment(totalBill);
   }, [MPayment, displayedItems]);
   
-  // Open and close modal for payment editing
   const handleEditClick = (payment) => {
     setSelectedPayment(payment);
     setIsModalOpen(true);
@@ -82,7 +72,6 @@ const AllClientsPayments = () => {
     setSelectedPayment(null);
   };
   
-
   const handleDelete = (id) => {
     Swal.fire({
       title: "Are you sure?",
@@ -135,48 +124,29 @@ const AllClientsPayments = () => {
   const [bankTotal, setBankTotal] = useState(0);
 
   useEffect(() => {
-    AxiosPublic.get(`https://digital-networking-server.vercel.app/Mpayment`)
-      .then((res) => {
-        const da = res.data;
-        const filtered = res.data;
-
-        const filter2 = filtered.filter(
-          (d) => d.paymentMethod === 'bkashMarchent'
-        );
-        const total = filter2.reduce((acc, datas) => acc + parseFloat(datas.amount), 0);
-        setBkashMarcentTotal(total);
-
-        const filter3 = filtered.filter(
-          (d) => d.paymentMethod === 'nagadPersonal'
-        );
-        const total3 = filter3.reduce((acc, datas) => acc + parseFloat(datas.amount), 0);
-        setNagadPersonalTotal(total3);
-
-        const filter4 = filtered.filter(
-          (d) => d.paymentMethod === 'bkashPersonal'
-        );
-        const total4 = filter4.reduce((acc, datas) => acc + parseFloat(datas.amount), 0);
-        setBkashPersonalTotal(total4);
-
-        const filter5 = filtered.filter(
-          (d) => d.paymentMethod === 'rocketPersonal'
-        );
-        const total5 = filter5.reduce((acc, datas) => acc + parseFloat(datas.amount), 0);
-        setRocketPersonalTotal(total5);
-
-        const filter6 = filtered.filter(
-          (d) => d.paymentMethod === 'bank'
-        );
-        const total6 = filter6.reduce((acc, datas) => acc + parseFloat(datas.amount), 0);
-        setBankTotal(total6);
-      });
-  }, []);
-
-
-
+    const filtered = displayedItems;
   
-
-
+    const filter2 = filtered.filter((d) => d.paymentMethod === 'bkashMarchent');
+    const total2 = filter2.reduce((acc, datas) => acc + (parseFloat(datas.amount) || 0), 0);
+    setBkashMarcentTotal(total2);
+  
+    const filter3 = filtered.filter((d) => d.paymentMethod === 'nagadPersonal');
+    const total3 = filter3.reduce((acc, datas) => acc + (parseFloat(datas.amount) || 0), 0);
+    setNagadPersonalTotal(total3);
+  
+    const filter4 = filtered.filter((d) => d.paymentMethod === 'bkashPersonal');
+    const total4 = filter4.reduce((acc, datas) => acc + (parseFloat(datas.amount) || 0), 0);
+    setBkashPersonalTotal(total4);
+  
+    const filter5 = filtered.filter((d) => d.paymentMethod === 'rocketPersonal');
+    const total5 = filter5.reduce((acc, datas) => acc + (parseFloat(datas.amount) || 0), 0);
+    setRocketPersonalTotal(total5);
+  
+    const filter6 = filtered.filter((d) => d.paymentMethod === 'bank');
+    const total6 = filter6.reduce((acc, datas) => acc + (parseFloat(datas.amount) || 0), 0);
+    setBankTotal(total6);
+  }, [displayedItems]); 
+  
   return (
     <div className="">
       <Helmet>
@@ -206,7 +176,7 @@ const AllClientsPayments = () => {
      <img className="balance-card-img" src="https://i.ibb.co/PZc0P4w/brac-bank-seeklogo.png" alt="Rocket" />
      <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"><span className="text-lg lg:text-2xl font-extrabold"> ৳</span> {bankTotal}</p>
    </div>
-   <div className="balance-card bg-white rounded-2xl shadow-lg p-5 text-center transition-transform transform hover:scale-105 border-0">
+   <div onClick={() => setSelectedCategory('All')} className="balance-card bg-white rounded-2xl shadow-lg p-5 text-center transition-transform transform hover:scale-105 border-0">
      <h1 className="text-3xl font-bold text-black">Total BDT</h1>
      <p className="balance-card-text text-lg lg:text-2xl mt-8 font-bold text-gray-700"><span className="text-lg lg:text-2xl font-extrabold"> ৳</span> {bkashPersonal + bkashMarcent + nagadPersonal + rocketPersonal + bankTotal}</p>
    </div>
