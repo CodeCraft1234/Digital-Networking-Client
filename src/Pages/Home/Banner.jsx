@@ -99,134 +99,133 @@ const Banner = () => {
     return thresholds.reduce((acc, curr) => acc + curr, 0); // Sum all threshold values
   };
   
-  const calculateTotalThreshold = () => {
-    const totalThreshold = employee.reduce((acc, user) => {
-      const thresholdsForUser = adsAccount
-        .filter(acc => acc.employeeEmail === user.email)
-        .map(acc => parseFloat(acc.threshold) || 0); // Map to threshold values or 0 if not found
-  
-      const sumThresholdsForUser = thresholdsForUser.reduce((acc, curr) => acc + curr, 0); // Sum thresholds for each user
-  
-      return acc + sumThresholdsForUser;
-    }, 0);
-    
-    return totalThreshold;
-  };
+
   
   return (
-    <div className="px-5">
+    <div className="p-5">
       <Helmet>
         <title>Dashboard | Digital Network</title>
         <link rel="canonical" href="https://www.example.com/" />
       </Helmet>
+      <div className='px-5 py-5 rounded-lg' style={{ backgroundColor: 'var(--bg-color3)', color: 'var(--text-color)', border: 'var(--border)' }}>
+  {ddd?.role === 'admin' && (
+   <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 lg:gap-5">
+   <div className="balance-card bg-[#f7e8e8] rounded-2xl p-5 text-center shadow-xl transition-transform transform hover:scale-105" style={{ border: 'var(--border)' }}>
+     <img className="balance-card-img" src="https://i.ibb.co/bHMLyvM/b-Kash-Merchant.png" alt="bKash" />
+     <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700">
+       <span className="text-lg lg:text-2xl font-extrabold">৳</span>{employee.reduce((total, userr) => total + parseFloat(calculateTotalByPaymentMethod(userr.email, 'bkashMarchent')), 0).toLocaleString('en-IN')}
+     </p>
+   </div>
+ 
+   <div className="balance-card items-center bg-[#ffe6f7] rounded-2xl p-5 text-center shadow-xl transition-transform transform hover:scale-105" style={{ border: 'var(--border)' }}>
+     <img className="balance-card-img" src="https://i.ibb.co/520Py6s/bkash-1.png" alt="bKash" />
+     <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700">
+       <span className="text-lg lg:text-2xl font-extrabold">৳</span>{employee.reduce((total, userr) => total + parseFloat(calculateTotalByPaymentMethod(userr.email, 'bkashPersonal')), 0).toLocaleString('en-IN')}
+     </p>
+   </div>
+ 
+   <div className="balance-card bg-[#fff2cc] rounded-2xl p-5 text-center shadow-xl transition-transform transform hover:scale-105" style={{ border: 'var(--border)' }}>
+     <img className="balance-card-img" src="https://i.ibb.co/JQBQBcF/nagad-marchant.png" alt="Nagad" />
+     <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700">
+       <span className="text-lg lg:text-2xl font-extrabold">৳</span>{employee.reduce((total, userr) => total + parseFloat(calculateTotalByPaymentMethod(userr.email, 'nagadPersonal')), 0).toLocaleString('en-IN')}
+     </p>
+   </div>
+ 
+   <div className="balance-card bg-[#e0f7fa] rounded-2xl p-5 text-center shadow-xl transition-transform transform hover:scale-105" style={{ border: 'var(--border)' }}>
+     <img className="balance-card-img" src="https://i.ibb.co/QkTM4M3/rocket.png" alt="Rocket" />
+     <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700">
+       <span className="text-lg lg:text-2xl font-extrabold">৳</span>{employee.reduce((total, userr) => total + parseFloat(calculateTotalByPaymentMethod(userr.email, 'rocketPersonal')), 0).toLocaleString('en-IN')}
+     </p>
+   </div>
+ 
+   <div className="balance-card bg-[#d9f8d9] rounded-2xl p-5 text-center shadow-xl transition-transform transform hover:scale-105" style={{ border: 'var(--border)' }}>
+     <h className="p-3 mt-7 text-black text-3xl font-bold text-center">Total</h>
+     <p className="balance-card-text mt-8 text-lg lg:text-2xl font-bold text-gray-700">
+       <span className="text-lg lg:text-2xl font-extrabold">৳</span>{
+         (
+           employee.reduce((total, userr) => total + parseFloat(calculateTotalByPaymentMethod(userr.email, 'bkashMarchent')), 0) +
+           employee.reduce((total, userr) => total + parseFloat(calculateTotalByPaymentMethod(userr.email, 'rocketPersonal')), 0) +
+           employee.reduce((total, userr) => total + parseFloat(calculateTotalByPaymentMethod(userr.email, 'nagadPersonal')), 0) +
+           employee.reduce((total, userr) => total + parseFloat(calculateTotalByPaymentMethod(userr.email, 'bkashPersonal')), 0)
+         ).toLocaleString('en-IN')
+       }
+     </p>
+   </div>
+ 
+   <div className="bg-[#f2f2f2] rounded-2xl p-5 text-center shadow-xl transition-transform transform hover:scale-105" style={{ border: 'var(--border)' }}>
+     <div>
+       <img className="balance-card-img w-56 h-auto" src="https://i.ibb.co/3WVZGdz/PAYO-BIG-aa26e6e0.png" alt="Payoneer" />
+       <span className="balance-card-text text-2xl flex items-center justify-center gap-2">
+         <p className="balance-card-text text-lg lg:text-2xl mt-3 font-bold text-gray-700">
+           <span className="text-lg lg:text-2xl font-extrabold text-red-600">$</span>{payoneerTotal.toLocaleString('en-IN')}
+         </p>
+       </span>
+     </div>
+   </div>
+ </div>
+ 
+  )}
+</div>
 
-      {
-        ddd?.role === 'admin' && <div className="grid grid-cols-2  sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 lg:gap-5 mt-5 mb-5">
-        <div className="balance-card bg-white rounded-2xl p-5 text-center shadow-xl transition-transform transform hover:scale-105 border-0">
-          <img className="balance-card-img" src="https://i.ibb.co/bHMLyvM/b-Kash-Merchant.png" alt="bKash" />
-          <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700">
-            <span className="text-lg lg:text-2xl font-extrabold">৳</span>{
-                                            employee.reduce((total, userr) => total + parseFloat(calculateTotalByPaymentMethod(userr.email, 'bkashMarchent')), 0)
-                                        }
-          </p>
-        </div>
-        <div className="balance-card items-center bg-white rounded-2xl p-5 text-center shadow-xl transition-transform transform hover:scale-105 border-0">
-          <img className="balance-card-img" src="https://i.ibb.co/520Py6s/bkash-1.png" alt="bKash" />
-          <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700">
-            <span className="text-lg lg:text-2xl font-extrabold">৳</span>{
-                                            employee.reduce((total, userr) => total + parseFloat(calculateTotalByPaymentMethod(userr.email, 'bkashPersonal')), 0)
-                                        }
-          </p>
-        </div>
-        <div className="balance-card bg-white rounded-2xl p-5 text-center shadow-xl transition-transform transform hover:scale-105 border-0">
-          <img className="balance-card-img" src="https://i.ibb.co/JQBQBcF/nagad-marchant.png" alt="Nagad" />
-          <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700">
-            <span className="text-lg lg:text-2xl font-extrabold">৳</span>{
-                                            employee.reduce((total, userr) => total + parseFloat(calculateTotalByPaymentMethod(userr.email, 'nagadPersonal')), 0)
-                                        }
-          </p>
-        </div>
-        <div className="balance-card bg-white rounded-2xl p-5 text-center shadow-xl transition-transform transform hover:scale-105 border-0">
-          <img className="balance-card-img" src="https://i.ibb.co/QkTM4M3/rocket.png" alt="Rocket" />
-          <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700">
-            <span className="text-lg lg:text-2xl font-extrabold">৳</span>{
-                                            employee.reduce((total, userr) => total + parseFloat(calculateTotalByPaymentMethod(userr.email, 'rocketPersonal')), 0)
-                                        }
-          </p>
-        </div>
-        <div className="balance-card bg-white rounded-2xl p-5 text-center shadow-xl transition-transform transform hover:scale-105 border-0">
-        <h className="p-3 mt-5 text-black text-3xl font-bold text-center">TOTAL</h>
-          <p className="balance-card-text mt-8 text-lg lg:text-2xl font-bold text-gray-700">
-            <span className="text-lg lg:text-2xl font-extrabold">৳</span>{ employee.reduce((total, userr) => total + parseFloat(calculateTotalByPaymentMethod(userr.email, 'bkashMarchent')), 0) +
-                                               employee.reduce((total, userr) => total + parseFloat(calculateTotalByPaymentMethod(userr.email, 'rocketPersonal')), 0) +   employee.reduce((total, userr) => total + parseFloat(calculateTotalByPaymentMethod(userr.email, 'nagadPersonal')), 0) +   employee.reduce((total, userr) => total + parseFloat(calculateTotalByPaymentMethod(userr.email, 'bkashPersonal')), 0)
-                                        }
-          </p>
-        </div>
-        <div className="bg-white rounded-2xl p-5 text-center shadow-xl transition-transform transform hover:scale-105 border-0 gap-4">
-          <div>
-            <img className="balance-card-img w-56 h-auto " src="https://i.ibb.co/3WVZGdz/PAYO-BIG-aa26e6e0.png" alt="Payoneer" />
-            <span className="balance-card-text text-2xl flex items-center justify-center gap-2">
-              <p className="balance-card-text text-lg lg:text-2xl mt-3 font-bold text-gray-700">
-                <span className="text-lg lg:text-2xl font-extrabold text-red-600">$</span>{payoneerTotal}
-              </p>
-            </span>
-          </div>
-        </div>
-      </div>
-      }
 
-      <div className=" mb-5">
-        <div className="overflow-x-auto text-black border shadow-2xl rounded-xl border-gray-400">
-          <table className="min-w-full text-xs md:text-base">
-            <thead className="bg-[#8bcfe8] text-black font-bold text-sm md:text-xl">
-              <tr>
-                  <th className="p-3 text-center">
+       <div className='px-5 p-5  my-5 mt-5 rounded-lg' style={{ backgroundColor: 'var(--bg-color3)', color: 'var(--text-color)',border: 'var(--border)'}}>
+
+<div className="  rounded-xl " style={{ backgroundColor: 'var(--bg-color)', color: 'var(--text-color)'}}>
+  <div className="overflow-x-auto  shadow-2xl ">
+    <table className="min-w-full text-xs md:text-base">
+      <thead className="  font-bold text-sm md:text-xl">
+        <tr>
+                  <th className="p-2 text-center">
                    SL
                   </th>
                  
-                    <th className="p-3 text-center">Employee Name</th>
+                    <th className="p-2 text-center">Employee Name</th>
                   {
                     ddd?.role === 'admin' && <>
                                         <th className="p-3 text-center">
-                      <img className="w-18 h-9 mx-auto" src="https://i.ibb.co/bHMLyvM/b-Kash-Merchant.png" alt="bKash Merchant" />
+                     
+                      <h1 className="">bKash PRA </h1>
                     </th>
-                    <th className="p-3 text-center">
-                      <img className="w-18 h-9 mx-auto" src="https://i.ibb.co/520Py6s/bkash-1.png" alt="bKash Personal" />
+                    <th className="p-2 text-center">
+                      
+                      <h1 className="">bKash </h1>
                     </th>
-                    <th className="p-3 text-center">
-                      <img className="w-18 h-9 mx-auto" src="https://i.ibb.co/JQBQBcF/nagad-marchant.png" alt="Nagad Personal" />
+                    <th className="p-2 text-center">
+                     
+                      <h1 className="">Nagad </h1>
                     </th>
-                    <th className="p-3 text-center">
-                      <img className="w-18 h-9 mx-auto" src="https://i.ibb.co/QkTM4M3/rocket.png" alt="Rocket Personal" />
+                    <th className="p-2 text-center">
+                      <h1 className="">Rocket </h1>
                     </th>
-                    <th className="p-3 text-center">
-                    <th className="p-3 text-center">Total Balance</th> 
+                    <th className="p- text-center">
+                    <th className="p- text-center">Total</th> 
                     </th>
                     </>
                   }
-                    <th className="p-3 text-center">
-                      <img className="w-28 h-8 mx-auto" src="https://i.ibb.co/3WVZGdz/PAYO-BIG-aa26e6e0.png" alt="Payoneer" />
-                    </th>
-                    <th className="p-3 text-center">Current Balance</th> 
+                  
                  
            
               </tr>
             </thead>
             {employee.map((userr,index) => (
               <tbody key={userr._id}>
-                <tr
-      key={userr._id}
-      className={index % 2 === 0 ? "bg-gray-200" : "bg-white"}
-    >
-      <td className="p-3 border border-gray-300 text-center font-bold">{index + 1}</td>
-      <td className="p-3 hover:text-blue-600 font-bold hover:text-sm md:hover:text-sm sm:hover:text-sm flex flex-col md:flex-row justify-start text-center items-center gap-2 border border-gray-300">
+                <tr style={{ backgroundColor: 'var(--bg-table)', color: 'var(--text-color2)'}}
+                  key={userr._id}
+                  className={`${
+                    index % 2 === 0
+                      ? "bg-white text-left text-black border-b border-opacity-20"
+                      : "bg-gray-200  text-left text-black border-b border-opacity-20"
+                  }`}
+                >
+      <td style={{ border: 'var(--border)' }} className="p-3 border border-gray-300 text-center font-bold">{index + 1}</td>
+      <td style={{ border: 'var(--border)' }} className="p-3 hover:text-blue-600 font-bold hover:text-sm md:hover:text-sm sm:hover:text-sm  gap-2 ">
         {ddd?.role === 'admin' ? (
-          <>
+          <p className="flex flex-col md:flex-row justify-start text-center items-center gap-2">
             <Link to={`/dashboard/userInfo/${userr?.email}`}>
               <img className="w-10 h-10 rounded-full" src={userr?.photo} alt="" />
             </Link>
             <Link to={`/dashboard/userInfo/${userr?.email}`}>{userr.name}</Link>
-          </>
+          </p>
         ) : (
           <>
             <img className="w-10 h-10 rounded-full" src={userr?.photo} alt="" />
@@ -236,72 +235,31 @@ const Banner = () => {
       </td>
       {
                     ddd?.role === 'admin' && <>
-                     <td className="p-3 border border-gray-300 text-center">
-        ৳ {calculateTotalByPaymentMethod2(userr.email, 'bkashMarchent') - calculateTotalByPaymentMethod(userr.email, 'bkashMarchent')}
+                     <td style={{ border: 'var(--border)' }} className="p-3 border border-gray-300 text-center">
+                     <span className=" text-xm font-extrabold">৳</span> {calculateTotalByPaymentMethod2(userr.email, 'bkashMarchent') - calculateTotalByPaymentMethod(userr.email, 'bkashMarchent')}
       </td>
-      <td className="p-3 border border-gray-300 text-center">
-        ৳ {calculateTotalByPaymentMethod2(userr.email, 'bkashPersonal') - calculateTotalByPaymentMethod(userr.email, 'bkashPersonal')}
+      <td style={{ border: 'var(--border)' }} className="p-3 border border-gray-300 text-center">
+      <span className=" text-xm font-extrabold">৳</span> {calculateTotalByPaymentMethod2(userr.email, 'bkashPersonal') - calculateTotalByPaymentMethod(userr.email, 'bkashPersonal')}
       </td>
-      <td className="p-3 border border-gray-300 text-center">
-        ৳ {calculateTotalByPaymentMethod2(userr.email, 'nagadPersonal') - calculateTotalByPaymentMethod(userr.email, 'nagadPersonal')}
+      <td style={{ border: 'var(--border)' }} className="p-3 border border-gray-300 text-center">
+      <span className=" text-xm font-extrabold">৳</span> {calculateTotalByPaymentMethod2(userr.email, 'nagadPersonal') - calculateTotalByPaymentMethod(userr.email, 'nagadPersonal')}
       </td>
-      <td className="p-3 border border-gray-300 text-center">
-        ৳ {calculateTotalByPaymentMethod2(userr.email, 'rocketPersonal') - calculateTotalByPaymentMethod(userr.email, 'rocketPersonal')}
+      <td style={{ border: 'var(--border)' }} className="p-3 border border-gray-300 text-center">
+      <span className=" text-xm font-extrabold">৳</span> {calculateTotalByPaymentMethod2(userr.email, 'rocketPersonal') - calculateTotalByPaymentMethod(userr.email, 'rocketPersonal')}
       </td>
-      <td className="p-3 border border-gray-300 text-center">
-        ৳ {calculateTotalByPaymentMethod3(userr.email) - calculateTotalByPaymentMethod4(userr.email)}
+      <td style={{ border: 'var(--border)' }} className="p-3 border border-gray-300 text-center">
+      <span className=" text-xm font-extrabold">৳</span> {calculateTotalByPaymentMethod3(userr.email) - calculateTotalByPaymentMethod4(userr.email)}
       </td>
                     </>
 
       }
      
-      <td className="p-3 border border-gray-300 text-center">
-        <div className="relative group flex items-center justify-center">
-          <h1 className="ml-10">$ {userr?.payoneer}</h1>
-          {ddd?.role === 'admin' && (
-            <button
-              className="text-black px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-              onClick={() =>
-                document.getElementById(`my_modal_${userr._id}`).showModal()
-              }
-            >
-              <FaEdit />
-            </button>
-          )}
-          <dialog id={`my_modal_${userr._id}`} className="modal">
-            <div className="modal-box bg-white">
-              <form
-                onSubmit={(e) => handleUpdateTotalBudget(e, userr._id, `my_modal_${userr._id}`)}
-              >
-                <input
-                  type="number"
-                  name="tBudged"
-                  step="0.01"
-                  defaultValue={userr.payoneer}
-                  className="w-full border bg-white border-black rounded p-2 mt-1 text-gray-500"
-                />
-                <button
-                  type="submit"
-                  className="mt-4 font-avenir px-3 mx-auto py-1 rounded-lg text-white bg-[#05a0db]"
-                >
-                  Update
-                </button>
-              </form>
-              <form method="dialog">
-                <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
-                  ✕
-                </button>
-              </form>
-            </div>
-          </dialog>
-        </div>
-      </td>
-      <td className="p-3 border border-gray-300 text-center">$ {getThresholdValue(userr.email)}</td>
+   
     </tr>
               </tbody>
             ))}
-             <tfoot>
-      <tr className="bg-[#05a0db] text-white">
+             <tfoot >
+      <tr  className="">
 
         <td className="p-3 text-center font-bold"></td>
         <td className="p-3 text-center font-bold">Total</td>
@@ -309,19 +267,19 @@ const Banner = () => {
 
         {
                     ddd?.role === 'admin' && <>
-                     <td className="p-3 text-center font-bold">৳ {
+                     <td className="p-3 text-center font-bold"><span className=" text-xm font-extrabold">৳</span> {
                                             employee.reduce((total, userr) => total + parseFloat(calculateTotalByPaymentMethod(userr.email, 'bkashMarchent')), 0)
                                         }</td>
-                                        <td className="p-3 text-center font-bold">৳ {
+                                        <td className="p-3 text-center font-bold"><span className=" text-xm font-extrabold">৳</span> {
                                             employee.reduce((total, userr) => total + parseFloat(calculateTotalByPaymentMethod(userr.email, 'bkashPersonal')), 0)
                                         }</td>
-                                        <td className="p-3 text-center font-bold">৳ {
+                                        <td className="p-3 text-center font-bold"><span className=" text-xm font-extrabold">৳</span> {
                                             employee.reduce((total, userr) => total + parseFloat(calculateTotalByPaymentMethod(userr.email, 'nagadPersonal')), 0)
                                         }</td>
-                                        <td className="p-3 text-center font-bold">৳ {
+                                        <td className="p-3 text-center font-bold"><span className=" text-xm font-extrabold">৳</span> {
                                             employee.reduce((total, userr) => total + parseFloat(calculateTotalByPaymentMethod(userr.email, 'rocketPersonal')), 0)
                                         }</td>
-                                        <td className="p-3 text-center font-bold">৳ { employee.reduce((total, userr) => total + parseFloat(calculateTotalByPaymentMethod(userr.email, 'bkashMarchent')), 0) +
+                                        <td className="p-3 text-center font-bold"><span className=" text-xm font-extrabold">৳</span> { employee.reduce((total, userr) => total + parseFloat(calculateTotalByPaymentMethod(userr.email, 'bkashMarchent')), 0) +
                                                employee.reduce((total, userr) => total + parseFloat(calculateTotalByPaymentMethod(userr.email, 'rocketPersonal')), 0) +   employee.reduce((total, userr) => total + parseFloat(calculateTotalByPaymentMethod(userr.email, 'nagadPersonal')), 0) +   employee.reduce((total, userr) => total + parseFloat(calculateTotalByPaymentMethod(userr.email, 'bkashPersonal')), 0)
                                         }</td>
                     </>
@@ -329,14 +287,15 @@ const Banner = () => {
         }
   
                                       
-            <td className="p-3 text-center font-bold">$ {payoneerTotal}</td>
-            <td className="p-3 text-center font-bold">৳ {calculateTotalThreshold()}</td>
+    
+         
       
    
       </tr>
     </tfoot>
           </table>
         </div>
+      </div>
       </div>
 
     </div>

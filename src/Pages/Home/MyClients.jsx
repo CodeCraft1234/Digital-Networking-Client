@@ -27,31 +27,31 @@ const MyClients = () => {
   
       useEffect(() => {
           if (users && user) {
-              const fff = users.find(u => u.email === user?.email);
+              const fff = users?.find(u => u.email === user?.email);
               console.log(fff);
               setDdd(fff || {}); // Update state with found user or an empty object
           }
       }, [users, user]);
   
     useEffect(() => {
-      const filtered = clients.filter(
-        (campaign) => campaign.employeeEmail === user?.email
+      const filtered = clients?.filter(
+        (campaign) => campaign?.employeeEmail === user?.email
       );
       console.log(filtered);
   
-      const totalRcv = filtered.reduce((acc, campaign) => {
+      const totalRcv = filtered?.reduce((acc, campaign) => {
         const payment = parseFloat(campaign.tPayment);
         return acc + (isNaN(payment) ? 0 : payment);
       }, 0);
       setTotalRCV(totalRcv);
   
-      const tspent = filtered.reduce(
+      const tspent = filtered?.reduce(
         (acc, campaign) => acc + parseFloat(campaign.tSpent),
         0
       );
       setTotalSpent(tspent);
   
-      const totalBill = filtered.reduce(
+      const totalBill = filtered?.reduce(
         (acc, campaign) => acc + parseFloat(campaign.tBill),
         0
       );
@@ -90,15 +90,7 @@ const MyClients = () => {
       AxiosPublic.post("https://digital-networking-server.vercel.app/clients", data)
         .then((res) => {
           refetch();
-          window.location.reload();
         })
-        .catch((error) => {
-          if (error.response && error.response.status === 400) {
-            alert("Client with the same email or phone number already exists.");
-          } else {
-            console.error("Error adding client:", error);
-          }
-        });
     };
     
     const [searchQuery, setSearchQuery] = useState("");
@@ -145,56 +137,28 @@ const MyClients = () => {
 
 
 
-      const handleUpdate2 = (e, id, campaign) => {
+      const handleUpdate2 = (e, id) => {
         e.preventDefault();
     
-        // Get the updated client information from the form
         const clientName = e.target.clientName.value;
         const clientPhone = e.target.clientPhone.value;
-        const clientEmail = e.target.clientEmail.value; // although email is disabled, we still fetch it
     
         const body = { clientName, clientPhone };
     
-        // Send the update request
         AxiosPublic.patch(`/client/update/${id}`, body)
             .then((res) => {
-                document.getElementById(`modal_${id}`).close();
-                refetch();
+              refetch();
+              document.getElementById(`modal_${id}`).close();
             })
             .catch((error) => {
                 console.error("Error updating campaign:", error);
                 toast.error("Failed to update campaign");
             });
-    
-        // Prepare the data for the edit history, including the previous data
-        const data = {
-            title: 'Client info Edit',
-            email:user?.email,
-            date:new Date(),
-            name:user?.displayName,
-            status:'unread',
-            newChange: [clientEmail, clientName, clientPhone],
-            previousData: [
-                campaign.clientEmail, // Original email
-                campaign.clientName,  // Original name
-                campaign.clientPhone  // Original phone
-            ]
-        };
-    
-        // Post the edit information
-        AxiosPublic.post("/notification", data)
-            .then((res) => {
-                refetch();
-            })
-            .catch((error) => {
-                console.error("Error posting edit history:", error);
-                toast.error("Failed to log edit history");
-            });
     };
     
      
-      const sortedAdsAccounts = filteredByCategory.sort((a, b) => {
-        return a.clientName.localeCompare(b.clientName);
+      const sortedAdsAccounts = filteredByCategory?.sort((a, b) => {
+        return a.clientName?.localeCompare(b?.clientName);
       });
 
 
@@ -210,8 +174,8 @@ const MyClients = () => {
       </Helmet>
 
 
-
-      <div className="grid lg:grid-cols-4 grid-cols-2 text-black sm:grid-cols-2 gap-3 lg:gap-5 justify-around lg:py-5 pb-5">
+      <div  style={{ backgroundColor: 'var(--bg-color3)', color: 'var(--text-color)',border: 'var(--border)'}} className="grid px-4 pt-4 rounded-md lg:grid-cols-4 grid-cols-2 text-black sm:grid-cols-2 gap-3 lg:gap-5 justify-around lg:py-5 mb-4 pb-5">
+    
         <div className="px-5 py-10 rounded-2xl bg-[#b7cc50] text-white shadow-lg text-center">
           <h2 className="lg:text-2xl text-xl font-bold">Total Spent</h2>
           <p className="lg:text-4x md:text-3xl text-md font-bold mt-2"> $ {totalSpent.toFixed(2) || 0.00}</p>
@@ -236,10 +200,11 @@ const MyClients = () => {
           </p>
         </div>
       </div>
+    
 
 
      
-
+      <div className='px-4 pt-4 pb-5 rounded-md' style={{ backgroundColor: 'var(--bg-color3)', color: 'var(--text-color)',border: 'var(--border)'}}>
       <div className="flex flex-col lg:flex-row justify-between items-center">
   <div className="flex justify-between lg:mb-5 items-center w-full lg:w-auto  ">
     <div className="flex lg:justify-center justify-center mb-4 lg:mb-0 text-gray-500 lg:mx-2 pb-1 items-center gap-5">
@@ -331,6 +296,7 @@ const MyClients = () => {
   <div className="w-full lg:w-auto">
     <input
       type="text"
+      style={{ backgroundColor: 'var(--bg-color2)',border: 'var(--border)', color: 'var(--text-color2)'}}
       placeholder="Search ...."
       className="rounded-lg w-full mb-5 lg:mb-5 placeholder-black border border-gray-700 p-2 font-bold text-black text-sm bg-white"
       value={searchQuery}
@@ -340,10 +306,10 @@ const MyClients = () => {
 </div>
 
 
-<div className="overflow-x-auto text-black mb-5 rounded-lg border-black">
-<table className="min-w-full rounded-xl">
-<thead className="bg-[#05a0db] text-white">
-<tr>
+<div  className="overflow-x-auto rounded-xl  text-center " style={{ }}>
+          <table className="min-w-full text-center ">
+            <thead className=" ">
+              <tr className="" style={{backgroundColor: 'var(--bg-color)' ,border: 'var(--border)',borderLeft: 'var(--border)', borderRight: 'var(--border)', color: 'var(--text-color)'}}>
 <th className="p-3 text-center">SL</th>
 <th className="p-3 text-center">Client Name</th>
 <th className="p-3 text-center">Client Phone</th>
@@ -357,17 +323,17 @@ const MyClients = () => {
 </thead>
 <tbody>
 {sortedAdsAccounts.map((campaign, index) => (
-<tr
-  key={campaign._id}
-  className={`${
-    index % 2 === 0
-      ? "text-black border-b border-opacity-20 hover:text-blue-600"
-      : "text-black border-b border-opacity-20 hover:text-blue-600"
-  }`}
->
-  <td className="p-3 border-r border-gray-400 border-l text-center ">{index + 1}</td>
+  <tr style={{ backgroundColor: 'var(--bg-table)', color: 'var(--text-color2)'}}
+                  key={campaign._id}
+                  className={`${
+                    index % 2 === 0
+                      ? "bg-white text-left text-black border-b border-opacity-20"
+                      : "bg-gray-200  text-left text-black border-b border-opacity-20"
+                  }`}
+                >
+  <td style={{  border: 'var(--border)'}} className="p-3 border-r border-gray-400 border-l text-center ">{index + 1}</td>
 
-  <td className="p-3 border-r-2 hover:text-blue-700 hover:font-bold text-start border-gray-300 ">
+  <td style={{  border: 'var(--border)'}} className="p-3 border-r-2  hover:font-bold text-start border-gray-300 ">
   <Link to={`/dashboard/client/${campaign.clientEmail}`} className="flex justify-start items-center">
     {campaign.clientName}
     {
@@ -402,14 +368,14 @@ const MyClients = () => {
 
 
   
-  <td className="p-3 border-r border-gray-400 text-start">
+  <td style={{  border: 'var(--border)'}} className="p-3 border-r border-gray-400 text-start">
     {campaign.clientPhone}
     </td>
-<td className="p-3 border-r border-gray-400 text-center">
+<td style={{  border: 'var(--border)'}} className="p-3 border-r border-gray-400 text-center">
   $ {Number(campaign.tBudged).toFixed(2)} 
 
 </td>
-<td className="p-3 border-r border-gray-400 text-center">
+<td style={{  border: 'var(--border)'}} className="p-3 border-r border-gray-400 text-center">
 
   {
   (
@@ -420,7 +386,7 @@ const MyClients = () => {
 }
 
 </td>
-<td className="p-3 border-r border-gray-400 text-center">
+<td style={{  border: 'var(--border)'}} className="p-3 border-r border-gray-400 text-center">
 
 ৳ 
   {
@@ -435,7 +401,7 @@ const MyClients = () => {
 }
 
 </td>
-<td className="p-3 border-r border-gray-400 text-center">
+<td style={{  border: 'var(--border)'}} className="p-3 border-r border-gray-400 text-center">
 
   ৳ 
   {
@@ -447,7 +413,7 @@ const MyClients = () => {
 }
 </td>
 
-<td className="p-3 border-r border-gray-400 text-center">
+<td style={{  border: 'var(--border)'}} className="p-3 border-r border-gray-400 text-center">
   ৳
   {
     (
@@ -471,7 +437,7 @@ const MyClients = () => {
 
 
 
-  <td className="p-3 border-r text-center border-gray-400">
+  <td style={{  border: 'var(--border)'}} className="p-3 border-r text-center border-gray-400">
   <div className="flex justify-center  items-center gap-3">
   <div>
   <button
@@ -557,7 +523,7 @@ const MyClients = () => {
 </tr>
 ))}
 
-      <tr className='bg-[#05a0db] text-white'>
+      <tr style={{ backgroundColor: 'var(--bg-color)', color: 'var(--text-color)'}} className=''>
         <td className="p-3 text-center font-bold">Total</td>
         <td className="p-3"></td>
         <td className="p-3"></td>
@@ -609,6 +575,8 @@ const MyClients = () => {
 </table>
 
   </div>
+  </div>
+
   </div>
   
         </div>

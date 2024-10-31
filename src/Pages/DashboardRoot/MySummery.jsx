@@ -64,12 +64,31 @@ const MySummery = () => {
       }, {});
 
       return recentMonths.map(month => {
-        const monthlySpentData = (user.monthlySpent || []).filter(spent =>
+        const monthlySpentData = (user.monthlySpent || [])
+        .filter(spent =>
           new Date(spent.date).toLocaleString('default', { month: 'long' }) === month
-        );
-        const selleryData = (user.sellery || []).filter(sell => sell.month === month);
+        )
+        .sort((a, b) => {
+          if (a.accountName < b.accountName) return -1;
+          if (a.accountName > b.accountName) return 1;
+          return new Date(a.date) - new Date(b.date);
+        })
+        .reduce((acc, current) => {
+          const existingAccount = acc.find(item => item.accountName === current.accountName);
+          if (existingAccount) {
+            if (new Date(current.date) > new Date(existingAccount.date)) {
+              acc = acc.filter(item => item.accountName !== existingAccount.accountName); 
+              acc.push(current); 
+            }
+          } else {
+            acc.push(current); 
+          }
+          return acc;
+        }, []);
+      
+      const totalSpent = monthlySpentData.reduce((acc, spent) => acc + spent.totalSpentt, 0);
 
-        const totalSpent = monthlySpentData.reduce((acc, spent) => acc + spent.totalSpentt, 0);
+        const selleryData = (user.sellery || []).filter(sell => sell.month === month);
         const totalSellery = selleryData.reduce((acc, sell) => acc + sell.amount, 0);
         const totalBonus = selleryData.reduce((acc, sell) => acc + sell.bonus, 0);
         const totalAdminPay = paymentByMonth[month] || 0;
@@ -97,49 +116,58 @@ const MySummery = () => {
         <link rel="canonical" href="https://www.example.com/" />
       </Helmet>
 
-      <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-6 text-black sm:grid-cols-2 gap-5 justify-around ">
-        <div className="px-5 py-10 rounded-2xl  bg-[#91a33a] text-white shadow-lg text-center">
-          <h2 className="text-xl font-bold">Total Spent</h2>
-          <p className="lg:text-2xl text-xl font-bold mt-2"> $ {employeeData.reduce((acc, data) => acc + data.totalSpent, 0).toFixed(2)}</p>
-        </div>
+      <div style={{ backgroundColor: 'var(--bg-color3)', color: 'var(--text-color)', border: 'var(--border)' }} className="grid grid-cols-2 p-5 rounded-lg md:grid-cols-2 lg:grid-cols-3 text-black sm:grid-cols-2 gap-5 justify-around">
+  <div className="px-5 py-10 rounded-2xl bg-[#81c784] text-black shadow-lg text-center">
+    <h2 className="text-xl font-bold">Total Spent</h2>
+    <p className="lg:text-2xl text-xl font-bold mt-2">
+      $ {new Intl.NumberFormat('en-IN').format(employeeData.reduce((acc, data) => acc + data.totalSpent, 0).toFixed(2))}
+    </p>
+  </div>
 
-        <div className="px-5 py-10 rounded-2xl bg-[#5422c0] text-white shadow-lg text-center">
-          <h2 className="text-xl font-bold">Total BDT</h2>
-          <p className="lg:text-2xl text-xl font-bold mt-2">
-             <span className="lg:text-2xl text-xl font-extrabold">৳</span> {employeeData.reduce((acc, data) => acc + data.totalBill, 0).toFixed(2)}
-          </p>
-        </div>
+  <div className="px-5 py-10 rounded-2xl bg-[#64b5f6] text-black shadow-lg text-center">
+    <h2 className="text-xl font-bold">Total BDT</h2>
+    <p className="lg:text-2xl text-xl font-bold mt-2">
+      <span className="lg:text-2xl text-xl font-extrabold">৳</span> {new Intl.NumberFormat('en-IN').format(employeeData.reduce((acc, data) => acc + data.totalBill, 0).toFixed(0))}
+    </p>
+  </div>
 
-        <div className="px-5 py-10 rounded-2xl  bg-[#05a0db] text-white shadow-lg text-center">
-          <h2 className="lg:text-2xl text-xl font-bold">Client Pay</h2>
-          <p className="lg:text-2xl text-xl font-bold mt-2"> <span className="text-2xl font-extrabold">৳</span>{employeeData.reduce((acc, data) => acc + data.totalClientPay, 0).toFixed(2)} </p>
-        </div>
+  <div className="px-5 py-10 rounded-2xl bg-[#ffb74d] text-black shadow-lg text-center">
+    <h2 className="lg:text-2xl text-xl font-bold">Client Pay</h2>
+    <p className="lg:text-2xl text-xl font-bold mt-2">
+      <span className="text-2xl font-extrabold">৳</span> {new Intl.NumberFormat('en-IN').format(employeeData.reduce((acc, data) => acc + data.totalClientPay, 0).toFixed(0))}
+    </p>
+  </div>
 
-        <div className="px-5 py-10 rounded-2xl  bg-[#ce1a38] text-white shadow-lg text-center">
-          <h2 className="text-xl font-bold">Employee Pay</h2>
-          <p className="lg:text-2xl text-xl font-bold mt-2">
-          <span className="lg:text-2xl text-xl font-extrabold">৳</span> {employeeData.reduce((acc, data) => acc + data.totalAdminPay, 0).toFixed(2)}
-          </p>
-        </div>
-        <div className="px-5 py-10 rounded-2xl  bg-[#ce1a38] text-white shadow-lg text-center">
-          <h2 className="text-xl font-bold">Employee Due</h2>
-          <p className="lg:text-2xl text-xl font-bold mt-2">
-          <span className="lg:text-2xl text-xl font-extrabold">৳</span> {(employeeData.reduce((acc, data) => acc + data.totalClientPay, 0) - employeeData.reduce((acc, data) => acc + data.totalAdminPay, 0)).toFixed(2)}
-          </p>
-        </div>
-        <div className="px-5 py-10 rounded-2xl  bg-[#ce1a38] text-white shadow-lg text-center">
-          <h2 className="text-xl font-bold">Client Due</h2>
-          <p className="lg:text-2xl text-xl font-bold mt-2">
-          <span className="lg:text-2xl text-xl font-extrabold">৳</span> {(employeeData.reduce((acc, data) => acc + data.totalBill, 0) - employeeData.reduce((acc, data) => acc + data.totalClientPay, 0)).toFixed(2)}
-          </p>
-        </div>
-      </div>
+  <div className="px-5 py-10 rounded-2xl bg-[#ce93d8] text-black shadow-lg text-center">
+    <h2 className="text-xl font-bold">Employee Pay</h2>
+    <p className="lg:text-2xl text-xl font-bold mt-2">
+      <span className="lg:text-2xl text-xl font-extrabold">৳</span> {new Intl.NumberFormat('en-IN').format(employeeData.reduce((acc, data) => acc + data.totalAdminPay, 0).toFixed(0))}
+    </p>
+  </div>
+
+  <div className="px-5 py-10 rounded-2xl bg-[#e57373] text-black shadow-lg text-center">
+    <h2 className="text-xl font-bold">Employee Due</h2>
+    <p className="lg:text-2xl text-xl font-bold mt-2">
+      <span className="lg:text-2xl text-xl font-extrabold">৳</span> {new Intl.NumberFormat('en-IN').format((employeeData.reduce((acc, data) => acc + data.totalBill, 0) - employeeData.reduce((acc, data) => acc + data.totalAdminPay, 0)).toFixed(0))}
+    </p>
+  </div>
+
+  <div className="px-5 py-10 rounded-2xl bg-[#ff8a65] text-black shadow-lg text-center">
+    <h2 className="text-xl font-bold">Client Due</h2>
+    <p className="lg:text-2xl text-xl font-bold mt-2">
+      <span className="lg:text-2xl text-xl font-extrabold">৳</span> {new Intl.NumberFormat('en-IN').format((employeeData.reduce((acc, data) => acc + data.totalBill, 0) - employeeData.reduce((acc, data) => acc + data.totalClientPay, 0)).toFixed(0))}
+    </p>
+  </div>
+</div>
 
 
-      <div className="overflow-x-auto text-black text-center mt-5 rounded-xl border border-gray-600">
-        <table className="min-w-full text-center bg-white">
-          <thead className="bg-[#05a0db] text-white">
-            <tr>
+
+
+      <div className="p-5 mt-5 rounded-lg " style={{ backgroundColor: 'var(--bg-color3)', color: 'var(--text-color)',border: 'var(--border)'}}>
+      <div  className="overflow-x-auto rounded-xl  text-center " style={{ backgroundColor: 'var(--bg-color)', color: 'var(--text-color)'}}>
+          <table className="min-w-full text-center ">
+            <thead className=" ">
+              <tr className="" style={{border: 'var(--border)',borderLeft: 'var(--border)', borderRight: 'var(--border)', color: 'var(--text-color)'}}>
               <th className="p-3">SL</th>
               <th className="p-3">Month</th>
               <th className="p-3">Total Spent</th>
@@ -151,46 +179,51 @@ const MySummery = () => {
           </thead>
           <tbody>
           {employeeData.map((data, index) => (
-    <tr
-      key={index}
-      className={index % 2 === 0 ? "bg-gray-200 py-2" : "bg-white py-2"}
-    >
-      <td className="p-3 border border-gray-300">{index + 1}</td>
-      <td className="p-3 border border-gray-300">{data.month}</td>
-      <td className="p-3 border border-gray-300">${data.totalSpent.toFixed(2)}</td>
-      <td className="p-3 border border-gray-300">৳{data.totalBill.toFixed(2)}</td>
-      <td className="p-3 border border-gray-300">৳{data.totalClientPay.toFixed(2)}</td>
-      <td className="p-3 border border-gray-300">৳{data.totalAdminPay.toFixed(2)}</td>
-      <td className="p-3 border border-gray-300">৳{(data.totalClientPay - data.totalAdminPay).toFixed(2)}</td>
+    <tr style={{ backgroundColor: 'var(--bg-table)', color: 'var(--text-color2)'}}
+    key={data._id}
+    className={`${
+      index % 2 === 0
+        ? "bg-white text-center text-black border-b border-opacity-20"
+        : "bg-gray-200  text-center text-black border-b border-opacity-20"
+    }`}
+  >
+      <td style={{  border: 'var(--border)'}} className="p-3 border border-gray-300">{index + 1}</td>
+      <td style={{  border: 'var(--border)'}} className="p-3 border border-gray-300">{data.month}</td>
+      <td style={{  border: 'var(--border)'}} className="p-3 border border-gray-300">${data.totalSpent.toFixed(2)}</td>
+      <td style={{  border: 'var(--border)'}} className="p-3 border border-gray-300">৳{data.totalBill.toFixed(0)}</td>
+      <td style={{  border: 'var(--border)'}} className="p-3 border border-gray-300">৳{data.totalClientPay.toFixed(0)}</td>
+      <td style={{  border: 'var(--border)'}} className="p-3 border border-gray-300">৳{data.totalAdminPay.toFixed(0)}</td>
+      <td style={{  border: 'var(--border)'}} className="p-3 border border-gray-300">৳{(data.totalClientPay - data.totalAdminPay).toFixed(0)}</td>
     </tr>
   ))}
 
 
 </tbody>
-<tfoot className="bg-[#05a0db] font-bold text-white">
-  <tr>
+<tfoot className=" font-bold ">
+  <tr style={{ backgroundColor: 'var(--bg-color)', color: 'var(--text-color)'}}>
     <td className="p-3 text-right border-gray-300" colSpan="2">Total</td>
     <td className="p-3 border-gray-300">
       ${employeeData.reduce((acc, data) => acc + data.totalSpent, 0).toFixed(2)}
     </td>
     <td className="p-3 border-gray-300">
-      ৳ {employeeData.reduce((acc, data) => acc + data.totalBill, 0).toFixed(2)}
+      ৳ {employeeData.reduce((acc, data) => acc + data.totalBill, 0).toFixed(0)}
     </td>
     <td className="p-3 border-gray-300">
-      ৳ {employeeData.reduce((acc, data) => acc + data.totalClientPay, 0).toFixed(2)}
+      ৳ {employeeData.reduce((acc, data) => acc + data.totalClientPay, 0).toFixed(0)}
     </td>
     <td className="p-3 border-gray-300">
-      ৳ {employeeData.reduce((acc, data) => acc + data.totalAdminPay, 0).toFixed(2)}
+      ৳ {employeeData.reduce((acc, data) => acc + data.totalAdminPay, 0).toFixed(0)}
     </td>
     <td className="p-3 border-gray-300">
       ৳ {(employeeData.reduce((acc, data) => acc + data.totalClientPay, 0) - 
-          employeeData.reduce((acc, data) => acc + data.totalAdminPay, 0)).toFixed(2)}
+          employeeData.reduce((acc, data) => acc + data.totalAdminPay, 0)).toFixed(0)}
     </td>
   </tr>
 </tfoot>
 
         </table>
       </div>
+    </div>
     </div>
   );
 };

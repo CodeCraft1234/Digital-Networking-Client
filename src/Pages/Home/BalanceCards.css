@@ -16,14 +16,11 @@
     transition: transform 0.3s ease;
   }
   
-  /* .balance-card:hover {
-    transform: scale(1.05);
-    border: 2px solid blue;
-  } */
+
   
   .balance-card-img {
-    height: 56px;
-    margin: 0 auto 16px;
+    height: 55px;
+    margin: 0 auto 15px;
   }
   
   .balance-card-text {

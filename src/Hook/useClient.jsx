@@ -13,7 +13,6 @@ const useClients = () => {
             return res.data
         }
     })
-console.log(clients)
 return [clients,refetch]
 
 };

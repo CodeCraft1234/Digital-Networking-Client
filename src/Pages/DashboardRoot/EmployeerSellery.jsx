@@ -17,10 +17,8 @@ const EmployeerSellery = () => {
   const [users, refetch] = useUsers();
   const [employeeData, setEmployeeData] = useState([]);
   const [selectedMonth, setSelectedMonth] = useState('');
-  const [modalData, setModalData] = useState(null); // For payment modal
-  const [monthlyData, setMonthlyData] = useState(null); // For monthly data modal
+  const [modalData, setModalData] = useState(null); 
   const [currentuser,setCurrentuser]=useState([])
-  console.log(currentuser);
 
   useEffect(() => {
     const employees = users.filter(user => user.role === 'employee');
@@ -41,10 +39,30 @@ const EmployeerSellery = () => {
       }, {});
 
       const monthlyData = months.map(month => {
-        const monthlySpentData = (monthlySpent || []).filter(spent => new Date(spent.date).toLocaleString('default', { month: 'long' }) === month);
+        const monthlySpentData = (monthlySpent || [])
+        .filter(spent =>
+          new Date(spent.date).toLocaleString('default', { month: 'long' }) === month
+        )
+        .sort((a, b) => {
+          if (a.accountName < b.accountName) return -1;
+          if (a.accountName > b.accountName) return 1;
+          return new Date(a.date) - new Date(b.date);
+        })
+        .reduce((acc, current) => {
+          const existingAccount = acc.find(item => item.accountName === current.accountName);
+          if (existingAccount) {
+            if (new Date(current.date) > new Date(existingAccount.date)) {
+              acc = acc.filter(item => item.accountName !== existingAccount.accountName); 
+              acc.push(current); 
+            }
+          } else {
+            acc.push(current); 
+          }
+          return acc;
+        }, []);
+      
+      const totalSpent = monthlySpentData.reduce((acc, spent) => acc + spent.totalSpentt, 0);
         const selleryData = (sellery || []).filter(sell => sell.month === month);
-
-        const totalSpent = monthlySpentData.reduce((acc, spent) => acc + spent.totalSpentt, 0);
         const totalSellery = selleryData.reduce((acc, sell) => acc + sell.amount || 0, 0);
         const totalBonus = selleryData.reduce((acc, sell) => acc + sell.bonus || 0, 0);
         const totalAdminPay = paymentByMonth[month] || 0;
@@ -58,7 +76,7 @@ const EmployeerSellery = () => {
           totalDue: totalSpent * 140 - totalAdminPay,
           totalSelleryPaid: totalSpent * 7 - totalSellery,
           totalAdminPay,
-          selleryData // Add sellery data to the monthly data
+          selleryData 
         };
       });
 
@@ -97,24 +115,21 @@ const EmployeerSellery = () => {
       });
   };
 
-  // Modal handlers
   const [sellery,setSellery]=useState([])
+
   const handleMonthClick = (data) => {
     setSelectedMonth(data.month); 
     const datass=currentuser?.sellery?.filter(s=>s.month === data?.month)
     setSellery(datass)
-    setMonthlyData(data); 
     document.getElementById('monthlyModal2').showModal(); 
   };
 
   const handlePayNowClick = (data) => {
-    setSelectedMonth(data.month); // Store the selected month
-    setModalData(data); // Store the selected month's data for the payment modal
-    document.getElementById('paymentModal').showModal(); // Open the payment modal
+    setSelectedMonth(data.month); 
+    setModalData(data); 
+    document.getElementById('paymentModal').showModal(); 
   };
 
-
-   // Handle update function
    const handleUpdate2 = async (e, spentId) => {
     e.preventDefault();
     const totalSpent = e.target.totalSpent.value;
@@ -174,50 +189,97 @@ const EmployeerSellery = () => {
         <title>E.M Sellery | Digital Network </title>
         <link rel="canonical" href="https://www.example.com/" />
       </Helmet>
-      <div className="overflow-x-auto text-center rounded-xl border-l border-gray-400">
-        <table className="min-w-full text-center bg-white">
-          <thead className="bg-[#05a0db] text-white">
-            <tr>
-              <th className="p-3">SL</th>
-              <th className="p-3">Month</th>
-              <th className="p-3">Spent</th>
-              <th className="p-3">T. Sellery</th>
-              <th className="p-3">Paid</th>
-              <th className="p-3">Unpaid</th>
-              <th className="p-3">Bonus</th>
-              <th className="p-3">Action</th>
+
+      <div style={{ backgroundColor: 'var(--bg-color3)', color: 'var(--text-color)',border: 'var(--border)'}} className="grid my-5 p-5 rounded-lg grid-cols-2 md:grid-cols-2 lg:grid-cols-6 text-black sm:grid-cols-2 gap-5 justify-around ">
+        <div className="px-5 py-10 rounded-2xl  bg-[#91a33a] text-white shadow-lg text-center">
+          <h2 className="text-xl font-bold">Total Spent</h2>
+          <p className="lg:text-xl text-xl font-bold mt-2"> $ {employeeData.reduce((acc, data) => acc + data.totalSpent, 0).toFixed(2)}</p>
+        </div>
+
+        <div className="px-5 py-10 rounded-2xl bg-[#5422c0] text-white shadow-lg text-center">
+          <h2 className="text-xl font-bold">Total Salery</h2>
+          <p className="lg:text-xl text-xl font-bold mt-2">
+             <span className="lg:text-xl text-xl font-extrabold">৳</span> {(employeeData.reduce((acc, data) => acc + data.totalSpent * 7, 0)).toFixed(0)}
+          </p>
+        </div>
+
+        <div className="px-5 py-10 rounded-2xl  bg-[#05a0db] text-white shadow-lg text-center">
+          <h2 className="lg:text-xl text-xl font-bold">Total Paid</h2>
+          <p className="lg:text-xl text-xl font-bold mt-2"> <span className="text-2xl font-extrabold">৳</span>{employeeData.reduce((acc, data) => acc + data.totalSellery, 0).toFixed(0)} </p>
+        </div>
+
+        <div className="px-5 py-10 rounded-2xl  bg-[#ce1a38] text-white shadow-lg text-center">
+          <h2 className="text-xl font-bold">Total Unpaid</h2>
+          <p className="lg:text-xl text-xl font-bold mt-2">
+          <span className="lg:text-xl text-xl font-extrabold">৳</span>  {employeeData.reduce((acc, data) => acc + data.totalSelleryPaid, 0).toFixed(0)}
+          </p>
+        </div>
+        <div className="px-5 py-10 rounded-2xl  bg-[#504491] text-white shadow-lg text-center">
+          <h2 className="text-xl font-bold">Total Due</h2>
+          <p className="lg:text-xl text-xl font-bold mt-2">
+          <span className="lg:text-xl text-xl font-extrabold">৳</span> {employeeData.reduce((acc, data) => acc + parseFloat(data.totalSellery), 0).toFixed(0) - employeeData.reduce((acc, data) => acc + parseFloat(data.totalSelleryPaid), 0).toFixed(0)}
+          </p>
+        </div>
+        <div className="px-5 py-10 rounded-2xl  bg-[#a6d427] text-white shadow-lg text-center">
+          <h2 className="text-xl font-bold">Total Bonus</h2>
+          <p className="lg:text-xl text-xl font-bold mt-2">
+          <span className="lg:text-xl text-xl font-extrabold">৳</span> {employeeData.reduce((acc, data) => acc + data.totalBonus, 0).toFixed(0)}
+          </p>
+        </div>
+      </div>
+
+
+
+      <div className='px-5 pb-5 pt-5 my-5 mt-5  rounded-lg' style={{ backgroundColor: 'var(--bg-color3)', color: 'var(--text-color)',border: 'var(--border)'}}>
+
+     
+
+
+
+<div  className="overflow-x-auto rounded-xl  text-center " style={{ backgroundColor: 'var(--bg-color)', color: 'var(--text-color)'}}>
+    <table className="min-w-full text-center ">
+      <thead className=" ">
+        <tr className="" style={{border: 'var(--border)',borderLeft: 'var(--border)', borderRight: 'var(--border)', color: 'var(--text-color)'}}>
+              <th style={{  border: 'var(--border)'}} className="p-3">SL</th>
+              <th style={{  border: 'var(--border)'}} className="p-3">Month</th>
+              <th style={{  border: 'var(--border)'}} className="p-3">Spent</th>
+              <th style={{  border: 'var(--border)'}} className="p-3">T. Sellery</th>
+              <th style={{  border: 'var(--border)'}} className="p-3">Paid</th>
+              <th style={{  border: 'var(--border)'}} className="p-3">Unpaid</th>
+              <th style={{  border: 'var(--border)'}} className="p-3">Bonus</th>
+              <th style={{  border: 'var(--border)'}} className="p-3">Action</th>
             </tr>
           </thead>
           <tbody>
             {employeeData.map((data, index) => (
-              <tr
-                key={data.month}
-                className={`${
-                  index % 2 === 0
-                    ? "bg-white text-left text-black border-b border-opacity-20"
-                    : "bg-gray-200 text-left text-black border-b border-opacity-20"
-                }`}
-              >
-                <td className="p-3 border-r-2 border-gray-300 text-center px-5">{index + 1}</td>
-                <td onClick={() => handleMonthClick(data)} className="p-3 hover:text-blue-600 cursor-pointer border-r-2 border-gray-300 text-center px-5">
+              <tr style={{ backgroundColor: 'var(--bg-table)', color: 'var(--text-color2)'}}
+              key={data._id}
+              className={`${
+                index % 2 === 0
+                  ? "bg-white text-left text-black border-b border-opacity-20"
+                  : "bg-gray-200  text-left text-black border-b border-opacity-20"
+              }`}
+             >
+                <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-300 text-center px-5">{index + 1}</td>
+                <td style={{  border: 'var(--border)'}} onClick={() => handleMonthClick(data)} className="p-3 hover:text-blue-600 cursor-pointer border-r-2 border-gray-300 text-center px-5">
                   {data.month}
                 </td>
-                <td className="p-3 border-r-2 border-gray-300 text-center">
+                <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-300 text-center">
                   ${data.totalSpent.toFixed(2)}
                 </td>
-                <td className="p-3 border-r-2 border-gray-300 text-center">
+                <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-300 text-center">
                   ৳ {(data.totalSpent * 7).toFixed(2)}
                 </td>
-                <td className="p-3 border-r-2 border-gray-300 text-center">
+                <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-300 text-center">
                   ৳{data.totalSellery.toFixed(2)}
                 </td>
-                <td className="p-3 border-r-2 border-gray-300 text-center">
+                <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-300 text-center">
                   ৳ {data.totalSelleryPaid.toFixed(2)}
                 </td>
-                <td className="p-3 border-r-2 border-gray-300 text-center">
+                <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-300 text-center">
                   ৳ {data.totalBonus.toFixed(2)}
                 </td>
-                <td className="p-3 border-r-2 border-gray-300 text-center">
+                <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-300 text-center">
                   <button
                     className="font-avenir px-2.5 hover:bg-red-700 hover:text-white mx-auto py-0.5 bg-[#05a0db] rounded-lg text-white"
                     onClick={() => handlePayNowClick(data)}
@@ -228,13 +290,33 @@ const EmployeerSellery = () => {
               </tr>
             ))}
           </tbody>
+          <tfoot className=" font-bold ">
+          <tr style={{ backgroundColor: 'var(--bg-color)', color: 'var(--text-color)'}}>
+            <td style={{  border: 'var(--border)'}} className="p-3 text-right" colSpan="2">Total</td>
+            <td style={{  border: 'var(--border)'}} className="p-3">
+              ${employeeData.reduce((acc, data) => acc + data.totalSpent, 0).toFixed(2)}
+            </td>
+            <td style={{  border: 'var(--border)'}} className="p-3">
+              ৳ {(employeeData.reduce((acc, data) => acc + data.totalSpent * 7, 0)).toFixed(2)}
+            </td>
+            <td style={{  border: 'var(--border)'}} className="p-3">
+              ৳ 
+            </td>
+            <td style={{  border: 'var(--border)'}} className="p-3">
+              ৳ {employeeData.reduce((acc, data) => acc + data.totalSelleryPaid, 0).toFixed(2)}
+            </td>
+            <td style={{  border: 'var(--border)'}} className="p-3">
+              ৳ {employeeData.reduce((acc, data) => acc + data.totalBonus, 0).toFixed(2)}
+            </td>
+            <td className="p-3"></td> {/* Empty for Action column */}
+          </tr>
+        </tfoot>
         </table>
       </div>
+      </div>
 
-      {/* Monthly Data Modal */}
       <dialog id="monthlyModal2" className="modal">
   <div className="relative modal-box bg-white text-black">
-    {/* Close Icon for Main Modal (Top-Right) */}
     <button
       onClick={() => document.getElementById('monthlyModal2').close()}
       className="absolute top-2 right-2 bg-transparent text-gray-600 hover:text-black"

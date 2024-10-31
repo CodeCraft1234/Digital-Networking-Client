@@ -102,7 +102,12 @@ const AllUsers = () => {
   };
 
   const getButtonClass = (tab) => 
-    `px-1 py-2 rounded ${activeTab === tab ? ' text-blue-700 font-bold' : ' text-black font-md'}`;
+    `px-3 py-1 lg:px-4 lg:py-2 text-md lg:text-lg rounded-lg transition duration-300 ease-in-out ${
+        activeTab === tab 
+            ? 'bg-blue-600 font-bold text-white shadow-lg transform scale-105'  // Active tab styles
+            : 'bg-red-600  text-white hover:bg-gray-700 hover:shadow-md' // Inactive tab styles
+    }`;
+  
 
   const [clients] = useClients();
   const [adsPayment] = useAdsPayment();
@@ -149,15 +154,23 @@ const AllUsers = () => {
         })
     };
 
+
   return (
-    <div className="my-5 mx-5 dark:text-green-800">
+    <div className="my-5 mx-5 ">
       <Helmet>
         <title>All Users | Digital Network</title>
         <link rel="canonical" href="https://www.example.com/" />
       </Helmet>
 
-      <div className="flex justify-between items-center">
-  <div  className="grid grid-cols-2 gap-4 my-5 lg:flex lg:justify-start lg:items-center lg:gap-1 lg:my-5 lg:mx-5">
+    
+
+
+
+      {activeTab === 'clientPay' && <EmployeeClientPay email={user?.email} />}
+
+      <div style={{ backgroundColor: 'var(--bg-color3)', color: 'var(--text-color)',border: 'var(--border)'}}  className="p-5  rounded-lg">
+      <div  className="flex justify-start rounded-lg items-center">
+  <div className="flex justify-start  gap-3 mb-5 ">
     <button 
       className={getButtonClass('all')}
       onClick={() => changeTab('all')}
@@ -200,25 +213,12 @@ const AllUsers = () => {
     >
       Users ({employees7.length})
     </button>
-   
   </div>
-  <Link to={'/dashboard/addEmployee'} 
-      className="flex justify-end items-center"
-      onClick={() => changeTab('client')}
-    >
-      <span ><IoIosAddCircle /></span><span >Add User</span>
-    </Link>
 </div>
-
-
-
-      {activeTab === 'clientPay' && <EmployeeClientPay email={user?.email} />}
-
-      <div className="text-black">
-        <div className="overflow-x-auto rounded-xl">
-          <table className="min-w-full bg-white">
-            <thead className="bg-[#05a0db] text-white">
-              <tr>
+      <div  className="overflow-x-auto rounded-xl  text-center " style={{ backgroundColor: 'var(--bg-color)', color: 'var(--text-color)'}}>
+          <table className="min-w-full text-center ">
+            <thead className=" ">
+              <tr className="" style={{border: 'var(--border)',borderLeft: 'var(--border)', borderRight: 'var(--border)', color: 'var(--text-color)'}}>
                 <th className="p-3 text-center">Sl</th>
                 <th className="p-3 text-center">Profile</th>
                 <th className="p-3 text-center">Name</th>
@@ -236,25 +236,25 @@ const AllUsers = () => {
             </thead>
             <tbody>
               {employees.map((user, index) => (
-                <tr
-                  key={user._id}
-                  className={`${
-                    index % 2 === 0
-                      ? "bg-white text-black border-b border-opacity-20"
-                      : "bg-gray-200 text-black border-b border-opacity-20"
-                  }`}
-                >
-                  <td className="p-3 border-l-2 border-r-2 border-gray-300 text-center">
+                 <tr style={{ backgroundColor: 'var(--bg-table)', color: 'var(--text-color2)'}}
+                 key={user._id}
+                 className={`${
+                   index % 2 === 0
+                     ? "bg-white text-left text-black border-b border-opacity-20"
+                     : "bg-gray-200  text-left text-black border-b border-opacity-20"
+                 }`}
+               >
+                  <td style={{  border: 'var(--border)'}} className="p-3 border-l-2 border-r-2 border-gray-300 text-center">
                     {index + 1}
                   </td>
-                  <td className="p-3 border-r-2 border-gray-300 text-center">
+                  <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-300 text-center">
                     <img
                       className="h-16 w-16 flex justify-center items-center mx-auto rounded-full"
                       src={user.photo}
                       alt=""
                     />
                   </td>
-                  <td className="p-3 hover:text-indigo-700 hover:font-bold border-r-2 border-gray-300 text-start">
+                  <td style={{  border: 'var(--border)'}} className="p-3 hover:text-indigo-700 hover:font-bold border-r-2 border-gray-300 text-start">
                     {
                       user.role === 'contributor' ? <Link to={`/dashboard/adsuserInfo/${user?.email}`}>
                       {user.name}
@@ -263,15 +263,15 @@ const AllUsers = () => {
                       </Link>
                     }
                   </td>
-                  <td className="p-3 border-r-2 border-gray-300 text-center">
+                  <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-300 text-center">
                     {user.contactNumber}
                   </td>
-                  <td className="p-3 border-r-2 border-gray-300 text-center">
+                  <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-300 text-center">
                     {user.email}
                   </td>
 
                                  {activeTab === 'contributor' && (
- <td className="p-3 border-r-2 border-gray-300 text-center">
+ <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-300 text-center">
   <span className="mr-1 text-xl font-bold">৳</span> 
  {
     (
@@ -297,15 +297,16 @@ const AllUsers = () => {
 
 
                   {activeTab === 'employee' && (
-                       <td className="p-3 border-r-2 hover:text-blue-700 hover:font-bold border-gray-300 text-center">  <Link to={`/dashboard/allEmployeeClients/${user?.email}`}>
+                       <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 hover:text-blue-700 hover:font-bold border-gray-300 text-center">  <Link to={`/dashboard/allEmployeeClients/${user?.email}`}>
                        {clients.filter(c => c.employeeEmail === user.email).length}
                        </Link></td>
                      )}
 
                  
                  
-                  <td className="p-3 border-r-2 border-gray-300 text-center">
+                  <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-300 text-center">
                     <select
+                     style={{ backgroundColor: 'var(--bg-color2)',border: 'var(--border)', color: 'var(--text-color2)'}}
                       className="p-2 bg-gray-100 border border-gray-300 rounded"
                       value={user.role}
                       onChange={(e) => handleRoleChange(user._id, e.target.value)}
@@ -318,7 +319,7 @@ const AllUsers = () => {
                       <option value="client">Client</option>
                     </select>
                   </td>
-                  <td className="p-3 text-center border-r-2 border-gray-300">
+                  <td style={{  border: 'var(--border)'}} className="p-3 text-center border-r-2 border-gray-300">
                   <button
                         className="bg-green-700 mr-3 hover:bg-blue-700 text-white px-2 py-1 rounded"
                         onClick={() =>
@@ -381,7 +382,7 @@ const AllUsers = () => {
             </tbody>
             {activeTab === 'employee' && (
   <tfoot>
-    <tr className="bg-[#05a0db] text-white py-5">
+    <tr style={{ backgroundColor: 'var(--bg-color)', color: 'var(--text-color)'}} className="  py-5">
       <td
         colSpan={5}
         className="text-right py-3 text-white font-bold"
@@ -402,7 +403,7 @@ const AllUsers = () => {
 )}
 
 {activeTab === 'contributor' && (
-  <tfoot className="bg-[#05a0db] text-white">
+  <tfoot  style={{border: 'var(--border)',borderLeft: 'var(--border)', borderRight: 'var(--border)', color: 'var(--text-color)'}} className="">
     <tr>
       <td colSpan="5" className="p-3 text-right">
         Total: 
@@ -416,7 +417,7 @@ const AllUsers = () => {
 
 {activeTab !== 'employee' && activeTab !== 'contributor' && (
   <tfoot>
-    <tr className="bg-[#05a0db] text-white py-5">
+    <tr  style={{border: 'var(--border)',borderLeft: 'var(--border)', borderRight: 'var(--border)', color: 'var(--text-color)'}} className=" py-5">
       <td
         colSpan={5}
         className="text-right py-3 text-white font-bold"

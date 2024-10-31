@@ -57,6 +57,14 @@ import AdsAccount from "./Pages/Home/AdsAccount";
 import MyPayments from "./Pages/Home/MyPayments";
 import Notification from "./Pages/DashboardRoot/Notification";
 import BankInfo from "./Pages/Home/BankInfo";
+import ClientHome from "./Pages/Home/ClientHome";
+import ClientCampaign2 from "./Pages/Home/ClientCampaign2";
+import ClientPaymentHistry2 from "./Pages/Home/ClientPaymentHistry2";
+import Payoneer from "./Pages/DashboardRoot/Payoneer";
+import ContriHistory from "./Pages/DashboardRoot/ContriHistory";
+import ContriSummery from "./Pages/DashboardRoot/ContriSummery";
+import ClientHistory from "./Pages/DashboardRoot/ClientHistory";
+
 
 const router = createBrowserRouter([
   {
@@ -130,6 +138,14 @@ const router = createBrowserRouter([
         element:<AdsPayments></AdsPayments>
        },
        {
+        path:'/dashboard/contributorSummery',
+        element:<ContriSummery></ContriSummery>
+       },
+       {
+        path:'/dashboard/contributorHistory',
+        element:<ContriHistory></ContriHistory>
+       },
+       {
         path:'/dashboard/notification',
         element:<Notification></Notification>
        },
@@ -184,6 +200,18 @@ const router = createBrowserRouter([
       {
         path:'dashboard/allUsers',
         element:<AllUsers></AllUsers>
+      },
+      {
+        path:'dashboard',
+        element:<ClientHome></ClientHome>
+      },
+      {
+        path:'dashboard/clientCampaigns',
+        element:<ClientCampaign2></ClientCampaign2>
+      },
+      {
+        path:'dashboard/paymentsClient',
+        element:<ClientPaymentHistry2></ClientPaymentHistry2>
       },
       {
         path:'dashboard/AddClients',
@@ -252,6 +280,18 @@ const router = createBrowserRouter([
        {
         path:'dashboard/myPayments',
         element:<MyPayments></MyPayments>
+       },
+       {
+        path:'dashboard/payoneer',
+        element:<Payoneer></Payoneer>
+       },
+       {
+        path:'dashboard/notification',
+        element:<Notification></Notification>
+       },
+       {
+        path:'dashboard/clientHistory',
+        element:<ClientHistory></ClientHistory>
        },
        {
         path:'dashboard/employeeMonthlySelary',

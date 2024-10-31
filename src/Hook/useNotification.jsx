@@ -10,7 +10,6 @@ const useNotification = () => {
             return res.data
         }
     })
-        console.log(notification)
         return [notification,refetch]
 };
 export default useNotification;

@@ -226,15 +226,15 @@ useEffect(() => {
 
   return (
 
-    <div className=" ">  
+    <div className="m-5 ">  
 
       <Helmet>
         <title> Dashboard | Digital Network</title>
         <link rel="canonical" href="https://www.tacobell.com/" />
       </Helmet>
 
-
-    <div className="grid grid-cols-2 md:grid-cols-1  items-center sm:grid-cols-2   lg:grid-cols-6 lg:gap-5 gap-3  p-5">
+<div className="rounded-lg" style={{ backgroundColor: 'var(--bg-color3)', color: 'var(--text-color)',border: 'var(--border)'}}>
+<div  className="grid grid-cols-2  md:grid-cols-1  items-center sm:grid-cols-2   lg:grid-cols-6 lg:gap-5 gap-3  p-5">
    <div className="balance-card bg-white rounded-2xl shadow-2xl p-5 text-center  transition-transform transform hover:scale-105 border-0">
      <img className="balance-card-img" src="https://i.ibb.co/bHMLyvM/b-Kash-Merchant.png" alt="bKash" />
 
@@ -310,10 +310,7 @@ useEffect(() => {
         </div>
       )}
     </div>
-    {/* <div className="balance-card bg-white rounded-2xl shadow-2xl p-5 text-center transition-transform transform hover:scale-105 border-0">
-     <h1 className="text-xl font-bold text-black py-4">Total BDT</h1>
-     <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"><span className="text-lg lg:text-2xl font-extrabold"> ৳</span> {bankTotal - bankTotal2 || 0}</p>
-   </div> */}
+
   
 
      </div>
@@ -332,6 +329,8 @@ useEffect(() => {
      <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"><span className="text-lg lg:text-2xl font-extrabold"> ৳</span> {bankTotal - bankTotal2}</p>
    </div>
      </div>
+</div>
+    
      <ToastContainer />
     </div>
   );

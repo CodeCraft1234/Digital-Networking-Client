@@ -7,7 +7,7 @@ const EmployeeAdAccount = () => {
   console.log(useradAdd);
 
   return (
-    <div className="mt-44">
+    <div className="mt-5">
       <h6 className="text-center text-green-600 dark:text-green-600 font-bold text-4xl">
         Employee Ad Account
       </h6>

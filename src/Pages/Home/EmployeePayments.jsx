@@ -71,7 +71,33 @@ const EmployeePayments = () => {
   }, [
     sortMonth,
     selectedDate,
-    selectedCategory, // Ensure this is updated when selecting a category
+    selectedCategory, 
+    employeePayment,
+    selectedStatus2,
+    selectedEmployee,
+    selectedYear,
+  ]);
+
+  const [filteredData2,setFilteredData2]=useState([])
+
+  useEffect(() => {
+    const filtered = employeePayment?.filter((payment) => {
+      const paymentDate = new Date(payment.date);
+      const selectedDateObject = selectedDate ? new Date(selectedDate) : null;
+  
+      return (
+        (!selectedEmployee || payment.employeeEmail === selectedEmployee) &&
+        (selectedStatus2 === 'All' || payment.status === selectedStatus2) &&
+        (!sortMonth || paymentDate.getMonth() + 1 === parseInt(sortMonth)) &&
+        (!selectedDateObject || paymentDate.toDateString() === selectedDateObject.toDateString()) &&
+        (!selectedYear || paymentDate.getFullYear() === parseInt(selectedYear))
+      );
+    });
+  
+    setFilteredData2(filtered);
+  }, [
+    sortMonth,
+    selectedDate,
     employeePayment,
     selectedStatus2,
     selectedEmployee,
@@ -85,27 +111,27 @@ const EmployeePayments = () => {
   const [bankTotal, setBankTotal] = useState(0);
 
   useEffect(() => {
-    const filtered = filteredData; 
-    const filter2 = filtered.filter(d => d.paymentMethod === 'bkashMarchent');
-    const total = filter2.reduce((acc, datas) => acc + parseFloat(datas.payAmount), 0);
+    const filtered = filteredData2 || 0; 
+    const filter2 = filtered?.filter(d => d.paymentMethod === 'bkashMarchent');
+    const total = filter2?.reduce((acc, datas) => acc + parseFloat(datas.payAmount), 0);
     setBkashMarcentTotal(total);
 
-    const filter3 = filtered.filter(d => d.paymentMethod === 'nagadPersonal');
-    const total3 = filter3.reduce((acc, datas) => acc + parseFloat(datas.payAmount), 0);
+    const filter3 = filtered?.filter(d => d.paymentMethod === 'nagadPersonal');
+    const total3 = filter3?.reduce((acc, datas) => acc + parseFloat(datas.payAmount), 0);
     setNagadPersonalTotal(total3);
 
-    const filter4 = filtered.filter(d => d.paymentMethod === 'bkashPersonal');
-    const total4 = filter4.reduce((acc, datas) => acc + parseFloat(datas.payAmount), 0);
+    const filter4 = filtered?.filter(d => d.paymentMethod === 'bkashPersonal');
+    const total4 = filter4?.reduce((acc, datas) => acc + parseFloat(datas.payAmount), 0);
     setBkashPersonalTotal(total4);
 
-    const filter5 = filtered.filter(d => d.paymentMethod === 'rocketPersonal');
-    const total5 = filter5.reduce((acc, datas) => acc + parseFloat(datas.payAmount), 0);
+    const filter5 = filtered?.filter(d => d.paymentMethod === 'rocketPersonal');
+    const total5 = filter5?.reduce((acc, datas) => acc + parseFloat(datas.payAmount), 0);
     setRocketPersonalTotal(total5);
 
-    const filter6 = filtered.filter(d => d.paymentMethod === 'bank');
-    const total6 = filter6.reduce((acc, datas) => acc + parseFloat(datas.payAmount), 0);
+    const filter6 = filtered?.filter(d => d.paymentMethod === 'bank');
+    const total6 = filter6?.reduce((acc, datas) => acc + parseFloat(datas.payAmount), 0);
     setBankTotal(total6);
-  }, [filteredData]);
+  }, [filteredData2]);
 
     // Open and close modal for payment editing
     const handleEditClick = (payment) => {
@@ -179,50 +205,68 @@ const EmployeePayments = () => {
     };
 
   return (
-    <div className="">
+    <div className="m-5">
       <Helmet>
         <title>Employee Payments | Digital Network </title>
         <link rel="canonical" href="https://www.example.com/" />
       </Helmet>
 
-      <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-3 lg:gap-5  lg:grid-cols-6  px-5">
-   <div  onClick={() => setSelectedCategory('bkashMarchent')} className="balance-card bg-white rounded-2xl shadow-lg p-5 text-center  transition-transform transform hover:scale-105 border-0">
-     <img className="balance-card-img" src="https://i.ibb.co/bHMLyvM/b-Kash-Merchant.png" alt="bKash" />
-     <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"> <span className="text-lg lg:text-2xl font-extrabold"> ৳</span> {bkashMarcent}</p>
-    
-   </div>
-   <div onClick={() => setSelectedCategory('bkashPersonal')} className="balance-card bg-white rounded-2xl shadow-lg p-5 text-center transition-transform transform hover:scale-105 border-0">
-     <img className="balance-card-img" src="https://i.ibb.co/520Py6s/bkash-1.png" alt="bKash" />
-     <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"> <span className="text-lg lg:text-2xl font-extrabold"> ৳</span> {bkashPersonal}</p>
-   </div>
+      <div style={{ backgroundColor: 'var(--bg-color3)', color: 'var(--text-color)', border: 'var(--border)' }} className="grid grid-cols-2 p-5 rounded-lg sm:grid-cols-2 md:grid-cols-3 gap-3 lg:gap-5 lg:grid-cols-6 px-5">
+  {[
+    { category: 'bkashMarchent', img: 'https://i.ibb.co/bHMLyvM/b-Kash-Merchant.png', amount: bkashMarcent, bgColor: '#f7e8e8',charge: filteredData2?.filter(d => d.paymentMethod === 'bkashMarchent')?.reduce((acc, datas) => acc + parseFloat(datas.charge || 0), 0) },
 
-   <div onClick={() => setSelectedCategory('nagadPersonal')} className="balance-card bg-white rounded-2xl shadow-lg p-5 text-center transition-transform transform hover:scale-105 border-0">
-     <img className="balance-card-img" src="https://i.ibb.co/JQBQBcF/nagad-marchant.png" alt="Nagad" />
-     <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"><span className="text-lg lg:text-2xl font-extrabold"> ৳</span> {nagadPersonal}</p>
-   </div>
+    { category: 'bkashPersonal', img: 'https://i.ibb.co/520Py6s/bkash-1.png', amount: bkashPersonal, bgColor: '#ffe6f7',charge: filteredData2?.filter(d => d.paymentMethod === 'bkashPersonal')?.reduce((acc, datas) => acc + parseFloat(datas.charge || 0), 0) },
 
-   <div onClick={() => setSelectedCategory('rocketPersonal')} className="balance-card bg-white rounded-2xl shadow-lg p-5 text-center transition-transform transform hover:scale-105 border-0">
-     <img className="balance-card-img" src="https://i.ibb.co/QkTM4M3/rocket.png" alt="Rocket" />
-     <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"><span className="text-lg lg:text-2xl font-extrabold"> ৳</span> {rocketPersonal}</p>
-   </div>
+    { category: 'nagadPersonal', img: 'https://i.ibb.co/JQBQBcF/nagad-marchant.png', amount: nagadPersonal, bgColor: '#fff2cc',charge: filteredData2?.filter(d => d.paymentMethod === 'nagadPersonal')?.reduce((acc, datas) => acc + parseFloat(datas.charge || 0), 0) },
 
-   <div onClick={() => setSelectedCategory('bank')} className="balance-card bg-white rounded-2xl shadow-lg p-5  text-center transition-transform transform hover:scale-105 border-0">
-     <img className="balance-card-img  " src="https://i.ibb.co/PZc0P4w/brac-bank-seeklogo.png" alt="Rocket" />
-     <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"><span className="text-lg lg:text-2xl font-extrabold"> ৳</span> { bankTotal }</p>
-   </div>
+    { category: 'rocketPersonal', img: 'https://i.ibb.co/QkTM4M3/rocket.png', amount: rocketPersonal, bgColor: '#e0f7fa',charge: filteredData2?.filter(d => d.paymentMethod === 'rocketPersonal')?.reduce((acc, datas) => acc + parseFloat(datas.charge || 0), 0) },
 
-   <div onClick={() => setSelectedCategory('All')} className="balance-card bg-white rounded-2xl shadow-lg p-5 text-center transition-transform transform hover:scale-105 border-0">
-     <h1 className="text-3xl font-bold text-black">Total BDT</h1>
-     <p className="balance-card-text text-lg lg:text-2xl mt-8 font-bold text-gray-700"><span className="text-lg lg:text-2xl font-extrabold"> ৳</span> {bkashPersonal + bkashMarcent + nagadPersonal + rocketPersonal + bankTotal}</p>
-   </div>
-     </div>
+    { category: 'bank', img: 'https://i.ibb.co/PZc0P4w/brac-bank-seeklogo.png', amount: bankTotal, bgColor: '#f2f2f2',charge: filteredData2?.filter(d => d.paymentMethod === 'bank')?.reduce((acc, datas) => acc + parseFloat(datas.charge || 0), 0) }
+
+  ].map(({ category, img, amount,charge, bgColor }) => (
+    <div style={{ backgroundColor: bgColor, border: 'var(--border)' }} key={category} onClick={() => setSelectedCategory(category)} className="balance-card bg-white rounded-2xl shadow-lg p-5 text-center transition-transform transform hover:scale-105 border-0">
+      <img className="balance-card-img" src={img} alt={category} />
+      <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700">
+        <span className="text-lg lg:text-xl font-extrabold">৳</span> {new Intl.NumberFormat('en-IN').format(amount)}
+      </p>
+
+      <p className="balance-card-text text-lg lg:text-xl font-bold text-red-700">
+        <span className="text-lg lg:text-2xl font-extrabold">৳</span> {new Intl.NumberFormat('en-IN').format(charge)}
+      </p>
+    </div>
+  ))}
+
+  <div style={{ backgroundColor: '#d9f8d9', border: 'var(--border)' }} onClick={() => setSelectedCategory('All')} className="balance-card bg-white pt-3 rounded-2xl shadow-lg p-5 text-center transition-transform transform hover:scale-105 border-0">
+    <h1 className="text-xl lg:text-3xl mt-3 font-bold text-black">
+      Total
+    </h1>
+    <h1 className="text-lg lg:text-2xl mt-7 text-black font-bold">
+    <span className="text-lg lg:text-xl font-extrabold">৳ </span> 
+      {new Intl.NumberFormat('en-IN').format(
+        Number(bkashPersonal) + Number(bkashMarcent) + Number(nagadPersonal) + Number(rocketPersonal) + Number(bankTotal)
+      )}
+    </h1>
+    <h1 className="text-lg mt-1 lg:text-xl text-red-700 font-extrabold">
+     <span >৳ </span> 
+      {new Intl.NumberFormat('en-IN').format(
+        displayedItems.reduce((acc, item) => acc + (isNaN(parseFloat(item?.charge)) ? 0 : parseFloat(item?.charge)), 0)
+      )}
+    </h1>
+   
+  </div>
+</div>
+
+
+
+     <div className='  my-5 mt-5 rounded-lg' style={{ backgroundColor: 'var(--bg-color3)', color: 'var(--text-color)',border: 'var(--border)'}}>
 
       <div className="lg:flex text-black lg:justify-start my-3 lg:my-0 lg:ml-5  items-center">
-        <div className="flex justify-center items-center lg:mr-5 ">
+        <div className="flex justify-center items-center lg:mr-3 ">
 
 
         <div className="flex  justify-center text-center items-center">
          <select
+          style={{ backgroundColor: 'var(--bg-color2)',border: 'var(--border)', color: 'var(--text-color2)'}}
            className="border bg-white w-full     text-black border-gray-400 rounded p-2 mt-1 "
            value={selectedEmployee}
            onChange={(e) => changeTab2(e.target.value)}
@@ -237,9 +281,10 @@ const EmployeePayments = () => {
        </div>
       
         </div>
-        <div className="flex mt-2 lg:mt-0 justify-center text-center gap-2 lg:gap-5 items-center">
+        <div className="flex mt-2 lg:mt-0 justify-center text-center gap-2 lg:gap-3 items-center">
         <div className="flex  justify-center text-center items-center">
          <select
+          style={{ backgroundColor: 'var(--bg-color2)',border: 'var(--border)', color: 'var(--text-color2)'}}
            className="border bg-white w-full     text-black border-gray-400 rounded p-2 mt-1 "
            value={selectedStatus2}
            onChange={(e) => changeTab3(e.target.value)}
@@ -252,6 +297,7 @@ const EmployeePayments = () => {
        </div>
           <div className="flex lg:mt-1 justify-center text-center items-center">
             <select
+             style={{ backgroundColor: 'var(--bg-color2)',border: 'var(--border)', color: 'var(--text-color2)'}}
               className="border bg-white w-full  mt-1  lg:my-5  text-black border-gray-400 rounded p-2 "
               value={sortMonth}
               onChange={(e) => changeTab(e.target.value)}
@@ -279,6 +325,7 @@ const EmployeePayments = () => {
           </div>
           <div className=" lg:flex text-black justify-center items-center">
         <select
+         style={{ backgroundColor: 'var(--bg-color2)',border: 'var(--border)', color: 'var(--text-color2)'}}
           className="border bg-white text-black border-gray-400 rounded p-2 mt-1"
           value={selectedYear}
           onChange={(e) => setSelectedYear(e.target.value)}
@@ -294,14 +341,15 @@ const EmployeePayments = () => {
       
       </div>
 
-      <div className="overflow-x-auto  text-black rounded-xl border border-gray-400 mx-5">
-        <table className="min-w-full bg-white">
-          <thead className="bg-[#05a0db] text-white">
-            <tr>
+      <div className="overflow-x-auto rounded-xl mx-5 mb-5 text-center " >
+          <table className="min-w-full text-center ">
+            <thead style={{ backgroundColor: 'var(--bg-color)', color: 'var(--text-color)'}}  className=" ">
+              <tr className="" style={{border: 'var(--border)',borderLeft: 'var(--border)', borderRight: 'var(--border)', color: 'var(--text-color)'}}>
               <th className="p-3"><span   >OFF</span> / <span >ON</span></th>
               <th className="p-3">Date</th>
               <th className="p-3">Employee Name</th>
               <th className="p-3">Amount</th>
+              <th className="p-3">Charge</th>
               <th className="p-3">Payment Method</th>
               <th className="p-3">Note</th>
               <th className="p-3">Status</th>
@@ -309,12 +357,16 @@ const EmployeePayments = () => {
             </tr>
           </thead>
           <tbody>
-            {displayedItems.map((payment, index) => (
-              <tr
-                key={index}
-                className={index % 2 === 0 ? "bg-gray-100" : "bg-white"}
-              >
-                 <td className="p-3 border-r-2 border-l-2 border-gray-200 text-center">  <label className="inline-flex items-center cursor-pointer">
+            {displayedItems.sort((a, b) => new Date(b.date) - new Date(a.date))?.map((payment, index) => (
+              <tr style={{ backgroundColor: 'var(--bg-table)', color: 'var(--text-color2)'}}
+              key={payment._id}
+              className={`${
+                index % 2 === 0
+                  ? "bg-white text-left text-black border-b border-opacity-20"
+                  : "bg-gray-200  text-left text-black border-b border-opacity-20"
+              }`}
+            >
+                 <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-l-2 border-gray-200 text-center">  <label className="inline-flex items-center cursor-pointer">
   <input
     type="checkbox"
     className="sr-only"
@@ -337,20 +389,23 @@ const EmployeePayments = () => {
   </div>
 </label>
 </td>
-                <td className="p-3 border-r-2 border-gray-200 text-center">
+                <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-200 text-center">
                 {new Date(payment.date).toLocaleDateString("en-GB")}
                 </td>
                
-                <td className="p-3 border-r-2 hover:text-blue-700 hover:font-bold text-start border-gray-200 ">
+                <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 hover:text-blue-700 hover:font-bold text-start border-gray-200 ">
                   <Link to={`/dashboard/userInfo/${payment?.employeeEmail}`}>
                   {payment.employeeName}
                   </Link>
                   
                 </td>
-                <td className="p-3 border-r-2 border-gray-200 text-center">
+                <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-200 text-center">
                   ৳ {payment.payAmount}
                 </td>
-                <td className="p-3 border-r-2 border-gray-200 text-center">
+                <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-200 text-center">
+                  ৳ {payment.charge || 0}
+                </td>
+                <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-200 text-center">
                   {payment.paymentMethod === "bkashMarchent" && (
                     <img
                       className="h-10 w-24 flex mx-auto my-auto items-center justify-center"
@@ -388,11 +443,11 @@ const EmployeePayments = () => {
                   )}
                 </td>
 
-                <td className="p-3 border-r-2 border-gray-200 text-center">
+                <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-200 text-center">
                   {payment.note}
                 </td>
 
-                <td className="p-3 border-r-2 border-gray-200 text-center">
+                <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-200 text-center">
                 {payment.status === 'pending' ? (
     <button
       className=" text-blue-700 font-bold px-2 py-1 rounded"
@@ -409,7 +464,8 @@ const EmployeePayments = () => {
   )}
                 </td>
 
-                <td className="p-3 border-r-2 flex justify-center gap-3 items-center border-gray-200 text-center">
+                <td style={{  border: 'var(--border)'}} className="p-3 border-r-2  items-center border-gray-200 text-center">
+                <div className="flex justify-center gap-3">
                 <button
                           className="bg-green-700 text-white px-2 py-1 rounded"
                           onClick={() => handleEditClick(payment)}
@@ -422,14 +478,21 @@ const EmployeePayments = () => {
                         >
                           Delete
                         </button>
+                </div>
                 </td>
               </tr>
             ))}
- <tr className="bg-[#05a0db] text-white font-bold">
+         <tr style={{ backgroundColor: 'var(--bg-color)', color: 'var(--text-color)'}} className=" font-bold">
               <td className="p-3 text-right" colSpan="3">
                 Total Amount :
               </td>
               <td className="p-3 text-center">৳ {bkashPersonal + bkashMarcent + nagadPersonal + rocketPersonal + bankTotal}</td>
+              <td className="p-3 text-center">৳ {displayedItems.reduce((acc, item) => {
+    const charge = parseFloat(item?.charge);
+    return acc + (isNaN(charge) ? 0 : charge); 
+  }, 0)}
+</td>
+
               <td className="p-3 text-center"></td>
               <td className="p-3 text-center"></td>
               <td className="p-3 text-center"></td>
@@ -437,6 +500,7 @@ const EmployeePayments = () => {
             </tr>
           </tbody>
         </table>
+      </div>
       </div>
      
       {isModalOpen && selectedPayment && (

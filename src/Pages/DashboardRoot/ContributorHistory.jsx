@@ -4,7 +4,7 @@ import UseAxiosPublic from '../../Axios/UseAxiosPublic';
 import Swal from 'sweetalert2';
 import { Link } from 'react-router-dom';
 
-const ContributorHistory = () => {
+const ContributorHistory = ({email}) => {
   const [users,refetch] = useUsers(); 
   const currentDate = new Date();
   const currentMonth = currentDate.toLocaleString('default', { month: 'long' });
@@ -31,7 +31,7 @@ const ContributorHistory = () => {
   
 
   // Flatten the monthlySpent data across all users
-  const flattenedData = users.filter(u=>u.role === 'contributor').reduce((acc, user) => {
+  const flattenedData = users.filter(u=>u.role === 'contributor')?.filter(u=>u?.email === email).reduce((acc, user) => {
     if (user.monthlySpent) {
       const userSpentData = user.monthlySpent.map(spent => ({
         ...spent,
@@ -108,26 +108,17 @@ const ContributorHistory = () => {
   };
 
   return (
-    <div className='mx-5 my-5'>
-      <div className="lg:flex lg:justify-end items-center gap-3 mb-5">
-        <div className='flex justify-center items-center'>
-          <select
-            className="px-4 py-2 border rounded bg-white text-black border-black"
-            onChange={(e) => changeTab(e.target.value)}
-            value={sortEmployee || ""}
-          >
-            <option value="">Select Employee</option>
-            {users.map(user => (
-              user.role === 'employee' && (
-                <option key={user._id} value={user.name}>{user.name}</option>
-              )
-            ))}
-          </select>
-        </div>
+    <div className=' my-5'>
+
+      <div style={{ backgroundColor: 'var(--bg-color3)', color: 'var(--text-color)',border: 'var(--border)'}} className=" rounded-lg p-5 ">
+
+      <div className="lg:flex lg:justify-start items-center gap-3 mb-5">
       
+
         <div className='flex justify-center mt-5 lg:mt-0 gap-5 items-center'>
         <div>
          <select
+          style={{ backgroundColor: 'var(--bg-color2)',border: 'var(--border)', color: 'var(--text-color2)'}}
             className=" px-4 py-2 border rounded bg-white text-black border-black"
             onChange={(e) => changeTab2(e.target.value)}
             value={sortMonth || ""}
@@ -138,8 +129,10 @@ const ContributorHistory = () => {
             ))}
           </select>
           </div>
-         <div>
-         <select
+         
+        </div>
+        <select
+         style={{ backgroundColor: 'var(--bg-color2)',border: 'var(--border)', color: 'var(--text-color2)'}}
             className="px-4 py-2 border rounded bg-white text-black border-black"
             onChange={(e) => setSortYear(e.target.value)}
             value={sortYear || ""}
@@ -149,36 +142,34 @@ const ContributorHistory = () => {
               <option key={year} value={year}>{year}</option>
             ))}
           </select>
-         </div>
-        </div>
       </div>
 
-      <div className="overflow-x-auto text-center rounded-xl border-l border-gray-400">
-        <table className="min-w-full text-center bg-white">
-          <thead className="bg-[#05a0db] text-white">
-            <tr>
-              <th className="p-3">SL</th>
-              <th className="p-3">Employee Name</th>
-              <th className="p-3">Month</th>
-              <th className="p-3">Ad Account Name</th>
-              <th className="p-3">Total Spent</th>
-              <th className="p-3">Total Bill</th>
-              <th className="p-3">Action</th>
+      <div  className="overflow-x-auto rounded-xl  text-center " style={{ backgroundColor: 'var(--bg-color)', color: 'var(--text-color)'}}>
+          <table className="min-w-full text-center ">
+            <thead className=" ">
+              <tr className="" style={{border: 'var(--border)',borderLeft: 'var(--border)', borderRight: 'var(--border)', color: 'var(--text-color)'}}>
+              <th style={{  border: 'var(--border)'}} className="p-3">SL</th>
+              <th style={{  border: 'var(--border)'}} className="p-3">Employee Name</th>
+              <th style={{  border: 'var(--border)'}} className="p-3">Month</th>
+              <th style={{  border: 'var(--border)'}} className="p-3">Ad Account Name</th>
+              <th style={{  border: 'var(--border)'}} className="p-3">Total Spent</th>
+              <th style={{  border: 'var(--border)'}} className="p-3">Total Bill</th>
+              <th style={{  border: 'var(--border)'}} className="p-3">Action</th>
             </tr>
           </thead>
           <tbody>
             {sortedAccounts.map((account, index) => (
-              <tr
-                key={account.ids} // Use `ids` as the key
-                className={`${
-                  index % 2 === 0
-                    ? "bg-white text-left text-black border-b border-opacity-20"
-                    : "bg-gray-200 text-left text-black border-b border-opacity-20"
-                }`}
-              >
-                <td className="p-3 border-r-2 border-gray-300 text-center px-5">{index + 1}</td>
+              <tr style={{ backgroundColor: 'var(--bg-table)', color: 'var(--text-color2)'}}
+              key={account._id}
+              className={`${
+                index % 2 === 0
+                  ? "bg-white text-left text-black border-b border-opacity-20"
+                  : "bg-gray-200  text-left text-black border-b border-opacity-20"
+              }`}
+            >
+                <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-300 text-center px-5">{index + 1}</td>
 
-                <td className="p-3 border-r-2 text-black font-semibold hover:text-blue-700 hover:font-bold border-gray-300 text-start px-5">
+                <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 font-semibold hover:text-blue-700 hover:font-bold border-gray-300 text-start px-5">
   <Link to={`/dashboard/userInfo/${account?.employeeEmail}`} className="flex items-center">
     {
       // Find the user based on their email
@@ -195,21 +186,21 @@ const ContributorHistory = () => {
 </td>
 
 
-                <td className="p-3 border-l-2 border-r-2 text-center border-gray-300">
+                <td style={{  border: 'var(--border)'}} className="p-3 border-l-2 border-r-2 text-center border-gray-300">
                   {new Date(account.date).toLocaleString('default', { month: 'long'})}
                 </td>
               
-                <td className="p-3 border-r-2 border-gray-300 text-start px-5">
+                <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-300 text-start px-5">
                   {account.accountName}
                 </td>
-                <td className="p-3 border-r-2 border-gray-300 text-center">
+                <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-300 text-center">
   $ {account.totalSpentt.toFixed(2)}
 </td>
-<td className="p-3 border-r-2 border-gray-300 text-center">
+<td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-300 text-center">
   ৳ {(account.totalSpentt * parseInt(account?.dollerRate)).toFixed(2)}
 </td>
 
-                <td className="p-3 border-r text-center border-gray-400">
+                <td style={{  border: 'var(--border)'}} className="p-3 border-r text-center border-gray-400">
                   <div className="flex justify-center items-center gap-3">
                     <div>
                       <button
@@ -274,21 +265,25 @@ const ContributorHistory = () => {
             ))}
           </tbody>
 
-          <tfoot className="bg-[#05a0db] border-t border-gray-700 text-white">
-  <tr>
-    <td colSpan="4" className="p-3 font-bold text-right">Total</td>
-    <td className="p-3 font-bold text-center">
+          <tfoot className="  text-white">
+
+  <tr style={{ backgroundColor: 'var(--bg-color)', color: 'var(--text-color)' }}>
+    <td style={{  border: 'var(--border)'}} colSpan="4" className="p-3 font-bold text-right">Total</td>
+    <td style={{  border: 'var(--border)'}} className="p-3 font-bold text-center">
       $ {sortedAccounts.reduce((sum, acc) => sum + acc.totalSpentt, 0).toFixed(2)}
     </td>
-    <td className="p-3 font-bold text-center">
+    <td style={{  border: 'var(--border)'}} className="p-3 font-bold text-center">
       ৳ {(sortedAccounts.reduce((sum, acc) => sum + acc.totalSpentt, 0) * 140).toFixed(2)}
     </td>
-    <td className="p-3 font-bold text-center"></td>
+    <td style={{  border: 'var(--border)'}} className="p-3 font-bold text-center"></td>
   </tr>
+
 </tfoot>
 
         </table>
       </div>
+      </div>
+
     </div>
   );
 };

@@ -1,5 +1,5 @@
 import { Link, NavLink } from "react-router-dom";
-import { FaHistory} from "react-icons/fa";
+import { FaHistory, FaPaypal} from "react-icons/fa";
 import { RxDashboard } from "react-icons/rx";
 import { MdAccountCircle, MdCampaign, MdOutlineSummarize } from "react-icons/md";
 import { useContext } from "react";
@@ -8,19 +8,37 @@ import { AuthContext } from "../../Security/AuthProvider";
 import { LuActivitySquare } from "react-icons/lu";
 import { CiBank } from "react-icons/ci";
 
+
+
+const BalanceCard = ({ title, amount }) => {
+  return (
+    <div
+    className="balance-card items-center rounded-2xl p-5 text-center shadow-xl transition-transform transform hover:scale-105"
+    style={{ backgroundColor: 'var(--bg-color)', color: 'var(--text-color)', border: 'var(--border)' }}
+  >
+    <p className="text-lg lg:text-2xl font-bold my-2">
+      <span className="text-lg lg:text-2xl font-extrabold">৳</span>
+      {amount}
+    </p>
+    <h1 className="text-xl font-bold pb-2 text-center">{title}</h1>
+  </div>
+  
+  );
+};
+
 const EmployeeDashboard = () => {
   const { user } = useContext(AuthContext);
 
   const getActiveStyle = (isActive) => (
     isActive
-      ? { backgroundColor: '#05a0db', color: 'white' }
+      ? { backgroundColor: 'var(--bg-color)', color: 'var(--text-color)' }
       : {}
   );
 
 
   return (
-    <div className=" h-screen">
-      <div className="w-[200px] bg-gray-900 text-white">
+    <div className=" w-[225px] bg-gray-900 text-white -mt-3 -ml-2 pr-2 min-h-screen">
+      <div className="">
         <div className="flex  items-center justify-center py-4">
           <Link to={"/"}>
             <img
@@ -58,13 +76,14 @@ const EmployeeDashboard = () => {
           </NavLink>
          
           <NavLink
-            to={`dashboard/myAdsAccount/${user?.email}`}
+            to={`dashboard/myAdsAccount/:email`}
             className="text-white hover:bg-[#f89320] hover:text-black py-2 px-4 rounded-lg flex items-center"
             style={({ isActive }) => getActiveStyle(isActive)}
           >
             <MdAccountCircle className="w-6 h-6 mr-2" />
             Ads Accounts
           </NavLink>
+         
           <NavLink
             to={`dashboard/myPayments`}
             className="text-white hover:bg-[#f89320] hover:text-black py-2 px-4 rounded-lg flex items-center"
@@ -97,6 +116,13 @@ const EmployeeDashboard = () => {
           >
             <LuActivitySquare  className="w-6 h-6 mr-2" />
            My Summery
+          </NavLink>
+          <NavLink
+            to="dashboard/payoneer"
+            className="text-white hover:bg-[#f89320] hover:text-black py-2 px-3 rounded-lg flex items-center"
+            style={({ isActive }) => getActiveStyle(isActive)}
+          >
+            <FaPaypal className="w-6 h-6 mr-2" /> Payoneer
           </NavLink>
           <NavLink
             to={`dashboard/bankInfo`}

@@ -12,7 +12,6 @@ const MyAdsAccount = ({email}) => {
   const [ddd, setDdd] = useState(null);
   const [currentTotal,setCurrentTotal]=useState(0)
   const [tSpent,setthreshold]=useState(0)
-  const [TSpent,setTSpent]=useState(0)
   const [adsAccount, refetch] = useAdsAccount();
   const [adsAccounts, setAdsAccounts] = useState([]);
   const [modalData, setModalData] = useState(null);
@@ -28,44 +27,29 @@ const MyAdsAccount = ({email}) => {
   };
 
   useEffect(() => {
-          const fff = users.find(u => u.email === email);
-          setDdd(fff || {}); 
-          const filterdata = adsAccount.filter((m) => m.employeeEmail === email);
-          setAdsAccounts(filterdata);
-  }, [users, email,adsAccount]);
-
-
-
-  useEffect(() => {
- 
-    const total = adsAccounts.reduce(
+    const fff = users.find((u) => u.email === email);
+    setDdd(fff || {});
+  
+    const filterdata = adsAccount.filter((m) => m.employeeEmail === email);
+    setAdsAccounts(filterdata);
+  
+    const total = filterdata.reduce(
       (acc, campaign) => acc + parseFloat(campaign.currentBallence),
       0
     );
     setCurrentTotal(total);
   
-    const totalBill = adsAccounts.reduce(
+    const totalBill = filterdata.reduce(
       (acc, campaign) => acc + parseFloat(campaign.threshold),
       0
     );
     setthreshold(totalBill);
+  }, [users, email, adsAccount]); 
   
-    const totalBilll = adsAccounts.reduce(
-      (acc, campaign) => acc + parseFloat(campaign.totalSpent),
-      0
-    );
-    setTSpent(totalBilll);
-  
-  }, [adsAccounts]);
-
-
   const sortedAdsAccounts = adsAccounts.filter((account) =>
     (selectedStatus ? account.status === selectedStatus : true) &&
     (searchQuery ? account.accountName.toLowerCase().includes(searchQuery.toLowerCase()) : true)
   ).sort((a, b) => a.accountName.localeCompare(b.accountName));
-
-
-
 
   const handleAddAdsAcount = (e) => {
     e.preventDefault();
@@ -77,22 +61,14 @@ const MyAdsAccount = ({email}) => {
     const threshold=0
     const totalSpent=0
     const status='Active'
-
     const data = { accountName,totalSpent,currentBallence,threshold, paymentDate,status, employeeEmail,employeerName };
 
     AxiosPublic.post("/adsAccount", data).then((res) => {
-      console.log(res.data);
-      // toast.success("add successful");
       toast.success("Post created successfully!");
       refetch()
       document.getElementById("my_modal_3").close()
     });
   };
-
-
-
-
-
 
 const handleUpdate = (e, id) => {
   e.preventDefault();
@@ -101,16 +77,17 @@ const handleUpdate = (e, id) => {
   const currentBallence = e.target.currentBallence.value;
   const threshold = e.target.threshold.value;
   const body = { accountName,currentBallence,paymentDate, threshold };
+
   AxiosPublic.patch(`/adsAccount/${id}`,body
   )
     .then((res) => {
-      toast.success("Ads Account Update successful!");
+      
       refetch()
+      setModalData(null)
     });
 };
 
 const handleDelete = (id) => {
-  // Show confirmation dialog
   Swal.fire({
     title: 'Are you sure?',
     text: "You won't be able to revert this!",
@@ -121,46 +98,38 @@ const handleDelete = (id) => {
     confirmButtonText: 'Yes, delete it!'
   }).then((result) => {
     if (result.isConfirmed) {
-      // Proceed with delete
+
       AxiosPublic.delete(`/adsAccount/${id}`)
         .then((res) => {
-          console.log(res.data);
           toast.success("Ads Account deleted successfully!");
           refetch();
         })
-        .catch((error) => {
-          toast.error("Failed to delete Ads Account");
-        });
     }
   });
 };
 
-
-
 const handleUpdate2 = (id, newStatus) => {
   const body = { status: newStatus };
-
   AxiosPublic.patch(`/adsAccount/status/${id}`, body)
     .then((res) => {
-      console.log(res.data);
       refetch();
-      toast.success(`Campaign updated successfully`);
+     
     })
-    .catch((error) => {
-      console.error("Error updating campaign:", error);
-      toast.error("Failed to update campaign");
-    });
 };
 
+const today = new Date();
+const formattedDate = today.toISOString().split('T')[0];  // "YYYY-MM-DD" format
+
+
   return (
-    <div className=" px-5 dark:text-green-800">
+    <div className=" px-5 mt-5 dark:text-green-800">
        <ToastContainer />
        <Helmet>
         <title>My Ads Account | Digital Network </title>
         <link rel="canonical" href="https://www.example.com/" />
       </Helmet>
-     
 
+      <div className='px-4 py-4  rounded-md' style={{ backgroundColor: 'var(--bg-color3)', color: 'var(--text-color)',border: 'var(--border)'}}>
 
       <div className="flex flex-col sm:flex-row justify-between items-center gap-5 text-gray-500">
   <div className="w-full sm:w-auto">
@@ -186,9 +155,11 @@ const handleUpdate2 = (id, newStatus) => {
               required
               type="date"
               name="paymentDate"
+              defaultValue={formattedDate}
               className="w-full border bg-green-300 border-gray-600 text-black rounded p-2 mt-1"
             />
           </div>
+          
           <div className="mb-4">
             <label className="block text-black">Account Name</label>
             <input
@@ -223,6 +194,7 @@ const handleUpdate2 = (id, newStatus) => {
   <div className="flex justify-end items-center gap-3">
     <div className="flex text-sm lg:mb-0  justify-center">
                 <select
+                  style={{ backgroundColor: 'var(--bg-color2)',border: 'var(--border)', color: 'var(--text-color2)'}}
                   name="status"
                   value={selectedStatus}
                   onChange={(e) => changeTab(e.target.value)}
@@ -234,14 +206,21 @@ const handleUpdate2 = (id, newStatus) => {
                 </select>
               </div>
  
-    <div className="flex w-full sm:w-auto justify-end">
-    <input
-      type="text"
-      placeholder="Search by account name..."
-      value={searchQuery}
-      onChange={(e) => setSearchQuery(e.target.value)}
-      className="rounded-lg placeholder-black border border-black p-2 text-black bg-white w-full sm:w-auto"
+              <div className=" flex mb-5 lg:mb-0 justify-center">
+   <input
+    style={{ backgroundColor: 'var(--bg-color2)',border: 'var(--border)', color: 'var(--text-color2)'}}
+     type="text"
+     placeholder="Search by campaign name"
+     className="border bg-white    rounded-l-lg p-1 flex-1"
+     value={searchQuery}
+     onChange={(e) => setSearchQuery(e.target.value)}
     />
+    <button
+     className="bg-black  text-white border border-black shadow-2xl rounded-r-lg p-2 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
+     onClick={() => {/* Add search functionality here */}}
+    >
+     Search
+    </button>
   </div>
   </div>
   
@@ -250,17 +229,16 @@ const handleUpdate2 = (id, newStatus) => {
 
     
 
-    <div className="overflow-x-auto mt-5 rounded-xl ">
-      <table className="min-w-full bg-white">
-        <thead className="bg-[#05a0db] text-white">
-          <tr>
-            <th className="p-3">OFF/ON</th>
-            <th className="p-3">Payment Date</th>
-            <th className="p-3">Ad Account Name</th>
-            <th className="p-3">Current Balance</th>
-            <th className="p-3">Threshold</th>
-            {/* <th className="p-3">Spent</th> */}
-            <th className="p-3">Status</th>
+<div  className="overflow-x-auto rounded-xl mt-5 text-center " style={{ backgroundColor: 'var(--bg-color)', color: 'var(--text-color)'}}>
+          <table className="min-w-full text-center ">
+            <thead className=" ">
+              <tr className="" style={{border: 'var(--border)',borderLeft: 'var(--border)', borderRight: 'var(--border)', color: 'var(--text-color)'}}>
+            <th style={{  border: 'var(--border)'}} className="p-3">OFF/ON</th>
+            <th style={{  border: 'var(--border)'}} className="p-3">Payment Date</th>
+            <th style={{  border: 'var(--border)'}} className="p-3">Ad Account Name</th>
+            <th style={{  border: 'var(--border)'}} className="p-3">Threshold</th>
+            <th style={{  border: 'var(--border)'}} className="p-3">Current Balance</th>
+            <th style={{  border: 'var(--border)'}} className="p-3">Status</th>
        
    
       <th className="p-3">Action</th>
@@ -270,15 +248,15 @@ const handleUpdate2 = (id, newStatus) => {
         </thead>
         <tbody>
           {sortedAdsAccounts.map((account, index) => (
-            <tr
-            key={account._id}
-            className={`${
-              index % 2 === 0
-                ? "bg-white text-left text-gray-500 border-b border-opacity-20"
-                : "bg-gray-200  text-left text-gray-500 border-b border-opacity-20"
-            }`}
-            >
-               <td className="p-3 border-r-2 border-l-2 border-gray-200 text-center">  <label className="inline-flex items-center cursor-pointer">
+           <tr style={{ backgroundColor: 'var(--bg-table)', color: 'var(--text-color2)'}}
+           key={account._id}
+           className={`${
+             index % 2 === 0
+               ? "bg-white text-left text-black border-b border-opacity-20"
+               : "bg-gray-200  text-left text-black border-b border-opacity-20"
+           }`}
+         >
+         <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-l-2 border-gray-200 text-center">  <label className="inline-flex items-center cursor-pointer">
   <input
     type="checkbox"
     className="sr-only"
@@ -301,17 +279,18 @@ const handleUpdate2 = (id, newStatus) => {
   </div>
 </label>
 </td>
-              <td className="p-3 border border-gray-300 text-center"> {new Date(account?.paymentDate).toLocaleDateString("en-GB")}</td>
-              <td className="p-3 border-r-2  border-gray-300 text-center px-5 ">
+              <td style={{  border: 'var(--border)'}} className="p-3 border border-gray-300 text-center"> {new Date(account?.paymentDate).toLocaleDateString("en-GB")}</td>
+              <td style={{  border: 'var(--border)'}} className="p-3 border-r-2  border-gray-300 text-center px-5 ">
                     <div className="">
                       <h1> {account.accountName}</h1>
                   
                     </div>
                   </td>
-              <td className="p-3 border border-gray-300  text-center">$ {account.currentBallence}</td>
-              <td className="p-3 border border-gray-300 text-center">$ {account.threshold}</td>
+                  <td style={{  border: 'var(--border)'}} className="p-3 border border-gray-300 text-center">$ {account.threshold}</td>
+              <td style={{  border: 'var(--border)'}} className="p-3 border border-gray-300  text-center">$ {account.currentBallence}</td>
+              
               {/* <td className="p-3 border border-gray-300 text-center">$ {account.totalSpent}</td> */}
-              <td className={`p-3 border  text-center border-gray-300  ${
+              <td style={{  border: 'var(--border)'}} className={`p-3 border  text-center border-gray-300  ${
                       account.status === "Active"
                         ? "text-green-700 font-bold"
                         : "text-red-600 font-bold"
@@ -320,7 +299,7 @@ const handleUpdate2 = (id, newStatus) => {
                     {account.status} 
                     </td>
                  
-      <td className="p-3 border border-gray-300 text-center"> 
+      <td style={{  border: 'var(--border)'}} className="p-3 border border-gray-300 text-center"> 
       <div className="flex justify-center gap-3">
                 <button
                   className="bg-green-700 hover:bg-blue-700 text-white px-2 py-1 rounded"
@@ -342,18 +321,19 @@ const handleUpdate2 = (id, newStatus) => {
 
             </tr>
           ))}
-          <tr className="bg-[#05a0db] text-sm text-white font-bold">
-    
-    <td className="p-3  text-right" colSpan="3">
+          <tr style={{border: 'var(--border)',borderLeft: 'var(--border)', borderRight: 'var(--border)', color: 'var(--text-color)'}} className="font-bold">
+    <td></td>
+    <td></td>
+    <td></td>
+    <td style={{  border: 'var(--border)'}} className="p-3  text-center" >
       Total :
     </td>
-    <td className="p-3  border-gray-300 text-center">$ {currentTotal.toFixed(2)}</td>
-    <td className="p-3  text-center">$ {tSpent.toFixed(2)}</td> 
-    {/* <td className="p-3  text-center">$ {TSpent.toFixed(2)}</td>  */}
-    <td className="p-3  text-center"></td> 
+    <td style={{  border: 'var(--border)'}} className="p-3  text-center">$ {tSpent.toFixed(2)}</td> 
+    <td style={{  border: 'var(--border)'}} className="p-3  border-gray-300 text-center">$ {currentTotal.toFixed(2)}</td>
+    <td style={{  border: 'var(--border)'}} className="p-3  text-center"></td> 
   
 
-      <td className="p-3  text-center"></td> 
+     
       
    
 
@@ -363,6 +343,7 @@ const handleUpdate2 = (id, newStatus) => {
   </tr>
         </tbody>
       </table>
+    </div>
     </div>
     {modalData && (
        <dialog className="modal" open>
@@ -395,6 +376,17 @@ const handleUpdate2 = (id, newStatus) => {
                className="w-full border-2 border-gray-400 rounded p-2 mt-1 bg-white text-black"
              />
            </div>
+          <div className="grid lg:grid-cols-2 gap-3">
+          <div className="mb-4">
+             <label className="block text-gray-500">Threshold</label>
+             <input
+               type="number"
+               name="threshold"
+               step="0.01"
+               defaultValue={modalData.threshold}
+               className="w-full border rounded p-2 mt-1 text-black bg-white border-gray-500"
+             />
+           </div>
            <div className="mb-4">
              <label className="block text-gray-500">Current Balance</label>
              <input
@@ -405,16 +397,8 @@ const handleUpdate2 = (id, newStatus) => {
                className="w-full border rounded p-2 mt-1 text-black bg-white border-gray-500"
              />
            </div>
-           <div className="mb-4">
-             <label className="block text-gray-500">Threshold</label>
-             <input
-               type="number"
-               name="threshold"
-               step="0.01"
-               defaultValue={modalData.threshold}
-               className="w-full border rounded p-2 mt-1 text-black bg-white border-gray-500"
-             />
-           </div>
+          </div>
+         
 
          
      

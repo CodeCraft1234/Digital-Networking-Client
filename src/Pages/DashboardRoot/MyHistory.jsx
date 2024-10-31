@@ -51,71 +51,47 @@ const MyHistory = () => {
 
   // Filter data based on sort criteria (if applicable)
   const sortedAccounts = flattenedData
-    .filter(account => {
-      const matchEmployee = sortEmployee ? account.employeeName === sortEmployee : true;
-      const matchMonth = sortMonth ? new Date(account.date).toLocaleString('default', { month: 'long' }) === sortMonth : true;
-      const matchYear = sortYear ? new Date(account.date).getFullYear().toString() === sortYear : true;
-      return matchEmployee && matchMonth && matchYear;
-    });
+  .filter(account => {
+    const matchEmployee = sortEmployee ? account.employeeName === sortEmployee : true;
+    const matchMonth = sortMonth ? new Date(account.date).toLocaleString('default', { month: 'long' }) === sortMonth : true;
+    const matchYear = sortYear ? new Date(account.date).getFullYear().toString() === sortYear : true;
+    return matchEmployee && matchMonth && matchYear;
+  })
+  // Sort filtered data by accountName and date
+  .sort((a, b) => new Date(a.date) - new Date(b.date)) // Sort in ascending order of date
+  // Reduce to keep only the latest entry per accountName
+  .reduce((acc, currentAccount) => {
+    const existingAccount = acc.find(account => account.accountName === currentAccount.accountName);
+    if (existingAccount) {
+      // Replace the existing one if current account date is later
+      if (new Date(currentAccount.date) > new Date(existingAccount.date)) {
+        acc = acc.filter(account => account.accountName !== existingAccount.accountName); // Remove old entry
+        acc.push(currentAccount); // Add new latest entry
+      }
+    } else {
+      acc.push(currentAccount); // Add new account if it doesn't exist yet
+    }
+    return acc;
+  }, [])
+  // Sort by accountName in ascending order (A-Z)
+  .sort((a, b) => a.accountName.localeCompare(b.accountName));
 
-  // Calculate totals
+
   const totalSpent = sortedAccounts.reduce((sum, account) => sum + account.totalSpentt, 0);
   const totalBill = totalSpent * 140; // Assuming conversion rate of 140
 
-  const AxiosPublic = UseAxiosPublic();
 
-  // Handle update function
-  const handleUpdate2 = async (e, userId, spentId) => {
-    e.preventDefault();
-    const totalSpent = e.target.totalSpentt.value; 
-    const totalSpentt = parseFloat(totalSpent);
-    
-    try {
-      const response = await AxiosPublic.put(`/updateSpent/${userId}/${spentId}`, {
-        totalSpentt,
-      });
-  
-      if (response.status === 200) {
-        toast.success('Total spent updated successfully');
-        refetch(); // Refresh data
-      }
-    } catch (error) {
-      console.error('Error updating total spent:', error);
-      toast.error('Failed to update total spent');
-    }
-  };
 
-  const handleDelete = (e, userId, spentId) => {
-    Swal.fire({
-      title: "Are you sure?",
-      text: "You want to delete this data!",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Yes, delete",
-    }).then((result) => {
-      if (result.isConfirmed) {
-        AxiosPublic.delete(`/users/historyDelete/${userId}/${spentId}`).then((res) => {
-          refetch();
-          console.log(res.data);
-          if (res.data.deletedCount > 0) {
-            Swal.fire({
-              title: "Deleted!",
-              text: "Your history has been deleted.",
-              icon: "success",
-            });
-          }
-        });
-      }
-    });
-  };
+
+
 
   return (
     <div className='mx-5 mt-5 lg:my-5 mb-5'>
-      <div className="flex justify-center lg:justify-end items-center gap-3 mb-5">
+      <div className="p-5 rounded-lg " style={{ backgroundColor: 'var(--bg-color3)', color: 'var(--text-color)',border: 'var(--border)'}} >
+      <div className="flex justify-center lg:justify-start items-center gap-3 mb-5">
         <div>
           <select
+            style={{ backgroundColor: 'var(--bg-color2)',border: 'var(--border)', color: 'var(--text-color2)'}}
             className="px-4 py-2 border rounded bg-white text-black border-black"
             onChange={(e) => changeTab(e.target.value)}
             value={sortMonth || ""}
@@ -129,6 +105,7 @@ const MyHistory = () => {
 
         <div>
           <select
+            style={{ backgroundColor: 'var(--bg-color2)',border: 'var(--border)', color: 'var(--text-color2)'}}
             className="px-4 py-2 border rounded bg-white text-black border-black"
             onChange={(e) => setSortYear(e.target.value)}
             value={sortYear || ""}
@@ -141,10 +118,10 @@ const MyHistory = () => {
         </div>
       </div>
 
-      <div className="overflow-x-auto text-center rounded-xl border-l border-gray-400">
-        <table className="min-w-full text-center bg-white">
-          <thead className="bg-[#05a0db] text-white">
-            <tr>
+      <div  className="overflow-x-auto rounded-xl  text-center " style={{ backgroundColor: 'var(--bg-color)', color: 'var(--text-color)'}}>
+          <table className="min-w-full text-center ">
+            <thead className=" ">
+              <tr className="" style={{border: 'var(--border)',borderLeft: 'var(--border)', borderRight: 'var(--border)', color: 'var(--text-color)'}}>
               <th className="p-3">SL</th>
               <th className="p-3">Payment Month</th>
             
@@ -155,87 +132,47 @@ const MyHistory = () => {
             </tr>
           </thead>
           <tbody>
-            {sortedAccounts.map((account, index) => (
-              <tr
-                key={account.ids} // Use `ids` as the key
-                className={`${
-                  index % 2 === 0
-                    ? "bg-white text-left text-black border-b border-opacity-20"
-                    : "bg-gray-200 text-left text-black border-b border-opacity-20"
-                }`}
-              >
-                <td className="p-3 border-r-2 border-gray-300 text-center px-5">{index + 1}</td>
-                <td className="p-3 border-l-2 border-r-2 text-center border-gray-300">
-                  {new Date(account.date).toLocaleString('default', { month: 'long'})}
-                </td>
-                
-                <td className="p-3 border-r-2 border-gray-300 text-start px-5">
-                  {account.accountName}
-                </td>
-                <td className="p-3 border-r-2 border-gray-300 text-center">
-                  $ {account.totalSpentt.toFixed(2)}
-                </td>
-                <td className="p-3 border-r-2 border-gray-300 text-center">
-                  ৳ {(account.totalSpentt * 140).toFixed(2)}
-                </td>
+          {sortedAccounts
+  .sort((a, b) => a.accountName.localeCompare(b.accountName)) // Sort accounts by name (A to Z)
+  .map((account, index) => (
+    <tr style={{ backgroundColor: 'var(--bg-table)', color: 'var(--text-color2)'}}
+    key={account._id}
+    className={`${
+      index % 2 === 0
+        ? "bg-white text-left text-black border-b border-opacity-20"
+        : "bg-gray-200  text-left text-black border-b border-opacity-20"
+    }`}
+  >
+        {/* Index, starting from 1 */}
+        <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-300 text-center px-5">
+          {index + 1}
+        </td>
 
-                {/* <td className="p-3 border-r text-center border-gray-400">
-                  <div className="flex justify-center items-center gap-3">
-                    <div>
-                      <button
-                        className="bg-green-700 hover:bg-blue-700 text-white px-2 py-1 rounded"
-                        onClick={() =>
-                          document.getElementById(`modal_${index}`).showModal()
-                        }
-                      >
-                        Edit
-                      </button>
-                      <dialog id={`modal_${index}`} className="modal">
-                        <div className="modal-box bg-white text-black">
-                          <form onSubmit={(e) => handleUpdate2(e, account.employeeId, account.ids)}>
-                            <div className="mb-4">
-                              <label className="block text-start text-gray-700">Total Spent</label>
-                              <input
-                                type="text"
-                                name="totalSpentt"
-                                defaultValue={account.totalSpentt}
-                                className="w-full bg-white border-black border rounded p-2 mt-1"
-                              />
-                            </div>
-                            <div className="grid grid-cols-2 gap-3">
-                              <button
-                                onClick={() =>
-                                  document.getElementById(`modal_${index}`).close()
-                                }
-                                className="bg-gray-300 text-black px-4 py-2 rounded hover:bg-gray-400"
-                                type="button"
-                              >
-                                Close
-                              </button>
-                              <button
-                                type="submit"
-                                className="bg-green-700 text-white px-4 py-2 rounded hover:bg-green-800"
-                              >
-                                Update
-                              </button>
-                            </div>
-                          </form>
-                        </div>
-                      </dialog>
-                    </div>
-                    <button
-                      className="bg-red-700 hover:bg-red-800 text-white px-2 py-1 rounded"
-                      onClick={(e) => handleDelete(e, account.employeeId, account.ids)}
-                    >
-                      Delete
-                    </button>
-                  </div>
-                </td> */}
-              </tr>
-            ))}
+        {/* Displaying the month from account.date */}
+        <td style={{  border: 'var(--border)'}} className="p-3 border-l-2 border-r-2 text-center border-gray-300">
+          {new Date(account.date).toLocaleString('default', { month: 'long' })}
+        </td>
+
+        {/* Displaying the accountName */}
+        <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-300 text-start px-5">
+          {account.accountName}
+        </td>
+
+        {/* Displaying the total spent in USD with 2 decimal precision */}
+        <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-300 text-center">
+          $ {account.totalSpentt.toFixed(2)}
+        </td>
+
+        {/* Converting and displaying the total spent in Bangladeshi Taka (৳) */}
+        <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-300 text-center">
+          ৳ {(account.totalSpentt * 140).toFixed(2)}
+        </td>
+      </tr>
+  ))}
+
           </tbody>
           <tfoot>
-            <tr className='bg-[#05a0db] text-white'>
+            <tr style={{ backgroundColor: 'var(--bg-color)', color: 'var(--text-color)'}} className=''>
               <td colSpan="3" className="p-3  border-gray-300 text-center font-bold">
                 Totals
               </td>
@@ -250,6 +187,7 @@ const MyHistory = () => {
           </tfoot>
         </table>
       </div>
+    </div>
     </div>
   );
 };

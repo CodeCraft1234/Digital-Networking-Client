@@ -192,19 +192,20 @@ const CampaignTable = ({ email }) => {
 
     
    
-    <div className=" p-5  ">
+    <div className=" px-5  ">
      
       <div className="overflow-x-auto  ">
 
       
   
+      <div className='px-5 pb-5 pt-5   rounded-lg' style={{ backgroundColor: 'var(--bg-color3)', color: 'var(--text-color)',border: 'var(--border)'}}>
 
-
-    <div className="flex justify-center  lg:justify-end mb-5">
+    <div className="flex justify-center  lg:justify-start mb-5">
               <input
+               style={{ backgroundColor: 'var(--bg-color2)',border: 'var(--border)', color: 'var(--text-color2)'}}
                 type="text"
                 placeholder=" Client Phone Number..."
-                className=" rounded-lg lg:w-auto w-full  placeholder-black border border-gray-700 p-2  text-black  bg-white"
+                className=" rounded-lg lg:w-auto w-full  p-2    bg-white"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
@@ -212,44 +213,42 @@ const CampaignTable = ({ email }) => {
     </div>
 
 
-<div className="overflow-x-auto rounded-lg border-black">
-<table className="min-w-full bg-white">
-<thead className="bg-[#05a0db] text-white">
-<tr>
-<th className="p-3 text-center">SL</th>
-<th className="p-3 text-center">Client Name</th>
-<th className="p-3 text-center">Client Phone</th>
-{/* <th className="p-3 text-center">Client Email</th> */}
-{/* <th className="p-3 text-center">T.Budget</th> */}
-<th className="p-3 text-center">T.Spent</th>
-<th className="p-3 text-center">Total Bill</th>
-<th className="p-3 text-center">Payment Rcv</th>
-<th className="p-3 text-center">Total Due</th>
-<th className="p-3 text-center">Action</th>
+    <div  className="overflow-x-auto rounded-xl  text-center " style={{ backgroundColor: 'var(--bg-color)', color: 'var(--text-color)'}}>
+          <table className="min-w-full text-center ">
+            <thead className=" ">
+              <tr className="" style={{border: 'var(--border)',borderLeft: 'var(--border)', borderRight: 'var(--border)', color: 'var(--text-color)'}}>
+<th style={{  border: 'var(--border)'}} className="p-3 text-center">SL</th>
+<th style={{  border: 'var(--border)'}} className="p-3 text-center">Client Name</th>
+<th style={{  border: 'var(--border)'}} className="p-3 text-center">Client Phone</th>
+<th style={{  border: 'var(--border)'}} className="p-3 text-center">T.Spent</th>
+<th style={{  border: 'var(--border)'}} className="p-3 text-center">Total Bill</th>
+<th style={{  border: 'var(--border)'}} className="p-3 text-center">Payment Rcv</th>
+<th style={{  border: 'var(--border)'}} className="p-3 text-center">Total Due</th>
+<th style={{  border: 'var(--border)'}} className="p-3 text-center">Action</th>
 
 </tr>
 </thead>
 <tbody>
 {filteredByCategory.map((campaign, index) => (
-<tr
-  key={campaign._id}
-  className={`${
-    index % 2 === 0
-      ? "bg-white border-b border-opacity-20 text-black "
-      : "bg-gray-300 border-b border-opacity-20 text-black "
-  }`}
+ <tr style={{ backgroundColor: 'var(--bg-table)', color: 'var(--text-color2)'}}
+ key={campaign._id}
+ className={`${
+   index % 2 === 0
+     ? "bg-white text-left text-black border-b border-opacity-20"
+     : "bg-gray-200  text-left text-black border-b border-opacity-20"
+ }`}
 >
-  <td className="p-3 border-r border-gray-400 border-l text-center">{index + 1}</td>
+  <td style={{  border: 'var(--border)'}} className="p-3 border-r border-gray-400 border-l text-center">{index + 1}</td>
 
-  <Link to={`/dashboard/client/${campaign.clientEmail}`}>
-    <td className="p-3 border-r border-gray-400 flex hover:font-bold hover:text-blue-600 justify-center text-center">{campaign.clientName}</td>
-  </Link>
-  <td className="p-3 border-r border-gray-400 text-center">{campaign.clientPhone}</td>
+ 
+    <td style={{  border: 'var(--border)'}} className="p-3 border-r border-gray-400  hover:font-bold hover:text-blue-600 justify-center text-center"> <Link to={`/dashboard/client/${campaign.clientEmail}`}>{campaign.clientName} </Link></td>
+ 
+  <td style={{  border: 'var(--border)'}} className="p-3 border-r border-gray-400 text-center">{campaign.clientPhone}</td>
   {/* <td className="p-3 border-r border-gray-400 text-center">$ {parseFloat(campaign.tBudged).toFixed(2)}</td> */}
-  <td className="p-3 border-r border-gray-400 text-center">$ {parseFloat(campaign.tSpent).toFixed(2)}</td>
-  <td className="p-3 border-r border-gray-400 text-center">৳ {parseFloat(campaign.tBill).toFixed(2)}</td>
-  <td className="p-3 border-r border-gray-400 text-center">৳ {parseFloat(campaign.tPayment).toFixed(2)}</td>
-  <td className="p-3 border-r border-gray-400 text-center">
+  <td style={{  border: 'var(--border)'}} className="p-3 border-r border-gray-400 text-center">$ {parseFloat(campaign.tSpent).toFixed(2)}</td>
+  <td style={{  border: 'var(--border)'}} className="p-3 border-r border-gray-400 text-center">৳ {parseFloat(campaign.tBill).toFixed(2)}</td>
+  <td style={{  border: 'var(--border)'}} className="p-3 border-r border-gray-400 text-center">৳ {parseFloat(campaign.tPayment).toFixed(2)}</td>
+  <td style={{  border: 'var(--border)'}} className="p-3 border-r border-gray-400 text-center">
   ৳ {
     !isNaN(Number(campaign.tBill)) && !isNaN(Number(campaign.tPaid))
     ? (Number(campaign.tBill) - Number(campaign.tPayment)).toFixed(2)
@@ -257,7 +256,7 @@ const CampaignTable = ({ email }) => {
   }
 </td>
 
-<td className="p-3 border-r text-center border-gray-400">
+<td style={{  border: 'var(--border)'}} className="p-3 border-r text-center border-gray-400">
   <div className="flex justify-center  items-center gap-3">
   <div>
   <button
@@ -345,22 +344,23 @@ const CampaignTable = ({ email }) => {
 
 </tr>
 ))}
-<tr className="bg-[#05a0db] text-sm text-white font-bold">
+<tr style={{border: 'var(--border)',borderLeft: 'var(--border)', borderRight: 'var(--border)', color: 'var(--text-color)'}} className=" font-bold">
 <td className="p-3 text-center"></td>
 
-<td className="p-3  text-right" colSpan="2">
+<td style={{  border: 'var(--border)'}} className="p-3  text-right" colSpan="2">
   Total :
 </td>
 {/* <td className="p-3  text-center">$ {totalBudged.toFixed(2)}</td> */}
-<td className="p-3  text-center">$ {totalSpent.toFixed(2)}</td>
-<td className="p-3  text-center">৳ {totalbill.toFixed(2)}</td>
-<td className="p-3  text-center">৳ {totalRCV.toFixed(2)}</td>
-<td className="p-3 ">Total Due : ৳ {totalDue.toFixed(2)}</td>
-<td className="p-3 "></td>
+<td style={{  border: 'var(--border)'}} className="p-3  text-center">$ {totalSpent.toFixed(2)}</td>
+<td style={{  border: 'var(--border)'}} className="p-3  text-center">৳ {totalbill.toFixed(2)}</td>
+<td style={{  border: 'var(--border)'}} className="p-3  text-center">৳ {totalRCV.toFixed(2)}</td>
+<td style={{  border: 'var(--border)'}} className="p-3 ">Total Due : ৳ {totalDue.toFixed(2)}</td>
+<td style={{  border: 'var(--border)'}} className="p-3 "></td>
 </tr>
 </tbody>
 </table>
 
+      </div>
       </div>
       </div>
     </div>

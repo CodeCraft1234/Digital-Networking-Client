@@ -185,6 +185,8 @@ const handleUpdate2 = (id, newStatus) => {
          <title>Ads Account | Digital Network </title>
          <link rel="canonical" href="https://www.example.com/" />
        </Helmet>
+
+       <div className='px-5 pb-5 pt-5 my-5 mt-5  rounded-lg' style={{ backgroundColor: 'var(--bg-color3)', color: 'var(--text-color)',border: 'var(--border)'}}>
        {
 
         user?.role === 'admin' &&   <div className="flex justify-start mb-5 text-gray-500 border-b border-opacity-20 mx-2 pb-1 items-center gap-3">
@@ -235,8 +237,9 @@ const handleUpdate2 = (id, newStatus) => {
        }
     
      
- <div className="mb-5 flex justify-center lg:justify-end">
+ <div className="mb-5 flex justify-center lg:justify-start">
                 <input
+                  style={{ backgroundColor: 'var(--bg-color2)',border: 'var(--border)', color: 'var(--text-color2)'}}
                     type="text"
                     placeholder="Search by account name..."
                     value={searchTerm}
@@ -245,10 +248,10 @@ const handleUpdate2 = (id, newStatus) => {
                 />
             </div>
  
-     <div className="overflow-x-auto rounded-xl mt-5">
-       <table className="min-w-full bg-white">
-         <thead className="bg-[#05a0db] text-white">
-           <tr>
+            <div  className="overflow-x-auto mt-5 rounded-xl  text-center " style={{ backgroundColor: 'var(--bg-color)', color: 'var(--text-color)'}}>
+          <table className="min-w-full text-center ">
+            <thead className=" ">
+              <tr className="" style={{border: 'var(--border)',borderLeft: 'var(--border)', borderRight: 'var(--border)', color: 'var(--text-color)'}}>
              <th className="p-3">SL</th>
              <th className="p-3">Ad Account Name</th>
              <th className="p-3">Total Spent</th>
@@ -260,15 +263,15 @@ const handleUpdate2 = (id, newStatus) => {
          </thead>
          <tbody>
            {sortedAdsAccounts.map((account, index) => (
-             <tr
+             <tr style={{ backgroundColor: 'var(--bg-table)', color: 'var(--text-color2)'}}
              key={account._id}
              className={`${
                index % 2 === 0
-                 ? "bg-white text-left text-gray-500 border-b border-opacity-20"
-                 : "bg-gray-200  text-left text-gray-500 border-b border-opacity-20"
+                 ? "bg-white text-left text-black border-b border-opacity-20"
+                 : "bg-gray-200  text-left text-black border-b border-opacity-20"
              }`}
-             >
-               <td className="p-3 border-r-2 border-l-2 border-gray-200 text-center">  <label className="inline-flex items-center cursor-pointer">
+           >
+               <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-l-2 border-gray-200 text-center">  <label className="inline-flex items-center cursor-pointer">
   <input
     type="checkbox"
     className="sr-only"
@@ -292,7 +295,7 @@ const handleUpdate2 = (id, newStatus) => {
 </label>
 </td>
               
-               <td className="p-3 border-r-2 border-gray-300 text-start px-5">
+               <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-300 text-start px-5">
                <h1>{account.accountName}</h1>
   {user?.role === 'admin' ? (
     <div>
@@ -315,9 +318,9 @@ const handleUpdate2 = (id, newStatus) => {
   ) : null}
 </td>
 
-               <td className="p-3 border border-gray-300 text-center">$ {account.totalSpent}</td>
-               <td className="p-3 border border-gray-300 text-center">৳ {account.totalSpent * account.dollerRate || 0} </td>
-               <td className={`p-3 border  text-center border-gray-300  ${
+               <td style={{  border: 'var(--border)'}} className="p-3 border border-gray-300 text-center">$ {account.totalSpent}</td>
+               <td style={{  border: 'var(--border)'}} className="p-3 border border-gray-300 text-center">৳ {account.totalSpent * account.dollerRate || 0} </td>
+               <td style={{  border: 'var(--border)'}} className={`p-3 border  text-center border-gray-300  ${
                        account.status === "Active"
                          ? "text-blue-700 font-bold"
                          : "text-red-600 font-bold"
@@ -325,10 +328,10 @@ const handleUpdate2 = (id, newStatus) => {
                    >
                      {account.status} 
                      </td>
-               <td className="p-3 border border-gray-300 text-center"> {new Date(account?.paymentDate).toLocaleDateString("en-GB")}</td>
+               <td style={{  border: 'var(--border)'}} className="p-3 border border-gray-300 text-center"> {new Date(account?.paymentDate).toLocaleDateString("en-GB")}</td>
              </tr>
            ))}
-           <tr className="bg-[#05a0db] text-sm text-white font-bold">
+           <tr style={{border: 'var(--border)',borderLeft: 'var(--border)', borderRight: 'var(--border)', color: 'var(--text-color)'}} className=" font-bold">
      
      <td className="p-3  text-right" colSpan="2">
        Total :
@@ -346,6 +349,7 @@ const handleUpdate2 = (id, newStatus) => {
    </tr>
          </tbody>
        </table>
+     </div>
      </div>
      {modalData && (
          <dialog className="modal" open>

@@ -1,8 +1,6 @@
-//
+
 import { useQuery } from "@tanstack/react-query";
 import UseAxiosPublic from "../Axios/UseAxiosPublic";
-
-
 
 const useCampaings = () => {
     const AxiosPublic=UseAxiosPublic()
@@ -13,7 +11,6 @@ const useCampaings = () => {
             return res.data
         }
     })
-console.log(campaings)
 return [campaings,refetch]
 
 };

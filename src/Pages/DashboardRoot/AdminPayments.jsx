@@ -52,6 +52,7 @@ const AdminPayments = () => {
         (!sortMonth || paymentDate.getMonth() + 1 === parseInt(sortMonth)) &&
 
         (selectedCategory === 'All' || selectedCategory === '' || payment.paymentMethod === selectedCategory) &&
+        
         (!selectedYear || paymentDate.getFullYear() === parseInt(selectedYear))
       );
     });
@@ -104,15 +105,17 @@ const AdminPayments = () => {
     const employeeName = user?.displayName;
     const employeeEmail = user?.email;
     const payAmount = e.target.payAmount.value;
+    const charge = e.target.charge.value;
     const paymentMethod = e.target.paymentMethod.value;
     const note = e.target.note.value;
-    const date = new Date()
+    const date = e.target.date.value;
 
     const data = {
       employeeName,
       employeeEmail,
       payAmount,
       note,
+      charge,
       paymentMethod,
       date,
       status:'pending'
@@ -132,28 +135,61 @@ const AdminPayments = () => {
 
   };
 
-  const handleUpdatePayment = (e, id) => {
+  const handleUpdatePayment = (e, id, payment) => {
     e.preventDefault();
+  
     const payAmount = parseFloat(e.target.payAmount.value);
     const date = e.target.date.value;
     const note = e.target.note.value;
     const paymentMethod = e.target.paymentMethod.value;
-    const status ='pending'
-    const body = {status, note, payAmount, date, paymentMethod };
+    const status = 'pending';
+    const updatedPaymentData = { status, note, payAmount, date, paymentMethod };
 
+    const previousAmount = payment.payAmount; 
+
+    // PATCH request to update the payment
     AxiosPublic.patch(
       `https://digital-networking-server.vercel.app/employeePayment/${id}`,
-      body
-    ).then((res) => {
+      updatedPaymentData
+    )
+    .then(() => {
       refetch();
-      document.getElementById(`modal_${id}`).close()
+      document.getElementById(`modal_${id}`).close();
       toast.success("Update successful!");
-    });
+  
+      // POST request to send edit notification with previous and updated data
+      AxiosPublic.post('/editNotification', {
+          ppayAmount: previousAmount,
+          pdate: payment.date,
+          pnote: payment.note,
+          ppaymentMethod: payment.paymentMethod,
+          pstatus: payment.status,
+    
+          editDate:new Date(),
+          name:user?.displayName,
+          photo:user?.photoURL,
+          email:user?.email,
+          message: `Payment of ৳${payAmount} by ${paymentMethod} was Edited.`,
+    
+          note,
+          payAmount,
+          date,
+          paymentMethod
+        
+      })
+      .then(() => {
+        console.log("Edit notification sent successfully!");
+      })
+      .catch(err => console.error("Error sending edit notification:", err));
+    })
+    .catch(err => console.error("Error updating payment:", err));
   };
+  
+  
 
   
 
-  const handleDelete = (id) => {
+  const handleDelete = (id, note, paymentMethod, charge, payAmount, date) => {
     // Show confirmation dialog
     Swal.fire({
       title: 'Are you sure?',
@@ -170,6 +206,28 @@ const AdminPayments = () => {
           .then((res) => {
             toast.success("Delete successful!");
             refetch();
+  
+            // Store deleted data in the notification collection
+            AxiosPublic.post('/notification', {
+              type: 'delete',
+              paymentId: id,
+              note,
+              paymentMethod,
+              charge,
+              payAmount,
+              date,
+              deleteDate:new Date(),
+              name:user.displayName,
+              photo:user?.photoURL,
+              email:user?.email,
+              message: `Payment of ৳${payAmount} by ${paymentMethod} was deleted.`
+            })
+            .then(() => {
+           
+            })
+            .catch((error) => {
+              toast.error("Failed to create notification.");
+            });
           })
           .catch((error) => {
             toast.error("Failed to delete. Please try again.");
@@ -178,46 +236,47 @@ const AdminPayments = () => {
     });
   };
 
-
+  const today = new Date();
+  const formattedDate = today.toISOString().split('T')[0];  // "YYYY-MM-DD" format
+  
   return (
-    <div className="mb-5">
+    <div className="m-5">
       <ToastContainer />
       <Helmet>
         <title>Admin Payment | Digital Network </title>
         <link rel="canonical" href="https://www.example.com/" />
       </Helmet>
-      <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-3 lg:gap-5  lg:grid-cols-6  px-5">
-   <div  onClick={() => setSelectedCategory('bkashMarchent')} className="balance-card bg-white rounded-2xl shadow-lg p-5 text-center  transition-transform transform hover:scale-105 border-0">
-     <img className="balance-card-img" src="https://i.ibb.co/bHMLyvM/b-Kash-Merchant.png" alt="bKash" />
-     <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"> <span className="text-lg lg:text-2xl font-extrabold"> ৳</span> {bkashMarcent}</p>
-    
-   </div>
-   <div onClick={() => setSelectedCategory('bkashPersonal')} className="balance-card bg-white rounded-2xl shadow-lg p-5 text-center transition-transform transform hover:scale-105 border-0">
-     <img className="balance-card-img" src="https://i.ibb.co/520Py6s/bkash-1.png" alt="bKash" />
-     <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"> <span className="text-lg lg:text-2xl font-extrabold"> ৳</span> {bkashPersonal}</p>
-   </div>
+      <div style={{ backgroundColor: 'var(--bg-color3)', color: 'var(--text-color)', border: 'var(--border)' }} className="grid grid-cols-2 p-5 rounded-lg sm:grid-cols-2 md:grid-cols-3 gap-3 lg:gap-5 lg:grid-cols-6 px-5">
+  {[
+    { category: 'bkashMarchent', img: 'https://i.ibb.co/bHMLyvM/b-Kash-Merchant.png', amount: bkashMarcent, bgColor: '#f7e8e8' },
+    { category: 'bkashPersonal', img: 'https://i.ibb.co/520Py6s/bkash-1.png', amount: bkashPersonal, bgColor: '#ffe6f7' },
+    { category: 'nagadPersonal', img: 'https://i.ibb.co/JQBQBcF/nagad-marchant.png', amount: nagadPersonal, bgColor: '#fff2cc' },
+    { category: 'rocketPersonal', img: 'https://i.ibb.co/QkTM4M3/rocket.png', amount: rocketPersonal, bgColor: '#e0f7fa' },
+    { category: 'bank', img: 'https://i.ibb.co/PZc0P4w/brac-bank-seeklogo.png', amount: bankTotal, bgColor: '#f2f2f2' }
+  ].map(({ category, img, amount, bgColor }) => (
+    <div key={category} onClick={() => setSelectedCategory(category)} style={{ backgroundColor: bgColor, border: 'var(--border)' }} className="balance-card bg-white rounded-2xl shadow-lg p-5 text-center transition-transform hover:scale-105 border-0">
+      <img className="balance-card-img" src={img} alt={category} />
+      <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700">
+        <span className="text-lg lg:text-2xl font-extrabold">৳</span> {new Intl.NumberFormat('en-IN').format(amount)}
+      </p>
+    </div>
+  ))}
 
-   <div onClick={() => setSelectedCategory('nagadPersonal')} className="balance-card bg-white rounded-2xl shadow-lg p-5 text-center transition-transform transform hover:scale-105 border-0">
-     <img className="balance-card-img" src="https://i.ibb.co/JQBQBcF/nagad-marchant.png" alt="Nagad" />
-     <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"><span className="text-lg lg:text-2xl font-extrabold"> ৳</span> {nagadPersonal}</p>
-   </div>
+  <div style={{ backgroundColor: '#d9f8d9', border: 'var(--border)' }} onClick={() => setSelectedCategory('All')} className="balance-card bg-white mt-3 rounded-2xl shadow-lg p-5 text-center transition-transform hover:scale-105 border-0">
+    <h1 className="text-xl font-bold text-black">
+      Total: <span className="text-lg lg:text-xl font-extrabold">৳</span> {new Intl.NumberFormat('en-IN').format(bkashPersonal + bkashMarcent + nagadPersonal + rocketPersonal + bankTotal)}
+    </h1>
+    <h1 className="text-xl font-bold mt-5 text-black">
+      Charge: <span className="text-lg lg:text-xl font-extrabold">৳</span> {new Intl.NumberFormat('en-IN').format(displayedItems.reduce((acc, item) => acc + (isNaN(parseFloat(item?.charge)) ? 0 : parseFloat(item?.charge)), 0))}
+    </h1>
+  </div>
+</div>
 
-   <div onClick={() => setSelectedCategory('rocketPersonal')} className="balance-card bg-white rounded-2xl shadow-lg p-5 text-center transition-transform transform hover:scale-105 border-0">
-     <img className="balance-card-img" src="https://i.ibb.co/QkTM4M3/rocket.png" alt="Rocket" />
-     <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"><span className="text-lg lg:text-2xl font-extrabold"> ৳</span> {rocketPersonal}</p>
-   </div>
 
-   <div onClick={() => setSelectedCategory('bank')} className="balance-card bg-white rounded-2xl shadow-lg p-5  text-center transition-transform transform hover:scale-105 border-0">
-     <img className="balance-card-img  " src="https://i.ibb.co/PZc0P4w/brac-bank-seeklogo.png" alt="Rocket" />
-     <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"><span className="text-lg lg:text-2xl font-extrabold"> ৳</span> { bankTotal }</p>
-   </div>
 
-   <div onClick={() => setSelectedCategory('All')} className="balance-card bg-white rounded-2xl shadow-lg p-5 text-center transition-transform transform hover:scale-105 border-0">
-     <h1 className="text-3xl font-bold text-black">Total BDT</h1>
-     <p className="balance-card-text text-lg lg:text-2xl mt-8 font-bold text-gray-700"><span className="text-lg lg:text-2xl font-extrabold"> ৳</span> {bkashPersonal + bkashMarcent + nagadPersonal + rocketPersonal + bankTotal}</p>
-   </div>
-     </div>
-<div className="flex flex-col md:flex-row justify-start lg:justify-between items-center gap-5 lg:px-5 lg:p-0 px-5">
+
+     <div className=" my-5 rounded-md pb-5" style={{ backgroundColor: 'var(--bg-color3)', color: 'var(--text-color)',border: 'var(--border)'}}>
+     <div className="flex flex-col md:flex-row justify-start lg:justify-between items-center gap-5 lg:px-5 lg:p-0 px-5">
 <div className="flex justify-start">
     <button
       className="font-avenir px-6 hover:bg-indigo-700 py-2 bg-[#05a0db] rounded-lg text-white"
@@ -228,14 +287,26 @@ const AdminPayments = () => {
     <dialog id="my_modal_1" className="modal">
       <div className="modal-box bg-white text-black font-bold">
         <form onSubmit={(e) => handlePayment(e)}>
-          <div className="mb-4">
+          <div className="">
             <h1
               className="text-black flex hover:text-red-500 justify-end text-end cursor-pointer"
               onClick={() => document.getElementById("my_modal_1").close()}
             >
               <ImCross />
             </h1>
-            <label className="block text-gray-250">Pay Amount</label>
+            <div className="mb-4">
+            <label className="block text-gray-250">Date</label>
+            <input
+              type="date"
+              name="date"
+              required
+              defaultValue={formattedDate}
+              className="w-full border bg-white border-black rounded p-2 mt-1"
+            />
+          </div>
+              <div className="grid gap-3 grid-cols-2">
+              <div className="mb-4 ">
+            <label className="block text-gray-250">Amount</label>
             <input
               required
               type="number"
@@ -243,6 +314,20 @@ const AdminPayments = () => {
               placeholder="0"
               className="w-full border bg-white border-black rounded p-2 mt-1"
             />
+          </div>
+            <div className="mb-4">
+            <label className="block text-gray-250">Charge</label>
+            <input
+              required
+              type="number"
+              name="charge"
+              placeholder="0"
+              defaultValue={0}
+              className="w-full border bg-white border-black rounded p-2 mt-1"
+            />
+          </div>
+              </div>
+            
           </div>
           <div className="mb-4">
             <label className="block text-gray-250">Payment Method</label>
@@ -262,7 +347,6 @@ const AdminPayments = () => {
             <input
               type="text"
               name="note"
-              required
               placeholder="type note..."
               className="w-full border bg-white border-black rounded p-2 mt-1"
             />
@@ -286,14 +370,13 @@ const AdminPayments = () => {
   </div>
 
   <div className="lg:flex text-black lg:justify-start my-3 lg:my-0 lg:ml-5  items-center">
-        <div className="flex justify-center items-center lg:mr-5 ">
-
-
-        </div>
+        
         <div className="flex mt-2 lg:mt-0 justify-center text-center gap-2 lg:gap-5 items-center">
         <div className="flex  justify-center text-center items-center">
          <select
-           className="border bg-white w-full     text-black border-gray-400 rounded p-2 mt-1 "
+         
+         style={{ backgroundColor: 'var(--bg-color2)',border: 'var(--border)', color: 'var(--text-color2)'}}
+           className=" w-full      rounded-md p-2 mt-1 "
            value={selectedStatus2}
            onChange={(e) => changeTab3(e.target.value)}
          >
@@ -305,7 +388,8 @@ const AdminPayments = () => {
        </div>
           <div className="flex lg:mt-1 justify-center text-center items-center">
             <select
-              className="border bg-white w-full  mt-1  lg:my-5  text-black border-gray-400 rounded p-2 "
+            style={{ backgroundColor: 'var(--bg-color2)',border: 'var(--border)', color: 'var(--text-color2)'}}
+              className=" w-full  mt-1  lg:my-5  t rounded-md p-2 "
               value={sortMonth}
               onChange={(e) => changeTab(e.target.value)}
             >
@@ -332,7 +416,8 @@ const AdminPayments = () => {
           </div>
           <div className=" lg:flex text-black justify-center items-center">
         <select
-          className="border bg-white text-black border-gray-400 rounded p-2 mt-1"
+        style={{ backgroundColor: 'var(--bg-color2)',border: 'var(--border)', color: 'var(--text-color2)'}}
+          className=" rounded-md p-2 mt-1"
           value={selectedYear}
           onChange={(e) => setSelectedYear(e.target.value)}
         >
@@ -347,43 +432,51 @@ const AdminPayments = () => {
       
       </div>
 
-</div>
+        </div>
 
 
 
-      <div className="overflow-x-auto border text-black border-gray-300 rounded-xl  mx-5 ">
-        <table className="min-w-full bg-white">
-          <thead className="bg-[#05a0db] text-white">
-            <tr>
-              <th className="p-3 ">SL</th>
-              <th className="p-3">Date</th>
-              <th className="p-3">Amount</th>
-              <th className="p-3">Payment Method</th>
-              <th className="p-3"> Note</th>
-              <th className="p-3">Status</th>
-              <th className="p-3">Action</th>
+<div  className="overflow-x-auto  rounded-xl mx-5 text-center " style={{ backgroundColor: 'var(--bg-color)', color: 'var(--text-color)'}}>
+          <table className="min-w-full  text-center ">
+            <thead className=" ">
+              <tr className="" style={{border: 'var(--border)',borderLeft: 'var(--border)', borderRight: 'var(--border)', color: 'var(--text-color)'}}>
+              <th style={{  border: 'var(--border)'}} className="p-3 ">SL</th>
+              <th style={{  border: 'var(--border)'}} className="p-3">Date</th>
+              <th style={{  border: 'var(--border)'}} className="p-3">Amount</th>
+              <th style={{  border: 'var(--border)'}} className="p-3">Charge</th>
+              <th style={{  border: 'var(--border)'}} className="p-3">Payment Method</th>
+              <th style={{  border: 'var(--border)'}} className="p-3"> Note</th>
+              <th style={{  border: 'var(--border)'}} className="p-3">Status</th>
+              <th style={{  border: 'var(--border)'}} className="p-3">Action</th>
             </tr>
           </thead>
           <tbody>
-            {displayedItems.map((payment, index) => (
-              <tr
-                key={index}
-                className={`${index % 2 === 0 ? "bg-gray-200" : "bg-white"}`}
-              >
-                <td className="p-3  border-r-2 border-l-2 border-gray-200 text-center">
+            {displayedItems.sort((a, b) => new Date(b.date) - new Date(a.date))?.map((payment, index) => (
+               <tr style={{ backgroundColor: 'var(--bg-table)', color: 'var(--text-color2)'}}
+               key={payment._id}
+               className={`${
+                 index % 2 === 0
+                   ? "bg-white text-left text-black border-b border-opacity-20"
+                   : "bg-gray-200  text-left text-black border-b border-opacity-20"
+               }`}
+             >
+                <td style={{  border: 'var(--border)'}} className="p-3  border-r-2 border-l-2 border-gray-200 text-center">
                   {index + 1}
                 </td>
-                <td className="p-3 border-r-2 border-gray-200 text-center">
+                <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-200 text-center">
                   {new Date(payment.date).toLocaleDateString("en-GB")}
                 </td>
-                <td className="p-3 border-r-2 border-gray-200 text-center">
+                <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-200 text-center">
                   ৳ {payment.payAmount}
                 </td>
+                <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-200 text-center">
+                  ৳ {payment.charge || 0}
+                </td>
 
-                <td className="p-3 border-r-2 border-gray-200 text-center">
+                <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-200 text-center">
                   {payment.paymentMethod === "bkashMarchent" && (
                     <img
-                      className="h-10 w-24 flex mx-auto my-auto items-center justify-center"
+                      className="h-10 w-24 shadow-2xl  flex mx-auto my-auto items-center justify-center"
                       src="https://i.ibb.co/bHMLyvM/b-Kash-Merchant.png"
                       alt=""
                     />
@@ -391,7 +484,7 @@ const AdminPayments = () => {
                   {payment.paymentMethod === "bkashPersonal" && (
                     <img
                       className="h-10 w-24 flex my-auto items-center mx-auto justify-center"
-                      src="https://i.ibb.co/520Py6s/bkash-1.png"
+                      src="https://i.ibb.co.com/f8LcKV0/bKash.png"
                       alt=""
                     />
                   )}
@@ -417,17 +510,18 @@ const AdminPayments = () => {
                     />
                   )}
                 </td>
-                <td className="p-3 border-r-2 border-gray-200 text-center">
+                <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-200 text-center">
                   {" "}
                   {payment.note}
                 </td>
-                <td className="p-3 border-r-2 border-gray-200 text-center">
+                <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-200 text-center">
                   {" "}
                   {payment.status === 'pending' ? <p className="text-blue-700 font-bold">Pending</p> : <p className="text-green-800 font-bold">Approved</p>}
                 </td>
 
-                <td className="p-3 border-r-2 flex justify-center gap-3 items-center border-gray-200 text-center">
-                  <button
+                <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 items-center border-gray-200 text-center">
+                 <div className="flex justify-center gap-3 ">
+                 <button
                   className="bg-green-700 hover:bg-blue-700 text-white px-2 py-1 rounded"
                     onClick={() =>
                       document
@@ -439,9 +533,8 @@ const AdminPayments = () => {
                   </button>
                   <dialog id={`modal_${payment._id}`} className="modal">
                     <div className="modal-box bg-white text-black font-bold">
-                      <form
-                        onSubmit={(e) => handleUpdatePayment(e, payment._id)}
-                      >
+                    <form onSubmit={(e) => handleUpdatePayment(e, payment._id, payment)}>
+
                         <div className="mb-4">
                           <h1
                             className=" text-black flex hover:text-red-500  justify-end  text-end"
@@ -469,7 +562,8 @@ const AdminPayments = () => {
                           />
                         </div>
 
-                        <div className="mb-4">
+                       <div className="grid grid-cols-2 gap-3">
+                       <div className="mb-4">
                           <label className="block text-left text-gray-700">
                             {" "}
                             New Amount
@@ -482,6 +576,18 @@ const AdminPayments = () => {
                             className="w-full border bg-white border-black rounded p-2 mt-1"
                           />
                         </div>
+                        <div className="mb-4">
+            <label className="block text-gray-250">Charge</label>
+            <input
+              required
+              type="number"
+              name="charge"
+              placeholder="0"
+              defaultValue={payment?.charge}
+              className="w-full border bg-white border-black rounded p-2 mt-1"
+            />
+          </div>
+                       </div>
 
                         
 
@@ -544,25 +650,33 @@ const AdminPayments = () => {
                   </dialog>
                   <button
                    className="bg-red-700 hover:bg-blue-700 text-white px-2 py-1 rounded"
-                    onClick={() => handleDelete(payment._id)}
+                    onClick={() => handleDelete(payment._id,payment?.note,payment.paymentMethod,payment?.charge,payment?.payAmount,payment.date)}
                   >
                     Delete
                   </button>
+                 </div>
                 </td>
               </tr>
             ))}
-            <tr className="bg-[#05a0db] text-white font-bold">
-              <td className="p-3 text-right" colSpan="2">
-                Total Amount :
+            <tr style={{border: 'var(--border)',borderLeft: 'var(--border)', borderRight: 'var(--border)', color: 'var(--text-color)'}} className=" font-bold">
+              <td></td>
+              <td style={{  border: 'var(--border)'}} className="p-3 text-right" >
+                Total :
               </td>
-              <td className="p-3 text-center">৳ {bkashPersonal + bkashMarcent + nagadPersonal + rocketPersonal + bankTotal}</td>
-              <td className="p-3 text-center"></td>
+              <td style={{  border: 'var(--border)'}} className="p-3 text-center">৳ {bkashPersonal + bkashMarcent + nagadPersonal + rocketPersonal + bankTotal}</td>
+              <td className="p-3 text-center">
+  ৳ {new Intl.NumberFormat('en-IN').format(
+        displayedItems.reduce((acc, item) => acc + (isNaN(parseFloat(item?.charge)) ? 0 : parseFloat(item?.charge)), 0)
+      )}
+</td>
+
               <td className="p-3 text-center"></td>
               <td className="p-3 text-center"></td>
               <td className="p-3 text-center"></td>
             </tr>
           </tbody>
         </table>
+      </div>
       </div>
     </div>
   );

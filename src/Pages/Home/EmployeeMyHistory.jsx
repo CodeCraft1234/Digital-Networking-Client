@@ -45,12 +45,32 @@ const EmployeeMyHistory = ({email}) => {
 
   // Filter data based on sort criteria (if applicable)
   const sortedAccounts = flattenedData
-    .filter(account => {
-      const matchEmployee = sortEmployee ? account.employeeName === sortEmployee : true;
-      const matchMonth = sortMonth ? new Date(account.date).toLocaleString('default', { month: 'long' }) === sortMonth : true;
-      const matchYear = sortYear ? new Date(account.date).getFullYear().toString() === sortYear : true;
-      return matchEmployee && matchMonth && matchYear;
-    });
+  .filter(account => {
+    const matchEmployee = sortEmployee ? account.employeeName === sortEmployee : true;
+    const matchMonth = sortMonth ? new Date(account.date).toLocaleString('default', { month: 'long' }) === sortMonth : true;
+    const matchYear = sortYear ? new Date(account.date).getFullYear().toString() === sortYear : true;
+    return matchEmployee && matchMonth && matchYear;
+  })
+  // Sort filtered data by accountName and date
+  .sort((a, b) => new Date(a.date) - new Date(b.date)) // Sort in ascending order of date
+  // Reduce to keep only the latest entry per accountName
+  .reduce((acc, currentAccount) => {
+    const existingAccount = acc.find(account => account.accountName === currentAccount.accountName);
+    if (existingAccount) {
+      // Replace the existing one if current account date is later
+      if (new Date(currentAccount.date) > new Date(existingAccount.date)) {
+        acc = acc.filter(account => account.accountName !== existingAccount.accountName); // Remove old entry
+        acc.push(currentAccount); // Add new latest entry
+      }
+    } else {
+      acc.push(currentAccount); // Add new account if it doesn't exist yet
+    }
+    return acc;
+  }, [])
+  // Sort by accountName in ascending order (A-Z)
+  .sort((a, b) => a.accountName.localeCompare(b.accountName));
+
+console.log(sortedAccounts);
 
   // Calculate totals
   const totalSpent = sortedAccounts.reduce((sum, account) => sum + account.totalSpentt, 0);
@@ -106,10 +126,11 @@ const EmployeeMyHistory = ({email}) => {
   };
 
   return (
-    <div className='mx-5 mt-5 lg:my-5 mb-5'>
-      <div className="flex justify-center lg:justify-end items-center gap-3 mb-5">
+    <div style={{ backgroundColor: 'var(--bg-color3)', color: 'var(--text-color)',border: 'var(--border)'}} className='mx-5 mt-5 py-5 rounded-lg lg:my-5 mb-5'>
+      <div  className="flex justify-center lg:justify-start pl-5 items-center gap-3 ">
         <div>
           <select
+           style={{ backgroundColor: 'var(--bg-color2)',border: 'var(--border)', color: 'var(--text-color2)'}}
             className="px-4 py-2 border rounded bg-white text-black border-black"
             onChange={(e) => changeTab(e.target.value)}
             value={sortMonth || ""}
@@ -123,6 +144,7 @@ const EmployeeMyHistory = ({email}) => {
 
         <div>
           <select
+           style={{ backgroundColor: 'var(--bg-color2)',border: 'var(--border)', color: 'var(--text-color2)'}}
             className="px-4 py-2 border rounded bg-white text-black border-black"
             onChange={(e) => setSortYear(e.target.value)}
             value={sortYear || ""}
@@ -135,45 +157,45 @@ const EmployeeMyHistory = ({email}) => {
         </div>
       </div>
 
-      <div className="overflow-x-auto text-center rounded-xl border-l border-gray-400">
-        <table className="min-w-full text-center bg-white">
-          <thead className="bg-[#05a0db] text-white">
-            <tr>
-              <th className="p-3">SL</th>
-              <th className="p-3">Payment Month</th>
-            
-              <th className="p-3">Ad Account Name</th>
-              <th className="p-3">Total Spent</th>
-              <th className="p-3">Total Bill</th>
-              <th className="p-3">Action</th>
+      <div className='px-5  pt-5    rounded-lg' >
+      <div  className="overflow-x-auto rounded-xl  text-center " style={{ backgroundColor: 'var(--bg-color)', color: 'var(--text-color)'}}>
+          <table className="min-w-full text-center ">
+            <thead className=" ">
+              <tr className="" style={{border: 'var(--border)',borderLeft: 'var(--border)', borderRight: 'var(--border)', color: 'var(--text-color)'}}>
+              <th style={{  border: 'var(--border)'}} className="p-3">SL</th>
+              <th style={{  border: 'var(--border)'}} className="p-3">Payment Month</th>
+              <th style={{  border: 'var(--border)'}} className="p-3">Ad Account Name</th>
+              <th style={{  border: 'var(--border)'}} className="p-3">Total Spent</th>
+              <th style={{  border: 'var(--border)'}} className="p-3">Total Bill</th>
+              <th style={{  border: 'var(--border)'}} className="p-3">Action</th>
             </tr>
           </thead>
           <tbody>
             {sortedAccounts.map((account, index) => (
-              <tr
-                key={account.ids} // Use `ids` as the key
-                className={`${
-                  index % 2 === 0
-                    ? "bg-white text-left text-black border-b border-opacity-20"
-                    : "bg-gray-200 text-left text-black border-b border-opacity-20"
-                }`}
+               <tr style={{ backgroundColor: 'var(--bg-table)', color: 'var(--text-color2)'}}
+               key={account._id}
+               className={`${
+                 index % 2 === 0
+                   ? "bg-white text-left text-black border-b border-opacity-20"
+                   : "bg-gray-200  text-left text-black border-b border-opacity-20"
+               }`}
               >
-                <td className="p-3 border-r-2 border-gray-300 text-center px-5">{index + 1}</td>
-                <td className="p-3 border-l-2 border-r-2 text-center border-gray-300">
+                <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-300 text-center px-5">{index + 1}</td>
+                <td style={{  border: 'var(--border)'}} className="p-3 border-l-2 border-r-2 text-center border-gray-300">
                   {new Date(account.date).toLocaleString('default', { month: 'long'})}
                 </td>
                 
-                <td className="p-3 border-r-2 border-gray-300 text-start px-5">
+                <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-300 text-start px-5">
                   {account.accountName}
                 </td>
-                <td className="p-3 border-r-2 border-gray-300 text-center">
+                <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-300 text-center">
                   $ {account.totalSpentt.toFixed(2)}
                 </td>
-                <td className="p-3 border-r-2 border-gray-300 text-center">
+                <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-300 text-center">
                   ৳ {(account.totalSpentt * 140).toFixed(2)}
                 </td>
 
-                <td className="p-3 border-r text-center border-gray-400">
+                <td style={{  border: 'var(--border)'}} className="p-3 border-r text-center border-gray-400">
                   <div className="flex justify-center items-center gap-3">
                     <div>
                       <button
@@ -229,20 +251,21 @@ const EmployeeMyHistory = ({email}) => {
             ))}
           </tbody>
           <tfoot>
-            <tr className='bg-[#05a0db] text-white'>
-              <td colSpan="3" className="p-3  border-gray-300 text-center font-bold">
+            <tr className=''>
+              <td style={{  border: 'var(--border)'}} colSpan="3" className="p-3  border-gray-300 text-center font-bold">
                 Totals
               </td>
-              <td className="p-3  border-gray-300 text-center font-bold">
+              <td style={{  border: 'var(--border)'}} className="p-3  border-gray-300 text-center font-bold">
                 $ {totalSpent.toFixed(2)}
               </td>
-              <td className="p-3 border-gray-300 text-center font-bold">
+              <td style={{  border: 'var(--border)'}} className="p-3 border-gray-300 text-center font-bold">
                 ৳ {totalBill.toFixed(2)}
               </td>
-              <td className="p-3 border-r-2 border-gray-300"></td>
+              <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-300"></td>
             </tr>
           </tfoot>
         </table>
+      </div>
       </div>
     </div>
   );

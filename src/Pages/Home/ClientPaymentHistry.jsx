@@ -5,7 +5,6 @@ import UseAxiosPublic from "../../Axios/UseAxiosPublic";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import useMpayment from "../../Hook/UseMpayment";
-import useCampaings from "../../Hook/useCampaign";
 import useClients from "../../Hook/useClient";
 import useUsers from "../../Hook/useUsers";
 import Swal from "sweetalert2";
@@ -17,14 +16,16 @@ const ClientPaymentHistry = () => {
   const [MPayment, refetch] = useMpayment();
   const AxiosPublic = UseAxiosPublic();
   const [totalPayment, setTotalPayment] = useState(0);
-  const [Histryy, setHistryy] = useState([]);
   const [datas, setdatas] = useState();
   const [clients] = useClients();
-  const [campaign] = useCampaings();
   
+  const [Histryy, setHistryy] = useState([]);
+  const [filteredHistory, setFilteredHistory] = useState([]);
+  const [selectedMonth, setSelectedMonth] = useState('');
+
   useEffect(() => {
     if (param?.email) {
-      // Filter and sort only when the email param changes
+
       const filteredData = MPayment.filter((m) => m.clientEmail === param.email);
       const sortedHistry = filteredData.sort((a, b) => new Date(b.date) - new Date(a.date));
       setHistryy(sortedHistry);
@@ -36,12 +37,27 @@ const ClientPaymentHistry = () => {
       setdatas(clientData);
     }
   }, [param?.email, MPayment, clients]);
+
+  useEffect(() => {
+    if (selectedMonth) {
+      const filtered = Histryy.filter(payment => {
+        const paymentDate = new Date(payment.date);
+        return (
+          paymentDate.getMonth() + 1 === parseInt(selectedMonth)
+        );
+      });
+      setFilteredHistory(filtered);
+    } else {
+      setFilteredHistory(Histryy); 
+    }
+  }, [selectedMonth, Histryy]);
+
   
   const handlePayment = async (e) => {
     e.preventDefault();
     const paymentMethod = e.target.paymentMethod.value;
     const amount = parseFloat(e.target.amount.value);
-    const date = new Date();
+    const date =  e.target.date.value;
     const note = e.target.note.value;
     const clientEmail = param?.email;
     const clientName = datas?.clientName;
@@ -57,17 +73,14 @@ const ClientPaymentHistry = () => {
       date,
     };
   
-    try {
-      await AxiosPublic.post(`/MPayment`, body);
-      toast.success("Payment successful");
-      refetch();
-      document.getElementById("my_modal_8").close();
-    } catch (error) {
-      console.error("Error adding payment:", error);
-      toast.error("Failed to add payment");
-    }
-  
-    // If payment method is 'bank', then post to employeePayment
+       AxiosPublic.post(`/MPayment`, body)
+       .then(res=>{
+        toast.success("Payment successful");
+        refetch();
+        document.getElementById("my_modal_8").close();
+        console.log(res.data);
+       })
+
     if (paymentMethod === "bank") {
       const employeeName = user?.displayName;
       const payAmount = e.target.amount.value;  // Use the amount for payAmount
@@ -82,7 +95,7 @@ const ClientPaymentHistry = () => {
       };
   
       try {
-        const response = await AxiosPublic.post("https://digital-networking-server.vercel.app/employeePayment", bankData);
+        const response = await AxiosPublic.post("/employeePayment", bankData);
         toast.success("Bank payment request sent successfully!");
         refetch();
         console.log(response.data);
@@ -136,19 +149,156 @@ const ClientPaymentHistry = () => {
     }
   };
 
+  const [ddd, setDdd] = useState(null);
+
+  useEffect(() => {
+      if (users && user) {
+          const foundUser = users.find(u => u.email === user.email);
+          setDdd(foundUser || {}); // Update state with found user or an empty object
+      }
+  }, [users, user]);
+
+  const today = new Date();
+  const formattedDate = today.toISOString().split('T')[0];  // "YYYY-MM-DD" format
+
+
   return (
     <div>
-      <div className=" p-2 sm:p-4 dark:text-green-600">
+
+
+
+<div style={{ backgroundColor: 'var(--bg-color3)', color: 'var(--text-color)', border: 'var(--border)' }} className="lg:mt-5 mt-5 px-5 rounded-lg mx-5">
+  <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 lg:gap-5 mt-5 mb-5">
+    
+    {/* bKash Merchant Card */}
+    <div 
+      onClick={() => setSelectedCategory('bkashMarchent')} 
+      style={{ backgroundColor: '#f7e8e8', border: 'var(--border)' }} 
+      className="balance-card rounded-2xl p-5 text-center shadow-xl transition-transform transform hover:scale-105"
+    >
+      <img className="balance-card-img" src="https://i.ibb.co/bHMLyvM/b-Kash-Merchant.png" alt="bKash Merchant" />
+      <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700">
+        <span className="text-lg lg:text-2xl font-extrabold">৳</span>
+        {filteredHistory?.filter(h => h.paymentMethod === 'bkashMarchent')?.reduce((acc, payment) => acc + payment?.amount, 0)}
+      </p>
+    </div>
+
+    {/* bKash Personal Card */}
+    <div 
+      onClick={() => setSelectedCategory('bkashPersonal')} 
+      style={{ backgroundColor: '#ffe6f7', border: 'var(--border)' }} 
+      className="balance-card rounded-2xl p-5 text-center shadow-xl transition-transform transform hover:scale-105"
+    >
+      <img className="balance-card-img" src="https://i.ibb.co/520Py6s/bkash-1.png" alt="bKash Personal" />
+      <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700">
+        <span className="text-lg lg:text-2xl font-extrabold">৳</span>
+        {filteredHistory?.filter(h => h.paymentMethod === 'bkashPersonal')?.reduce((acc, payment) => acc + payment?.amount, 0)}
+      </p>
+    </div>
+
+    {/* Nagad Personal Card */}
+    <div 
+      onClick={() => setSelectedCategory('nagadPersonal')} 
+      style={{ backgroundColor: '#fff2cc', border: 'var(--border)' }} 
+      className="balance-card rounded-2xl p-5 text-center shadow-xl transition-transform transform hover:scale-105"
+    >
+      <img className="balance-card-img" src="https://i.ibb.co/JQBQBcF/nagad-marchant.png" alt="Nagad Personal" />
+      <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700">
+        <span className="text-lg lg:text-2xl font-extrabold">৳</span>
+        {filteredHistory?.filter(h => h.paymentMethod === 'nagadPersonal')?.reduce((acc, payment) => acc + payment?.amount, 0)}
+      </p>
+    </div>
+
+    {/* Rocket Personal Card */}
+    <div 
+      onClick={() => setSelectedCategory('rocketPersonal')} 
+      style={{ backgroundColor: '#e0f7fa', border: 'var(--border)' }} 
+      className="balance-card rounded-2xl p-5 text-center shadow-xl transition-transform transform hover:scale-105"
+    >
+      <img className="balance-card-img" src="https://i.ibb.co/QkTM4M3/rocket.png" alt="Rocket Personal" />
+      <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700">
+        <span className="text-lg lg:text-2xl font-extrabold">৳</span>
+        {filteredHistory?.filter(h => h.paymentMethod === 'rocketPersonal')?.reduce((acc, payment) => acc + payment?.amount, 0)}
+      </p>
+    </div>
+
+    {/* Bank Card */}
+    <div 
+      onClick={() => setSelectedCategory('bank')} 
+      style={{ backgroundColor: '#f2f2f2', border: 'var(--border)' }} 
+      className="balance-card rounded-2xl p-5 text-center shadow-xl transition-transform transform hover:scale-105"
+    >
+      <h1 className="p-3 text-black text-3xl font-bold text-center">Bank</h1>
+      <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700">
+        <span className="text-lg lg:text-2xl font-extrabold">৳</span>
+        {filteredHistory?.filter(h => h.paymentMethod === 'bank')?.reduce((acc, payment) => acc + payment?.amount, 0)}
+      </p>
+    </div>
+
+    {/* Total Card */}
+    <div 
+      style={{ backgroundColor: '#d9f8d9', border: 'var(--border)' }} 
+      className="balance-card rounded-2xl p-5 text-center shadow-xl transition-transform transform hover:scale-105"
+    >
+      <h1 className="p-3 text-black text-3xl font-bold text-center">TOTAL</h1>
+      <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700">
+        <span className="text-lg lg:text-2xl font-extrabold">৳</span>
+        {filteredHistory?.reduce((acc, payment) => acc + payment?.amount, 0)}
+      </p>
+    </div>
+    
+  </div>
+</div>
+
+
+     
+      <div style={{ backgroundColor: 'var(--bg-color3)', color: 'var(--text-color)',border: 'var(--border)'}} className="  rounded-lg px-5 m-5 ">
         <div>
-      <button
-         className="font-avenir hover:bg-indigo-700 px-6 w-full lg:w-auto mx-auto py-2 bg-[#05a0db]  rounded-lg text-white"
-          onClick={() => document.getElementById("my_modal_8").showModal()}
-        >
-           Pay Now
-  </button>
+
+       <div className="flex  items-center justify-between ">
+        <button
+      className="font-avenir hover:bg-indigo-700 px-4 p-2 w-full lg:w-auto   bg-[#05a0db]  rounded-lg text-white"
+       onClick={() => document.getElementById("my_modal_8").showModal()}
+     >
+        Pay Now
+</button>
+
+ <div className="mb-4">
+   <label htmlFor="month" className="block">Select Month:</label>
+   <select id="month" value={selectedMonth}  style={{ backgroundColor: 'var(--bg-color2)',border: 'var(--border)', color: 'var(--text-color2)'}} onChange={(e) => setSelectedMonth(e.target.value)} className="border bg-white text-black rounded p-2">
+     <option value="">Months</option>
+     <option value="1">January</option>
+     <option value="2">February</option>
+     <option value="3">March</option>
+     <option value="4">April</option>
+     <option value="5">May</option>
+     <option value="6">June</option>
+     <option value="7">July</option>
+     <option value="8">August</option>
+     <option value="9">September</option>
+     <option value="10">October</option>
+     <option value="11">November</option>
+     <option value="12">December</option>
+   </select>
+ </div>
+
+
+      </div>
+     
   <dialog id="my_modal_8" className="modal">
     <div className="modal-box text-black bg-white font-bold">
       <form onSubmit={(e) => handlePayment(e)}>
+
+      <div className="mb-4">
+            <label className="block text-gray-250">Date</label>
+            <input
+              type="date"
+              name="date"
+              required
+              defaultValue={formattedDate}
+              className="w-full border bg-white border-black rounded p-2 mt-1"
+            />
+          </div>
        
 
           <div className="mb-4">
@@ -201,7 +351,7 @@ const ClientPaymentHistry = () => {
           </button>
           <button
             type="submit"
-            className="font-avenir hover:bg-indigo-700 px-3 py-2 bg-[#05a0db] rounded-lg text-white text-center"
+            className="font-avenir hover:bg-indigo-700 px-3 py-2 bg-[#2220af] rounded-lg text-white text-center"
           >
             Pay Now
           </button>
@@ -211,43 +361,51 @@ const ClientPaymentHistry = () => {
   </dialog>
 </div>
 
-        <div className="overflow-x-auto mt-5 rounded-xl ">
-          <table className="min-w-full bg-white">
-            <thead className="bg-[#05a0db] text-white">
-              <tr>
-                <th className="p-3 ">SL</th>
-                <th className="p-3">Payment Date</th>
-                <th className="p-3 ">Client Name</th>
-                <th className="p-3">Payment Amount</th>
-                <th className="p-3">Payment Method</th>
-                <th className="p-3"> Note</th>
-                <th className="p-3">Action</th>
+<div  className="overflow-x-auto rounded-xl  text-center " style={{ backgroundColor: 'var(--bg-color)', color: 'var(--text-color)'}}>
+          <table className="min-w-full text-center ">
+            <thead className=" ">
+              <tr className="" style={{border: 'var(--border)',borderLeft: 'var(--border)', borderRight: 'var(--border)', color: 'var(--text-color)'}}>
+                <th style={{  border: 'var(--border)'}} className="p-3 ">SL</th>
+                <th style={{  border: 'var(--border)'}} className="p-3">Payment Date</th>
+                <th style={{  border: 'var(--border)'}} className="p-3 ">Client Name</th>
+                <th style={{  border: 'var(--border)'}} className="p-3">Payment Amount</th>
+                <th style={{  border: 'var(--border)'}} className="p-3">Payment Method</th>
+                <th style={{  border: 'var(--border)'}} className="p-3"> Note</th>
+                {
+      ddd?.role === 'employee' && 
+      <th className="p-3">Action</th>
+      }
+                
                 
               </tr>
             </thead>
             <tbody>
-              {Histryy.map((payment, index) => (
-                <tr
-                  key={index}
-                  className={`${index % 2 === 0 ? "bg-gray-100" : "bg-white"}`}
-                >
-                  <td className="p-3  border-r-2 border-l-2 border-gray-200 text-center">
+              {filteredHistory.sort((a, b) => new Date(b.date) - new Date(a.date))?.sort((a, b) => new Date(b.date) - new Date(a.date))?.map((payment, index) => (
+                <tr style={{ backgroundColor: 'var(--bg-table)', color: 'var(--text-color2)'}}
+                key={payment._id}
+                className={`${
+                  index % 2 === 0
+                    ? "bg-white text-left text-black border-b border-opacity-20"
+                    : "bg-gray-200  text-left text-black border-b border-opacity-20"
+                }`}
+              >
+                  <td style={{  border: 'var(--border)'}} className="p-3  border-r-2 border-l-2 border-gray-200 text-center">
                     {index + 1}
                   </td>
-                  <td className="p-3 border-r-2 border-gray-200 text-center">
+                  <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-200 text-center">
                   {new Date(payment.date).toLocaleDateString("en-GB")}
                   </td>
                 
-                  <td className="p-3 border-r-2 border-gray-200 text-start">
+                  <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-200 text-start">
                     {payment.clientName}
                    
                   </td>
-                  <td className="p-3 border-r-2 border-gray-200 text-center">
+                  <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-200 text-center">
                     <span className="text-md mr-1 font-extrabold">৳</span>{" "}
                     {payment.amount}
                   </td>
 
-                  <td className="p-3 border-r-2 border-gray-200 text-center">
+                  <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-200 text-center">
                     {payment.paymentMethod === "bkashMarchent" && (
                       <img
                         className="h-10 w-24 flex mx-auto my-auto items-center justify-center"
@@ -284,12 +442,15 @@ const ClientPaymentHistry = () => {
                       />
                     )}
                   </td>
-                  <td className="p-3 border-r-2 border-gray-200 text-start">
+                  <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 text-center border-gray-200 ">
                     {" "}
                     {payment.note}
                   </td>
               
-                  <td className="p-3 border-r-2 border-gray-200 text-center">
+
+                  {
+      ddd?.role === 'employee' &&
+      <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-200 text-center">
                   <div className="flex justify-center items-center gap-3">
   <div>
     <button
@@ -334,7 +495,6 @@ const ClientPaymentHistry = () => {
               <option value="bkashPersonal">Bkash Personal</option>
               <option value="nagadPersonal">Nagad Personal</option>
               <option value="rocketPersonal">Rocket Personal</option>
-              <option value="bank">Bank</option>
             </select>
           </div>
           <div className="mb-4">
@@ -376,21 +536,24 @@ const ClientPaymentHistry = () => {
 </div>
 
                   </td>
-                 
+      }
+
                 </tr>
               ))}
-              <tr className="bg-[#05a0db] text-white font-bold">
-                <td className="p-3 text-center" colSpan="3">
+              <tr style={{ backgroundColor: 'var(--bg-color)', color: 'var(--text-color)'}} className="  font-bold">
+                <td style={{  border: 'var(--border)'}} className="p-3 text-center" colSpan="3">
                   Total Amount :
                 </td>
-                <td className="p-3 text-center">
+                <td style={{  border: 'var(--border)'}} className="p-3 text-center">
                   <span className="text-md mr-1 font-extrabold">৳</span>{" "}
                   {totalPayment}
                 </td>
-                <td className="p-3 text-center"></td>
-                <td className="p-3 text-center"></td>
-                <td className="p-3 text-center"></td>
-                
+                <td style={{  border: 'var(--border)'}} className="p-3 text-center"></td>
+                <td style={{  border: 'var(--border)'}} className="p-3 text-center"></td>
+                 {
+                    ddd?.role === 'employee' && 
+                    <td style={{  border: 'var(--border)'}} className="p-3 text-center"></td>
+                 }
               </tr>
             </tbody>
           </table>

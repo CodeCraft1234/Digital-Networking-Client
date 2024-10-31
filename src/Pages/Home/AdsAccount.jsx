@@ -14,7 +14,7 @@ const AdsAccount = () => {
     const [searchQuery, setSearchQuery] = useState("");
     const AxiosPublic = UseAxiosPublic();
     const [modalData, setModalData] = useState(null);
-    
+    const [modalData2, setModalData2] = useState(null);
     const initialTab = localStorage.getItem("activeTabAlladsAccountStatus") || "Active";
     const initialTab2 = localStorage.getItem("activeTabAlladsAccountEmail") || "all";
     const [selectedEmail, setSelectedEmail] = useState(initialTab2 );
@@ -35,7 +35,9 @@ const AdsAccount = () => {
       (selectedStatus ? account.status === selectedStatus : true) &&
       (selectedEmail === "all" || account.employeeEmail === selectedEmail) &&
       (searchQuery ? account.accountName.toLowerCase().includes(searchQuery.toLowerCase()) : true)
-    );
+    )
+    .sort((a, b) => a.accountName.localeCompare(b.accountName, undefined, { sensitivity: 'base' }));
+  
 
       const handleUpdate = (e, id) => {
         e.preventDefault();
@@ -73,14 +75,13 @@ const AdsAccount = () => {
       e.preventDefault();
       const totalSpent = e.target.totalSpent.value;
       const date = e.target.date.value;
-      const body = { totalSpent: parseFloat(totalSpent)  };
+      const body = { totalSpent: parseFloat(totalSpent)};
       const ids=generateRandomId()
    
       axios.put(`https://digital-networking-server.vercel.app/adsAccount/totalSpent/${id}`, body)
         .then((res) => {
-          console.log(res.data);
           refetch();
-          document.getElementById(`my_modal_${id}`).close(); // Close the modal
+          setModalData2(null);
         })
         .catch((error) => {
           console.error("Error updating total spent:", error);
@@ -117,13 +118,18 @@ const AdsAccount = () => {
           toast.error("Failed to update campaign");
         });
     };
+
+    const today = new Date();
+    const formattedDate = today.toISOString().split('T')[0];  // "YYYY-MM-DD" format
+
     return (
-        <div className="m-5">
+        <div style={{ backgroundColor: 'var(--bg-color3)', color: 'var(--text-color)',border: 'var(--border)'}} className="m-5 rounded-lg p-5">
            
-            <div className=" flex justify-center lg:justify-end lg:mb-5  mx-auto mb-3  items-center gap-3 ">
+           <div style={{ backgroundColor: 'var(--bg-color3)', color: 'var(--text-color)'}} className=" flex justify-center lg:justify-start    mb-5  mx-auto   items-center gap-3 ">
 
             <div className="flex  lg:mb-0 justify-center">
       <select
+       style={{ backgroundColor: 'var(--bg-color2)',border: 'var(--border)', color: 'var(--text-color2)'}}
         name="email"
         value={selectedEmail}
         onChange={(e) => changeTab2(e.target.value)}
@@ -158,6 +164,7 @@ const AdsAccount = () => {
             <div className="flex  justify-center gap-3">
             <div className="flex text-sm lg:mb-0  justify-center">
                 <select
+                 style={{ backgroundColor: 'var(--bg-color2)',border: 'var(--border)', color: 'var(--text-color2)'}}
                   name="status"
                   value={selectedStatus}
                   onChange={(e) => changeTab(e.target.value)}
@@ -175,10 +182,10 @@ const AdsAccount = () => {
 
             </div>
          
-            <div className="overflow-x-auto rounded-xl text-black text-center border border-black">
-          <table className="min-w-full  text-center bg-white">
-            <thead className="bg-[#05a0db] text-white">
-              <tr>
+            <div  className="overflow-x-auto rounded-xl  text-center " >
+          <table className="min-w-full text-center ">
+            <thead style={{ backgroundColor: 'var(--bg-color)', color: 'var(--text-color)'}} className=" ">
+              <tr className="" style={{border: 'var(--border)',borderLeft: 'var(--border)', borderRight: 'var(--border)', color: 'var(--text-color)'}}>
                 <th className="p-3">OFF/ON</th>
                 <th className="p-3">Payment Date</th>
                 <th className="p-3">Employeer Name</th>
@@ -196,15 +203,15 @@ const AdsAccount = () => {
             </thead>
             <tbody>
               {filteredAdsAccount.map((account, index) => (
-                <tr
-                  key={account._id}
-                  className={`${
-                    index % 2 === 0
-                      ? "bg-white text-left text-black border-b border-opacity-20"
-                      : "bg-gray-200  text-left text-black border-b border-opacity-20"
-                  }`}
-                >
-                   <td className="p-3 border-r-2 border-l-2 border-gray-200 text-center">  <label className="inline-flex items-center cursor-pointer">
+                <tr style={{ backgroundColor: 'var(--bg-table)', color: 'var(--text-color2)'}}
+                key={account._id}
+                className={`${
+                  index % 2 === 0
+                    ? "bg-white text-left text-black border-b border-opacity-20"
+                    : "bg-gray-200  text-left text-black border-b border-opacity-20"
+                }`}
+              >
+                   <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-l-2 border-gray-200 text-center">  <label className="inline-flex items-center cursor-pointer">
   <input
     type="checkbox"
     className="sr-only"
@@ -227,86 +234,42 @@ const AdsAccount = () => {
   </div>
 </label>
 </td>
-                  <td className="p-3 border-l-2 border-r-2 text-center border-gray-300 ">
+                  <td style={{  border: 'var(--border)'}} className="p-3 border-l-2 border-r-2 text-center border-gray-300 ">
                     {new Date(account.paymentDate).toLocaleDateString("en-GB")}
                   </td>
 
-                  <td className="p-3 border-r-2 hover:text-blue-700 hover:font-bold border-gray-300 text-start px-5 ">
+                  <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 hover:text-blue-700 hover:font-bold border-gray-300 text-start px-5 ">
                     <Link to={`/dashboard/userInfo/${account?.employeeEmail}`}>
                     {account.employeerName}
                     </Link>
                 
                   </td>
-                  <td className="p-3 border-r-2  border-gray-300 text-start px-5 ">
+                  <td style={{  border: 'var(--border)'}} className="p-3 border-r-2  border-gray-300 text-start px-5 ">
                     <div className="">
                       <h1> {account.accountName}</h1>
                     
                     </div>
                   </td>
                 
-                  <td className="p-3 border-r-2 border-gray-300 text-center">
-                  $ {account.currentBallence}
+                  <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-300 text-center">
+                  <span className=" text-xm font-extrabold">৳</span> {account.currentBallence}
                   </td>
-                  <td className="p-3 border-r-2 border-gray-300 text-center ">
-                  $ {account.threshold}
+                  <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-300 text-center ">
+                  <span className=" text-xm font-extrabold">৳</span> {account.threshold}
                   </td>
-                  <td className="p-3 border-r-2 border-gray-300 text-center ">
+                  <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-300 text-center ">
                     <div className="relative group flex items-center justify-center ">
-                      <h1>$ {account.totalSpent}</h1>
+                      <h1><span className=" text-xm font-extrabold">৳</span> {account.totalSpent}</h1>
                       <button
-                        className=" text-black text-right px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                        onClick={() =>
-                          document
-                            .getElementById(`my_modal_${account._id}`)
-                            .showModal()
-                        }
-                      >
-                        <FaEdit />
-                      </button>
-
-                      <dialog id={`my_modal_${account._id}`} className="modal">
-  <div className="modal-box bg-white">
-    <h1 className="text-black font-bold text-ceter">{account.accountName}</h1>
-    <form
-      onSubmit={(e) =>
-        handleUpdateTotalSpent(e, account._id, account.accountName, account.employeeEmail, account.employeerName)
-      }
-    >
-      <h1 className="text-black font-bold text-start">Date</h1>
-      <input
-        className="text-black inline-block w-full mb-5 p-3 border border-black bg-red-200"
-        type="date"
-        name="date"
-        required
-        id=""
-      />
-      <h1 className="text-black font-bold text-start">Total Spent</h1>
-      <input
-        type="number"
-        name="totalSpent"
-        step="0.01"
-        placeholder="0"
-        className="w-full rounded p-2 mt-3 bg-white text-black border border-gray-700"
-      />
-
-      <button
-        type="submit"
-        className="mt-4 font-avenir px-3 mx-auto py-1 rounded-lg text-white bg-[#05a0db]"
-      >
-        Update
-      </button>
-    </form>
-    <form method="dialog">
-      <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
-        ✕
-      </button>
-    </form>
-  </div>
-</dialog>
+                      className="text-black text-right px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                     onClick={() => setModalData2(account)}
+                   >
+                <FaEdit />
+               </button>
 
                     </div>
                   </td>
-                  <td
+                  <td style={{  border: 'var(--border)'}}
                     className={`p-3 border-r-2  text-center border-gray-300  ${
                       account.status === "Active"
                         ? "text-green-900 font-bold"
@@ -315,7 +278,7 @@ const AdsAccount = () => {
                   >
                     {account.status}
                   </td>
-                  <td
+                  <td style={{  border: 'var(--border)'}}
                     className={`p-3 border-r-2  text-center border-gray-300  `}
                   >
                <div className="flex justify-center gap-3">
@@ -339,24 +302,24 @@ const AdsAccount = () => {
                 </tr>
               ))}
 
-<tr className="bg-[#05a0db]   text-sm text-white font-bold">
+<tr style={{backgroundColor: 'var(--bg-color)',border: 'var(--border)',borderLeft: 'var(--border)', borderRight: 'var(--border)', color: 'var(--text-color)'}} className="font-bold">
                 <td className="p-3  text-right" colSpan="4">
                   Total :
                 </td>
                 <td className="p-3 text-center border-gray-300  ">
-                {adsAccount.reduce(
+                <span className=" text-xm font-extrabold">$</span> {adsAccount.reduce(
         (acc, account) => acc + parseFloat(account.currentBallence || 0),
         0
       ).toFixed(2)}
                 </td>
                 <td className="p-3 text-center  border-gray-300  ">
-                  $ {adsAccount.reduce(
+                <span className=" text-xm font-extrabold">$</span> {adsAccount.reduce(
         (acc, account) => acc + parseFloat(account.threshold || 0),
         0
       ).toFixed(2)}
                 </td>
                 <td className="p-3 text-start  border-gray-300 ">
-                  $  {adsAccount.reduce(
+                <span className=" text-xm font-extrabold">$</span>  {adsAccount.reduce(
         (acc, account) => acc + parseFloat(account.totalSpent || 0),
         0
       ).toFixed(2)}
@@ -370,6 +333,7 @@ const AdsAccount = () => {
             </tbody>
           </table>
         </div>
+
         {modalData && (
      <dialog className="modal" open>
      <div className="modal-box bg-white text-black">
@@ -454,6 +418,52 @@ const AdsAccount = () => {
      </div>
    </dialog>
       )}
+
+   {modalData2 && ( 
+           <dialog className="modal" open>
+  <div className="modal-box bg-white">
+
+         <h1 className=" text-black flex hover:text-red-500  justify-end  text-end"
+             onClick={() => setModalData2(null)} >
+            <ImCross />
+        </h1>
+
+  
+     <form
+      onSubmit={(e) =>
+        handleUpdateTotalSpent(e, modalData2._id, modalData2.accountName, modalData2.employeeEmail, modalData2.employeerName)
+      }
+    >
+     <h1 className="text-black font-bold text-center">{modalData2.accountName}</h1>
+
+      <h1 className="text-black font-bold text-start">Date</h1>
+      <input
+        className="text-black inline-block w-full mb-5 p-3 border border-black bg-red-200"
+        type="date"
+        name="date"
+        required
+        defaultValue={formattedDate}
+        id=""
+      />
+      <h1 className="text-black font-bold text-start">Total Spent</h1>
+      <input
+        type="number"
+        name="totalSpent"
+        step="0.01"
+        placeholder="0"
+        className="w-full rounded p-2 mt-3 bg-white text-black border border-gray-700"
+      />
+
+      <button
+        type="submit"
+        className="mt-4 font-avenir px-3 mx-auto py-1 rounded-lg text-white bg-[#05a0db]"
+      >
+        Update
+      </button>
+    </form>
+  </div>
+</dialog>
+    )}
         </div>
     );
 };

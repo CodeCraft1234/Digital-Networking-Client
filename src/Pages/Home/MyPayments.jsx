@@ -32,29 +32,32 @@ const MyPayments = () => {
     },[])
 
     return (
-        <div>
-                         <div className="flex lg:justify-start justify-center items-center gap-1 lg:mt-5 mt-5 mx-5">
-      <button 
-          className={getButtonClass('adminPay')}
-          onClick={() => changeTab('adminPay')}
-        >
-          Admin Pay 
-        </button>
-        <p className='font-extrabold text-blue text-2xl'>|</p>
-      <button 
-          className={getButtonClass('clientsPay')}
-          onClick={() => changeTab('clientsPay')}
-        >
-          Clients Pay 
-        </button>
+      <div>
 
-      </div>
+      <div style={{ backgroundColor: 'var(--bg-color3)', color: 'var(--text-color)',border: 'var(--border)'}} className="flex lg:justify-center rounded-md p-2 justify-center items-center gap-1 lg:mt-5 mt-5 mx-5">
+ <button 
+  style={{ backgroundColor: 'var(--bg-table)', color: 'var(--text-color2)'}}
+     className={getButtonClass('adminPay')}
+     onClick={() => changeTab('adminPay')}
+   >
+     Admin Pay 
+   </button>
+   <p className='font-extrabold text-blue-800 text-2xl'>|</p>
+ <button 
+  style={{ backgroundColor: 'var(--bg-table)', color: 'var(--text-color2)'}}
+     className={getButtonClass('clientsPay')}
+     onClick={() => changeTab('clientsPay')}
+   >
+     Clients Pay 
+   </button>
 
-      {activeTab === 'adminPay' && <AdminPayments></AdminPayments>}
-      {activeTab === 'clientsPay' && <ClientPayments></ClientPayments>}
+       </div>
+
+ {activeTab === 'adminPay' && <AdminPayments></AdminPayments>}
+ {activeTab === 'clientsPay' && <ClientPayments></ClientPayments>}
 
 
-        </div>
+   </div>
 
     );
 };

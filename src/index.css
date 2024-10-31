@@ -1,3 +1,83 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Default (light) theme */
+
+:root {
+    --bg-color: gray;
+    --bg-color2:  gray; 
+    --text-color: black;
+    --border: 1px solid gray; 
+}
+
+/* Dark theme */
+[data-theme="light"] {
+    --bg-color: #e9ebee;
+    --bg-color2: white; 
+    --bg-color3: #e9ebee; 
+    --text-color: black; 
+    --text-color2: black; 
+    --border: 1px solid #2e353a; 
+    --border2: 1px solid #2e353a; 
+} 
+[data-theme="dark"] {
+    --bg-color: #394148;
+    --bg-color2: #2e353a; 
+    --bg-color3: #394148; 
+    --text-color: white; 
+    --text-color2: white; 
+    --border: 1px solid #23282c; 
+    --border2: 3px solid #2e353a; 
+} 
+
+/* Blue theme */
+[data-theme="blue"] {
+    --bg-color: #4285F4; 
+    --bg-color2:  #e9ebee; 
+    --bg-color3: white; 
+    --bg-table: #ffffff;
+    --text-color: white;  
+    --text-color2: black; 
+    --border: 1px solid #0077A0; 
+}
+
+/* Green theme */
+[data-theme="green"] {
+    --bg-color: #278664; 
+    --bg-color2:  #e9ebee; 
+    --bg-color3: white; 
+    --bg-table: #ffffff;
+    --text-color: white;  
+    --text-color2: black;  
+    --border: 1px solid #4baf6e; 
+}
+
+[data-theme="pink"] {
+    --bg-color: #e83e8c; 
+    --bg-color2:  #e9ebee; 
+    --bg-color3: white; 
+    --bg-table: #ffffff;
+    --text-color: white; 
+    --text-color2: black;  
+    --border: 1px solid #ff70ac;
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+}
+
+.balance-card {
+    background-color: var(--bg-color); 
+    color: var(--text-color); 
+    border: var(--border); 
+    padding: 1rem;
+    border-radius: 0.5rem;
+    transition: background-color 0.3s ease, color 0.3s ease, border 0.3s ease; /* Smooth transition */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+  
+  
+  

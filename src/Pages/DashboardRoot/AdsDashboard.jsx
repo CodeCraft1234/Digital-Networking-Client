@@ -1,90 +1,24 @@
-import { Link, NavLink, useNavigate } from "react-router-dom";
-import {
-  FaBlog,
-  FaBlogger,
-  FaBorderAll,
-  FaDAndD,
-  FaEmpire,
-  FaHome,
-  FaUsers,
-} from "react-icons/fa";
-
+import { Link, NavLink } from "react-router-dom";
 import { RxDashboard } from "react-icons/rx";
-
-import { MdAccountCircle, MdCampaign, MdOutlinePayments, MdOutlineSummarize } from "react-icons/md";
-import { IoLogOutOutline, IoPeopleSharp } from "react-icons/io5";
-
-
-import { IoIosAddCircleOutline, IoIosPeople, IoMdArrowDropdown, IoMdArrowDropup } from "react-icons/io";
-import { useContext, useState } from "react";
-
-import { FaPeopleGroup, FaUser } from "react-icons/fa6";
-
+import { MdAccountCircle } from "react-icons/md";
+import { useContext } from "react";
 import { AuthContext } from "../../Security/AuthProvider";
-import { GiClick } from "react-icons/gi";
-import { RiSecurePaymentFill, RiSecurePaymentLine } from "react-icons/ri";
+import { CiBank } from "react-icons/ci";
+import { LuActivitySquare } from "react-icons/lu";
+import { FaHistory } from "react-icons/fa";
 
 const AdsDashboard = () => {
-  const { user, logOut } = useContext(AuthContext);
-  const navigate = useNavigate();
-  const handleLogOut = () => {
-    logOut().then().catch();
-    navigate("/login");
-  };
-
+  const { user} = useContext(AuthContext);
 
   const getActiveStyle = (isActive) => (
     isActive
-      ? { backgroundColor: '#05a0db', color: 'white' }
+      ? { backgroundColor: 'var(--bg-color)', color: 'var(--text-color)' }
       : {}
   );
-
-  const getActiveStyle2 = (isActive) => (
-    isActive
-      ? { backgroundColor: '#f89320', color: 'white' }
-      : {}
-  );
-  const [isOpen, setIsOpen] = useState(false);
-  const [isOpen2, setIsOpen2] = useState(false);
-  const [isOpenTwo, setIsOpenTwo] = useState(false);
-
-
-
-
-
-
-
-
-
-
-  const toggleDropdown = () => {
-    setIsOpen(!isOpen);
-  };
-  const toggleDropdown2 = () => {
-    setIsOpen(!isOpen2);
-  };
-  const toggleDropdownTwo = () => {
-    setIsOpenTwo(!isOpenTwo);
-  };
-
-  const handleMouseEnter = () => {
-    setIsOpen(true);
-  };
-
-  const handleMouseLeave2 = () => {
-    setIsOpen2(false);
-  };
-  const handleMouseEnter2 = () => {
-    setIsOpen2(true);
-  };
-
-  const handleMouseLeave = () => {
-    setIsOpen(false);
-  };
 
   return (
-    <div className="overflow-hidden h-screen">
-      <div className="w-[200px] bg-gray-900 text-white">
+    <div className="w-[225px]  text-white bg-gray-900 -mt-3 -ml-2 pr-2 min-h-screen">
+      <div className="">
         <div className="flex  items-center justify-center py-4">
           <Link to={"/"}>
             <img
@@ -122,7 +56,30 @@ const AdsDashboard = () => {
             Payments
           </NavLink>
 
+          <NavLink
+            to='dashboard/contributorSummery'
+            className="text-white hover:bg-[#f89320] hover:text-black py-2 px-4 rounded-lg flex items-center"
+            style={({ isActive }) => getActiveStyle(isActive)}>
+            <LuActivitySquare className="w-6 h-6 mr-2" />
+           Summery
+          </NavLink>
 
+          <NavLink
+            to='dashboard/contributorHistory'
+            className="text-white hover:bg-[#f89320] hover:text-black py-2 px-4 rounded-lg flex items-center"
+            style={({ isActive }) => getActiveStyle(isActive)}>
+            <FaHistory className="w-6 h-6 mr-2" />
+            History 
+          </NavLink>
+
+          <NavLink
+            to={`dashboard/bankInfo`}
+            className="text-white hover:bg-[#f89320] hover:text-black py-2 px-4 rounded-lg flex items-center"
+            style={({ isActive }) => getActiveStyle(isActive)}
+          >
+           <CiBank   className="w-6 h-6 mr-2" />
+           Bank Info
+          </NavLink>
 
         </ul>
       </div>

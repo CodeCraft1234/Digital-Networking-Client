@@ -143,29 +143,112 @@ const AllClients = ({}) => {
   const total = (totalSpent - totalPayment).toFixed(2);
   
   return (
-    <div className="mt-10">
+    <div className="mt-5">
       <ToastContainer></ToastContainer>
       <Helmet>
         <title>All Clients | Digital Network </title>
         <link rel="canonical" href="https://www.example.com/" />
       </Helmet>
-      <div className="grid grid-cols-2 justify-center items-center gap-5 px-5 text-white pb-5">
+      <div style={{ backgroundColor: 'var(--bg-color3)', color: 'var(--text-color)',border: 'var(--border)'}} className="grid lg:grid-cols-4 mx-5 grid-cols-2 text-black sm:grid-cols-2 gap-3 lg:gap-5 justify-around p-5 rounded-lg lg:py-5 pb-5">
+      <div className="px-5 py-10 rounded-2xl bg-[#b7cc50] text-white shadow-lg text-center">
+  <h2 className="lg:text-2xl text-xl font-bold">Total Spent</h2>
+  <p className="lg:text-2xl md:text-3xl text-md font-bold mt-2">
+  $ {
+    filteredClients
+      ?.flatMap(client => client?.campaigns || []) // Use an empty array if campaigns is undefined
+      ?.reduce((acc, curr) => acc + (parseFloat(curr.tSpent) || 0), 0).toFixed(0) // Sum up `tSpent` values
+  }
+</p>
 
-  <div className="bg-blue-600 rounded-lg p-5">
-
-  </div>
-
-  <div className="bg-red-600 p-5 rounded-lg">
-   
-  </div>
 </div>
 
 
+<div className="px-5 py-10 rounded-2xl bg-[#5422c0] text-white shadow-lg text-center">
+  <h2 className="lg:text-2xl text-xl font-bold">Total Bill</h2>
+  <p className="lg:text-2xl md:text-3xl text-md font-bold mt-2">
+        <span className='font-extrabold lg:text-4x text-md'> ৳ </span>
+        {
+          (filteredClients
+            ?.flatMap(client => client.campaigns || [])
+            ?.reduce((acc, curr) => {
+              const tSpent = parseFloat(curr.tSpent).toFixed(0) || 0;
+              const dollerRate = parseFloat(curr.dollerRate).toFixed(0) || 0;
+              return acc + (tSpent * dollerRate)
+            }, 0)
+          )
+        }
+      </p>
+</div>
 
 
-      <div className="lg:flex gap-5 mr-5 lg:justify-end  items-center">
+        <div className="px-5 py-10 rounded-2xl bg-[#05a0db] text-white shadow-lg text-center">
+          <h2 className="lg:text-2xl text-xl font-bold">Total Paid</h2>
+          <p className="lg:text-2xl md:text-3xl text-md font-bold mt-2">
+  <span className='font-extrabold lg:text-4x text-md'> ৳ </span>
+  {
+    filteredClients
+      ?.flatMap(client => client.payments || []) 
+      ?.reduce((acc, curr) => acc + (parseFloat(curr.amount) || 0), 0).toFixed(0) 
+  }
+</p>
+
+        </div>
+
+    
+
+
+
+
+
+        <div  className="px-5 py-10 rounded-2xl bg-[#ce1a38] text-white shadow-lg text-center">
+  <h2 className="lg:text-2xl text-xl font-bold">
+    {
+      ((
+        (filteredClients
+          ?.flatMap(client => client.campaigns || []) 
+          ?.reduce((acc, curr) => {
+            const tSpent = parseFloat(curr.tSpent) || 0; // Safely parse tSpent
+            const dollerRate = parseFloat(curr.dollerRate) || 0; // Safely parse dollerRate
+            return acc + (tSpent * dollerRate); // Accumulate the total
+          }, 0) || 0 // Fallback to 0 if no campaigns exist
+        ).toFixed(0) - 
+        (filteredClients
+          ?.flatMap(client => client.payments || []) 
+          ?.reduce((acc, curr) => acc + (parseFloat(curr.amount) || 0), 0) || 0).toFixed(0) 
+      ) > 0 ? "Avarage":"Avarage")
+    }
+  </h2>
+  <p className="lg:text-2xl md:text-3xl text-md font-bold mt-2">
+    <span className='font-extrabold text-md'> ৳ </span> 
+    {
+      Math.abs(
+        (
+          (filteredClients
+            ?.flatMap(client => client.campaigns || []) 
+            ?.reduce((acc, curr) => {
+              const tSpent = parseFloat(curr.tSpent) || 0; // Safely parse tSpent
+              const dollerRate = parseFloat(curr.dollerRate) || 0; // Safely parse dollerRate
+              return acc + (tSpent * dollerRate); // Accumulate the total
+            }, 0) || 0 // Fallback to 0 if no campaigns exist
+          ).toFixed(0) - 
+          (filteredClients
+            ?.flatMap(client => client.payments || []) 
+            ?.reduce((acc, curr) => acc + (parseFloat(curr.amount) || 0), 0) || 0).toFixed(0)
+        )
+      )
+    }
+  </p>
+</div>
+
+      </div>
+
+
+
+      <div className='px-5 pb-5 mx-5 my-5 mt-5 rounded-lg' style={{ backgroundColor: 'var(--bg-color3)', color: 'var(--text-color)',border: 'var(--border)'}}>
+      <div className="lg:flex gap-3 mr-3 lg:justify-start mt-5  items-center">
         <div className="flex justify-center ">
           <select
+           style={{ backgroundColor: 'var(--bg-color2)',border: 'var(--border)', color: 'var(--text-color2)'}}
             name="email"
             className="border bg-white w-full ml-5 lg:ml-0 border-gray-700 text-black rounded p-2 mt-1"
             onChange={(e) => activeTab(e.target.value)}
@@ -181,20 +264,21 @@ const AllClients = ({}) => {
         </div>
         <div className="flex justify-center mt-5 lg:mt-0">
           <input
+           style={{ backgroundColor: 'var(--bg-color2)',border: 'var(--border)', color: 'var(--text-color2)'}}
             type="text"
             placeholder="Search by Phone..."
-            className="rounded-lg bg-white w-full ml-5 lg:ml-0 placeholder-black border border-gray-700 px-5 p-2 text-black text-sm"
+           className="border bg-white w-full ml-5 lg:ml-0 border-gray-700 text-black rounded p-2 mt-1"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
         </div>
       </div>
 
-      <div className="p-5  text-black">
-        <div className="overflow-x-auto rounded-lg text-black border-black">
-          <table className="min-w-full text-black bg-white">
-            <thead className="bg-[#05a0db] text-white">
-              <tr>
+      <div className=" mt-5  text-black">
+      <div  className="overflow-x-auto rounded-xl  text-center " style={{ backgroundColor: 'var(--bg-color)', color: 'var(--text-color)'}}>
+          <table className="min-w-full text-center ">
+            <thead className=" ">
+              <tr className="" style={{border: 'var(--border)',borderLeft: 'var(--border)', borderRight: 'var(--border)', color: 'var(--text-color)'}}>
                 <th className="p-3 text-center">SL</th>
                 <th className="p-3 text-start">Client Name</th>
                 <th className="p-3 text-center">Client Phone</th>
@@ -206,18 +290,18 @@ const AllClients = ({}) => {
             </thead>
             <tbody>
               {filteredByCategory.map((campaign, index) => (
-                <tr
-                  key={campaign._id}
-                  className={`${
-                    index % 2 === 0
-                      ? "bg-white  border-b border-opacity-20"
-                      : "bg-gray-200  border-b border-opacity-20"
-                  }`}
-                >
-                  <td className="p-3 border-l-2 border-r-2 border-gray-300 text-center">
+               <tr style={{ backgroundColor: 'var(--bg-table)', color: 'var(--text-color2)'}}
+               key={campaign._id}
+               className={`${
+                 index % 2 === 0
+                   ? "bg-white text-left text-black border-b border-opacity-20"
+                   : "bg-gray-200  text-left text-black border-b border-opacity-20"
+               }`}
+             >
+                  <td style={{  border: 'var(--border)'}} className="p-3 border-l-2 border-r-2 border-gray-300 text-center">
                     {index + 1}
                   </td>
-<td className="p-3 border-r-2 hover:text-blue-700 hover:font-bold text-start border-gray-300 ">
+<td style={{  border: 'var(--border)'}} className="p-3 border-r-2 hover:text-blue-700 hover:font-bold text-start border-gray-300 ">
   <Link to={`/dashboard/client/${campaign.clientEmail}`} className="flex justify-start items-center">
     {campaign.clientName}
     {
@@ -250,10 +334,10 @@ const AllClients = ({}) => {
   </Link>
 </td>
 
-                  <td className="p-3 border-r-2 border-gray-300 text-center">
+                  <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-300 text-center">
                     {campaign.clientPhone}
                     </td>
-                    <td className="p-3 border-r border-gray-400 text-center">
+                    <td style={{  border: 'var(--border)'}} className="p-3 border-r border-gray-400 text-center">
 
 ৳ 
   {
@@ -268,7 +352,7 @@ const AllClients = ({}) => {
 }
 
 </td>
-                  <td className="p-3 border-r border-gray-400 text-center">
+                  <td style={{  border: 'var(--border)'}} className="p-3 border-r border-gray-400 text-center">
   
   ৳ 
   {
@@ -280,7 +364,7 @@ const AllClients = ({}) => {
 }
 </td>
 
-     <td className="p-3 border-r border-gray-400 text-center">
+     <td style={{  border: 'var(--border)'}} className="p-3 border-r border-gray-400 text-center">
   ৳
   {
     (
@@ -302,7 +386,7 @@ const AllClients = ({}) => {
   }
 </td>
 
-                  <td className="p-3 border-r-2 border-gray-200 text-center">
+                  <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-200 text-center">
                   <button
  className="bg-green-700 hover:bg-blue-700 mr-3 text-white px-2 py-1 rounded"
     onClick={() =>
@@ -380,7 +464,8 @@ const AllClients = ({}) => {
                   </td>
                 </tr>
               ))}
-              <tr className="bg-[#05a0db] text-sm text-white font-bold">
+              <tr style={{border: 'var(--border)',borderLeft: 'var(--border)', borderRight: 'var(--border)', color: 'var(--text-color)'}} className=" text-sm  font-bold">
+             
                 <td className="p-3 border-black text-right" colSpan="3">
                   Total :
                 </td>
@@ -399,6 +484,7 @@ const AllClients = ({}) => {
             </tbody>
           </table>
         </div>
+      </div>
       </div>
     </div>
   );

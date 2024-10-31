@@ -1,66 +1,66 @@
-import  { useState } from 'react';
-
+import { useState } from 'react';
 import EmployeePayments from './EmployeePayments';
 import AllClientsPayments from './AllClientsPayments';
 import AllAdsPayments from '../DashboardRoot/AllAdsPayments';
-import useEmployeePayment from '../../Hook/useEmployeePayment';
-import useAdsPayment from '../../Hook/useAdsPayment';
-import useMpayment from '../../Hook/UseMpayment';
 import { Helmet } from 'react-helmet-async';
 
 const PaymentHistory = () => {
-    const [employeePayment]=useEmployeePayment()
-    const [adsPayment]=useAdsPayment()
-    const [MPayment] = useMpayment();
+
     const initialTab = localStorage.getItem("activeTabPayment") || "employeerPay";
     const [activeTab, setActiveTab] = useState(initialTab);
-  
+
     const changeTab = (tab) => {
         setActiveTab(tab);
         localStorage.setItem("activeTabPayment", tab); // Store the active tab in local storage
-      };
+    };
 
+    // Dynamic classes for active and inactive buttons
     const getButtonClass = (tab) => 
-        `px-1 py-2 text-sm lg:text-xl rounded ${activeTab === tab ? ' text-blue-700 font-bold' : ' text-black font-md'}`;
-    
+        `px-3 py-1 lg:px-4 lg:py-2 text-md lg:text-lg rounded-lg transition duration-300 ease-in-out ${
+            activeTab === tab 
+                ? 'bg-blue-600 text-white shadow-lg transform scale-105'  // Active tab styles
+                : 'bg-red-400 text-white hover:bg-gray-300 hover:shadow-md' // Inactive tab styles
+        }`;
+
     return (
         <div>
-                  <Helmet>
-        <title>Payment History | Digital Network</title>
-        <link rel="canonical" href="https://www.example.com/" />
-      </Helmet>
-             <div className="flex justify-start items-center gap-1 my-5 mx-5">
-      <button 
-          className={getButtonClass('employeerPay')}
-          onClick={() => changeTab('employeerPay')}
-        >
-          Employeer Pay 
-        </button>
-        <p className='font-extrabold text-blue text-2xl'>|</p>
-      <button 
-          className={getButtonClass('clientsPay')}
-          onClick={() => changeTab('clientsPay')}
-        >
-          Clients Pay 
-        </button>
-        <p className='font-extrabold text-blue text-2xl'>|</p>
-        <button 
-          className={getButtonClass('contributorPay')}
-          onClick={() => changeTab('contributorPay')}
-        >
-          Contributor Pay 
-        </button>
-        <p className='font-extrabold text-blue text-2xl'>|</p>
-      
+            <Helmet>
+                <title>Payment History | Digital Network</title>
+                <link rel="canonical" href="https://www.example.com/" />
+            </Helmet>
 
-       
-      </div>
+            <div className="px-2 mx-5   mt-5 rounded-lg" >
+                <div className="flex justify-center items-center gap-5 my-5">
+                    {/* Employeer Pay Button */}
+                    <button
+                        className={getButtonClass('employeerPay')}
+                        onClick={() => changeTab('employeerPay')}
+                    >
+                        Employer Pay
+                    </button>
 
-      {activeTab === 'contributorPay' && <AllAdsPayments></AllAdsPayments>}
-      {activeTab === 'employeerPay' && <EmployeePayments></EmployeePayments>}
-      {activeTab === 'clientsPay' && <AllClientsPayments></AllClientsPayments>}
-   
+                    {/* Clients Pay Button */}
+                    <button
+                        className={getButtonClass('clientsPay')}
+                        onClick={() => changeTab('clientsPay')}
+                    >
+                        Clients Pay
+                    </button>
 
+                    {/* Contributor Pay Button */}
+                    <button
+                        className={getButtonClass('contributorPay')}
+                        onClick={() => changeTab('contributorPay')}
+                    >
+                        Contributor Pay
+                    </button>
+                </div>
+            </div>
+
+            {/* Tab Content */}
+            {activeTab === 'contributorPay' && <AllAdsPayments />}
+            {activeTab === 'employeerPay' && <EmployeePayments />}
+            {activeTab === 'clientsPay' && <AllClientsPayments />}
         </div>
     );
 };

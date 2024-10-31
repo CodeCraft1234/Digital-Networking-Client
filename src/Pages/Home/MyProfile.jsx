@@ -8,14 +8,8 @@ const MyProfile = () => {
 
 
     return (
-        <div className=" ">
-           
-          <CampaignTable2></CampaignTable2>
-          <div className="">
-        <Banner></Banner>
-      </div>
-      
-      
+        <div className=" "> 
+          <CampaignTable2></CampaignTable2>     
         </div>
     );
 };

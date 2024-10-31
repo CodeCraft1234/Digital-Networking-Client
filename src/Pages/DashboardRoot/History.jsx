@@ -3,10 +3,19 @@ import useUsers from '../../Hook/useUsers';  // Custom hook to fetch users
 import UseAxiosPublic from '../../Axios/UseAxiosPublic';
 import Swal from 'sweetalert2';
 import { Link } from 'react-router-dom';
+import { FaEdit, FaMinusSquare } from 'react-icons/fa';
 
 const History = () => {
   const [users,refetch] = useUsers(); 
   const currentDate = new Date();
+
+  const [modalData2, setModalData2] = useState(null);
+
+  // Function to close the modal
+  const closeModal = () => {
+    setModalData2(null);
+  };
+
   const currentMonth = currentDate.toLocaleString('default', { month: 'long' });
   const currentYear = currentDate.getFullYear().toString();
   const [sortYear, setSortYear] = useState(currentYear);
@@ -43,37 +52,47 @@ const History = () => {
     return acc;
   }, []);
 
-  // Filter data based on sort criteria (if applicable)
   const sortedAccounts = flattenedData
-    .filter(account => {
-      const matchEmployee = sortEmployee ? account.employeeName === sortEmployee : true;
-      const matchMonth = sortMonth ? new Date(account.date).toLocaleString('default', { month: 'long' }) === sortMonth : true;
-      const matchYear = sortYear ? new Date(account.date).getFullYear().toString() === sortYear : true;
-      return matchEmployee && matchMonth && matchYear;
-    });
+  .filter(account => {
+    const matchEmployee = sortEmployee ? account.employeeName === sortEmployee : true;
+    const matchMonth = sortMonth ? new Date(account.date).toLocaleString('default', { month: 'long' }) === sortMonth : true;
+    const matchYear = sortYear ? new Date(account.date).getFullYear().toString() === sortYear : true;
+    return matchEmployee && matchMonth && matchYear;
+  })
+  .reduce((acc, currentAccount) => {
+    const existingAccount = acc.find(account => account.accountName === currentAccount.accountName);
+    if (existingAccount) {
+      if (new Date(currentAccount.date) > new Date(existingAccount.date)) {
+        acc = acc.filter(account => account.accountName !== existingAccount.accountName); 
+        acc.push(currentAccount); 
+      }
+    } else {
+      acc.push(currentAccount); 
+    }
+    return acc;
+  }, [])
+  .sort((a, b) => a.accountName.localeCompare(b.accountName, undefined, { sensitivity: 'base' }));
+
 
   const AxiosPublic = UseAxiosPublic();
 
-  // Handle update function
   const handleUpdate2 = async (e, userId, spentId) => {
     e.preventDefault();
     const totalSpent = e.target.totalSpentt.value; 
     const totalSpentt = parseFloat(totalSpent);
+    console.log(totalSpentt);
     
-    try {
-      const response = await AxiosPublic.put(`/updateSpent/${userId}/${spentId}`, {
+   AxiosPublic.put(`/updateSpent/${userId}/${spentId}`, {
         totalSpentt,
-      });
-  
-      if (response.status === 200) {
-        alert('Total spent updated successfully');
-        window.location.reload(); // Optionally reload the page to fetch updated data
-      }
-    } catch (error) {
-      console.error('Error updating total spent:', error);
-      alert('Failed to update total spent');
+      })
+      .then(res=>{
+        setModalData2(null);
+        console.log(res.data);
+        refetch()
+      })
+       
     }
-  };
+  
   const handleDelete = (e, userId, spentId) => {
     Swal.fire({
       title: "Are you sure?",
@@ -102,9 +121,11 @@ const History = () => {
 
   return (
     <div className='mx-5 my-5'>
-      <div className="lg:flex lg:justify-end items-center gap-3 mb-5">
+      <div className='px-5 py-5 rounded-md' style={{ backgroundColor: 'var(--bg-color3)', color: 'var(--text-color)',border: 'var(--border)'}}>
+      <div className="lg:flex lg:justify-start items-center gap-3 mb-5">
         <div className='flex justify-center items-center'>
           <select
+           style={{ backgroundColor: 'var(--bg-color2)',border: 'var(--border)', color: 'var(--text-color2)'}}
             className="px-4 py-2 border rounded bg-white text-black border-black"
             onChange={(e) => changeTab(e.target.value)}
             value={sortEmployee || ""}
@@ -121,6 +142,7 @@ const History = () => {
         <div className='flex justify-center mt-5 lg:mt-0 gap-5 items-center'>
         <div>
          <select
+          style={{ backgroundColor: 'var(--bg-color2)',border: 'var(--border)', color: 'var(--text-color2)'}}
             className=" px-4 py-2 border rounded bg-white text-black border-black"
             onChange={(e) => changeTab2(e.target.value)}
             value={sortMonth || ""}
@@ -131,8 +153,11 @@ const History = () => {
             ))}
           </select>
           </div>
-         <div>
+        
+        </div>
+        <div>
          <select
+          style={{ backgroundColor: 'var(--bg-color2)',border: 'var(--border)', color: 'var(--text-color2)'}}
             className="px-4 py-2 border rounded bg-white text-black border-black"
             onChange={(e) => setSortYear(e.target.value)}
             value={sortYear || ""}
@@ -143,35 +168,39 @@ const History = () => {
             ))}
           </select>
          </div>
-        </div>
       </div>
 
-      <div className="overflow-x-auto text-center rounded-xl border-l border-gray-400">
-        <table className="min-w-full text-center bg-white">
-          <thead className="bg-[#05a0db] text-white">
-            <tr>
-              <th className="p-3">SL</th>
+      <div  className="overflow-x-auto rounded-xl  text-center " style={{ backgroundColor: 'var(--bg-color)', color: 'var(--text-color)'}}>
+          <table className="min-w-full text-center ">
+            <thead className=" ">
+              <tr className="" style={{border: 'var(--border)',borderLeft: 'var(--border)', borderRight: 'var(--border)', color: 'var(--text-color)'}}>
+              <th className="p-3">{sortedAccounts?.length}</th>
               <th className="p-3">Employee Name</th>
-              <th className="p-3">Month</th>
               <th className="p-3">Ad Account Name</th>
+              <th className="p-3">Month</th>
               <th className="p-3">Total Spent</th>
               <th className="p-3">Total Bill</th>
-              <th className="p-3">Action</th>
+          
             </tr>
           </thead>
-          <tbody>
-            {sortedAccounts.map((account, index) => (
-              <tr
-                key={account.ids} // Use `ids` as the key
-                className={`${
-                  index % 2 === 0
-                    ? "bg-white text-left text-black border-b border-opacity-20"
-                    : "bg-gray-200 text-left text-black border-b border-opacity-20"
-                }`}
-              >
-                <td className="p-3 border-r-2 border-gray-300 text-center px-5">{index + 1}</td>
+          <tbody >
+            {sortedAccounts?.map((account, index) => (
+              <tr  style={{ backgroundColor: 'var(--bg-table)', color: 'var(--text-color2)'}}
+              key={account._id}
+              className={`${
+                index % 2 === 0
+                  ? "bg-white text-left text-black border-b border-opacity-20"
+                  : "bg-gray-200  text-left text-black border-b border-opacity-20"
+              }`}
+            >
+                <td style={{  border: 'var(--border)',}} className="p-3 border-r-2 border-gray-300 text-center px-5"> <button
+                      className=" hover:bg-blue-700 text-[#f86c6b] text-xl px-2 py-1 rounded" 
+                      onClick={(e) => handleDelete(e, account.employeeId, account.ids)} // Ensure correct 
+                    >
+                      <FaMinusSquare />
+                    </button></td>
 
-                <td className="p-3 border-r-2 text-black font-semibold hover:text-blue-700 hover:font-bold border-gray-300 text-start px-5">
+                <td style={{  border: 'var(--border)'}} className="p-3 border-r-2  font-semibold hover:text-blue-700 hover:font-bold border-gray-300 text-start px-5">
   <Link to={`/dashboard/userInfo/${account?.employeeEmail}`} className="flex items-center">
     {
       // Find the user based on their email
@@ -185,94 +214,93 @@ const History = () => {
     }
     <span>{account.employeeName}</span>
   </Link>
-</td>
+                 </td>
 
 
-                <td className="p-3 border-l-2 border-r-2 text-center border-gray-300">
-                  {new Date(account.date).toLocaleString('default', { month: 'long'})}
-                </td>
+               
               
-                <td className="p-3 border-r-2 border-gray-300 text-start px-5">
-                  {account.accountName}
-                </td>
-                <td className="p-3 border-r-2 border-gray-300 text-center">
-  $ {account.totalSpentt.toFixed(2)}
-</td>
-<td className="p-3 border-r-2 border-gray-300 text-center">
-  ৳ {(account.totalSpentt * 140).toFixed(2)}
-</td>
+                <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-300 text-start px-5">
 
-                <td className="p-3 border-r text-center border-gray-400">
-                  <div className="flex justify-center items-center gap-3">
+                <div onClick={() => setModalData2(account)} className="flex justify-left items-center gap-1">
                     <div>
                       <button
-                      className="bg-green-700 hover:bg-blue-700 text-white px-2 py-1 rounded"
-                        onClick={() =>
-                          document.getElementById(`modal_${index}`).showModal()
-                        }
+                      className=" flex justify-center items-center gap-1   px-2 py-1 rounded"
+                      
                       >
-                        Edit
+                       <FaEdit />  <span>{account.accountName}</span>
                       </button>
-                      <dialog id={`modal_${index}`} className="modal">
-                        <div className="modal-box bg-white text-black">
-                          <form onSubmit={(e) => handleUpdate2(e, account.employeeId, account.ids)}>
-                            <div className="mb-4">
-                              <label className="block text-start text-gray-700">Total Spent</label>
-                              <input
-                                type="text"
-                                name="totalSpentt"
-                                defaultValue={account.totalSpentt}
-                                className="w-full bg-white border-black border rounded p-2 mt-1"
-                              />
-                            </div>
-                            <div className="grid grid-cols-2 gap-3">
-                              <button
-                                onClick={() =>
-                                  document.getElementById(`modal_${index}`).close()
-                                }
-                                type="button"
-                                className="font-avenir px-3 py-1 bg-red-600 rounded-lg text-white"
-                              >
-                                Close
-                              </button>
-                              <button
-                                type="submit"
-                                className="font-avenir px-3 py-1 bg-[#05a0db] rounded-lg text-white"
-                              >
-                                Update
-                              </button>
-                            </div>
-                          </form>
-                        </div>
-                      </dialog>
                     </div>
-                    <button
-                      className="bg-red-700 hover:bg-blue-700 text-white px-2 py-1 rounded"
-                      onClick={(e) => handleDelete(e, account.employeeId, account.ids)} // Ensure correct ID for deletion
-                    >
-                      Delete
-                    </button>
+                  
+                   
                   </div>
+                
                 </td>
+                <td style={{  border: 'var(--border)'}} className="p-3 border-l-2 border-r-2 text-center border-gray-300">
+                  {new Date(account.date).toLocaleString('default', { month: 'long'})}
+                </td>
+                <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-300 text-center">
+                <span className='font-extrabold '>$</span> {account.totalSpentt.toFixed(2)}
+</td>
+<td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-300 text-center">
+<span className='font-extrabold '>৳</span> {(account.totalSpentt * 140).toFixed(0)}
+</td>
+
+               
               </tr>
             ))}
           </tbody>
 
-          <tfoot className="bg-[#05a0db] border-t border-gray-700 text-white">
-  <tr>
+          <tfoot className="">
+  <tr style={{ backgroundColor: 'var(--bg-color)', color: 'var(--text-color)'}}>
     <td colSpan="4" className="p-3 font-bold text-right">Total</td>
     <td className="p-3 font-bold text-center">
       $ {sortedAccounts.reduce((sum, acc) => sum + acc.totalSpentt, 0).toFixed(2)}
     </td>
     <td className="p-3 font-bold text-center">
-      ৳ {(sortedAccounts.reduce((sum, acc) => sum + acc.totalSpentt, 0) * 140).toFixed(2)}
+    <span className='font-extrabold '>৳</span> {(sortedAccounts.reduce((sum, acc) => sum + acc.totalSpentt, 0) * 140).toFixed(0)}
     </td>
-    <td className="p-3 font-bold text-center"></td>
+  
   </tr>
 </tfoot>
 
         </table>
       </div>
+      </div>
+
+       {modalData2 && (
+      <dialog className="modal" open>
+        <div className="modal-box bg-white text-black">
+          <h1 className='text-center my-3 text-xl text-blue-500 font-bold'>{modalData2.accountName}</h1>
+          <form onSubmit={(e) => handleUpdate2(e, modalData2.employeeId, modalData2.ids)}>
+            <div className="mb-4">
+              <label className="block text-start text-gray-700">Total Spent</label>
+              <input
+                type="text"
+                name="totalSpentt"
+                defaultValue={modalData2.totalSpentt}
+                className="w-full bg-white border-black border rounded p-2 mt-1"
+              />
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <button
+                onClick={closeModal}
+                type="button"
+                className="font-avenir px-3 py-1 bg-red-600 rounded-lg text-white"
+              >
+                Close
+              </button>
+              <button
+                type="submit"
+                className="font-avenir px-3 py-1 bg-[#05a0db] rounded-lg text-white"
+              >
+                Update
+              </button>
+            </div>
+          </form>
+        </div>
+      </dialog>
+    )}
+
     </div>
   );
 };

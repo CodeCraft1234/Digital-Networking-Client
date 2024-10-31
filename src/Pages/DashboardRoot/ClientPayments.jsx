@@ -152,46 +152,48 @@ const ClientPayments = () => {
   },[user?.email])
 
   return (
-    <div className="">
+    <div className="m-5">
       <ToastContainer />
       <Helmet>
         <title>Client Payment | Digital Network </title>
         <link rel="canonical" href="https://www.example.com/" />
       </Helmet>
 
-      <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3  lg:grid-cols-6 gap-5  p-5">
-   <div onClick={(e) => setSelectedCategory('bkashMarchent')} className="balance-card bg-white rounded-2xl shadow-lg p-5 text-center  transition-transform transform hover:scale-105 border-0">
-     <img className="balance-card-img" src="https://i.ibb.co/bHMLyvM/b-Kash-Merchant.png" alt="bKash" />
-     <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"> <span className="text-lg lg:text-2xl font-extrabold"> ৳</span> {bkashMarcent}</p>
-   </div>
-   <div onClick={(e) => setSelectedCategory('bkashPersonal')} className="balance-card bg-white rounded-2xl shadow-lg p-5 text-center transition-transform transform hover:scale-105 border-0">
-     <img className="balance-card-img" src="https://i.ibb.co/520Py6s/bkash-1.png" alt="bKash" />
-     <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"> <span className="text-lg lg:text-2xl font-extrabold"> ৳</span> {bkashPersonal}</p>
-   </div>
-   <div onClick={(e) => setSelectedCategory('nagadPersonal')} className="balance-card bg-white rounded-2xl shadow-lg p-5 text-center transition-transform transform hover:scale-105 border-0">
-     <img className="balance-card-img" src="https://i.ibb.co/JQBQBcF/nagad-marchant.png" alt="Nagad" />
-     <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"><span className="text-lg lg:text-2xl font-extrabold"> ৳</span> {nagadPersonal}</p>
-   </div>
-   <div  onClick={(e) => setSelectedCategory('rocketPersonal')} className="balance-card bg-white rounded-2xl shadow-lg p-5 text-center transition-transform transform hover:scale-105 border-0">
-     <img className="balance-card-img" src="https://i.ibb.co/QkTM4M3/rocket.png" alt="Rocket" />
-     <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"><span className="text-lg lg:text-2xl font-extrabold"> ৳</span> {rocketPersonal}</p>
-   </div>
 
-   <div  onClick={(e) => setSelectedCategory('bank')}  className="balance-card bg-white rounded-2xl shadow-lg p-5 text-center transition-transform transform hover:scale-105 border-0">
-     <img className="balance-card-img" src="https://i.ibb.co/PZc0P4w/brac-bank-seeklogo.png" alt="Rocket" />
-     <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"><span className="text-lg lg:text-2xl font-extrabold"> ৳</span> {bankTotal}</p>
-   </div>
-   <div  onClick={(e) => setSelectedCategory('bank')}  className="balance-card bg-white rounded-2xl shadow-lg p-5 text-center transition-transform transform hover:scale-105 border-0">
-     <h1 className="text-2xl text-black font-bold">Total BDT</h1>
-     <p className="balance-card-text mt-9 text-lg lg:text-2xl font-bold text-gray-700"><span className="text-lg lg:text-2xl font-extrabold"> ৳</span> {bankTotal+rocketPersonal+bkashMarcent+bkashPersonal+nagadPersonal}</p>
-   </div>
-     </div>
+      <div style={{ backgroundColor: 'var(--bg-color3)', color: 'var(--text-color)', border: 'var(--border)' }} className="grid grid-cols-2 p-5 rounded-lg sm:grid-cols-2 md:grid-cols-3 gap-3 lg:gap-5 lg:grid-cols-6 px-5">
+  {[ 
+    { category: 'bkashMarchent', img: 'https://i.ibb.co/bHMLyvM/b-Kash-Merchant.png', amount: bkashMarcent, bgColor: '#f7e8e8' },
+    { category: 'bkashPersonal', img: 'https://i.ibb.co/520Py6s/bkash-1.png', amount: bkashPersonal, bgColor: '#ffe6f7' },
+    { category: 'nagadPersonal', img: 'https://i.ibb.co/JQBQBcF/nagad-marchant.png', amount: nagadPersonal, bgColor: '#fff2cc' },
+    { category: 'rocketPersonal', img: 'https://i.ibb.co/QkTM4M3/rocket.png', amount: rocketPersonal, bgColor: '#e0f7fa' },
+    { category: 'bank', img: 'https://i.ibb.co/PZc0P4w/brac-bank-seeklogo.png', amount: bankTotal, bgColor: '#f2f2f2' },
+  ].map(({ category, img, amount, bgColor }) => (
+    <div key={category} onClick={() => setSelectedCategory(category)} style={{ backgroundColor: bgColor, border: 'var(--border)' }} className="balance-card rounded-2xl shadow-lg p-5 text-center transition-transform hover:scale-105">
+      <img className="balance-card-img" src={img} alt={category} />
+      <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700">
+        <span className="text-lg lg:text-2xl font-extrabold">৳</span> {new Intl.NumberFormat('en-IN').format(amount)}
+      </p>
+    </div>
+  ))}
+
+  <div style={{ backgroundColor: '#d9f8d9', border: 'var(--border)' }} onClick={() => setSelectedCategory('All')} className="balance-card  rounded-2xl shadow-lg p-5 text-center transition-transform hover:scale-105">
+    <h1 className="text-xl font-bold text-black">
+      Total
+    </h1>
+    <h1 className="text-black text-xl font-bold mt-5 "><span className="text-lg lg:text-xl font-extrabold">৳</span> {new Intl.NumberFormat('en-IN').format(bkashPersonal + bkashMarcent + nagadPersonal + rocketPersonal + bankTotal)}</h1>
+   
+  </div>
+</div>
+
+
+
 
 {/* ///////////////////////////////////////////////////////////////// */}
 
-
-<div className="flex flex-wrap lg:justify-end justify-center ml-5 items-center gap-5 mr-5 mb-5">
+<div className="my-5 rounded-lg pt-4" style={{ backgroundColor: 'var(--bg-color3)', color: 'var(--text-color)',border: 'var(--border)'}}>
+<div className="flex flex-wrap lg:justify-start justify-center ml-5 items-center gap-5 mr-5 mb-5">
   <select
+    style={{ backgroundColor: 'var(--bg-color2)',border: 'var(--border)', color: 'var(--text-color2)'}}
     className="border bg-white text-black border-gray-400 rounded p-2 mt-1"
     value={sortMonth}
     onChange={(e) => changeTab(e.target.value)}
@@ -218,6 +220,7 @@ const ClientPayments = () => {
   </select>
 
   <input
+    style={{ backgroundColor: 'var(--bg-color2)',border: 'var(--border)', color: 'var(--text-color2)'}}
     type="date"
     className="border bg-green-300 text-black border-gray-400 rounded p-2 mt-1"
     value={selectedDate}
@@ -226,17 +229,10 @@ const ClientPayments = () => {
 </div>
 
 
-
-
-
-
-  
-
-
-      <div className="overflow-x-auto text-black rounded-xl mb-5 mx-5">
-        <table className="min-w-full bg-white">
-          <thead className="bg-[#05a0db] text-white">
-            <tr>
+<div  className="overflow-x-auto rounded-xl mx-4 mb-5 text-center " style={{ backgroundColor: 'var(--bg-color)', color: 'var(--text-color)'}}> 
+        <table className="min-w-full text-center ">
+          <thead className=" ">
+            <tr className="" style={{border: 'var(--border)',borderLeft: 'var(--border)', borderRight: 'var(--border)', color: 'var(--text-color)'}}>
               <th className="p-3">SL</th>
               <th className="p-3">Date</th>
               <th className="p-3">Client Name</th>
@@ -247,29 +243,33 @@ const ClientPayments = () => {
             </tr>
           </thead>
           <tbody>
-            {filteredData.map((payment, index) => (
-              <tr
-                key={index}
-                className={index % 2 === 0 ? "bg-gray-200" : "bg-white"}
-              >
-                <td className="p-3 border-r-2 border-l-2 border-gray-200 text-center">
+            {filteredData.sort((a, b) => new Date(b.date) - new Date(a.date))?.map((payment, index) => (
+              <tr style={{ backgroundColor: 'var(--bg-table)', color: 'var(--text-color2)'}}
+              key={payment._id}
+              className={`${
+                index % 2 === 0
+                  ? "bg-white text-left text-black border-b border-opacity-20"
+                  : "bg-gray-200  text-left text-black border-b border-opacity-20"
+              }`}
+            >
+                <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-l-2 border-gray-200 text-center">
                   {index + 1}
                 </td>
-                <td className="p-3 border-r-2 border-gray-200 text-center">
+                <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-200 text-center">
                   {new Date(payment.date).toLocaleDateString("en-GB")}
                 </td>
-                <td className="p-3 hover:text-blue-700 hover:font-bold border-r-2 border-gray-200 text-center">
+                <td style={{  border: 'var(--border)'}} className="p-3 hover:text-blue-700 hover:font-bold border-r-2 border-gray-200 text-center">
                 <Link to={`/dashboard/client/${payment.clientEmail}`}>
                 {payment.clientName}
                 </Link>
                  
                 </td>
               
-                <td className="p-3 border-r-2 border-gray-200 text-center">
+                <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-200 text-center">
                   ৳ {payment.amount}
                 </td>
                
-                <td className="p-3 border-r-2 border-gray-200 text-center">
+                <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-200 text-center">
                   {payment.paymentMethod === "bkashMarchent" && (
                     <img
                       className="h-10 w-24 flex mx-auto my-auto items-center justify-center"
@@ -306,12 +306,12 @@ const ClientPayments = () => {
                     />
                   )}
                 </td>
-                <td className="p-3 border-r-2 border-gray-200 text-center">
+                <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-200 text-center">
                   {payment.note}
                 </td>
                 
-                <td className="p-3 border-r-2 gap-3 flex justify-center items-center border-gray-200 text-center">
-              
+                <td style={{  border: 'var(--border)'}} className="p-3  gap-3  text-center">
+                <div className="flex justify-center items-center gap-3">
                   <button
                           className="bg-green-700 hover:bg-blue-700 text-white px-2 py-1 rounded"
                           onClick={() => handleEditClick(payment)}
@@ -324,13 +324,13 @@ const ClientPayments = () => {
                         >
                           Delete
                         </button>
-                      
+                        </div>
                  
                 </td>
               </tr>
             ))}
           </tbody>
-          <tr className="bg-[#05a0db] text-white font-bold">
+          <tr style={{ backgroundColor: 'var(--bg-color)', color: 'var(--text-color)'}} className=" font-bold">
               <td className="p-3 text-right" colSpan="3">
                 Total Amount =
               </td>
@@ -342,6 +342,7 @@ const ClientPayments = () => {
              
             </tr>
         </table>
+      </div>
       </div>
      
       {isModalOpen && selectedPayment && (

@@ -114,12 +114,12 @@ const AdsUserPayments = () => {
     item.paymentMethod.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const filteredByCategory = selectedCategory
-    ? filteredItems.filter(
-        (item) =>
-          item.paymentMethod.toLowerCase() === selectedCategory.toLowerCase()
-      )
-    : filteredItems;
+  const filteredByCategory = selectedCategory && selectedCategory.toLowerCase() !== 'all'
+  ? filteredItems.filter(
+      (item) => item.paymentMethod.toLowerCase() === selectedCategory.toLowerCase()
+    )
+  : filteredItems;
+
 
   useEffect(()=>{
     const totalBill = filteredByCategory.reduce(
@@ -140,6 +140,7 @@ const AdsUserPayments = () => {
     const paymentMethod = e.target.paymentMethod.value;
     const note = e.target.note.value;
     const date = e.target.date.value;
+    
 
     const data = {
       employeeName,
@@ -148,6 +149,7 @@ const AdsUserPayments = () => {
       note,
       paymentMethod,
       date,
+      status:'pending'
     };
 
     AxiosPublic.post(
@@ -270,39 +272,39 @@ const AdsUserPayments = () => {
     };
     
     return (
-        <div>
-                 <div className="grid grid-cols-2 text-white sm:grid-cols-2 md:grid-cols-3 mb-3  lg:grid-cols-6 gap-3 lg:gap-5 mt-4 ">
-   <div onClick={(e) => setSelectedCategory('bkashMarchent')} className="balance-card bg-white rounded-2xl shadow-lg p-5 text-center  transition-transform transform hover:scale-105 border-0">
-     <img className="balance-card-img" src="https://i.ibb.co/bHMLyvM/b-Kash-Merchant.png" alt="bKash" />
-     <p className="balance-card-text text-black text-lg lg:text-2xl font-bold "> <span className="text-lg lg:text-2xl text-white font-extrabold"> ৳</span> {bkashMarcent2}</p>
-   </div>
-   <div onClick={(e) => setSelectedCategory('bkashPersonal')} className="balance-card bg-white rounded-2xl shadow-lg p-5 text-center transition-transform transform hover:scale-105 border-0">
-     <img className="balance-card-img" src="https://i.ibb.co/520Py6s/bkash-1.png" alt="bKash" />
-     <p className="balance-card-text text-black text-lg lg:text-2xl font-bold "> <span className="text-lg lg:text-2xl font-extrabold"> ৳</span> {bkashPersonal2}</p>
-   </div>
-   <div onClick={(e) => setSelectedCategory('nagadPersonal')} className="balance-card bg-white rounded-2xl shadow-lg p-5 text-center transition-transform transform hover:scale-105 border-0">
-     <img className="balance-card-img" src="https://i.ibb.co/JQBQBcF/nagad-marchant.png" alt="Nagad" />
-     <p className="balance-card-text text-black text-lg lg:text-2xl font-bold "><span className="text-lg lg:text-2xl font-extrabold"> ৳</span> {nagadPersonal2}</p>
-   </div>
-   <div onClick={(e) => setSelectedCategory('rocketPersonal')} className="balance-card bg-white rounded-2xl shadow-lg p-5 text-center transition-transform transform hover:scale-105 border-0">
-     <img className="balance-card-img" src="https://i.ibb.co/QkTM4M3/rocket.png" alt="Rocket" />
-     <p className="balance-card-text text-black text-lg lg:text-2xl font-bold "><span className="text-lg lg:text-2xl font-extrabold"> ৳</span> {rocketPersonal2}</p>
-   </div>
+        <div >
 
-   <div onClick={(e) => setSelectedCategory('bank')} className="balance-card bg-white rounded-2xl shadow-lg p-5 text-center transition-transform transform hover:scale-105 border-0">
-     <img className="balance-card-img" src="https://i.ibb.co/PZc0P4w/brac-bank-seeklogo.png" alt="Rocket" />
-     
-     <p className="balance-card-text text-black text-lg lg:text-2xl font-bold "><span className="text-lg lg:text-2xl font-extrabold"> ৳</span> {bankTotal2}</p>
-   </div>
-   <div className="balance-card bg-white rounded-2xl shadow-lg p-5 text-center transition-transform transform hover:scale-105 border-0">
-     <h1 className='text-2xl text-black font-bold'>Total</h1>
-     
-     <p className="balance-card-text pt-8 text-black text-lg lg:text-2xl font-bold "><span className="text-lg lg:text-2xl font-extrabold"> ৳</span> {bankTotal2+nagadPersonal2+rocketPersonal2+bkashMarcent2+bkashPersonal2}</p>
-   </div>
-     </div>
+<div style={{ backgroundColor: 'var(--bg-color3)', color: 'var(--text-color)', border: 'var(--border)' }} className="grid grid-cols-2 p-5 mt-5 rounded-lg sm:grid-cols-2 md:grid-cols-3 gap-3 lg:gap-5 lg:grid-cols-6 px-5">
+  {[ 
+    { category: 'bkashMarchent', img: 'https://i.ibb.co/bHMLyvM/b-Kash-Merchant.png', amount: bkashMarcent2, bgColor: '#f7e8e8' },
+    { category: 'bkashPersonal', img: 'https://i.ibb.co/520Py6s/bkash-1.png', amount: bkashPersonal2, bgColor: '#ffe6f7' },
+    { category: 'nagadPersonal', img: 'https://i.ibb.co/JQBQBcF/nagad-marchant.png', amount: nagadPersonal2, bgColor: '#fff2cc' },
+    { category: 'rocketPersonal', img: 'https://i.ibb.co/QkTM4M3/rocket.png', amount: rocketPersonal2, bgColor: '#e0f7fa' },
+    { category: 'bank', img: 'https://i.ibb.co/PZc0P4w/brac-bank-seeklogo.png', amount: bankTotal2, bgColor: '#f2f2f2' },
+  ].map(({ category, img, amount, bgColor }) => (
+    <div key={category} onClick={() => setSelectedCategory(category)} style={{ backgroundColor: bgColor, border: 'var(--border)' }} className="balance-card rounded-2xl shadow-lg p-5 text-center transition-transform hover:scale-105">
+      <img className="balance-card-img" src={img} alt={category} />
+      <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700">
+        <span className="text-lg lg:text-2xl font-extrabold">৳</span> {new Intl.NumberFormat('en-IN').format(amount)}
+      </p>
+    </div>
+  ))}
+
+  <div style={{ backgroundColor: '#d9f8d9', border: 'var(--border)' }} onClick={() => setSelectedCategory('all')} className="balance-card  rounded-2xl shadow-lg p-5 text-center transition-transform hover:scale-105">
+    <h1 className="text-xl mt-3 font-bold text-black">
+      Total
+    </h1>
+    <h1 className="text-black text-xl font-bold mt-5 "><span className="text-lg lg:text-xl font-extrabold">৳</span> {new Intl.NumberFormat('en-IN').format(bkashPersonal2 + bkashMarcent2 + nagadPersonal2 + rocketPersonal2 + bankTotal2)}</h1>
+   
+  </div>
+</div>
    
 {/* ///////////////////////////////////////////////////////////////// */}
+
+<div className='px-5 pb-5  my-5 mt-5 rounded-lg' style={{ backgroundColor: 'var(--bg-color3)', color: 'var(--text-color)',border: 'var(--border)'}}>
 <div className="flex lg:justify-between flex-col lg:flex-row my-5 gap-5 mx-2">
+
+  
   <div className="w-full lg:w-auto">
     <button
       className="font-avenir px-5 mt-1 py-2 bg-[#05a0db] rounded-lg text-white w-full lg:w-auto"
@@ -314,15 +316,17 @@ const AdsUserPayments = () => {
     <dialog id="my_modal_1" className="modal">
       <div className="modal-box bg-white text-black font-bold">
         <form onSubmit={(e) => handlePayment(e)}>
-          <div className="mb-4">
-            <label className="block text-gray-700">Date</label>
-            <input
-              required
-              type="date"
-              name="date"
-              className="w-full border-2 bg-green-300 border-black rounded p-2 mt-1"
-            />
-          </div>
+        <div className="mb-4">
+  <label className="block text-gray-700">Date</label>
+  <input
+    required
+    type="date"
+    name="date"
+    className="w-full border-2 bg-green-300 border-black rounded p-2 mt-1"
+    defaultValue={new Date().toISOString().split('T')[0]} // Sets the current date in YYYY-MM-DD format
+  />
+</div>
+
           <div className="mb-4">
             <label className="block text-gray-700">Pay Amount</label>
             <input
@@ -330,16 +334,6 @@ const AdsUserPayments = () => {
               type="number"
               name="payAmount"
               placeholder='0'
-              className="w-full border-2 bg-white border-black rounded p-2 mt-1"
-            />
-          </div>
-          <div className="mb-4">
-            <label className="block text-gray-700">Note</label>
-            <input
-              type="text"
-              name="note"
-              required
-              placeholder="type note..."
               className="w-full border-2 bg-white border-black rounded p-2 mt-1"
             />
           </div>
@@ -357,6 +351,17 @@ const AdsUserPayments = () => {
               <option value="bank">Bank</option>
             </select>
           </div>
+          <div className="mb-4">
+            <label className="block text-gray-700">Note</label>
+            <input
+              type="text"
+              name="note"
+          
+              placeholder="type note..."
+              className="w-full border-2 bg-white border-black rounded p-2 mt-1"
+            />
+          </div>
+        
           <div className="grid grid-cols-2 gap-3 mt-4">
             <button
               type="button"
@@ -379,6 +384,7 @@ const AdsUserPayments = () => {
 
   <div className="hidden lg:flex flex-col lg:flex-row gap-3 w-full lg:w-auto">
     <select
+     style={{ backgroundColor: 'var(--bg-color2)',border: 'var(--border)', color: 'var(--text-color2)'}}
       className="border bg-blue-200 text-black border-gray-400 rounded p-2 mt-1 w-full"
       value={sortMonth}
       onChange={(e) => setSortMonth(e.target.value)}
@@ -405,6 +411,7 @@ const AdsUserPayments = () => {
     </select>
 
     <input
+     style={{ backgroundColor: 'var(--bg-color2)',border: 'var(--border)', color: 'var(--text-color2)'}}
       type="date"
       className="border rounded bg-blue-200 text-black border-gray-400 p-2 mt-1 w-full"
       value={selectedDate}
@@ -414,29 +421,33 @@ const AdsUserPayments = () => {
 </div>
 
 
-      <div className="overflow-x-auto text-black rounded-xl border border-gray-700 mt-5 ">
-        <table className="min-w-full bg-white">
-          <thead className="bg-[#05a0db] text-white">
-            <tr>
-              <th className="p-3 ">OFF/ON</th>
-              <th className="p-3">Payment Date</th>
-              <th className="p-3">Payment Amount</th>
-              <th className="p-3">Payment Method</th>
-              <th className="p-3"> Note</th>
-              <th className="p-3"> Status</th>
-              <th className="p-3">Edit</th>
+<div  className="overflow-x-auto rounded-xl  text-center " style={{ backgroundColor: 'var(--bg-color)', color: 'var(--text-color)'}}>
+          <table className="min-w-full text-center ">
+            <thead className=" ">
+              <tr className="" style={{border: 'var(--border)',borderLeft: 'var(--border)', borderRight: 'var(--border)', color: 'var(--text-color)'}}>
+              <th style={{  border: 'var(--border)'}} className="p-3 ">OFF/ON</th>
+              <th style={{  border: 'var(--border)'}} className="p-3">Date</th>
+              <th style={{  border: 'var(--border)'}} className="p-3">Amount</th>
+              <th style={{  border: 'var(--border)'}} className="p-3">Payment Method</th>
+              <th style={{  border: 'var(--border)'}} className="p-3"> Note</th>
+              <th style={{  border: 'var(--border)'}} className="p-3"> Status</th>
+              <th style={{  border: 'var(--border)'}} className="p-3">Edit</th>
             </tr>
           </thead>
           <tbody>
             {filteredByCategory.map((payment, index) => (
-              <tr
-                key={index}
-                className={`${index % 2 === 0 ? "bg-gray-100" : "bg-white"}`}
-              >
+              <tr style={{ backgroundColor: 'var(--bg-table)', color: 'var(--text-color2)'}}
+              key={payment._id}
+              className={`${
+                index % 2 === 0
+                  ? "bg-white text-left text-black border-b border-opacity-20"
+                  : "bg-gray-200  text-left text-black border-b border-opacity-20"
+              }`}
+            >
 
 
 
-           <td className="p-3 border-r-2 border-l-2 border-gray-200 text-center">  <label className="inline-flex items-center cursor-pointer">
+           <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-l-2 border-gray-200 text-center">  <label className="inline-flex items-center cursor-pointer">
   <input
     type="checkbox"
     className="sr-only"
@@ -461,15 +472,15 @@ const AdsUserPayments = () => {
 </td>
 
 
-                <td className="p-3 border-r-2 border-gray-200 text-center">
+                <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-200 text-center">
                 {new Date(payment.date).toLocaleDateString("en-GB")}
                 </td>
                
-                <td className="p-3 border-r-2 border-gray-200 text-center">
+                <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-200 text-center">
                   ৳ {payment.payAmount}
                 </td>
 
-                <td className="p-3 border-r-2 border-gray-200 text-center">
+                <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-200 text-center">
                   {payment.paymentMethod === "bkashMarchent" && (
                     <img
                       className="h-10 w-24 flex mx-auto my-auto items-center justify-center"
@@ -506,11 +517,11 @@ const AdsUserPayments = () => {
                     />
                   )}
                 </td>
-                <td className="p-3 border-r-2 border-gray-200 text-center">
+                <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-200 text-center">
                   {" "}
                   {payment.note}
                 </td>
-                <td className="p-3 border-r-2 border-gray-200 text-center">
+                <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-200 text-center">
                 {payment.status !== 'pending' ? (
     <button
      
@@ -530,7 +541,7 @@ const AdsUserPayments = () => {
 
                
 
-                <td className="p-3 border-r-2 border-gray-200 text-center">
+                <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-200 text-center">
                 <div className='flex gap-3 justify-center items-center'>
                 <button
                    className="bg-green-700 hover:bg-blue-700 text-white px-2 py-1 rounded"
@@ -551,18 +562,9 @@ const AdsUserPayments = () => {
                 </div>
                 
                 <dialog id={`modal_${payment._id}`} className="modal">
-  <div className="modal-box bg-white text-black font-bold">
+  <div className="modal-box text-start bg-white text-black font-bold">
     <form onSubmit={(e) => handleUpdatePayment(e, payment._id)}>
-      <div className="mb-4">
-        <label className="block text-gray-700">Previous Amount</label>
-        <input
-          type="number"
-          name="previousAmount"
-          disabled
-          defaultValue={payment?.payAmount}
-          className="w-full border-2 bg-white border-black rounded p-2 mt-1"
-        />
-      </div>
+     <h1 className='text-center font-bold '>৳ {payment?.payAmount}</h1>
       <div className="mb-4">
         <label className="block text-gray-700">New Amount</label>
         <input
@@ -637,20 +639,21 @@ const AdsUserPayments = () => {
                 
               </tr>
             ))}
-            <tr className="bg-[#05a0db] text-white font-bold">
-              <td className="p-3 text-center" colSpan="2">
+            <tr style={{ backgroundColor: 'var(--bg-color)', color: 'var(--text-color)'}} className="  font-bold">
+              <td style={{  border: 'var(--border)'}} className="p-3 text-center" colSpan="2">
                 Total Amount :
               </td>
-              <td className="p-3 text-center">৳ {totalPayment}</td>
-              <td className="p-3 text-center"></td>
-              <td className="p-3 text-center"></td>
-              <td className="p-3 text-center"></td>
-              <td className="p-3 text-center"></td>
+              <td style={{  border: 'var(--border)'}} className="p-3 text-center">৳ {totalPayment}</td>
+              <td style={{  border: 'var(--border)'}} className="p-3 text-center"></td>
+              <td style={{  border: 'var(--border)'}} className="p-3 text-center"></td>
+              <td style={{  border: 'var(--border)'}} className="p-3 text-center"></td>
+              <td style={{  border: 'var(--border)'}} className="p-3 text-center"></td>
 
             </tr>
           </tbody>
         </table>
       </div>
+        </div>
         </div>
     );
 };

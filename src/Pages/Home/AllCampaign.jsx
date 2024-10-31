@@ -1,8 +1,7 @@
 import { Link } from "react-router-dom";
 import useClients from "../../Hook/useClient";
 import useUsers from "../../Hook/useUsers";
-import { useContext, useEffect, useState } from "react";
-import { AuthContext } from "../../Security/AuthProvider";
+import { useEffect, useState } from "react";
 import useCampaings from "../../Hook/useCampaign";
 import UseAxiosPublic from "../../Axios/UseAxiosPublic";
 import Swal from "sweetalert2";
@@ -11,7 +10,6 @@ import { toast } from "react-toastify";
 
 const Campaigns = () => {
   const [users] = useUsers();
-  const { user } = useContext(AuthContext);
   const [clients] = useClients();
   const [campaigns, refetch] = useCampaings();
   const [filteredClients, setFilteredClients] = useState([]);
@@ -19,7 +17,6 @@ const Campaigns = () => {
   const initialTab = localStorage.getItem("activeTaballcampaignClient") ;
   const [selectedClient, setSelectedClient] = useState(initialTab);
   
-
   const changeTab = (tab) => {
     setSelectedClient(tab);
     localStorage.setItem("activeTaballcampaignClient", tab); 
@@ -151,7 +148,7 @@ const Campaigns = () => {
   }, [clients, users]);
 
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 50;
+  const itemsPerPage = 30;
   const totalPages = Math.ceil(filteredByCategory.length / itemsPerPage);
   const paginatedItems = filteredByCategory.slice(
     (currentPage - 1) * itemsPerPage,
@@ -186,105 +183,157 @@ const Campaigns = () => {
   };
   const sortedItems = sortByDateDescending(paginatedItems);
 
+
+  const initialStatus = localStorage.getItem("activeTabSelectedStatus") || 'All';
+  const [selectedStatus2, setSelectedStatus2] = useState(initialStatus);
+
+  const changeTab3 = (tab) => {
+    setSelectedStatus2(tab);
+    localStorage.setItem("activeTabSelectedStatus", tab);
+  };
+
   return (
-    <div className="my-5">
+    <div className="m-5">
      <Helmet>
         <title>All Campaigns | Digital Network </title>
         <link rel="canonical" href="https://www.example.com/" />
       </Helmet>
-      <div className="lg:flex lg:mb-5 text-black lg:justify-end gap-5 items-center mr-5">
-        <form
-          className="lg:flex lg:justify-center items-center"
-          onSubmit={handleSort}
+      <div className='px-5 py-5 mt-5 rounded-lg' style={{ backgroundColor: 'var(--bg-color3)', color: 'var(--text-color)',border: 'var(--border)'}}>
+      <div className="flex flex-col lg:flex-row lg:mb-5 text-black lg:justify-start gap-5 items-center ">
+  <form className="flex flex-col lg:flex-row lg:justify-start items-center w-full" onSubmit={handleSort}>
+    {/* Employee Selection */}
+    <div className="w-full lg:w-auto flex justify-start lg:mr-3 gap-3">
+      <div>
+        <select
+          style={{
+            backgroundColor: 'var(--bg-color2)',
+            border: 'var(--border)',
+            color: 'var(--text-color2)',
+          }}
+          className="w-full lg:w-auto bg-white border text-black border-gray-400 rounded p-2 mt-1"
+          value={selectedClient}
+          onChange={(e) => changeTab(e.target.value)}
         >
-         
-        <div className="flex justify-center lg:mr-5 gap-2">
-        <div >
-              <select
-                className="bg-white border text-black border-gray-400 rounded p-2 mt-1"
-                value={selectedClient}
-                onChange={(e) => changeTab(e.target.value)}
-              >
-                <option value="">Select an employee</option>
-                {clientss.map((client) => (
-                  <option key={client.name} value={client.email}>
-                    {client.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-           
-        </div>
-        <div className="flex justify-center  lg:mr-5 mt-5 lg:mt-0">
-            <select
-  className="bg-white border text-black border-gray-400 rounded p-2 mt-1"
-  value={selectedClient}
-  onChange={(e) => setSelectedClientt(e.target.value)}
->
-  <option value="">Select a Client</option>
-  {clients
-    .filter(client => !selectedClient || client.employeeEmail === selectedClient)
-    .map((client) => (
-      <option key={client.clientEmail} value={client.clientEmail}>
-        {client.clientName}
-      </option>
-    ))}
-</select>
-
-            </div>
-        <div className="flex justify-center gap-5 lg:my-0 my-5">
-        <div className="flex flex-col justify-center items-start">
-            <select
-              className="border bg-white text-black border-gray-400 rounded p-2 mt-1"
-              value={sortMonth}
-              onChange={(e) => changeTab2(e.target.value)}
-            >
-              <option value="">Select Month</option>
-              {[
-                "January",
-                "February",
-                "March",
-                "April",
-                "May",
-                "June",
-                "July",
-                "August",
-                "September",
-                "October",
-                "November",
-                "December",
-              ].map((month, index) => (
-                <option key={index + 1} value={index + 1}>
-                  {month}
-                </option>
-              ))}
-            </select>
-          </div>
-        </div>
-
-    <div className="ml-5 flex mb-5 lg:mb-0 justify-center">
-   <input
-     type="text"
-     placeholder="Search by campaign name"
-     className="border bg-white  text-black placeholder-gray-500 border-gray-700 rounded-l-lg p-2 flex-1"
-     value={searchQuery}
-     onChange={(e) => setSearchQuery(e.target.value)}
-    />
-    <button
-     className="bg-black  text-white border border-black shadow-2xl rounded-r-lg p-2 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
-     onClick={() => {/* Add search functionality here */}}
-    >
-     Search
-    </button>
-  </div>
-        </form>
+          <option value="">Select an employee</option>
+          {clientss.map((client) => (
+            <option key={client.name} value={client.email}>
+              {client.name}
+            </option>
+          ))}
+        </select>
       </div>
+    </div>
+
+    {/* Client Selection */}
+    <div className="w-full lg:w-auto flex justify-center lg:mr-3 mt-5 lg:mt-0">
+      <select
+        style={{
+          backgroundColor: 'var(--bg-color2)',
+          border: 'var(--border)',
+          color: 'var(--text-color2)',
+        }}
+        className="w-full lg:w-auto bg-white border text-black border-gray-400 rounded p-2 mt-1"
+        value={selectedClient}
+        onChange={(e) => setSelectedClientt(e.target.value)}
+      >
+        <option value="">Select a Client</option>
+        {clients
+          .filter((client) => !selectedClient || client.employeeEmail === selectedClient)
+          .map((client) => (
+            <option key={client.clientEmail} value={client.clientEmail}>
+              {client.clientName}
+            </option>
+          ))}
+      </select>
+    </div>
+
+    {/* Month Selection & Status */}
+    <div className="w-full lg:w-auto flex flex-col lg:flex-row justify-center gap-3 lg:my-0 my-5">
+      {/* Month Selector */}
+      <div className="w-full lg:w-auto flex flex-col justify-center items-start">
+        <select
+          style={{
+            backgroundColor: 'var(--bg-color2)',
+            border: 'var(--border)',
+            color: 'var(--text-color2)',
+          }}
+          className="w-full lg:w-auto border bg-white text-black border-gray-400 rounded p-2 mt-1"
+          value={sortMonth}
+          onChange={(e) => changeTab2(e.target.value)}
+        >
+          <option value="">Select Month</option>
+          {[
+            'January',
+            'February',
+            'March',
+            'April',
+            'May',
+            'June',
+            'July',
+            'August',
+            'September',
+            'October',
+            'November',
+            'December',
+          ].map((month, index) => (
+            <option key={index + 1} value={index + 1}>
+              {month}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      {/* Status Selector */}
+      <div className="w-full lg:w-auto flex lg:mr-3 justify-center items-center">
+        <select
+          style={{
+            backgroundColor: 'var(--bg-color2)',
+            border: 'var(--border)',
+            color: 'var(--text-color2)',
+          }}
+          className="w-full lg:w-auto border bg-white text-black border-gray-400 rounded p-2 mt-1"
+          value={selectedStatus2}
+          onChange={(e) => changeTab3(e.target.value)}
+        >
+          <option value="All">All Status</option>
+          <option value="Active">Active</option>
+          <option value="Complete">Complete</option>
+        </select>
+      </div>
+    </div>
+
+    {/* Search Field */}
+    <div className="w-full lhg:mt-1 lg:w-auto flex mb-4 lg:mb-0 justify-center">
+      <input
+        style={{
+          backgroundColor: 'var(--bg-color2)',
+          border: 'var(--border)',
+          color: 'var(--text-color2)',
+        }}
+        type="text"
+        placeholder="Search by campaign name"
+        className="w-full lg:w-auto border bg-white text-black placeholder-gray-500 border-gray-700 rounded-l-lg p-2 flex-1"
+        value={searchQuery}
+        onChange={(e) => setSearchQuery(e.target.value)}
+      />
+      <button
+        className="bg-black text-white border border-black shadow-2xl rounded-r-lg p-2 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
+        onClick={() => {
+          /* Add search functionality here */
+        }}
+      >
+        Search
+      </button>
+    </div>
+  </form>
+</div>
+
       
-      <div className="px-5 ">
-        <div className="overflow-x-auto rounded-xl  text-black  border-l border-gray-400">
-          <table className="min-w-full bg-white">
-            <thead className="bg-[#05a0db] text-white">
-              <tr>
+      <div className=" ">
+      <div  className="overflow-x-auto rounded-xl  text-center " style={{ backgroundColor: 'var(--bg-color)', color: 'var(--text-color)'}}>
+          <table className="min-w-full text-center ">
+            <thead className=" ">
+              <tr className="" style={{border: 'var(--border)',borderLeft: 'var(--border)', borderRight: 'var(--border)', color: 'var(--text-color)'}}>
                 <th className="p-3 text-center">OFF/ON</th>
                 <th className="p-3 text-center">Date</th>
                 <th className="p-3 text-center">Campaign Name</th>
@@ -296,16 +345,16 @@ const Campaigns = () => {
               </tr>
             </thead>
             <tbody>
-              {sortedItems.map((campaign, index) => (
-                <tr
-                  key={campaign._id}
-                  className={`${
-                    index % 2 === 0
-                      ? "bg-white text-black border-b border-opacity-20"
-                      : "bg-gray-200 text-black border-b border-opacity-20"
-                  }`}
-                >
-                <td className="p-3 border-r-2 border-l-2 border-gray-200 text-center">  <label className="inline-flex items-center cursor-pointer">
+              {sortedItems.filter(payment=>selectedStatus2 === 'All' || payment.status === selectedStatus2).map((campaign, index) => (
+                <tr style={{ backgroundColor: 'var(--bg-table)', color: 'var(--text-color2)'}}
+                key={campaign._id}
+                className={`${
+                  index % 2 === 0
+                    ? "bg-white text-left text-black border-b border-opacity-20"
+                    : "bg-gray-200  text-left text-black border-b border-opacity-20"
+                }`}
+              >
+                <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-l-2 border-gray-200 text-center">  <label className="inline-flex items-center cursor-pointer">
   <input
     type="checkbox"
     className="sr-only"
@@ -328,44 +377,42 @@ const Campaigns = () => {
   </div>
 </label>
 </td>
-                  <td className="p-3 border-l-2 border-r-2 border-gray-300 ">
+                  <td style={{  border: 'var(--border)'}} className="p-3 border-l-2 border-r-2 border-gray-300 ">
                   {new Date(campaign?.date).toLocaleDateString("en-GB")}
                   </td>
-                  <td className="p-3 border-r-2  border-gray-300 text-start px-5 ">
+                  <td style={{  border: 'var(--border)'}} className="p-3 border-r-2  border-gray-300 text-start px-5 ">
                     <div className="">
                     
                         {campaign.campaignName}
                     </div>
                   </td>
-               <td className="p-3 border-r-2 hover:text-blue-700 hover:font-bold border-gray-300 text-center ">
+               <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 hover:text-blue-700 hover:font-bold border-gray-300 text-center ">
                    <Link to={`/dashboard/client/${campaign.clientEmail}`} className="">
                        {campaign.clientName}
                    </Link>
                  </td>
 
-                  <td className="p-3 border-r-2 border-gray-300 text-center ">
+                  <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-300 text-center ">
                   $ {campaign.tBudged}
                   
                   </td>
-                  <td className="p-3 border-r-2 border-gray-300 text-center ">
+                  <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-300 text-center ">
                   $ {campaign.tSpent}
                  
                   </td>
 
-                  <td
+                  <td style={{  border: 'var(--border)'}}
                     className={`p-3 border-r-2 text-center border-gray-300 ${
                       campaign.status === "Active"
-                        ? " text-green-900 font-bold"
-                        : campaign.status === "In Review"
-                        ? " text-red-600 font-bold"
-                        : campaign.status === "Complete"
                         ? " text-blue-600 font-bold"
+                        : campaign.status === "Complete"
+                        ? " text-gray-400 font-bold"
                         : ""
                     }`}
                   >
                     {campaign.status}
                   </td>
-                  <td className="p-3 border-l-2 border-r-2 border-gray-300 text-center">
+                  <td style={{  border: 'var(--border)'}} className="p-3 border-l-2 border-r-2 border-gray-300 text-center">
       <div className="flex justify-center gap-3">
         <div>
                       <button
@@ -469,25 +516,26 @@ const Campaigns = () => {
                   
                 </tr>
               ))}
-              <tr className="bg-[#05a0db] text-sm text-white font-bold">
-                <td
-                  className="p-3 border border-black text-right"
+              <tr style={{ backgroundColor: 'var(--bg-color)', color: 'var(--text-color)'}} className=" text-sm  font-bold">
+                <td style={{  border: 'var(--border)'}}
+                  className="p-3 border  text-right"
                   colSpan="4"
                 >
                   Total :
                 </td>
-                <td className="p-3 border border-black text-center">
+                <td style={{  border: 'var(--border)'}} className="p-3 border  text-center">
                   $ {totalBudged.toFixed(2) || 0}
                 </td>
-                <td className="p-3 border border-black text-center">
+                <td style={{  border: 'var(--border)'}} className="p-3 border  text-center">
   {`$ ${totalSpent.toFixed(2)}`}
 </td>
-                <td className="p-3 border border-black text-center"></td>
-                <td className="p-3 border border-black text-center"></td>
+                <td  className="p-3   text-center"></td>
+                <td className="p-3   text-center"></td>
               </tr>
             </tbody>
           </table>
         </div>
+      </div>
       </div>
 
       <div className="flex justify-center mt-4">

@@ -28,7 +28,6 @@ const AdsUserAdsAccount = () => {
     }, [users, user,email]);
   
     
-  
     const [adsAccountCenter, refetch] = useAdsAccountCenter();
     const [adsAccounts, setAdsAccounts] = useState([]);
   
@@ -91,6 +90,7 @@ const AdsUserAdsAccount = () => {
   }, [adsAccounts]);
   
   const [modalData, setModalData] = useState(null);
+
   const handleUpdate = (e, id) => {
     e.preventDefault();
     const accountName = e.target.accountName.value;
@@ -153,7 +153,6 @@ const AdsUserAdsAccount = () => {
 
   const [adsPayment] = useAdsPayment();
 
-
   const [payment, setPayment] = useState([]);
   const [filteredClients, setFilteredClients] = useState([]);
   const [sortMonth, setSortMonth] = useState("");
@@ -163,6 +162,7 @@ const AdsUserAdsAccount = () => {
   const [selectedDate, setSelectedDate] = useState("");
 
   const [totalPayment, setTotalPayment] = useState(0);
+
   useEffect(() => {
     const realdata = adsPayment.filter(
       (m) => m.employeeEmail === email
@@ -294,6 +294,7 @@ const AdsUserAdsAccount = () => {
 
 
   const [activeDropdown, setActiveDropdown] = useState(null);
+  
   const toggleDropdown = (orderId) => {
     setActiveDropdown(activeDropdown === orderId ? null : orderId);
   };
@@ -382,7 +383,9 @@ const AdsUserAdsAccount = () => {
 
     return (
         <div>
-                   <div className="flex justify-start  text-gray-500 border-opacity-20 mx-2  items-center gap-3">
+           <div style={{ backgroundColor: 'var(--bg-color3)', color: 'var(--text-color)',border: 'var(--border)'}} className="mt-5 rounded-lg p-5 ">
+            
+         <div className="flex justify-start  text-gray-500 border-opacity-20   items-center gap-3">
   <button
     className="font-avenir px-3 w-full lg:w-auto mt-5 lg:mt-0 py-1 rounded-lg text-white bg-[#05a0db]"
     onClick={() => document.getElementById("my_modal_3").showModal()}
@@ -429,33 +432,34 @@ const AdsUserAdsAccount = () => {
     </div>
   </dialog>
         </div>
-        <div className="overflow-x-auto rounded-xl border border-gray-400 mt-5">
-       <table className="min-w-full bg-white">
-         <thead className="bg-[#05a0db] text-white">
-           <tr>
-             <th className="p-3">SL</th>
-             <th className="p-3">Payment Date</th>
-             <th className="p-3">Ad Account Name</th>
-             <th className="p-3">Current Balance</th>
-             <th className="p-3">Threshold</th>
-             <th className="p-3">Total Spent</th>
-             <th className="p-3">Total Bill</th>
-             <th className="p-3">Status</th>
-             <th className="p-3">Action</th>
+
+        <div  className="overflow-x-auto rounded-xl mt-5 text-center " style={{ backgroundColor: 'var(--bg-color)', color: 'var(--text-color)'}}>
+          <table className="min-w-full text-center ">
+            <thead className=" ">
+              <tr className="" style={{border: 'var(--border)',borderLeft: 'var(--border)', borderRight: 'var(--border)', color: 'var(--text-color)'}}>
+             <th style={{  border: 'var(--border)'}} className="p-3">SL</th>
+             <th style={{  border: 'var(--border)'}} className="p-3">Payment Date</th>
+             <th style={{  border: 'var(--border)'}} className="p-3">Ad Account Name</th>
+             <th style={{  border: 'var(--border)'}} className="p-3">Current Balance</th>
+             <th style={{  border: 'var(--border)'}} className="p-3">Threshold</th>
+             <th style={{  border: 'var(--border)'}} className="p-3">Total Spent</th>
+             <th style={{  border: 'var(--border)'}} className="p-3">Total Bill</th>
+             <th style={{  border: 'var(--border)'}} className="p-3">Status</th>
+             <th style={{  border: 'var(--border)'}} className="p-3">Action</th>
          
            </tr>
          </thead>
          <tbody>
            {adsAccounts.map((account, index) => (
-             <tr
+             <tr style={{ backgroundColor: 'var(--bg-table)', color: 'var(--text-color2)'}}
              key={account._id}
              className={`${
                index % 2 === 0
-                 ? "bg-white text-left text-gray-500 border-b border-opacity-20"
-                 : "bg-gray-200  text-left text-gray-500 border-b border-opacity-20"
+                 ? "bg-white text-left text-black border-b border-opacity-20"
+                 : "bg-gray-200  text-left text-black border-b border-opacity-20"
              }`}
-             >
-               <td className="p-3 border-r-2 border-l-2 border-gray-200 text-center">  <label className="inline-flex items-center cursor-pointer">
+           >
+               <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-l-2 border-gray-200 text-center">  <label className="inline-flex items-center cursor-pointer">
   <input
     type="checkbox"
     className="sr-only"
@@ -477,18 +481,19 @@ const AdsUserAdsAccount = () => {
     ></span>
   </div>
 </label>
-</td>
-               <td className="p-3 border border-gray-300 text-center"> {new Date(account?.paymentDate).toLocaleDateString("en-GB")}</td>
+              </td>
+
+               <td style={{  border: 'var(--border)'}} className="p-3 border border-gray-300 text-center"> {new Date(account?.paymentDate).toLocaleDateString("en-GB")}</td>
               
-               <td className="p-3 border-r-2  border-gray-300 text-start px-5 ">
+               <td style={{  border: 'var(--border)'}} className="p-3 border-r-2  border-gray-300 text-start px-5 ">
                      <div className="">
                        <h1> {account.accountName}</h1>
                    
                      </div>
                    </td>
-               <td className="p-3 border border-gray-300  text-center">$ {account.currentBallence}</td>
-               <td className="p-3 border border-gray-300 text-center">$ {account.threshold}</td>
-               <td className="p-3 border-r-2 border-gray-300 text-center ">
+               <td style={{  border: 'var(--border)'}} className="p-3 border border-gray-300  text-center">$ {account.currentBallence}</td>
+               <td style={{  border: 'var(--border)'}} className="p-3 border border-gray-300 text-center">$ {account.threshold}</td>
+               <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-300 text-center ">
                     <div className="relative group flex items-center justify-center ">
                       <h1>$ {account.totalSpent}</h1>
                       <button
@@ -552,8 +557,8 @@ const AdsUserAdsAccount = () => {
 
                     </div>
                   </td>
-               <td className="p-3 border border-gray-300 text-center">$ {account.totalSpent * account.dollerRate}</td>
-               <td className={`p-3 border  text-center border-gray-300  ${
+               <td style={{  border: 'var(--border)'}} className="p-3 border border-gray-300 text-center">$ {account.totalSpent * account.dollerRate}</td>
+               <td style={{  border: 'var(--border)'}} className={`p-3 border  text-center border-gray-300  ${
                        account.status === "Active"
                          ? "text-blue-700 font-bold"
                          : "text-red-600 font-bold"
@@ -561,8 +566,9 @@ const AdsUserAdsAccount = () => {
                    >
                      {account.status} 
                      </td>
-               <td className={`p-3 border flex justify-center gap-2 text-center border-gray-300  `}
+               <td style={{  border: 'var(--border)'}} className={`p-3 text-center   `}
                    >
+                    <div className='flex justify-center gap-2 '>
                     <button
                           className="bg-green-700 hover:bg-blue-700 text-white px-2 py-1 rounded"
                            onClick={() => setModalData(account)}
@@ -575,22 +581,24 @@ const AdsUserAdsAccount = () => {
                         >
                           Delete
                         </button>
+                    </div>
+                  
                         
                      </td>
               
              </tr>
            ))}
-           <tr className="bg-[#05a0db] text-sm text-white font-bold">
+           <tr style={{ backgroundColor: 'var(--bg-color)', color: 'var(--text-color)' }} className=" text-sm  font-bold">
      
-     <td className="p-3  text-right" colSpan="3">
+     <td style={{  border: 'var(--border)'}} className="p-3  text-right" colSpan="3">
        Total :
      </td>
-     <td className="p-3  border-gray-300 text-center">$ {currentTotal}</td>
-     <td className="p-3  text-center">$ {tSpent}</td> 
-     <td className="p-3  text-center">$ {TSpent}</td> 
-     <td className="p-3  text-center"></td> 
-     <td className="p-3  text-center"></td> 
-     <td className="p-3  text-center"></td> 
+     <td style={{  border: 'var(--border)'}} className="p-3  border-gray-300 text-center">$ {currentTotal}</td>
+     <td style={{  border: 'var(--border)'}} className="p-3  text-center">$ {tSpent}</td> 
+     <td style={{  border: 'var(--border)'}} className="p-3  text-center">$ {TSpent}</td> 
+     <td style={{  border: 'var(--border)'}} className="p-3  text-center"></td> 
+     <td style={{  border: 'var(--border)'}} className="p-3  text-center"></td> 
+     <td style={{  border: 'var(--border)'}} className="p-3  text-center"></td> 
  
     
      
@@ -599,6 +607,9 @@ const AdsUserAdsAccount = () => {
          </tbody>
        </table>
      </div>
+
+     </div>
+
      {modalData && (
       <dialog className="modal" open>
       <div className="modal-box bg-white text-black">

@@ -185,11 +185,13 @@ const EmployeeCampaign = ({email}) => {
         <title>Campaign Table | Digital Network </title>
         <link rel="canonical" href="https://www.example.com/" />
       </Helmet>
-<div className="lg:flex  lg:justify-end gap-5 items-center ">
+      <div className='px-5  pt-5 my-5 mt-5  rounded-lg' style={{ backgroundColor: 'var(--bg-color3)', color: 'var(--text-color)',border: 'var(--border)'}}>
+<div className="lg:flex  lg:justify-start gap-3 items-center ">
 <form className="flex justify-center items-center">
   <div className="mb-4 ">
  
     <select 
+     style={{ backgroundColor: 'var(--bg-color2)',border: 'var(--border)', color: 'var(--text-color2)'}}
       name="email" 
       className="border border-gray-700 text-black bg-white rounded p-2 mt-1"
       onChange={handleSort} // Automatically trigger sort when changed
@@ -204,9 +206,10 @@ const EmployeeCampaign = ({email}) => {
 
       <div className="flex justify-center ">
                 <input
+                 style={{ backgroundColor: 'var(--bg-color2)',border: 'var(--border)', color: 'var(--text-color2)'}}
                   type="text"
                   placeholder="Search Campaign Name..."
-                  className=" rounded-lg w-full  mb-3 placeholder-black border border-gray-400 p-2 text-black  text-sm bg-white"
+                  className=" rounded-lg w-full  mb-3  border border-gray-400 p-2.5   text-sm bg-white"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                 />
@@ -218,34 +221,32 @@ const EmployeeCampaign = ({email}) => {
 
 
       <div className="">
-        <div className="overflow-x-auto rounded-xl">
-          <table className="min-w-full bg-white">
-            <thead className="bg-[#05a0db] text-white">
-              <tr>
-                <th className="p-3 text-center border-2 border-gray-300">SL</th>
-                <th className="p-3 text-center border-2 border-gray-300">Date</th>
-                <th className="p-3 text-center border-2 border-gray-300">Campaign Name</th>
-                <th className="p-3 text-center border-2 border-gray-300">client Name</th>
-     
-                <th className="p-3 text-center border-2 border-gray-300">Total Budged</th>
-                <th className="p-3 text-center border-2 border-gray-300">Total spent</th>
-                <th className="p-3 text-center border-2 border-gray-300">Status</th>
-                
-                <th className="p-3 text-center border-2 border-gray-300">Action</th>
+      <div  className="overflow-x-auto rounded-xl mb-5 text-center " style={{ backgroundColor: 'var(--bg-color)', color: 'var(--text-color)'}}>
+          <table className="min-w-full text-center ">
+            <thead className=" ">
+              <tr className="" style={{border: 'var(--border)',borderLeft: 'var(--border)', borderRight: 'var(--border)', color: 'var(--text-color)'}}>
+                <th  style={{  border: 'var(--border)'}} className="p-3 text-center border-2 border-gray-300">SL</th>
+                <th  style={{  border: 'var(--border)'}} className="p-3 text-center border-2 border-gray-300">Date</th>
+                <th  style={{  border: 'var(--border)'}} className="p-3 text-center border-2 border-gray-300">Campaign Name</th>
+                <th  style={{  border: 'var(--border)'}} className="p-3 text-center border-2 border-gray-300">client Name</th>
+                <th  style={{  border: 'var(--border)'}} className="p-3 text-center border-2 border-gray-300">Total Budged</th>
+                <th  style={{  border: 'var(--border)'}} className="p-3 text-center border-2 border-gray-300">Total spent</th>
+                <th  style={{  border: 'var(--border)'}} className="p-3 text-center border-2 border-gray-300">Status</th>
+                <th  style={{  border: 'var(--border)'}} className="p-3 text-center border-2 border-gray-300">Action</th>
                 
               </tr>
             </thead>
             <tbody>
   {filteredItems.map((campaign, index) => (
-    <tr
-      key={campaign._id}
-      className={`${
-        index % 2 === 0
-          ? "bg-white text-black border-b border-opacity-20"
-          : "bg-gray-200 text-black border-b border-opacity-20"
-      }`}
-    >
-<td className="p-3 border-r-2 border-l-2 border-gray-200 text-center">  <label className="inline-flex items-center cursor-pointer">
+    <tr style={{ backgroundColor: 'var(--bg-table)', color: 'var(--text-color2)'}}
+    key={campaign._id}
+    className={`${
+      index % 2 === 0
+        ? "bg-white text-left text-black border-b border-opacity-20"
+        : "bg-gray-200  text-left text-black border-b border-opacity-20"
+    }`}
+   >
+<td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-l-2 border-gray-200 text-center">  <label className="inline-flex items-center cursor-pointer">
   <input
     type="checkbox"
     className="sr-only"
@@ -268,26 +269,26 @@ const EmployeeCampaign = ({email}) => {
   </div>
 </label>
 </td>
-      <td className="p-3 border-l-2 border-r-2 border-gray-300 text-center">
+      <td style={{  border: 'var(--border)'}} className="p-3 border-l-2 border-r-2 border-gray-300 text-center">
   {new Date(campaign.date).toLocaleDateString("en-US", {
     year: "numeric",
     month: "2-digit",
     day: "2-digit",
   })}
 </td>
-      <td className="p-3 border-r-2 border-gray-300 text-left">
+      <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-300 text-left">
         <Link to={`/client/${campaign.clientEmail}`} className="flex justify-start">
         {campaign.campaignName}
         </Link>
 
       </td>
       
-      <td className="p-3 border-r-2 border-gray-300 text-center">
+      <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-300 text-center">
         <Link to={campaign.pageURL} className="flex justify-center">
         {campaign.clientName}
         </Link>
       </td>        
-      <td className="p-3 border-r-2 border-gray-300 text-center">
+      <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-300 text-center">
         <div className="relative group flex items-center justify-center">
           <h1>$ {campaign.tBudged}</h1>
           <button
@@ -336,7 +337,7 @@ const EmployeeCampaign = ({email}) => {
         </div>
       </td>
 
-      <td className="p-3 border-r-2 border-gray-300 text-center">
+      <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-300 text-center">
         <div className="relative group flex items-center justify-center">
           <h1>$ {campaign.tSpent}</h1>
           <button
@@ -385,7 +386,7 @@ const EmployeeCampaign = ({email}) => {
         </div>
       </td>
       
-      <td
+      <td style={{  border: 'var(--border)'}}
   className={`p-3 border text-center border-gray-300 ${
     campaign.status === "Active"
       ? "text-green-700 font-bold"
@@ -398,7 +399,7 @@ const EmployeeCampaign = ({email}) => {
 </td>
 
 
-                  <td className="p-3 border-l-2 border-r-2 border-gray-300 text-center">
+                  <td style={{  border: 'var(--border)'}} className="p-3 border-l-2 border-r-2 border-gray-300 text-center">
       <div className="flex justify-center gap-3">
         <div>
                       <button
@@ -500,7 +501,7 @@ const EmployeeCampaign = ({email}) => {
       
     </tr>
   ))}
-  <tr className="bg-[#05a0db] text-sm text-white font-bold">
+  <tr style={{border: 'var(--border)',borderLeft: 'var(--border)', borderRight: 'var(--border)', color: 'var(--text-color)'}} className=" font-bold">
     <td className="p-3  border-gray-300 text-right" colSpan="4">
       Total :
     </td>
@@ -517,6 +518,7 @@ const EmployeeCampaign = ({email}) => {
 </tbody>
           </table>  
         </div>
+      </div>
       </div>
     </div>
   );

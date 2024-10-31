@@ -9,11 +9,9 @@ import useUsers from "../../Hook/useUsers";
 const AllClientsPayments = () => {
   const [MPayment, refetch] = useMpayment();
   const AxiosPublic = UseAxiosPublic();
-
   const [selectedDate, setSelectedDate] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
   const [filteredData, setFilteredData] = useState([]);
-
   const [totalPayment, setTotalPayment] = useState(0);
   const [users] = useUsers();
   const [employees, setEmployees] = useState([]);
@@ -23,46 +21,39 @@ const AllClientsPayments = () => {
   const displayedItems = showAll ? filteredData : filteredData.slice(0, itemsToShow);
   const [selectedPayment, setSelectedPayment] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-
-
   const initialTab = localStorage.getItem("activeTaballClientspays") ;
   const [sortMonth, setSortMonth] = useState(initialTab); 
+  const initialTab2 = localStorage.getItem("activeTaballClientsemp") ;
+  const [selectedEmployee, setSelectedEmployee] = useState(initialTab2);
   
   const changeTab = (tab) => {
     setSortMonth(tab);
     localStorage.setItem("activeTaballClientspays", tab); 
   };
 
-  const initialTab2 = localStorage.getItem("activeTaballClientsemp") ;
-  const [selectedEmployee, setSelectedEmployee] = useState(initialTab2); 
-  
   const changeTab2 = (tab) => {
     setSelectedEmployee(tab);
     localStorage.setItem("activeTaballClientsemp", tab); 
   };
 
-  
-  // Fetch employees when users are available
   useEffect(() => {
     if (users) {
       setEmployees(users.filter((u) => u.role === "employee"));
     }
   }, [users]);
   
-  // Filter MPayment data based on selected filters
   useEffect(() => {
     const filtered = MPayment.filter((payment) =>
       (selectedEmployee ? payment.employeeEmail === selectedEmployee : true) &&
       (sortMonth ? new Date(payment.date).getMonth() + 1 === parseInt(sortMonth) : true) &&
       (selectedDate ? payment.date === selectedDate : true) &&
-      (selectedCategory ? payment.paymentMethod === selectedCategory : true) &&
+      (selectedCategory === 'All' || selectedCategory === '' || payment.paymentMethod === selectedCategory) &&
       (selectedYear ? new Date(payment.date).getFullYear() === parseInt(selectedYear) : true)
     );
   
     setFilteredData(filtered);
   }, [sortMonth, selectedDate, selectedCategory,  MPayment, selectedEmployee, selectedYear]);
   
-  // Calculate total payment based on displayed items
   useEffect(() => {
     const totalBill = displayedItems.reduce(
       (acc, campaign) => acc + parseFloat(campaign.amount),
@@ -71,7 +62,6 @@ const AllClientsPayments = () => {
     setTotalPayment(totalBill);
   }, [MPayment, displayedItems]);
   
-  // Open and close modal for payment editing
   const handleEditClick = (payment) => {
     setSelectedPayment(payment);
     setIsModalOpen(true);
@@ -82,7 +72,6 @@ const AllClientsPayments = () => {
     setSelectedPayment(null);
   };
   
-
   const handleDelete = (id) => {
     Swal.fire({
       title: "Are you sure?",
@@ -135,90 +124,77 @@ const AllClientsPayments = () => {
   const [bankTotal, setBankTotal] = useState(0);
 
   useEffect(() => {
-    AxiosPublic.get(`https://digital-networking-server.vercel.app/Mpayment`)
-      .then((res) => {
-        const da = res.data;
-        const filtered = res.data;
-
-        const filter2 = filtered.filter(
-          (d) => d.paymentMethod === 'bkashMarchent'
-        );
-        const total = filter2.reduce((acc, datas) => acc + parseFloat(datas.amount), 0);
-        setBkashMarcentTotal(total);
-
-        const filter3 = filtered.filter(
-          (d) => d.paymentMethod === 'nagadPersonal'
-        );
-        const total3 = filter3.reduce((acc, datas) => acc + parseFloat(datas.amount), 0);
-        setNagadPersonalTotal(total3);
-
-        const filter4 = filtered.filter(
-          (d) => d.paymentMethod === 'bkashPersonal'
-        );
-        const total4 = filter4.reduce((acc, datas) => acc + parseFloat(datas.amount), 0);
-        setBkashPersonalTotal(total4);
-
-        const filter5 = filtered.filter(
-          (d) => d.paymentMethod === 'rocketPersonal'
-        );
-        const total5 = filter5.reduce((acc, datas) => acc + parseFloat(datas.amount), 0);
-        setRocketPersonalTotal(total5);
-
-        const filter6 = filtered.filter(
-          (d) => d.paymentMethod === 'bank'
-        );
-        const total6 = filter6.reduce((acc, datas) => acc + parseFloat(datas.amount), 0);
-        setBankTotal(total6);
-      });
-  }, []);
-
-
-
+    const filtered = displayedItems;
   
-
-
+    const filter2 = filtered.filter((d) => d.paymentMethod === 'bkashMarchent');
+    const total2 = filter2.reduce((acc, datas) => acc + (parseFloat(datas.amount) || 0), 0);
+    setBkashMarcentTotal(total2);
+  
+    const filter3 = filtered.filter((d) => d.paymentMethod === 'nagadPersonal');
+    const total3 = filter3.reduce((acc, datas) => acc + (parseFloat(datas.amount) || 0), 0);
+    setNagadPersonalTotal(total3);
+  
+    const filter4 = filtered.filter((d) => d.paymentMethod === 'bkashPersonal');
+    const total4 = filter4.reduce((acc, datas) => acc + (parseFloat(datas.amount) || 0), 0);
+    setBkashPersonalTotal(total4);
+  
+    const filter5 = filtered.filter((d) => d.paymentMethod === 'rocketPersonal');
+    const total5 = filter5.reduce((acc, datas) => acc + (parseFloat(datas.amount) || 0), 0);
+    setRocketPersonalTotal(total5);
+  
+    const filter6 = filtered.filter((d) => d.paymentMethod === 'bank');
+    const total6 = filter6.reduce((acc, datas) => acc + (parseFloat(datas.amount) || 0), 0);
+    setBankTotal(total6);
+  }, [displayedItems]); 
+  
   return (
-    <div className="">
+    <div className="m-5">
       <Helmet>
         <title>Clients Payment | Digital Network </title>
         <link rel="canonical" href="https://www.example.com/" />
       </Helmet>
 
-      <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3  lg:grid-cols-6 gap-3 lg:gap-5   px-5 pb-5">
-   <div onClick={() => setSelectedCategory('bkashMarchent')} className="balance-card bg-white rounded-2xl shadow-lg p-5 text-center  transition-transform transform hover:scale-105 border-0">
-     <img className="balance-card-img" src="https://i.ibb.co/bHMLyvM/b-Kash-Merchant.png" alt="bKash" />
-     <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"> <span className="text-lg lg:text-2xl font-extrabold"> ৳</span> {bkashMarcent}</p>
-   </div>
-   <div onClick={() => setSelectedCategory('bkashPersonal')} className="balance-card bg-white rounded-2xl shadow-lg p-5 text-center transition-transform transform hover:scale-105 border-0">
-     <img className="balance-card-img" src="https://i.ibb.co/520Py6s/bkash-1.png" alt="bKash" />
-     <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"> <span className="text-lg lg:text-2xl font-extrabold"> ৳</span> {bkashPersonal}</p>
-   </div>
-   <div onClick={() => setSelectedCategory('nagadPersonal')} className="balance-card bg-white rounded-2xl shadow-lg p-5 text-center transition-transform transform hover:scale-105 border-0">
-     <img className="balance-card-img" src="https://i.ibb.co/JQBQBcF/nagad-marchant.png" alt="Nagad" />
-     <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"><span className="text-lg lg:text-2xl font-extrabold"> ৳</span> {nagadPersonal}</p>
-   </div>
-   <div onClick={() => setSelectedCategory('rocketPersonal')} className="balance-card bg-white rounded-2xl shadow-lg p-5 text-center transition-transform transform hover:scale-105 border-0">
-     <img className="balance-card-img" src="https://i.ibb.co/QkTM4M3/rocket.png" alt="Rocket" />
-     <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"><span className="text-lg lg:text-2xl font-extrabold"> ৳</span> {rocketPersonal}</p>
-   </div>
+      <div style={{ backgroundColor: 'var(--bg-color3)', color: 'var(--text-color)', border: 'var(--border)' }} className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 lg:gap-5 px-5 p-5 rounded-lg">
+  {[
+    { category: 'bkashMarchent', img: 'https://i.ibb.co/bHMLyvM/b-Kash-Merchant.png', amount: bkashMarcent, bgColor: '#f7e8e8' },
+    { category: 'bkashPersonal', img: 'https://i.ibb.co/520Py6s/bkash-1.png', amount: bkashPersonal, bgColor: '#ffe6f7' },
+    { category: 'nagadPersonal', img: 'https://i.ibb.co/JQBQBcF/nagad-marchant.png', amount: nagadPersonal, bgColor: '#fff2cc' },
+    { category: 'rocketPersonal', img: 'https://i.ibb.co/QkTM4M3/rocket.png', amount: rocketPersonal, bgColor: '#e0f7fa' },
+    { category: 'bank', img: 'https://i.ibb.co/PZc0P4w/brac-bank-seeklogo.png', amount: bankTotal, bgColor: '#f2f2f2' },
+    { category: 'All', img: '', amount: bkashPersonal + bkashMarcent + nagadPersonal + rocketPersonal + bankTotal, bgColor: '#d9f8d9', total: true }
+  ].map(({ category, img, amount, bgColor, total }) => (
+    <div style={{ backgroundColor: bgColor, border: 'var(--border)' }} key={category} onClick={() => setSelectedCategory(category)} className="balance-card bg-white rounded-2xl shadow-lg p-5 text-center transition-transform hover:scale-105 border-0">
+      {total ? (
+        <>
+          <h1 className="text-3xl font-bold text-black">Total BDT</h1>
+          <p className="balance-card-text text-lg lg:text-2xl mt-8 font-bold text-gray-700">
+            <span className="text-lg lg:text-2xl font-extrabold">৳</span> {new Intl.NumberFormat('en-IN').format(amount)}
+          </p>
+        </>
+      ) : (
+        <>
+          <img className="balance-card-img" src={img} alt={category} />
+          <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700">
+            <span className="text-lg lg:text-2xl font-extrabold">৳</span> {new Intl.NumberFormat('en-IN').format(amount)}
+          </p>
+        </>
+      )}
+    </div>
+  ))}
+</div>
 
-   <div onClick={() => setSelectedCategory('bank')} className="balance-card bg-white rounded-2xl shadow-lg p-5 text-center transition-transform transform hover:scale-105 border-0">
-     <img className="balance-card-img" src="https://i.ibb.co/PZc0P4w/brac-bank-seeklogo.png" alt="Rocket" />
-     <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700"><span className="text-lg lg:text-2xl font-extrabold"> ৳</span> {bankTotal}</p>
-   </div>
-   <div className="balance-card bg-white rounded-2xl shadow-lg p-5 text-center transition-transform transform hover:scale-105 border-0">
-     <h1 className="text-3xl font-bold text-black">Total BDT</h1>
-     <p className="balance-card-text text-lg lg:text-2xl mt-8 font-bold text-gray-700"><span className="text-lg lg:text-2xl font-extrabold"> ৳</span> {bkashPersonal + bkashMarcent + nagadPersonal + rocketPersonal + bankTotal}</p>
-   </div>
-     </div>
+
 
 {/* ///////////////////////////////////////////////////////////////// */}
-<div className="lg:flex text-black lg:justify-end gap-5 items-center">
-  <div className="flex flex-wrap lg:flex-nowrap gap-3 lg:gap-5 justify-center items-center">
+<div className='px-5 py-5  my-5 mt-5 rounded-lg' style={{ backgroundColor: 'var(--bg-color3)', color: 'var(--text-color)',border: 'var(--border)'}}>
 
-    <div className="flex flex-wrap gap-3 lg:gap-5 justify-center items-start">
+<div className="lg:flex text-black lg:justify-start mb-5 gap-3 items-center">
+  <div className="flex flex-wrap lg:flex-nowrap gap-3 lg:gap-3 justify-center items-center">
+
+    <div className="flex flex-wrap gap-3 lg:gap-3 justify-center items-start">
       <div className="flex justify-center text-start items-start">
         <select
+         style={{ backgroundColor: 'var(--bg-color2)',border: 'var(--border)', color: 'var(--text-color2)'}}
           className="border bg-white text-black border-gray-400 rounded p-2 mt-1"
           value={selectedEmployee}
           onChange={(e) => changeTab2(e.target.value)}
@@ -232,24 +208,9 @@ const AllClientsPayments = () => {
         </select>
       </div>
 
-      <div className="hidden lg:flex text-black justify-center items-center">
-        <select
-          className="border bg-white text-black border-gray-400 rounded p-2 mt-1"
-          value={selectedYear}
-          onChange={(e) => setSelectedYear(e.target.value)}
-        >
-          {Array.from({ length: 31 }, (_, i) => 2020 + i).map((year) => (
-            <option key={year} value={year}>
-              {year}
-            </option>
-          ))}
-        </select>
-      </div>
-    </div>
-
-    <div className="flex flex-wrap gap-3 lg:gap-5 justify-center items-start">
       <div className="flex justify-center items-start">
         <select
+         style={{ backgroundColor: 'var(--bg-color2)',border: 'var(--border)', color: 'var(--text-color2)'}}
           className="border bg-white text-black border-gray-400 rounded p-2 mt-1"
           value={sortMonth}
           onChange={(e) => changeTab(e.target.value)}
@@ -275,14 +236,33 @@ const AllClientsPayments = () => {
           ))}
         </select>
       </div>
-
-      <div className="hidden lg:flex mr-5 justify-center items-start">
+    </div>
+    {/* <div className="hidden lg:flex  justify-center items-start">
         <input
+         style={{ backgroundColor: 'var(--bg-color2)',border: 'var(--border)', color: 'var(--text-color2)'}}
           type="date"
           className="border rounded bg-green-300 text-black border-gray-400 p-2 mt-1"
           value={selectedDate}
           onChange={(e) => setSelectedDate(e.target.value)}
         />
+      </div> */}
+
+    <div className="flex flex-wrap gap-3 lg:gap-5 justify-center items-start">
+     
+
+      <div className="hidden lg:flex text-black justify-center items-center">
+        <select
+         style={{ backgroundColor: 'var(--bg-color2)',border: 'var(--border)', color: 'var(--text-color2)'}}
+          className="border bg-white text-black border-gray-400 rounded p-2 mt-1"
+          value={selectedYear}
+          onChange={(e) => setSelectedYear(e.target.value)}
+        >
+          {Array.from({ length: 31 }, (_, i) => 2020 + i).map((year) => (
+            <option key={year} value={year}>
+              {year}
+            </option>
+          ))}
+        </select>
       </div>
     </div>
 
@@ -291,10 +271,10 @@ const AllClientsPayments = () => {
 
 
 
-      <div className="overflow-x-auto text-black rounded-xl my-5 border border-gray-400 mx-5">
-        <table className="min-w-full bg-white">
-          <thead className="bg-[#05a0db] text-white">
-            <tr>
+<div  className="overflow-x-auto rounded-xl  text-center " >
+          <table className="min-w-full text-center ">
+            <thead style={{ backgroundColor: 'var(--bg-color)', color: 'var(--text-color)'}} className=" ">
+              <tr className="" style={{border: 'var(--border)',borderLeft: 'var(--border)', borderRight: 'var(--border)', color: 'var(--text-color)'}}>
               <th className="p-3">SL</th>
               <th className="p-3">Payment Date</th>
               <th className="p-3">Client Name</th>
@@ -305,28 +285,32 @@ const AllClientsPayments = () => {
             </tr>
           </thead>
           <tbody>
-            {displayedItems.map((payment, index) => (
-              <tr
-                key={index}
-                className={index % 2 === 0 ? "bg-gray-100" : "bg-white"}
-              >
-                <td className="p-3 border-r-2 border-l-2 border-gray-200 text-center">
+            {displayedItems.sort((a, b) => new Date(b.date) - new Date(a.date))?.map((payment, index) => (
+              <tr style={{ backgroundColor: 'var(--bg-table)', color: 'var(--text-color2)'}}
+              key={payment?._id}
+              className={`${
+                index % 2 === 0
+                  ? "bg-white text-left text-black border-b border-opacity-20"
+                  : "bg-gray-200  text-left text-black border-b border-opacity-20"
+              }`}
+            >
+                <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-l-2 border-gray-200 text-center">
                   {index + 1}
                 </td>
-                <td className="p-3 border-r-2 border-gray-200 text-center">
+                <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-200 text-center">
                   {new Date(payment.date).toLocaleDateString("en-GB")}
                 </td>
 
-                <td className="p-3 hover:text-blue-700 hover:font-bold border-r-2 border-gray-200 text-start">
+                <td style={{  border: 'var(--border)'}} className="p-3 hover:text-blue-700 hover:font-bold border-r-2 border-gray-200 text-start">
                 <Link to={`/dashboard/client/${payment.clientEmail}`}>
                 {payment.clientName}
                 </Link>
                 </td>
               
-                <td className="p-3 border-r-2 border-gray-200 text-center">
+                <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-200 text-center">
                   ৳ {payment.amount}
                 </td>
-                <td className="p-3 border-r-2 border-gray-200 text-center">
+                <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-200 text-center">
                   {payment.paymentMethod === "bkashMarchent" && (
                     <img
                       className="h-10 w-24 flex mx-auto my-auto items-center justify-center"
@@ -363,12 +347,12 @@ const AllClientsPayments = () => {
                     />
                   )}
                 </td>
-                <td className="p-3 border-r-2 border-gray-200 text-center">
+                <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-200 text-center">
                   {payment.note}
                 </td>
                
-                <td className="p-3 border-r-2 flex gap-3 justify-center items-center border-gray-200 text-center">
-               
+                <td style={{  border: 'var(--border)'}} className="p-3 border-r-2  border-gray-200 text-center">
+                <div className="flex justify-center items-center gap-3">
                        <button
                           className="bg-green-700 hover:bg-blue-700 text-white px-2 py-1 rounded"
                           onClick={() => handleEditClick(payment)}
@@ -381,15 +365,15 @@ const AllClientsPayments = () => {
                         >
                           Delete
                         </button>
-                  
+                        </div>
                 
                 </td>
               </tr>
             ))}
           </tbody>
-          <tr className="bg-[#05a0db] text-white font-bold">
+          <tr style={{backgroundColor: 'var(--bg-color)',border: 'var(--border)',borderLeft: 'var(--border)', borderRight: 'var(--border)', color: 'var(--text-color)'}} className=" font-bold">
               <td className="p-3 text-right" colSpan="3">
-                Total Amount =
+                Total :
               </td>
               <td className="p-3 text-center">৳ {totalPayment}</td>
               <td className="p-3 text-center"></td>
@@ -398,6 +382,7 @@ const AllClientsPayments = () => {
             
             </tr>
         </table>
+      </div>
       </div>
      
       {isModalOpen && selectedPayment && (

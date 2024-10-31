@@ -1,160 +1,126 @@
 import { Link } from "react-router-dom";
 import useClients from "../../Hook/useClient";
-import useUsers from "../../Hook/useUsers";
 import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../../Security/AuthProvider";
-import { IoIosSearch } from "react-icons/io";
 import useCampaings from "../../Hook/useCampaign";
 import UseAxiosPublic from "../../Axios/UseAxiosPublic";
 import Swal from "sweetalert2";
 import { Helmet } from "react-helmet-async";
-import { FaEdit } from "react-icons/fa";
-import axios from "axios";
-import { MdDelete, MdEditSquare } from "react-icons/md";
 import { ImCross } from "react-icons/im";
 import { toast } from "react-toastify";
 
 const MyCampaigns = () => {
-  const [users] = useUsers();
   const { user } = useContext(AuthContext);
-  const [ddd, setDdd] = useState([]);
   const [clients] = useClients();
-  const [campaigns,refetch]=useCampaings()
+  const [campaigns, refetch] = useCampaings();
+  console.log(campaigns);
   const [totalSpent, setTotalSpent] = useState(0);
   const [totalBudged, setTotalBudged] = useState(0);
-  const [totalRCV, setTotalRCV] = useState(0);
-  const [totalbill, setTotalBill] = useState(0);
-  const [client,setClient]=useState([])
-
-  useEffect(() => {
-    const filtered = clients.filter(
-      (campaign) => campaign.employeeEmail === user?.email
-    );
-    console.log(filtered);
-    setClient(filtered)
-
-  }, [clients, user?.email]);
-
+  const [client, setClient] = useState([]);
   const [filteredClients, setFilteredClients] = useState([]);
-
-  useEffect(() => {
-    if (users && user) {
-      const employees = users.filter(u => u.role === 'employee');
-      setDdd(employees);
-    }
-  }, [users, user]);
-
-
-  useEffect(() => {
-    const filtered=campaigns.filter(c=>c?.email === user?.email )
-    if (filtered) {
-      setFilteredClients(filtered);
-      console.log(filtered);
-    }
-  }, [campaigns,user?.email]);
-  console.log(campaigns);
-
-
-  const handleSort = (email) => {
-    if (!email) {
-      // If "All Clients" is selected (email is empty), show all campaigns
-      setFilteredClients(campaigns);
-    } else {
-      // Filter campaigns by the selected client's email
-      const filtered = campaigns.filter((c) => c.clientEmail === email);
-      setFilteredClients(filtered);
-    }
-  };
-
-
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
 
-  const filteredItems = filteredClients.filter((item) =>
+
+  const initialTab = localStorage.getItem("activeTabsummeryEmployeess") || "All";
+  const [selectedEmployee, setSelectedEmployee] = useState(initialTab);
+
+  // Function to handle tab change
+  const changeTab = (tab) => {
+    setSelectedEmployee(tab);
+    localStorage.setItem("activeTabsummeryEmployeess", tab); // Store the active tab in local storage
+  };
+  
+  useEffect(() => {
+    if (clients.length && user?.email) {
+      const filtered = clients.filter(campaign => campaign.employeeEmail === user.email);
+      setClient(filtered);
+    }
+  }, [clients, user?.email]);
+  
+  // useEffect to filter campaigns based on user email
+  useEffect(() => {
+    if (campaigns.length && user?.email) {
+      const filtered = campaigns.filter(c => c?.email === user.email);
+      setFilteredClients(filtered);
+    }
+  }, [campaigns, user?.email]);
+  
+  // Sorting campaigns based on client email
+  const handleSort = (email) => {
+    if (!email) {
+      setFilteredClients(campaigns); // Reset to all campaigns
+    } else {
+      const filtered = campaigns.filter(c => c.clientEmail === email);
+      setFilteredClients(filtered);
+    }
+  };
+  
+  // Filter campaigns based on search query
+  const filteredItems = filteredClients.filter(item =>
     item?._id.toLowerCase().includes(searchQuery.toLowerCase())
   );
-
+  
+  // Filter by category if selected
+  // Filtering logic
   const filteredByCategory = selectedCategory
-    ? filteredItems.filter(
-        (item) => item?.campaignName.toLowerCase() === selectedCategory.toLowerCase()
+    ? filteredItems.filter(item =>
+        (selectedEmployee === 'All' || item.status === selectedEmployee) &&
+        item?.campaignName?.toLowerCase() === selectedCategory.toLowerCase()
       )
     : filteredItems;
-
-
-   
-
-  console.log(totalSpent, totalBudged, totalRCV, totalbill);
-
+  
+  // useEffect to calculate total spent and budged
   useEffect(() => {
-    const totalRcv = filteredByCategory.reduce((acc, campaign) => {
-      const payment = parseFloat(campaign.tPayment);
-      return acc + (isNaN(payment) ? 0 : payment);
-    }, 0);
-    setTotalRCV(totalRcv);
-
-    const tspent = filteredByCategory.reduce(
-      (acc, campaign) => acc + parseFloat(campaign.tSpent),
-      0
-    );
-    setTotalSpent(tspent);
-
-    const total = filteredByCategory.reduce(
-      (acc, campaign) => acc + parseFloat(campaign.tBudged),
-      0
-    );
-    setTotalBudged(total);
-
-    const totalBill = filteredByCategory.reduce(
-      (acc, campaign) => acc + parseFloat(campaign.tBill),
-      0
-    );
-    setTotalBill(totalBill);
-
+    if (filteredByCategory.length) {
+      const totals = filteredByCategory.reduce(
+        (acc, { tSpent, tBudged }) => ({
+          spent: acc.spent + parseFloat(tSpent),
+          budged: acc.budged + parseFloat(tBudged),
+        }),
+        { spent: 0, budged: 0 }
+      );
+      setTotalSpent(totals.spent);
+      setTotalBudged(totals.budged);
+    }
   }, [filteredByCategory]);
-
+  
+  // Sort campaigns by name
+  const sortedAdsAccounts = filteredByCategory?.sort((a, b) =>
+    a.campaignName?.localeCompare(b.campaignName)
+  );
+  
 
   const handleUpdate = (e, id) => {
     e.preventDefault();
     const tSpent = e.target.totalSpent.value;
     const dollerRate = e.target.dollerRate.value;
+    const campaignName= e.target.campaignName.value;
     const tBudged = e.target.tBudged.value;
-    const body = { tSpent, dollerRate, tBudged };
+    const body = { tSpent, dollerRate, tBudged,campaignName };
 
-    AxiosPublic.patch(
-      `https://digital-networking-server.vercel.app/campaings/${id}`,
+    AxiosPublic.patch(`/campaings/${id}`,
       body
     )
       .then((res) => {
-        console.log(res.data);
         refetch();
+        document.getElementById(`modal_${id}`).close()
         toast.success(`Campaign updated successfully`);
       })
-      .catch((error) => {
-        console.error("Error updating campaign:", error);
-        toast.error("Failed to update campaign");
-      });
   };
  
-
-
   const handleUpdate2 = (id, newStatus) => {
     const body = { status: newStatus };
 
-    AxiosPublic.patch(`https://digital-networking-server.vercel.app/campaings/status/${id}`, body)
+    AxiosPublic.patch(`/campaings/status/${id}`, body)
       .then((res) => {
-        console.log(res.data);
         refetch();
         toast.success(`Campaign updated successfully`);
       })
-      .catch((error) => {
-        console.error("Error updating campaign:", error);
-        toast.error("Failed to update campaign");
-      });
   };
 
   const AxiosPublic =UseAxiosPublic()
   const handledelete = (id) => {
-    // Show confirmation dialog
     Swal.fire({
       title: 'Are you sure?',
       text: "You won't be able to revert this!",
@@ -165,34 +131,25 @@ const MyCampaigns = () => {
       confirmButtonText: 'Yes, delete it!'
     }).then((result) => {
       if (result.isConfirmed) {
-        // Proceed with delete
         AxiosPublic.delete(`/campaigns/${id}`)
           .then((res) => {
             refetch();
             toast.success("Campaign deleted successfully");
           })
-          .catch((error) => {
-            toast.error("Failed to delete campaign");
-          });
       }
     });
   };
 
-
-    const sortedAdsAccounts = filteredByCategory?.sort((a, b) => {
-      return a.campaignName?.localeCompare(b.campaignName);
-    });
-
-    
   return (
     <div className="lg:mt-5 mt-5 mb-10 mx-5">
       <Helmet>
         <title>My Campaign | Digital Network </title>
         <link rel="canonical" href="https://www.example.com/" />
       </Helmet>
+      <div className='px-4 py-4  rounded-md' style={{ backgroundColor: 'var(--bg-color3)', color: 'var(--text-color)',border: 'var(--border)'}}>
       <div className="flex flex-col mb-0 lg:mb-5 sm:flex-row justify-between items-center gap-5">
   <form
-    className="flex justify-center items-center w-full sm:w-auto"
+    className="flex justify-center gap-3 items-center w-full sm:w-auto"
     onSubmit={(e) => {
       e.preventDefault();
       handleSort(e.target.email.value); // Pass the selected email directly
@@ -201,6 +158,7 @@ const MyCampaigns = () => {
     <div className=" sm:mb-0 mx-auto w-full sm:w-auto">
       <select
         name="email"
+        style={{ backgroundColor: 'var(--bg-color2)',border: 'var(--border)', color: 'var(--text-color2)'}}
         className="border border-gray-700 text-black bg-white rounded p-1.5 mt-1 w-full sm:w-auto"
         onChange={(e) => {
           handleSort(e.target.value); // Trigger the sort function on selection change
@@ -216,28 +174,48 @@ const MyCampaigns = () => {
         ))}
       </select>
     </div>
+    <div>
+         <select
+        style={{ backgroundColor: 'var(--bg-color2)', border: 'var(--border)', color: 'var(--text-color2)' }}
+        className="bg-white border text-black border-gray-400 rounded p-1.5 mt-1"
+        value={selectedEmployee}
+        onChange={(e) => changeTab(e.target.value)}
+      >
+        <option value="All">Status</option>
+        <option value="Active">Active</option>
+        <option value="Complete">Complete</option>
+      </select>
+        </div>
   </form>
 
-  <div className="flex justify-end w-full mb-5 lg:mb-0 sm:w-auto">
-    <input
-      type="text"
-      placeholder="Search Campaign Name..."
-      className="rounded-lg placeholder-black border border-black p-2 text-black text-sm bg-white w-full sm:w-auto"
-      value={searchQuery}
-      onChange={(e) => setSearchQuery(e.target.value)}
+  <div className="ml-5 flex mb-5 lg:mb-0 justify-center">
+   <input
+    style={{ backgroundColor: 'var(--bg-color2)',border: 'var(--border)', color: 'var(--text-color2)'}}
+     type="text"
+     placeholder="Search by campaign name"
+     className="border bg-white  text-black placeholder-gray-500 border-gray-700 rounded-l-lg p-1 flex-1"
+     value={searchQuery}
+     onChange={(e) => setSearchQuery(e.target.value)}
     />
+    <button
+     className="bg-black  text-white border border-black shadow-2xl rounded-r-lg p-2 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
+     onClick={() => {/* Add search functionality here */}}
+    >
+     Search
+    </button>
   </div>
+
 </div>
 
 
 
 
 
-      <div className="mb-5">
-        <div className="overflow-x-auto rounded-xl">
-          <table className="min-w-full bg-white">
-            <thead className="bg-[#05a0db] text-white">
-              <tr>
+
+      <div  className="overflow-x-auto rounded-xl  text-center " style={{ backgroundColor: 'var(--bg-color)', color: 'var(--text-color)'}}>
+          <table className="min-w-full text-center ">
+            <thead className=" ">
+              <tr className="" style={{border: 'var(--border)',borderLeft: 'var(--border)', borderRight: 'var(--border)', color: 'var(--text-color)'}}>
                 <th className="p-3 text-center  border-gray-300">OFF/ON</th>
                 {/* <th className="p-3 text-center border-2 border-gray-300">SL</th> */}
                 <th className="p-3 text-center  border-gray-300">Date</th>
@@ -251,17 +229,17 @@ const MyCampaigns = () => {
               </tr>
             </thead>
             <tbody>
-  {sortedAdsAccounts.map((campaign, index) => (
-    <tr
-      key={campaign._id}
-      className={`${
-        index % 2 === 0
-          ? "bg-white text-black border-b border-opacity-20"
-          : "bg-gray-200 text-black border-b border-opacity-20"
-      }`}
-    >
+  {sortedAdsAccounts?.filter(f => selectedEmployee === 'All' || f.status === selectedEmployee)?.map((campaign, index) => (
+    <tr style={{ backgroundColor: 'var(--bg-table)', color: 'var(--text-color2)'}}
+    key={campaign._id}
+    className={`${
+      index % 2 === 0
+        ? "bg-white text-left text-black border-b border-opacity-20"
+        : "bg-gray-200  text-left text-black border-b border-opacity-20"
+    }`}
+  >
       
-      <td className="p-3 border-r-2 border-l-2 border-gray-200 text-center">  <label className="inline-flex items-center cursor-pointer">
+      <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-l-2 border-gray-200 text-center">  <label className="inline-flex items-center cursor-pointer">
   <input
     type="checkbox"
     className="sr-only"
@@ -284,139 +262,45 @@ const MyCampaigns = () => {
   </div>
 </label>
 </td>
-      {/* <td className="p-3 border-r-2 border-l-2 border-gray-200 text-center">{index + 1}</td> */}
-      <td className="p-3 border-l-2 border-r-2 border-gray-300 text-center">
+    
+      <td style={{  border: 'var(--border)'}} className="p-3 border-l-2 border-r-2 border-gray-300 text-center">
   {new Date(campaign.date).toLocaleDateString("en-US", {
     year: "numeric",
     month: "2-digit",
     day: "2-digit",
   })}
 </td>
-      <td className="p-3 border-r-2 border-gray-300 text-center">
+      <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-300 text-center">
         
         {campaign.campaignName}
         
 
       </td>
-      <td className="p-3 border-r-2 border-gray-300 text-center">
+      <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-300 text-center">
        <Link to={`/dashboard/client/${campaign.clientEmail}`}>
        {campaign.pageName}
        </Link>
        
       </td>        
-      <td className="p-3 border-r-2 border-gray-300 text-center">
+      <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-300 text-center">
      
         {campaign.clientName}
       
       </td>        
-      <td className="p-3 border-r-2 border-gray-300 text-center">
+      <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-300 text-center">
      
       $ {campaign.tBudged}
       
       </td>        
-      {/* <td className="p-3 border-r-2 border-gray-300 text-center">
-        <div className="relative group flex items-center justify-center">
-          <h1>$ {campaign.tBudged}</h1>
-          <button
-            className="text-black px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-            onClick={handleOpenBudgetModal}
-          >
-            <FaEdit />
-          </button>
 
-          {isBudgetModalOpen && (
-            <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-              <div className="bg-white p-4 rounded shadow-lg">
-                <form
-                  onSubmit={(e) => {
-                    handleUpdateTotalBudget(e, campaign._id);
-                    handleCancel();
-                  }}
-                >
-                  <label className="block text-sm font-bold mb-2">Lifetime</label>
-                  <input
-                    type="number"
-                    name="tBudged"
-                    step="0.01"
-                    defaultValue={campaign.tBudged}
-                    className="w-full border rounded p-2 mb-4 text-gray-500"
-                  />
-                  <div className="flex justify-end">
-                    <button
-                      type="button"
-                      className="mr-2 px-3 py-1 rounded text-white bg-red-800"
-                      onClick={handleCancel}
-                    >
-                      Cancel
-                    </button>
-                    <button
-                      type="submit"
-                      className="px-3 py-1 rounded text-white bg-green-800"
-                    >
-                      Publish
-                    </button>
-                  </div>
-                </form>
-              </div>
-            </div>
-          )}
-        </div>
-      </td> */}
 
-      <td className="p-3 border-r-2 border-gray-300 text-center">
+      <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-300 text-center">
        
       $ {campaign.tSpent}
      </td>    
 
-      {/* <td className="p-3 border-r-2 border-gray-300 text-center">
-        <div className="relative group flex items-center justify-center">
-          <h1></h1>
-          <button
-            className="text-black px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-            onClick={handleOpenSpentModal}
-          >
-            <FaEdit />
-          </button>
-
-          {isSpentModalOpen && (
-            <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-              <div className="bg-white p-4 rounded shadow-lg">
-                <form
-                  onSubmit={(e) => {
-                    handleUpdateTotalSpent(e, campaign._id);
-                    handleCancel();
-                  }}
-                >
-                  <label className="block text-sm font-bold mb-2">Lifetime</label>
-                  <input
-                    type="number"
-                    name="tSpent"
-                    step="0.01"
-                    defaultValue={campaign.tSpent}
-                    className="w-full border rounded p-2 mb-4 text-gray-500"
-                  />
-                  <div className="flex justify-end">
-                    <button
-                      type="button"
-                      className="mr-2 px-3 py-1 rounded text-white bg-red-800"
-                      onClick={handleCancel}
-                    >
-                      Cancel
-                    </button>
-                    <button
-                      type="submit"
-                      className="px-3 py-1 rounded text-white bg-green-800"
-                    >
-                      Publish
-                    </button>
-                  </div>
-                </form>
-              </div>
-            </div>
-          )}
-        </div>
-      </td> */}
-     <td
+     
+     <td style={{  border: 'var(--border)'}}
   className={`p-3 text-center ${
     campaign.status === "Active" ? "text-green-800 font-bold" : "text-black font-bold"
   }`}
@@ -429,23 +313,23 @@ const MyCampaigns = () => {
 
 
 
-      <td className="p-3 border-l-2 border-r-2 border-gray-300 text-center">
+      <td style={{  border: 'var(--border)'}} className="p-3 border-l-2 border-r-2 border-gray-300 text-center">
       <div className="flex justify-center gap-3">
         <div>
                       <button
                         className="bg-green-700 hover:bg-blue-700 text-white px-2 py-1 rounded"
                         onClick={() =>
-                          document.getElementById(`modal_${index}`).showModal()
+                          document.getElementById(`modal_${campaign._id}`).showModal()
                         }
                       >
                         Edit
                       </button>
-                      <dialog id={`modal_${index}`} className="modal">
+                      <dialog id={`modal_${campaign._id}`} className="modal">
   <div className="modal-box bg-white text-black">
     <form onSubmit={(e) => handleUpdate(e, campaign._id)}>
     <h1
              className=" text-black flex hover:text-red-500  justify-end  text-end"
-             onClick={() => document.getElementById(`modal_${index}`).close()}
+             onClick={() => document.getElementById(`modal_${campaign._id}`).close()}
            >
             <ImCross />
            </h1>
@@ -455,7 +339,6 @@ const MyCampaigns = () => {
           type="text"
           name="campaignName"
           defaultValue={campaign.campaignName}
-          disabled
        
           className="w-full bg-white  border-gray-700 border rounded p-2 mt-1"
         />
@@ -494,17 +377,7 @@ const MyCampaigns = () => {
           className="w-full bg-white border  border-gray-700 rounded p-2 mt-1"
         />
       </div>
-      <div className="mb-4">
-        <label className="block text-start  font-bold text-gray-700">Status</label>
-        <input
-          
-          type="text"
-          name="status"
-          disabled
-          defaultValue={campaign.status}
-          className="w-full bg-white border  border-gray-700 rounded p-2 mt-1"
-        />
-      </div>
+     
 
 
 
@@ -513,7 +386,7 @@ const MyCampaigns = () => {
           type="button"
           className="p-2 hover:bg-red-700 rounded-lg bg-red-600 text-white"
           onClick={() =>
-            document.getElementById(`modal_${index}`).close()
+            document.getElementById(`modal_${campaign._id}`).close()
           }
         >
           Close
@@ -540,7 +413,7 @@ const MyCampaigns = () => {
 </td>
     </tr>
   ))}
-  <tr className="bg-[#05a0db] text-sm text-white font-bold">
+  <tr style={{border: 'var(--border)',borderLeft: 'var(--border)', borderRight: 'var(--border)', color: 'var(--text-color)'}} className=" font-bold">
     <td className="p-3  border-gray-300 text-right" colSpan="5">
       Total :
     </td>
@@ -554,7 +427,8 @@ const MyCampaigns = () => {
 </tbody>
           </table>  
         </div>
-      </div>
+        </div>
+   
     </div>
   );
 };

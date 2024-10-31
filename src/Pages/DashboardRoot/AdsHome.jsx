@@ -71,11 +71,12 @@ const AdsDashboardHome = () => {
   }, [adsAccounts, totalPayment]);
 
   return (
-    <div className="mt-4 ">
+    <div className="mt-4 m-5 ">
       <Helmet>
         <title>Dashboard | Digital Network</title>
         <link rel="canonical" href="https://www.tacobell.com/" />
       </Helmet>
+      <div className='  rounded-lg' style={{ backgroundColor: 'var(--bg-color3)', color: 'var(--text-color)',border: 'var(--border)'}}>
       <div className="grid lg:grid-cols-4 text-white grid-cols-2 gap-3 lg:gap-5 justify-around p-5">
         <div className="px-5 py-10 rounded-2xl bg-[#c6e529] shadow-lg text-center">
           <h2 className="text-xl">Total Spent</h2>
@@ -93,6 +94,7 @@ const AdsDashboardHome = () => {
           <h2 className="text-xl ">Total Due</h2>
           <p className=" lg:text-4xl text-sm font-bold"> ৳ {totalDue.toFixed(2)}</p>
         </div>
+      </div>
       </div>
 
       <ToastContainer />

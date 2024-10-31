@@ -9,6 +9,7 @@ import useClients from "../../Hook/useClient";
 import useUsers from "../../Hook/useUsers";
 import useAdsAccount from "../../Hook/useAdAccount";
 import Swal from "sweetalert2";
+import useMpayment from "../../Hook/UseMpayment";
 
 const ClientCampaign = () => {
     const { user } = useContext(AuthContext);
@@ -61,13 +62,11 @@ const ClientCampaign = () => {
       e.preventDefault();
       const tSpent = e.target.totalSpent.value;
       const campaignName = e.target.campaignName.value;
-      const status = e.target.status.value;
       const dollerRate = e.target.dollerRate.value;
       const tBudged = e.target.tBudged.value;
-      const body = { tSpent,campaignName, status, dollerRate, tBudged };
+      const body = { tSpent,campaignName, dollerRate, tBudged };
   
-      AxiosPublic.patch(
-        `https://digital-networking-server.vercel.app/campaings/${id}`,
+      AxiosPublic.patch(`/campaings/${id}`,
         body
       )
         .then((res) => {
@@ -158,17 +157,69 @@ const ClientCampaign = () => {
         });
        };
 
+       const [MPayment]=useMpayment()
+
+       const [totalPaymeent, setTotalPayment] = useState([]);
+       useEffect(() => {
+             const realdata = MPayment.filter((m) => m.clientEmail === param?.email);
+             const totalBill = realdata.reduce(
+               (acc, campaign) => acc + parseFloat(campaign.amount),
+               0
+             );
+             setTotalPayment(totalBill);
+       }, [param?.email,MPayment]);
+
+
+       const today = new Date();
+       const formattedDate = today.toISOString().split('T')[0];  // "YYYY-MM-DD" format
+       
     return (
         <div>
             <div className="p-4">
+
+            <div style={{ backgroundColor: 'var(--bg-color3)', color: 'var(--text-color)',border: 'var(--border)'}}  className="grid grid-cols-2 m-1 rounded-lg md:grid-cols-2 lg:grid-cols-4 text-black sm:grid-cols-2 gap-3 lg:gap-5 justify-around p-5">
+        <div className="px-5 py-10 rounded-2xl  bg-[#91a33a] text-white shadow-lg text-center">
+          <h2 className="lg:text-2xl text-sm font-bold">Total Spent</h2>
+          <p className="lg:text-4xl text-xl font-bold mt-2"> $ {totalSpent.toFixed(2)}</p>
+        </div>
+
+        <div className="px-5 py-10 rounded-2xl bg-[#5422c0] text-white shadow-lg text-center">
+          <h2 className="lg:text-2xl text-sm font-bold">Total Bill</h2>
+          <p className="lg:text-4xl text-xl font-bold mt-2">
+             <span className="lg:text-4xl text-xl font-extrabold">৳</span> {totalBills.toFixed(0)}
+          </p>
+        </div>
+
+        <div className="px-5 py-10 rounded-2xl  bg-[#05a0db] text-white shadow-lg text-center">
+          <h2 className="lg:text-2xl text-sm font-bold">Total Paid</h2>
+          <p className="lg:text-4xl text-xl font-bold mt-2"> <span className="lg:text-4xl text-xl font-extrabold">৳</span> {parseInt(totalPaymeent).toFixed(0)}</p>
+        </div>
+
+        <div className="px-5 py-10 rounded-2xl  bg-[#ce1a38] text-white shadow-lg text-center">
+          <h2 className="lg:text-2xl text-sm font-bold">Total <span>
+  {((totalBills - totalPaymeent).toFixed(0))  >= 0 ? 'Due' : 'Advance'}
+</span>
+</h2>
+          <p className="lg:text-4xl text-xl font-bold mt-2">
+          <span className="lg:text-4xl text-xl font-extrabold">৳</span> {Math.abs((totalBills - totalPaymeent).toFixed(0))}
+          </p>
+        </div>
+      </div>
+
+      <div style={{ backgroundColor: 'var(--bg-color3)', color: 'var(--text-color)',border: 'var(--border)'}} className="  rounded-lg p-5 mx-1 my-5 ">
         
   <div>
-    <button
-      className="font-avenir hover:bg-indigo-700 px-6 lg:w-auto w-full mx-auto  py-2 bg-[#05a0db] rounded-lg text-white"
+
+    {
+      ddd?.role ==='employee' && 
+      <button
+      className="font-avenir hover:bg-indigo-700 px-5 p-3 lg:w-auto w-full mx-auto   bg-[#05a0db] rounded-lg text-white"
       onClick={() => document.getElementById("my_modal_2").showModal()}
     >
       Add Campaign
     </button>
+    }
+   
     <dialog id="my_modal_2" className="modal overflow-hidden">
       <div className="modal-box bg-white">
         <section className="dark:text-gray-100">
@@ -190,6 +241,7 @@ const ClientCampaign = () => {
                   type="date"
                   placeholder="type...."
                   required
+                  defaultValue={formattedDate}
                   className="w-full border border-gray-600 text-black bg-green-300 rounded p-2 mt-1"
                 />
               </div>
@@ -288,29 +340,37 @@ const ClientCampaign = () => {
     </dialog>
   </div>
 
-        <div className="overflow-x-auto text-black rounded-xl mt-5">
-          <table className="min-w-full bg-white">
-            <thead className="bg-[#05a0db] text-white">
-              <tr>
-                <th className="p-3">OFF/ON</th>    
-                <th className="p-3">Date</th>
-                <th className="p-3">Campaign Name</th>
-                <th className="p-3">Page Name</th>
-                <th className="p-3">Ads Account</th>
-                <th className="p-3">T. Budget</th>
-                <th className="p-3">T. Spent</th>
-                <th className="p-3">Total Bill</th>
-                <th className="p-3">Status</th>
-                <th className="p-3">Action</th>
+  <div  className="overflow-x-auto rounded-xl mt-5  text-center " style={{ backgroundColor: 'var(--bg-color)', color: 'var(--text-color)'}}>
+          <table className="min-w-full text-center ">
+            <thead className=" ">
+              <tr className="" style={{border: 'var(--border)',borderLeft: 'var(--border)', borderRight: 'var(--border)', color: 'var(--text-color)'}}>
+                <th style={{  border: 'var(--border)'}} className="p-3">OFF/ON</th>    
+                <th style={{  border: 'var(--border)'}} className="p-3">Date</th>
+                <th style={{  border: 'var(--border)'}} className="p-3">Campaign Name</th>
+                <th style={{  border: 'var(--border)'}} className="p-3">Page Name</th>
+                <th style={{  border: 'var(--border)'}} className="p-3">Ads Account</th>
+                <th style={{  border: 'var(--border)'}} className="p-3">T. Budget</th>
+                <th style={{  border: 'var(--border)'}} className="p-3">T. Spent</th>
+                <th style={{  border: 'var(--border)'}} className="p-3">Total Bill</th>
+                <th style={{  border: 'var(--border)'}} className="p-3">Status</th>
+                {
+      ddd?.role ==='employee' && 
+      <th className="p-3">Action</th>
+      }
+              
               </tr>
             </thead>
             <tbody>
               {dataa2.map((work, index) => (
-                <tr
-                  key={index}
-                  className={`${index % 2 === 0 ? "bg-gray-100" : "bg-white"}`}
-                >
-                        <td className="p-3 border-r-2 border-l-2 border-gray-200 text-center">  <label className="inline-flex items-center cursor-pointer">
+                 <tr style={{ backgroundColor: 'var(--bg-table)', color: 'var(--text-color2)'}}
+                 key={work._id}
+                 className={`${
+                   index % 2 === 0
+                     ? "bg-white text-left text-black border-b border-opacity-20"
+                     : "bg-gray-200  text-left text-black border-b border-opacity-20"
+                 }`}
+               >
+                        <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-l-2 border-gray-200 text-center">  <label className="inline-flex items-center cursor-pointer">
   <input
     type="checkbox"
     className="sr-only"
@@ -333,36 +393,36 @@ const ClientCampaign = () => {
   </div>
 </label>
 </td>
-                  <td className="p-3 border-r-2 border-gray-200 text-center">
+                  <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-200 text-center">
                   {new Date(work?.date).toLocaleDateString("en-GB")}
                   </td>
                   
-                  <td className="p-3 border-r-2 border-gray-200 text-left">
+                  <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-200 text-left">
                     {work.campaignName}
                   
                   </td>
-                  <td className="p-3 hover:text-blue-700 hover:font-bold border-r-2 border-gray-200 text-left">
+                  <td style={{  border: 'var(--border)'}} className="p-3 hover:text-blue-700 hover:font-bold border-r-2 border-gray-200 text-left">
                    <a href={`${work.pageUrl}`}> {work.pageName}</a>
                   
                   </td>
                   
-                  <td className="p-3 border-r-2 border-gray-200 text-center">
+                  <td  style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-200 text-center">
                     {work.adsAccount}
                   </td>
 
-                  <td className="p-3 border-r-2 border-gray-200 text-center">
+                  <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-200 text-center">
                   $ {work.tBudged}
                   </td>
 
-                  <td className="p-3 border-r-2 border-gray-200 text-center">
+                  <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-200 text-center">
                   $ {work.tSpent}
                   </td>
 
-                  <td className="p-3 border-r-2 border-gray-200 text-center">
+                  <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-200 text-center">
                     <span className="text-md mr-1 font-extrabold">৳</span>
                     {parseInt(work.tSpent * work.dollerRate)}
                   </td>
-                  <td
+                  <td style={{  border: 'var(--border)'}}
                     className={`p-3 text-center border-r-2 border-gray-200 ${
                       work.status === "Active"
                         ? "text-green-500 font-bold"
@@ -371,164 +431,160 @@ const ClientCampaign = () => {
                   >
                     {work.status}
                   </td>
-                  <td
-                    className={`p-3 text-center border-r-2 border-gray-200`}
-                  >
-                   <div className="flex justify-center gap-3">
 
-                   <div>
-  <button
-    className="bg-green-700 hover:bg-blue-700 text-white px-2 py-1 rounded"
-    onClick={() =>
-      document.getElementById(`modal_${work._id}`).showModal()
-    }
-  >
-      Edit
-  </button>
-  <dialog id={`modal_${work._id}`} className="modal">
-    <div className="modal-box bg-white text-black">
-      <form onSubmit={(e) => handleUpdate(e, work._id)}>
-        <div className="mb-4">
-          <label className="block text-left text-gray-700">
-            Campaign Name
-          </label>
-          <input
-            type="text"
-            name="campaignName"
-            defaultValue={work.campaignName}
-         
-            className="w-full bg-white border border-gray-700 rounded p-2 mt-1"
-          />
-        </div>
-        <div className="mb-4">
-          <label className="block text-left text-gray-700">
-            Account Name
-          </label>
-          <input
-            type="text"
-            name="adsAccount"
-            defaultValue={work.adsAccount}
-          disabled
-            className="w-full bg-white border border-gray-700 rounded p-2 mt-1"
-          />
-        </div>
+                  {
+      ddd?.role ==='employee' && 
+      <td style={{  border: 'var(--border)'}}
+      className={`p-3 text-center  `}
+    >
+     <div className="flex justify-center gap-3">
 
-        <div className="mb-4">
-          <label className="block text-left text-gray-700">
-            Total Budged
-          </label>
-          <input
-            type="number"
-            name="tBudged"
-            defaultValue={work.tBudged}
-            step="0.01"
-            className="w-full bg-white border border-gray-700 rounded p-2 mt-1"
-          />
-        </div>
-        <div className="mb-4">
-          <label className="block text-left text-gray-700">
-            Total Spent
-          </label>
-          <input
-            type="number"
-            name="totalSpent"
-            defaultValue={work.tSpent}
-            step="0.01"
-            className="w-full bg-white border border-gray-700 rounded p-2 mt-1"
-          />
-        </div>
+     <div>
+<button
+className="bg-green-700 hover:bg-blue-700 text-white px-2 py-1 rounded"
+onClick={() =>
+document.getElementById(`modal_${work._id}`).showModal()
+}
+>
+Edit
+</button>
+<dialog id={`modal_${work._id}`} className="modal">
+<div className="modal-box bg-white text-black">
+<form onSubmit={(e) => handleUpdate(e, work._id)}>
+<div className="mb-4">
+<label className="block text-left text-gray-700">
+Campaign Name
+</label>
+<input
+type="text"
+name="campaignName"
+defaultValue={work.campaignName}
 
-        <div className="mb-4">
-          <label className="block text-left text-gray-700">
-            Dollers Rate
-          </label>
-          <input
-            step="0.01"
-            type="number"
-            name="dollerRate"
-            defaultValue={work.dollerRate}
-            className="w-full bg-white border border-gray-700 rounded p-2 mt-1"
-          />
-        </div>
-        <div className="mb-4">
-          <label className="block text-left text-gray-700">
-            Status
-          </label>
-          <select
-            defaultValue={work.status}
-            name="status"
-            className="w-full bg-white border border-gray-700 rounded p-2 mt-1"
-          >
-            <option value="In Review">In Review</option>
-            <option value="Active">Active</option>
-            <option value="Complete">Complete</option>
-          </select>
-        </div>
+className="w-full bg-white border border-gray-700 rounded p-2 mt-1"
+/>
+</div>
+<div className="mb-4">
+<label className="block text-left text-gray-700">
+Account Name
+</label>
+<input
+type="text"
+name="adsAccount"
+defaultValue={work.adsAccount}
+disabled
+className="w-full bg-white border border-gray-700 rounded p-2 mt-1"
+/>
+</div>
 
-        {/* Buttons at the bottom in a two-grid layout */}
-        <div className="grid grid-cols-2 gap-3 mt-4">
-        <button
-            type="button"
-            className="p-2 hover:bg-red-700 rounded-lg bg-red-600 text-white text-center"
-            onClick={() =>
-              document.getElementById(`modal_${work._id}`).close()
-            }
-          >
-            Close
-          </button>
-          <button
-            type="submit"
-            className="font-avenir hover:bg-indigo-700 px-3 py-2 bg-[#05a0db] rounded-lg text-white text-center"
-          >
-            Update
-          </button>
-        
-        </div>
-      </form>
-    </div>
-  </dialog>
+<div className="mb-4">
+<label className="block text-left text-gray-700">
+Total Budged
+</label>
+<input
+type="number"
+name="tBudged"
+defaultValue={work.tBudged}
+step="0.01"
+className="w-full bg-white border border-gray-700 rounded p-2 mt-1"
+/>
+</div>
+<div className="mb-4">
+<label className="block text-left text-gray-700">
+Total Spent
+</label>
+<input
+type="number"
+name="totalSpent"
+defaultValue={work.tSpent}
+step="0.01"
+className="w-full bg-white border border-gray-700 rounded p-2 mt-1"
+/>
+</div>
+
+<div className="mb-4">
+<label className="block text-left text-gray-700">
+Dollers Rate
+</label>
+<input
+step="0.01"
+type="number"
+name="dollerRate"
+defaultValue={work.dollerRate}
+className="w-full bg-white border border-gray-700 rounded p-2 mt-1"
+/>
+</div>
+
+<div className="grid grid-cols-2 gap-3 mt-4">
+<button
+type="button"
+className="p-2 hover:bg-red-700 rounded-lg bg-red-600 text-white text-center"
+onClick={() =>
+document.getElementById(`modal_${work._id}`).close()
+}
+>
+Close
+</button>
+<button
+type="submit"
+className="font-avenir hover:bg-indigo-700 px-3 py-2 bg-[#05a0db] rounded-lg text-white text-center"
+>
+Update
+</button>
+
+</div>
+</form>
+</div>
+</dialog>
 </div>
 
 <button
-                          className="bg-red-700 hover:bg-blue-700 text-white px-2 py-1 rounded"
-                          onClick={() => handledelete(work._id)}
-                        >
-                        Delete
-                        </button>
+            className="bg-red-700 hover:bg-blue-700 text-white px-2 py-1 rounded"
+            onClick={() => handledelete(work._id)}
+          >
+          Delete
+          </button>
 
 </div>
-                  </td>
+    </td>
+      }
+                 
                  
                 </tr>
               ))}
-              <tr className="bg-[#05a0db] text-white font-bold">
-                <td className="p-3  text-center"></td>
-                <td className="p-3 text-right" colSpan="5">
+              <tr style={{border: 'var(--border)',borderLeft: 'var(--border)', borderRight: 'var(--border)', color: 'var(--text-color)'}} className=" font-bold">
+                <td  className="p-3  text-center"></td>
+                <td   className="p-3 text-right" colSpan="5">
                   Total Spent:
                 </td>
-                <td className="p-3 text-center">
+                <td  style={{  border: 'var(--border)'}} className="p-3 text-center">
                   <span className="text-md mr-1 font-extrabold">$</span>{" "}
                   {totalSpent}
                 </td>
-                <td className="p-3 text-center">
+                <td style={{  border: 'var(--border)'}} className="p-3 text-center">
                   <span className="text-md mr-1 font-extrabold">৳</span>{" "}
                   {totalBills}
                 </td>
                 {ddd?.role === "admin" ? (
                   <>
-                    <td className="p-3 text-center"></td>
-                    <td className="p-3 text-center"></td>
+                    <td style={{  border: 'var(--border)'}} className="p-3 text-center"></td>
+                  
                   </>
                 ) : (
                   <>
-                   <td className="p-3 text-center"></td>
-                  <td className="p-3 text-center"></td>
+                   <td style={{  border: 'var(--border)'}} className="p-3 text-center"></td>
+                   {
+      ddd?.role ==='employee' && 
+      <td style={{  border: 'var(--border)'}} className="p-3 text-center"></td>
+      }
+                 
                   </>
                 )}
               </tr>
             </tbody>
           </table>
         </div>
+        </div>
+
       </div>
         </div>
     );
