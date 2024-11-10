@@ -8,18 +8,27 @@ import Swal from "sweetalert2";
 import { Helmet } from "react-helmet-async";
 import { ImCross } from "react-icons/im";
 import { toast } from "react-toastify";
+import useMyCampaingsByEmail from "../../Hook/useMyCampaignByEmail";
 
 const MyCampaigns = () => {
   const { user } = useContext(AuthContext);
   const [clients] = useClients();
-  const [campaigns, refetch] = useCampaings();
-  console.log(campaigns);
+  const [mycampaigns,refetch]=useMyCampaingsByEmail(user?.email)
+  const [campaigns] = useCampaings();
+
   const [totalSpent, setTotalSpent] = useState(0);
   const [totalBudged, setTotalBudged] = useState(0);
   const [client, setClient] = useState([]);
   const [filteredClients, setFilteredClients] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 40;
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
+
 
 
   const initialTab = localStorage.getItem("activeTabsummeryEmployeess") || "All";
@@ -57,7 +66,7 @@ const MyCampaigns = () => {
   };
   
   // Filter campaigns based on search query
-  const filteredItems = filteredClients.filter(item =>
+  const filteredItems = mycampaigns.filter(item =>
     item?._id.toLowerCase().includes(searchQuery.toLowerCase())
   );
   
@@ -90,6 +99,15 @@ const MyCampaigns = () => {
     a.campaignName?.localeCompare(b.campaignName)
   );
   
+
+  const getPaginatedCampaigns = () => {
+    const filteredCampaigns = sortedAdsAccounts;
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    return filteredCampaigns?.slice(startIndex, endIndex);
+  };
+
+  const totalPages = Math.ceil(filteredByCategory.length / itemsPerPage);
 
   const handleUpdate = (e, id) => {
     e.preventDefault();
@@ -141,12 +159,12 @@ const MyCampaigns = () => {
   };
 
   return (
-    <div className="lg:mt-5 mt-5 mb-10 mx-5">
+    <div className="lg:mt-5 overflow-x-auto  mt-5 mb-10 mx-5">
       <Helmet>
         <title>My Campaign | Digital Network </title>
         <link rel="canonical" href="https://www.example.com/" />
       </Helmet>
-      <div className='px-4 py-4  rounded-md' style={{ backgroundColor: 'var(--bg-color3)', color: 'var(--text-color)',border: 'var(--border)'}}>
+      <div className='px-4 py-4 overflow-x-auto  rounded-md' style={{ backgroundColor: 'var(--bg-color3)', color: 'var(--text-color)',border: 'var(--border)'}}>
       <div className="flex flex-col mb-0 lg:mb-5 sm:flex-row justify-between items-center gap-5">
   <form
     className="flex justify-center gap-3 items-center w-full sm:w-auto"
@@ -205,17 +223,12 @@ const MyCampaigns = () => {
     </button>
   </div>
 
-</div>
+     </div>
 
-
-
-
-
-
-      <div  className="overflow-x-auto rounded-xl  text-center " style={{ backgroundColor: 'var(--bg-color)', color: 'var(--text-color)'}}>
+     <div  className="overflow-x-auto rounded-xl  text-center " style={{ color: 'var(--text-color)'}}>
           <table className="min-w-full text-center ">
             <thead className=" ">
-              <tr className="" style={{border: 'var(--border)',borderLeft: 'var(--border)', borderRight: 'var(--border)', color: 'var(--text-color)'}}>
+              <tr className="" style={{border: 'var(--border)', backgroundColor: 'var(--bg-color)',borderLeft: 'var(--border)', borderRight: 'var(--border)', color: 'var(--text-color)'}}>
                 <th className="p-3 text-center  border-gray-300">OFF/ON</th>
                 {/* <th className="p-3 text-center border-2 border-gray-300">SL</th> */}
                 <th className="p-3 text-center  border-gray-300">Date</th>
@@ -229,7 +242,7 @@ const MyCampaigns = () => {
               </tr>
             </thead>
             <tbody>
-  {sortedAdsAccounts?.filter(f => selectedEmployee === 'All' || f.status === selectedEmployee)?.map((campaign, index) => (
+  {getPaginatedCampaigns()?.filter(f => selectedEmployee === 'All' || f.status === selectedEmployee)?.map((campaign, index) => (
     <tr style={{ backgroundColor: 'var(--bg-table)', color: 'var(--text-color2)'}}
     key={campaign._id}
     className={`${
@@ -413,12 +426,12 @@ const MyCampaigns = () => {
 </td>
     </tr>
   ))}
-  <tr style={{border: 'var(--border)',borderLeft: 'var(--border)', borderRight: 'var(--border)', color: 'var(--text-color)'}} className=" font-bold">
+  <tr style={{border: 'var(--border)', backgroundColor: 'var(--bg-color)',borderLeft: 'var(--border)', borderRight: 'var(--border)', color: 'var(--text-color)'}} className=" font-bold">
     <td className="p-3  border-gray-300 text-right" colSpan="5">
       Total :
     </td>
-    <td className="p-3  border-gray-300 text-center">$ {totalBudged}</td>
-    <td className="p-3  border-gray-300 text-center">$ {totalSpent}</td> 
+    <td className="p-3  border-gray-300 text-center">$ {totalBudged.toFixed(0)}</td>
+    <td className="p-3  border-gray-300 text-center">$ {totalSpent.toFixed(0)}</td> 
     <td className="p-3  border-gray-300 text-start"></td> 
     <td className="p-3  border-gray-300 text-start"></td> 
 
@@ -426,6 +439,55 @@ const MyCampaigns = () => {
   </tr>
 </tbody>
           </table>  
+                    {/* Pagination Controls */}
+                    <div
+  style={{ backgroundColor: 'var(--bg-color)', color: 'var(--text-color2)' }}
+  className="flex justify-center items-center py-3 space-x-3"
+>
+  {/* Previous Button */}
+  <button
+    className={`px-4 py-2 rounded-lg transition ${
+      currentPage === 1
+        ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+        : "bg-blue-500 text-white hover:bg-blue-600"
+    }`}
+    onClick={() => handlePageChange(currentPage - 1)}
+    disabled={currentPage === 1}
+  >
+    Previous
+  </button>
+
+  {/* Page Numbers */}
+  <div className="flex space-x-1">
+    {Array.from({ length: totalPages }, (_, i) => i + 1).map((pageNumber) => (
+      <button
+        key={pageNumber}
+        onClick={() => handlePageChange(pageNumber)}
+        className={`px-3 py-1 rounded-lg transition border ${
+          currentPage === pageNumber
+            ? "bg-blue-600 text-white"
+            : "bg-gray-200 text-gray-800 hover:bg-gray-300"
+        }`}
+      >
+        {pageNumber}
+      </button>
+    ))}
+  </div>
+
+  {/* Next Button */}
+  <button
+    className={`px-4 py-2 rounded-lg transition ${
+      currentPage === totalPages
+        ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+        : "bg-blue-500 text-white hover:bg-blue-600"
+    }`}
+    onClick={() => handlePageChange(currentPage + 1)}
+    disabled={currentPage === totalPages}
+  >
+    Next
+  </button>
+</div>
+
         </div>
         </div>
    

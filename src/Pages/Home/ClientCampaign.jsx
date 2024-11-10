@@ -2,7 +2,6 @@ import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../../Security/AuthProvider";
 import { Form, useParams } from "react-router-dom";
 import UseAxiosPublic from "../../Axios/UseAxiosPublic";
-import useCampaings from "../../Hook/useCampaign";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import useClients from "../../Hook/useClient";
@@ -10,19 +9,21 @@ import useUsers from "../../Hook/useUsers";
 import useAdsAccount from "../../Hook/useAdAccount";
 import Swal from "sweetalert2";
 import useMpayment from "../../Hook/UseMpayment";
+import useCampaingsByEmail from "../../Hook/useCampaignsByEmail";
+import useMypymentsByEmail from "../../Hook/useMyMPayments";
 
 const ClientCampaign = () => {
     const { user } = useContext(AuthContext);
     const param = useParams();
+    const [campaignss,refetch]=useCampaingsByEmail(param?.email)
+    const [Mypayments]=useMypymentsByEmail(user?.email)
     const [clients]=useClients()
     const [datas,setdatas]=useState()
     const AxiosPublic = UseAxiosPublic();
-    const [campaign, refetch] = useCampaings();
     const [totalSpent, setTotalSpent] = useState(0);
     const [totalBills, setTotalBills] = useState(0);
     const [users] = useUsers();
     const [ddd, setDdd] = useState(null);
-    const [dataa2, setData2] = useState([]);
     const [adsAccount] = useAdsAccount();
     const [adsAccounts, setAdsAccounts] = useState([]);
 
@@ -33,18 +34,13 @@ const ClientCampaign = () => {
         const fff = users.find((u) => u.email === user?.email);
         setDdd(fff || {}); 
 
-      const filtered = campaign.filter(
-        (campaign) => campaign.clientEmail === param?.email
-      );
-      setData2(filtered);
-
-      const totalBill = filtered.reduce(
+      const totalBill = campaignss.reduce(
         (acc, campaign) => acc + parseFloat(campaign.tSpent) * parseFloat(campaign.dollerRate),
         0
       );
       setTotalBills(totalBill);
     
-      const totalSpent = filtered.reduce(
+      const totalSpent = campaignss.reduce(
         (acc, campaign) => acc + parseFloat(campaign.tSpent),
         0
       );
@@ -55,9 +51,9 @@ const ClientCampaign = () => {
       );
       setAdsAccounts(filterdata);
 
-    }, [clients,users, user,campaign, param?.email,adsAccount, user?.email]);
+    }, [clients, users, user, param?.email, campaignss, adsAccount]);
 
-    
+
     const handleUpdate = (e, id) => {
       e.preventDefault();
       const tSpent = e.target.totalSpent.value;
@@ -79,7 +75,6 @@ const ClientCampaign = () => {
           toast.error("Failed to update campaign");
         });
     };
-  
   
     const handleaddblog = (e) => {
       e.preventDefault();
@@ -118,8 +113,8 @@ const ClientCampaign = () => {
         refetch();
       });
     };
+
     const handledelete = (id) => {
-      // Show confirmation dialog
       Swal.fire({
         title: 'Are you sure?',
         text: "You won't be able to revert this!",
@@ -145,10 +140,10 @@ const ClientCampaign = () => {
 
     const handleUpdate2 = (id, newStatus) => {
       const body = { status: newStatus };
-      AxiosPublic.patch(`https://digital-networking-server.vercel.app/campaings/status/${id}`, body)
+      AxiosPublic.patch(`/campaings/status/${id}`, body)
         .then((res) => {
           console.log(res.data);
-          refetch();
+          refetch()
           toast.success(`Campaign updated successfully`);
         })
         .catch((error) => {
@@ -157,18 +152,15 @@ const ClientCampaign = () => {
         });
        };
 
-       const [MPayment]=useMpayment()
-
        const [totalPaymeent, setTotalPayment] = useState([]);
        useEffect(() => {
-             const realdata = MPayment.filter((m) => m.clientEmail === param?.email);
+             const realdata = Mypayments.filter((m) => m.clientEmail === param?.email);
              const totalBill = realdata.reduce(
                (acc, campaign) => acc + parseFloat(campaign.amount),
                0
              );
              setTotalPayment(totalBill);
-       }, [param?.email,MPayment]);
-
+       }, [param?.email,Mypayments]);
 
        const today = new Date();
        const formattedDate = today.toISOString().split('T')[0];  // "YYYY-MM-DD" format
@@ -291,7 +283,7 @@ const ClientCampaign = () => {
               </div>
               <div className="mb-4">
                 <label htmlFor="name" className="block mb-1 ml-1">
-                Page Url
+                Page Url <span className="text-red-600">(Optional)</span>
                 </label>
                 <input
                   id="name"
@@ -361,7 +353,7 @@ const ClientCampaign = () => {
               </tr>
             </thead>
             <tbody>
-              {dataa2.map((work, index) => (
+              {campaignss.map((work, index) => (
                  <tr style={{ backgroundColor: 'var(--bg-table)', color: 'var(--text-color2)'}}
                  key={work._id}
                  className={`${
@@ -557,11 +549,11 @@ Update
                   Total Spent:
                 </td>
                 <td  style={{  border: 'var(--border)'}} className="p-3 text-center">
-                  <span className="text-md mr-1 font-extrabold">$</span>{" "}
+                  <span className="text-sm mr-1 font-extrabold">$</span>{" "}
                   {totalSpent}
                 </td>
                 <td style={{  border: 'var(--border)'}} className="p-3 text-center">
-                  <span className="text-md mr-1 font-extrabold">৳</span>{" "}
+                  <span className="text-sm mr-1 font-extrabold">৳</span>{" "}
                   {totalBills}
                 </td>
                 {ddd?.role === "admin" ? (

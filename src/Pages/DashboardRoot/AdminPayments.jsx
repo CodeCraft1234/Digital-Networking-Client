@@ -1,19 +1,17 @@
 import { useContext, useEffect, useState } from "react";
-import useEmployeePayment from "../../Hook/useEmployeePayment";
 import { AuthContext } from "../../Security/AuthProvider";
 import UseAxiosPublic from "../../Axios/UseAxiosPublic";
-import useUsers from "../../Hook/useUsers";
 import { Helmet } from "react-helmet-async";
 import { toast, ToastContainer } from "react-toastify";
 import { ImCross } from "react-icons/im";
 import Swal from "sweetalert2";
+import useMyEmployeePayments from "../../Hook/useMyemployeePayments";
 
 const AdminPayments = () => {
   const { user } = useContext(AuthContext);
-  const [employeePayment, refetch] = useEmployeePayment()
+  const [MyEmployeePayment,refetch]=useMyEmployeePayments(user?.email)
   const [selectedCategory, setSelectedCategory] = useState("");
   const [filteredData, setFilteredData] = useState([]);
-  const [employees, setEmployees] = useState([]);
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   const [showAll, setShowAll] = useState(false);
   const [itemsToShow] = useState(200); 
@@ -31,21 +29,9 @@ const AdminPayments = () => {
   const initialStatus = localStorage.getItem("activeTabSelectedStatuss") || 'All';
   const [selectedStatus2, setSelectedStatus2] = useState(initialStatus);
 
-  const changeTab3 = (tab) => {
-    setSelectedStatus2(tab);
-    localStorage.setItem("activeTabSelectedStatuss", tab);
-  };
-  
+
   useEffect(() => {
-    if (user && employeePayment) { 
-      const dataa = employeePayment.filter(e => e.employeeEmail === user.email); 
-      setEmployees(dataa); 
-    }
-  }, [user, employeePayment]);
-  
-  
-  useEffect(() => {
-    const filtered = employees.filter((payment) => {
+    const filtered = MyEmployeePayment.filter((payment) => {
       const paymentDate = new Date(payment.date);
       return (
         (selectedStatus2 === 'All' || payment.status === selectedStatus2) &&
@@ -61,7 +47,7 @@ const AdminPayments = () => {
   }, [
     sortMonth,
     selectedCategory, 
-    employees,
+    MyEmployeePayment,
     selectedStatus2,
     selectedYear,
   ]);
@@ -169,7 +155,8 @@ const AdminPayments = () => {
           name:user?.displayName,
           photo:user?.photoURL,
           email:user?.email,
-          message: `Payment of ৳${payAmount} by ${paymentMethod} was Edited.`,
+          message : `The payment of ৳${previousAmount} via ${payment.paymentMethod} has been updated to ৳${payAmount} using ${paymentMethod}.`,
+
     
           note,
           payAmount,
@@ -372,20 +359,7 @@ const AdminPayments = () => {
   <div className="lg:flex text-black lg:justify-start my-3 lg:my-0 lg:ml-5  items-center">
         
         <div className="flex mt-2 lg:mt-0 justify-center text-center gap-2 lg:gap-5 items-center">
-        <div className="flex  justify-center text-center items-center">
-         <select
-         
-         style={{ backgroundColor: 'var(--bg-color2)',border: 'var(--border)', color: 'var(--text-color2)'}}
-           className=" w-full      rounded-md p-2 mt-1 "
-           value={selectedStatus2}
-           onChange={(e) => changeTab3(e.target.value)}
-         >
-           <option value="All">All Status</option>
-           <option value="pending">Pending</option>
-           <option value="Approved">Approved</option>
-          
-         </select>
-       </div>
+       
           <div className="flex lg:mt-1 justify-center text-center items-center">
             <select
             style={{ backgroundColor: 'var(--bg-color2)',border: 'var(--border)', color: 'var(--text-color2)'}}

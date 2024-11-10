@@ -1,7 +1,7 @@
 import "./profile.css";
 import { useLoaderData } from "react-router-dom";
 import { useState } from "react";
-import CampaignTable from "../Home/CampaignTable";
+import CampaignTable from "../Home/EmployeeClient";
 import UserAdAccount from "../../Components/UserAdAccount/MyAdsAccount";
 import EmployeerSellery from "../DashboardRoot/EmployeerSellery";
 import { Helmet } from "react-helmet-async";
@@ -10,6 +10,7 @@ import EmployeeClientPay from "../DashboardRoot/EmployeeClientPay";
 import EmployeeCampaign from "../Home/EmployeeCampaign";
 import EmployeeMyHistory from "../Home/EmployeeMyHistory";
 import EmployeeMySummery from "../DashboardRoot/EmployeeMySummery";
+import EmployeeClient from "../Home/EmployeeClient";
 
 const EmployeeProfile = () => {
   const userr = useLoaderData();
@@ -108,7 +109,7 @@ const EmployeeProfile = () => {
         </button>
       </div>
 
-      {activeTab === 'client' && <CampaignTable email={userr?.email} />}
+      {activeTab === 'client' && <EmployeeClient email={userr?.email} />}
       {activeTab === 'campaign' && <EmployeeCampaign email={userr?.email} />}
       {activeTab === 'adsAccount' && <UserAdAccount email={userr?.email} />}
       {activeTab === 'sellery' && <EmployeerSellery />}

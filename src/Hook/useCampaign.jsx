@@ -11,6 +11,7 @@ const useCampaings = () => {
             return res.data
         }
     })
+    
 return [campaings,refetch]
 
 };

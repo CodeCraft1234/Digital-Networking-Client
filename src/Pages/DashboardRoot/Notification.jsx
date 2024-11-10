@@ -3,6 +3,7 @@ import UseAxiosPublic from "../../Axios/UseAxiosPublic";
 import useNotification from "../../Hook/useNotification";
 import useEditNotification from "../../Hook/useEditNotificaation";
 import useUsers from "../../Hook/useUsers";
+import { formatDistanceToNow } from 'date-fns';
 
 const Notification = () => {
   const [notification, refetch] = useNotification();
@@ -11,7 +12,6 @@ const Notification = () => {
   const [selectedNotification, setSelectedNotification] = useState(null);
   const [selectedEditNotification, setSelectedEditNotification] = useState(null);
 
-  // Function to handle notification status update and display modal
   const handleUpdate = (notification) => {
     const data = { status: "read" };
     AxiosPublic.patch(`/notification/${notification._id}`, data)
@@ -22,17 +22,6 @@ const Notification = () => {
     setSelectedNotification(notification); // Show the modal with notification details
   };
 
-  const handleUpdate2 = (editNotification) => {
-    const data = { status: "read" };
-    AxiosPublic.patch(`/editNotification/${editNotification._id}`, data)
-      .then(() => {
-        refetch();
-      })
-      .catch((err) => console.error("Error updating notification:", err));
-    setSelectedEditNotification(editNotification); // Show the modal with notification details
-  };
-
-  // Sort notifications: unread first, then by date (latest first)
   const sortedNotifications = notification.sort((a, b) => {
     if (a.status === "unread" && b.status === "read") return -1;
     if (a.status === "read" && b.status === "unread") return 1;
@@ -78,48 +67,53 @@ const Notification = () => {
               </option>
             ))}
           </select>
-        <div className="grid lg:grid-cols-2 gap-3 ">
-        <div className="py-6 px-5 bg-white rounded-2xl shadow-2xl border-t-4 border-blue-300">
-        <h2 className="text-3xl font-bold text-blue-700 mb-5 text-center">Delete Notifications</h2>
-        {sortedNotifications.length > 0 ? (
-          sortedNotifications.filter(client => 
-            selectedClient === 'all' || client.email === selectedClient).map((item) => (
-            <div
-              key={item._id}
-              className={`flex items-center justify-between px-6 py-4 mb-4 rounded-xl cursor-pointer shadow-lg transition-colors ${
-                item.status === "read" ? "bg-white" : "bg-yellow-100"
-              } hover:bg-blue-100 border-l-4 ${item.status === "read" ? "border-gray-200" : "border-yellow-500"}`}
-              onClick={() => handleUpdate(item)}
-            >
-              <div className="text-blue-700 font-semibold">{item.name}</div>
-              <div className="text-gray-600 truncate">{item.message}</div>
-            </div>
-          ))
-        ) : (
-          <div className="px-4 py-3 text-gray-600 text-center">No notifications</div>
-        )}
-      </div>
-      <div className="py-6 px-5 bg-white rounded-2xl shadow-2xl border-t-4 border-blue-300">
-        <h2 className="text-3xl font-bold text-blue-700 mb-5 text-center">Edit Notifications</h2>
-        {sortedNotifications2.length > 0 ? (
-          sortedNotifications2.filter(client => 
-            selectedClient === 'all' || client.email === selectedClient).map((item) => (
-            <div
-              key={item._id}
-              className={`flex items-center justify-between px-6 py-4 mb-4 rounded-xl cursor-pointer shadow-lg transition-colors ${
-                item.status === "read" ? "bg-white" : "bg-yellow-100"
-              } hover:bg-blue-100 border-l-4 ${item.status === "read" ? "border-gray-200" : "border-yellow-500"}`}
-              onClick={() => handleUpdate2(item)}
-            >
-              <div className="text-blue-700 font-semibold">{item.name}</div>
-              <div className="text-gray-600 truncate">{item.message}</div>
-            </div>
-          ))
-        ) : (
-          <div className="px-4 py-3 text-gray-600 text-center">No notifications</div>
-        )}
-      </div>
-        </div>
+          <div className=" ">
+  <div className="py-6 px-5 bg-white rounded-2xl shadow-2xl border-t-4 border-blue-300">
+    <h2 className="text-3xl font-bold text-blue-700 mb-5 text-center">Notifications</h2>
+    
+    {sortedNotifications.length > 0 || sortedNotifications2.length > 0 ? (
+      // Merge the two notification arrays and sort them by date
+      [...sortedNotifications, ...sortedNotifications2]
+        .sort((a, b) => {
+          const dateA = a.deleteDate || a.editDate;
+          const dateB = b.deleteDate || b.editDate;
+          return new Date(b.date || dateB) - new Date(a.date || dateA);
+        })
+        .filter(client => selectedClient === 'all' || client.email === selectedClient)
+        .map((item) => (
+          <div
+            key={item._id}
+            className={`flex items-start justify-start gap-5  px-6 py-4 mb-4 rounded-xl cursor-pointer shadow-lg transition-colors ${
+              item.status === "read" ? "bg-white" : "bg-yellow-100"
+            } hover:bg-blue-100 border-l-4 ${item.status === "read" ? "border-gray-200" : "border-yellow-500"}`}
+            onClick={() => handleUpdate(item)}
+          >
+            <div >
+             <div className="text-blue-700 flex justify-start items-start gap-2 font-semibold">
+             <div>
+             <img className="h-12 w-12 rounded-full" src={item.photo} alt="" />
+             </div>
+           <div>
+           <p className="flex justify-start items-center gap-1"> <p className="text-black font-bold">{item.name}</p> <p className="text-gray-600">{item.message}</p>
+           </p>
+           <p className="text-blue-700">
+              {isNaN(new Date(item.deleteDate || item.editDate)) 
+                ? 'Invalid date' 
+                : formatDistanceToNow(new Date(item.deleteDate || item.editDate), { addSuffix: true })}
+              </p>
+           </div>
+            
+             </div>
+             
+              </div>
+          </div>
+        ))
+    ) : (
+      <div className="px-4 py-3 text-gray-600 text-center">No notifications</div>
+    )}
+  </div>
+</div>
+
 
       {/* Modal for displaying notification details */}
       {selectedNotification && (

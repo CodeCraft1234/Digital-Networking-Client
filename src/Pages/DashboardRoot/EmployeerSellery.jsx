@@ -267,9 +267,15 @@ const EmployeerSellery = () => {
                 <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-300 text-center">
                   ${data.totalSpent.toFixed(2)}
                 </td>
-                <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-300 text-center">
-                  ৳ {(data.totalSpent * 7).toFixed(2)}
-                </td>
+                <td
+  style={{ border: 'var(--border)' }}
+  className="p-3 border-r-2 border-gray-300 text-center"
+>
+  ৳ {
+    (data.totalSpent * (["October", "November", "December"].includes(data.month) ? 6 : 7)).toFixed(0)
+  }
+</td>
+
                 <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-300 text-center">
                   ৳{data.totalSellery.toFixed(2)}
                 </td>

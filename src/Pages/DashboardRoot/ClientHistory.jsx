@@ -1,70 +1,44 @@
-import { useContext, useEffect, useRef, useState } from "react";
-import useAdsAccount from "../../Hook/useAdAccount";
-import useUsers from "../../Hook/useUsers";
+import {  useEffect, useRef, useState } from "react";
 import useClients from "../../Hook/useClient";
-import UseAxiosPublic from "../../Axios/UseAxiosPublic";
-import useCampaings from "../../Hook/useCampaign";
-import { AuthContext } from "../../Security/AuthProvider";
 import { useParams } from "react-router-dom";
-import useMpayment from "../../Hook/UseMpayment";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
+import useCampaingsByEmail from "../../Hook/useCampaignsByEmail";
+import useMpymentsByEmail from "../../Hook/useMpaymentByEmail";
 
 const ClientHistory = () => {
-  const { user } = useContext(AuthContext);
   const param = useParams();
   const [clients] = useClients();
-  const [datas, setdatas] = useState();
-  const [campaign] = useCampaings();
+  const [campaignss]=useCampaingsByEmail(param?.email)
   const [totalSpent, setTotalSpent] = useState(0);
   const [totalBills, setTotalBills] = useState(0);
-  const [users] = useUsers();
-  const [ddd, setDdd] = useState(null);
-  const [dataa2, setData2] = useState([]);
-  const [adsAccount] = useAdsAccount();
-  const [adsAccounts, setAdsAccounts] = useState([]);
 
   useEffect(() => {
-    const realdata = clients.find((m) => m.clientEmail === param?.email);
-    setdatas(realdata);
 
-    const fff = users.find((u) => u.email === user?.email);
-    setDdd(fff || {});
-
-    const filtered = campaign.filter(
-      (campaign) => campaign.clientEmail === param?.email
-    );
-    setData2(filtered);
-
-    const totalBill = filtered.reduce(
+    const totalBill = campaignss.reduce(
       (acc, campaign) => acc + parseFloat(campaign.tSpent) * parseFloat(campaign.dollerRate),
       0
     );
     setTotalBills(totalBill);
 
-    const totalSpent = filtered.reduce(
+    const totalSpent = campaignss.reduce(
       (acc, campaign) => acc + parseFloat(campaign.tSpent),
       0
     );
     setTotalSpent(totalSpent);
 
-    const filterdata = adsAccount.filter(
-      (m) => m.employeeEmail === user?.email
-    );
-    setAdsAccounts(filterdata);
-  }, [clients, users, user, campaign, param?.email, adsAccount, user?.email]);
+  }, [campaignss]);
 
-  const [MPayment] = useMpayment();
   const [totalPaymeent, setTotalPayment] = useState([]);
+  const [Mpayments]=useMpymentsByEmail(param?.email)
 
   useEffect(() => {
-    const realdata = MPayment.filter((m) => m.clientEmail === param?.email);
-    const totalBill = realdata.reduce(
+    const totalBill = Mpayments.reduce(
       (acc, campaign) => acc + parseFloat(campaign.amount),
       0
     );
     setTotalPayment(totalBill);
-  }, [param?.email, MPayment]);
+  }, [ Mpayments]);
 
   //////////////////////////////////////
 
@@ -74,17 +48,14 @@ const ClientHistory = () => {
 
   useEffect(() => {
     if (param?.email) {
-      const filteredData = MPayment.filter((m) => m.clientEmail === param.email);
-      const sortedHistry = filteredData.sort((a, b) => new Date(b.date) - new Date(a.date));
+      const sortedHistry = Mpayments.sort((a, b) => new Date(b.date) - new Date(a.date));
       setHistryy(sortedHistry);
 
-      const totalBill = filteredData.reduce((acc, campaign) => acc + parseFloat(campaign.amount), 0);
+      const totalBill = Mpayments.reduce((acc, campaign) => acc + parseFloat(campaign.amount), 0);
       setTotalPayment(totalBill);
 
-      const clientData = clients.find((m) => m.clientEmail === param.email);
-      setdatas(clientData);
     }
-  }, [param?.email, MPayment, clients]);
+  }, [param?.email, Mpayments, clients]);
 
   useEffect(() => {
     if (selectedMonth) {

@@ -1,25 +1,17 @@
-import { useContext, useEffect, useState } from "react";
-import { ToastContainer, toast } from "react-toastify";
+import {  useEffect, useState } from "react";
+import { toast } from "react-toastify";
 
 import "react-toastify/dist/ReactToastify.css"
 import UseAxiosPublic from "../../Axios/UseAxiosPublic";
 import useUsers from "../../Hook/useUsers";
 import EmployeerMouthlySelery from "./EmployeerMouthlySelery";
 import useClients from "../../Hook/useClient";
-import { Form, Link, NavLink } from "react-router-dom";
 import useAdsAccount from "../../Hook/useAdAccount";
-import UserAdAccount from "../../Components/UserAdAccount/MyAdsAccount";
 
 const Selary = ({ email }) => {
-  console.log(email);
-  const [clients, refetch] = useClients();
-  const [adsAccount] = useAdsAccount();
+  const [clients] = useClients();
   const AxiosPublic = UseAxiosPublic();
   const [filteredCampaigns, setFilteredCampaigns] = useState([]);
-  const [data, setUserData] = useState([]);
-  const [users] = useUsers();
-  const [user, setUser] = useState(null);
-  console.log("kjhgfaklhgklagshkl", clients, adsAccount);
 
   const [totalSpent, setTotalSpent] = useState(0);
   const [totalBudged, setTotalBudged] = useState(0);
@@ -62,53 +54,6 @@ const Selary = ({ email }) => {
   }, [clients, email]);
 
 
-  const handlePayment = (e) => {};
-
-  const handleAddAdsAcount = (e) => {
-    e.preventDefault();
-    const accountName = e.target.accountName.value;
-    const issueDate = e.target.issueDate.value;
-    console.log(accountName, issueDate);
-    const employeeEmail = email;
-    const data = { accountName, issueDate, employeeEmail };
-
-    AxiosPublic.post("https://digital-networking-server.vercel.appadsAccount", data).then((res) => {
-      console.log(res.data);
-      toast.success("add successful");
-    });
-  };
-
-  const handleaddblog = (e) => {
-    e.preventDefault();
-    const clientName = e.target.clientName.value;
-    const clientPhone = e.target.clientPhone.value;
-    const clientEmail = e.target.clientEmail.value;
-    const employeeEmail = email;
-    const tBudged = 0;
-    const tSpent = 0;
-    const tBill = 0;
-    const tDue = 0;
-    const tPaid = 0;
-    const date = e.target.date.value;
-    const data = {
-      clientName,
-      clientEmail,
-      clientPhone,
-      tBudged,
-      employeeEmail,
-      tSpent,
-      tBill,
-      date,
-      tDue,
-      tPaid,
-    };
-    console.log(data);
-
-    AxiosPublic.post("https://digital-networking-server.vercel.appclients", data).then((res) => {
-      console.log(res.data);
-    });
-  };
-
 
   const [bkashMarcent,setBkashMarcentTotal]=useState(0)
   const [nagadPersonal,setNagadPersonalTotal]=useState(0)
@@ -118,7 +63,7 @@ const Selary = ({ email }) => {
 
 
   useEffect(()=>{
-      AxiosPublic.get(`https://digital-networking-server.vercel.appMpayment`)
+      AxiosPublic.get(`https://digital-networking-server.vercel.app/Mpayment`)
       .then(res => {
           console.log('sdjkhagjijkhgjkhdsajljkhgdsjkajkjkfjldfgjkgjkgd',res.data);
           const da=res.data

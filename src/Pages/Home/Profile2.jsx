@@ -28,6 +28,13 @@ const Profile2 = () => {
     localStorage.setItem("activeTabMyadsAccountStatuss", tab); 
   };
 
+
+  
+  const sortedAdsAccounts = adsAccounts.filter((account) =>
+    (selectedStatus ? account.status === selectedStatus : true) &&
+    (searchQuery ? account.accountName.toLowerCase().includes(searchQuery.toLowerCase()) : true)
+  ).sort((a, b) => a.accountName.localeCompare(b.accountName));
+
   useEffect(() => {
     const fff = users.find((u) => u.email === user?.email);
     setDdd(fff || {});
@@ -35,23 +42,18 @@ const Profile2 = () => {
     const filterdata = adsAccount.filter((m) => m.employeeEmail === user?.email);
     setAdsAccounts(filterdata);
   
-    const total = filterdata.reduce(
+    const total = sortedAdsAccounts.reduce(
       (acc, campaign) => acc + parseFloat(campaign.currentBallence),
       0
     );
     setCurrentTotal(total);
   
-    const totalBill = filterdata.reduce(
+    const totalBill = sortedAdsAccounts.reduce(
       (acc, campaign) => acc + parseFloat(campaign.threshold),
       0
     );
     setthreshold(totalBill);
-  }, [users, user?.email, adsAccount]); 
-  
-  const sortedAdsAccounts = adsAccounts.filter((account) =>
-    (selectedStatus ? account.status === selectedStatus : true) &&
-    (searchQuery ? account.accountName.toLowerCase().includes(searchQuery.toLowerCase()) : true)
-  ).sort((a, b) => a.accountName.localeCompare(b.accountName));
+  }, [users, user?.email,sortedAdsAccounts, adsAccount]); 
 
   const handleAddAdsAcount = (e) => {
     e.preventDefault();
@@ -325,7 +327,7 @@ const formattedDate = today.toISOString().split('T')[0];  // "YYYY-MM-DD" format
           ))}
           <tr style={{border: 'var(--border)',borderLeft: 'var(--border)', borderRight: 'var(--border)', color: 'var(--text-color)'}} className="font-bold">
     <td></td>
-    <td></td>
+ 
     <td></td>
     <td style={{  border: 'var(--border)'}} className="p-3  text-center" >
       Total :

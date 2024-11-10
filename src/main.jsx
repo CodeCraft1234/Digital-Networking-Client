@@ -299,9 +299,8 @@ const router = createBrowserRouter([
        },
     
        {
-        path:'dashboard/myAdsAccount/:email',
+        path:'dashboard/myAdsAccount',
         element:<Profile2></Profile2>,
-        loader: ({ params }) => fetch(`https://digital-networking-server.vercel.app/users/${params.email}`)
        },
        {
         path:'dashboard/adsAccountCenter/:email',

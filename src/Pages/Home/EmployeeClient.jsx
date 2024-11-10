@@ -11,12 +11,11 @@ import useMyCampaingsByEmail from '../../Hook/useMyCampaignByEmail';
 import useMyClientsByEmail from '../../Hook/useMyClientsByEmail';
 import useMypymentsByEmail from '../../Hook/useMyMPayments';
 
-const MyClients = () => {
-    const { user }=useContext(AuthContext)
-    const [myclients,refetch]=useMyClientsByEmail(user?.email)
+const EmployeeClient = ({email}) => {
+    const [myclients,refetch]=useMyClientsByEmail(email)
     const AxiosPublic = UseAxiosPublic();
-    const [mycampaigns]=useMyCampaingsByEmail(user?.email)
-    const [Mypayments]=useMypymentsByEmail(user?.email)
+    const [mycampaigns]=useMyCampaingsByEmail(email)
+    const [Mypayments]=useMypymentsByEmail(email)
     const [users] = useUsers();
     const [ddd, setDdd] = useState(null);
     const [totalSpent, setTotalSpent] = useState(0);
@@ -26,11 +25,11 @@ const MyClients = () => {
     const [sortedAdsAccounts, setSortedAdsAccounts] = useState([]);
   
       useEffect(() => {
-          if (users && user) {
-              const fff = users?.find(u => u.email === user?.email);
+          if (users && email) {
+              const fff = users?.find(u => u.email === email);
               setDdd(fff || {}); 
           }
-      }, [users, user]);
+      }, [users, email]);
   
     const [searchQuery, setSearchQuery] = useState("");
     const [selectedStatus, setSelectedStatus] = useState('positive'); 
@@ -70,8 +69,8 @@ const MyClients = () => {
     const filteredCampaigns = sortedAdsAccounts.filter(campaign => {
       if (selectedStatus === 'positive') return campaign.balance < 0; 
       if (selectedStatus === 'negative') return campaign.balance > 0; 
-      if (selectedStatus === 'all') return true; // Show all data when 'all' is selected
-      return campaign.balance === 0; 
+      if (selectedStatus === 'neutral') return campaign.balance === 0;
+      return selectedStatus === 'all'; // Show all data when status is 'all'
     });
     
 
@@ -104,14 +103,14 @@ const MyClients = () => {
       );
       setTotalBill(totalBill);
   
-    }, [mycampaigns,Mypayments, user?.email]);
+    }, [mycampaigns,Mypayments, email]);
 
     const handleaddblog = (e) => {
       e.preventDefault();
       const clientName = e.target.clientName.value;
       const clientPhone = e.target.clientPhone.value;
       const clientEmail = e.target.clientEmail.value;
-      const employeeEmail = user?.email;
+      const employeeEmail = email;
       const tBudged = 0;
       const tSpent = 0;
       const tBill = 0;
@@ -188,10 +187,11 @@ const MyClients = () => {
            <ToastContainer />
              <div className="overflow-x-auto   ">
 
-      <Helmet>
-        <title> My Client | Digital Network</title>
-        <link rel="canonical" href="https://www.tacobell.com/" />
-      </Helmet>
+             <Helmet>
+              <title>{ddd?.name ? `${ddd.name} | Digital Network` : "Digital Network"}</title>
+             <link rel="canonical" href="https://www.tacobell.com/" />
+            </Helmet>
+
 
 
       <div  style={{ backgroundColor: 'var(--bg-color3)', color: 'var(--text-color)',border: 'var(--border)'}} className="grid px-4 pt-4 rounded-md lg:grid-cols-5 grid-cols-2 text-black sm:grid-cols-2 gap-3 lg:gap-5 justify-around lg:py-5 mb-4 pb-5">
@@ -377,10 +377,12 @@ const MyClients = () => {
 
 
 <div className='flex mb-5 lg:mb-5 gap-3 justify-end items-center'>
+
 <div className="">
         <select
           name="status"
           className="bg-transparent bg-gray-200 border border-black text-black text-sm py-2 px-3 rounded-md focus:outline-none  focus:border-blue-500 group-hover:bg-white group-hover:border-gray-700 group-hover:text-black"
+          style={{ backgroundColor: 'var(--bg-color2)',border: 'var(--border)', color: 'var(--text-color2)'}}
           value={selectedStatus} // Bind value to state
           onChange={(e) => setSelectedStatus(e.target.value)} // Update selected status
         >
@@ -390,6 +392,7 @@ const MyClients = () => {
           <option value="equal">Clear</option>
         </select>
       </div>
+
 <div className="w-full lg:w-auto">
     <input
       type="text"
@@ -401,7 +404,7 @@ const MyClients = () => {
     />
   </div>
   
-
+  
 </div>
 </div>
 
@@ -728,4 +731,4 @@ const MyClients = () => {
     );
 };
 
-export default MyClients;
+export default EmployeeClient;

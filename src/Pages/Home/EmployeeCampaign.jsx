@@ -6,19 +6,20 @@ import UseAxiosPublic from "../../Axios/UseAxiosPublic";
 import Swal from "sweetalert2";
 import { Helmet } from "react-helmet-async";
 import { FaEdit } from "react-icons/fa";
-import axios from "axios";
 import { MdDelete, MdEditSquare } from "react-icons/md";
 import { toast } from "react-toastify";
+import useMyCampaingsByEmail from "../../Hook/useMyCampaignByEmail";
 
 const EmployeeCampaign = ({email}) => {
   const [clients] = useClients();
   const [campaigns,refetch]=useCampaings()
+  const [mycampaigns]=useMyCampaingsByEmail(email)
   const [isBudgetModalOpen, setIsBudgetModalOpen] = useState(false);
   const [isSpentModalOpen, setIsSpentModalOpen] = useState(false);
   const [totalSpent, setTotalSpent] = useState(0);
   const [totalBudged, setTotalBudged] = useState(0);
   const [client,setClient]=useState([])
-  const [filteredClients, setFilteredClients] = useState([]);
+  const [filteredClients, setFilteredClients] = useState(mycampaigns);
   const [searchQuery, setSearchQuery] = useState("");
   const AxiosPublic=UseAxiosPublic()
 
@@ -28,12 +29,7 @@ const EmployeeCampaign = ({email}) => {
     );
     setClient(filtered)
 
-    const filtered2=campaigns.filter(c=>c?.email === email )
-    if (filtered) {
-      setFilteredClients(filtered2);
-    }
-
-  }, [clients, email,campaigns]);
+  }, [clients, email]);
 
   const handleOpenBudgetModal = () => {
     setIsBudgetModalOpen(true);
@@ -505,8 +501,8 @@ const EmployeeCampaign = ({email}) => {
     <td className="p-3  border-gray-300 text-right" colSpan="4">
       Total :
     </td>
-    <td className="p-3  border-gray-300 text-start">$ {totalBudged}</td>
-    <td className="p-3  border-gray-300 text-start">$ {totalSpent}</td> 
+    <td className="p-3  border-gray-300 text-start">$ {totalBudged.toFixed(2)}</td>
+    <td className="p-3  border-gray-300 text-start">$ {totalSpent.toFixed(2)}</td> 
     <td className="p-3  border-gray-300 text-start"></td> 
   
                   <td className="p-3  border-gray-300 text-start"></td> 

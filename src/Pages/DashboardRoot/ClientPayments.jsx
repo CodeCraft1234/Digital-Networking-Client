@@ -2,16 +2,15 @@ import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../../Security/AuthProvider";
 import UseAxiosPublic from "../../Axios/UseAxiosPublic";
 import { Helmet } from "react-helmet-async";
-import useMpayment from "../../Hook/UseMpayment";
 import { toast, ToastContainer } from "react-toastify";
 import { Link } from "react-router-dom";
 import Swal from "sweetalert2";
+import useMypymentsByEmail from "../../Hook/useMyMPayments";
 
 const ClientPayments = () => {
-  const [MPayment, refetch] = useMpayment();
-  const AxiosPublic = UseAxiosPublic();
   const { user } = useContext(AuthContext);
-  const [data, setData] = useState([]);
+  const [Mypayments,refetch]=useMypymentsByEmail(user?.email)
+  const AxiosPublic = UseAxiosPublic();
   const [selectedPayment, setSelectedPayment] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedDate, setSelectedDate] = useState("");
@@ -27,13 +26,10 @@ const ClientPayments = () => {
     localStorage.setItem("activeTabclientpayMont", tab); 
   };
   
-  useEffect(() => {
-    const totalBill = filteredData.reduce((acc, campaign) => acc + parseFloat(campaign.amount), 0);
-    setTotalPayment(totalBill);
-  }, [MPayment,filteredData, user?.email]);
+
   
   useEffect(() => {
-    let filtered = data;
+    let filtered = Mypayments;
     if (sortMonth) {
       filtered = filtered.filter(
         (payment) =>
@@ -52,12 +48,14 @@ const ClientPayments = () => {
     }
 
     setFilteredData(filtered);
-  }, [sortMonth, selectedDate, selectedCategory, data]);
+  }, [sortMonth, selectedDate, selectedCategory, Mypayments]);
   
+
   useEffect(() => {
-    const finds = MPayment.filter((f) => f.employeeEmail === user?.email);
-    setData(finds);
-  }, [MPayment, user]);
+    const totalBill = filteredData.reduce((acc, campaign) => acc + parseFloat(campaign.amount), 0);
+    setTotalPayment(totalBill);
+  }, [Mypayments,filteredData, user?.email]);
+
 
   const handleDelete = (id) => {
     // Show confirmation dialog
@@ -106,8 +104,7 @@ const ClientPayments = () => {
       note: e.target.note.value,
     };
 
-    AxiosPublic.patch(
-      `https://digital-networking-server.vercel.app/Mpayment/${selectedPayment._id}`,
+    AxiosPublic.patch(`/Mpayment/${selectedPayment._id}`,
       updatedPayment
     ).then((res) => {
       toast.success("Payment Update successful!");
@@ -124,10 +121,7 @@ const ClientPayments = () => {
   const [bankTotal,setBankTotal]=useState(0)
 
   useEffect(()=>{
-      AxiosPublic.get(`https://digital-networking-server.vercel.app/Mpayment`)
-      .then(res => {
-          const da=res.data
-          const filtered=da.filter(f=> f.employeeEmail === user?.email) 
+          const filtered=Mypayments
 
           const filter2=filtered.filter(d=>d.paymentMethod === 'bkashMarchent')
           const total = filter2.reduce((acc, datas) => acc + parseFloat(datas.amount),0);
@@ -148,8 +142,8 @@ const ClientPayments = () => {
           const filter6=filtered.filter(d=>d.paymentMethod === 'bank')
           const total6 = filter6.reduce((acc, datas) => acc + parseFloat(datas.amount),0);
           setBankTotal(total6)
-      })
-  },[user?.email])
+      
+  },[Mypayments])
 
   return (
     <div className="m-5">

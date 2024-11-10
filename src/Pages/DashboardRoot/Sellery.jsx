@@ -150,11 +150,15 @@ const Sellery = () => {
   </div>
 
   <div className="px-5 py-10 rounded-2xl bg-[#5422c0] text-white shadow-lg text-center">
-    <h2 className="lg:text-xl text-sm font-bold">Total Sellery</h2>
-    <p className="lg:text-xl text-sm font-bold mt-2">
-      <span className="lg:text-xl text-sm font-extrabold">৳</span> {new Intl.NumberFormat('en-IN').format((totalSpent * 7).toFixed(0))}
-    </p>
-  </div>
+  <h2 className="lg:text-xl text-sm font-bold">Total Sellery</h2>
+  <p className="lg:text-xl text-sm font-bold mt-2">
+    <span className="lg:text-xl text-sm font-extrabold">৳</span> 
+    {new Intl.NumberFormat('en-IN').format(
+      (totalSpent * (["October", "November", "December"].includes(sortMonth) ? 6 : 7)).toFixed(0)
+    )}
+  </p>
+</div>
+
 
   <div className="px-5 py-10 rounded-2xl bg-[#05a0db] text-white shadow-lg text-center">
     <h2 className="lg:text-xl text-sm font-bold">Paid</h2>
@@ -228,7 +232,9 @@ const Sellery = () => {
                   <Link className='flex justify-start items-center gap-2' to={`/dashboard/userInfo/${user?.email}`}><img className='h-10 w-10 rounded-full flex justify-center' src={user.photo} alt="" /><span>{user.name}</span></Link>
                 </td>
                  <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-300 text-center"><span className='font-extrabold '>$</span> {user.totalSpent.toFixed(2)}</td>
-                <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-300 text-center"><span className='font-extrabold '>৳</span> {(user.totalSpent * 7).toFixed(2)}</td>
+                <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-300 text-center"><span className='font-extrabold '>৳</span> {
+      (user.totalSpent * (["October", "November", "December"].includes(sortMonth) ? 6 : 7)).toFixed(0)
+    }</td>
                 <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-300 text-center"><span className='font-extrabold '>৳</span> {user.totalSellery.toFixed(2)}</td>
                 <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-300 text-center"><span className='font-extrabold '>৳</span> {(user.totalSpent * 7 - user.totalSellery).toFixed(2)}</td>
                 <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-300 text-center"><span className='font-extrabold '>৳</span> {user.totalBonus.toFixed(2)}</td>

@@ -126,7 +126,8 @@ const AdminDashboard = () => {
            <CiBank   className="w-6 h-6 mr-2" />
            Bank Info
           </NavLink>
-<NavLink
+          
+          <NavLink
             to={`dashboard/notification`}
             className="text-white hover:bg-[#f89320] hover:text-black py-2 px-4 rounded-lg flex items-center"
             style={({ isActive }) => getActiveStyle(isActive)}

@@ -8,12 +8,13 @@ import useMpayment from "../../Hook/UseMpayment";
 import useClients from "../../Hook/useClient";
 import useUsers from "../../Hook/useUsers";
 import Swal from "sweetalert2";
+import useMpymentsByEmail from "../../Hook/useMpaymentByEmail";
 
 const ClientPaymentHistry = () => {
   const { user } = useContext(AuthContext);
   const [users] = useUsers();
   const param = useParams();
-  const [MPayment, refetch] = useMpayment();
+  const [Mpayments,refetch]=useMpymentsByEmail(param?.email)
   const AxiosPublic = UseAxiosPublic();
   const [totalPayment, setTotalPayment] = useState(0);
   const [datas, setdatas] = useState();
@@ -26,17 +27,16 @@ const ClientPaymentHistry = () => {
   useEffect(() => {
     if (param?.email) {
 
-      const filteredData = MPayment.filter((m) => m.clientEmail === param.email);
-      const sortedHistry = filteredData.sort((a, b) => new Date(b.date) - new Date(a.date));
+      const sortedHistry = Mpayments.sort((a, b) => new Date(b.date) - new Date(a.date));
       setHistryy(sortedHistry);
   
-      const totalBill = filteredData.reduce((acc, campaign) => acc + parseFloat(campaign.amount), 0);
+      const totalBill = sortedHistry.reduce((acc, campaign) => acc + parseFloat(campaign.amount), 0);
       setTotalPayment(totalBill);
   
       const clientData = clients.find((m) => m.clientEmail === param.email);
       setdatas(clientData);
     }
-  }, [param?.email, MPayment, clients]);
+  }, [param?.email, Mpayments, clients]);
 
   useEffect(() => {
     if (selectedMonth) {

@@ -13,7 +13,7 @@ const useMpayment = () => {
             return res.data
         }
     })
-console.log(MPayment)
+
 return [MPayment,refetch]
 
 };

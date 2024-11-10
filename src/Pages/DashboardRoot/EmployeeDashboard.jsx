@@ -76,7 +76,7 @@ const EmployeeDashboard = () => {
           </NavLink>
          
           <NavLink
-            to={`dashboard/myAdsAccount/:email`}
+            to={`dashboard/myAdsAccount`}
             className="text-white hover:bg-[#f89320] hover:text-black py-2 px-4 rounded-lg flex items-center"
             style={({ isActive }) => getActiveStyle(isActive)}
           >

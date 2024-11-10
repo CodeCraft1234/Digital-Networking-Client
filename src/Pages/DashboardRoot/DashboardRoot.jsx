@@ -6,12 +6,15 @@ import Login from "../../Security/Login";
 import { AuthContext } from "../../Security/AuthProvider";
 import Register from "../../Security/Register";
 import {  MdCampaign, MdOutlinePayments } from "react-icons/md";
-import { LuActivitySquare,  } from "react-icons/lu";
-import {  IoMdCash,  } from "react-icons/io";
 import useUsers from "../../Hook/useUsers";
-import { RiAccountPinBoxLine, RiSecurePaymentLine } from "react-icons/ri";
-import { FaPeopleRoof, FaUsersViewfinder } from "react-icons/fa6";
+import { RiAccountPinBoxLine } from "react-icons/ri";
+import { FaUsersViewfinder } from "react-icons/fa6";
 import { BsCashCoin } from "react-icons/bs";
+import useNotification from "../../Hook/useNotification";
+import useEditNotification from "../../Hook/useEditNotificaation";
+import UseAxiosPublic from "../../Axios/UseAxiosPublic";
+import { formatDistanceToNow } from "date-fns";
+import { IoNotificationsCircleSharp } from "react-icons/io5";
 
 const DashboardRoot = () => {
   const [showSidebar, setShowSidebar] = useState(false);
@@ -26,15 +29,7 @@ const DashboardRoot = () => {
     }
   }, []);
 
-  const [clientUsername, setClientUser2] = useState(null); // State for clientUser from localStorage
-
-  useEffect(() => {
-    const storedClientUser = localStorage.getItem("clientUsername");
-    if (storedClientUser) {
-      setClientUser2(storedClientUser);
-    }
-  }, []);
-
+ 
   const navigate = useNavigate();
   const handleLogOut = () => {
     logOut().then().catch();
@@ -46,6 +41,7 @@ const DashboardRoot = () => {
 
   const [isOpen, setIsOpen] = useState(false);
   const [isOpen2, setIsOpen2] = useState(false);
+  const [isOpen3, setIsOpen3] = useState(false);
   const dropdownRef = useRef(null); 
   const dropdownRef2 = useRef(null); 
   const [ddd, setDdd] = useState({}); 
@@ -77,6 +73,7 @@ const DashboardRoot = () => {
 
     const toggleDropdown = () => setIsOpen(!isOpen);
     const toggleDropdown2 = () => setIsOpen2(!isOpen2);
+    const toggleDropdown3 = () => setIsOpen3(!isOpen3);
 
     useEffect(() => {
       const handleClickOutside = (event) => {
@@ -112,6 +109,39 @@ const DashboardRoot = () => {
       setTheme(e.target.value);
     };
 
+    const handleLogout = () => {
+      localStorage.removeItem("clientUser"); 
+      localStorage.removeItem("clientUsername"); 
+      setClientUser(null); 
+      navigate("/"); 
+    };
+  
+    const [notification, refetch] = useNotification();
+    const [editNotification] = useEditNotification();
+  
+    const sortedNotifications = notification.sort((a, b) => {
+      if (a.status === "unread" && b.status === "read") return -1;
+      if (a.status === "read" && b.status === "unread") return 1;
+      return new Date(b.date) - new Date(a.date);
+    });
+    const sortedNotifications2 = editNotification.sort((a, b) => {
+      if (a.status === "unread" && b.status === "read") return -1;
+      if (a.status === "read" && b.status === "unread") return 1;
+      return new Date(b.date) - new Date(a.date);
+    });
+  
+  
+  
+    const AxiosPublic=UseAxiosPublic()
+    const handleUpdate = (notification) => {
+      const data = { status: "read" };
+      AxiosPublic.patch(`/notification/${notification._id}`, data)
+        .then(() => {
+          refetch();
+        })
+        .catch((err) => console.error("Error updating notification:", err));
+    };
+  
 
   if (!user  ) {
     if (location.pathname === '/signup') {
@@ -120,18 +150,6 @@ const DashboardRoot = () => {
     return <Login />;
   }
 
-  const handleLogout = () => {
-    localStorage.removeItem("clientUser"); 
-    localStorage.removeItem("clientUsername"); 
-    setClientUser(null); 
-    navigate("/"); 
-  };
-
-
-
-
-
-  
 
   return (
     <div className=" ">
@@ -153,83 +171,21 @@ const DashboardRoot = () => {
   <div className="left-0  items-center grid lg:grid-cols-3 gap-5">
 
     <div className="flex justify-start items-center ml-3 gap-5">
+     
+       <div className="navbar-end ">
+      <select
+        value={theme}
+        onChange={handleThemeChange}
+        className="select-theme-dropdown bg-white px-4 py-2 rounded-md text-black mr-5"
+      >
+        <option value="light">Light</option>
+        <option value="dark">Dark</option>
+        <option value="blue">Blue</option>
+        <option value="green">Green</option>
+        <option value="pink">Pink</option>
+      </select>
+    </div>
 
-      {ddd?.role === 'admin' && (
-        <>
-          <Link
-            className="flex justify-start gap-0 hover:text-blue-600"
-            to="dashboard/allPayments"
-          >
-            <MdOutlinePayments className="w-6 h-6 mr-2" />
-            <span> Payments</span>
-          </Link>
-
-          <Link
-            className="flex justify-start gap-0 hover:text-blue-600"
-            to="dashboard/AllSummery"
-          >
-            <LuActivitySquare className="w-6 h-6 mr-2" />
-            <span> Summery</span>
-          </Link>
-          <Link
-            className="flex justify-start gap-0 hover:text-blue-600"
-            to="dashboard/sellery"
-          >
-            <IoMdCash className="w-6 h-6 mr-2" />
-            Salary
-          </Link>
-        
-
-  
-        </> 
-      )}
-
-      {
-        ddd?.role === "employee" &&    <>
-       
-
-        <Link
-          className="hover:text-blue-600 flex justify-start gap-0"
-          to="/dashboard/myClients"
-        >
-          <FaPeopleRoof className="w-6 h-6 mr-2" />
-          <span> My Clients </span>
-        </Link>
-
-        <Link
-          className="hover:text-blue-600 flex justify-start gap-0"
-          to="/dashboard/adminPayments"
-        >
-          <MdCampaign className="w-6 h-6 mr-2" />
-          <span> Campaigns</span>
-        </Link>
-        <Link
-          className="hover:text-blue-600 flex justify-start gap-0"
-          to="/dashboard/myPayments"
-        >
-          <RiSecurePaymentLine className="w-6 h-6 mr-2" />
-          <span> My Payments</span>
-        </Link>
-      </>
-      }
-      {
-        ddd?.role === 'client' && <>
-         <Link
-          className="hover:text-blue-600 flex justify-start gap-0"
-          to="/dashboard/clientCampaigns"
-        >
-          <MdCampaign className="w-6 h-6 mr-2" />
-          <span> Campaigns</span>
-        </Link>
-        <Link
-          className="hover:text-blue-600 flex justify-start gap-0"
-          to="/dashboard/clientPayments"
-        >
-          <RiSecurePaymentLine className="w-6 h-6 mr-2" />
-          <span> Payments</span>
-        </Link>
-        </>
-      }
  {clientUser && (
   <div style={{ color: 'var(--text-color)' }} className="flex justify-center gap-5 items-center">
   <h1 className="font-bold text-xl">{clientUser}</h1>
@@ -242,15 +198,87 @@ const DashboardRoot = () => {
 </div>
 
       )}
+      
     </div>
 
     <div className="flex justify-end ml-16 gap-2">
-   
+
+    {
+    ddd.role === 'admin' && <div className=" gap-2">
+    <div className="items-center">
+     <div className="" ref={dropdownRef}>
+       <label
+         tabIndex={0}
+         className="relative cursor-pointer"
+         onClick={toggleDropdown3}
+       >
+         <h1 className="text-5xl font-bold"><p className=""><IoNotificationsCircleSharp /></p> </h1>
+       </label>
+       {isOpen3 && (
+         <ul
+           tabIndex={0}
+           className="absolute mt-7 text-white left-1  z-[1] p-1 rounded-box shadow-lg bg-white"
+         >
+           <div className="p-4 text-center">
+             <div className="text-start ">
+               <div className="text-center ">
+               {(sortedNotifications.length > 0 || sortedNotifications2.length > 0) ? (
+[...sortedNotifications, ...sortedNotifications2]
+ .sort((a, b) => {
+   const dateA = a.deleteDate || a.editDate;
+   const dateB = b.deleteDate || b.editDate;
+   return new Date(b.date || dateB) - new Date(a.date || dateA);
+ })
+ .slice(0, 5) 
+ .map((item) => (
+       <div
+         key={item._id}
+         className={`flex items-start  justify-start gap-2  px-6 py-4 mb-1 rounded-xl cursor-pointer shadow-lg transition-colors ${
+           item.status === "read" ? "bg-white" : "bg-yellow-100"
+         } hover:bg-blue-100 border-l-4 ${item.status === "read" ? "border-gray-200" : "border-yellow-500"}`}
+         onClick={() => handleUpdate(item)}
+       >
+         <div >
+          <div className="text-blue-700 flex justify-start items-start gap-2 font-semibold">
+          <div>
+          <img className="h-12 w-12 rounded-full" src={item.photo} alt="" />
+          </div>
+        <div>
+        <p className="flex justify-start items-center gap-1"> <p className="text-black font-bold">{item.name}</p> <p className="text-gray-600">{item.message}</p>
+        </p>
+        <p className="text-blue-700 text-start">
+           {isNaN(new Date(item.deleteDate || item.editDate)) 
+             ? 'Invalid date' 
+             : formatDistanceToNow(new Date(item.deleteDate || item.editDate), { addSuffix: true })}
+           </p>
+        </div>
+          </div>
+           </div>
+       </div>
+     ))
+ ) : (
+   <div className="px-4 py-3 text-gray-600 text-center">No notifications</div>
+ )}
+                 <Link to={'/dashboard/notification'}>
+                   <p className="text-white bg-[#394148] hover:bg-blue-500 text-sm border border-gray-500 rounded-lg py-1.5 mt-2 px-3">
+                     See All
+                   </p>
+                 </Link>
+               </div>
+             </div>
+             <hr className="my-2" />
+           </div>
+         </ul>
+       )}
+     </div>
+ </div>
+ </div>
+
+    }
     <div className="items-center">
       
       {user?.displayName ? (
         <div className="relative" ref={dropdownRef}>
-          {/* Profile Image and Dropdown Toggle */}
           
           <label
             tabIndex={0}
@@ -258,7 +286,7 @@ const DashboardRoot = () => {
             onClick={toggleDropdown}
           >
             <img
-              className="h-8 w-8 rounded-full"
+              className="h-10 w-10 mt-1 rounded-full"
               src={user.photoURL}
               alt="Profile"
             />
@@ -269,7 +297,7 @@ const DashboardRoot = () => {
               viewBox="0 0 24 24"
               strokeWidth={2}
               stroke="currentColor"
-              className="absolute right-0 bottom-0 h-4 w-4 bg-white rounded-full"
+              className="absolute right-0 bottom-0 h-3 w-3 bg-black rounded-full"
             >
               <path
                 strokeLinecap="round"
@@ -296,7 +324,7 @@ const DashboardRoot = () => {
                   to={'/dashboard/updateProfile'}
                 >
                   <h1 className="my-2">
-                    {user?.displayName?.split(' ')[0]}
+                    {user?.displayName}
                   </h1>
                 </Link>
 
@@ -387,28 +415,13 @@ const DashboardRoot = () => {
       </>
       )}
     </div>
-
-    <h1 className="my-2">
-                    {user?.displayName?.split(' ')[0]}
+    <h1 className="mt-3 text-xl">
+                    {user?.displayName}
                   </h1>
+    
 
 
-    <div className="navbar-end mt-2">
-      {/* Dropdown for selecting theme */}
-      <select
-        value={theme}
-        onChange={handleThemeChange}
-        className="select-theme-dropdown bg-white P-2 rounded-md text-black mr-5"
-      >
-        <option value="light">Light</option>
-        <option value="dark">Dark</option>
-        <option value="blue">Blue</option>
-        <option value="green">Green</option>
-        <option value="pink">Pink</option>
-      </select>
-     
-       
-    </div>
+
      
     </div>
 
