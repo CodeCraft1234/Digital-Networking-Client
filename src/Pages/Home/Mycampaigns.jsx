@@ -9,11 +9,13 @@ import { Helmet } from "react-helmet-async";
 import { ImCross } from "react-icons/im";
 import { toast } from "react-toastify";
 import useMyCampaingsByEmail from "../../Hook/useMyCampaignByEmail";
+import useMyClientsByEmail from "../../Hook/useMyClientsByEmail";
 
 const MyCampaigns = () => {
   const { user } = useContext(AuthContext);
   const [clients] = useClients();
-  const [mycampaigns,refetch]=useMyCampaingsByEmail(user?.email)
+  const AxiosPublic=UseAxiosPublic()
+  const [mycampaigns, refetch] = useMyCampaingsByEmail(user?.email);
   const [campaigns] = useCampaings();
 
   const [totalSpent, setTotalSpent] = useState(0);
@@ -29,131 +31,106 @@ const MyCampaigns = () => {
     setCurrentPage(pageNumber);
   };
 
-
-
   const initialTab = localStorage.getItem("activeTabsummeryEmployeess") || "All";
   const [selectedEmployee, setSelectedEmployee] = useState(initialTab);
 
-  // Function to handle tab change
   const changeTab = (tab) => {
     setSelectedEmployee(tab);
-    localStorage.setItem("activeTabsummeryEmployeess", tab); // Store the active tab in local storage
+    localStorage.setItem("activeTabsummeryEmployeess", tab);
   };
-  
+
+  const initialTab2 = localStorage.getItem("activeTaballcampaignmonthsss");
+  const [sortMonth, setSortMonth] = useState(initialTab2 || (new Date().getMonth() + 1).toString());
+
+  const changeTab2 = (tab) => {
+    setSortMonth(tab);
+    localStorage.setItem("activeTaballcampaignmonthsss", tab);
+  };
+
   useEffect(() => {
     if (clients.length && user?.email) {
-      const filtered = clients.filter(campaign => campaign.employeeEmail === user.email);
+      const filtered = clients.filter((campaign) => campaign.employeeEmail === user.email);
       setClient(filtered);
     }
   }, [clients, user?.email]);
-  
-  // useEffect to filter campaigns based on user email
+
   useEffect(() => {
     if (campaigns.length && user?.email) {
-      const filtered = campaigns.filter(c => c?.email === user.email);
+      const filtered = campaigns.filter((c) => c?.email === user.email);
       setFilteredClients(filtered);
     }
   }, [campaigns, user?.email]);
-  
-  // Sorting campaigns based on client email
-  const handleSort = (email) => {
-    if (!email) {
-      setFilteredClients(campaigns); // Reset to all campaigns
-    } else {
-      const filtered = campaigns.filter(c => c.clientEmail === email);
-      setFilteredClients(filtered);
-    }
-  };
-  
-  // Filter campaigns based on search query
-  const filteredItems = mycampaigns.filter(item =>
+
+  // Filter and Sort Campaigns based on Date
+
+  const [myclients]=useMyClientsByEmail(user?.email)
+
+  const tspent = mycampaigns
+      
+  ?.filter(campaign => myclients.some(client => client.clientEmail === campaign.clientEmail))
+  console.log(tspent,mycampaigns);
+
+  const filteredItems = tspent.filter((item) =>
     item?._id.toLowerCase().includes(searchQuery.toLowerCase())
   );
-  
-  // Filter by category if selected
-  // Filtering logic
+
   const filteredByCategory = selectedCategory
-    ? filteredItems.filter(item =>
-        (selectedEmployee === 'All' || item.status === selectedEmployee) &&
-        item?.campaignName?.toLowerCase() === selectedCategory.toLowerCase()
+    ? filteredItems.filter(
+        (item) =>
+          (selectedEmployee === "All" || item.status === selectedEmployee) &&
+          item?.campaignName?.toLowerCase() === selectedCategory.toLowerCase()
       )
     : filteredItems;
-  
-  // useEffect to calculate total spent and budged
+
+  // Filter campaigns by selected month
+  const filtered = sortMonth
+    ? filteredByCategory.filter((item) => {
+        const month = new Date(item.date).getMonth() + 1;
+        return month === parseInt(sortMonth);
+      })
+    : filteredByCategory;
+    console.log(filtered);
+
   useEffect(() => {
-    if (filteredByCategory.length) {
-      const totals = filteredByCategory.reduce(
-        (acc, { tSpent, tBudged }) => ({
-          spent: acc.spent + parseFloat(tSpent),
-          budged: acc.budged + parseFloat(tBudged),
-        }),
-        { spent: 0, budged: 0 }
-      );
-      setTotalSpent(totals.spent);
-      setTotalBudged(totals.budged);
-    }
+    const totals = filteredByCategory.reduce(
+      (acc, { tSpent, tBudged }) => ({
+        spent: acc.spent + parseFloat(tSpent) || 0,
+        budged: acc.budged + parseFloat(tBudged) || 0,
+      }),
+      { spent: 0, budged: 0 }
+    );
+    setTotalSpent(totals.spent);
+    setTotalBudged(totals.budged);
   }, [filteredByCategory]);
-  
-  // Sort campaigns by name
-  const sortedAdsAccounts = filteredByCategory?.sort((a, b) =>
+
+  // Sort campaigns alphabetically by campaign name
+  const sortedAdsAccounts = filtered.sort((a, b) =>
     a.campaignName?.localeCompare(b.campaignName)
   );
-  
-
+console.log(sortedAdsAccounts);
   const getPaginatedCampaigns = () => {
-    const filteredCampaigns = sortedAdsAccounts;
     const startIndex = (currentPage - 1) * itemsPerPage;
     const endIndex = startIndex + itemsPerPage;
-    return filteredCampaigns?.slice(startIndex, endIndex);
+    return sortedAdsAccounts?.slice(startIndex, endIndex);
   };
 
-  const totalPages = Math.ceil(filteredByCategory.length / itemsPerPage);
+  const totalPages = Math.ceil(filtered.length / itemsPerPage);
 
-  const handleUpdate = (e, id) => {
-    e.preventDefault();
-    const tSpent = e.target.totalSpent.value;
-    const dollerRate = e.target.dollerRate.value;
-    const campaignName= e.target.campaignName.value;
-    const tBudged = e.target.tBudged.value;
-    const body = { tSpent, dollerRate, tBudged,campaignName };
-
-    AxiosPublic.patch(`/campaings/${id}`,
-      body
-    )
-      .then((res) => {
-        refetch();
-        document.getElementById(`modal_${id}`).close()
-        toast.success(`Campaign updated successfully`);
-      })
-  };
- 
-  const handleUpdate2 = (id, newStatus) => {
-    const body = { status: newStatus };
-
-    AxiosPublic.patch(`/campaings/status/${id}`, body)
-      .then((res) => {
-        refetch();
-        toast.success(`Campaign updated successfully`);
-      })
-  };
-
-  const AxiosPublic =UseAxiosPublic()
   const handledelete = (id) => {
     Swal.fire({
-      title: 'Are you sure?',
+      title: "Are you sure?",
       text: "You won't be able to revert this!",
-      icon: 'warning',
+      icon: "warning",
       showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'Yes, delete it!'
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!",
     }).then((result) => {
       if (result.isConfirmed) {
-        AxiosPublic.delete(`/campaigns/${id}`)
-          .then((res) => {
-            refetch();
-            toast.success("Campaign deleted successfully");
-          })
+        AxiosPublic.delete(`/campaigns/${id}`).then(() => {
+          refetch();
+          toast.success("Campaign deleted successfully");
+        });
       }
     });
   };
@@ -166,36 +143,13 @@ const MyCampaigns = () => {
       </Helmet>
       <div className='px-4 py-4 overflow-x-auto  rounded-md' style={{ backgroundColor: 'var(--bg-color3)', color: 'var(--text-color)',border: 'var(--border)'}}>
       <div className="flex flex-col mb-0 lg:mb-5 sm:flex-row justify-between items-center gap-5">
-  <form
-    className="flex justify-center gap-3 items-center w-full sm:w-auto"
-    onSubmit={(e) => {
-      e.preventDefault();
-      handleSort(e.target.email.value); // Pass the selected email directly
-    }}
-  >
-    <div className=" sm:mb-0 mx-auto w-full sm:w-auto">
-      <select
-        name="email"
-        style={{ backgroundColor: 'var(--bg-color2)',border: 'var(--border)', color: 'var(--text-color2)'}}
-        className="border border-gray-700 text-black bg-white rounded p-1.5 mt-1 w-full sm:w-auto"
-        onChange={(e) => {
-          handleSort(e.target.value); // Trigger the sort function on selection change
-        }}
-      >
-        <option disabled selected value="">
-          All Clients
-        </option>
-        {client.map((d) => (
-          <option key={d._id} value={d.clientEmail}>
-            {d.clientName}
-          </option>
-        ))}
-      </select>
-    </div>
-    <div>
+
+  
+   <div className="flex justify-start items-center gap-3">
+   <div>
          <select
         style={{ backgroundColor: 'var(--bg-color2)', border: 'var(--border)', color: 'var(--text-color2)' }}
-        className="bg-white border text-black border-gray-400 rounded p-1.5 mt-1"
+        className="bg-white border text-black border-gray-400 rounded p-2 mt-1"
         value={selectedEmployee}
         onChange={(e) => changeTab(e.target.value)}
       >
@@ -204,7 +158,42 @@ const MyCampaigns = () => {
         <option value="Complete">Complete</option>
       </select>
         </div>
-  </form>
+
+        <div className="w-full lg:w-auto flex flex-col justify-center items-start">
+        <select
+          style={{
+            backgroundColor: 'var(--bg-color2)',
+            border: 'var(--border)',
+            color: 'var(--text-color2)',
+          }}
+          className="w-full lg:w-auto border bg-white text-black border-gray-400 rounded p-2 mt-1"
+          value={sortMonth}
+          onChange={(e) => changeTab2(e.target.value)}
+        >
+          <option value="">Select Month</option>
+          {[
+            'January',
+            'February',
+            'March',
+            'April',
+            'May',
+            'June',
+            'July',
+            'August',
+            'September',
+            'October',
+            'November',
+            'December',
+          ].map((month, index) => (
+            <option key={index + 1} value={index + 1}>
+              {month}
+            </option>
+          ))}
+        </select>
+      </div>
+   </div>
+
+
 
   <div className="ml-5 flex mb-5 lg:mb-0 justify-center">
    <input
@@ -430,8 +419,8 @@ const MyCampaigns = () => {
     <td className="p-3  border-gray-300 text-right" colSpan="5">
       Total :
     </td>
-    <td className="p-3  border-gray-300 text-center">$ {totalBudged.toFixed(0)}</td>
-    <td className="p-3  border-gray-300 text-center">$ {totalSpent.toFixed(0)}</td> 
+    <td className="p-3  border-gray-300 text-center">$ {totalBudged.toFixed(2)}</td>
+    <td className="p-3  border-gray-300 text-center">$ {totalSpent.toFixed(2)}</td> 
     <td className="p-3  border-gray-300 text-start"></td> 
     <td className="p-3  border-gray-300 text-start"></td> 
 

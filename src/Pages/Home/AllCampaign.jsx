@@ -7,15 +7,16 @@ import UseAxiosPublic from "../../Axios/UseAxiosPublic";
 import Swal from "sweetalert2";
 import { Helmet } from "react-helmet-async";
 import { toast } from "react-toastify";
+import useMyCampaingsByEmail from "../../Hook/useMyCampaignByEmail";
 
 const Campaigns = () => {
   const [users] = useUsers();
   const [clients] = useClients();
-  const [campaigns, refetch] = useCampaings();
   const [filteredClients, setFilteredClients] = useState([]);
   const [selectedClientt, setSelectedClientt] = useState("");
   const initialTab = localStorage.getItem("activeTaballcampaignClient") ;
   const [selectedClient, setSelectedClient] = useState(initialTab);
+  const [mycampaigns, refetch] = useMyCampaingsByEmail(selectedClient);
   
   const changeTab = (tab) => {
     setSelectedClient(tab);
@@ -32,7 +33,7 @@ const Campaigns = () => {
   };
   
   useEffect(() => {
-    let filtered = campaigns;
+    let filtered = mycampaigns;
 
     const currentMonth = new Date().getMonth() + 1;
     if (!sortMonth) {
@@ -54,12 +55,12 @@ const Campaigns = () => {
     }
 
     setFilteredClients(filtered);
-  }, [sortMonth,  selectedClient, selectedClientt, campaigns]);
+  }, [sortMonth,  selectedClient, selectedClientt, mycampaigns]);
 
   const handleSort = (e) => {
     e.preventDefault();
     const status = e.target.status.value;
-    const filtered = campaigns.filter((c) => c.status === status);
+    const filtered = mycampaigns.filter((c) => c.status === status);
     setFilteredClients(filtered);
   };
 
@@ -214,7 +215,6 @@ const Campaigns = () => {
           value={selectedClient}
           onChange={(e) => changeTab(e.target.value)}
         >
-          <option value="">Select an employee</option>
           {clientss.map((client) => (
             <option key={client.name} value={client.email}>
               {client.name}
@@ -224,28 +224,6 @@ const Campaigns = () => {
       </div>
     </div>
 
-    {/* Client Selection */}
-    <div className="w-full lg:w-auto flex justify-center lg:mr-3 mt-5 lg:mt-0">
-      <select
-        style={{
-          backgroundColor: 'var(--bg-color2)',
-          border: 'var(--border)',
-          color: 'var(--text-color2)',
-        }}
-        className="w-full lg:w-auto bg-white border text-black border-gray-400 rounded p-2 mt-1"
-        value={selectedClient}
-        onChange={(e) => setSelectedClientt(e.target.value)}
-      >
-        <option value="">Select a Client</option>
-        {clients
-          .filter((client) => !selectedClient || client.employeeEmail === selectedClient)
-          .map((client) => (
-            <option key={client.clientEmail} value={client.clientEmail}>
-              {client.clientName}
-            </option>
-          ))}
-      </select>
-    </div>
 
     {/* Month Selection & Status */}
     <div className="w-full lg:w-auto flex flex-col lg:flex-row justify-center gap-3 lg:my-0 my-5">

@@ -6,6 +6,9 @@ import useEmployeePayment from '../../Hook/useEmployeePayment';
 import useMpayment from '../../Hook/UseMpayment';
 import html2canvas from 'html2canvas';
 import { jsPDF } from 'jspdf';
+import useMyClientsByEmail from '../../Hook/useMyClientsByEmail';
+import useMypymentsByEmail from '../../Hook/useMyMPayments';
+
 const months = [
   'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'
 ];
@@ -44,17 +47,24 @@ const AllSummery = () => {
 
   const recentMonths = getRecentMonths();
 
+  const [Mypayments]=useMypymentsByEmail(selectedEmployee)
+  const [myclients]=useMyClientsByEmail(selectedEmployee)
+
+  const tPay = Mypayments
+      
+  ?.filter(campaign => myclients.some(client => client.clientEmail === campaign.clientEmail))
+
+
   const employeeData = useMemo(() => {
     if (selectedEmployee !== "allEmployee") {
-      // Filter for a single employee
-      const relevantUsers = users.filter(u => u.role === 'employee' && u.email === selectedEmployee);
+
+      const relevantUsers = users.filter(u => u.role === 'employee' && u.email === selectedEmployee );
   
       return relevantUsers.flatMap(user => {
         const employeePayments = employeePayment.filter(payment => payment.employeeEmail === selectedEmployee);
         const mPayments = Mpayment.filter(payment => payment.employeeEmail === selectedEmployee);
   
         return recentMonths.map(month => {
-          // Filter and get the latest monthlySpent data for each accountName in the selected month
           const monthlySpentData = (user.monthlySpent || [])
             .filter(spent => new Date(spent.date).toLocaleString('default', { month: 'long' }) === month)
             .reduce((acc, currentSpent) => {
@@ -82,9 +92,9 @@ const AllSummery = () => {
             .filter(payment => new Date(payment.date).toLocaleString('default', { month: 'long' }) === month)
             .reduce((acc, payment) => acc + parseFloat(payment.payAmount), 0);
   
-          const totalClientPay = mPayments
+          const totalClientPay = tPay
             .filter(payment => new Date(payment.date).toLocaleString('default', { month: 'long' }) === month)
-            .reduce((acc, payment) => acc + parseFloat(payment.amount), 0);
+            .reduce((acc, payment) => acc + parseFloat(payment.amount) || 0, 0);
   
           return {
             month,
@@ -133,7 +143,10 @@ const AllSummery = () => {
           const mPayments = Mpayment.filter(payment =>
             payment.employeeEmail === user.email && new Date(payment.date).toLocaleString('default', { month: 'long' }) === month
           );
-          totalClientPay += mPayments.reduce((acc, payment) => acc + parseFloat(payment.amount), 0);
+          totalClientPay += mPayments
+  .filter((payment) => payment && !isNaN(parseFloat(payment.amount))) // Ensure valid data
+  .reduce((acc, payment) => acc + parseFloat(payment.amount), 0);    // Perform the sum
+
         });
   
         totalBill = totalSpent * 140;
@@ -152,7 +165,7 @@ const AllSummery = () => {
 
   const totalSpentSum = employeeData.reduce((acc, data) => acc + data.totalSpent, 0);
   const totalBillSum = employeeData.reduce((acc, data) => acc + data.totalBill, 0);
-  const totalClientPaySum = employeeData.reduce((acc, data) => acc + data.totalClientPay, 0);
+  const totalClientPaySum = employeeData.reduce((acc, data) => acc + parseFloat(data.totalClientPay), 0);
   const totalAdminPaySum = employeeData.reduce((acc, data) => acc + data.totalAdminPay, 0);
 
 
@@ -225,8 +238,12 @@ const AllSummery = () => {
   <div className="px-5 py-10 rounded-2xl bg-[#ce93d8] text-black shadow-lg text-center">
     <h2 className="lg:text-lg text-sm font-bold">Client Pay</h2>
     <p className="lg:text-xl text-xm font-bold mt-2">
-      <span className="lg:text-xl text-xm font-extrabold">৳</span> {new Intl.NumberFormat('en-IN').format(totalClientPaySum.toFixed(0))}
-    </p>
+  <span className="lg:text-xl text-xm font-extrabold">৳</span>{" "}
+  {new Intl.NumberFormat("en-IN").format(
+    employeeData?.reduce((acc, data) => acc + (data.totalClientPay || 0), 0).toFixed(0)
+  )}
+</p>
+
   </div>
 
   
@@ -234,7 +251,7 @@ const AllSummery = () => {
   <div className="px-5 py-10 rounded-2xl bg-[#ff8a65] text-black shadow-lg text-center">
     <h2 className="lg:text-lg text-sm font-bold">Client Due</h2>
     <p className="lg:text-xl text-xm font-bold mt-2">
-      <span className="lg:text-xl text-xm font-extrabold">৳</span> {new Intl.NumberFormat('en-IN').format((totalBillSum - totalClientPaySum).toFixed(0))}
+      <span className="lg:text-xl text-xm font-extrabold">৳</span> {new Intl.NumberFormat('en-IN').format((totalBillSum - tPay.reduce((acc, payment) => acc + parseFloat(payment?.amount || 0), 0)).toFixed(0))}
     </p>
   </div>
 </div>
@@ -288,7 +305,11 @@ const AllSummery = () => {
       <td style={{  border: 'var(--border)'}} className="p-3 border">{data.month}</td>
       <td style={{  border: 'var(--border)'}} className="p-3 border"><span className='font-extrabold '>$</span> {data.totalSpent.toFixed(2)}</td>
       <td style={{  border: 'var(--border)'}} className="p-3 border"><span className='font-extrabold '>৳</span> {data.totalBill.toFixed(0)}</td>
-      <td style={{  border: 'var(--border)'}} className="p-3 border"><span className='font-extrabold '>৳</span> {data.totalClientPay.toFixed(0)}</td>
+      <td style={{ border: 'var(--border)' }} className="p-3 border">
+  <span className="font-extrabold">৳</span>{" "}
+  {Number.isNaN(data.totalClientPay) ? 0 : data.totalClientPay.toFixed(0)}
+</td>
+
       <td style={{  border: 'var(--border)'}} className="p-3 border"><span className='font-extrabold '>৳</span> {data.totalAdminPay.toFixed(0)}</td>
       
     </tr>

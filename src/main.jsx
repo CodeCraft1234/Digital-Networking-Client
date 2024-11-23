@@ -64,6 +64,7 @@ import Payoneer from "./Pages/DashboardRoot/Payoneer";
 import ContriHistory from "./Pages/DashboardRoot/ContriHistory";
 import ContriSummery from "./Pages/DashboardRoot/ContriSummery";
 import ClientHistory from "./Pages/DashboardRoot/ClientHistory";
+import OthersSellery from "./Pages/DashboardRoot/OthersSellery";
 
 
 const router = createBrowserRouter([
@@ -301,6 +302,10 @@ const router = createBrowserRouter([
        {
         path:'dashboard/myAdsAccount',
         element:<Profile2></Profile2>,
+       },
+       {
+        path:'dashboard/othersSellery',
+        element:<OthersSellery></OthersSellery>,
        },
        {
         path:'dashboard/adsAccountCenter/:email',

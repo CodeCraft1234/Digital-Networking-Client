@@ -6,9 +6,12 @@ import { toast, ToastContainer } from "react-toastify";
 import { Link } from "react-router-dom";
 import Swal from "sweetalert2";
 import useMypymentsByEmail from "../../Hook/useMyMPayments";
+import useMyCampaingsByEmail from "../../Hook/useMyCampaignByEmail";
+import useMyClientsByEmail from "../../Hook/useMyClientsByEmail";
 
 const ClientPayments = () => {
   const { user } = useContext(AuthContext);
+  const [myclients]=useMyClientsByEmail(user?.email)
   const [Mypayments,refetch]=useMypymentsByEmail(user?.email)
   const AxiosPublic = UseAxiosPublic();
   const [selectedPayment, setSelectedPayment] = useState(null);
@@ -17,6 +20,11 @@ const ClientPayments = () => {
   const [selectedCategory, setSelectedCategory] = useState("");
   const [filteredData, setFilteredData] = useState([]);
   const [totalPayment, setTotalPayment] = useState(0);
+
+
+  const tPay = Mypayments
+      
+  ?.filter(campaign => myclients.some(client => client.clientEmail === campaign.clientEmail))
   
   const initialTab = localStorage.getItem("activeTabclientpayMont") || "All";
   const [sortMonth, setSortMonth] = useState(initialTab || new Date().getMonth() + 1)
@@ -25,11 +33,40 @@ const ClientPayments = () => {
     setSortMonth(tab);
     localStorage.setItem("activeTabclientpayMont", tab); 
   };
-  
+
+  const [sortedAdsAccounts, setSortedAdsAccounts] = useState([]);
+
+useEffect(() => {
+  const clientsWithBalance = myclients.map(campaign => {
+
+
+
+    const totalReceived = tPay
+      .filter(payment => payment.clientEmail === campaign.clientEmail)
+      .reduce((acc, payment) => acc + parseFloat(payment?.amount || 0), 0);
+
+    const balance = totalReceived 
+
+    return { ...campaign, balance }; 
+  });
+
+  const sortedCampaigns = clientsWithBalance.sort((a, b) => {
+
+    if (a.balance > 0 && b.balance <= 0) return -1;
+    if (a.balance <= 0 && b.balance > 0) return 1;
+
+    if (a.balance < 0 && b.balance === 0) return -1;
+    if (a.balance === 0 && b.balance < 0) return 1;
+
+    return 0;
+  });
+
+  setSortedAdsAccounts(sortedCampaigns);
+}, [myclients, tPay]);
 
   
   useEffect(() => {
-    let filtered = Mypayments;
+    let filtered = tPay;
     if (sortMonth) {
       filtered = filtered.filter(
         (payment) =>
@@ -48,13 +85,13 @@ const ClientPayments = () => {
     }
 
     setFilteredData(filtered);
-  }, [sortMonth, selectedDate, selectedCategory, Mypayments]);
+  }, [sortMonth, selectedDate, selectedCategory, tPay]);
   
 
   useEffect(() => {
     const totalBill = filteredData.reduce((acc, campaign) => acc + parseFloat(campaign.amount), 0);
     setTotalPayment(totalBill);
-  }, [Mypayments,filteredData, user?.email]);
+  }, [tPay,filteredData, user?.email]);
 
 
   const handleDelete = (id) => {
@@ -121,7 +158,7 @@ const ClientPayments = () => {
   const [bankTotal,setBankTotal]=useState(0)
 
   useEffect(()=>{
-          const filtered=Mypayments
+          const filtered=tPay
 
           const filter2=filtered.filter(d=>d.paymentMethod === 'bkashMarchent')
           const total = filter2.reduce((acc, datas) => acc + parseFloat(datas.amount),0);
@@ -143,7 +180,7 @@ const ClientPayments = () => {
           const total6 = filter6.reduce((acc, datas) => acc + parseFloat(datas.amount),0);
           setBankTotal(total6)
       
-  },[Mypayments])
+  },[tPay])
 
   return (
     <div className="m-5">
@@ -171,10 +208,16 @@ const ClientPayments = () => {
   ))}
 
   <div style={{ backgroundColor: '#d9f8d9', border: 'var(--border)' }} onClick={() => setSelectedCategory('All')} className="balance-card  rounded-2xl shadow-lg p-5 text-center transition-transform hover:scale-105">
-    <h1 className="text-xl font-bold text-black">
+    <h1 className="text-2xl  font-bold text-black">
       Total
     </h1>
-    <h1 className="text-black text-xl font-bold mt-5 "><span className="text-lg lg:text-xl font-extrabold">৳</span> {new Intl.NumberFormat('en-IN').format(bkashPersonal + bkashMarcent + nagadPersonal + rocketPersonal + bankTotal)}</h1>
+    <h1 className="text-black text-xl font-bold mt-10">
+  <span className="text-lg lg:text-xl font-extrabold">৳</span> 
+  {new Intl.NumberFormat('en-IN').format(
+    tPay.reduce((acc, payment) => acc + parseFloat(payment?.amount || 0), 0)
+  )}
+</h1>
+
    
   </div>
 </div>

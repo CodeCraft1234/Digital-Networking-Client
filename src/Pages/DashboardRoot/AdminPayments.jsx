@@ -134,8 +134,7 @@ const AdminPayments = () => {
     const previousAmount = payment.payAmount; 
 
     // PATCH request to update the payment
-    AxiosPublic.patch(
-      `https://digital-networking-server.vercel.app/employeePayment/${id}`,
+    AxiosPublic.patch(`/employeePayment/${id}`,
       updatedPaymentData
     )
     .then(() => {
@@ -249,12 +248,12 @@ const AdminPayments = () => {
     </div>
   ))}
 
-  <div style={{ backgroundColor: '#d9f8d9', border: 'var(--border)' }} onClick={() => setSelectedCategory('All')} className="balance-card bg-white mt-3 rounded-2xl shadow-lg p-5 text-center transition-transform hover:scale-105 border-0">
+  <div style={{ backgroundColor: '#d9f8d9', border: 'var(--border)' }} onClick={() => setSelectedCategory('All')} className="balance-card bg-white  rounded-2xl shadow-lg p-5 text-center transition-transform hover:scale-105 border-0">
     <h1 className="text-xl font-bold text-black">
-      Total: <span className="text-lg lg:text-xl font-extrabold">৳</span> {new Intl.NumberFormat('en-IN').format(bkashPersonal + bkashMarcent + nagadPersonal + rocketPersonal + bankTotal)}
+      <p className="mb-5">Total</p> <span className="text-lg lg:text-xl font-extrabold">৳</span> {new Intl.NumberFormat('en-IN').format(bkashPersonal + bkashMarcent + nagadPersonal + rocketPersonal + bankTotal)}
     </h1>
-    <h1 className="text-xl font-bold mt-5 text-black">
-      Charge: <span className="text-lg lg:text-xl font-extrabold">৳</span> {new Intl.NumberFormat('en-IN').format(displayedItems.reduce((acc, item) => acc + (isNaN(parseFloat(item?.charge)) ? 0 : parseFloat(item?.charge)), 0))}
+    <h1 className="text-xl font-bold mt-2 text-red-800">
+       <span className="text-lg lg:text-xl font-extrabold">৳</span> {new Intl.NumberFormat('en-IN').format(displayedItems.reduce((acc, item) => acc + (isNaN(parseFloat(item?.charge)) ? 0 : parseFloat(item?.charge)), 0))}
     </h1>
   </div>
 </div>

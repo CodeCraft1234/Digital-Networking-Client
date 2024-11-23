@@ -141,6 +141,12 @@ const AllClients = ({}) => {
   );
 
   const total = (totalSpent - totalPayment).toFixed(2);
+
+
+
+  const [showAll, setShowAll] = useState(false);
+  const [itemsToShow] = useState(50); 
+  const displayedItems = showAll ? filteredByCategory : filteredByCategory.slice(0, itemsToShow);
   
   return (
     <div className="mt-5">
@@ -149,7 +155,7 @@ const AllClients = ({}) => {
         <title>All Clients | Digital Network </title>
         <link rel="canonical" href="https://www.example.com/" />
       </Helmet>
-      <div style={{ backgroundColor: 'var(--bg-color3)', color: 'var(--text-color)',border: 'var(--border)'}} className="grid lg:grid-cols-4 mx-5 grid-cols-2 text-black sm:grid-cols-2 gap-3 lg:gap-5 justify-around p-5 rounded-lg lg:py-5 pb-5">
+      {/* <div style={{ backgroundColor: 'var(--bg-color3)', color: 'var(--text-color)',border: 'var(--border)'}} className="grid lg:grid-cols-4 mx-5 grid-cols-2 text-black sm:grid-cols-2 gap-3 lg:gap-5 justify-around p-5 rounded-lg lg:py-5 pb-5">
       <div className="px-5 py-10 rounded-2xl bg-[#b7cc50] text-white shadow-lg text-center">
   <h2 className="lg:text-2xl text-xl font-bold">Total Spent</h2>
   <p className="lg:text-2xl md:text-3xl text-md font-bold mt-2">
@@ -240,7 +246,7 @@ const AllClients = ({}) => {
   </p>
 </div>
 
-      </div>
+      </div> */}
 
 
 
@@ -275,10 +281,10 @@ const AllClients = ({}) => {
       </div>
 
       <div className=" mt-5  text-black">
-      <div  className="overflow-x-auto rounded-xl  text-center " style={{ backgroundColor: 'var(--bg-color)', color: 'var(--text-color)'}}>
+      <div  className="overflow-x-auto rounded-xl  text-center " style={{  color: 'var(--text-color)'}}>
           <table className="min-w-full text-center ">
             <thead className=" ">
-              <tr className="" style={{border: 'var(--border)',borderLeft: 'var(--border)', borderRight: 'var(--border)', color: 'var(--text-color)'}}>
+              <tr className="" style={{backgroundColor: 'var(--bg-color)', border: 'var(--border)',borderLeft: 'var(--border)', borderRight: 'var(--border)', color: 'var(--text-color)'}}>
                 <th className="p-3 text-center">SL</th>
                 <th className="p-3 text-start">Client Name</th>
                 <th className="p-3 text-center">Client Phone</th>
@@ -289,7 +295,7 @@ const AllClients = ({}) => {
               </tr>
             </thead>
             <tbody>
-              {filteredByCategory.map((campaign, index) => (
+              {displayedItems.map((campaign, index) => (
                <tr style={{ backgroundColor: 'var(--bg-table)', color: 'var(--text-color2)'}}
                key={campaign._id}
                className={`${
@@ -464,7 +470,7 @@ const AllClients = ({}) => {
                   </td>
                 </tr>
               ))}
-              <tr style={{border: 'var(--border)',borderLeft: 'var(--border)', borderRight: 'var(--border)', color: 'var(--text-color)'}} className=" text-sm  font-bold">
+              {/* <tr style={{border: 'var(--border)',borderLeft: 'var(--border)', borderRight: 'var(--border)', color: 'var(--text-color)'}} className=" text-sm  font-bold">
              
                 <td className="p-3 border-black text-right" colSpan="3">
                   Total :
@@ -480,12 +486,29 @@ const AllClients = ({}) => {
                   ৳ {totalRCV.toFixed(2)}
                 </td>
                 <td className="p-3 border-black text-center"></td>
-              </tr>
+              </tr> */}
             </tbody>
           </table>
+         
         </div>
       </div>
       </div>
+      {!showAll && filteredByCategory.length > itemsToShow && (
+  <button
+    onClick={() => setShowAll(true)}
+    className="mt-4 p-2 mx-auto flex justify-center my-10 bg-blue-500 text-white rounded"
+  >
+    Show All
+  </button>
+)}
+{showAll && (
+  <button
+    onClick={() => setShowAll(false)}
+    className="mt-4 p-2  mx-auto flex justify-center my-10 bg-gray-500 text-white rounded"
+  >
+    Show Less
+  </button>
+)}
     </div>
   );
 };

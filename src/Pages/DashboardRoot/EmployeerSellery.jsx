@@ -193,38 +193,66 @@ const EmployeerSellery = () => {
       <div style={{ backgroundColor: 'var(--bg-color3)', color: 'var(--text-color)',border: 'var(--border)'}} className="grid my-5 p-5 rounded-lg grid-cols-2 md:grid-cols-2 lg:grid-cols-6 text-black sm:grid-cols-2 gap-5 justify-around ">
         <div className="px-5 py-10 rounded-2xl  bg-[#91a33a] text-white shadow-lg text-center">
           <h2 className="text-xl font-bold">Total Spent</h2>
-          <p className="lg:text-xl text-xl font-bold mt-2"> $ {employeeData.reduce((acc, data) => acc + data.totalSpent, 0).toFixed(2)}</p>
+          <p className="lg:text-xl text-xl font-bold mt-2">
+  $ {new Intl.NumberFormat('en-IN', { maximumFractionDigits: 2 }).format(
+    employeeData.reduce((acc, data) => acc + data.totalSpent, 0).toFixed(0)
+  )}
+</p>
+
         </div>
 
         <div className="px-5 py-10 rounded-2xl bg-[#5422c0] text-white shadow-lg text-center">
           <h2 className="text-xl font-bold">Total Salery</h2>
           <p className="lg:text-xl text-xl font-bold mt-2">
-             <span className="lg:text-xl text-xl font-extrabold">৳</span> {(employeeData.reduce((acc, data) => acc + data.totalSpent * 7, 0)).toFixed(0)}
-          </p>
+  <span className="lg:text-xl text-xl font-extrabold">৳</span> 
+  {new Intl.NumberFormat('en-IN').format(
+    employeeData.reduce((acc, data) => acc + data.totalSpent * 7, 0).toFixed(0)
+  )}
+</p>
+
         </div>
 
         <div className="px-5 py-10 rounded-2xl  bg-[#05a0db] text-white shadow-lg text-center">
           <h2 className="lg:text-xl text-xl font-bold">Total Paid</h2>
-          <p className="lg:text-xl text-xl font-bold mt-2"> <span className="text-2xl font-extrabold">৳</span>{employeeData.reduce((acc, data) => acc + data.totalSellery, 0).toFixed(0)} </p>
+          <p className="lg:text-xl text-xl font-bold mt-2">
+  <span className="text-2xl font-extrabold">৳</span>
+  {new Intl.NumberFormat('en-IN').format(
+    employeeData.reduce((acc, data) => acc + data.totalSellery, 0).toFixed(0)
+  )}
+</p>
+
         </div>
 
         <div className="px-5 py-10 rounded-2xl  bg-[#ce1a38] text-white shadow-lg text-center">
           <h2 className="text-xl font-bold">Total Unpaid</h2>
           <p className="lg:text-xl text-xl font-bold mt-2">
-          <span className="lg:text-xl text-xl font-extrabold">৳</span>  {employeeData.reduce((acc, data) => acc + data.totalSelleryPaid, 0).toFixed(0)}
-          </p>
+  <span className="lg:text-xl text-xl font-extrabold">৳</span> 
+  {new Intl.NumberFormat('en-IN').format(
+    employeeData.reduce((acc, data) => acc + data.totalSelleryPaid, 0).toFixed(0)
+  )}
+</p>
+
         </div>
         <div className="px-5 py-10 rounded-2xl  bg-[#504491] text-white shadow-lg text-center">
           <h2 className="text-xl font-bold">Total Due</h2>
           <p className="lg:text-xl text-xl font-bold mt-2">
-          <span className="lg:text-xl text-xl font-extrabold">৳</span> {employeeData.reduce((acc, data) => acc + parseFloat(data.totalSellery), 0).toFixed(0) - employeeData.reduce((acc, data) => acc + parseFloat(data.totalSelleryPaid), 0).toFixed(0)}
-          </p>
+  <span className="lg:text-xl text-xl font-extrabold">৳</span> 
+  {new Intl.NumberFormat('en-IN').format(
+    employeeData.reduce((acc, data) => acc + parseFloat(data.totalSellery), 0) - 
+    employeeData.reduce((acc, data) => acc + parseFloat(data.totalSelleryPaid), 0).toFixed(0)
+  )}
+</p>
+
         </div>
         <div className="px-5 py-10 rounded-2xl  bg-[#a6d427] text-white shadow-lg text-center">
           <h2 className="text-xl font-bold">Total Bonus</h2>
           <p className="lg:text-xl text-xl font-bold mt-2">
-          <span className="lg:text-xl text-xl font-extrabold">৳</span> {employeeData.reduce((acc, data) => acc + data.totalBonus, 0).toFixed(0)}
-          </p>
+  <span className="lg:text-xl text-xl font-extrabold">৳</span> 
+  {new Intl.NumberFormat('en-IN').format(
+    employeeData.reduce((acc, data) => acc + data.totalBonus, 0).toFixed(0)
+  )}
+</p>
+
         </div>
       </div>
 

@@ -51,57 +51,71 @@ const EmployeeProfile = () => {
       
 
 
+    
+     {
+      userr.role === 'employee' && 
       <div className="lg:flex lg:justify-center grid grid-cols-3 px-3  mb-3 lg:mb-0  items-center gap-5 mt-5">
       <button 
-          className={getButtonClass('adsAccount')}
-          onClick={() => changeTab('adsAccount')}
-        >
-          Ads Account
-        </button>
-        <p className='font-extrabold hidden lg:visible text-blue text-2xl'>|</p>
-      <button 
-          className={getButtonClass('client')}
-          onClick={() => changeTab('client')}
-        >
-          Clients
-        </button>
-        <p className='font-extrabold hidden lg:visible text-blue text-2xl'>|</p>
+      className={getButtonClass('adsAccount')}
+      onClick={() => changeTab('adsAccount')}
+    >
+      Ads Account
+    </button>
+    <p className='font-extrabold hidden lg:visible text-blue text-2xl'>|</p>
+  <button 
+      className={getButtonClass('client')}
+      onClick={() => changeTab('client')}
+    >
+      Clients
+    </button>
+    <p className='font-extrabold hidden lg:visible text-blue text-2xl'>|</p>
 
-        <button 
-          className={getButtonClass('campaign')}
-          onClick={() => changeTab('campaign')}
-        >
-          Campaigns
-        </button>
-        <p className='font-extrabold hidden lg:visible text-blue text-2xl'>|</p>
-        <button 
-          className={getButtonClass('adminPay')}
-          onClick={() => changeTab('adminPay')}
-        >
-          Admin Pay
-        </button>
-        <p className='font-extrabold hidden lg:visible text-blue text-2xl'>|</p>
-        <button 
-          className={getButtonClass('clientPay')}
-          onClick={() => changeTab('clientPay')}
-        >
-          Client Pay
-        </button>
-        <p className='font-extrabold hidden lg:visible text-blue text-2xl'>|</p>
+    <button 
+      className={getButtonClass('campaign')}
+      onClick={() => changeTab('campaign')}
+    >
+      Campaigns
+    </button>
+    <p className='font-extrabold hidden lg:visible text-blue text-2xl'>|</p>
+    <button 
+      className={getButtonClass('adminPay')}
+      onClick={() => changeTab('adminPay')}
+    >
+      Admin Pay
+    </button>
+    <p className='font-extrabold hidden lg:visible text-blue text-2xl'>|</p>
+    <button 
+      className={getButtonClass('clientPay')}
+      onClick={() => changeTab('clientPay')}
+    >
+      Client Pay
+    </button>
+    <p className='font-extrabold hidden lg:visible text-blue text-2xl'>|</p>
+
+    <button 
+      className={getButtonClass('history')}
+      onClick={() => changeTab('history')}
+    >
+      History
+    </button>
+    <button 
+      className={getButtonClass('summery')}
+      onClick={() => changeTab('summery')}
+    >
+      Summery
+    </button>
     
-        <button 
-          className={getButtonClass('history')}
-          onClick={() => changeTab('history')}
-        >
-          History
-        </button>
-        <button 
-          className={getButtonClass('summery')}
-          onClick={() => changeTab('summery')}
-        >
-          Summery
-        </button>
-        <button 
+    <button 
+    className={getButtonClass('sellery')}
+    onClick={() => changeTab('sellery')}
+  >
+    Sellery
+  </button>
+  </div>
+     }
+       
+      <div className="flex justify-center items-center my-5">
+         <button 
           className={getButtonClass('sellery')}
           onClick={() => changeTab('sellery')}
         >

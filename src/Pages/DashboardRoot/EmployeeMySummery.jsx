@@ -1,9 +1,12 @@
-import  { useContext, useEffect, useState, useMemo } from 'react';
+import React, { useContext, useEffect, useState, useMemo } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { AuthContext } from '../../Security/AuthProvider';
 import useUsers from '../../Hook/useUsers';
 import useEmployeePayment from '../../Hook/useEmployeePayment';
 import useMpayment from '../../Hook/UseMpayment';
+import useMyCampaingsByEmail from '../../Hook/useMyCampaignByEmail';
+import useMypymentsByEmail from '../../Hook/useMyMPayments';
+import useMyClientsByEmail from '../../Hook/useMyClientsByEmail';
 
 const months = [
   'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'
@@ -14,7 +17,24 @@ const EmployeeMySummery = ({email}) => {
   const [employeePayment] = useEmployeePayment();
   const [Mpayment] = useMpayment();
 
+  const [employees, setEmployees] = useState([]);
   const [selectedEmployee, setSelectedEmployee] = useState(email);
+
+  const [mycampaigns]=useMyCampaingsByEmail(email)
+  const [Mypayments]=useMypymentsByEmail(email)
+  const [myclients]=useMyClientsByEmail(email)
+
+  const tPay = Mypayments
+      
+  ?.filter(campaign => myclients.some(client => client.clientEmail === campaign.clientEmail))
+
+
+  useEffect(() => {
+    if (users && email) {
+      const employeeList = users.filter((u) => u.role === "employee");
+      setEmployees(employeeList);
+    }
+  }, [users,email]);
 
   const getRecentMonths = () => {
     const today = new Date();
@@ -35,11 +55,11 @@ const EmployeeMySummery = ({email}) => {
 
     return relevantUsers.flatMap(user => {
       const employeePayments = employeePayment.filter(
-        payment => selectedEmployee ? payment.employeeEmail === selectedEmployee : payment.employeeEmail === email
+        payment => selectedEmployee ? payment.employeeEmail === selectedEmployee : payment.employeeEmail === user.email
       );
 
-      const mPayments = Mpayment.filter(
-        payment => selectedEmployee ? payment.employeeEmail === selectedEmployee : payment.employeeEmail === email
+      const mPayments = tPay.filter(
+        payment => selectedEmployee ? payment.employeeEmail === selectedEmployee : payment.employeeEmail === user.email
       );
 
       const paymentByMonth = employeePayments.reduce((acc, payment) => {
@@ -48,9 +68,9 @@ const EmployeeMySummery = ({email}) => {
         return acc;
       }, {});
 
-      const paymentByMonth2 = mPayments.reduce((acc, payment) => {
+      const paymentByMonth2 = tPay.reduce((acc, payment) => {
         const month = new Date(payment.date).toLocaleString('default', { month: 'long' });
-        acc[month] = (acc[month] || 0) + parseFloat(payment.amount);
+        acc[month] = (acc[month] || 0) + parseFloat(payment.amount) || 0;
         return acc;
       }, {});
 
@@ -78,6 +98,7 @@ const EmployeeMySummery = ({email}) => {
         }, []);
       
       const totalSpent = monthlySpentData.reduce((acc, spent) => acc + spent.totalSpentt, 0);
+
         const selleryData = (user.sellery || []).filter(sell => sell.month === month);
         const totalSellery = selleryData.reduce((acc, sell) => acc + sell.amount, 0);
         const totalBonus = selleryData.reduce((acc, sell) => acc + sell.bonus, 0);
@@ -99,6 +120,8 @@ const EmployeeMySummery = ({email}) => {
     });
   }, [users, selectedEmployee, employeePayment, Mpayment, recentMonths]);
 
+
+
   return (
     <div className='mx-5 lg:mt-5 mb-5'>
       <Helmet>
@@ -106,99 +129,113 @@ const EmployeeMySummery = ({email}) => {
         <link rel="canonical" href="https://www.example.com/" />
       </Helmet>
 
-      <div style={{ backgroundColor: 'var(--bg-color3)', color: 'var(--text-color)',border: 'var(--border)'}} className="grid grid-cols-2 p-5 rounded-lg md:grid-cols-2 lg:grid-cols-6 text-black sm:grid-cols-2 gap-5 justify-around ">
-        <div className="px-5 py-10 rounded-2xl  bg-[#91a33a] text-white shadow-lg text-center">
-          <h2 className="text-xl font-bold">Total Spent</h2>
-          <p className="lg:text-xl text-xl font-bold mt-2"> $ {employeeData.reduce((acc, data) => acc + data.totalSpent, 0).toFixed(2)}</p>
-        </div>
+      <div style={{ backgroundColor: 'var(--bg-color3)', color: 'var(--text-color)', border: 'var(--border)' }} className="grid grid-cols-2 p-5 rounded-lg md:grid-cols-2 lg:grid-cols-3 text-black sm:grid-cols-2 gap-5 justify-around">
+  <div className="px-5 py-10 rounded-2xl bg-[#81c784] text-black shadow-lg text-center">
+    <h2 className="text-xl font-bold">Total Spent</h2>
+    <p className="lg:text-2xl text-xl font-bold mt-2">
+      $ {new Intl.NumberFormat('en-IN').format(employeeData.reduce((acc, data) => acc + data.totalSpent, 0).toFixed(2))}
+    </p>
+  </div>
 
-        <div className="px-5 py-10 rounded-2xl bg-[#5422c0] text-white shadow-lg text-center">
-          <h2 className="text-xl font-bold">Total BDT</h2>
-          <p className="lg:text-xl text-xl font-bold mt-2">
-             <span className="lg:text-xl text-xl font-extrabold">৳</span> {employeeData.reduce((acc, data) => acc + data.totalBill, 0).toFixed(0)}
-          </p>
-        </div>
+  <div className="px-5 py-10 rounded-2xl bg-[#64b5f6] text-black shadow-lg text-center">
+    <h2 className="text-xl font-bold">Total BDT</h2>
+    <p className="lg:text-2xl text-xl font-bold mt-2">
+      <span className="lg:text-2xl text-xl font-extrabold">৳</span> {new Intl.NumberFormat('en-IN').format(employeeData.reduce((acc, data) => acc + data.totalBill, 0).toFixed(0))}
+    </p>
+  </div>
 
-        <div className="px-5 py-10 rounded-2xl  bg-[#05a0db] text-white shadow-lg text-center">
-          <h2 className="lg:text-xl text-xl font-bold">Client Pay</h2>
-          <p className="lg:text-xl text-xl font-bold mt-2"> <span className="text-2xl font-extrabold">৳</span>{employeeData.reduce((acc, data) => acc + data.totalClientPay, 0).toFixed(0)} </p>
-        </div>
+  <div className="px-5 py-10 rounded-2xl bg-[#ffb74d] text-black shadow-lg text-center">
+    <h2 className="lg:text-2xl text-xl font-bold">Client Pay</h2>
+    <p className="lg:text-2xl text-xl font-bold mt-2">
+      <span className="text-2xl font-extrabold">৳</span> {new Intl.NumberFormat('en-IN').format(
+  tPay.reduce((acc, payment) => acc + parseFloat(payment?.amount || 0), 0)
+)}
 
-        <div className="px-5 py-10 rounded-2xl  bg-[#ce1a38] text-white shadow-lg text-center">
-          <h2 className="text-xl font-bold">Employee Pay</h2>
-          <p className="lg:text-xl text-xl font-bold mt-2">
-          <span className="lg:text-xl text-xl font-extrabold">৳</span> {employeeData.reduce((acc, data) => acc + data.totalAdminPay, 0).toFixed(0)}
-          </p>
-        </div>
-        <div className="px-5 py-10 rounded-2xl  bg-[#504491] text-white shadow-lg text-center">
-          <h2 className="text-xl font-bold">Employee Due</h2>
-          <p className="lg:text-xl text-xl font-bold mt-2">
-          <span className="lg:text-xl text-xl font-extrabold">৳</span> {(employeeData.reduce((acc, data) => acc + data.totalClientPay, 0) - employeeData.reduce((acc, data) => acc + data.totalAdminPay, 0)).toFixed(0)}
-          </p>
-        </div>
-        <div className="px-5 py-10 rounded-2xl  bg-[#a6d427] text-white shadow-lg text-center">
-          <h2 className="text-xl font-bold">Client Due</h2>
-          <p className="lg:text-xl text-xl font-bold mt-2">
-          <span className="lg:text-xl text-xl font-extrabold">৳</span> {(employeeData.reduce((acc, data) => acc + data.totalBill, 0) - employeeData.reduce((acc, data) => acc + data.totalClientPay, 0)).toFixed(0)}
-          </p>
-        </div>
-      </div>
+    </p>
+  </div>
+
+  <div className="px-5 py-10 rounded-2xl bg-[#ce93d8] text-black shadow-lg text-center">
+    <h2 className="text-xl font-bold">Employee Pay</h2>
+    <p className="lg:text-2xl text-xl font-bold mt-2">
+      <span className="lg:text-2xl text-xl font-extrabold">৳</span> {new Intl.NumberFormat('en-IN').format(employeeData.reduce((acc, data) => acc + data.totalAdminPay, 0).toFixed(0))}
+    </p>
+  </div>
+
+  <div className="px-5 py-10 rounded-2xl bg-[#e57373] text-black shadow-lg text-center">
+    <h2 className="text-xl font-bold">Employee Due</h2>
+    <p className="lg:text-2xl text-xl font-bold mt-2">
+      <span className="lg:text-2xl text-xl font-extrabold">৳</span> {new Intl.NumberFormat('en-IN').format((employeeData.reduce((acc, data) => acc + data.totalBill, 0) - employeeData.reduce((acc, data) => acc + data.totalAdminPay, 0)).toFixed(0))}
+    </p>
+  </div>
+
+  <div className="px-5 py-10 rounded-2xl bg-[#ff8a65] text-black shadow-lg text-center">
+    <h2 className="text-xl font-bold">Client Due</h2>
+    <p className="lg:text-2xl text-xl font-bold mt-2">
+      <span className="lg:text-2xl text-xl font-extrabold">৳</span> {new Intl.NumberFormat('en-IN').format((employeeData.reduce((acc, data) => acc + data.totalBill, 0) - tPay
+        .reduce((acc, payment) => acc + parseFloat(payment?.amount || 0), 0).toFixed(0)))}
+    </p>
+  </div>
+</div>
 
 
-      <div className='px-5 pb-5 pt-5 my-5 mt-5  rounded-lg' style={{ backgroundColor: 'var(--bg-color3)', color: 'var(--text-color)',border: 'var(--border)'}}>
+
+
+      <div className="p-5 mt-5 rounded-lg " style={{ backgroundColor: 'var(--bg-color3)', color: 'var(--text-color)',border: 'var(--border)'}}>
       <div  className="overflow-x-auto rounded-xl  text-center " style={{ backgroundColor: 'var(--bg-color)', color: 'var(--text-color)'}}>
           <table className="min-w-full text-center ">
             <thead className=" ">
               <tr className="" style={{border: 'var(--border)',borderLeft: 'var(--border)', borderRight: 'var(--border)', color: 'var(--text-color)'}}>
-              <th style={{  border: 'var(--border)'}} className="p-3">SL</th>
-              <th style={{  border: 'var(--border)'}} className="p-3">Month</th>
-              <th style={{  border: 'var(--border)'}} className="p-3">Total Spent</th>
-              <th style={{  border: 'var(--border)'}} className="p-3">Total BDT</th>
-              <th style={{  border: 'var(--border)'}} className="p-3">Client Payment</th>
-              <th style={{  border: 'var(--border)'}} className="p-3">Admin Payment</th>
-              <th style={{  border: 'var(--border)'}} className="p-3">Due</th>
+              <th className="p-3">SL</th>
+              <th className="p-3">Month</th>
+              <th className="p-3">Total Spent</th>
+              <th className="p-3">Total BDT</th>
+              <th className="p-3">Client Payment</th>
+              <th className="p-3">Admin Payment</th>
+              <th className="p-3">Due</th>
             </tr>
           </thead>
           <tbody>
           {employeeData.map((data, index) => (
-   <tr style={{ backgroundColor: 'var(--bg-table)', color: 'var(--text-color2)'}}
-   key={data._id}
-   className={`${
-     index % 2 === 0
-       ? "bg-white text-left text-black border-b border-opacity-20"
-       : "bg-gray-200  text-left text-black border-b border-opacity-20"
-   }`}
+    <tr style={{ backgroundColor: 'var(--bg-table)', color: 'var(--text-color2)'}}
+    key={data._id}
+    className={`${
+      index % 2 === 0
+        ? "bg-white text-center text-black border-b border-opacity-20"
+        : "bg-gray-200  text-center text-black border-b border-opacity-20"
+    }`}
   >
       <td style={{  border: 'var(--border)'}} className="p-3 border border-gray-300">{index + 1}</td>
       <td style={{  border: 'var(--border)'}} className="p-3 border border-gray-300">{data.month}</td>
       <td style={{  border: 'var(--border)'}} className="p-3 border border-gray-300">${data.totalSpent.toFixed(2)}</td>
-      <td style={{  border: 'var(--border)'}} className="p-3 border border-gray-300">৳{data.totalBill.toFixed(2)}</td>
-      <td style={{  border: 'var(--border)'}} className="p-3 border border-gray-300">৳{data.totalClientPay.toFixed(2)}</td>
-      <td style={{  border: 'var(--border)'}} className="p-3 border border-gray-300">৳{data.totalAdminPay.toFixed(2)}</td>
-      <td style={{  border: 'var(--border)'}} className="p-3 border border-gray-300">৳{(data.totalClientPay - data.totalAdminPay).toFixed(2)}</td>
+      <td style={{  border: 'var(--border)'}} className="p-3 border border-gray-300">৳{data.totalBill.toFixed(0)}</td>
+      <td style={{  border: 'var(--border)'}} className="p-3 border border-gray-300">৳{data.totalClientPay.toFixed(0)}</td>
+      <td style={{  border: 'var(--border)'}} className="p-3 border border-gray-300">৳{data.totalAdminPay.toFixed(0)}</td>
+      <td style={{  border: 'var(--border)'}} className="p-3 border border-gray-300">৳{(data.totalClientPay - data.totalAdminPay).toFixed(0)}</td>
     </tr>
   ))}
 
 
 </tbody>
 <tfoot className=" font-bold ">
-  <tr  style={{ backgroundColor: "var(--bg-color)", color: "var(--text-color)" }}>
-    <td style={{  border: 'var(--border)'}} className="p-3 text-right border-gray-300" colSpan="2">Total</td>
-    <td style={{  border: 'var(--border)'}} className="p-3 border-gray-300">
+  <tr style={{ backgroundColor: 'var(--bg-color)', color: 'var(--text-color)'}}>
+    <td className="p-3 text-right border-gray-300" colSpan="2">Total</td>
+    <td className="p-3 border-gray-300">
       ${employeeData.reduce((acc, data) => acc + data.totalSpent, 0).toFixed(2)}
     </td>
-    <td style={{  border: 'var(--border)'}} className="p-3 border-gray-300">
-      ৳ {employeeData.reduce((acc, data) => acc + data.totalBill, 0).toFixed(2)}
+    <td className="p-3 border-gray-300">
+      ৳ {employeeData.reduce((acc, data) => acc + data.totalBill, 0).toFixed(0)}
     </td>
-    <td style={{  border: 'var(--border)'}} className="p-3 border-gray-300">
-      ৳ {employeeData.reduce((acc, data) => acc + data.totalClientPay, 0).toFixed(2)}
+    <td className="p-3 border-gray-300">
+      ৳ {tPay
+        .reduce((acc, payment) => acc + parseFloat(payment?.amount || 0), 0).toFixed(0)}
     </td>
-    <td style={{  border: 'var(--border)'}} className="p-3 border-gray-300">
-      ৳ {employeeData.reduce((acc, data) => acc + data.totalAdminPay, 0).toFixed(2)}
+    <td className="p-3 border-gray-300">
+      ৳ {employeeData.reduce((acc, data) => acc + data.totalAdminPay, 0).toFixed(0)}
     </td>
-    <td style={{  border: 'var(--border)'}} className="p-3 border-gray-300">
-      ৳ {(employeeData.reduce((acc, data) => acc + data.totalClientPay, 0) - 
-          employeeData.reduce((acc, data) => acc + data.totalAdminPay, 0)).toFixed(2)}
+    <td className="p-3 border-gray-300">
+      ৳ {(tPay
+        .reduce((acc, payment) => acc + parseFloat(payment?.amount || 0), 0).toFixed(0) - 
+          employeeData.reduce((acc, data) => acc + data.totalAdminPay, 0)).toFixed(0)}
     </td>
   </tr>
 </tfoot>

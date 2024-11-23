@@ -32,10 +32,22 @@ const EmployeeClient = ({email}) => {
       }, [users, email]);
   
     const [searchQuery, setSearchQuery] = useState("");
-    const [selectedStatus, setSelectedStatus] = useState('positive'); 
+    const [selectedStatus, setSelectedStatus] = useState('all'); 
+    
+    const tspent = mycampaigns
+      
+    ?.filter(campaign => myclients.some(client => client.clientEmail === campaign.clientEmail))
+    console.log(tspent,mycampaigns);
+
+    const tPay = Mypayments
+      
+    ?.filter(campaign => myclients.some(client => client.clientEmail === campaign.clientEmail))
+    console.log(tspent,mycampaigns);
 
     useEffect(() => {
+
       const clientsWithBalance = myclients.map(campaign => {
+
         const totalSpent = mycampaigns
           .filter(payment => payment.clientEmail === campaign.clientEmail)
           .reduce(
@@ -52,27 +64,17 @@ const EmployeeClient = ({email}) => {
         return { ...campaign, balance }; 
       });
   
-      const sortedCampaigns = clientsWithBalance.sort((a, b) => {
 
-        if (a.balance > 0 && b.balance <= 0) return -1;
-        if (a.balance <= 0 && b.balance > 0) return 1;
   
-        if (a.balance < 0 && b.balance === 0) return -1;
-        if (a.balance === 0 && b.balance < 0) return 1;
-  
-        return 0;
-      });
-  
-      setSortedAdsAccounts(sortedCampaigns);
+      setSortedAdsAccounts(clientsWithBalance);
     }, [myclients, mycampaigns, Mypayments]);
   
     const filteredCampaigns = sortedAdsAccounts.filter(campaign => {
       if (selectedStatus === 'positive') return campaign.balance < 0; 
       if (selectedStatus === 'negative') return campaign.balance > 0; 
-      if (selectedStatus === 'neutral') return campaign.balance === 0;
-      return selectedStatus === 'all'; // Show all data when status is 'all'
+      if (selectedStatus === 'all') return true; // Show all data when 'all' is selected
+      return campaign.balance === 0; 
     });
-    
 
     const filteredCampaigns2 = sortedAdsAccounts.filter(campaign => {
        return campaign.balance > 0; 
@@ -84,26 +86,42 @@ const EmployeeClient = ({email}) => {
 
 
     
-  useEffect(() => {
-      const totalRcv = Mypayments?.reduce((acc, campaign) => {
-        const payment = parseFloat(campaign.amount);
-        return acc + (isNaN(payment) ? 0 : payment);
-      }, 0);
+    useEffect(() => {
+      // Calculate total received amount for clients' payments
+      const totalRcv = Mypayments
+          ?.filter(payment => myclients.some(client => client.clientEmail === payment.clientEmail))
+          .reduce((acc, payment) => {
+              const amount = parseFloat(payment.amount);
+              return acc + (isNaN(amount) ? 0 : amount);
+          }, 0);
       setTotalRCV(totalRcv);
-  
-      const tspent = mycampaigns?.reduce(
-        (acc, campaign) => acc + parseFloat(campaign.tSpent),
-        0
-      );
+
+      // Calculate total spent based on client's campaigns
+      const tspent = mycampaigns
+
+          ?.filter(campaign => myclients.some(client => client.clientEmail === campaign.clientEmail))
+          .reduce((acc, campaign) => {
+              const spent = parseFloat(campaign.tSpent || 0);
+              return acc + (isNaN(spent) ? 0 : spent);
+          }, 0);
+
       setTotalSpent(tspent);
-  
-      const totalBill = mycampaigns?.reduce(
-        (acc, campaign) => acc + parseFloat(campaign.tSpent) * parseFloat(campaign.dollerRate),
-        0
-      );
+
+      // Calculate total bill based on spent and dollar rate for client's campaigns
+      const totalBill = mycampaigns
+          ?.filter(campaign => myclients.some(client => client.clientEmail === campaign.clientEmail))
+          .reduce((acc, campaign) => {
+              const spent = parseFloat(campaign.tSpent || 0);
+              const dollarRate = parseFloat(campaign.dollerRate || 0);
+              return acc + (isNaN(spent) || isNaN(dollarRate) ? 0 : spent * dollarRate);
+          }, 0);
       setTotalBill(totalBill);
-  
-    }, [mycampaigns,Mypayments, email]);
+
+      console.log("Total Received:", totalRcv);
+      console.log("Total Spent:", tspent);
+      console.log("Total Bill:", totalBill);
+
+  }, [mycampaigns, Mypayments, myclients, email]);
 
     const handleaddblog = (e) => {
       e.preventDefault();
@@ -169,7 +187,8 @@ const EmployeeClient = ({email}) => {
     
         const clientName = e.target.clientName.value;
         const clientPhone = e.target.clientPhone.value;
-        const body = { clientName, clientPhone };
+        const clientEmail = e.target.clientEmail.value;
+        const body = { clientName,clientEmail, clientPhone };
     
         AxiosPublic.patch(`/client/update/${id}`, body)
             .then((res) => {
@@ -181,36 +200,52 @@ const EmployeeClient = ({email}) => {
                 toast.error("Failed to update campaign");
             });
     };
-    
+
     return (
         <div className='mx-5 mt-5'>
            <ToastContainer />
              <div className="overflow-x-auto   ">
 
-             <Helmet>
-              <title>{ddd?.name ? `${ddd.name} | Digital Network` : "Digital Network"}</title>
-             <link rel="canonical" href="https://www.tacobell.com/" />
-            </Helmet>
-
+      <Helmet>
+        <title> My Client | Digital Network</title>
+        <link rel="canonical" href="https://www.tacobell.com/" />
+      </Helmet>
 
 
       <div  style={{ backgroundColor: 'var(--bg-color3)', color: 'var(--text-color)',border: 'var(--border)'}} className="grid px-4 pt-4 rounded-md lg:grid-cols-5 grid-cols-2 text-black sm:grid-cols-2 gap-3 lg:gap-5 justify-around lg:py-5 mb-4 pb-5">
     
         <div className="px-5 py-10 rounded-2xl bg-[#90a427] text-white shadow-lg text-center">
           <h2 className="lg:text-2xl text-xl font-bold">Total Spent</h2>
-          <p className="lg:text-4x md:text-3xl text-md font-bold mt-2"> $ {totalSpent?.toFixed(2) || 0.00}</p>
+          <p className="lg:text-4x md:text-3xl text-md font-bold mt-2"> $ {tspent
+        .reduce((acc, payment) => acc + parseFloat(payment?.tSpent || 0), 0).toFixed(2)
+    }
+    </p>
         </div>
 
         <div className="px-5 py-10 rounded-2xl bg-[#5422c0] text-white shadow-lg text-center">
           <h2 className="lg:text-2xl text-xl font-bold">Total Bill</h2>
-          <p className="lg:text-4x md:text-3xl text-md font-bold mt-2"><span className='font-extrabold lg:text-4x text-md'> ৳ </span>
-          {totalbill?.toFixed(2)}
-          </p>
+         
+          <p className="lg:text-4x md:text-3xl text-md font-bold mt-2">
+  <span className="font-extrabold lg:text-4x text-md">৳</span>
+  {new Intl.NumberFormat('en-IN').format(
+    tspent.reduce(
+      (acc, campaign) => acc + parseFloat(campaign.tSpent) * parseFloat(campaign.dollerRate),
+      0
+    ).toFixed(0)
+  )}
+</p>
+
         </div>
 
         <div className="px-5 py-10 rounded-2xl bg-[#05a0db] text-white shadow-lg text-center">
           <h2 className="lg:text-2xl text-xl font-bold">Total Paid</h2>
-          <p className="lg:text-4x md:text-3xl text-md font-bold mt-2"> <span className='font-extrabold lg:text-4x text-md'> ৳ </span> {totalRCV?.toFixed(2) || 0.00}</p>
+          <p className="lg:text-4x md:text-3xl text-md font-bold mt-2">
+  <span className="font-extrabold lg:text-4x text-md">৳</span>
+  {new Intl.NumberFormat('en-IN').format(
+    tPay.reduce((acc, payment) => acc + parseFloat(payment?.amount || 0), 0)
+  )}
+</p>
+
         </div>
 
         {/* <div className="px-5 py-10 rounded-2xl bg-[#1d8b6c] text-white shadow-lg text-center">
@@ -247,38 +282,46 @@ const EmployeeClient = ({email}) => {
 <div className="px-5 py-10 rounded-2xl bg-[#574d87] text-white shadow-lg text-center">
   <h2 className="lg:text-2xl text-xl font-bold">Total Advanced</h2>
   <p className="lg:text-4x md:text-3xl text-md font-bold mt-2">
-    <span className="font-extrabold text-md"> ৳ {Math.abs(
-        filteredCampaigns2
-          .map(client => {
-            const totalReceivedCampaigns = mycampaigns
-              .filter(campaign => campaign.clientEmail === client.clientEmail)
-              .reduce(
-                (acc, campaign) => acc + parseFloat(campaign.tSpent) * parseFloat(campaign.dollerRate),
-                0
-              );
+  <span className="font-extrabold text-md"> 
+  ৳ {Math.abs(
+    filteredCampaigns2
+      .map(client => {
+        const totalReceivedCampaigns = mycampaigns
+          .filter(campaign => campaign.clientEmail === client.clientEmail)
+          .reduce(
+            (acc, campaign) => acc + parseFloat(campaign.tSpent) * parseFloat(campaign.dollerRate),
+            0
+          );
 
-            const totalReceivedPayments = Mypayments
-              .filter(payment => payment.clientEmail === client.clientEmail)
-              .reduce(
-                (acc, payment) => acc + parseFloat(payment?.amount || 0),
-                0
-              );
+        const totalReceivedPayments = Mypayments
+          .filter(payment => payment.clientEmail === client.clientEmail)
+          .reduce(
+            (acc, payment) => acc + parseFloat(payment?.amount || 0),
+            0
+          );
 
-            // Return the difference between totalReceivedCampaigns and totalReceivedPayments
-            return   totalReceivedPayments - totalReceivedCampaigns
-          })
-          .reduce((total, clientTotal) => total + clientTotal, 0) // Sum up all totals
-      ).toFixed(2)} 
-    </span> 
+        // Return the difference between totalReceivedCampaigns and totalReceivedPayments
+        return totalReceivedPayments - totalReceivedCampaigns;
+      })
+      .reduce((total, clientTotal) => total + clientTotal, 0) // Sum up all totals
+  ).toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+</span>
+
+
   </p>
 </div>
 
 
       <div className="px-5 py-10 rounded-2xl bg-red-900 text-white shadow-lg text-center">
           <h2 className="lg:text-2xl text-xl font-bold">Total Due</h2>
-          <p className="lg:text-4x md:text-3xl text-md font-bold mt-2"><span className='font-extrabold lg:text-4x text-md'> ৳ </span>
-          { totalRCV?.toFixed(0) - totalbill?.toFixed(0) || 0.00}
-          </p>
+          <p className="lg:text-4x md:text-3xl text-md font-bold mt-2">
+  <span className='font-extrabold lg:text-4x text-md'> ৳ </span>
+  {((totalRCV ?? 0) - (totalbill ?? 0))
+    .toFixed(0)
+    .replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+</p>
+
+
         </div>
       </div>
     
@@ -377,12 +420,10 @@ const EmployeeClient = ({email}) => {
 
 
 <div className='flex mb-5 lg:mb-5 gap-3 justify-end items-center'>
-
 <div className="">
         <select
           name="status"
           className="bg-transparent bg-gray-200 border border-black text-black text-sm py-2 px-3 rounded-md focus:outline-none  focus:border-blue-500 group-hover:bg-white group-hover:border-gray-700 group-hover:text-black"
-          style={{ backgroundColor: 'var(--bg-color2)',border: 'var(--border)', color: 'var(--text-color2)'}}
           value={selectedStatus} // Bind value to state
           onChange={(e) => setSelectedStatus(e.target.value)} // Update selected status
         >
@@ -392,7 +433,6 @@ const EmployeeClient = ({email}) => {
           <option value="equal">Clear</option>
         </select>
       </div>
-
 <div className="w-full lg:w-auto">
     <input
       type="text"
@@ -404,7 +444,7 @@ const EmployeeClient = ({email}) => {
     />
   </div>
   
-  
+
 </div>
 </div>
 
@@ -425,7 +465,12 @@ const EmployeeClient = ({email}) => {
 </tr>
 </thead>
 <tbody>
-{filteredCampaigns.map((campaign, index) => (
+{filteredCampaigns
+    .filter(item => 
+        item?.clientName && 
+        item?.clientPhone?.toLowerCase().includes(searchQuery.toLowerCase())
+    )
+    .map((campaign, index) => (
   <tr style={{ backgroundColor: 'var(--bg-table)', color: 'var(--text-color2)'}}
                   key={campaign._id}
                   className={`${
@@ -592,7 +637,7 @@ const EmployeeClient = ({email}) => {
           <input
             type="email"
             name="clientEmail"
-            disabled
+            
             defaultValue={campaign?.clientEmail}
             className="w-full border-black bg-white border rounded p-2 mt-1"
           />
@@ -650,6 +695,9 @@ const EmployeeClient = ({email}) => {
     .reduce((total, clientTotal) => total + clientTotal, 0) // Sum up all totals
     .toFixed(2)}
         </td>
+
+
+
         <td className="p-3 text-center font-bold">
       $ {filteredCampaigns
     .map(client => {
@@ -661,6 +709,9 @@ const EmployeeClient = ({email}) => {
     .reduce((total, clientTotal) => total + clientTotal, 0) // Sum up all totals
     .toFixed(2)}
         </td>
+
+
+        
         <td className="p-3 text-center font-bold">
         ৳ {filteredCampaigns
     .map(client => {

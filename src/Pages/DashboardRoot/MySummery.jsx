@@ -4,6 +4,9 @@ import { AuthContext } from '../../Security/AuthProvider';
 import useUsers from '../../Hook/useUsers';
 import useEmployeePayment from '../../Hook/useEmployeePayment';
 import useMpayment from '../../Hook/UseMpayment';
+import useMyCampaingsByEmail from '../../Hook/useMyCampaignByEmail';
+import useMypymentsByEmail from '../../Hook/useMyMPayments';
+import useMyClientsByEmail from '../../Hook/useMyClientsByEmail';
 
 const months = [
   'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'
@@ -17,6 +20,15 @@ const MySummery = () => {
 
   const [employees, setEmployees] = useState([]);
   const [selectedEmployee, setSelectedEmployee] = useState(user.email);
+
+  const [mycampaigns]=useMyCampaingsByEmail(user?.email)
+  const [Mypayments]=useMypymentsByEmail(user?.email)
+  const [myclients]=useMyClientsByEmail(user?.email)
+
+  const tPay = Mypayments
+      
+  ?.filter(campaign => myclients.some(client => client.clientEmail === campaign.clientEmail))
+
 
   useEffect(() => {
     if (users && user) {
@@ -47,19 +59,15 @@ const MySummery = () => {
         payment => selectedEmployee ? payment.employeeEmail === selectedEmployee : payment.employeeEmail === user.email
       );
 
-      const mPayments = Mpayment.filter(
-        payment => selectedEmployee ? payment.employeeEmail === selectedEmployee : payment.employeeEmail === user.email
-      );
-
       const paymentByMonth = employeePayments.reduce((acc, payment) => {
         const month = new Date(payment.date).toLocaleString('default', { month: 'long' });
         acc[month] = (acc[month] || 0) + parseFloat(payment.payAmount);
         return acc;
       }, {});
 
-      const paymentByMonth2 = mPayments.reduce((acc, payment) => {
+      const paymentByMonth2 = tPay.reduce((acc, payment) => {
         const month = new Date(payment.date).toLocaleString('default', { month: 'long' });
-        acc[month] = (acc[month] || 0) + parseFloat(payment.amount);
+        acc[month] = (acc[month] || 0) + parseFloat(payment.amount) || 0;
         return acc;
       }, {});
 
@@ -109,6 +117,8 @@ const MySummery = () => {
     });
   }, [users, selectedEmployee, employeePayment, Mpayment, recentMonths]);
 
+
+
   return (
     <div className='mx-5 lg:mt-5 mb-5'>
       <Helmet>
@@ -134,7 +144,10 @@ const MySummery = () => {
   <div className="px-5 py-10 rounded-2xl bg-[#ffb74d] text-black shadow-lg text-center">
     <h2 className="lg:text-2xl text-xl font-bold">Client Pay</h2>
     <p className="lg:text-2xl text-xl font-bold mt-2">
-      <span className="text-2xl font-extrabold">৳</span> {new Intl.NumberFormat('en-IN').format(employeeData.reduce((acc, data) => acc + data.totalClientPay, 0).toFixed(0))}
+      <span className="text-2xl font-extrabold">৳</span> {new Intl.NumberFormat('en-IN').format(
+  tPay.reduce((acc, payment) => acc + parseFloat(payment?.amount || 0), 0)
+)}
+
     </p>
   </div>
 
@@ -155,7 +168,8 @@ const MySummery = () => {
   <div className="px-5 py-10 rounded-2xl bg-[#ff8a65] text-black shadow-lg text-center">
     <h2 className="text-xl font-bold">Client Due</h2>
     <p className="lg:text-2xl text-xl font-bold mt-2">
-      <span className="lg:text-2xl text-xl font-extrabold">৳</span> {new Intl.NumberFormat('en-IN').format((employeeData.reduce((acc, data) => acc + data.totalBill, 0) - employeeData.reduce((acc, data) => acc + data.totalClientPay, 0)).toFixed(0))}
+      <span className="lg:text-2xl text-xl font-extrabold">৳</span> {new Intl.NumberFormat('en-IN').format((employeeData.reduce((acc, data) => acc + data.totalBill, 0) - tPay
+        .reduce((acc, payment) => acc + parseFloat(payment?.amount || 0), 0).toFixed(0)))}
     </p>
   </div>
 </div>
@@ -209,13 +223,15 @@ const MySummery = () => {
       ৳ {employeeData.reduce((acc, data) => acc + data.totalBill, 0).toFixed(0)}
     </td>
     <td className="p-3 border-gray-300">
-      ৳ {employeeData.reduce((acc, data) => acc + data.totalClientPay, 0).toFixed(0)}
+      ৳ {tPay
+        .reduce((acc, payment) => acc + parseFloat(payment?.amount || 0), 0).toFixed(0)}
     </td>
     <td className="p-3 border-gray-300">
       ৳ {employeeData.reduce((acc, data) => acc + data.totalAdminPay, 0).toFixed(0)}
     </td>
     <td className="p-3 border-gray-300">
-      ৳ {(employeeData.reduce((acc, data) => acc + data.totalClientPay, 0) - 
+      ৳ {(tPay
+        .reduce((acc, payment) => acc + parseFloat(payment?.amount || 0), 0).toFixed(0) - 
           employeeData.reduce((acc, data) => acc + data.totalAdminPay, 0)).toFixed(0)}
     </td>
   </tr>

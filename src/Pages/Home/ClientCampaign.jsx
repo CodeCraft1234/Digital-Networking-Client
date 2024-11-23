@@ -11,6 +11,7 @@ import Swal from "sweetalert2";
 import useMpayment from "../../Hook/UseMpayment";
 import useCampaingsByEmail from "../../Hook/useCampaignsByEmail";
 import useMypymentsByEmail from "../../Hook/useMyMPayments";
+import useMpymentsByEmail from "../../Hook/useMpaymentByEmail";
 
 const ClientCampaign = () => {
     const { user } = useContext(AuthContext);
@@ -85,9 +86,9 @@ const ClientCampaign = () => {
       const tBudged = e.target.totalBudged.value;
       const pageUrl = e.target.pageUrl.value;
       const adsAccount = e.target.adsAccount.value;
+      const dollerRate = e.target.dollerRate.value;
       const email = user?.email;
       const tSpent = tBudged
-      const dollerRate = 140;
       const status = "Active";
       const date = e.target.date.value;
       const data = {
@@ -153,14 +154,15 @@ const ClientCampaign = () => {
        };
 
        const [totalPaymeent, setTotalPayment] = useState([]);
+       const [Mpayments]=useMpymentsByEmail(param?.email)
+     
        useEffect(() => {
-             const realdata = Mypayments.filter((m) => m.clientEmail === param?.email);
-             const totalBill = realdata.reduce(
-               (acc, campaign) => acc + parseFloat(campaign.amount),
-               0
-             );
-             setTotalPayment(totalBill);
-       }, [param?.email,Mypayments]);
+         const totalBill = Mpayments.reduce(
+           (acc, campaign) => acc + parseFloat(campaign.amount),
+           0
+         );
+         setTotalPayment(totalBill);
+       }, [ Mpayments]);
 
        const today = new Date();
        const formattedDate = today.toISOString().split('T')[0];  // "YYYY-MM-DD" format
@@ -294,6 +296,8 @@ const ClientCampaign = () => {
                 />
               </div>
             </div>
+                <div className="flex items-center gap-3">
+               
               <div>
                 <label htmlFor="totalBudged" className="block mb-1 ml-1">
                   Total Budged
@@ -308,6 +312,22 @@ const ClientCampaign = () => {
                   className="w-full border border-gray-600 text-black bg-white rounded p-2 mt-1"
                 />
               </div>
+              <div>
+                <label htmlFor="dollerRate" className="block mb-1 ml-1">
+                  Doller Rate
+                </label>
+                <input
+                  step="0.01"
+                  id="dollerRate"
+                  name="dollerRate"
+                  type="number"
+                  placeholder="type dollerRate"
+                  defaultValue={140}
+                  required
+                  className="w-full border border-gray-600 text-black bg-white rounded p-2 mt-1"
+                />
+              </div>
+                </div>
             </div>
 
             <div className="grid grid-cols-2 gap-3 mt-4">
