@@ -7,13 +7,12 @@ import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import useUsersSellery from '../../Hook/useUsersSellery';
 import useAllEmployee from '../../Hook/useAllEmployee';
-import useEmployeePaymentsSellery from '../../Hook/useEmployeePaymentsSellery';
 
 const months = [
   'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'
 ];
 
-const Sellery = () => {
+const DesignersSellery = () => {
   const [allEmployees]=useAllEmployee()
   const [employeeData, setEmployeeData] = useState([]);
   const [selectedMonth, setSelectedMonth] = useState('');
@@ -21,77 +20,57 @@ const Sellery = () => {
   const [currentuser,setCurrentuser]=useState([])
 
   const [employees, setEmployees] = useState([]);
-  const initialTab = localStorage.getItem("activeTabsummeryEmployeed") || "allEmployee";
+  const initialTab = localStorage.getItem("activeTabsummeryEmployeedSs") || "allEmployee";
   const [selectedEmployee, setSelectedEmployee] = useState(initialTab);
   const [usersSellery, refetch] = useUsersSellery(selectedEmployee);
-  const [employeePaymentSellery] = useEmployeePaymentsSellery(selectedEmployee);
 
   const changeTab = (tab) => {
     setSelectedEmployee(tab);
-    localStorage.setItem("activeTabsummeryEmployeed", tab); 
+    localStorage.setItem("activeTabsummeryEmployeedSs", tab); 
   };
 
 
   useEffect(() => {
     if (allEmployees) {
-      const employeeList = allEmployees.filter((u) => u.role === "employee");
+      const employeeList = allEmployees.filter((u) => u.role === "graphicDesigner");
       setEmployees(employeeList);
     }
-  }, [allEmployees]);
+
+    if (allEmployees) {
+      const employeeList = allEmployees.find((u) => u.email === selectedEmployee);
+      setCurrentuser(employeeList);
+    }
+    
+  }, [allEmployees,selectedEmployee]);
 
   useEffect(() => {
 
     if (usersSellery) {
-      const { monthlySpent, sellery } = usersSellery;
+      const { sellery } = usersSellery;
 
       const monthlyData = months.map(month => {
-        const monthlySpentData = (monthlySpent || [])
-        .filter(spent =>
-          new Date(spent.date).toLocaleString('default', { month: 'long' }) === month
-        )
-        .sort((a, b) => {
-          if (a.accountName < b.accountName) return -1;
-          if (a.accountName > b.accountName) return 1;
-          return new Date(a.date) - new Date(b.date);
-        })
-        .reduce((acc, current) => {
-          const existingAccount = acc.find(item => item.accountName === current.accountName);
-          if (existingAccount) {
-            if (new Date(current.date) > new Date(existingAccount.date)) {
-              acc = acc.filter(item => item.accountName !== existingAccount.accountName); 
-              acc.push(current); 
-            }
-          } else {
-            acc.push(current); 
-          }
-          return acc;
-        }, []);
-      
-      const totalSpent = monthlySpentData.reduce((acc, spent) => acc + spent.totalSpentt, 0);
         const selleryData = (sellery || []).filter(sell => sell.month === month);
+        const totalBasic = selleryData.reduce((acc, sell) => acc + sell.basic || 0, 0);
         const totalSellery = selleryData.reduce((acc, sell) => acc + sell.amount || 0, 0);
-        const totalBonus = selleryData.reduce((acc, sell) => acc + sell.bonus || 0, 0);
-        
+    
         return {
           month,
-          totalSpent,
+          totalBasic,
           totalSellery,
-          totalBonus,
-          totalBill: totalSpent * 140,
-          totalSelleryPaid: totalSpent * 7 - totalSellery,
           selleryData 
         };
       });
 
       setEmployeeData(monthlyData);
     }
-  }, [usersSellery, selectedEmployee, employeePaymentSellery]);
+  }, [usersSellery, selectedEmployee]);
 
   const AxiosPublic = UseAxiosPublic();
 
   const handleSellery = (e) => {
     e.preventDefault();
     const amount = parseFloat(e.target.amount.value);
+    const basic = parseFloat(e.target.basic.value);
     const date = new Date(`${selectedMonth} 1, ${new Date().getFullYear()}`);
 
     const generateRandomId = () => Math.floor(Math.random() * 1e13);
@@ -100,6 +79,7 @@ const Sellery = () => {
       id,
       amount,
       date,
+      basic,
       month: selectedMonth,
       selectedEmployee
     };
@@ -131,7 +111,7 @@ const Sellery = () => {
     document.getElementById('paymentModal').showModal(); 
   };
 
-  const handleUpdate2 = async (e, spentId) => {
+   const handleUpdate2 = async (e, spentId) => {
     e.preventDefault();
     const totalSpent = e.target.totalSpent.value;
     const totalSpentParsed = parseFloat(totalSpent);
@@ -217,26 +197,16 @@ const Sellery = () => {
         <link rel="canonical" href="https://www.example.com/" />
       </Helmet>
 
-      <div style={{ backgroundColor: 'var(--bg-color3)', color: 'var(--text-color)',border: 'var(--border)'}} className="grid my-5 p-5 rounded-lg grid-cols-2 md:grid-cols-2 lg:grid-cols-6 text-black sm:grid-cols-2 gap-5 justify-around ">
-        <div className="px-5 py-10 rounded-2xl  bg-[#91a33a] text-white shadow-lg text-center">
-          <h2 className="text-xl font-bold">Total Spent</h2>
-          <p className="lg:text-xl text-xl font-bold mt-2">
-  $ {new Intl.NumberFormat('en-IN', { maximumFractionDigits: 2 }).format(
-    employeeData.reduce((acc, data) => acc + data.totalSpent, 0).toFixed(0)
-  )}
-</p>
+      <div style={{ backgroundColor: 'var(--bg-color3)', color: 'var(--text-color)',border: 'var(--border)'}} className="grid my-5 p-5 rounded-lg grid-cols-2 md:grid-cols-2 lg:grid-cols-2 text-black sm:grid-cols-2 gap-5 justify-around ">
 
-        </div>
-
-        <div className="px-5 py-10 rounded-2xl bg-[#5422c0] text-white shadow-lg text-center">
-          <h2 className="text-xl font-bold">Total Salery</h2>
+      <div className="px-5 py-10 rounded-2xl  bg-[#65533d] text-white shadow-lg text-center">
+          <h2 className="text-xl font-bold">Total Basic</h2>
           <p className="lg:text-xl text-xl font-bold mt-2">
   <span className="lg:text-xl text-xl font-extrabold">৳</span> 
   {new Intl.NumberFormat('en-IN').format(
-    employeeData.reduce((acc, data) => acc + data.totalSpent * 7, 0).toFixed(0)
+    employeeData.reduce((acc, data) => acc + data.totalBasic, 0).toFixed(0)
   )}
 </p>
-
         </div>
 
         <div className="px-5 py-10 rounded-2xl  bg-[#05a0db] text-white shadow-lg text-center">
@@ -247,40 +217,9 @@ const Sellery = () => {
     employeeData.reduce((acc, data) => acc + data.totalSellery, 0).toFixed(0)
   )}
 </p>
-
         </div>
 
-        <div className="px-5 py-10 rounded-2xl  bg-[#ce1a38] text-white shadow-lg text-center">
-          <h2 className="text-xl font-bold">Total Unpaid</h2>
-          <p className="lg:text-xl text-xl font-bold mt-2">
-  <span className="lg:text-xl text-xl font-extrabold">৳</span> 
-  {new Intl.NumberFormat('en-IN').format(
-    employeeData.reduce((acc, data) => acc + data.totalSelleryPaid, 0).toFixed(0)
-  )}
-</p>
 
-        </div>
-        <div className="px-5 py-10 rounded-2xl  bg-[#504491] text-white shadow-lg text-center">
-          <h2 className="text-xl font-bold">Total Due</h2>
-          <p className="lg:text-xl text-xl font-bold mt-2">
-  <span className="lg:text-xl text-xl font-extrabold">৳</span> 
-  {new Intl.NumberFormat('en-IN').format(
-    employeeData.reduce((acc, data) => acc + parseFloat(data.totalSellery), 0) - 
-    employeeData.reduce((acc, data) => acc + parseFloat(data.totalSelleryPaid), 0).toFixed(0)
-  )}
-</p>
-
-        </div>
-        <div className="px-5 py-10 rounded-2xl  bg-[#a6d427] text-white shadow-lg text-center">
-          <h2 className="text-xl font-bold">Total Bonus</h2>
-          <p className="lg:text-xl text-xl font-bold mt-2">
-  <span className="lg:text-xl text-xl font-extrabold">৳</span> 
-  {new Intl.NumberFormat('en-IN').format(
-    employeeData.reduce((acc, data) => acc + data.totalBonus, 0).toFixed(0)
-  )}
-</p>
-
-        </div>
       </div>
 
 
@@ -307,16 +246,14 @@ const Sellery = () => {
 
 
 
-<div  className="overflow-x-auto rounded-xl  text-center " style={{  color: 'var(--text-color)'}}>
+<div  className="overflow-x-auto rounded-xl  text-center " style={{ backgroundColor: 'var(--bg-color)', color: 'var(--text-color)'}}>
     <table className="min-w-full text-center ">
       <thead className=" ">
-        <tr className="" style={{backgroundColor: 'var(--bg-color)',border: 'var(--border)',borderLeft: 'var(--border)', borderRight: 'var(--border)', color: 'var(--text-color)'}}>
+        <tr className="" style={{border: 'var(--border)',borderLeft: 'var(--border)', borderRight: 'var(--border)', color: 'var(--text-color)'}}>
               <th style={{  border: 'var(--border)'}} className="p-3">SL</th>
               <th style={{  border: 'var(--border)'}} className="p-3">Month</th>
-              <th style={{  border: 'var(--border)'}} className="p-3">Spent</th>
-              <th style={{  border: 'var(--border)'}} className="p-3">T. Sellery</th>
+              <th style={{  border: 'var(--border)'}} className="p-3">Basic Salary</th>
               <th style={{  border: 'var(--border)'}} className="p-3">Paid</th>
-              <th style={{  border: 'var(--border)'}} className="p-3">Unpaid</th>
               <th style={{  border: 'var(--border)'}} className="p-3">Action</th>
             </tr>
           </thead>
@@ -334,24 +271,16 @@ const Sellery = () => {
                 <td style={{  border: 'var(--border)'}} onClick={() => handleMonthClick(data)} className="p-3 hover:text-blue-600 cursor-pointer border-r-2 border-gray-300 text-center px-5">
                   {data.month}
                 </td>
+
                 <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-300 text-center">
-                  ${data.totalSpent.toFixed(2)}
+                  ৳ {data.totalBasic.toFixed(2)}
                 </td>
-                <td
-  style={{ border: 'var(--border)' }}
-  className="p-3 border-r-2 border-gray-300 text-center"
->
-  ৳ {
-    (data.totalSpent * (["October", "November", "December"].includes(data.month) ? 7 : 7)).toFixed(0)
-  }
-</td>
 
                 <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-300 text-center">
                   ৳{data.totalSellery.toFixed(2)}
                 </td>
-                <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-300 text-center">
-                  ৳ {data.totalSelleryPaid.toFixed(2)}
-                </td>
+ 
+              
                 <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-300 text-center">
                   <button
                     className="font-avenir px-2.5 hover:bg-red-700 hover:text-white mx-auto py-0.5 bg-[#05a0db] rounded-lg text-white"
@@ -366,20 +295,15 @@ const Sellery = () => {
           <tfoot className=" font-bold ">
           <tr style={{ backgroundColor: 'var(--bg-color)', color: 'var(--text-color)'}}>
             <td style={{  border: 'var(--border)'}} className="p-3 text-right" colSpan="2">Total</td>
+
             <td style={{  border: 'var(--border)'}} className="p-3">
-              ${employeeData.reduce((acc, data) => acc + data.totalSpent, 0).toFixed(2)}
+              ৳ {employeeData.reduce((acc, data) => acc + data.totalBonus, 0).toFixed(2)}
             </td>
             <td style={{  border: 'var(--border)'}} className="p-3">
-              ৳ {(employeeData.reduce((acc, data) => acc + data.totalSpent * 7, 0)).toFixed(2)}
-            </td>
-            <td style={{  border: 'var(--border)'}} className="p-3">
-              ৳ 
-            </td>
-            <td style={{  border: 'var(--border)'}} className="p-3">
-              ৳ {employeeData.reduce((acc, data) => acc + data.totalSelleryPaid, 0).toFixed(2)}
+              ৳ {employeeData.reduce((acc, data) => acc + data.totalSellery, 0).toFixed(2)}
             </td>
           
-            <td className="p-3"></td> {/* Empty for Action column */}
+           
           </tr>
         </tfoot>
         </table>
@@ -438,7 +362,7 @@ const Sellery = () => {
                       </button>
                       <form onSubmit={(e) => handleUpdate2(e, item.id)}>
                         <div className="mb-4">
-                          <label className="block text-start text-gray-700">Total Spent</label>
+                          <label className="block text-start text-gray-700">Total Amount</label>
                           <input
                             type="text"
                             name="totalSpent"
@@ -484,18 +408,20 @@ const Sellery = () => {
             <form onSubmit={handleSellery}>
               <input type="hidden" name="month" value={modalData.month} />
               <input type="hidden" name="email" value={selectedEmployee} />
+
+              <div className="form-control mt-4">
+                <label className="label">
+                  <span className="label-text">Basic</span>
+                </label>
+                <input type="number" name="basic" placeholder="Basic" className="input bg-white text-black border border-gray-400 input-bordered"  />
+              </div>
               <div className="form-control">
                 <label className="label">
-                  <span className="label-text">Amount</span>
+                  <span className="label-text">Pay</span>
                 </label>
                 <input type="number" name="amount" placeholder="Amount" className="input bg-white text-black border border-gray-400 input-bordered" required />
               </div>
-              <div className="form-control mt-4">
-                <label className="label">
-                  <span className="label-text">Bonus</span>
-                </label>
-                <input type="number" name="bonus" placeholder="Bonus" className="input bg-white text-black border border-gray-400 input-bordered"  />
-              </div>
+             
               <div className="modal-action grid lg:grid-cols-2 justify-center gap-5">
               <button onClick={() => document.getElementById('paymentModal').close()} className="btn btn-secondary w-full">Close</button>
                 <button type="submit" className="btn w-full btn-primary">Submit</button>
@@ -509,5 +435,5 @@ const Sellery = () => {
   );
 };
 
-export default Sellery;
+export default DesignersSellery;
 

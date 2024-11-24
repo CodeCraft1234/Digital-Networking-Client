@@ -65,6 +65,7 @@ import ContriHistory from "./Pages/DashboardRoot/ContriHistory";
 import ContriSummery from "./Pages/DashboardRoot/ContriSummery";
 import ClientHistory from "./Pages/DashboardRoot/ClientHistory";
 import OthersSellery from "./Pages/DashboardRoot/OthersSellery";
+import AllSellery from "./Pages/Home/AllSellery";
 
 
 const router = createBrowserRouter([
@@ -272,7 +273,7 @@ const router = createBrowserRouter([
        },
        {
         path:'dashboard/sellery',
-        element:<Sellery></Sellery>
+        element:<AllSellery></AllSellery>
        },
        {
         path:'dashboard/mySellery',

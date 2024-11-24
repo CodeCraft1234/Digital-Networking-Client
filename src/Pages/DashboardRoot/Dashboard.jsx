@@ -5,18 +5,24 @@ import EmployeeDashboard from "./EmployeeDashboard";
 import AdsDashboard from "./AdsDashboard";
 import ClientDashboard from "./ClientDashboard"; // Make sure this is imported
 import Skilitonloader from "./Skilitonloader"; // Import the SkeletonLoader component
-import useUserr from "../../Hook/useUser";
+import useAllEmployee from "../../Hook/useAllEmployee";
 
 const Dashboard = ({ showSidebar }) => {
   const { user } = useContext(AuthContext); // Get the authenticated user from the context
-  const {userr}=useUserr(user?.email)
+  const [allEmployees]=useAllEmployee()
+  const [userr, setDdd] = useState({}); 
+  useEffect(() => {
+      if (allEmployees && user) {
+          const fff = allEmployees.find(u => u.email === user?.email);
+          setDdd(fff || {}); 
+      }
+  }, [allEmployees, user]);
   const [showSkeleton, setShowSkeleton] = useState(true); // State to track skeleton display
 
   useEffect(() => {
-    // Set a timeout to hide the skeleton loader after 1 second
     const timer = setTimeout(() => {
       setShowSkeleton(false);
-    }, 1000); // Updated to 1000 ms (1 second)
+    }, 1000); 
 
     return () => clearTimeout(timer); 
   }, [userr, user]);
@@ -28,9 +34,7 @@ const Dashboard = ({ showSidebar }) => {
       } md:block`}
     >
       <ul className="menu text-center text-lg md:text-xl">
-        {showSkeleton ? (
-          <Skilitonloader /> 
-        ) : (
+        {  (
           userr?.role === "admin" ? (
             <AdminDashboard />
           ) : userr?.role === "contributor" ? (

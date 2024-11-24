@@ -111,8 +111,9 @@ const ClientHistory = () => {
     <div className="m-4">
 
 
+<div className="rounded-lg" style={{ backgroundColor: 'var(--bg-color3)', color: 'var(--text-color)',border: 'var(--border)'}} >
+<div  className="grid grid-cols-2 m-1 rounded-lg md:grid-cols-2 lg:grid-cols-4 text-black sm:grid-cols-2 gap-3 lg:gap-5 justify-around p-5">
 
-<div style={{ backgroundColor: 'var(--bg-color3)', color: 'var(--text-color)',border: 'var(--border)'}}  className="grid grid-cols-2 m-1 rounded-lg md:grid-cols-2 lg:grid-cols-4 text-black sm:grid-cols-2 gap-3 lg:gap-5 justify-around p-5">
         <div className="px-5 py-10 rounded-2xl  bg-[#91a33a] text-white shadow-lg text-center">
           <h2 className="lg:text-2xl text-sm font-bold">Total Spent</h2>
           <p className="lg:text-4xl text-xl font-bold mt-2"> $ {totalSpent.toFixed(2)}</p>
@@ -143,8 +144,8 @@ const ClientHistory = () => {
 
 
 
-      <div style={{ backgroundColor: 'var(--bg-color3)', color: 'var(--text-color)', border: 'var(--border)' }} className="lg:mt-5 mt-5 px-5 rounded-lg mx-1">
-  <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 lg:gap-5 mt-5 mb-5">
+      <div className="mx-5">
+  <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-7 gap-3 lg:gap-5  mb-5">
     
 
     <div 
@@ -175,6 +176,17 @@ const ClientHistory = () => {
     {/* Nagad Personal Card */}
     <div 
     
+      style={{ backgroundColor: '#fff2cc', border: 'var(--border)' }} 
+      className="balance-card rounded-2xl p-5 text-center shadow-xl transition-transform transform hover:scale-105"
+    >
+      <img className="balance-card-img" src="https://i.ibb.co.com/WsDkLzc/Nagad-Marchant.png" alt="Nagad Personal" />
+      <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700">
+        <span className="text-lg lg:text-2xl font-extrabold">৳</span>
+        {filteredHistory?.filter(h => h.paymentMethod === 'nagadMarchent')?.reduce((acc, payment) => acc + payment?.amount, 0)}
+      </p>
+    </div>
+
+    <div 
       style={{ backgroundColor: '#fff2cc', border: 'var(--border)' }} 
       className="balance-card rounded-2xl p-5 text-center shadow-xl transition-transform transform hover:scale-105"
     >
@@ -224,6 +236,7 @@ const ClientHistory = () => {
     </div>
     
   </div>
+</div>
 </div>
 
    <div style={{ backgroundColor: 'var(--bg-color3)', color: 'var(--text-color)', border: 'var(--border)' }} className="lg:mt-5 mt-5  rounded-lg mx-1">

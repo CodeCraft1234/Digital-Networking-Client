@@ -51,8 +51,10 @@ const AllClients = ({}) => {
   const [selectedCategory, setSelectedCategory] = useState("");
 
   const filteredItems = filteredClients.filter((item) =>
-    item.clientPhone.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+    item.clientPhone.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    item.clientName.toLowerCase().includes(searchQuery.toLowerCase())
+);
+
 
   const filteredByCategory = selectedCategory
     ? filteredItems.filter(
@@ -110,8 +112,7 @@ const AllClients = ({}) => {
     const clientEmail = e.target.clientEmail.value;
     const body = { clientName, clientEmail,  clientPhone };
 
-    AxiosPublic.patch(
-      `https://digital-networking-server.vercel.app/client/update/${id}`,
+    AxiosPublic.patch(`/client/update/${id}`,
       body
     )
       .then((res) => {
@@ -144,9 +145,27 @@ const AllClients = ({}) => {
 
 
 
-  const [showAll, setShowAll] = useState(false);
-  const [itemsToShow] = useState(50); 
-  const displayedItems = showAll ? filteredByCategory : filteredByCategory.slice(0, itemsToShow);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 20;
+
+  const displayedItems = filteredByCategory.slice(0, currentPage * itemsPerPage);
+  const isMoreItems = currentPage * itemsPerPage < filteredByCategory.length;
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (
+        window.innerHeight + document.documentElement.scrollTop + 100 >=
+        document.documentElement.scrollHeight
+      ) {
+        setCurrentPage((prevPage) => prevPage + 1);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
   
   return (
     <div className="mt-5">
@@ -155,100 +174,6 @@ const AllClients = ({}) => {
         <title>All Clients | Digital Network </title>
         <link rel="canonical" href="https://www.example.com/" />
       </Helmet>
-      {/* <div style={{ backgroundColor: 'var(--bg-color3)', color: 'var(--text-color)',border: 'var(--border)'}} className="grid lg:grid-cols-4 mx-5 grid-cols-2 text-black sm:grid-cols-2 gap-3 lg:gap-5 justify-around p-5 rounded-lg lg:py-5 pb-5">
-      <div className="px-5 py-10 rounded-2xl bg-[#b7cc50] text-white shadow-lg text-center">
-  <h2 className="lg:text-2xl text-xl font-bold">Total Spent</h2>
-  <p className="lg:text-2xl md:text-3xl text-md font-bold mt-2">
-  $ {
-    filteredClients
-      ?.flatMap(client => client?.campaigns || []) // Use an empty array if campaigns is undefined
-      ?.reduce((acc, curr) => acc + (parseFloat(curr.tSpent) || 0), 0).toFixed(0) // Sum up `tSpent` values
-  }
-</p>
-
-</div>
-
-
-<div className="px-5 py-10 rounded-2xl bg-[#5422c0] text-white shadow-lg text-center">
-  <h2 className="lg:text-2xl text-xl font-bold">Total Bill</h2>
-  <p className="lg:text-2xl md:text-3xl text-md font-bold mt-2">
-        <span className='font-extrabold lg:text-4x text-md'> ৳ </span>
-        {
-          (filteredClients
-            ?.flatMap(client => client.campaigns || [])
-            ?.reduce((acc, curr) => {
-              const tSpent = parseFloat(curr.tSpent).toFixed(0) || 0;
-              const dollerRate = parseFloat(curr.dollerRate).toFixed(0) || 0;
-              return acc + (tSpent * dollerRate)
-            }, 0)
-          )
-        }
-      </p>
-</div>
-
-
-        <div className="px-5 py-10 rounded-2xl bg-[#05a0db] text-white shadow-lg text-center">
-          <h2 className="lg:text-2xl text-xl font-bold">Total Paid</h2>
-          <p className="lg:text-2xl md:text-3xl text-md font-bold mt-2">
-  <span className='font-extrabold lg:text-4x text-md'> ৳ </span>
-  {
-    filteredClients
-      ?.flatMap(client => client.payments || []) 
-      ?.reduce((acc, curr) => acc + (parseFloat(curr.amount) || 0), 0).toFixed(0) 
-  }
-</p>
-
-        </div>
-
-    
-
-
-
-
-
-        <div  className="px-5 py-10 rounded-2xl bg-[#ce1a38] text-white shadow-lg text-center">
-  <h2 className="lg:text-2xl text-xl font-bold">
-    {
-      ((
-        (filteredClients
-          ?.flatMap(client => client.campaigns || []) 
-          ?.reduce((acc, curr) => {
-            const tSpent = parseFloat(curr.tSpent) || 0; // Safely parse tSpent
-            const dollerRate = parseFloat(curr.dollerRate) || 0; // Safely parse dollerRate
-            return acc + (tSpent * dollerRate); // Accumulate the total
-          }, 0) || 0 // Fallback to 0 if no campaigns exist
-        ).toFixed(0) - 
-        (filteredClients
-          ?.flatMap(client => client.payments || []) 
-          ?.reduce((acc, curr) => acc + (parseFloat(curr.amount) || 0), 0) || 0).toFixed(0) 
-      ) > 0 ? "Avarage":"Avarage")
-    }
-  </h2>
-  <p className="lg:text-2xl md:text-3xl text-md font-bold mt-2">
-    <span className='font-extrabold text-md'> ৳ </span> 
-    {
-      Math.abs(
-        (
-          (filteredClients
-            ?.flatMap(client => client.campaigns || []) 
-            ?.reduce((acc, curr) => {
-              const tSpent = parseFloat(curr.tSpent) || 0; // Safely parse tSpent
-              const dollerRate = parseFloat(curr.dollerRate) || 0; // Safely parse dollerRate
-              return acc + (tSpent * dollerRate); // Accumulate the total
-            }, 0) || 0 // Fallback to 0 if no campaigns exist
-          ).toFixed(0) - 
-          (filteredClients
-            ?.flatMap(client => client.payments || []) 
-            ?.reduce((acc, curr) => acc + (parseFloat(curr.amount) || 0), 0) || 0).toFixed(0)
-        )
-      )
-    }
-  </p>
-</div>
-
-      </div> */}
-
-
 
       <div className='px-5 pb-5 mx-5 my-5 mt-5 rounded-lg' style={{ backgroundColor: 'var(--bg-color3)', color: 'var(--text-color)',border: 'var(--border)'}}>
       <div className="lg:flex gap-3 mr-3 lg:justify-start mt-5  items-center">
@@ -493,22 +418,7 @@ const AllClients = ({}) => {
         </div>
       </div>
       </div>
-      {!showAll && filteredByCategory.length > itemsToShow && (
-  <button
-    onClick={() => setShowAll(true)}
-    className="mt-4 p-2 mx-auto flex justify-center my-10 bg-blue-500 text-white rounded"
-  >
-    Show All
-  </button>
-)}
-{showAll && (
-  <button
-    onClick={() => setShowAll(false)}
-    className="mt-4 p-2  mx-auto flex justify-center my-10 bg-gray-500 text-white rounded"
-  >
-    Show Less
-  </button>
-)}
+      {isMoreItems && <p className="text-center mt-5">Loading more clients...</p>}
     </div>
   );
 };

@@ -93,8 +93,7 @@ const Campaigns = () => {
     const tBudged = e.target.tBudged.value;
     const body = { tSpent, status, dollerRate, tBudged };
 
-    AxiosPublic.patch(
-      `https://digital-networking-server.vercel.app/campaings/${id}`,
+    AxiosPublic.patch(`/campaings/${id}`,
       body
     )
       .then((res) => {
@@ -149,22 +148,27 @@ const Campaigns = () => {
   }, [clients, users]);
 
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 30;
-  const totalPages = Math.ceil(filteredByCategory.length / itemsPerPage);
-  const paginatedItems = filteredByCategory.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
-  );
+  const itemsPerPage = 20;
 
-  const handlePageChange = (page) => {
-    setCurrentPage(page);
-  };
-  const maxPagesToShow = 10;
-  const startPage = Math.max(1, currentPage - Math.floor(maxPagesToShow / 2));
-  const endPage = Math.min(totalPages, startPage + maxPagesToShow - 1);
+  const displayedItems = filteredByCategory.slice(0, currentPage * itemsPerPage);
+  const isMoreItems = currentPage * itemsPerPage < filteredByCategory.length;
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (
+        window.innerHeight + document.documentElement.scrollTop + 100 >=
+        document.documentElement.scrollHeight
+      ) {
+        setCurrentPage((prevPage) => prevPage + 1);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
   
-  // Adjust start page if we're too close to the end of the total pages
-  const adjustedStartPage = Math.max(1, endPage - maxPagesToShow + 1);
 
   const handleUpdate2 = (id, newStatus) => {
     const body = { status: newStatus };
@@ -178,12 +182,6 @@ const Campaigns = () => {
         toast.error("Failed to update campaign");
       });
   };
-
-  const sortByDateDescending = (items) => {
-    return items.sort((a, b) => new Date(b.date) - new Date(a.date));
-  };
-  const sortedItems = sortByDateDescending(paginatedItems);
-
 
   const initialStatus = localStorage.getItem("activeTabSelectedStatus") || 'All';
   const [selectedStatus2, setSelectedStatus2] = useState(initialStatus);
@@ -323,7 +321,7 @@ const Campaigns = () => {
               </tr>
             </thead>
             <tbody>
-              {sortedItems.filter(payment=>selectedStatus2 === 'All' || payment.status === selectedStatus2).map((campaign, index) => (
+              {displayedItems.filter(payment=>selectedStatus2 === 'All' || payment.status === selectedStatus2).sort((a, b) => new Date(b.date) - new Date(a.date)).map((campaign, index) => (
                 <tr style={{ backgroundColor: 'var(--bg-table)', color: 'var(--text-color2)'}}
                 key={campaign._id}
                 className={`${
@@ -516,36 +514,7 @@ const Campaigns = () => {
       </div>
       </div>
 
-      <div className="flex justify-center mt-4">
-      <button
-        onClick={() => handlePageChange(currentPage - 1)}
-        disabled={currentPage === 1}
-        className="px-4 py-2 bg-blue-500 text-white rounded mr-2"
-      >
-        Previous
-      </button>
-      {[...Array(endPage - adjustedStartPage + 1).keys()].map((pageIndex) => {
-        const page = adjustedStartPage + pageIndex;
-        return (
-          <button
-            key={page}
-            onClick={() => handlePageChange(page)}
-            className={`px-4 py-2 rounded mr-2 ${
-              currentPage === page ? "bg-blue-700 text-white" : "bg-blue-500 text-white"
-            }`}
-          >
-            {page}
-          </button>
-        );
-      })}
-      <button
-        onClick={() => handlePageChange(currentPage + 1)}
-        disabled={currentPage === totalPages}
-        className="px-4 py-2 bg-blue-500 text-white rounded ml-2"
-      >
-        Next
-      </button>
-    </div>
+      {isMoreItems && <p className="text-center mt-5">Loading more clients...</p>}
     </div>
   );
 };

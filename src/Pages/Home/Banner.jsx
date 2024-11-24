@@ -8,6 +8,7 @@ import axios from "axios";
 import { Helmet } from "react-helmet-async";
 import useEmployeePayment from "../../Hook/useEmployeePayment";
 import useMpayment from "../../Hook/UseMpayment";
+import ShowOfSellery from "../DashboardRoot/ShowOfSellery";
 
 const Banner = () => {
   const [users, refetch] = useUsers();
@@ -298,6 +299,7 @@ const Banner = () => {
       </div>
       </div>
 
+<ShowOfSellery></ShowOfSellery>
     </div>
   );
 };

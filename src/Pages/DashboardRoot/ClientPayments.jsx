@@ -156,6 +156,7 @@ useEffect(() => {
   const [bkashPersonal,setBkashPersonalTotal]=useState(0)
   const [rocketPersonal,setRocketPersonalTotal]=useState(0)
   const [bankTotal,setBankTotal]=useState(0)
+  const [nagadMarchent, setNagadMarchentTotal] = useState(0);
 
   useEffect(()=>{
           const filtered=tPay
@@ -179,6 +180,10 @@ useEffect(() => {
           const filter6=filtered.filter(d=>d.paymentMethod === 'bank')
           const total6 = filter6.reduce((acc, datas) => acc + parseFloat(datas.amount),0);
           setBankTotal(total6)
+
+          const filter7 = filtered.filter(d => d.paymentMethod === 'nagadMarchent');
+          const total7 = filter7.reduce((acc, datas) => acc + parseFloat(datas.amount), 0);
+          setNagadMarchentTotal(total7);
       
   },[tPay])
 
@@ -191,10 +196,11 @@ useEffect(() => {
       </Helmet>
 
 
-      <div style={{ backgroundColor: 'var(--bg-color3)', color: 'var(--text-color)', border: 'var(--border)' }} className="grid grid-cols-2 p-5 rounded-lg sm:grid-cols-2 md:grid-cols-3 gap-3 lg:gap-5 lg:grid-cols-6 px-5">
+      <div style={{ backgroundColor: 'var(--bg-color3)', color: 'var(--text-color)', border: 'var(--border)' }} className="grid grid-cols-2 p-5 rounded-lg sm:grid-cols-2 md:grid-cols-3 gap-3 lg:gap-5 lg:grid-cols-7 px-5">
   {[ 
     { category: 'bkashMarchent', img: 'https://i.ibb.co/bHMLyvM/b-Kash-Merchant.png', amount: bkashMarcent, bgColor: '#f7e8e8' },
     { category: 'bkashPersonal', img: 'https://i.ibb.co/520Py6s/bkash-1.png', amount: bkashPersonal, bgColor: '#ffe6f7' },
+    { category: 'nagadMarchent', img: 'https://i.ibb.co.com/WsDkLzc/Nagad-Marchant.png', amount: nagadMarchent, bgColor: '#fff2cc' },
     { category: 'nagadPersonal', img: 'https://i.ibb.co/JQBQBcF/nagad-marchant.png', amount: nagadPersonal, bgColor: '#fff2cc' },
     { category: 'rocketPersonal', img: 'https://i.ibb.co/QkTM4M3/rocket.png', amount: rocketPersonal, bgColor: '#e0f7fa' },
     { category: 'bank', img: 'https://i.ibb.co/PZc0P4w/brac-bank-seeklogo.png', amount: bankTotal, bgColor: '#f2f2f2' },

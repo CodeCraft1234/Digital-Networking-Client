@@ -16,9 +16,7 @@ const EmployeePayments = () => {
   const [users] = useUsers();
   const [employees, setEmployees] = useState([]);
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
-  const [showAll, setShowAll] = useState(false);
-  const [itemsToShow] = useState(200); 
-  const displayedItems = showAll ? filteredData : filteredData.slice(0, itemsToShow);
+
   const [selectedPayment, setSelectedPayment] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -109,6 +107,7 @@ const EmployeePayments = () => {
   const [bkashPersonal, setBkashPersonalTotal] = useState(0);
   const [rocketPersonal, setRocketPersonalTotal] = useState(0);
   const [bankTotal, setBankTotal] = useState(0);
+  const [nagadMarchent, setNagadMarchentTotal] = useState(0);
 
   useEffect(() => {
     const filtered = filteredData2 || 0; 
@@ -131,6 +130,10 @@ const EmployeePayments = () => {
     const filter6 = filtered?.filter(d => d.paymentMethod === 'bank');
     const total6 = filter6?.reduce((acc, datas) => acc + parseFloat(datas.payAmount), 0);
     setBankTotal(total6);
+
+    const filter7 = filtered.filter(d => d.paymentMethod === 'nagadMarchent');
+    const total7 = filter7.reduce((acc, datas) => acc + parseFloat(datas.payAmount), 0);
+    setNagadMarchentTotal(total7);
   }, [filteredData2]);
 
     // Open and close modal for payment editing
@@ -180,8 +183,7 @@ const EmployeePayments = () => {
         note: e.target.note.value,
       };
   
-      AxiosPublic.patch(
-        `https://digital-networking-server.vercel.app/employeePayment/${selectedPayment._id}`,
+      AxiosPublic.patch(`/employeePayment/${selectedPayment._id}`,
         updatedPayment
       ).then((res) => {
         handleCancel();
@@ -204,6 +206,29 @@ const EmployeePayments = () => {
         });
     };
 
+
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 20;
+  
+    const displayedItems = filteredData.slice(0, currentPage * itemsPerPage);
+    const isMoreItems = currentPage * itemsPerPage < filteredData.length;
+  
+    useEffect(() => {
+      const handleScroll = () => {
+        if (
+          window.innerHeight + document.documentElement.scrollTop + 100 >=
+          document.documentElement.scrollHeight
+        ) {
+          setCurrentPage((prevPage) => prevPage + 1);
+        }
+      };
+  
+      window.addEventListener("scroll", handleScroll);
+      return () => {
+        window.removeEventListener("scroll", handleScroll);
+      };
+    }, []);
+
   return (
     <div className="m-5">
       <Helmet>
@@ -211,13 +236,16 @@ const EmployeePayments = () => {
         <link rel="canonical" href="https://www.example.com/" />
       </Helmet>
 
-      <div style={{ backgroundColor: 'var(--bg-color3)', color: 'var(--text-color)', border: 'var(--border)' }} className="grid grid-cols-2 p-5 rounded-lg sm:grid-cols-2 md:grid-cols-3 gap-3 lg:gap-5 lg:grid-cols-6 px-5">
+      <div style={{ backgroundColor: 'var(--bg-color3)', color: 'var(--text-color)', border: 'var(--border)' }} className="grid grid-cols-2 p-5 rounded-lg sm:grid-cols-2 md:grid-cols-3 gap-3 lg:gap-5 lg:grid-cols-7 px-5">
   {[
     { category: 'bkashMarchent', img: 'https://i.ibb.co/bHMLyvM/b-Kash-Merchant.png', amount: bkashMarcent, bgColor: '#f7e8e8',charge: filteredData2?.filter(d => d.paymentMethod === 'bkashMarchent')?.reduce((acc, datas) => acc + parseFloat(datas.charge || 0), 0) },
 
     { category: 'bkashPersonal', img: 'https://i.ibb.co/520Py6s/bkash-1.png', amount: bkashPersonal, bgColor: '#ffe6f7',charge: filteredData2?.filter(d => d.paymentMethod === 'bkashPersonal')?.reduce((acc, datas) => acc + parseFloat(datas.charge || 0), 0) },
 
+    { category: 'nagadMarchent', img: 'https://i.ibb.co.com/WsDkLzc/Nagad-Marchant.png', amount: nagadMarchent, bgColor: '#fff2cc',charge: filteredData2?.filter(d => d.paymentMethod === 'nagadMarchent')?.reduce((acc, datas) => acc + parseFloat(datas.charge || 0), 0) },
+
     { category: 'nagadPersonal', img: 'https://i.ibb.co/JQBQBcF/nagad-marchant.png', amount: nagadPersonal, bgColor: '#fff2cc',charge: filteredData2?.filter(d => d.paymentMethod === 'nagadPersonal')?.reduce((acc, datas) => acc + parseFloat(datas.charge || 0), 0) },
+
 
     { category: 'rocketPersonal', img: 'https://i.ibb.co/QkTM4M3/rocket.png', amount: rocketPersonal, bgColor: '#e0f7fa',charge: filteredData2?.filter(d => d.paymentMethod === 'rocketPersonal')?.reduce((acc, datas) => acc + parseFloat(datas.charge || 0), 0) },
 
@@ -243,7 +271,7 @@ const EmployeePayments = () => {
     <h1 className="text-lg lg:text-2xl mt-7 text-black font-bold">
     <span className="text-lg lg:text-xl font-extrabold">৳ </span> 
       {new Intl.NumberFormat('en-IN').format(
-        Number(bkashPersonal) + Number(bkashMarcent) + Number(nagadPersonal) + Number(rocketPersonal) + Number(bankTotal)
+        Number(bkashPersonal) + Number(bkashMarcent) + Number(nagadPersonal) + Number(rocketPersonal) + Number(bankTotal) + Number(nagadMarchent)
       )}
     </h1>
     <h1 className="text-lg mt-1 lg:text-xl text-red-700 font-extrabold">
@@ -582,6 +610,7 @@ const EmployeePayments = () => {
           </div>
         </div>
       )}
+        {isMoreItems && <p className="text-center mt-5">Loading more clients...</p>}
     </div>
   );
 };

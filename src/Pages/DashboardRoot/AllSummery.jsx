@@ -1,27 +1,28 @@
-import  { useContext, useEffect, useState, useMemo } from 'react';
+import  { useEffect, useState, useMemo } from 'react';
 import { Helmet } from 'react-helmet-async';
-import { AuthContext } from '../../Security/AuthProvider';
-import useUsers from '../../Hook/useUsers';
-import useEmployeePayment from '../../Hook/useEmployeePayment';
+
 import useMpayment from '../../Hook/UseMpayment';
 import html2canvas from 'html2canvas';
 import { jsPDF } from 'jspdf';
 import useMyClientsByEmail from '../../Hook/useMyClientsByEmail';
 import useMypymentsByEmail from '../../Hook/useMyMPayments';
+import useAllEmployee from '../../Hook/useAllEmployee';
+import useUsersSellery from '../../Hook/useUsersSellery';
+import useMyEmployeePayments from '../../Hook/useMyemployeePayments';
 
 const months = [
   'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'
 ];
 
 const AllSummery = () => {
-  const [users] = useUsers();
-  const { user } = useContext(AuthContext);
-  const [employeePayment] = useEmployeePayment();
-  const [Mpayment] = useMpayment();
 
+  const [allEmployees]=useAllEmployee()
   const [employees, setEmployees] = useState([]);
   const initialTab = localStorage.getItem("activeTabsummeryEmployee") || "allEmployee";
   const [selectedEmployee, setSelectedEmployee] = useState(initialTab);
+  const [usersSellery] = useUsersSellery(selectedEmployee);
+  const [MyEmployeePayment]=useMyEmployeePayments(selectedEmployee)
+  const [Mypayments]=useMypymentsByEmail(selectedEmployee)
 
   const changeTab = (tab) => {
     setSelectedEmployee(tab);
@@ -29,11 +30,11 @@ const AllSummery = () => {
   };
 
   useEffect(() => {
-    if (users && user) {
-      const employeeList = users.filter((u) => u.role === "employee");
+    if (allEmployees) {
+      const employeeList = allEmployees.filter((u) => u.role === "employee");
       setEmployees(employeeList);
     }
-  }, [users, user]);
+  }, [allEmployees]);
 
   const getRecentMonths = () => {
     const today = new Date();
@@ -47,7 +48,6 @@ const AllSummery = () => {
 
   const recentMonths = getRecentMonths();
 
-  const [Mypayments]=useMypymentsByEmail(selectedEmployee)
   const [myclients]=useMyClientsByEmail(selectedEmployee)
 
   const tPay = Mypayments
@@ -58,14 +58,12 @@ const AllSummery = () => {
   const employeeData = useMemo(() => {
     if (selectedEmployee !== "allEmployee") {
 
-      const relevantUsers = users.filter(u => u.role === 'employee' && u.email === selectedEmployee );
+      const relevantUsers = allEmployees.filter(u => u.role === 'employee' && u.email === selectedEmployee );
   
       return relevantUsers.flatMap(user => {
-        const employeePayments = employeePayment.filter(payment => payment.employeeEmail === selectedEmployee);
-        const mPayments = Mpayment.filter(payment => payment.employeeEmail === selectedEmployee);
-  
+
         return recentMonths.map(month => {
-          const monthlySpentData = (user.monthlySpent || [])
+          const monthlySpentData = (usersSellery.monthlySpent || [])
             .filter(spent => new Date(spent.date).toLocaleString('default', { month: 'long' }) === month)
             .reduce((acc, currentSpent) => {
               // Use a Map to ensure only the latest entry per accountName
@@ -84,11 +82,11 @@ const AllSummery = () => {
   
           const totalSpent = monthlySpentData.reduce((acc, spent) => acc + spent.totalSpentt, 0);
   
-          const selleryData = (user.sellery || []).filter(sell => sell.month === month);
+          const selleryData = (usersSellery.sellery || []).filter(sell => sell.month === month);
           const totalSellery = selleryData.reduce((acc, sell) => acc + sell.amount, 0);
           const totalBonus = selleryData.reduce((acc, sell) => acc + sell.bonus, 0);
   
-          const totalAdminPay = employeePayments
+          const totalAdminPay = MyEmployeePayment
             .filter(payment => new Date(payment.date).toLocaleString('default', { month: 'long' }) === month)
             .reduce((acc, payment) => acc + parseFloat(payment.payAmount), 0);
   
@@ -116,8 +114,7 @@ const AllSummery = () => {
         let totalClientPay = 0;
         let totalAdminPay = 0;
   
-        users.filter(user => user.role === 'employee').forEach(user => {
-          const monthlySpentData = (user.monthlySpent || [])
+          const monthlySpentData = (usersSellery.monthlySpent || [])
             .filter(spent => new Date(spent.date).toLocaleString('default', { month: 'long' }) === month)
             .reduce((acc, currentSpent) => {
               const accountMap = acc.reduce((map, spent) => {
@@ -135,19 +132,19 @@ const AllSummery = () => {
   
           totalSpent += monthlySpentData.reduce((acc, spent) => acc + spent.totalSpentt, 0);
   
-          const employeePayments = employeePayment.filter(payment =>
-            payment.employeeEmail === user.email && new Date(payment.date).toLocaleString('default', { month: 'long' }) === month
+          const employeePayments = MyEmployeePayment.filter(payment =>
+            payment.employeeEmail === usersSellery.email && new Date(payment.date).toLocaleString('default', { month: 'long' }) === month
           );
           totalAdminPay += employeePayments.reduce((acc, payment) => acc + parseFloat(payment.payAmount), 0);
   
-          const mPayments = Mpayment.filter(payment =>
-            payment.employeeEmail === user.email && new Date(payment.date).toLocaleString('default', { month: 'long' }) === month
+          const mPayments = Mypayments.filter(payment =>
+            payment.employeeEmail === usersSellery.email && new Date(payment.date).toLocaleString('default', { month: 'long' }) === month
           );
           totalClientPay += mPayments
   .filter((payment) => payment && !isNaN(parseFloat(payment.amount))) // Ensure valid data
   .reduce((acc, payment) => acc + parseFloat(payment.amount), 0);    // Perform the sum
 
-        });
+      
   
         totalBill = totalSpent * 140;
   
@@ -160,7 +157,7 @@ const AllSummery = () => {
         };
       }).sort((a, b) => months.indexOf(a.month) - months.indexOf(b.month));
     }
-  }, [users, selectedEmployee, employeePayment, Mpayment, recentMonths]);
+  }, [selectedEmployee,usersSellery, MyEmployeePayment, Mypayments, recentMonths]);
   
 
   const totalSpentSum = employeeData.reduce((acc, data) => acc + data.totalSpent, 0);
@@ -267,7 +264,6 @@ const AllSummery = () => {
           value={selectedEmployee}
           onChange={(e) => changeTab(e.target.value)}
         >
-          <option value="allEmployee">All Employees</option>
           {employees.map((employee) => (
             <option key={employee._id} value={employee.email}>
               {employee.name}

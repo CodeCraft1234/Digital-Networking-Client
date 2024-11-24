@@ -10,6 +10,8 @@ import Swal from 'sweetalert2';
 import useMyCampaingsByEmail from '../../Hook/useMyCampaignByEmail';
 import useMyClientsByEmail from '../../Hook/useMyClientsByEmail';
 import useMypymentsByEmail from '../../Hook/useMyMPayments';
+import { BiSolidEdit } from "react-icons/bi";
+import { FaEdit, FaMinusSquare, FaRegMinusSquare } from "react-icons/fa";
 
 const MyClients = () => {
     const { user }=useContext(AuthContext)
@@ -463,15 +465,15 @@ const MyClients = () => {
 <th className="p-3 text-center">T.Spent</th>
 <th className="p-3 text-center">Total Bill</th>
 <th className="p-3 text-center">Payment Rcv</th>
-<th className="p-3 text-center">Total Due</th>
+<th className="p-3 text-center">Total</th>
 <th className="p-3">Action</th>
 </tr>
 </thead>
 <tbody>
 {filteredCampaigns
     .filter(item => 
-        item?.clientName && 
-        item?.clientPhone?.toLowerCase().includes(searchQuery.toLowerCase())
+      item.clientPhone.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      item.clientName.toLowerCase().includes(searchQuery.toLowerCase())
     )
     .sort((a, b) => a.clientName.localeCompare(b.clientName)).map((campaign, index) => (
   <tr style={{ backgroundColor: 'var(--bg-table)', color: 'var(--text-color2)'}}
@@ -484,9 +486,84 @@ const MyClients = () => {
                 >
   <td style={{  border: 'var(--border)'}} className="p-3 border-r border-gray-400 border-l text-center ">{index + 1}</td>
 
-  <td style={{  border: 'var(--border)'}} className="p-3 border-r-2  hover:font-bold text-start border-gray-300 ">
-  <Link to={`/dashboard/client/${campaign.clientEmail}`} className="flex justify-start items-center">
-    {campaign.clientName}
+  <td style={{  border: 'var(--border)'}} className="p-3 border-r border-gray-400 border-l text-center ">
+  
+<div className='flex justify-start items-center gap-2  text-start'>
+  
+   <div >
+  <button
+ className=" flex justify-center items-center gap-1   px-2 py-1 rounded"
+    onClick={() =>
+      document.getElementById(`modal_${campaign._id}`).showModal()
+    }
+  >
+     <FaEdit />
+  </button>
+
+  <dialog id={`modal_${campaign._id}`} className="modal">
+    <div className="modal-box bg-white text-black">
+      <form  onSubmit={(e) => handleUpdate2(e, campaign._id, campaign)}>
+        <h1 className="text-md mb-5">
+          Client Name:{" "}
+          <span className="text-blue-600 text-xl font-bold">
+            {campaign.clientName}
+          </span>
+        </h1>
+
+        <div className="mb-4">
+          <label className="block text-start text-gray-700">Client Name</label>
+          <input
+            type="text"
+            name="clientName"
+            defaultValue={campaign?.clientName}
+            className="w-full border-black bg-white border rounded p-2 mt-1"
+          />
+        </div>
+        <div className="mb-4">
+          <label className="block text-start text-gray-700">Phone</label>
+          <input
+            type="text"
+            name="clientPhone"
+            defaultValue={campaign?.clientPhone}
+            className="w-full bg-white border-black border rounded p-2 mt-1"
+          />
+        </div>
+        <div className="mb-4">
+          <label className="block text-start text-gray-700">Email</label>
+          <input
+            type="email"
+            name="clientEmail"
+            disabled
+            defaultValue={campaign?.clientEmail}
+            className="w-full border-black bg-white border rounded p-2 mt-1"
+          />
+        </div>
+
+        <div className="grid grid-cols-2 gap-3">
+          <button
+            onClick={() =>
+              document.getElementById(`modal_${campaign._id}`).close()
+            }
+            type="button"
+            className="font-avenir hover:bg-red-700 px-3 py-1 bg-red-600 rounded-lg text-white"
+          >
+            Close
+          </button>
+          <button
+            type="submit"
+            className="font-avenir hover:bg-indigo-700 px-3 py-1 bg-[#05a0db] rounded-lg text-white"
+          >
+            Update
+          </button>
+        </div>
+      </form>
+    </div>
+  </dialog>
+   </div>
+
+   <Link to={`/dashboard/client/${campaign.clientEmail}`} className="items-center">
+<span>
+{campaign.clientName}
     {
       (() => {
         const balance = (
@@ -514,7 +591,11 @@ const MyClients = () => {
         }
       })()
     }
+</span>
+
   </Link>
+</div>
+
 </td>
 
 
@@ -570,113 +651,91 @@ const MyClients = () => {
 }
 </td>
 
-<td style={{  border: 'var(--border)'}} className="p-3 border-r border-gray-400 text-center">
-  ৳
-  {
-    (
-      
+<td style={{ border: 'var(--border)' }} className="p-3 border-r border-gray-400 text-center">
+  <span
+    className={`w-20 px-2 py-0.5 rounded text-center inline-block ${
       (
-        Mypayments
-          .filter(payment => payment.clientEmail === campaign.clientEmail)
-          .reduce((acc, payment) => acc + parseFloat(payment?.amount || 0), 0)
-      ) 
-      -
+        (
+          Mypayments
+            .filter(payment => payment.clientEmail === campaign.clientEmail)
+            .reduce((acc, payment) => acc + parseFloat(payment?.amount || 0), 0)
+        ) 
+        -
+        (
+          mycampaigns
+            .filter(payment => payment.clientEmail === campaign.clientEmail)
+            .reduce(
+              (acc, campaign) => acc + parseFloat(campaign.tSpent) * parseFloat(campaign.dollerRate),
+              0
+            )
+        )
+      ) > 0
+        ? 'bg-red-700 font-bold text-white'
+        : (
+            (
+              (
+                Mypayments
+                  .filter(payment => payment.clientEmail === campaign.clientEmail)
+                  .reduce((acc, payment) => acc + parseFloat(payment?.amount || 0), 0)
+              ) 
+              -
+              (
+                mycampaigns
+                  .filter(payment => payment.clientEmail === campaign.clientEmail)
+                  .reduce(
+                    (acc, campaign) => acc + parseFloat(campaign.tSpent) * parseFloat(campaign.dollerRate),
+                    0
+                  )
+              )
+            ) < 0
+          ? 'bg-green-500 font-bold text-white'
+          : ' '
+        )
+    }`}
+  >
+    <span className='text-xl font-bold mr-1'>৳</span>
+    {
       (
-        mycampaigns
-          .filter(payment => payment.clientEmail === campaign.clientEmail)
-          .reduce(
-            (acc, campaign) => acc + parseFloat(campaign.tSpent) * parseFloat(campaign.dollerRate),
-            0
-          )
-      )
-    ).toFixed(2)
-  }
+        (
+          Mypayments
+            .filter(payment => payment.clientEmail === campaign.clientEmail)
+            .reduce((acc, payment) => acc + parseFloat(payment?.amount || 0), 0)
+        ) 
+        -
+        (
+          mycampaigns
+            .filter(payment => payment.clientEmail === campaign.clientEmail)
+            .reduce(
+              (acc, campaign) => acc + parseFloat(campaign.tSpent) * parseFloat(campaign.dollerRate),
+              0
+            )
+        )
+      ).toFixed(0)
+    }
+  </span>
 </td>
+
+
+
 
 
 
   <td style={{  border: 'var(--border)'}} className="p-3 border-r text-center border-gray-400">
   <div className="flex justify-center  items-center gap-3">
-  <div>
-  <button
- className="bg-green-700 hover:bg-blue-700 text-white px-2 py-1 rounded"
-    onClick={() =>
-      document.getElementById(`modal_${campaign._id}`).showModal()
-    }
-  >
-    Edit
-  </button>
 
-  <dialog id={`modal_${campaign._id}`} className="modal">
-    <div className="modal-box bg-white text-black">
-      <form  onSubmit={(e) => handleUpdate2(e, campaign._id, campaign)}>
-        <h1 className="text-md mb-5">
-          Client Name:{" "}
-          <span className="text-blue-600 text-xl font-bold">
-            {campaign.clientName}
-          </span>
-        </h1>
-
-        <div className="mb-4">
-          <label className="block text-start text-gray-700">Client Name</label>
-          <input
-            type="text"
-            name="clientName"
-            defaultValue={campaign?.clientName}
-            className="w-full border-black bg-white border rounded p-2 mt-1"
-          />
-        </div>
-        <div className="mb-4">
-          <label className="block text-start text-gray-700">Phone</label>
-          <input
-            type="text"
-            name="clientPhone"
-            defaultValue={campaign?.clientPhone}
-            className="w-full bg-white border-black border rounded p-2 mt-1"
-          />
-        </div>
-        <div className="mb-4">
-          <label className="block text-start text-gray-700">Email</label>
-          <input
-            type="email"
-            name="clientEmail"
-            
-            defaultValue={campaign?.clientEmail}
-            className="w-full border-black bg-white border rounded p-2 mt-1"
-          />
-        </div>
-
-        <div className="grid grid-cols-2 gap-3">
-          <button
-            onClick={() =>
-              document.getElementById(`modal_${campaign._id}`).close()
-            }
-            type="button"
-            className="font-avenir hover:bg-red-700 px-3 py-1 bg-red-600 rounded-lg text-white"
-          >
-            Close
-          </button>
-          <button
-            type="submit"
-            className="font-avenir hover:bg-indigo-700 px-3 py-1 bg-[#05a0db] rounded-lg text-white"
-          >
-            Update
-          </button>
-        </div>
-      </form>
-    </div>
-  </dialog>
-</div>
 
                       <button
-                           className="bg-red-700 hover:bg-blue-700 text-white px-2 py-1 rounded"
+                         className=" hover:bg-blue-700 text-[#f86c6b] text-xl px-2 py-1 rounded"
                           onClick={() => handledelete(campaign._id)}
                         >
                           <ToastContainer></ToastContainer>
-                          Delete
+                          <span >
+                          <FaMinusSquare  />
+                          </span>
+                          
                         </button>
                       </div>
-
+ 
   </td>
 </tr>
 ))}

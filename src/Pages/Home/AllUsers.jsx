@@ -5,17 +5,15 @@ import { AuthContext } from "../../Security/AuthProvider";
 import UseAxiosPublic from "../../Axios/UseAxiosPublic";
 import Swal from "sweetalert2";
 import { Helmet } from "react-helmet-async";
-import { MdDelete } from "react-icons/md";
 import EmployeeClientPay from "../DashboardRoot/EmployeeClientPay";
 import useClients from "../../Hook/useClient";
 import { Link } from "react-router-dom";
-import Profile from "../Profile/EmployeeProfile";
-import { IoIosAddCircle } from "react-icons/io";
 import useAdsPayment from "../../Hook/useAdsPayment";
 import useAdsAccountCenter from "../../Hook/useAdsAccountCenter";
+import useAllEmployee from "../../Hook/useAllEmployee";
 
 const AllUsers = () => {
-  const [users, refetch] = useUsers(); // Fetch users data
+  const [allEmployees,refetch]=useAllEmployee()
   const { user } = useContext(AuthContext); // Get current user
   const [employees, setEmployees] = useState([]); // State to hold filtered employees
   const [employees2, setEmployees2] = useState([]); // State to hold filtered employees
@@ -25,31 +23,30 @@ const AllUsers = () => {
   const [employees6, setEmployees6] = useState([]); // State to hold filtered employees
   const [employees7, setEmployees7] = useState([]); // State to hold filtered employees
   
-  // Get the initial tab from local storage or default to 'all'
   const initialTab = localStorage.getItem("activeTab") || "all";
   const [activeTab, setActiveTab] = useState(initialTab);
   console.log(activeTab);
 
   useEffect(() => {
-    if (users && activeTab !== 'all') {
-      const employeeList = users.filter((u) => u.role === activeTab);
+    if (allEmployees && activeTab !== 'all') {
+      const employeeList = allEmployees.filter((u) => u.role === activeTab);
       setEmployees(employeeList);
-      const employeeList2 = users.filter((u) => u.role === 'graphicDesigner');
+      const employeeList2 = allEmployees.filter((u) => u.role === 'graphicDesigner');
       setEmployees2(employeeList2);
-      const employeeList3 = users.filter((u) => u.role === 'admin');
+      const employeeList3 = allEmployees.filter((u) => u.role === 'admin');
       setEmployees3(employeeList3);
-      const employeeList4 = users.filter((u) => u.role === 'employee');
+      const employeeList4 = allEmployees.filter((u) => u.role === 'employee');
       setEmployees4(employeeList4);
-      const employeeList5 = users.filter((u) => u.role === 'webDeveloper');
+      const employeeList5 = allEmployees.filter((u) => u.role === 'webDeveloper');
       setEmployees5(employeeList5);
-      const employeeList6 = users.filter((u) => u.role === 'contributor');
+      const employeeList6 = allEmployees.filter((u) => u.role === 'contributor');
       setEmployees6(employeeList6);
-      const employeeList7 = users.filter((u) => u.role === 'client');
+      const employeeList7 = allEmployees.filter((u) => u.role === 'client');
       setEmployees7(employeeList7);
     } else {
-      setEmployees(users); // Show all users if 'all' is selected
+      setEmployees(allEmployees); 
     }
-  }, [users, activeTab]);
+  }, [allEmployees, activeTab]);
 
   const AxiosPublic = UseAxiosPublic();
 
@@ -113,7 +110,6 @@ const AllUsers = () => {
   const [adsPayment] = useAdsPayment();
   const [adsAccountCenter] = useAdsAccountCenter();
 
-  // Calculate the total clients for employees
   const totalClientsForEmployees = activeTab === 'employee'
     ? employees.reduce((total, employee) => 
         total + clients.filter(client => client.employeeEmail === employee.email).length
@@ -175,7 +171,7 @@ const AllUsers = () => {
       className={getButtonClass('all')}
       onClick={() => changeTab('all')}
     >
-      All Users ({users.length})
+      All Users ({allEmployees.length})
     </button>
     <button 
       className={getButtonClass('admin')}

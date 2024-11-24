@@ -54,6 +54,7 @@ const AdminPayments = () => {
   
   const [bkashMarcent, setBkashMarcentTotal] = useState(0);
   const [nagadPersonal, setNagadPersonalTotal] = useState(0);
+  const [nagadMarchent, setNagadMarchentTotal] = useState(0);
   const [bkashPersonal, setBkashPersonalTotal] = useState(0);
   const [rocketPersonal, setRocketPersonalTotal] = useState(0);
   const [bankTotal, setBankTotal] = useState(0);
@@ -79,6 +80,9 @@ const AdminPayments = () => {
     const filter6 = filtered.filter(d => d.paymentMethod === 'bank');
     const total6 = filter6.reduce((acc, datas) => acc + parseFloat(datas.payAmount), 0);
     setBankTotal(total6);
+    const filter7 = filtered.filter(d => d.paymentMethod === 'nagadMarchent');
+    const total7 = filter7.reduce((acc, datas) => acc + parseFloat(datas.payAmount), 0);
+    setNagadMarchentTotal(total7);
   }, [filteredData]);
   
   // Other functions (handlePayment, handleUpdatePayment, toggleDropdown, handleDelete, etc.) remain unchanged.
@@ -107,8 +111,7 @@ const AdminPayments = () => {
       status:'pending'
     };
 
-    AxiosPublic.post(
-      "https://digital-networking-server.vercel.app/employeePayment",
+    AxiosPublic.post("/employeePayment",
       data
     )
       .then((res) => {
@@ -232,10 +235,11 @@ const AdminPayments = () => {
         <title>Admin Payment | Digital Network </title>
         <link rel="canonical" href="https://www.example.com/" />
       </Helmet>
-      <div style={{ backgroundColor: 'var(--bg-color3)', color: 'var(--text-color)', border: 'var(--border)' }} className="grid grid-cols-2 p-5 rounded-lg sm:grid-cols-2 md:grid-cols-3 gap-3 lg:gap-5 lg:grid-cols-6 px-5">
+      <div style={{ backgroundColor: 'var(--bg-color3)', color: 'var(--text-color)', border: 'var(--border)' }} className="grid grid-cols-2 p-5 rounded-lg sm:grid-cols-2 md:grid-cols-3 gap-3 lg:gap-5 lg:grid-cols-7 px-5">
   {[
     { category: 'bkashMarchent', img: 'https://i.ibb.co/bHMLyvM/b-Kash-Merchant.png', amount: bkashMarcent, bgColor: '#f7e8e8' },
     { category: 'bkashPersonal', img: 'https://i.ibb.co/520Py6s/bkash-1.png', amount: bkashPersonal, bgColor: '#ffe6f7' },
+    { category: 'nagadMarchent', img: 'https://i.ibb.co.com/WsDkLzc/Nagad-Marchant.png', amount: nagadMarchent, bgColor: '#fff2cc' },
     { category: 'nagadPersonal', img: 'https://i.ibb.co/JQBQBcF/nagad-marchant.png', amount: nagadPersonal, bgColor: '#fff2cc' },
     { category: 'rocketPersonal', img: 'https://i.ibb.co/QkTM4M3/rocket.png', amount: rocketPersonal, bgColor: '#e0f7fa' },
     { category: 'bank', img: 'https://i.ibb.co/PZc0P4w/brac-bank-seeklogo.png', amount: bankTotal, bgColor: '#f2f2f2' }
@@ -273,6 +277,10 @@ const AdminPayments = () => {
     <dialog id="my_modal_1" className="modal">
       <div className="modal-box bg-white text-black font-bold">
         <form onSubmit={(e) => handlePayment(e)}>
+
+          <div className="grid lg:grid-cols-2">
+
+          </div>
           <div className="">
             <h1
               className="text-black flex hover:text-red-500 justify-end text-end cursor-pointer"
@@ -287,10 +295,11 @@ const AdminPayments = () => {
               name="date"
               required
               defaultValue={formattedDate}
-              className="w-full border bg-white border-black rounded p-2 mt-1"
+              className="w-full border text-black bg-white border-black rounded p-2 mt-1"
             />
           </div>
-              <div className="grid gap-3 grid-cols-2">
+
+              <div className="grid lg:grid-cols-2 gap-3">
               <div className="mb-4 ">
             <label className="block text-gray-250">Amount</label>
             <input
@@ -301,7 +310,7 @@ const AdminPayments = () => {
               className="w-full border bg-white border-black rounded p-2 mt-1"
             />
           </div>
-            <div className="mb-4">
+          <div className="mb-4">
             <label className="block text-gray-250">Charge</label>
             <input
               required
@@ -315,21 +324,49 @@ const AdminPayments = () => {
               </div>
             
           </div>
+
           <div className="mb-4">
-            <label className="block text-gray-250">Payment Method</label>
-            <select
-              required
-              name="paymentMethod"
-              className="w-full border bg-white border-black rounded p-2 mt-1"
-            >
-              <option value="bkashMarchent">Bkash Marchent</option>
-              <option value="bkashPersonal">Bkash Personal</option>
-              <option value="nagadPersonal">Nagad Personal</option>
-              <option value="rocketPersonal">Rocket Personal</option>
-            </select>
-          </div>
+  <div className="mt-2 flex justify-between items-center">
+    <div className="form-control">
+      <label className="label flex justify-start items-center gap-2 cursor-pointer">
+        <input
+          type="radio"
+          name="paymentMethod"
+          value="bkashPersonal"
+          className="radio radio-primary"
+        />
+        <span className="label-text text-black">Bkash Personal</span>
+      </label>
+    </div>
+    <div className="form-control">
+      <label className="label flex justify-start items-center gap-2 cursor-pointer">
+        <input
+          type="radio"
+          name="paymentMethod"
+          value="nagadPersonal"
+          className="radio radio-primary"
+        />
+        <span className="label-text text-black">Nagad Personal</span>
+      </label>
+    </div>
+    <div className="form-control">
+      <label className="label flex justify-start items-center gap-2 cursor-pointer">
+        <input
+          type="radio"
+          name="paymentMethod"
+          value="rocketPersonal"
+          className="radio radio-primary"
+        />
+        <span className="label-text text-black">Rocket Personal</span>
+      </label>
+    </div>
+  </div>
+         </div>
+
+
+
           <div className="mb-4">
-            <label className="block text-gray-250">Note</label>
+            <label className="block text-gray-250">Note (Optional)</label>
             <input
               type="text"
               name="note"
@@ -347,7 +384,7 @@ const AdminPayments = () => {
               type="submit"
               className="font-avenir w-full hover:bg-indigo-700 px-3 pt-2 rounded-lg flex justify-center text-white bg-[#05a0db]"
             >
-              Send
+              Submit
             </button>
           </div>
         </form>
@@ -472,6 +509,13 @@ const AdminPayments = () => {
                     <img
                       className="h-10 w-24 flex my-auto items-center mx-auto justify-center"
                       src="https://i.ibb.co/JQBQBcF/nagad-marchant.png"
+                      alt=""
+                    />
+                  )}
+                  {payment.paymentMethod === "nagadMarchent" && (
+                    <img
+                      className="h-10 w-24 flex my-auto items-center mx-auto justify-center"
+                      src="https://i.ibb.co.com/WsDkLzc/Nagad-Marchant.png"
                       alt=""
                     />
                   )}

@@ -105,6 +105,56 @@ const ClientPaymentHistry = () => {
         toast.error("Failed to send bank payment request");
       }
     }
+
+    if (paymentMethod === "nagadMarchent") {
+      const employeeName = user?.displayName;
+      const payAmount = e.target.amount.value;  // Use the amount for payAmount
+      const bankData = {
+        employeeName,
+        employeeEmail,
+        payAmount,
+        note,
+        paymentMethod,
+        date,
+        status: 'pending'
+      };
+  
+      try {
+        const response = await AxiosPublic.post("/employeePayment", bankData);
+        toast.success("Bank payment request sent successfully!");
+        refetch();
+        console.log(response.data);
+        document.getElementById("my_modal_1").close();
+      } catch (error) {
+        console.error("Error posting bank payment:", error);
+        toast.error("Failed to send bank payment request");
+      }
+    }
+
+    if (paymentMethod === "bkashMarchent") {
+      const employeeName = user?.displayName;
+      const payAmount = e.target.amount.value;  // Use the amount for payAmount
+      const bankData = {
+        employeeName,
+        employeeEmail,
+        payAmount,
+        note,
+        paymentMethod,
+        date,
+        status: 'pending'
+      };
+  
+      try {
+        const response = await AxiosPublic.post("/employeePayment", bankData);
+        toast.success("Bank payment request sent successfully!");
+        refetch();
+        console.log(response.data);
+        document.getElementById("my_modal_1").close();
+      } catch (error) {
+        console.error("Error posting bank payment:", error);
+        toast.error("Failed to send bank payment request");
+      }
+    }
   };
   
   const handleUpdatePayment = async (e, id) => {
@@ -168,7 +218,7 @@ const ClientPaymentHistry = () => {
 
 
 <div style={{ backgroundColor: 'var(--bg-color3)', color: 'var(--text-color)', border: 'var(--border)' }} className="lg:mt-5 mt-5 px-5 rounded-lg mx-5">
-  <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 lg:gap-5 mt-5 mb-5">
+  <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-7 gap-3 lg:gap-5 mt-5 mb-5">
     
     {/* bKash Merchant Card */}
     <div 
@@ -196,7 +246,18 @@ const ClientPaymentHistry = () => {
       </p>
     </div>
 
-    {/* Nagad Personal Card */}
+    <div 
+      onClick={() => setSelectedCategory('nagadMarchent')} 
+      style={{ backgroundColor: '#fff2cc', border: 'var(--border)' }} 
+      className="balance-card rounded-2xl p-5 text-center shadow-xl transition-transform transform hover:scale-105"
+    >
+      <img className="balance-card-img" src="https://i.ibb.co.com/WsDkLzc/Nagad-Marchant.png" alt="Nagad Personal" />
+      <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700">
+        <span className="text-lg lg:text-2xl font-extrabold">৳</span>
+        {filteredHistory?.filter(h => h.paymentMethod === 'nagadMarchent')?.reduce((acc, payment) => acc + payment?.amount, 0)}
+      </p>
+    </div>
+
     <div 
       onClick={() => setSelectedCategory('nagadPersonal')} 
       style={{ backgroundColor: '#fff2cc', border: 'var(--border)' }} 
@@ -302,7 +363,7 @@ const ClientPaymentHistry = () => {
        
 
           <div className="mb-4">
-            <label className="block text-gray-700">New Amount</label>
+            <label className="block text-gray-700">Amount</label>
             <input
               required
               type="number"
@@ -310,35 +371,106 @@ const ClientPaymentHistry = () => {
               className="w-full border border-gray-600 text-black bg-white rounded p-2 mt-1"
             />
           </div>
+          
+
           <div className="mb-4">
-            <label className="block text-gray-700">Note</label>
+
+
+  <div className="mt-2 grid mb-4 lg:grid-cols-3 ">
+
+  <div className="form-control">
+      <label className="label flex justify-start items-center gap-2 cursor-pointer">
+        <input
+          type="radio"
+          name="bkashMarchent"
+          value="bkashMarchent"
+          className="radio radio-primary"
+        />
+        <span className="label-text text-black">Bkash Marchent</span>
+      </label>
+    </div>
+
+    <div className="form-control">
+      <label className="label flex justify-start items-center gap-2 cursor-pointer">
+        <input
+          type="radio"
+          name="paymentMethod"
+          value="bkashPersonal"
+          className="radio radio-primary"
+        />
+        <span className="label-text text-black">Bkash Personal</span>
+      </label>
+    </div>
+
+
+    <div className="form-control">
+      <label className="label flex justify-start items-center gap-2 cursor-pointer">
+        <input
+          type="radio"
+          name="bank"
+          value="bank"
+          className="radio radio-primary"
+        />
+        <span className="label-text text-black">Bank Payment</span>
+      </label>
+    </div>
+
+    <div className="form-control">
+      <label className="label flex justify-start items-center gap-2 cursor-pointer">
+        <input
+          type="radio"
+          name="nagadMarchent"
+          value="nagadMarchent"
+          className="radio radio-primary"
+        />
+        <span className="label-text text-black">Nagad Marchent</span>
+      </label>
+    </div>
+
+
+    
+    <div className="form-control">
+      <label className="label flex justify-start items-center gap-2 cursor-pointer">
+        <input
+          type="radio"
+          name="nagadPersonal"
+          value="nagadPersonal"
+          className="radio radio-primary"
+        />
+        <span className="label-text text-black">Nagad Personal</span>
+      </label>
+    </div>
+
+
+   
+
+
+    <div className="form-control">
+      <label className="label flex justify-start items-center gap-2 cursor-pointer">
+        <input
+          type="radio"
+          name="paymentMethod"
+          value="rocketPersonal"
+          className="radio radio-primary"
+        />
+        <span className="label-text text-black">Rocket Personal</span>
+      </label>
+    </div>
+
+   
+   
+  </div>
+
+  <div className="mb-4">
+            <label className="block text-gray-700">Note (optional)</label>
             <input
-              required
+             placeholder="type note..."
               type="text"
               name="note"
               className="w-full border border-gray-600 text-black bg-white rounded p-2 mt-1"
             />
           </div>
- 
-       
-          <div className="mb-4">
-            <label className="block text-gray-700">Payment Method</label>
-            <select
-              name="paymentMethod"
-              className="w-full border border-gray-600 text-black bg-white rounded p-2 mt-1"
-            >
-              <option disabled value="">
-                Select a Method
-              </option>
-              <option value="bkashMarchent">Bkash Marchent</option>
-              <option value="bkashPersonal">Bkash Personal</option>
-              <option value="nagadPersonal">Nagad Personal</option>
-              <option value="rocketPersonal">Rocket Personal</option>
-              <option value="bank">Bank</option>
-            </select>
-          </div>
-       
-     
+         </div>
 
         {/* Buttons at the bottom in a two-grid layout */}
         <div className="grid grid-cols-2 gap-3 mt-8">
@@ -361,7 +493,7 @@ const ClientPaymentHistry = () => {
   </dialog>
 </div>
 
-<div  className="overflow-x-auto rounded-xl  text-center " style={{ backgroundColor: 'var(--bg-color)', color: 'var(--text-color)'}}>
+<div  className="overflow-x-auto rounded-xl mb-5  text-center " style={{ backgroundColor: 'var(--bg-color)', color: 'var(--text-color)'}}>
           <table className="min-w-full text-center ">
             <thead className=" ">
               <tr className="" style={{border: 'var(--border)',borderLeft: 'var(--border)', borderRight: 'var(--border)', color: 'var(--text-color)'}}>
@@ -431,6 +563,13 @@ const ClientPaymentHistry = () => {
                       <img
                         className="h-10 w-24 flex my-auto items-center mx-auto justify-center"
                         src="https://i.ibb.co/JQBQBcF/nagad-marchant.png"
+                        alt=""
+                      />
+                    )}
+                    {payment.paymentMethod === "nagadMarchent" && (
+                      <img
+                        className="h-10 w-24 flex my-auto items-center mx-auto justify-center"
+                        src="https://i.ibb.co.com/WsDkLzc/Nagad-Marchant.png"
                         alt=""
                       />
                     )}

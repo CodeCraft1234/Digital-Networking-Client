@@ -16,15 +16,35 @@ const AllClientsPayments = () => {
   const [users] = useUsers();
   const [employees, setEmployees] = useState([]);
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
-  const [showAll, setShowAll] = useState(false);
-  const [itemsToShow] = useState(200); 
-  const displayedItems = showAll ? filteredData : filteredData.slice(0, itemsToShow);
   const [selectedPayment, setSelectedPayment] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const initialTab = localStorage.getItem("activeTaballClientspays") ;
   const [sortMonth, setSortMonth] = useState(initialTab); 
   const initialTab2 = localStorage.getItem("activeTaballClientsemp") ;
   const [selectedEmployee, setSelectedEmployee] = useState(initialTab2);
+
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 20;
+
+  const displayedItems = filteredData.slice(0, currentPage * itemsPerPage);
+  const isMoreItems = currentPage * itemsPerPage < filteredData.length;
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (
+        window.innerHeight + document.documentElement.scrollTop + 100 >=
+        document.documentElement.scrollHeight
+      ) {
+        setCurrentPage((prevPage) => prevPage + 1);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
   
   const changeTab = (tab) => {
     setSortMonth(tab);
@@ -122,6 +142,7 @@ const AllClientsPayments = () => {
   const [bkashPersonal, setBkashPersonalTotal] = useState(0);
   const [rocketPersonal, setRocketPersonalTotal] = useState(0);
   const [bankTotal, setBankTotal] = useState(0);
+  const [nagadMarchent, setNagadMarchentTotal] = useState(0);
 
   useEffect(() => {
     const filtered = displayedItems;
@@ -145,8 +166,15 @@ const AllClientsPayments = () => {
     const filter6 = filtered.filter((d) => d.paymentMethod === 'bank');
     const total6 = filter6.reduce((acc, datas) => acc + (parseFloat(datas.amount) || 0), 0);
     setBankTotal(total6);
+
+     const filter7 = filtered.filter(d => d.paymentMethod === 'nagadMarchent');
+    const total7 = filter7.reduce((acc, datas) => acc + parseFloat(datas.payAmount), 0);
+    setNagadMarchentTotal(total7);
   }, [displayedItems]); 
   
+
+
+
   return (
     <div className="m-5">
       <Helmet>
@@ -154,14 +182,16 @@ const AllClientsPayments = () => {
         <link rel="canonical" href="https://www.example.com/" />
       </Helmet>
 
-      <div style={{ backgroundColor: 'var(--bg-color3)', color: 'var(--text-color)', border: 'var(--border)' }} className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 lg:gap-5 px-5 p-5 rounded-lg">
+      <div style={{ backgroundColor: 'var(--bg-color3)', color: 'var(--text-color)', border: 'var(--border)' }} className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-7 gap-3 lg:gap-5 px-5 p-5 rounded-lg">
   {[
     { category: 'bkashMarchent', img: 'https://i.ibb.co/bHMLyvM/b-Kash-Merchant.png', amount: bkashMarcent, bgColor: '#f7e8e8' },
     { category: 'bkashPersonal', img: 'https://i.ibb.co/520Py6s/bkash-1.png', amount: bkashPersonal, bgColor: '#ffe6f7' },
+    
+    { category: 'nagadMarchent', img: 'https://i.ibb.co.com/WsDkLzc/Nagad-Marchant.png', amount: nagadMarchent, bgColor: '#fff2cc' },
     { category: 'nagadPersonal', img: 'https://i.ibb.co/JQBQBcF/nagad-marchant.png', amount: nagadPersonal, bgColor: '#fff2cc' },
     { category: 'rocketPersonal', img: 'https://i.ibb.co/QkTM4M3/rocket.png', amount: rocketPersonal, bgColor: '#e0f7fa' },
     { category: 'bank', img: 'https://i.ibb.co/PZc0P4w/brac-bank-seeklogo.png', amount: bankTotal, bgColor: '#f2f2f2' },
-    { category: 'All', img: '', amount: bkashPersonal + bkashMarcent + nagadPersonal + rocketPersonal + bankTotal, bgColor: '#d9f8d9', total: true }
+    { category: 'All', img: '', amount: bkashPersonal + bkashMarcent + nagadPersonal + nagadMarchent  + rocketPersonal + bankTotal, bgColor: '#d9f8d9', total: true }
   ].map(({ category, img, amount, bgColor, total }) => (
     <div style={{ backgroundColor: bgColor, border: 'var(--border)' }} key={category} onClick={() => setSelectedCategory(category)} className="balance-card bg-white rounded-2xl shadow-lg p-5 text-center transition-transform hover:scale-105 border-0">
       {total ? (
@@ -464,22 +494,7 @@ const AllClientsPayments = () => {
           </div>
         </div>
       )}
-      {!showAll && filteredData.length > itemsToShow && (
-  <button
-    onClick={() => setShowAll(true)}
-    className="mt-4 p-2 mx-auto flex justify-center my-10 bg-blue-500 text-white rounded"
-  >
-    Show All
-  </button>
-)}
-{showAll && (
-  <button
-    onClick={() => setShowAll(false)}
-    className="mt-4 p-2  mx-auto flex justify-center my-10 bg-gray-500 text-white rounded"
-  >
-    Show Less
-  </button>
-)}
+        {isMoreItems && <p className="text-center mt-5">Loading more clients...</p>}
     </div>
   );
 };

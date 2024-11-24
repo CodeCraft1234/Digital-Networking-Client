@@ -15,6 +15,7 @@ import useEditNotification from "../../Hook/useEditNotificaation";
 import UseAxiosPublic from "../../Axios/UseAxiosPublic";
 import { formatDistanceToNow } from "date-fns";
 import { IoNotificationsCircleSharp } from "react-icons/io5";
+import useAllEmployee from "../../Hook/useAllEmployee";
 
 const DashboardRoot = () => {
   const [showSidebar, setShowSidebar] = useState(false);
@@ -37,21 +38,21 @@ const DashboardRoot = () => {
   };
 
   const isActive = (path) => location.pathname === path;
-  const [users]=useUsers()
-
+  
   const [isOpen, setIsOpen] = useState(false);
   const [isOpen2, setIsOpen2] = useState(false);
   const [isOpen3, setIsOpen3] = useState(false);
   const dropdownRef = useRef(null); 
   const dropdownRef2 = useRef(null); 
   const [ddd, setDdd] = useState({}); 
-
+  
+  const [allEmployees]=useAllEmployee()
   useEffect(() => {
-      if (users && user) {
-          const fff = users.find(u => u.email === user?.email);
+      if (allEmployees && user) {
+          const fff = allEmployees.find(u => u.email === user?.email);
           setDdd(fff || {}); 
       }
-  }, [users, user]);
+  }, [allEmployees, user]);
   
   const handleClickOutside = (event) => {
     if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {

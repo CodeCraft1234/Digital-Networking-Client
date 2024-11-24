@@ -1,3 +1,4 @@
+
 import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../../Security/AuthProvider";
 import UseAxiosPublic from "../../Axios/UseAxiosPublic";
@@ -19,10 +20,8 @@ const AllAdsPayments = () => {
   const [selectedDate, setSelectedDate] = useState("");
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   const [selectedPayment, setSelectedPayment] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [showAll, setShowAll] = useState(false);
-  const [itemsToShow, setItemsToShow] = useState(40);
   const [bkashMarcent, setBkashMarcentTotal] = useState(0);
+  const [nagadMarchent, setNagadMarchentTotal] = useState(0);
   const [nagadPersonal, setNagadPersonalTotal] = useState(0);
   const [bkashPersonal, setBkashPersonalTotal] = useState(0);
   const [rocketPersonal, setRocketPersonalTotal] = useState(0);
@@ -46,6 +45,25 @@ const AllAdsPayments = () => {
   };
   
 
+  const [currentPage, setCurrentPage] = useState(1);
+
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (
+        window.innerHeight + document.documentElement.scrollTop + 100 >=
+        document.documentElement.scrollHeight
+      ) {
+        setCurrentPage((prevPage) => prevPage + 1);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
+  
   useEffect(() => {
       if (users && user) {
           const datas=users.filter(f=>f.role === 'contributor')
@@ -81,7 +99,6 @@ const AllAdsPayments = () => {
   );
   const filteredByCategory = selectedCategory ? filteredItems.filter((item) => item.status === selectedCategory) : filteredItems;
   
-  // Calculate total payment
   useEffect(() => {
     setTotalPayment(filteredByCategory.reduce((acc, campaign) => acc + parseFloat(campaign.payAmount), 0));
   }, [filteredByCategory]);
@@ -93,6 +110,9 @@ const AllAdsPayments = () => {
   }, [adsPayment, selectedYear]);
   
   // Edit functionality
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  // Edit functionality
   const handleEditClick = (payment) => {
     setSelectedPayment(payment);
     setIsModalOpen(true);
@@ -101,7 +121,7 @@ const AllAdsPayments = () => {
     setIsModalOpen(false);
     setSelectedPayment(null);
   };
-  
+
   // Payment totals by method
   useEffect(() => {
     const calculateTotal = (method) =>
@@ -110,11 +130,15 @@ const AllAdsPayments = () => {
     setNagadPersonalTotal(calculateTotal('nagadPersonal'));
     setBkashPersonalTotal(calculateTotal('bkashPersonal'));
     setRocketPersonalTotal(calculateTotal('rocketPersonal'));
+    setNagadMarchentTotal(calculateTotal('nagadMarchent'));
     setBankTotal(calculateTotal('bank'));
   }, [adsPayment]);
+
+  const itemsPerPage = 20;
+
+  const displayedItems = filteredByCategory.slice(0, currentPage * itemsPerPage);
+  const isMoreItems = currentPage * itemsPerPage < filteredByCategory.length;
   
-  // Show all data or limited items
-  const displayedItems = showAll ? filteredByCategory : filteredByCategory.slice(0, 40);
   const years = Array.from({ length: 31 }, (_, i) => 2020 + i);
   
 
@@ -141,8 +165,7 @@ const AllAdsPayments = () => {
       note: e.target.note.value,
     };
 
-    AxiosPublic.patch(
-      `https://digital-networking-server.vercel.app/adsPayment/${selectedPayment._id}`,
+    AxiosPublic.patch(`/adsPayment/${selectedPayment._id}`,
       updatedPayment
     ).then((res) => {
       handleCancel();
@@ -183,10 +206,13 @@ const AllAdsPayments = () => {
         <title>Contributor Payments | Digital Network </title>
         <link rel="canonical" href="https://www.example.com/" />
       </Helmet>
-      <div style={{ backgroundColor: 'var(--bg-color3)', color: 'var(--text-color)', border: 'var(--border)' }} className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 lg:gap-5 px-5 p-5 rounded-lg">
+      <div style={{ backgroundColor: 'var(--bg-color3)', color: 'var(--text-color)', border: 'var(--border)' }} className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-7 gap-3 lg:gap-5 px-5 p-5 rounded-lg">
   {[
     { category: 'bkashMarchent', img: 'https://i.ibb.co/bHMLyvM/b-Kash-Merchant.png', amount: bkashMarcent, bgColor: '#f7e8e8' }, // Light red for bKash Merchant
     { category: 'bkashPersonal', img: 'https://i.ibb.co/520Py6s/bkash-1.png', amount: bkashPersonal, bgColor: '#ffe6f7' }, // Light pink for bKash Personal
+
+    { category: 'nagadMarchent', img: 'https://i.ibb.co.com/WsDkLzc/Nagad-Marchant.png', amount: nagadMarchent, bgColor: '#fff2cc' }, // Light yellow for Nagad
+
     { category: 'nagadPersonal', img: 'https://i.ibb.co/JQBQBcF/nagad-marchant.png', amount: nagadPersonal, bgColor: '#fff2cc' }, // Light yellow for Nagad
     { category: 'rocketPersonal', img: 'https://i.ibb.co/QkTM4M3/rocket.png', amount: rocketPersonal, bgColor: '#e0f7fa' }, // Light blue for Rocket
     { category: 'bank', img: 'https://i.ibb.co/PZc0P4w/brac-bank-seeklogo.png', amount: bankTotal, bgColor: '#f2f2f2' }, // Light grey for Bank
@@ -507,22 +533,7 @@ const AllAdsPayments = () => {
         </div>
       )}
     
-{!showAll && filteredByCategory.length > itemsToShow && (
-  <button
-    onClick={() => setShowAll(true)}
-    className="mt-4 p-2  mx-auto flex justify-center my-10 bg-blue-500 text-white rounded"
-  >
-    Show All
-  </button>
-)}
-{showAll && (
-  <button
-    onClick={() => setShowAll(false)}
-    className="mt-4 p-2  mx-auto flex justify-center my-10 bg-gray-500 text-white rounded"
-  >
-    Show Less
-  </button>
-)}
+    {isMoreItems && <p className="text-center mt-5">Loading more clients...</p>}
 
     </div>
   );
