@@ -17,7 +17,7 @@ const AdminDashboard = () => {
 
   const getActiveStyle = (isActive) => (
     isActive
-      ? { backgroundColor: 'var(--bg-color)', color: 'var(--text-color)' }
+      ? { backgroundColor: 'var(--bg-colorActive)', color: 'var(--text-color)' }
       : {}
   );
 
@@ -110,13 +110,7 @@ const AdminDashboard = () => {
           >
             <IoMdCash  className="w-6 h-6 mr-2" />Salary
           </NavLink>
-          <NavLink
-            to="/dashboard/othersSellery"
-            className="text-white hover:bg-[#f89320] hover:text-black py-2 px-3 rounded-lg flex items-center"
-            style={({ isActive }) => getActiveStyle(isActive)}
-          >
-            <IoMdCash  className="w-6 h-6 mr-2" />Others Salary
-          </NavLink>
+
           <NavLink
             to="dashboard/payoneer"
             className="text-white hover:bg-[#f89320] hover:text-black py-2 px-3 rounded-lg flex items-center"

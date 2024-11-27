@@ -311,7 +311,7 @@ const Sellery = () => {
     <table className="min-w-full text-center ">
       <thead className=" ">
         <tr className="" style={{backgroundColor: 'var(--bg-color)',border: 'var(--border)',borderLeft: 'var(--border)', borderRight: 'var(--border)', color: 'var(--text-color)'}}>
-              <th style={{  border: 'var(--border)'}} className="p-3">SL</th>
+          
               <th style={{  border: 'var(--border)'}} className="p-3">Month</th>
               <th style={{  border: 'var(--border)'}} className="p-3">Spent</th>
               <th style={{  border: 'var(--border)'}} className="p-3">T. Sellery</th>
@@ -330,7 +330,7 @@ const Sellery = () => {
                   : "bg-gray-200  text-left text-black border-b border-opacity-20"
               }`}
              >
-                <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-300 text-center px-5">{index + 1}</td>
+                
                 <td style={{  border: 'var(--border)'}} onClick={() => handleMonthClick(data)} className="p-3 hover:text-blue-600 cursor-pointer border-r-2 border-gray-300 text-center px-5">
                   {data.month}
                 </td>
@@ -365,7 +365,7 @@ const Sellery = () => {
           </tbody>
           <tfoot className=" font-bold ">
           <tr style={{ backgroundColor: 'var(--bg-color)', color: 'var(--text-color)'}}>
-            <td style={{  border: 'var(--border)'}} className="p-3 text-right" colSpan="2">Total</td>
+            <td style={{  border: 'var(--border)'}} className="p-3 text-right" colSpan="1">Total</td>
             <td style={{  border: 'var(--border)'}} className="p-3">
               ${employeeData.reduce((acc, data) => acc + data.totalSpent, 0).toFixed(2)}
             </td>

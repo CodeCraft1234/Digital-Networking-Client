@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import useAdsAccount from "../../Hook/useAdAccount";
-import { FaEdit } from "react-icons/fa";
+import { FaEdit, FaMinusSquare } from "react-icons/fa";
 import useUsers from "../../Hook/useUsers";
 import { useState } from "react";
 import { toast } from "react-toastify";
@@ -45,14 +45,13 @@ const AdsAccount = () => {
         const date = e.target.date.value;
         const currentBallence = e.target.currentBallence.value;
         const threshold = e.target.threshold.value;
-        const status = e.target.status.value;
-        const body = {date, accountName, currentBallence, threshold, status };
+        const body = {date, accountName, currentBallence, threshold};
       
         AxiosPublic.patch(`/adsAccount/${id}`, body)
           .then((res) => {
             console.log(res.data);
-            refetch(); // Refetch the data to get the updated list
-            setModalData(null); // Close the modal upon successful update
+            refetch(); 
+            setModalData(null); 
             toast.success("Account updated successfully!");
           })
           .catch((error) => {
@@ -78,7 +77,7 @@ const AdsAccount = () => {
       const body = { totalSpent: parseFloat(totalSpent)};
       const ids=generateRandomId()
    
-      axios.put(`https://digital-networking-server.vercel.app/adsAccount/totalSpent/${id}`, body)
+      AxiosPublic.put(`/adsAccount/totalSpent/${id}`, body)
         .then((res) => {
           refetch();
           setModalData2(null);
@@ -186,19 +185,17 @@ const AdsAccount = () => {
           <table className="min-w-full text-center ">
             <thead style={{ backgroundColor: 'var(--bg-color)', color: 'var(--text-color)'}} className=" ">
               <tr className="" style={{border: 'var(--border)',borderLeft: 'var(--border)', borderRight: 'var(--border)', color: 'var(--text-color)'}}>
-                <th className="p-3">OFF/ON</th>
-                <th className="p-3">Payment Date</th>
-                <th className="p-3">Employeer Name</th>
-                <th className="p-3">Ad Account Name</th>
-                <th className="p-3">Current Balance</th>
-                <th className="p-3">Threshold</th>
-                <th className="p-3">Spent</th>
-                <th className="p-3 " >
-                  Status
-                </th>
                 <th className="p-3 " >
                   Action
                 </th>
+                <th className="p-3 text-start">Ad Account Name</th>
+                <th className="p-3  text-start">Employeer Name</th>
+                <th className="p-3 text-start">Current Balance</th>
+                <th className="p-3 text-start">Threshold</th>
+                <th className="p-3 text-start">Spend</th>
+                <th className="p-3">Payment Date</th>
+                
+                <th className="p-3">OFF/ON</th>
               </tr>
             </thead>
             <tbody>
@@ -211,7 +208,66 @@ const AdsAccount = () => {
                     : "bg-gray-200  text-left text-black border-b border-opacity-20"
                 }`}
               >
-                   <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-l-2 border-gray-200 text-center">  <label className="inline-flex items-center cursor-pointer">
+                    <td style={{  border: 'var(--border)'}}
+                    className={`p-3 border-r-2  text-center border-gray-300  `}
+                  >
+               <div className="flex justify-center gap-3">
+                        <button
+                          className="text-red-600 text-xl hover:bg-blue-700  px-2 py-1 rounded"
+                          onClick={() => handleDelete(account._id)}
+                        >
+                          <FaMinusSquare  />
+                        </button>
+                      
+                      </div>
+                  </td>
+
+                
+
+                  <td style={{  border: 'var(--border)'}} className="p-3 border-r-2  border-gray-300 text-start px-5 ">
+                    <div className="">
+                    <button
+                         className="flex justify-start items-center gap-2"
+                          onClick={() => setModalData(account)}
+                        >
+                          <FaEdit />
+                           <h1> {account.accountName}</h1>
+                        </button>
+                     
+                    
+                    </div>
+                  </td>
+
+                  <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 hover:text-blue-700 hover:font-bold border-gray-300 text-start px-5 ">
+                    <Link to={`/dashboard/userInfo/${account?.employeeEmail}`}>
+                    {account.employeerName}
+                    </Link>
+                
+                  </td>
+                
+                
+                  <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-300 text-start">
+                  <span className=" text-xm font-extrabold">৳</span> {account.currentBallence}
+                  </td>
+                  <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-300 text-start ">
+                  <span className=" text-xm font-extrabold">৳</span> {account.threshold}
+                  </td>
+                  <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-300 text-center ">
+                    <div className="relative group flex items-center justify-center ">
+                      <h1><span className=" text-xm font-extrabold">৳</span> {account.totalSpent}</h1>
+                      <button
+                      className="text-black text-center px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                     onClick={() => setModalData2(account)}
+                   >
+                <FaEdit />
+               </button>
+
+                    </div>
+                  </td>
+                  <td style={{  border: 'var(--border)'}} className="p-3 border-l-2 border-r-2 text-center border-gray-300 ">
+                    {new Date(account.paymentDate).toLocaleDateString("en-GB")}
+                  </td>
+                  <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-l-2 border-gray-200 text-center">  <label className="inline-flex items-center cursor-pointer">
   <input
     type="checkbox"
     className="sr-only"
@@ -233,72 +289,8 @@ const AdsAccount = () => {
     ></span>
   </div>
 </label>
-</td>
-                  <td style={{  border: 'var(--border)'}} className="p-3 border-l-2 border-r-2 text-center border-gray-300 ">
-                    {new Date(account.paymentDate).toLocaleDateString("en-GB")}
-                  </td>
+                 </td>
 
-                  <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 hover:text-blue-700 hover:font-bold border-gray-300 text-start px-5 ">
-                    <Link to={`/dashboard/userInfo/${account?.employeeEmail}`}>
-                    {account.employeerName}
-                    </Link>
-                
-                  </td>
-                  <td style={{  border: 'var(--border)'}} className="p-3 border-r-2  border-gray-300 text-start px-5 ">
-                    <div className="">
-                      <h1> {account.accountName}</h1>
-                    
-                    </div>
-                  </td>
-                
-                  <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-300 text-center">
-                  <span className=" text-xm font-extrabold">৳</span> {account.currentBallence}
-                  </td>
-                  <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-300 text-center ">
-                  <span className=" text-xm font-extrabold">৳</span> {account.threshold}
-                  </td>
-                  <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-300 text-center ">
-                    <div className="relative group flex items-center justify-center ">
-                      <h1><span className=" text-xm font-extrabold">৳</span> {account.totalSpent}</h1>
-                      <button
-                      className="text-black text-right px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                     onClick={() => setModalData2(account)}
-                   >
-                <FaEdit />
-               </button>
-
-                    </div>
-                  </td>
-                  <td style={{  border: 'var(--border)'}}
-                    className={`p-3 border-r-2  text-center border-gray-300  ${
-                      account.status === "Active"
-                        ? "text-green-900 font-bold"
-                        : "text-red-600 font-bold"
-                    }`}
-                  >
-                    {account.status}
-                  </td>
-                  <td style={{  border: 'var(--border)'}}
-                    className={`p-3 border-r-2  text-center border-gray-300  `}
-                  >
-               <div className="flex justify-center gap-3">
-                        <button
-                          className="bg-green-700 hover:bg-blue-700 text-white px-2 py-1 rounded"
-                          onClick={() => setModalData(account)}
-                        >
-                          Edit
-                        </button>
-                        <button
-                          className="bg-red-700 hover:bg-blue-700 text-white px-2 py-1 rounded"
-                          onClick={() => handleDelete(account._id)}
-                        >
-                         Delete
-                        </button>
-                      
-                      </div>
-                  </td>
-
-                
                 </tr>
               ))}
 
@@ -325,7 +317,7 @@ const AdsAccount = () => {
       ).toFixed(2)}
                 </td>
                 <td className="p-3 border-gray-300 text-center"></td>
-                <td className="p-3 border-gray-300 text-center"></td>
+              
               </tr>
         
 
@@ -344,7 +336,7 @@ const AdsAccount = () => {
             <ImCross />
            </h1>
        <form onSubmit={(e) => handleUpdate(e, modalData._id)}>
-        <h1 className="text-black text-center d">Old Account Name: <span className="text-blue-700 text-center font-bold" >{modalData.accountName}</span></h1>
+        <h1 className="text-black text-center d">Account Name: <span className="text-blue-700 text-center font-bold" >{modalData.accountName}</span></h1>
         
         <div className="mb-4">
              <label className="block text-gray-500">Date</label>
@@ -352,7 +344,7 @@ const AdsAccount = () => {
                type="date"
                required
                name="date"
-               defaultValue={modalData.date}
+               defaultValue={modalData.paymentDate}
                className="w-full border-2 border-gray-400 rounded p-2 mt-1 bg-green-300 text-black"
              />
            </div>
@@ -366,7 +358,8 @@ const AdsAccount = () => {
              className="w-full border-2 border-black rounded p-2 mt-1 bg-white text-black"
            />
          </div>
-         <div className="mb-4">
+            <div className="grid lg:grid-cols-2 gap-3">
+            <div className="mb-4">
            <label className="block text-gray-500">Current Balance</label>
            <input
              type="number"
@@ -386,19 +379,8 @@ const AdsAccount = () => {
              className="w-full border rounded p-2 mt-1 text-black bg-white border-gray-500"
            />
          </div>
-         <div className="mb-4">
-           <label className="block text-gray-500">Status</label>
-           <select
-             name="status"
-             defaultValue={modalData.status}
-             disabled
-             className="w-full border rounded p-2 mt-1 text-black bg-white border-gray-500"
-           >
-             <option value="Active">Active</option>
-             <option value="Disable">Disable</option>
-           </select>
-         </div>
-   
+            </div>
+
          <div className="grid grid-cols-2 gap-3">
          <button
              className="p-2 hover:bg-red-700 rounded-lg bg-red-600 text-white text-center"

@@ -7,6 +7,7 @@ import useMpayment from '../../Hook/UseMpayment';
 import useMyCampaingsByEmail from '../../Hook/useMyCampaignByEmail';
 import useMypymentsByEmail from '../../Hook/useMyMPayments';
 import useMyClientsByEmail from '../../Hook/useMyClientsByEmail';
+import useMyEmployeePayments from '../../Hook/useMyemployeePayments';
 
 const months = [
   'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'
@@ -15,7 +16,7 @@ const months = [
 const MySummery = () => {
   const [users] = useUsers();
   const { user } = useContext(AuthContext);
-  const [employeePayment] = useEmployeePayment();
+  const [MyEmployeePayment]=useMyEmployeePayments(user?.email)
   const [Mpayment] = useMpayment();
 
   const [employees, setEmployees] = useState([]);
@@ -55,11 +56,9 @@ const MySummery = () => {
       : users.filter(u => u.role === 'employee');
 
     return relevantUsers.flatMap(user => {
-      const employeePayments = employeePayment.filter(
-        payment => selectedEmployee ? payment.employeeEmail === selectedEmployee : payment.employeeEmail === user.email
-      );
 
-      const paymentByMonth = employeePayments.reduce((acc, payment) => {
+      const paymentByMonth = MyEmployeePayment.filter(m=>m.status === 'Approved')
+      .reduce((acc, payment) => {
         const month = new Date(payment.date).toLocaleString('default', { month: 'long' });
         acc[month] = (acc[month] || 0) + parseFloat(payment.payAmount);
         return acc;
@@ -115,7 +114,7 @@ const MySummery = () => {
         };
       }).sort((a, b) => months.indexOf(a.month) - months.indexOf(b.month)); // Sort by month
     });
-  }, [users, selectedEmployee, employeePayment, Mpayment, recentMonths]);
+  }, [users, selectedEmployee, MyEmployeePayment, Mpayment, recentMonths]);
 
 
 
@@ -126,7 +125,7 @@ const MySummery = () => {
         <link rel="canonical" href="https://www.example.com/" />
       </Helmet>
 
-      <div style={{ backgroundColor: 'var(--bg-color3)', color: 'var(--text-color)', border: 'var(--border)' }} className="grid grid-cols-2 p-5 rounded-lg md:grid-cols-2 lg:grid-cols-3 text-black sm:grid-cols-2 gap-5 justify-around">
+      <div style={{ backgroundColor: 'var(--bg-color3)', color: 'var(--text-color)', border: 'var(--border)' }} className="grid grid-cols-2 p-5 rounded-lg md:grid-cols-2 lg:grid-cols-6 text-black sm:grid-cols-2 gap-5 justify-around">
   <div className="px-5 py-10 rounded-2xl bg-[#81c784] text-black shadow-lg text-center">
     <h2 className="text-xl font-bold">Total Spent</h2>
     <p className="lg:text-2xl text-xl font-bold mt-2">
@@ -182,12 +181,12 @@ const MySummery = () => {
           <table className="min-w-full text-center ">
             <thead className=" ">
               <tr className="" style={{border: 'var(--border)',borderLeft: 'var(--border)', borderRight: 'var(--border)', color: 'var(--text-color)'}}>
-              <th className="p-3">SL</th>
+            
               <th className="p-3">Month</th>
               <th className="p-3">Total Spent</th>
               <th className="p-3">Total BDT</th>
-              <th className="p-3">Client Payment</th>
               <th className="p-3">Admin Payment</th>
+              <th className="p-3">Client Payment</th>
               <th className="p-3">Due</th>
             </tr>
           </thead>
@@ -201,13 +200,14 @@ const MySummery = () => {
         : "bg-gray-200  text-center text-black border-b border-opacity-20"
     }`}
   >
-      <td style={{  border: 'var(--border)'}} className="p-3 border border-gray-300">{index + 1}</td>
+      
       <td style={{  border: 'var(--border)'}} className="p-3 border border-gray-300">{data.month}</td>
       <td style={{  border: 'var(--border)'}} className="p-3 border border-gray-300">${data.totalSpent.toFixed(2)}</td>
       <td style={{  border: 'var(--border)'}} className="p-3 border border-gray-300">৳{data.totalBill.toFixed(0)}</td>
-      <td style={{  border: 'var(--border)'}} className="p-3 border border-gray-300">৳{data.totalClientPay.toFixed(0)}</td>
       <td style={{  border: 'var(--border)'}} className="p-3 border border-gray-300">৳{data.totalAdminPay.toFixed(0)}</td>
+      <td style={{  border: 'var(--border)'}} className="p-3 border border-gray-300">৳{data.totalClientPay.toFixed(0)}</td>
       <td style={{  border: 'var(--border)'}} className="p-3 border border-gray-300">৳{(data.totalClientPay - data.totalAdminPay).toFixed(0)}</td>
+      
     </tr>
   ))}
 
@@ -215,25 +215,30 @@ const MySummery = () => {
 </tbody>
 <tfoot className=" font-bold ">
   <tr style={{ backgroundColor: 'var(--bg-color)', color: 'var(--text-color)'}}>
-    <td className="p-3 text-right border-gray-300" colSpan="2">Total</td>
+    <td className="p-3 text-right border-gray-300" colSpan="1">Total</td>
     <td className="p-3 border-gray-300">
       ${employeeData.reduce((acc, data) => acc + data.totalSpent, 0).toFixed(2)}
     </td>
     <td className="p-3 border-gray-300">
       ৳ {employeeData.reduce((acc, data) => acc + data.totalBill, 0).toFixed(0)}
     </td>
+
+    <td className="p-3 border-gray-300">
+      ৳ {employeeData.reduce((acc, data) => acc + data.totalAdminPay, 0).toFixed(0)}
+    </td>
+
     <td className="p-3 border-gray-300">
       ৳ {tPay
         .reduce((acc, payment) => acc + parseFloat(payment?.amount || 0), 0).toFixed(0)}
     </td>
-    <td className="p-3 border-gray-300">
-      ৳ {employeeData.reduce((acc, data) => acc + data.totalAdminPay, 0).toFixed(0)}
-    </td>
+
+   
     <td className="p-3 border-gray-300">
       ৳ {(tPay
         .reduce((acc, payment) => acc + parseFloat(payment?.amount || 0), 0).toFixed(0) - 
           employeeData.reduce((acc, data) => acc + data.totalAdminPay, 0)).toFixed(0)}
     </td>
+    
   </tr>
 </tfoot>
 

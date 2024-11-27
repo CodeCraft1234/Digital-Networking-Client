@@ -1,7 +1,5 @@
 import  { useEffect, useState, useMemo } from 'react';
 import { Helmet } from 'react-helmet-async';
-
-import useMpayment from '../../Hook/UseMpayment';
 import html2canvas from 'html2canvas';
 import { jsPDF } from 'jspdf';
 import useMyClientsByEmail from '../../Hook/useMyClientsByEmail';
@@ -86,7 +84,7 @@ const AllSummery = () => {
           const totalSellery = selleryData.reduce((acc, sell) => acc + sell.amount, 0);
           const totalBonus = selleryData.reduce((acc, sell) => acc + sell.bonus, 0);
   
-          const totalAdminPay = MyEmployeePayment
+          const totalAdminPay = MyEmployeePayment.filter(m=>m.status === 'Approved')
             .filter(payment => new Date(payment.date).toLocaleString('default', { month: 'long' }) === month)
             .reduce((acc, payment) => acc + parseFloat(payment.payAmount), 0);
   
@@ -279,12 +277,11 @@ const AllSummery = () => {
           <table className="min-w-full text-center ">
             <thead className=" ">
               <tr className="" style={{border: 'var(--border)',borderLeft: 'var(--border)', borderRight: 'var(--border)', color: 'var(--text-color)'}}>
-        <th className="p-3">SL</th>
         <th className="p-3">Month</th>
         <th className="p-3">Total Spent</th>
         <th className="p-3">Total BDT</th>
-        <th className="p-3">Client Pay</th>
         <th className="p-3">Employee Pay</th>
+        <th className="p-3">Client Pay</th>
       </tr>
     </thead>
     <tbody className='text-center'>
@@ -297,16 +294,16 @@ const AllSummery = () => {
         : "bg-gray-200  text-center text-black border-b border-opacity-20"
     }`}
   >
-      <td style={{  border: 'var(--border)'}} className="p-3 border">{index + 1}</td>
       <td style={{  border: 'var(--border)'}} className="p-3 border">{data.month}</td>
       <td style={{  border: 'var(--border)'}} className="p-3 border"><span className='font-extrabold '>$</span> {data.totalSpent.toFixed(2)}</td>
       <td style={{  border: 'var(--border)'}} className="p-3 border"><span className='font-extrabold '>৳</span> {data.totalBill.toFixed(0)}</td>
+      <td style={{  border: 'var(--border)'}} className="p-3 border"><span className='font-extrabold '>৳</span> {data.totalAdminPay.toFixed(0)}</td>
       <td style={{ border: 'var(--border)' }} className="p-3 border">
   <span className="font-extrabold">৳</span>{" "}
   {Number.isNaN(data.totalClientPay) ? 0 : data.totalClientPay.toFixed(0)}
 </td>
 
-      <td style={{  border: 'var(--border)'}} className="p-3 border"><span className='font-extrabold '>৳</span> {data.totalAdminPay.toFixed(0)}</td>
+      
       
     </tr>
   ))}
@@ -314,7 +311,7 @@ const AllSummery = () => {
 
     <tfoot>
       <tr  style={{ backgroundColor: 'var(--bg-color)', color: 'var(--text-color)'}} className=" font-bold ">
-      <td className="p-3 text-right" colSpan="2">
+      <td className="p-3 text-right" colSpan="1">
                 Total :
               </td>
         
@@ -322,14 +319,17 @@ const AllSummery = () => {
           $ {employeeData.reduce((acc, data) => acc + data.totalSpent, 0).toFixed(2)}
         </td>
         <td className="p-3  font-semibold">
-           ‍ <span className='font-extrabold  text-white'> ৳ </span> {employeeData.reduce((acc, data) => acc + data.totalBill, 0).toFixed(0)}
+           ‍ <span className='font-extrabold  '> ৳ </span> {employeeData.reduce((acc, data) => acc + data.totalBill, 0).toFixed(0)}
         </td>
         <td className="p-3  font-semibold">
-        <span className='font-extrabold  text-white'> ৳ </span> {employeeData.reduce((acc, data) => acc + data.totalClientPay, 0).toFixed(0)}
+        <span className='font-extrabold  '> ৳ </span> {employeeData.reduce((acc, data) => acc + data.totalAdminPay, 0).toFixed(0)}
         </td>
         <td className="p-3  font-semibold">
-        <span className='font-extrabold  text-white'> ৳ </span> {employeeData.reduce((acc, data) => acc + data.totalAdminPay, 0).toFixed(0)}
+        <span className='font-extrabold  '> ৳ </span> {employeeData.reduce((acc, data) => acc + data.totalClientPay, 0).toFixed(0)}
         </td>
+       
+       
+       
         
       </tr>
     

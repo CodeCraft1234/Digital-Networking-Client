@@ -9,6 +9,7 @@ import { Helmet } from "react-helmet-async";
 import { toast, ToastContainer } from "react-toastify";
 import useCampaings from "../../Hook/useCampaign";
 import useMpayment from "../../Hook/UseMpayment";
+import { FaEdit, FaMinusSquare } from "react-icons/fa";
 
 const AllClients = ({}) => {
   const [users] = useUsers();
@@ -210,13 +211,13 @@ const AllClients = ({}) => {
           <table className="min-w-full text-center ">
             <thead className=" ">
               <tr className="" style={{backgroundColor: 'var(--bg-color)', border: 'var(--border)',borderLeft: 'var(--border)', borderRight: 'var(--border)', color: 'var(--text-color)'}}>
-                <th className="p-3 text-center">SL</th>
+                <th className="p-3 text-center">{displayedItems.length}</th>
                 <th className="p-3 text-start">Client Name</th>
-                <th className="p-3 text-center">Client Phone</th>
+                <th className="p-3 text-left">Client Phone</th>
                 <th className="p-3 text-center">Total Bill</th>
                 <th className="p-3 text-center">Total Payment Rcv</th>
                 <th className="p-3 text-center">Total Due</th>
-                <th className="p-3 text-center">Action</th>
+         
               </tr>
             </thead>
             <tbody>
@@ -230,11 +231,20 @@ const AllClients = ({}) => {
                }`}
              >
                   <td style={{  border: 'var(--border)'}} className="p-3 border-l-2 border-r-2 border-gray-300 text-center">
-                    {index + 1}
+                  <button
+                       className="text-red-600 text-xl hover:bg-blue-700  px-2 py-1 rounded"
+                      onClick={() => handledelete(campaign._id)}
+                    >
+                      <FaMinusSquare  />
+                    </button>
                   </td>
 <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 hover:text-blue-700 hover:font-bold text-start border-gray-300 ">
   <Link to={`/dashboard/client/${campaign.clientEmail}`} className="flex justify-start items-center">
+
+
     {campaign.clientName}
+
+   
     {
       (() => {
         const balance = (
@@ -266,7 +276,17 @@ const AllClients = ({}) => {
 </td>
 
                   <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-300 text-center">
-                    {campaign.clientPhone}
+
+                     <button
+                     className="flex justify-start items-center gap-2"
+                       onClick={() =>
+                         document.getElementById(`modal_${campaign._id}`).showModal()
+                       }
+                     >
+                        <FaEdit />
+                        {campaign.clientPhone}
+                     </button>
+                   
                     </td>
                     <td style={{  border: 'var(--border)'}} className="p-3 border-r border-gray-400 text-center">
 
@@ -317,15 +337,8 @@ const AllClients = ({}) => {
   }
 </td>
 
-                  <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-200 text-center">
-                  <button
- className="bg-green-700 hover:bg-blue-700 mr-3 text-white px-2 py-1 rounded"
-    onClick={() =>
-      document.getElementById(`modal_${campaign._id}`).showModal()
-    }
-  >
-    Edit
-  </button>
+                 
+                  
 
   <dialog id={`modal_${campaign._id}`} className="modal">
     <div className="modal-box bg-white text-black">
@@ -386,13 +399,8 @@ const AllClients = ({}) => {
       </form>
     </div>
   </dialog>
-                    <button
-                       className="bg-red-700 text-white px-2 py-1 rounded"
-                      onClick={() => handledelete(campaign._id)}
-                    >
-                      Delete
-                    </button>
-                  </td>
+                  
+                
                 </tr>
               ))}
               {/* <tr style={{border: 'var(--border)',borderLeft: 'var(--border)', borderRight: 'var(--border)', color: 'var(--text-color)'}} className=" text-sm  font-bold">

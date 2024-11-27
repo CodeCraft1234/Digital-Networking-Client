@@ -12,6 +12,7 @@ import useMpayment from "../../Hook/UseMpayment";
 import useCampaingsByEmail from "../../Hook/useCampaignsByEmail";
 import useMypymentsByEmail from "../../Hook/useMyMPayments";
 import useMpymentsByEmail from "../../Hook/useMpaymentByEmail";
+import { FaEdit, FaMinusSquare } from "react-icons/fa";
 
 const ClientCampaign = () => {
     const { user } = useContext(AuthContext);
@@ -169,24 +170,24 @@ const ClientCampaign = () => {
        
     return (
         <div>
-            <div className="p-4">
+            <div className="p-5">
 
-            <div style={{ backgroundColor: 'var(--bg-color3)', color: 'var(--text-color)',border: 'var(--border)'}}  className="grid grid-cols-2 m-1 rounded-lg md:grid-cols-2 lg:grid-cols-4 text-black sm:grid-cols-2 gap-3 lg:gap-5 justify-around p-5">
+            <div style={{ backgroundColor: 'var(--bg-color3)', color: 'var(--text-color)',border: 'var(--border)'}}  className="grid grid-cols-2  rounded-lg md:grid-cols-2 lg:grid-cols-4 text-black sm:grid-cols-2 gap-3 lg:gap-3 justify-around p-5">
         <div className="px-5 py-10 rounded-2xl  bg-[#91a33a] text-white shadow-lg text-center">
-          <h2 className="lg:text-2xl text-sm font-bold">Total Spent</h2>
-          <p className="lg:text-4xl text-xl font-bold mt-2"> $ {totalSpent.toFixed(2)}</p>
+          <h2 className="lg:text-xl text-sm font-bold">Total Spent</h2>
+          <p className="lg:text-2xl text-xl font-bold mt-2"> $ {totalSpent.toFixed(2)}</p>
         </div>
 
         <div className="px-5 py-10 rounded-2xl bg-[#5422c0] text-white shadow-lg text-center">
           <h2 className="lg:text-2xl text-sm font-bold">Total Bill</h2>
-          <p className="lg:text-4xl text-xl font-bold mt-2">
-             <span className="lg:text-4xl text-xl font-extrabold">৳</span> {totalBills.toFixed(0)}
+          <p className="lg:text-2xl text-xl font-bold mt-2">
+             <span className="lg:text-2xl text-xl font-extrabold">৳</span> {totalBills.toFixed(0)}
           </p>
         </div>
 
         <div className="px-5 py-10 rounded-2xl  bg-[#05a0db] text-white shadow-lg text-center">
-          <h2 className="lg:text-2xl text-sm font-bold">Total Paid</h2>
-          <p className="lg:text-4xl text-xl font-bold mt-2"> <span className="lg:text-4xl text-xl font-extrabold">৳</span> {parseInt(totalPaymeent).toFixed(0)}</p>
+          <h2 className="lg:text-xl text-sm font-bold">Total Paid</h2>
+          <p className="lg:text-2xl text-xl font-bold mt-2"> <span className="lg:text-2xl text-xl font-extrabold">৳</span> {parseInt(totalPaymeent).toFixed(0)}</p>
         </div>
 
         <div className="px-5 py-10 rounded-2xl  bg-[#ce1a38] text-white shadow-lg text-center">
@@ -194,8 +195,8 @@ const ClientCampaign = () => {
   {((totalBills - totalPaymeent).toFixed(0))  >= 0 ? 'Due' : 'Advance'}
 </span>
 </h2>
-          <p className="lg:text-4xl text-xl font-bold mt-2">
-          <span className="lg:text-4xl text-xl font-extrabold">৳</span> {Math.abs((totalBills - totalPaymeent).toFixed(0))}
+          <p className="lg:text-2xl text-xl font-bold mt-2">
+          <span className="lg:text-2xl text-xl font-extrabold">৳</span> {Math.abs((totalBills - totalPaymeent).toFixed(0))}
           </p>
         </div>
       </div>
@@ -207,7 +208,7 @@ const ClientCampaign = () => {
     {
       ddd?.role ==='employee' && 
       <button
-      className="font-avenir hover:bg-indigo-700 px-5 p-3 lg:w-auto w-full mx-auto   bg-[#05a0db] rounded-lg text-white"
+      className="font-avenir hover:bg-indigo-700 px-5 p-2 lg:w-auto w-full mx-auto   bg-[#05a0db] rounded-lg text-white"
       onClick={() => document.getElementById("my_modal_2").showModal()}
     >
       Add Campaign
@@ -222,7 +223,7 @@ const ClientCampaign = () => {
             className=" w-full  p-1 mx-auto space-y-5 rounded-md  text-black font-bold"
           >
             <div>
-              <h1 className="text-3xl my-4 text-center font-bold text-white">
+              <h1 className="text-2xl mb-4 text-center font-bold text-black">
                 Add a Campaign
               </h1>
               <div className="mb-4">
@@ -239,7 +240,9 @@ const ClientCampaign = () => {
                   className="w-full border border-gray-600 text-black bg-green-300 rounded p-2 mt-1"
                 />
               </div>
-              <div className="mb-4">
+
+            <div className="grid lg:grid-cols-2 gap-3 items-center">
+            <div className="mb-4">
                 <label htmlFor="name" className="block mb-1 ml-1">
                   Campaign Name
                 </label>
@@ -257,7 +260,7 @@ const ClientCampaign = () => {
                 <select
                   required
                   name="adsAccount"
-                  className="w-full border border-gray-600 text-black bg-white rounded p-2 mt-1"
+                  className="w-full border border-gray-600 text-black bg-white rounded p-2 mt-2"
                 >
                   <option className="text-black" value="">
                     All Ads Account
@@ -269,6 +272,8 @@ const ClientCampaign = () => {
                   ))}
                 </select>
               </div>
+            </div>
+
             <div className="flex items-center gap-2">
             <div className="mb-4">
                 <label htmlFor="pageName" className="block mb-1 ml-1">
@@ -355,21 +360,17 @@ const ClientCampaign = () => {
   <div  className="overflow-x-auto rounded-xl mt-5  text-center " style={{ backgroundColor: 'var(--bg-color)', color: 'var(--text-color)'}}>
           <table className="min-w-full text-center ">
             <thead className=" ">
-              <tr className="" style={{border: 'var(--border)',borderLeft: 'var(--border)', borderRight: 'var(--border)', color: 'var(--text-color)'}}>
-                <th style={{  border: 'var(--border)'}} className="p-3">OFF/ON</th>    
+              <tr className="" style={{border: 'var(--border)',borderLeft: 'var(--border)', borderRight: 'var(--border)', color: 'var(--text-color)'}}>  
+                <th style={{  border: 'var(--border)'}} className="p-3">{campaignss?.length}</th>
                 <th style={{  border: 'var(--border)'}} className="p-3">Date</th>
-                <th style={{  border: 'var(--border)'}} className="p-3">Campaign Name</th>
-                <th style={{  border: 'var(--border)'}} className="p-3">Page Name</th>
+                <th style={{  border: 'var(--border)'}} className="p-3 text-start">Campaign Name</th>
+                <th style={{  border: 'var(--border)'}} className="p-3 text-start">Page Name</th>
                 <th style={{  border: 'var(--border)'}} className="p-3">Ads Account</th>
                 <th style={{  border: 'var(--border)'}} className="p-3">T. Budget</th>
                 <th style={{  border: 'var(--border)'}} className="p-3">T. Spent</th>
                 <th style={{  border: 'var(--border)'}} className="p-3">Total Bill</th>
                 <th style={{  border: 'var(--border)'}} className="p-3">Status</th>
-                {
-      ddd?.role ==='employee' && 
-      <th className="p-3">Action</th>
-      }
-              
+ 
               </tr>
             </thead>
             <tbody>
@@ -382,85 +383,42 @@ const ClientCampaign = () => {
                      : "bg-gray-200  text-left text-black border-b border-opacity-20"
                  }`}
                >
-                        <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-l-2 border-gray-200 text-center">  <label className="inline-flex items-center cursor-pointer">
-  <input
-    type="checkbox"
-    className="sr-only"
-    checked={work.status === "Active"}
-    onChange={() => {
-      const newStatus = work.status === "Active" ? "Complete" : "Active";
-      handleUpdate2(work._id, newStatus);
-    }}
-  />
-  <div
-    className={`relative w-12 h-6 transition duration-200 ease-linear rounded-full ${
-      work.status === "Active" ? "bg-blue-700" : "bg-gray-500"
-    }`}
-  >
-    <span
-      className={`absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition-transform duration-200 ease-linear transform ${
-        work.status === "Active" ? "translate-x-6" : ""
-      }`}
-    ></span>
-  </div>
-</label>
-</td>
+                <td style={{  border: 'var(--border)'}} className="p-3 border-l-2 border-r-2 border-gray-300 text-center">
+      <div className="flex justify-center gap-3">
+                
+                        <button
+                           className=" hover:bg-blue-700 text-[#f86c6b] text-xl px-2 py-1 rounded"
+                          onClick={() => handledelete(work._id)}
+                        >
+                         <span >
+                          <FaMinusSquare  />
+                          </span>
+                        </button>
+                      </div>
+     </td>
+                      
                   <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-200 text-center">
                   {new Date(work?.date).toLocaleDateString("en-GB")}
                   </td>
                   
                   <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-200 text-left">
-                    {work.campaignName}
-                  
-                  </td>
-                  <td style={{  border: 'var(--border)'}} className="p-3 hover:text-blue-700 hover:font-bold border-r-2 border-gray-200 text-left">
-                   <a href={`${work.pageUrl}`}> {work.pageName}</a>
-                  
-                  </td>
-                  
-                  <td  style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-200 text-center">
-                    {work.adsAccount}
-                  </td>
-
-                  <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-200 text-center">
-                  $ {work.tBudged}
-                  </td>
-
-                  <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-200 text-center">
-                  $ {work.tSpent}
-                  </td>
-
-                  <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-200 text-center">
-                    <span className="text-md mr-1 font-extrabold">৳</span>
-                    {parseInt(work.tSpent * work.dollerRate)}
-                  </td>
-                  <td style={{  border: 'var(--border)'}}
-                    className={`p-3 text-center border-r-2 border-gray-200 ${
-                      work.status === "Active"
-                        ? "text-green-500 font-bold"
-                        : "text-red-500 font-bold"
-                    }`}
-                  >
-                    {work.status}
-                  </td>
-
-                  {
-      ddd?.role ==='employee' && 
-      <td style={{  border: 'var(--border)'}}
-      className={`p-3 text-center  `}
-    >
-     <div className="flex justify-center gap-3">
-
-     <div>
-<button
-className="bg-green-700 hover:bg-blue-700 text-white px-2 py-1 rounded"
-onClick={() =>
-document.getElementById(`modal_${work._id}`).showModal()
-}
->
-Edit
-</button>
-<dialog id={`modal_${work._id}`} className="modal">
+                  <button
+                        className=" flex justify-center items-center gap-1   px-2 py-1 rounded"
+                        onClick={() =>
+                          document.getElementById(`modal_${work._id}`).showModal()
+                          }
+                      >
+                       <FaEdit /> 
+                       <span>
+  {work.campaignName
+    .split(' ') // Split the campaign name into words
+    .slice(0, 4) // Take only the first 6 words
+    .join(' ') // Join the words back into a string
+    + (work.campaignName.split(' ').length > 4 ? '...' : '') // Add "..." if there are more than 6 words
+  }
+</span>
+                      </button>
+                      <dialog id={`modal_${work._id}`} className="modal">
 <div className="modal-box bg-white text-black">
 <form onSubmit={(e) => handleUpdate(e, work._id)}>
 <div className="mb-4">
@@ -546,27 +504,68 @@ Update
 </div>
 </form>
 </div>
-</dialog>
-</div>
+     </dialog>
+                  
+                  </td>
+                  <td style={{  border: 'var(--border)'}} className="p-3 hover:text-blue-700 hover:font-bold border-r-2 border-gray-200 text-left">
+                  
+                   {work.pageName
+    .split(' ') 
+    .slice(0, 4) 
+    .join(' ') 
+    + (work.pageName.split(' ').length > 4 ? '...' : '') // Add "..." if there are more than 6 words
+  } 
+                  
+                  </td>
+                  
+                  <td  style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-200 text-center">
+                    {work.adsAccount}
+                  </td>
 
-<button
-            className="bg-red-700 hover:bg-blue-700 text-white px-2 py-1 rounded"
-            onClick={() => handledelete(work._id)}
-          >
-          Delete
-          </button>
+                  <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-200 text-center">
+                  $ {work.tBudged}
+                  </td>
 
-</div>
-    </td>
-      }
+                  <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-200 text-center">
+                  $ {work.tSpent}
+                  </td>
+
+                  <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-200 text-center">
+                    <span className="text-md mr-1 font-extrabold">৳</span>
+                    {parseInt(work.tSpent * work.dollerRate)}
+                  </td>
+                  <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-l-2 border-gray-200 text-center">  <label className="inline-flex items-center cursor-pointer">
+  <input
+    type="checkbox"
+    className="sr-only"
+    checked={work.status === "Active"}
+    onChange={() => {
+      const newStatus = work.status === "Active" ? "Complete" : "Active";
+      handleUpdate2(work._id, newStatus);
+    }}
+  />
+  <div
+    className={`relative w-12 h-6 transition duration-200 ease-linear rounded-full ${
+      work.status === "Active" ? "bg-blue-700" : "bg-gray-500"
+    }`}
+  >
+    <span
+      className={`absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition-transform duration-200 ease-linear transform ${
+        work.status === "Active" ? "translate-x-6" : ""
+      }`}
+    ></span>
+  </div>
+</label>
+</td>
+
                  
-                 
+                
                 </tr>
               ))}
               <tr style={{border: 'var(--border)',borderLeft: 'var(--border)', borderRight: 'var(--border)', color: 'var(--text-color)'}} className=" font-bold">
                 <td  className="p-3  text-center"></td>
                 <td   className="p-3 text-right" colSpan="5">
-                  Total Spent:
+                  Total:
                 </td>
                 <td  style={{  border: 'var(--border)'}} className="p-3 text-center">
                   <span className="text-sm mr-1 font-extrabold">$</span>{" "}
@@ -584,10 +583,7 @@ Update
                 ) : (
                   <>
                    <td style={{  border: 'var(--border)'}} className="p-3 text-center"></td>
-                   {
-      ddd?.role ==='employee' && 
-      <td style={{  border: 'var(--border)'}} className="p-3 text-center"></td>
-      }
+
                  
                   </>
                 )}

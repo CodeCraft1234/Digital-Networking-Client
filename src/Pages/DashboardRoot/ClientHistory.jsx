@@ -5,6 +5,7 @@ import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 import useCampaingsByEmail from "../../Hook/useCampaignsByEmail";
 import useMpymentsByEmail from "../../Hook/useMpaymentByEmail";
+import BalanceCard from "./BalanceCard";
 
 const ClientHistory = () => {
   const param = useParams();
@@ -112,32 +113,32 @@ const ClientHistory = () => {
 
 
 <div className="rounded-lg" style={{ backgroundColor: 'var(--bg-color3)', color: 'var(--text-color)',border: 'var(--border)'}} >
-<div  className="grid grid-cols-2 m-1 rounded-lg md:grid-cols-2 lg:grid-cols-4 text-black sm:grid-cols-2 gap-3 lg:gap-5 justify-around p-5">
+<div  className="grid grid-cols-2  rounded-lg md:grid-cols-2 lg:grid-cols-4 text-black sm:grid-cols-2 gap-3 lg:gap-3 justify-around p-5">
 
         <div className="px-5 py-10 rounded-2xl  bg-[#91a33a] text-white shadow-lg text-center">
-          <h2 className="lg:text-2xl text-sm font-bold">Total Spent</h2>
-          <p className="lg:text-4xl text-xl font-bold mt-2"> $ {totalSpent.toFixed(2)}</p>
+          <h2 className="lg:text-xl text-sm font-bold">Total Spent</h2>
+          <p className="lg:text-2xl text-xl font-bold mt-2"> $ {totalSpent.toFixed(2)}</p>
         </div>
 
         <div className="px-5 py-10 rounded-2xl bg-[#5422c0] text-white shadow-lg text-center">
-          <h2 className="lg:text-2xl text-sm font-bold">Total Bill</h2>
-          <p className="lg:text-4xl text-xl font-bold mt-2">
-             <span className="lg:text-4xl text-xl font-extrabold">৳</span> {totalBills.toFixed(0)}
+          <h2 className="lg:text-xl text-sm font-bold">Total Bill</h2>
+          <p className="lg:text-2xl text-xl font-bold mt-2">
+             <span className="lg:text-2xl text-xl font-extrabold">৳</span> {totalBills.toFixed(0)}
           </p>
         </div>
 
         <div className="px-5 py-10 rounded-2xl  bg-[#05a0db] text-white shadow-lg text-center">
-          <h2 className="lg:text-2xl text-sm font-bold">Total Paid</h2>
-          <p className="lg:text-4xl text-xl font-bold mt-2"> <span className="lg:text-4xl text-xl font-extrabold">৳</span> {parseInt(totalPaymeent).toFixed(0)}</p>
+          <h2 className="lg:text-xl text-sm font-bold">Total Paid</h2>
+          <p className="lg:text-2xl text-xl font-bold mt-2"> <span className="lg:text-2xl text-xl font-extrabold">৳</span> {parseInt(totalPaymeent).toFixed(0)}</p>
         </div>
 
         <div className="px-5 py-10 rounded-2xl  bg-[#ce1a38] text-white shadow-lg text-center">
-          <h2 className="lg:text-2xl text-sm font-bold">Total <span>
+          <h2 className="lg:text-xl text-sm font-bold">Total <span>
   {((totalBills - totalPaymeent).toFixed(0))  >= 0 ? 'Due' : 'Advance'}
 </span>
 </h2>
-          <p className="lg:text-4xl text-xl font-bold mt-2">
-          <span className="lg:text-4xl text-xl font-extrabold">৳</span> {Math.abs((totalBills - totalPaymeent).toFixed(0))}
+          <p className="lg:text-2xl text-xl font-bold mt-2">
+          <span className="lg:text-2xl text-xl font-extrabold">৳</span> {Math.abs((totalBills - totalPaymeent).toFixed(0))}
           </p>
         </div>
       </div>
@@ -145,105 +146,26 @@ const ClientHistory = () => {
 
 
       <div className="mx-5">
-  <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-7 gap-3 lg:gap-5  mb-5">
+  <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-7 gap-3 lg:gap-3  mb-5">
     
 
-    <div 
-    
-      style={{ backgroundColor: '#f7e8e8', border: 'var(--border)' }} 
-      className="balance-card rounded-2xl p-5 text-center shadow-xl transition-transform transform hover:scale-105"
-    >
-      <img className="balance-card-img" src="https://i.ibb.co/bHMLyvM/b-Kash-Merchant.png" alt="bKash Merchant" />
-      <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700">
-        <span className="text-lg lg:text-2xl font-extrabold">৳</span>
-        {filteredHistory?.filter(h => h.paymentMethod === 'bkashMarchent')?.reduce((acc, payment) => acc + payment?.amount, 0)}
-      </p>
-    </div>
+  <BalanceCard img={`https://i.ibb.co/bHMLyvM/b-Kash-Merchant.png`} amount={filteredHistory?.filter(h => h.paymentMethod === 'bkashMarchent')?.reduce((acc, payment) => acc + payment?.amount, 0)}></BalanceCard>
+                 <BalanceCard img={`https://i.ibb.co/520Py6s/bkash-1.png`} amount={filteredHistory?.filter(h => h.paymentMethod === 'bkashPersonal')?.reduce((acc, payment) => acc + payment?.amount, 0)}></BalanceCard>
+                 <BalanceCard img={`https://i.ibb.co/JQBQBcF/nagad-marchant.png`} amount={filteredHistory?.filter(h => h.paymentMethod === 'nagadPersonal')?.reduce((acc, payment) => acc + payment?.amount, 0)}></BalanceCard>
+                 <BalanceCard img={`https://i.ibb.co/QkTM4M3/rocket.png`} amount={filteredHistory?.filter(h => h.paymentMethod === 'rocketPersonal')?.reduce((acc, payment) => acc + payment?.amount, 0)}></BalanceCard>
+                 <BalanceCard img={`https://i.ibb.co.com/kG9cBXJ/BBBLBank.png`} amount={filteredHistory?.filter(h => h.paymentMethod === 'bank')?.reduce((acc, payment) => acc + payment?.amount, 0)}></BalanceCard>
+                 <BalanceCard img={`https://i.ibb.co.com/vH2fPBm/DBBLBank.png`} amount={filteredHistory?.filter(h => h.paymentMethod === 'DBBLBank')?.reduce((acc, payment) => acc + payment?.amount, 0)}></BalanceCard>
+                 <BalanceCard img={`https://i.ibb.co.com/pnS6nt4/IBBLBank.png`} amount={filteredHistory?.filter(h => h.paymentMethod === 'IBBLBank')?.reduce((acc, payment) => acc + payment?.amount, 0)}></BalanceCard>
 
-    {/* bKash Personal Card */}
-    <div 
-      
-      style={{ backgroundColor: '#ffe6f7', border: 'var(--border)' }} 
-      className="balance-card rounded-2xl p-5 text-center shadow-xl transition-transform transform hover:scale-105"
-    >
-      <img className="balance-card-img" src="https://i.ibb.co/520Py6s/bkash-1.png" alt="bKash Personal" />
-      <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700">
-        <span className="text-lg lg:text-2xl font-extrabold">৳</span>
-        {filteredHistory?.filter(h => h.paymentMethod === 'bkashPersonal')?.reduce((acc, payment) => acc + payment?.amount, 0)}
-      </p>
-    </div>
-
-    {/* Nagad Personal Card */}
-    <div 
-    
-      style={{ backgroundColor: '#fff2cc', border: 'var(--border)' }} 
-      className="balance-card rounded-2xl p-5 text-center shadow-xl transition-transform transform hover:scale-105"
-    >
-      <img className="balance-card-img" src="https://i.ibb.co.com/WsDkLzc/Nagad-Marchant.png" alt="Nagad Personal" />
-      <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700">
-        <span className="text-lg lg:text-2xl font-extrabold">৳</span>
-        {filteredHistory?.filter(h => h.paymentMethod === 'nagadMarchent')?.reduce((acc, payment) => acc + payment?.amount, 0)}
-      </p>
-    </div>
-
-    <div 
-      style={{ backgroundColor: '#fff2cc', border: 'var(--border)' }} 
-      className="balance-card rounded-2xl p-5 text-center shadow-xl transition-transform transform hover:scale-105"
-    >
-      <img className="balance-card-img" src="https://i.ibb.co/JQBQBcF/nagad-marchant.png" alt="Nagad Personal" />
-      <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700">
-        <span className="text-lg lg:text-2xl font-extrabold">৳</span>
-        {filteredHistory?.filter(h => h.paymentMethod === 'nagadPersonal')?.reduce((acc, payment) => acc + payment?.amount, 0)}
-      </p>
-    </div>
-
-    {/* Rocket Personal Card */}
-    <div 
-    
-      style={{ backgroundColor: '#e0f7fa', border: 'var(--border)' }} 
-      className="balance-card rounded-2xl p-5 text-center shadow-xl transition-transform transform hover:scale-105"
-    >
-      <img className="balance-card-img" src="https://i.ibb.co/QkTM4M3/rocket.png" alt="Rocket Personal" />
-      <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700">
-        <span className="text-lg lg:text-2xl font-extrabold">৳</span>
-        {filteredHistory?.filter(h => h.paymentMethod === 'rocketPersonal')?.reduce((acc, payment) => acc + payment?.amount, 0)}
-      </p>
-    </div>
-
-    {/* Bank Card */}
-    <div 
-     
-      style={{ backgroundColor: '#f2f2f2', border: 'var(--border)' }} 
-      className="balance-card rounded-2xl p-5 text-center shadow-xl transition-transform transform hover:scale-105"
-    >
-      <h1 className="p-3 text-black text-3xl font-bold text-center">Bank</h1>
-      <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700">
-        <span className="text-lg lg:text-2xl font-extrabold">৳</span>
-        {filteredHistory?.filter(h => h.paymentMethod === 'bank')?.reduce((acc, payment) => acc + payment?.amount, 0)}
-      </p>
-    </div>
-
-    {/* Total Card */}
-    <div 
-      style={{ backgroundColor: '#d9f8d9', border: 'var(--border)' }} 
-      className="balance-card rounded-2xl p-5 text-center shadow-xl transition-transform transform hover:scale-105"
-    >
-      <h1 className="p-3 text-black text-3xl font-bold text-center">TOTAL</h1>
-      <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700">
-        <span className="text-lg lg:text-2xl font-extrabold">৳</span>
-        {filteredHistory?.reduce((acc, payment) => acc + payment?.amount, 0)}
-      </p>
-    </div>
-    
   </div>
 </div>
 </div>
 
-   <div style={{ backgroundColor: 'var(--bg-color3)', color: 'var(--text-color)', border: 'var(--border)' }} className="lg:mt-5 mt-5  rounded-lg mx-1">
+   <div style={{ backgroundColor: 'var(--bg-color3)', color: 'var(--text-color)', border: 'var(--border)' }} className="lg:mt-5 mt-3  rounded-lg ">
 
      <button
         onClick={handleDownloadPDF}
-        className="  ml-5 mt-5 bg-blue-500 text-white py-2 px-4 rounded"
+        className="  ml-5 mt-5 bg-blue-500 text-white py-1 px-5 rounded"
       >
         Download PDF
       </button>

@@ -10,8 +10,7 @@ import Swal from 'sweetalert2';
 import useMyCampaingsByEmail from '../../Hook/useMyCampaignByEmail';
 import useMyClientsByEmail from '../../Hook/useMyClientsByEmail';
 import useMypymentsByEmail from '../../Hook/useMyMPayments';
-import { BiSolidEdit } from "react-icons/bi";
-import { FaEdit, FaMinusSquare, FaRegMinusSquare } from "react-icons/fa";
+import { FaEdit, FaMinusSquare } from "react-icons/fa";
 
 const MyClients = () => {
     const { user }=useContext(AuthContext)
@@ -39,12 +38,12 @@ const MyClients = () => {
     
     const tspent = mycampaigns
       
-    ?.filter(campaign => myclients.some(client => client.clientEmail === campaign.clientEmail))
+    ?.filter(campaign => myclients.some(client => client.clientEmail === campaign?.clientEmail))
     console.log(tspent,mycampaigns);
 
     const tPay = Mypayments
       
-    ?.filter(campaign => myclients.some(client => client.clientEmail === campaign.clientEmail))
+    ?.filter(campaign => myclients.some(client => client.clientEmail === campaign?.clientEmail))
     console.log(tspent,mycampaigns);
 
     useEffect(() => {
@@ -88,7 +87,6 @@ const MyClients = () => {
     });
 
 
-    
     useEffect(() => {
       // Calculate total received amount for clients' payments
       const totalRcv = Mypayments
@@ -120,10 +118,6 @@ const MyClients = () => {
           }, 0);
       setTotalBill(totalBill);
 
-      console.log("Total Received:", totalRcv);
-      console.log("Total Spent:", tspent);
-      console.log("Total Bill:", totalBill);
-
   }, [mycampaigns, Mypayments, myclients, user?.email]);
 
     const handleaddblog = (e) => {
@@ -152,15 +146,23 @@ const MyClients = () => {
         tPaid,
       };
     
+      const datas={title: `add ${clientName} as a client`,date:new Date(),user:user?.displayName}
       AxiosPublic.post("/clients", data)
+        .then((res) => {
+          refetch();
+          AxiosPublic.post("/activity", datas)
         .then((res) => {
           refetch();
           document.getElementById("my_modal_2").close()
           console.log(res.data);
         })
+          document.getElementById("my_modal_2").close()
+          console.log(res.data);
+        })
     };
     
-      const handledelete = (id) => {
+      const handledelete = (id,clientName) => {
+        const datas={title: `Delete ${clientName} from My client`,date:new Date(),user:user?.displayName}
         // Show confirmation dialog
         Swal.fire({
           title: 'Are you sure?',
@@ -175,6 +177,14 @@ const MyClients = () => {
             // Proceed with delete
             AxiosPublic.delete(`/clients/${id}`)
               .then((res) => {
+
+                AxiosPublic.post("/activity", datas)
+        .then((res) => {
+          refetch();
+          document.getElementById("my_modal_2").close()
+          console.log(res.data);
+        })
+
                 refetch();
                 toast.success("Delete successful");
               })
@@ -192,10 +202,19 @@ const MyClients = () => {
         const clientPhone = e.target.clientPhone.value;
         const clientEmail = e.target.clientEmail.value;
         const body = { clientName,clientEmail, clientPhone };
+
+        const datas={title: `Update ${clientName} from My client`,date:new Date(),user:user?.displayName}
     
         AxiosPublic.patch(`/client/update/${id}`, body)
             .then((res) => {
               refetch();
+              AxiosPublic.post("/activity", datas)
+              .then((res) => {
+                refetch();
+                document.getElementById("my_modal_2").close()
+                console.log(res.data);
+              })
+      
               document.getElementById(`modal_${id}`).close();
             })
             .catch((error) => {
@@ -458,15 +477,14 @@ const MyClients = () => {
           <table className="min-w-full text-center ">
             <thead className=" ">
               <tr className="" style={{backgroundColor: 'var(--bg-color)' ,border: 'var(--border)',borderLeft: 'var(--border)', borderRight: 'var(--border)', color: 'var(--text-color)'}}>
-<th className="p-3 text-center">SL</th>
-<th className="p-3 text-center">Client Name</th>
-<th className="p-3 text-center">Client Phone</th>
+<th className="p-3 text-center">{filteredCampaigns.length}</th>
+<th className="p-3 text-left">Client Name</th>
+<th className="p-3 text-left">Contact Number</th>
 <th className="p-3 text-center">T.Budget</th>
 <th className="p-3 text-center">T.Spent</th>
 <th className="p-3 text-center">Total Bill</th>
 <th className="p-3 text-center">Payment Rcv</th>
 <th className="p-3 text-center">Total</th>
-<th className="p-3">Action</th>
 </tr>
 </thead>
 <tbody>
@@ -484,7 +502,16 @@ const MyClients = () => {
                       : "bg-gray-200  text-left text-black border-b border-opacity-20"
                   }`}
                 >
-  <td style={{  border: 'var(--border)'}} className="p-3 border-r border-gray-400 border-l text-center ">{index + 1}</td>
+  <td style={{  border: 'var(--border)'}} className="p-3 border-r border-gray-400 border-l text-center ">                      <button
+                         className=" hover:bg-blue-700 text-[#f86c6b] text-xl px-2 py-1 rounded"
+                          onClick={() => handledelete(campaign._id,campaign.clientName)}
+                        >
+                          <ToastContainer></ToastContainer>
+                          <span >
+                          <FaMinusSquare  />
+                          </span>
+                          
+                        </button></td>
 
   <td style={{  border: 'var(--border)'}} className="p-3 border-r border-gray-400 border-l text-center ">
   
@@ -561,7 +588,7 @@ const MyClients = () => {
   </dialog>
    </div>
 
-   <Link to={`/dashboard/client/${campaign.clientEmail}`} className="items-center">
+   <Link to={`/dashboard/client/${campaign.clientEmail}`} className="items-center hover:font-bold">
 <span>
 {campaign.clientName}
     {
@@ -594,6 +621,7 @@ const MyClients = () => {
 </span>
 
   </Link>
+
 </div>
 
 </td>
@@ -615,7 +643,7 @@ const MyClients = () => {
 </td>
 <td style={{  border: 'var(--border)'}} className="p-3 border-r border-gray-400 text-center">
 
-  {
+ $ {
   (
     mycampaigns
       .filter(payment => payment.clientEmail === campaign.clientEmail)
@@ -626,27 +654,26 @@ const MyClients = () => {
 </td>
 <td style={{  border: 'var(--border)'}} className="p-3 border-r border-gray-400 text-center">
 
-৳ 
-  {
+৳ {
   (
     mycampaigns
       .filter(payment => payment.clientEmail === campaign.clientEmail)
       .reduce(
         (acc, campaign) => acc + parseFloat(campaign.tSpent) * parseFloat(campaign.dollerRate),
         0
-           ).toFixed(2)
+           ).toFixed(0)
    )
 }
 
 </td>
+
 <td style={{  border: 'var(--border)'}} className="p-3 border-r border-gray-400 text-center">
 
-  ৳ 
-  {
+  ৳ {
   (
     Mypayments
       .filter(payment => payment.clientEmail === campaign.clientEmail)
-      .reduce((acc, payment) => acc + parseFloat(payment?.amount || 0), 0).toFixed(2) 
+      .reduce((acc, payment) => acc + parseFloat(payment?.amount || 0), 0).toFixed(0) 
   ) 
 }
 </td>
@@ -670,7 +697,7 @@ const MyClients = () => {
             )
         )
       ) > 0
-        ? 'bg-red-700 font-bold text-white'
+        ? 'bg-green-500 font-bold text-white'
         : (
             (
               (
@@ -688,14 +715,14 @@ const MyClients = () => {
                   )
               )
             ) < 0
-          ? 'bg-green-500 font-bold text-white'
+          ? 'bg-red-800 font-bold text-white'
           : ' '
         )
     }`}
   >
-    <span className='text-xl font-bold mr-1'>৳</span>
+    <span className='text-sm font-extrabold mr-1'>৳</span>
     {
-      (
+      Math.abs(
         (
           Mypayments
             .filter(payment => payment.clientEmail === campaign.clientEmail)
@@ -720,30 +747,14 @@ const MyClients = () => {
 
 
 
-  <td style={{  border: 'var(--border)'}} className="p-3 border-r text-center border-gray-400">
-  <div className="flex justify-center  items-center gap-3">
 
-
-                      <button
-                         className=" hover:bg-blue-700 text-[#f86c6b] text-xl px-2 py-1 rounded"
-                          onClick={() => handledelete(campaign._id)}
-                        >
-                          <ToastContainer></ToastContainer>
-                          <span >
-                          <FaMinusSquare  />
-                          </span>
-                          
-                        </button>
-                      </div>
- 
-  </td>
 </tr>
 ))}
 
       <tr style={{ backgroundColor: 'var(--bg-color)', color: 'var(--text-color)'}} className=''>
       <td className="p-3"></td>
       <td className="p-3"></td>
-        <td className="p-3 text-center font-bold">Total</td>
+        <td className="p-3 text-center font-bold">Total: </td>
        
         
         <td className="p-3 text-center font-bold">
@@ -757,8 +768,6 @@ const MyClients = () => {
     .reduce((total, clientTotal) => total + clientTotal, 0) // Sum up all totals
     .toFixed(2)}
         </td>
-
-
 
         <td className="p-3 text-center font-bold">
       $ {filteredCampaigns
@@ -786,7 +795,7 @@ const MyClients = () => {
       return totalReceived;
     })
     .reduce((total, clientTotal) => total + clientTotal, 0) // Sum up all totals
-    .toFixed(2)}
+    .toFixed(0)}
         </td>
 
         <td className="p-3 text-center font-bold">
@@ -798,12 +807,11 @@ const MyClients = () => {
       return totalReceived;
     })
     .reduce((total, clientTotal) => total + clientTotal, 0) // Sum up all totals
-    .toFixed(2)} 
+    .toFixed(0)} 
 </td>
 
 <td className="p-3 text-center font-bold">
-  ৳ 
-  {(
+  ৳ {(
 
     filteredCampaigns
       .map(client => {
@@ -825,11 +833,9 @@ const MyClients = () => {
         return totalReceived;
       })
       .reduce((total, clientTotal) => total + clientTotal, 0) 
-  ).toFixed(2)}
+  ).toFixed(0)}
 </td>
 
-
-        <td className="p-3"></td>
       </tr>
  
 </tbody>

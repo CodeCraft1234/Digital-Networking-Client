@@ -1,14 +1,15 @@
 import { useEffect, useState } from "react";
 import useAdsAccount from "../../Hook/useAdAccount";
 import UseAxiosPublic from "../../Axios/UseAxiosPublic";
-import useUsers from "../../Hook/useUsers";
 import { Helmet } from "react-helmet-async";
 import { toast, ToastContainer } from "react-toastify";
 import { ImCross } from "react-icons/im";
 import Swal from "sweetalert2";
+import useAllEmployee from "../../Hook/useAllEmployee";
+import { FaEdit, FaMinusSquare } from "react-icons/fa";
 
 const MyAdsAccount = ({email}) => {
-  const [users] = useUsers();
+  const [allEmployees]=useAllEmployee()
   const [ddd, setDdd] = useState(null);
   const [currentTotal,setCurrentTotal]=useState(0)
   const [tSpent,setthreshold]=useState(0)
@@ -27,7 +28,7 @@ const MyAdsAccount = ({email}) => {
   };
 
   useEffect(() => {
-    const fff = users.find((u) => u.email === email);
+    const fff = allEmployees.find((u) => u.email === email);
     setDdd(fff || {});
   
     const filterdata = adsAccount.filter((m) => m.employeeEmail === email);
@@ -44,7 +45,7 @@ const MyAdsAccount = ({email}) => {
       0
     );
     setthreshold(totalBill);
-  }, [users, email, adsAccount]); 
+  }, [allEmployees, email, adsAccount]); 
   
   const sortedAdsAccounts = adsAccounts.filter((account) =>
     (selectedStatus ? account.status === selectedStatus : true) &&
@@ -118,7 +119,7 @@ const handleUpdate2 = (id, newStatus) => {
 };
 
 const today = new Date();
-const formattedDate = today.toISOString().split('T')[0];  // "YYYY-MM-DD" format
+const formattedDate = today.toISOString().split('T')[0];  
 
 
   return (
@@ -302,16 +303,16 @@ const formattedDate = today.toISOString().split('T')[0];  // "YYYY-MM-DD" format
       <td style={{  border: 'var(--border)'}} className="p-3 border border-gray-300 text-center"> 
       <div className="flex justify-center gap-3">
                 <button
-                  className="bg-green-700 hover:bg-blue-700 text-white px-2 py-1 rounded"
+                   className=" flex justify-center items-center gap-1   px-2 py-1 rounded"
                   onClick={() => setModalData(account)}
                 >
-                 Edit
+                   <FaEdit />
                 </button>
                 <button
-                   className="bg-red-700 hover:bg-blue-700 text-white px-2 py-1 rounded"
+                   className=" flex justify-center items-center gap-1   px-2 py-1 rounded"
                   onClick={() => handleDelete(account._id)}
                 >
-                  Delete
+                   <FaMinusSquare  />
                 </button>
                 
               </div>

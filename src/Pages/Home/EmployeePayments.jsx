@@ -7,6 +7,7 @@ import { Link } from "react-router-dom";
 import useUsers from "../../Hook/useUsers";
 import useEmployeePayment from "../../Hook/useEmployeePayment";
 import { toast } from "react-toastify";
+import { FaEdit, FaMinusSquare } from "react-icons/fa";
 
 const EmployeePayments = () => {
   const [employeePayment, refetch] = useEmployeePayment()
@@ -108,6 +109,8 @@ const EmployeePayments = () => {
   const [rocketPersonal, setRocketPersonalTotal] = useState(0);
   const [bankTotal, setBankTotal] = useState(0);
   const [nagadMarchent, setNagadMarchentTotal] = useState(0);
+  const [IBBLBankTotal, setIBBLBankTotal] = useState(0);
+  const [DBBLBankTotal, setDBBLBankTotal] = useState(0);
 
   useEffect(() => {
     const filtered = filteredData2 || 0; 
@@ -134,6 +137,15 @@ const EmployeePayments = () => {
     const filter7 = filtered.filter(d => d.paymentMethod === 'nagadMarchent');
     const total7 = filter7.reduce((acc, datas) => acc + parseFloat(datas.payAmount), 0);
     setNagadMarchentTotal(total7);
+
+    const filter8 = filtered.filter(d => d.paymentMethod === 'IBBLBank');
+    const total8 = filter8.reduce((acc, datas) => acc + parseFloat(datas.payAmount), 0);
+    setIBBLBankTotal(total8);
+
+    const filter9 = filtered.filter(d => d.paymentMethod === 'DBBLBank');
+    const total9 = filter9.reduce((acc, datas) => acc + parseFloat(datas.payAmount), 0);
+    setDBBLBankTotal(total9);
+
   }, [filteredData2]);
 
     // Open and close modal for payment editing
@@ -229,6 +241,7 @@ const EmployeePayments = () => {
       };
     }, []);
 
+    console.log(displayedItems);
   return (
     <div className="m-5">
       <Helmet>
@@ -236,31 +249,27 @@ const EmployeePayments = () => {
         <link rel="canonical" href="https://www.example.com/" />
       </Helmet>
 
-      <div style={{ backgroundColor: 'var(--bg-color3)', color: 'var(--text-color)', border: 'var(--border)' }} className="grid grid-cols-2 p-5 rounded-lg sm:grid-cols-2 md:grid-cols-3 gap-3 lg:gap-5 lg:grid-cols-7 px-5">
+      <div style={{ backgroundColor: 'var(--bg-color3)', color: 'var(--text-color)', border: 'var(--border)' }} className="grid grid-cols-2 p-5 rounded-lg sm:grid-cols-2 md:grid-cols-3 gap-3 lg:gap-5 lg:grid-cols-6 px-5">
   {[
-    { category: 'bkashMarchent', img: 'https://i.ibb.co/bHMLyvM/b-Kash-Merchant.png', amount: bkashMarcent, bgColor: '#f7e8e8',charge: filteredData2?.filter(d => d.paymentMethod === 'bkashMarchent')?.reduce((acc, datas) => acc + parseFloat(datas.charge || 0), 0) },
-
+ { category: 'bank', img: 'https://i.ibb.co/PZc0P4w/brac-bank-seeklogo.png', amount: bankTotal, bgColor: '#f2f2f2',charge: filteredData2?.filter(d => d.paymentMethod === 'bank')?.reduce((acc, datas) => acc + parseFloat(datas.charge || 0), 0) },
+    { category: 'DBBLBank', img: 'https://i.ibb.co.com/nnN8KW0/DBBL.png', amount: DBBLBankTotal, bgColor: '#f2f2f2' },
+    { category: 'IBBLBank', img: 'https://i.ibb.co.com/yfMSDcd/IBBL.png', amount: IBBLBankTotal, bgColor: '#f2f2f2' },
     { category: 'bkashPersonal', img: 'https://i.ibb.co/520Py6s/bkash-1.png', amount: bkashPersonal, bgColor: '#ffe6f7',charge: filteredData2?.filter(d => d.paymentMethod === 'bkashPersonal')?.reduce((acc, datas) => acc + parseFloat(datas.charge || 0), 0) },
-
-    { category: 'nagadMarchent', img: 'https://i.ibb.co.com/WsDkLzc/Nagad-Marchant.png', amount: nagadMarchent, bgColor: '#fff2cc',charge: filteredData2?.filter(d => d.paymentMethod === 'nagadMarchent')?.reduce((acc, datas) => acc + parseFloat(datas.charge || 0), 0) },
 
     { category: 'nagadPersonal', img: 'https://i.ibb.co/JQBQBcF/nagad-marchant.png', amount: nagadPersonal, bgColor: '#fff2cc',charge: filteredData2?.filter(d => d.paymentMethod === 'nagadPersonal')?.reduce((acc, datas) => acc + parseFloat(datas.charge || 0), 0) },
 
-
-    { category: 'rocketPersonal', img: 'https://i.ibb.co/QkTM4M3/rocket.png', amount: rocketPersonal, bgColor: '#e0f7fa',charge: filteredData2?.filter(d => d.paymentMethod === 'rocketPersonal')?.reduce((acc, datas) => acc + parseFloat(datas.charge || 0), 0) },
-
-    { category: 'bank', img: 'https://i.ibb.co/PZc0P4w/brac-bank-seeklogo.png', amount: bankTotal, bgColor: '#f2f2f2',charge: filteredData2?.filter(d => d.paymentMethod === 'bank')?.reduce((acc, datas) => acc + parseFloat(datas.charge || 0), 0) }
+   
 
   ].map(({ category, img, amount,charge, bgColor }) => (
     <div style={{ backgroundColor: bgColor, border: 'var(--border)' }} key={category} onClick={() => setSelectedCategory(category)} className="balance-card bg-white rounded-2xl shadow-lg p-5 text-center transition-transform transform hover:scale-105 border-0">
-      <img className="balance-card-img" src={img} alt={category} />
+      <img className="balance-card-img h-20" src={img} alt={category} />
       <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700">
         <span className="text-lg lg:text-xl font-extrabold">৳</span> {new Intl.NumberFormat('en-IN').format(amount)}
       </p>
 
-      <p className="balance-card-text text-lg lg:text-xl font-bold text-red-700">
+      {/* <p className="balance-card-text text-lg lg:text-xl font-bold text-red-700">
         <span className="text-lg lg:text-2xl font-extrabold">৳</span> {new Intl.NumberFormat('en-IN').format(charge)}
-      </p>
+      </p> */}
     </div>
   ))}
 
@@ -268,10 +277,10 @@ const EmployeePayments = () => {
     <h1 className="text-xl lg:text-3xl mt-3 font-bold text-black">
       Total
     </h1>
-    <h1 className="text-lg lg:text-2xl mt-7 text-black font-bold">
+    <h1 className="text-lg lg:text-2xl mt-2 text-black font-bold">
     <span className="text-lg lg:text-xl font-extrabold">৳ </span> 
       {new Intl.NumberFormat('en-IN').format(
-        Number(bkashPersonal) + Number(bkashMarcent) + Number(nagadPersonal) + Number(rocketPersonal) + Number(bankTotal) + Number(nagadMarchent)
+        Number(bkashPersonal) + Number(bkashMarcent) +  + Number(nagadPersonal) + Number(DBBLBankTotal)  + Number(IBBLBankTotal) + Number(rocketPersonal) + Number(bankTotal) + Number(nagadMarchent)
       )}
     </h1>
     <h1 className="text-lg mt-1 lg:text-xl text-red-700 font-extrabold">
@@ -373,15 +382,15 @@ const EmployeePayments = () => {
           <table className="min-w-full text-center ">
             <thead style={{ backgroundColor: 'var(--bg-color)', color: 'var(--text-color)'}}  className=" ">
               <tr className="" style={{border: 'var(--border)',borderLeft: 'var(--border)', borderRight: 'var(--border)', color: 'var(--text-color)'}}>
-              <th className="p-3"><span   >OFF</span> / <span >ON</span></th>
+              <th className="p-3">Action</th>
               <th className="p-3">Date</th>
-              <th className="p-3">Employee Name</th>
+              <th className="p-3 text-start">Employee Name</th>
               <th className="p-3">Amount</th>
               <th className="p-3">Charge</th>
               <th className="p-3">Payment Method</th>
               <th className="p-3">Note</th>
               <th className="p-3">Status</th>
-              <th className="p-3">Action</th>
+            
             </tr>
           </thead>
           <tbody>
@@ -394,38 +403,31 @@ const EmployeePayments = () => {
                   : "bg-gray-200  text-left text-black border-b border-opacity-20"
               }`}
             >
-                 <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-l-2 border-gray-200 text-center">  <label className="inline-flex items-center cursor-pointer">
-  <input
-    type="checkbox"
-    className="sr-only"
-    checked={payment.status !== "pending"}
-    onChange={() => {
-      const newStatus = payment.status !== "pending" ? "pending" : "Approved";
-      handleUpdate2(payment._id, newStatus);
-    }}
-  />
-  <div
-    className={`relative w-12 h-6 transition duration-200 ease-linear rounded-full ${
-      payment.status !== "pending" ? "bg-blue-700" : "bg-gray-500"
-    }`}
-  >
-    <span
-      className={`absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition-transform duration-200 ease-linear transform ${
-        payment.status !== "pending" ? "translate-x-6" : ""
-      }`}
-    ></span>
-  </div>
-</label>
-</td>
+
+           <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-200 text-center">
+                <button
+                      className="text-red-600 text-xl hover:bg-blue-700  px-2 py-1 rounded"
+                          onClick={() => handleDelete(payment._id)}
+                        >
+                           <FaMinusSquare  />
+                        </button>
+                </td>
+                
                 <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-200 text-center">
                 {new Date(payment.date).toLocaleDateString("en-GB")}
                 </td>
                
+               
                 <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 hover:text-blue-700 hover:font-bold text-start border-gray-200 ">
-                  <Link to={`/dashboard/userInfo/${payment?.employeeEmail}`}>
-                  {payment.employeeName}
-                  </Link>
-                  
+               
+                  <button
+                         className="flex justify-start items-center gap-2"
+                          onClick={() => handleEditClick(payment)}
+                        >
+                               <FaEdit />
+                               <h1>{payment.employeeName}</h1>
+                        </button>
+
                 </td>
                 <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-200 text-center">
                   ৳ {payment.payAmount}
@@ -434,6 +436,20 @@ const EmployeePayments = () => {
                   ৳ {payment.charge || 0}
                 </td>
                 <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-200 text-center">
+                {payment.paymentMethod === "DBBLBank" && (
+                    <img
+                      className="h-10 w-32 flex my-auto items-center mx-auto justify-center"
+                      src="https://i.ibb.co.com/nnN8KW0/DBBL.png"
+                      alt=""
+                    />
+                  )}
+                  {payment.paymentMethod === "IBBLBank" && (
+                    <img
+                      className="h-10 w-32 flex my-auto items-center mx-auto justify-center"
+                      src="https://i.ibb.co.com/yfMSDcd/IBBL.png"
+                      alt=""
+                    />
+                  )}
                   {payment.paymentMethod === "bkashMarchent" && (
                     <img
                       className="h-10 w-24 flex mx-auto my-auto items-center justify-center"
@@ -475,39 +491,31 @@ const EmployeePayments = () => {
                   {payment.note}
                 </td>
 
-                <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-200 text-center">
-                {payment.status === 'pending' ? (
-    <button
-      className=" text-blue-700 font-bold px-2 py-1 rounded"
-    >
-       Pending
-    </button>
-  ) : (
-    <button
+               
 
-      className="text-green-700 font-bold px-2 py-1 rounded"
-    >
-     Approved
-    </button>
-  )}
-                </td>
-
-                <td style={{  border: 'var(--border)'}} className="p-3 border-r-2  items-center border-gray-200 text-center">
-                <div className="flex justify-center gap-3">
-                <button
-                          className="bg-green-700 text-white px-2 py-1 rounded"
-                          onClick={() => handleEditClick(payment)}
-                        >
-                               Edit
-                        </button>
-                        <button
-                        className="bg-red-700 text-white px-2 py-1 rounded"
-                          onClick={() => handleDelete(payment._id)}
-                        >
-                          Delete
-                        </button>
-                </div>
-                </td>
+                <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-l-2 border-gray-200 text-center">  <label className="inline-flex items-center cursor-pointer">
+  <input
+    type="checkbox"
+    className="sr-only"
+    checked={payment.status !== "pending"}
+    onChange={() => {
+      const newStatus = payment.status !== "pending" ? "pending" : "Approved";
+      handleUpdate2(payment._id, newStatus);
+    }}
+  />
+  <div
+    className={`relative w-12 h-6 transition duration-200 ease-linear rounded-full ${
+      payment.status !== "pending" ? "bg-blue-700" : "bg-gray-500"
+    }`}
+  >
+    <span
+      className={`absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition-transform duration-200 ease-linear transform ${
+        payment.status !== "pending" ? "translate-x-6" : ""
+      }`}
+    ></span>
+  </div>
+</label>
+</td>
               </tr>
             ))}
          <tr style={{ backgroundColor: 'var(--bg-color)', color: 'var(--text-color)'}} className=" font-bold">
@@ -524,7 +532,7 @@ const EmployeePayments = () => {
               <td className="p-3 text-center"></td>
               <td className="p-3 text-center"></td>
               <td className="p-3 text-center"></td>
-              <td className="p-3 text-center"></td>
+            
             </tr>
           </tbody>
         </table>
@@ -573,11 +581,11 @@ const EmployeePayments = () => {
                   className="w-full border bg-white border-gray-300 p-2 rounded-lg"
                   required
                 >
+                  <option value="bank">Brack Bank</option>
+                  <option value="DBBLBank">DBBL Bank</option>
+                  <option value="IBBLBank">IBBL Bank</option>
                   <option value="bkashPersonal">bKash Personal</option>
-                  <option value="bkashMarchent">bKash Marcent</option>
                   <option value="nagadPersonal">Nagad Personal</option>
-                  <option value="rocketPersonal">Rocket Personal</option>
-                  <option value="bank">Bank</option>
                 </select>
               </div>
               <div className="mb-4">

@@ -108,7 +108,7 @@ const Banner = () => {
         <title>Dashboard | Digital Network</title>
         <link rel="canonical" href="https://www.example.com/" />
       </Helmet>
-      <div className='px-5 py-5 rounded-lg' style={{ backgroundColor: 'var(--bg-color3)', color: 'var(--text-color)', border: 'var(--border)' }}>
+      {/* <div className='px-5 py-5 rounded-lg' style={{ backgroundColor: 'var(--bg-color3)', color: 'var(--text-color)', border: 'var(--border)' }}>
   {ddd?.role === 'admin' && (
    <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 lg:gap-5">
    <div className="balance-card bg-[#f7e8e8] rounded-2xl p-5 text-center shadow-xl transition-transform transform hover:scale-105" style={{ border: 'var(--border)' }}>
@@ -297,7 +297,7 @@ const Banner = () => {
           </table>
         </div>
       </div>
-      </div>
+      </div> */}
 
 <ShowOfSellery></ShowOfSellery>
     </div>

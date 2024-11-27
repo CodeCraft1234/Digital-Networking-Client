@@ -6,6 +6,7 @@ import { toast, ToastContainer } from "react-toastify";
 import { ImCross } from "react-icons/im";
 import Swal from "sweetalert2";
 import useMyEmployeePayments from "../../Hook/useMyemployeePayments";
+import { FaEdit, FaMinusSquare } from "react-icons/fa";
 
 const AdminPayments = () => {
   const { user } = useContext(AuthContext);
@@ -13,10 +14,8 @@ const AdminPayments = () => {
   const [selectedCategory, setSelectedCategory] = useState("");
   const [filteredData, setFilteredData] = useState([]);
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
-  const [showAll, setShowAll] = useState(false);
-  const [itemsToShow] = useState(200); 
-  const displayedItems = showAll ? filteredData : filteredData.slice(0, itemsToShow);
   const AxiosPublic=UseAxiosPublic()
+  const [selectedDate, setSelectedDate] = useState("");
 
   const initialTab = localStorage.getItem("activeTaballClientspayss") ;
   const [sortMonth, setSortMonth] = useState(initialTab); 
@@ -58,12 +57,11 @@ const AdminPayments = () => {
   const [bkashPersonal, setBkashPersonalTotal] = useState(0);
   const [rocketPersonal, setRocketPersonalTotal] = useState(0);
   const [bankTotal, setBankTotal] = useState(0);
+  const [IBBLBankTotal, setIBBLBankTotal] = useState(0);
+  const [DBBLBankTotal, setDBBLBankTotal] = useState(0);
 
   useEffect(() => {
     const filtered = filteredData; 
-    const filter2 = filtered.filter(d => d.paymentMethod === 'bkashMarchent');
-    const total = filter2.reduce((acc, datas) => acc + parseFloat(datas.payAmount), 0);
-    setBkashMarcentTotal(total);
 
     const filter3 = filtered.filter(d => d.paymentMethod === 'nagadPersonal');
     const total3 = filter3.reduce((acc, datas) => acc + parseFloat(datas.payAmount), 0);
@@ -80,14 +78,35 @@ const AdminPayments = () => {
     const filter6 = filtered.filter(d => d.paymentMethod === 'bank');
     const total6 = filter6.reduce((acc, datas) => acc + parseFloat(datas.payAmount), 0);
     setBankTotal(total6);
-    const filter7 = filtered.filter(d => d.paymentMethod === 'nagadMarchent');
-    const total7 = filter7.reduce((acc, datas) => acc + parseFloat(datas.payAmount), 0);
-    setNagadMarchentTotal(total7);
+    const filter8 = filtered.filter(d => d.paymentMethod === 'IBBLBank');
+    const total8 = filter8.reduce((acc, datas) => acc + parseFloat(datas.payAmount), 0);
+    setIBBLBankTotal(total8);
+    const filter9 = filtered.filter(d => d.paymentMethod === 'DBBLBank');
+    const total9 = filter9.reduce((acc, datas) => acc + parseFloat(datas.payAmount), 0);
+    setDBBLBankTotal(total9);
   }, [filteredData]);
   
-  // Other functions (handlePayment, handleUpdatePayment, toggleDropdown, handleDelete, etc.) remain unchanged.
-  
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 20;
 
+  const displayedItems = filteredData.slice(0, currentPage * itemsPerPage);
+  const isMoreItems = currentPage * itemsPerPage < filteredData.length;
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (
+        window.innerHeight + document.documentElement.scrollTop + 100 >=
+        document.documentElement.scrollHeight
+      ) {
+        setCurrentPage((prevPage) => prevPage + 1);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
 
 
   const handlePayment = async (e) => {
@@ -235,17 +254,18 @@ const AdminPayments = () => {
         <title>Admin Payment | Digital Network </title>
         <link rel="canonical" href="https://www.example.com/" />
       </Helmet>
-      <div style={{ backgroundColor: 'var(--bg-color3)', color: 'var(--text-color)', border: 'var(--border)' }} className="grid grid-cols-2 p-5 rounded-lg sm:grid-cols-2 md:grid-cols-3 gap-3 lg:gap-5 lg:grid-cols-7 px-5">
+      <div style={{ backgroundColor: 'var(--bg-color3)', color: 'var(--text-color)', border: 'var(--border)' }} className="grid grid-cols-2 p-5 rounded-lg sm:grid-cols-2 md:grid-cols-3 gap-3 lg:gap-5 lg:grid-cols-6 px-5">
   {[
-    { category: 'bkashMarchent', img: 'https://i.ibb.co/bHMLyvM/b-Kash-Merchant.png', amount: bkashMarcent, bgColor: '#f7e8e8' },
+    { category: 'bank', img: 'https://i.ibb.co/PZc0P4w/brac-bank-seeklogo.png', amount: bankTotal, bgColor: '#f2f2f2' },
+    { category: 'DBBLBank', img: 'https://i.ibb.co.com/nnN8KW0/DBBL.png', amount: DBBLBankTotal, bgColor: '#f2f2f2' },
+    { category: 'IBBLBank', img: 'https://i.ibb.co.com/yfMSDcd/IBBL.png', amount: IBBLBankTotal, bgColor: '#f2f2f2' },
     { category: 'bkashPersonal', img: 'https://i.ibb.co/520Py6s/bkash-1.png', amount: bkashPersonal, bgColor: '#ffe6f7' },
-    { category: 'nagadMarchent', img: 'https://i.ibb.co.com/WsDkLzc/Nagad-Marchant.png', amount: nagadMarchent, bgColor: '#fff2cc' },
     { category: 'nagadPersonal', img: 'https://i.ibb.co/JQBQBcF/nagad-marchant.png', amount: nagadPersonal, bgColor: '#fff2cc' },
-    { category: 'rocketPersonal', img: 'https://i.ibb.co/QkTM4M3/rocket.png', amount: rocketPersonal, bgColor: '#e0f7fa' },
-    { category: 'bank', img: 'https://i.ibb.co/PZc0P4w/brac-bank-seeklogo.png', amount: bankTotal, bgColor: '#f2f2f2' }
+    // { category: 'rocketPersonal', img: 'https://i.ibb.co/QkTM4M3/rocket.png', amount: rocketPersonal, bgColor: '#e0f7fa' },
+    
   ].map(({ category, img, amount, bgColor }) => (
     <div key={category} onClick={() => setSelectedCategory(category)} style={{ backgroundColor: bgColor, border: 'var(--border)' }} className="balance-card bg-white rounded-2xl shadow-lg p-5 text-center transition-transform hover:scale-105 border-0">
-      <img className="balance-card-img" src={img} alt={category} />
+      <img className="balance-card-img h-20" src={img} alt={category} />
       <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700">
         <span className="text-lg lg:text-2xl font-extrabold">৳</span> {new Intl.NumberFormat('en-IN').format(amount)}
       </p>
@@ -254,7 +274,7 @@ const AdminPayments = () => {
 
   <div style={{ backgroundColor: '#d9f8d9', border: 'var(--border)' }} onClick={() => setSelectedCategory('All')} className="balance-card bg-white  rounded-2xl shadow-lg p-5 text-center transition-transform hover:scale-105 border-0">
     <h1 className="text-xl font-bold text-black">
-      <p className="mb-5">Total</p> <span className="text-lg lg:text-xl font-extrabold">৳</span> {new Intl.NumberFormat('en-IN').format(bkashPersonal + bkashMarcent + nagadPersonal + rocketPersonal + bankTotal)}
+      <p className="mb-5">Total</p> <span className="text-lg lg:text-xl font-extrabold">৳</span> {new Intl.NumberFormat('en-IN').format(bkashPersonal + DBBLBankTotal + IBBLBankTotal +  bkashMarcent + nagadPersonal + nagadMarchent + rocketPersonal + bankTotal)}
     </h1>
     <h1 className="text-xl font-bold mt-2 text-red-800">
        <span className="text-lg lg:text-xl font-extrabold">৳</span> {new Intl.NumberFormat('en-IN').format(displayedItems.reduce((acc, item) => acc + (isNaN(parseFloat(item?.charge)) ? 0 : parseFloat(item?.charge)), 0))}
@@ -326,7 +346,40 @@ const AdminPayments = () => {
           </div>
 
           <div className="mb-4">
-  <div className="mt-2 flex justify-between items-center">
+  <div className="mt-2 grid lg:grid-cols-3">
+    <div className="form-control">
+      <label className="label flex justify-start items-center gap-2 cursor-pointer">
+        <input
+          type="radio"
+          name="paymentMethod"
+          value="bank"
+          className="radio radio-primary"
+        />
+        <span className="label-text text-black">Brack Bank</span>
+      </label>
+    </div>
+    <div className="form-control">
+      <label className="label flex justify-start items-center gap-2 cursor-pointer">
+        <input
+          type="radio"
+          name="paymentMethod"
+          value="DBBLBank"
+          className="radio radio-primary"
+        />
+        <span className="label-text text-black">DBBL Bank</span>
+      </label>
+    </div>
+    <div className="form-control">
+      <label className="label flex justify-start items-center gap-2 cursor-pointer">
+        <input
+          type="radio"
+          name="paymentMethod"
+          value="IBBLBank"
+          className="radio radio-primary"
+        />
+        <span className="label-text text-black">Islami Bank</span>
+      </label>
+    </div>
     <div className="form-control">
       <label className="label flex justify-start items-center gap-2 cursor-pointer">
         <input
@@ -335,7 +388,7 @@ const AdminPayments = () => {
           value="bkashPersonal"
           className="radio radio-primary"
         />
-        <span className="label-text text-black">Bkash Personal</span>
+        <span className="label-text text-black">bKash</span>
       </label>
     </div>
     <div className="form-control">
@@ -346,22 +399,12 @@ const AdminPayments = () => {
           value="nagadPersonal"
           className="radio radio-primary"
         />
-        <span className="label-text text-black">Nagad Personal</span>
-      </label>
-    </div>
-    <div className="form-control">
-      <label className="label flex justify-start items-center gap-2 cursor-pointer">
-        <input
-          type="radio"
-          name="paymentMethod"
-          value="rocketPersonal"
-          className="radio radio-primary"
-        />
-        <span className="label-text text-black">Rocket Personal</span>
+        <span className="label-text text-black">Nagad</span>
       </label>
     </div>
   </div>
-         </div>
+</div>
+
 
 
 
@@ -395,6 +438,14 @@ const AdminPayments = () => {
   <div className="lg:flex text-black lg:justify-start my-3 lg:my-0 lg:ml-5  items-center">
         
         <div className="flex mt-2 lg:mt-0 justify-center text-center gap-2 lg:gap-5 items-center">
+
+        <input
+    style={{ backgroundColor: 'var(--bg-color2)',border: 'var(--border)', color: 'var(--text-color2)'}}
+    type="date"
+    className="border bg-green-300 text-black border-gray-400 rounded p-2 mt-1"
+    value={selectedDate}
+    onChange={(e) => setSelectedDate(e.target.value)}
+  />
        
           <div className="flex lg:mt-1 justify-center text-center items-center">
             <select
@@ -450,14 +501,14 @@ const AdminPayments = () => {
           <table className="min-w-full  text-center ">
             <thead className=" ">
               <tr className="" style={{border: 'var(--border)',borderLeft: 'var(--border)', borderRight: 'var(--border)', color: 'var(--text-color)'}}>
-              <th style={{  border: 'var(--border)'}} className="p-3 ">SL</th>
+              <th style={{  border: 'var(--border)'}} className="p-3 ">{displayedItems.length}</th>
               <th style={{  border: 'var(--border)'}} className="p-3">Date</th>
               <th style={{  border: 'var(--border)'}} className="p-3">Amount</th>
               <th style={{  border: 'var(--border)'}} className="p-3">Charge</th>
               <th style={{  border: 'var(--border)'}} className="p-3">Payment Method</th>
               <th style={{  border: 'var(--border)'}} className="p-3"> Note</th>
               <th style={{  border: 'var(--border)'}} className="p-3">Status</th>
-              <th style={{  border: 'var(--border)'}} className="p-3">Action</th>
+             
             </tr>
           </thead>
           <tbody>
@@ -471,82 +522,24 @@ const AdminPayments = () => {
                }`}
              >
                 <td style={{  border: 'var(--border)'}} className="p-3  border-r-2 border-l-2 border-gray-200 text-center">
-                  {index + 1}
-                </td>
-                <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-200 text-center">
-                  {new Date(payment.date).toLocaleDateString("en-GB")}
-                </td>
-                <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-200 text-center">
-                  ৳ {payment.payAmount}
-                </td>
-                <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-200 text-center">
-                  ৳ {payment.charge || 0}
-                </td>
-
-                <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-200 text-center">
-                  {payment.paymentMethod === "bkashMarchent" && (
-                    <img
-                      className="h-10 w-24 shadow-2xl  flex mx-auto my-auto items-center justify-center"
-                      src="https://i.ibb.co/bHMLyvM/b-Kash-Merchant.png"
-                      alt=""
-                    />
-                  )}
-                  {payment.paymentMethod === "bkashPersonal" && (
-                    <img
-                      className="h-10 w-24 flex my-auto items-center mx-auto justify-center"
-                      src="https://i.ibb.co.com/f8LcKV0/bKash.png"
-                      alt=""
-                    />
-                  )}
-                  {payment.paymentMethod === "rocketPersonal" && (
-                    <img
-                      className="h-10 w-24 flex my-auto items-center mx-auto justify-center"
-                      src="https://i.ibb.co/QkTM4M3/rocket.png"
-                      alt=""
-                    />
-                  )}
-                  {payment.paymentMethod === "nagadPersonal" && (
-                    <img
-                      className="h-10 w-24 flex my-auto items-center mx-auto justify-center"
-                      src="https://i.ibb.co/JQBQBcF/nagad-marchant.png"
-                      alt=""
-                    />
-                  )}
-                  {payment.paymentMethod === "nagadMarchent" && (
-                    <img
-                      className="h-10 w-24 flex my-auto items-center mx-auto justify-center"
-                      src="https://i.ibb.co.com/WsDkLzc/Nagad-Marchant.png"
-                      alt=""
-                    />
-                  )}
-                  {payment.paymentMethod === "bank" && (
-                    <img
-                      className="h-12 w-13 flex my-auto items-center mx-auto justify-center"
-                      src="https://i.ibb.co/PZc0P4w/brac-bank-seeklogo.png"
-                      alt=""
-                    />
-                  )}
-                </td>
-                <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-200 text-center">
-                  {" "}
-                  {payment.note}
-                </td>
-                <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-200 text-center">
-                  {" "}
-                  {payment.status === 'pending' ? <p className="text-blue-700 font-bold">Pending</p> : <p className="text-green-800 font-bold">Approved</p>}
-                </td>
-
-                <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 items-center border-gray-200 text-center">
-                 <div className="flex justify-center gap-3 ">
+                <div className="flex justify-center items-center gap-3 ">
+                <button
+                    className=" hover:bg-blue-700 text-[#f86c6b] text-xl px-2 py-1 rounded"
+                    onClick={() => handleDelete(payment._id,payment?.note,payment.paymentMethod,payment?.charge,payment?.payAmount,payment.date)}
+                  >
+                     <span >
+                          <FaMinusSquare  />
+                          </span>
+                  </button>
                  <button
-                  className="bg-green-700 hover:bg-blue-700 text-white px-2 py-1 rounded"
+                  className=" flex justify-center text-xl items-center gap-1   px-2 py-1 rounded"
                     onClick={() =>
                       document
                         .getElementById(`modal_${payment._id}`)
                         .showModal()
                     }
                   >
-                    Edit
+                    <FaEdit />
                   </button>
                   <dialog id={`modal_${payment._id}`} className="modal">
                     <div className="modal-box bg-white text-black font-bold">
@@ -616,19 +609,16 @@ const AdminPayments = () => {
                             defaultValue={payment.paymentMethod}
                             className="w-full border bg-white border-black rounded p-2 mt-1"
                           >
-                            <option value="bkashMarchent">
-                              Bkash Marchent
-                            </option>
+                            <option value="bank">Brack Bank</option>
+                            <option value="IBBLbank">Islami Bank</option>
+                            <option value="DBBLBank">DBBL Bank</option>
+
                             <option value="bkashPersonal">
-                              Bkash Personal
+                              bKash 
                             </option>
                             <option value="nagadPersonal">
-                              Nagad Personal
-                            </option>
-                            <option value="rocketPersonal">
-                              Rocket Personal
-                            </option>
-                            <option value="bank">Bank</option>
+                              Nagad 
+                            </option> 
                           </select>
                         </div>
 
@@ -665,14 +655,75 @@ const AdminPayments = () => {
                       </form>
                     </div>
                   </dialog>
-                  <button
-                   className="bg-red-700 hover:bg-blue-700 text-white px-2 py-1 rounded"
-                    onClick={() => handleDelete(payment._id,payment?.note,payment.paymentMethod,payment?.charge,payment?.payAmount,payment.date)}
-                  >
-                    Delete
-                  </button>
+                  
                  </div>
                 </td>
+                <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-200 text-center">
+                  {new Date(payment.date).toLocaleDateString("en-GB")}
+                </td>
+                <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-200 text-center">
+                  ৳ {payment.payAmount}
+                </td>
+                <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-200 text-center">
+                  ৳ {payment.charge || 0}
+                </td>
+
+                <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-200 text-center">
+                 
+                  {payment.paymentMethod === "bkashPersonal" && (
+                    <img
+                      className="h-10 w-24 flex my-auto items-center mx-auto justify-center"
+                      src="https://i.ibb.co.com/f8LcKV0/bKash.png"
+                      alt=""
+                    />
+                  )}
+                  {payment.paymentMethod === "rocketPersonal" && (
+                    <img
+                      className="h-10 w-24 flex my-auto items-center mx-auto justify-center"
+                      src="https://i.ibb.co/QkTM4M3/rocket.png"
+                      alt=""
+                    />
+                  )}
+                  {payment.paymentMethod === "nagadPersonal" && (
+                    <img
+                      className="h-10 w-24 flex my-auto items-center mx-auto justify-center"
+                      src="https://i.ibb.co/JQBQBcF/nagad-marchant.png"
+                      alt=""
+                    />
+                  )}
+                  {payment.paymentMethod === "DBBLBank" && (
+                    <img
+                      className="h-10 w-32 flex my-auto items-center mx-auto justify-center"
+                      src="https://i.ibb.co.com/nnN8KW0/DBBL.png"
+                      alt=""
+                    />
+                  )}
+                  {payment.paymentMethod === "IBBLBank" && (
+                    <img
+                      className="h-10 w-32 flex my-auto items-center mx-auto justify-center"
+                      src="https://i.ibb.co.com/yfMSDcd/IBBL.png"
+                      alt=""
+                    />
+                  )}
+                  
+                  {payment.paymentMethod === "bank" && (
+                    <img
+                      className="h-12 w-13 flex my-auto items-center mx-auto justify-center"
+                      src="https://i.ibb.co/PZc0P4w/brac-bank-seeklogo.png"
+                      alt=""
+                    />
+                  )}
+                </td>
+                <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-200 text-center">
+                  {" "}
+                  {payment.note}
+                </td>
+                <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-200 text-center">
+                  {" "}
+                  {payment.status === 'pending' ? <p className="text-blue-700 font-bold">Pending</p> : <p className="text-green-800 font-bold">Approved</p>}
+                </td>
+
+                
               </tr>
             ))}
             <tr style={{border: 'var(--border)',borderLeft: 'var(--border)', borderRight: 'var(--border)', color: 'var(--text-color)'}} className=" font-bold">
@@ -689,12 +740,13 @@ const AdminPayments = () => {
 
               <td className="p-3 text-center"></td>
               <td className="p-3 text-center"></td>
-              <td className="p-3 text-center"></td>
+          
             </tr>
           </tbody>
         </table>
       </div>
       </div>
+      {isMoreItems && <p className="text-center mt-5">Loading more clients...</p>}
     </div>
   );
 };

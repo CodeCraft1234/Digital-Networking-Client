@@ -7,6 +7,7 @@ import { toast, ToastContainer } from "react-toastify";
 import { ImCross } from "react-icons/im";
 import Swal from "sweetalert2";
 import { AuthContext } from "../../Security/AuthProvider";
+import { FaEdit, FaMinusSquare } from "react-icons/fa";
 
 const Profile2 = () => {
   const [users] = useUsers();
@@ -237,17 +238,12 @@ const formattedDate = today.toISOString().split('T')[0];  // "YYYY-MM-DD" format
           <table className="min-w-full text-center ">
             <thead className=" ">
               <tr className="" style={{border: 'var(--border)',borderLeft: 'var(--border)', borderRight: 'var(--border)', color: 'var(--text-color)'}}>
-            <th style={{  border: 'var(--border)'}} className="p-3">OFF/ON</th>
-            <th style={{  border: 'var(--border)'}} className="p-3">Payment Date</th>
+              <th className="p-3">Action</th>
             <th style={{  border: 'var(--border)'}} className="p-3">Ad Account Name</th>
             <th style={{  border: 'var(--border)'}} className="p-3">Threshold</th>
             <th style={{  border: 'var(--border)'}} className="p-3">Current Balance</th>
+            <th style={{  border: 'var(--border)'}} className="p-3">Payment Date</th>
             <th style={{  border: 'var(--border)'}} className="p-3">Status</th>
-       
-   
-      <th className="p-3">Action</th>
-     
-        
           </tr>
         </thead>
         <tbody>
@@ -260,7 +256,40 @@ const formattedDate = today.toISOString().split('T')[0];  // "YYYY-MM-DD" format
                : "bg-gray-200  text-left text-black border-b border-opacity-20"
            }`}
          >
-         <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-l-2 border-gray-200 text-center">  <label className="inline-flex items-center cursor-pointer">
+
+          <td style={{  border: 'var(--border)'}} className="p-3 border border-gray-300 text-center"> 
+               <div className="flex justify-center gap-3">
+                 <button
+                   className=" flex text-red-600 text-xl justify-center items-center gap-1   px-2 py-1 rounded"
+                  onClick={() => handleDelete(account._id)}
+                >
+                   <FaMinusSquare  />
+                </button>
+              </div>
+            </td>
+         
+             
+              <td style={{  border: 'var(--border)'}} className="p-3 border-r-2  border-gray-300 text-center px-5 ">
+                    <div className="flex justify-start items-center gap-2">
+                    <button
+                   className=" flex  justify-center items-center gap-1   px-2 py-1 rounded"
+                  onClick={() => setModalData(account)}
+                >
+                   <FaEdit />
+                   <h1> {account.accountName}</h1>
+                </button>
+                     
+                  
+                    </div>
+                  </td>
+                  <td style={{  border: 'var(--border)'}} className="p-3 border border-gray-300 text-center">$ {account.threshold}</td>
+              <td style={{  border: 'var(--border)'}} className="p-3 border border-gray-300  text-center">$ {account.currentBallence}</td>
+              
+              {/* <td className="p-3 border border-gray-300 text-center">$ {account.totalSpent}</td> */}
+            
+              <td style={{  border: 'var(--border)'}} className="p-3 border border-gray-300 text-center"> {new Date(account?.paymentDate).toLocaleDateString("en-GB")}</td>
+                 
+                    <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-l-2 border-gray-200 text-center">  <label className="inline-flex items-center cursor-pointer">
   <input
     type="checkbox"
     className="sr-only"
@@ -283,44 +312,6 @@ const formattedDate = today.toISOString().split('T')[0];  // "YYYY-MM-DD" format
   </div>
 </label>
 </td>
-              <td style={{  border: 'var(--border)'}} className="p-3 border border-gray-300 text-center"> {new Date(account?.paymentDate).toLocaleDateString("en-GB")}</td>
-              <td style={{  border: 'var(--border)'}} className="p-3 border-r-2  border-gray-300 text-center px-5 ">
-                    <div className="">
-                      <h1> {account.accountName}</h1>
-                  
-                    </div>
-                  </td>
-                  <td style={{  border: 'var(--border)'}} className="p-3 border border-gray-300 text-center">$ {account.threshold}</td>
-              <td style={{  border: 'var(--border)'}} className="p-3 border border-gray-300  text-center">$ {account.currentBallence}</td>
-              
-              {/* <td className="p-3 border border-gray-300 text-center">$ {account.totalSpent}</td> */}
-              <td style={{  border: 'var(--border)'}} className={`p-3 border  text-center border-gray-300  ${
-                      account.status === "Active"
-                        ? "text-green-700 font-bold"
-                        : "text-red-600 font-bold"
-                    }`}
-                  >
-                    {account.status} 
-                    </td>
-                 
-      <td style={{  border: 'var(--border)'}} className="p-3 border border-gray-300 text-center"> 
-      <div className="flex justify-center gap-3">
-                <button
-                  className="bg-green-700 hover:bg-blue-700 text-white px-2 py-1 rounded"
-                  onClick={() => setModalData(account)}
-                >
-                 Edit
-                </button>
-                <button
-                   className="bg-red-700 hover:bg-blue-700 text-white px-2 py-1 rounded"
-                  onClick={() => handleDelete(account._id)}
-                >
-                  Delete
-                </button>
-                
-              </div>
-      </td>
-      
              
 
             </tr>

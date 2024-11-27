@@ -24,6 +24,8 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
+import useCampaings from "../../Hook/useCampaign";
+import useClients from "../../Hook/useClient";
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
@@ -31,16 +33,15 @@ const months = [
   'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'
 ];
 
-const EmployeeHome = () => {
+const AdminHome = () => {
   const [users] = useUsers();
-  const { user } = useContext(AuthContext);
   const [employeePayment] = useEmployeePayment();
-  const [Mypayments]=useMypymentsByEmail(user?.email)
-  const [mycampaigns] = useMyCampaingsByEmail(user?.email);
-  const [myclients]=useMyClientsByEmail(user?.email)
+  const [MPayment]=useMpayment()
+  const [campaigns]=useCampaings()
+  const [clients]=useClients()
 
-  const tPay2 = mycampaigns?.filter(campaign =>
-    myclients.some(client => client.clientEmail === campaign.clientEmail)
+  const tPay2 = campaigns?.filter(campaign =>
+    clients.some(client => client.clientEmail === campaign.clientEmail)
   );
   
 
@@ -49,19 +50,19 @@ const EmployeeHome = () => {
   const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
 
   // Filter clients for today
-  const todayClients = myclients?.filter(client => {
+  const todayClients = clients?.filter(client => {
     const clientDate = new Date(client.date);
     return clientDate.toDateString() === today.toDateString();
   });
 
   // Filter clients for this week
-  const weeklyClients = myclients?.filter(client => {
+  const weeklyClients = clients?.filter(client => {
     const clientDate = new Date(client.date);
     return clientDate >= startOfWeek && clientDate <= today;
   });
 
   // Filter clients for this month
-  const monthlyClients = myclients?.filter(client => {
+  const monthlyClients = clients?.filter(client => {
     const clientDate = new Date(client.date);
     return clientDate >= startOfMonth && clientDate <= today;
   });
@@ -87,8 +88,8 @@ const EmployeeHome = () => {
 
 
   
-  const tPay = Mypayments?.filter(campaign =>
-    myclients.some(client => client.clientEmail === campaign.clientEmail)
+  const tPay = MPayment?.filter(campaign =>
+    clients.some(client => client.clientEmail === campaign.clientEmail)
   );
 
 
@@ -121,77 +122,86 @@ const EmployeeHome = () => {
   /////////////////////////////////////////////////////////////////////////////////
 
 
-  const email = user?.email;
+//   const [employeeDatas, setEmployeeData] = useState([]);
 
-  const [employeeDatas, setEmployeeData] = useState([]);
-  const [filteredUsers, setFilterUser] = useState();
-  console.log(filteredUsers,users);
+//   useEffect(() => {
+//     if (users && employeePayment) {
+//       const months = Array.from({ length: 12 }, (_, i) => 
+//         new Date(0, i).toLocaleString('default', { month: 'long' })
+//       );
 
-  useEffect(() => {
+//       const allUserData = users.map(user => {
+//         const { monthlySpent = [], sellery = [] } = user;
 
-    const filteredUser = users?.find(user => user?.email === email);
+//         // Calculate payment by month
+//         const paymentByMonth = months.reduce((acc, month) => {
+//           const monthPayments = employeePayment.filter(payment =>
+//             new Date(payment.date).toLocaleString('default', { month: 'long' }) === month
+//           );
+//           const totalPayAmount = monthPayments.reduce(
+//             (sum, payment) => sum + parseFloat(payment.payAmount || 0),
+//             0
+//           );
+//           acc[month] = totalPayAmount;
+//           return acc;
+//         }, {});
 
-    setFilterUser(filteredUser)
+//         // Create monthly data
+//         const monthlyData = months.map(month => {
+//           // Filter and process monthlySpent
+//           const monthlySpentData = monthlySpent
+//             .filter(spent =>
+//               new Date(spent.date).toLocaleString('default', { month: 'long' }) === month
+//             )
+//             .sort((a, b) => {
+//               if (a.accountName < b.accountName) return -1;
+//               if (a.accountName > b.accountName) return 1;
+//               return new Date(a.date) - new Date(b.date);
+//             })
+//             .reduce((acc, current) => {
+//               const existingAccount = acc.find(item => item.accountName === current.accountName);
+//               if (existingAccount) {
+//                 if (new Date(current.date) > new Date(existingAccount.date)) {
+//                   acc = acc.filter(item => item.accountName !== existingAccount.accountName);
+//                   acc.push(current);
+//                 }
+//               } else {
+//                 acc.push(current);
+//               }
+//               return acc;
+//             }, []);
 
-    if (filteredUser) {
-      const { monthlySpent, sellery } = filteredUser;
+//           // Calculate totals
+//           const totalSpent = monthlySpentData.reduce((acc, spent) => acc + (spent.totalSpentt || 0), 0);
+//           const selleryData = sellery.filter(sell => sell.month === month);
+//           const totalSellery = selleryData.reduce((acc, sell) => acc + (sell.amount || 0), 0);
+//           const totalBonus = selleryData.reduce((acc, sell) => acc + (sell.bonus || 0), 0);
+//           const totalAdminPay = paymentByMonth[month] || 0;
 
-      const employeePayments = employeePayment.filter(payment => payment.employeeEmail === email);
+//           return {
+//             month,
+//             totalSpent,
+//             totalSellery,
+//             totalBonus,
+//             totalBill: totalSpent * 140,
+//             totalDue: totalSpent * 140 - totalAdminPay,
+//             totalSelleryPaid: totalSpent * 7 - totalSellery,
+//             totalAdminPay
+//           };
+//         });
 
-      const paymentByMonth = months.reduce((acc, month) => {
-        const monthPayments = employeePayments.filter(payment => new Date(payment.date).toLocaleString('default', { month: 'long' }) === month);
-        const totalPayAmount = monthPayments.reduce((sum, payment) => sum + parseFloat(payment.payAmount), 0);
-        acc[month] = totalPayAmount;
-        return acc;
-      }, {});
+//         return {
+//           userEmail: user.email,
+//           monthlyData
+//         };
+//       });
 
-      const monthlyData = months.map(month => {
+//       // Flatten and combine all users' monthly data
+//       const aggregatedData = allUserData.flatMap(user => user.monthlyData);
+//       setEmployeeData(aggregatedData);
+//     }
+//   }, [users, employeePayment]);
 
-        const selleryData = (sellery || []).filter(sell => sell.month === month);
-
-        const monthlySpentData = (monthlySpent || [])
-        .filter(spent =>
-          new Date(spent.date).toLocaleString('default', { month: 'long' }) === month
-        )
-        .sort((a, b) => {
-          if (a.accountName < b.accountName) return -1;
-          if (a.accountName > b.accountName) return 1;
-          return new Date(a.date) - new Date(b.date);
-        })
-        .reduce((acc, current) => {
-          const existingAccount = acc.find(item => item.accountName === current.accountName);
-          if (existingAccount) {
-            if (new Date(current.date) > new Date(existingAccount.date)) {
-              acc = acc.filter(item => item.accountName !== existingAccount.accountName); 
-              acc.push(current); 
-            }
-          } else {
-            acc.push(current); 
-          }
-          return acc;
-        }, []);
-        setFilterUser(monthlySpentData)
-      const totalSpent = monthlySpentData.reduce((acc, spent) => acc + spent.totalSpentt, 0);
-      
-        const totalSellery = selleryData.reduce((acc, sell) => acc + sell.amount, 0);
-        const totalBonus = selleryData.reduce((acc, sell) => acc + sell.bonus, 0);
-        const totalAdminPay = paymentByMonth[month] || 0;
-
-        return {
-          month,
-          totalSpent,
-          totalSellery,
-          totalBonus,
-          totalBill: totalSpent * 140,
-          totalDue: totalSpent * 140 - totalAdminPay,
-          totalSelleryPaid: totalSpent * 7 - totalSellery,
-          totalAdminPay 
-        };
-      });
-
-      setEmployeeData(monthlyData);
-    }
-  }, [users, email, employeePayment]);
   const [activity]=useActivity()
 
 
@@ -223,6 +233,63 @@ const EmployeeHome = () => {
         },
       },
     };
+
+    const totalSpent = users?.map(user => user?.monthlySpent?.filter(spent => new Date(spent.date).toLocaleString('default', { month: 'long' }) === new Date().toLocaleString('default', { month: 'long' })).sort((a, b) => a.accountName.localeCompare(b.accountName) || new Date(b.date) - new Date(a.date)).reduce((acc, current) => { if (!acc.some(item => item.accountName === current.accountName)) acc.push(current); return acc; }, []).reduce((total, account) => total + (account.totalSpentt || 0), 0).toFixed(2)).reduce((sum, userTotal) => sum + parseFloat(userTotal || 0), 0);
+
+
+    const totalSpentPreviousMonth = users
+  ?.map(user => {
+    // Process each user's monthlySpent
+    return user?.monthlySpent
+      ?.filter(spent => {
+        // Calculate the previous month
+        const currentDate = new Date();
+        const previousMonthDate = new Date(currentDate.setMonth(currentDate.getMonth() - 1));
+        const previousMonth = previousMonthDate.toLocaleString('default', { month: 'long' });
+
+        // Filter spent data for the previous month
+        return new Date(spent.date).toLocaleString('default', { month: 'long' }) === previousMonth;
+      })
+      ?.sort((a, b) => {
+        // Sort by accountName (ascending) and date (descending)
+        if (a.accountName < b.accountName) return -1;
+        if (a.accountName > b.accountName) return 1;
+        return new Date(b.date) - new Date(a.date);
+      })
+      ?.reduce((acc, current) => {
+        // Ensure unique accountName entries
+        if (!acc.some(item => item.accountName === current.accountName)) {
+          acc.push(current); // Add the latest entry for each unique accountName
+        }
+        return acc;
+      }, [])
+      ?.reduce((total, account) => total + (account.totalSpentt || 0), 0); // Sum up totalSpentt values
+  })
+  ?.filter(total => total > 0) // Remove undefined or 0 results
+  ?.reduce((sum, userTotal) => sum + userTotal, 0) // Sum totals for all users
+  ?.toFixed(2); // Format the total to two decimal places
+  
+//     const totalSpents = users
+//   ?.map(user => {
+
+//     return user?.monthlySpent
+//       ?.sort((a, b) => {
+//         if (a.accountName < b.accountName) return -1;
+//         if (a.accountName > b.accountName) return 1;
+//         return new Date(b.date) - new Date(a.date);
+//       })
+//       ?.reduce((acc, current) => {
+//         if (!acc.some(item => item.accountName === current.accountName)) {
+//           acc.push(current); 
+//         }
+//         return acc;
+//       }, [])
+//       ?.reduce((total, account) => total + (account.totalSpentt || 0), 0); 
+//   })
+//   ?.filter(total => total > 0) 
+//   ?.reduce((sum, userTotal) => sum + userTotal, 0) 
+//   ?.toFixed(2); 
+
   return (
 
     <div className="m-5 ">  
@@ -301,67 +368,20 @@ const EmployeeHome = () => {
                  
                    <p>
   This Month: <span className="font-bold">
-  $ {
-    users?.find(user => user?.email === email)?.monthlySpent
-      ?.filter(spent => {
-        const currentMonth = new Date().toLocaleString('default', { month: 'long' }); // Get current month
-        return new Date(spent.date).toLocaleString('default', { month: 'long' }) === currentMonth;
-      })
-      .sort((a, b) => {
-        if (a.accountName < b.accountName) return -1;
-        if (a.accountName > b.accountName) return 1;
-        return new Date(b.date) - new Date(a.date); // Sort by date descending for each accountName
-      })
-      .reduce((acc, current) => {
-        // Check if accountName is already added
-        const existingAccount = acc.find(item => item.accountName === current.accountName);
-        if (!existingAccount) {
-          acc.push(current); // Add the latest entry for each unique accountName
-        }
-        return acc;
-      }, [])
-      .reduce((total, account) => total + (account.totalSpentt || 0), 0) // Sum up totalSpentt values
-      .toFixed(2) // Format total to two decimal places
-  }
+  $ {totalSpent.toFixed(2)}
 </span>
 
 </p>
 
                    <p>Previous Month: <span className="font-bold">
-  $ {
-    users?.find(user => user?.email === email)?.monthlySpent
-      ?.filter(spent => {
-        // Get the current date and calculate the previous month
-        const currentDate = new Date();
-        const previousMonthDate = new Date(currentDate.setMonth(currentDate.getMonth() - 1));
-        const previousMonth = previousMonthDate.toLocaleString('default', { month: 'long' }); // Get previous month as a string
-
-        // Filter the spent data for the previous month
-        return new Date(spent.date).toLocaleString('default', { month: 'long' }) === previousMonth;
-      })
-      .sort((a, b) => {
-        if (a.accountName < b.accountName) return -1;
-        if (a.accountName > b.accountName) return 1;
-        return new Date(b.date) - new Date(a.date); // Sort by date descending for each accountName
-      })
-      .reduce((acc, current) => {
-        // Check if accountName is already added
-        const existingAccount = acc.find(item => item.accountName === current.accountName);
-        if (!existingAccount) {
-          acc.push(current); // Add the latest entry for each unique accountName
-        }
-        return acc;
-      }, [])
-      .reduce((total, account) => total + (account.totalSpentt || 0), 0) // Sum up totalSpentt values
-      .toFixed(2) // Format total to two decimal places
-  }
+  $ {totalSpentPreviousMonth}
 </span>
 
                    </p>
                    <p>Total Spend: <span className="font-bold">
-                     $ {new Intl.NumberFormat('en-IN').format(
+                     {/* $ {new Intl.NumberFormat('en-IN').format(
                        employeeDatas.reduce((acc, data) => acc + data.totalSpent, 0).toFixed(2)
-                     )}
+                     )} */}
                    </span></p>
                  </div>
                       </div>
@@ -370,7 +390,7 @@ const EmployeeHome = () => {
                  </div>
 
 
-                    <div style={{ backgroundColor: 'var(--bg-color3)', color: 'var(--text-color2)', border: 'var(--border)' }} className="bg-gray-800     rounded-lg">
+                    {/* <div style={{ backgroundColor: 'var(--bg-color3)', color: 'var(--text-color2)', border: 'var(--border)' }} className="bg-gray-800     rounded-lg">
                     <h1 style={{ border: 'var(--border)' }} className="font-bold text-xl  rounded-t-lg border-gray-300 p-2 pl-4">Salary</h1>
                       <div style={{ border: 'var(--border)' }} className="flex p-3  rounded-b-lg  justify-start gap-3 pl-4 items-center">
                       <p className="text-7xl">
@@ -389,7 +409,7 @@ const EmployeeHome = () => {
                     <p>Total Unpaid: <span className="font-bold"><span className="text-sm font-extrabold">৳</span> {(employeeDatas.reduce((acc, data) => acc + data.totalSelleryPaid, 0)).toFixed(2)}</span></p>
                  </div>
                       </div>
-                 </div>
+                 </div> */}
 
                  <div style={{ backgroundColor: 'var(--bg-color3)', color: 'var(--text-color2)', border: 'var(--border)' }} className="bg-gray-800  my-5   rounded-lg">
                     <h1 style={{ border: 'var(--border)' }} className="font-bold text-xl  rounded-t-lg border-gray-300 p-2 pl-4">Campaigns</h1>
@@ -467,4 +487,4 @@ const EmployeeHome = () => {
      </div>
   );
 };
-export default EmployeeHome;
+export default AdminHome;

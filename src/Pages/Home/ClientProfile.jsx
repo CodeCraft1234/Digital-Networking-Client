@@ -125,7 +125,7 @@ const ClientProfile = () => {
           className={getButtonClass('clientHistory')}
           onClick={() => changeTab('clientHistory')}
         >
-          History
+          Summery
         </button>
       </div>
       </div>

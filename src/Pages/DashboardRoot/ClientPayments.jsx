@@ -6,8 +6,8 @@ import { toast, ToastContainer } from "react-toastify";
 import { Link } from "react-router-dom";
 import Swal from "sweetalert2";
 import useMypymentsByEmail from "../../Hook/useMyMPayments";
-import useMyCampaingsByEmail from "../../Hook/useMyCampaignByEmail";
 import useMyClientsByEmail from "../../Hook/useMyClientsByEmail";
+import { FaEdit, FaMinusSquare } from "react-icons/fa";
 
 const ClientPayments = () => {
   const { user } = useContext(AuthContext);
@@ -20,6 +20,8 @@ const ClientPayments = () => {
   const [selectedCategory, setSelectedCategory] = useState("");
   const [filteredData, setFilteredData] = useState([]);
   const [totalPayment, setTotalPayment] = useState(0);
+
+  const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
 
 
   const tPay = Mypayments
@@ -34,37 +36,6 @@ const ClientPayments = () => {
     localStorage.setItem("activeTabclientpayMont", tab); 
   };
 
-  const [sortedAdsAccounts, setSortedAdsAccounts] = useState([]);
-
-useEffect(() => {
-  const clientsWithBalance = myclients.map(campaign => {
-
-
-
-    const totalReceived = tPay
-      .filter(payment => payment.clientEmail === campaign.clientEmail)
-      .reduce((acc, payment) => acc + parseFloat(payment?.amount || 0), 0);
-
-    const balance = totalReceived 
-
-    return { ...campaign, balance }; 
-  });
-
-  const sortedCampaigns = clientsWithBalance.sort((a, b) => {
-
-    if (a.balance > 0 && b.balance <= 0) return -1;
-    if (a.balance <= 0 && b.balance > 0) return 1;
-
-    if (a.balance < 0 && b.balance === 0) return -1;
-    if (a.balance === 0 && b.balance < 0) return 1;
-
-    return 0;
-  });
-
-  setSortedAdsAccounts(sortedCampaigns);
-}, [myclients, tPay]);
-
-  
   useEffect(() => {
     let filtered = tPay;
     if (sortMonth) {
@@ -74,18 +45,25 @@ useEffect(() => {
       );
     }
   
-    if (selectedDate) {
-      filtered = filtered.filter((payment) => payment.date === selectedDate);
-    }
-  
     if (selectedCategory) {
       filtered = filtered.filter(
         (payment) => payment.paymentMethod === selectedCategory
       );
     }
 
+    if (selectedDate) {
+      filtered = filtered.filter((payment) => payment.date === selectedDate);
+    }
+  
+
+  if (selectedYear) {
+    filtered = filtered.filter(
+      (payment) => new Date(payment.date).getFullYear() === parseInt(selectedYear)
+    );
+  }
+
     setFilteredData(filtered);
-  }, [sortMonth, selectedDate, selectedCategory, tPay]);
+  }, [sortMonth, selectedDate,selectedYear, selectedCategory, tPay]);
   
 
   useEffect(() => {
@@ -187,6 +165,28 @@ useEffect(() => {
       
   },[tPay])
 
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 20;
+
+  const displayedItems = filteredData.slice(0, currentPage * itemsPerPage);
+  const isMoreItems = currentPage * itemsPerPage < filteredData.length;
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (
+        window.innerHeight + document.documentElement.scrollTop + 100 >=
+        document.documentElement.scrollHeight
+      ) {
+        setCurrentPage((prevPage) => prevPage + 1);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
+
   return (
     <div className="m-5">
       <ToastContainer />
@@ -196,17 +196,18 @@ useEffect(() => {
       </Helmet>
 
 
-      <div style={{ backgroundColor: 'var(--bg-color3)', color: 'var(--text-color)', border: 'var(--border)' }} className="grid grid-cols-2 p-5 rounded-lg sm:grid-cols-2 md:grid-cols-3 gap-3 lg:gap-5 lg:grid-cols-7 px-5">
+      <div style={{ backgroundColor: 'var(--bg-color3)', color: 'var(--text-color)', border: 'var(--border)' }} className="grid grid-cols-2 p-5 rounded-lg sm:grid-cols-2 md:grid-cols-3 gap-3 lg:gap-5 lg:grid-cols-8 px-5">
   {[ 
     { category: 'bkashMarchent', img: 'https://i.ibb.co/bHMLyvM/b-Kash-Merchant.png', amount: bkashMarcent, bgColor: '#f7e8e8' },
     { category: 'bkashPersonal', img: 'https://i.ibb.co/520Py6s/bkash-1.png', amount: bkashPersonal, bgColor: '#ffe6f7' },
-    { category: 'nagadMarchent', img: 'https://i.ibb.co.com/WsDkLzc/Nagad-Marchant.png', amount: nagadMarchent, bgColor: '#fff2cc' },
     { category: 'nagadPersonal', img: 'https://i.ibb.co/JQBQBcF/nagad-marchant.png', amount: nagadPersonal, bgColor: '#fff2cc' },
     { category: 'rocketPersonal', img: 'https://i.ibb.co/QkTM4M3/rocket.png', amount: rocketPersonal, bgColor: '#e0f7fa' },
     { category: 'bank', img: 'https://i.ibb.co/PZc0P4w/brac-bank-seeklogo.png', amount: bankTotal, bgColor: '#f2f2f2' },
+    { category: 'DBBLBank', img: 'https://i.ibb.co.com/nnN8KW0/DBBL.png', amount: bankTotal, bgColor: '#f2f2f2' },
+    { category: 'IBBLBank', img: 'https://i.ibb.co.com/yfMSDcd/IBBL.png', amount: bankTotal, bgColor: '#f2f2f2' },
   ].map(({ category, img, amount, bgColor }) => (
     <div key={category} onClick={() => setSelectedCategory(category)} style={{ backgroundColor: bgColor, border: 'var(--border)' }} className="balance-card rounded-2xl shadow-lg p-5 text-center transition-transform hover:scale-105">
-      <img className="balance-card-img" src={img} alt={category} />
+      <img className="balance-card-img h-20" src={img} alt={category} />
       <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700">
         <span className="text-lg lg:text-2xl font-extrabold">৳</span> {new Intl.NumberFormat('en-IN').format(amount)}
       </p>
@@ -235,6 +236,15 @@ useEffect(() => {
 
 <div className="my-5 rounded-lg pt-4" style={{ backgroundColor: 'var(--bg-color3)', color: 'var(--text-color)',border: 'var(--border)'}}>
 <div className="flex flex-wrap lg:justify-start justify-center ml-5 items-center gap-5 mr-5 mb-5">
+
+<input
+    style={{ backgroundColor: 'var(--bg-color2)',border: 'var(--border)', color: 'var(--text-color2)'}}
+    type="date"
+    className="border bg-green-300 text-black border-gray-400 rounded p-2 mt-1"
+    value={selectedDate}
+    onChange={(e) => setSelectedDate(e.target.value)}
+  />
+
   <select
     style={{ backgroundColor: 'var(--bg-color2)',border: 'var(--border)', color: 'var(--text-color2)'}}
     className="border bg-white text-black border-gray-400 rounded p-2 mt-1"
@@ -262,13 +272,23 @@ useEffect(() => {
     ))}
   </select>
 
-  <input
-    style={{ backgroundColor: 'var(--bg-color2)',border: 'var(--border)', color: 'var(--text-color2)'}}
-    type="date"
-    className="border bg-green-300 text-black border-gray-400 rounded p-2 mt-1"
-    value={selectedDate}
-    onChange={(e) => setSelectedDate(e.target.value)}
-  />
+
+  <div className=" lg:flex text-black justify-center items-center">
+        <select
+        style={{ backgroundColor: 'var(--bg-color2)',border: 'var(--border)', color: 'var(--text-color2)'}}
+          className=" rounded-md p-2 mt-1"
+          value={selectedYear}
+          onChange={(e) => setSelectedYear(e.target.value)}
+        >
+          {Array.from({ length: 31 }, (_, i) => 2020 + i).map((year) => (
+            <option key={year} value={year}>
+              {year}
+            </option>
+          ))}
+        </select>
+      </div>
+
+
 </div>
 
 
@@ -276,17 +296,17 @@ useEffect(() => {
         <table className="min-w-full text-center ">
           <thead className=" ">
             <tr className="" style={{border: 'var(--border)',borderLeft: 'var(--border)', borderRight: 'var(--border)', color: 'var(--text-color)'}}>
-              <th className="p-3">SL</th>
+              <th className="p-3">{displayedItems.length}</th>
               <th className="p-3">Date</th>
               <th className="p-3">Client Name</th>
               <th className="p-3">Amount</th>
               <th className="p-3">Payment Method</th>
               <th className="p-3">Note</th>
-              <th className="p-3">Action</th>
+              
             </tr>
           </thead>
           <tbody>
-            {filteredData.sort((a, b) => new Date(b.date) - new Date(a.date))?.map((payment, index) => (
+            {displayedItems.sort((a, b) => new Date(b.date) - new Date(a.date))?.map((payment, index) => (
               <tr style={{ backgroundColor: 'var(--bg-table)', color: 'var(--text-color2)'}}
               key={payment._id}
               className={`${
@@ -296,7 +316,14 @@ useEffect(() => {
               }`}
             >
                 <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-l-2 border-gray-200 text-center">
-                  {index + 1}
+                <button
+                          className=" hover:bg-blue-700 text-[#f86c6b] text-xl px-2 py-1 rounded"
+                          onClick={() => handleDelete(payment._id)}
+                        >
+                           <span >
+                          <FaMinusSquare  />
+                          </span>
+                        </button>
                 </td>
                 <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-200 text-center">
                   {new Date(payment.date).toLocaleDateString("en-GB")}
@@ -348,39 +375,50 @@ useEffect(() => {
                       alt=""
                     />
                   )}
+
+                    {payment.paymentMethod === "DBBLBank" && (
+                      <img
+                        className="h-10 w-24 flex my-auto items-center mx-auto justify-center"
+                        src="https://i.ibb.co.com/nnN8KW0/DBBL.png"
+                        alt=""
+                      />
+                    )}
+                    {payment.paymentMethod === "IBBLBank" && (
+                      <img
+                        className="h-10 w-24 flex my-auto items-center mx-auto justify-center"
+                        src="https://i.ibb.co.com/yfMSDcd/IBBL.png"
+                        alt=""
+                      />
+                    )}
+
                 </td>
                 <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-200 text-center">
                   {payment.note}
                 </td>
                 
-                <td style={{  border: 'var(--border)'}} className="p-3  gap-3  text-center">
+                {/* <td style={{  border: 'var(--border)'}} className="p-3  gap-3  text-center">
                 <div className="flex justify-center items-center gap-3">
                   <button
-                          className="bg-green-700 hover:bg-blue-700 text-white px-2 py-1 rounded"
+                          className=" flex justify-center items-center gap-1   px-2 py-1 rounded"
                           onClick={() => handleEditClick(payment)}
                         >
-                       Edit
+                      <FaEdit />
                         </button>
-                        <button
-                          className="bg-red-700 hover:bg-blue-700 text-white px-2 py-1 rounded"
-                          onClick={() => handleDelete(payment._id)}
-                        >
-                          Delete
-                        </button>
+                       
                         </div>
                  
-                </td>
+                </td> */}
               </tr>
             ))}
           </tbody>
           <tr style={{ backgroundColor: 'var(--bg-color)', color: 'var(--text-color)'}} className=" font-bold">
               <td className="p-3 text-right" colSpan="3">
-                Total Amount =
+                Total:
               </td>
               <td className="p-3 text-center">৳ {totalPayment}</td>
               <td className="p-3 text-center"></td>
               <td className="p-3 text-center"></td>
-              <td className="p-3 text-center"></td>
+              
            
              
             </tr>
@@ -475,6 +513,8 @@ useEffect(() => {
     </div>
     
       )}
+
+{isMoreItems && <p className="text-center mt-5">Loading more clients...</p>}
     </div>
   );
 };

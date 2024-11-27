@@ -11,8 +11,8 @@ const useUserr = (email) => {
             const res = await AxiosPublic.get(`/userr/${email}`);
             return res.data;
         },
-        enabled: !!email, // Only run the query if email is provided
-        retry: false // Optionally disable retries
+        enabled: !!email, 
+        retry: false 
     });
 
     return { userr, refetch, isLoading, isError };

@@ -10,6 +10,7 @@ import { ImCross } from "react-icons/im";
 import { toast } from "react-toastify";
 import useMyCampaingsByEmail from "../../Hook/useMyCampaignByEmail";
 import useMyClientsByEmail from "../../Hook/useMyClientsByEmail";
+import { FaEdit, FaMinusSquare } from "react-icons/fa";
 
 const MyCampaigns = () => {
   const { user } = useContext(AuthContext);
@@ -25,11 +26,6 @@ const MyCampaigns = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
 
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 40;
-  const handlePageChange = (pageNumber) => {
-    setCurrentPage(pageNumber);
-  };
 
   const initialTab = localStorage.getItem("activeTabsummeryEmployeess") || "All";
   const [selectedEmployee, setSelectedEmployee] = useState(initialTab);
@@ -107,14 +103,28 @@ const MyCampaigns = () => {
   const sortedAdsAccounts = filtered.sort((a, b) =>
     a.campaignName?.localeCompare(b.campaignName)
   );
-console.log(sortedAdsAccounts);
-  const getPaginatedCampaigns = () => {
-    const startIndex = (currentPage - 1) * itemsPerPage;
-    const endIndex = startIndex + itemsPerPage;
-    return sortedAdsAccounts?.slice(startIndex, endIndex);
-  };
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 20;
 
-  const totalPages = Math.ceil(filtered.length / itemsPerPage);
+  const displayedItems = sortedAdsAccounts.slice(0, currentPage * itemsPerPage);
+  const isMoreItems = currentPage * itemsPerPage < sortedAdsAccounts.length;
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (
+        window.innerHeight + document.documentElement.scrollTop + 100 >=
+        document.documentElement.scrollHeight
+      ) {
+        setCurrentPage((prevPage) => prevPage + 1);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
+  
 
   const handledelete = (id) => {
     Swal.fire({
@@ -170,7 +180,7 @@ console.log(sortedAdsAccounts);
           value={sortMonth}
           onChange={(e) => changeTab2(e.target.value)}
         >
-          <option value="">Select Month</option>
+          
           {[
             'January',
             'February',
@@ -218,20 +228,18 @@ console.log(sortedAdsAccounts);
           <table className="min-w-full text-center ">
             <thead className=" ">
               <tr className="" style={{border: 'var(--border)', backgroundColor: 'var(--bg-color)',borderLeft: 'var(--border)', borderRight: 'var(--border)', color: 'var(--text-color)'}}>
-                <th className="p-3 text-center  border-gray-300">OFF/ON</th>
-                {/* <th className="p-3 text-center border-2 border-gray-300">SL</th> */}
+                <th className="p-3 text-center  border-gray-300">{displayedItems.length}</th>
                 <th className="p-3 text-center  border-gray-300">Date</th>
-                <th className="p-3 text-center  border-gray-300">Campaign Name</th>
-                <th className="p-3 text-center  border-gray-300">Client Name</th>
-                <th className="p-3 text-center  border-gray-300">Page Name</th>
-                <th className="p-3 text-center  border-gray-300">Total Budged</th>
-                <th className="p-3 text-center  border-gray-300">Total spent</th>
+                <th className="p-3 text-start  border-gray-300">Campaign Name</th>
+                <th className="p-3 text-start  border-gray-300">Client Name</th>
+                <th className="p-3 text-start  border-gray-300">Page Name</th>
+                <th className="p-3 text-center  border-gray-300">Budged</th>
+                <th className="p-3 text-center  border-gray-300">Spend</th>
                 <th className="p-3 text-center  border-gray-300">Status</th>
-                <th className="p-3 text-center  border-gray-300">Action</th>
               </tr>
             </thead>
             <tbody>
-  {getPaginatedCampaigns()?.filter(f => selectedEmployee === 'All' || f.status === selectedEmployee)?.map((campaign, index) => (
+  {displayedItems?.filter(f => selectedEmployee === 'All' || f.status === selectedEmployee)?.map((campaign, index) => (
     <tr style={{ backgroundColor: 'var(--bg-table)', color: 'var(--text-color2)'}}
     key={campaign._id}
     className={`${
@@ -240,91 +248,49 @@ console.log(sortedAdsAccounts);
         : "bg-gray-200  text-left text-black border-b border-opacity-20"
     }`}
   >
+
+<td style={{  border: 'var(--border)'}} className="p-3 border-l-2 border-r-2 border-gray-300 text-center">
+      <div className="flex justify-center gap-3">
+                
+                        <button
+                           className=" hover:bg-blue-700 text-[#f86c6b] text-xl px-2 py-1 rounded"
+                          onClick={() => handledelete(campaign._id)}
+                        >
+                         <span >
+                          <FaMinusSquare  />
+                          </span>
+                        </button>
+                      </div>
+     </td>
       
-      <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-l-2 border-gray-200 text-center">  <label className="inline-flex items-center cursor-pointer">
-  <input
-    type="checkbox"
-    className="sr-only"
-    checked={campaign.status === "Active"}
-    onChange={() => {
-      const newStatus = campaign.status === "Active" ? "Complete" : "Active";
-      handleUpdate2(campaign._id, newStatus);
-    }}
-  />
-  <div
-    className={`relative w-12 h-6 transition duration-200 ease-linear rounded-full ${
-      campaign.status === "Active" ? "bg-blue-700" : "bg-gray-500"
-    }`}
-  >
-    <span
-      className={`absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition-transform duration-200 ease-linear transform ${
-        campaign.status === "Active" ? "translate-x-6" : ""
-      }`}
-    ></span>
-  </div>
-</label>
-</td>
+      
     
-      <td style={{  border: 'var(--border)'}} className="p-3 border-l-2 border-r-2 border-gray-300 text-center">
+      <td style={{  border: 'var(--border)'}} className="p-3 border-l-2 border-r-2 text-start border-gray-300 ">
   {new Date(campaign.date).toLocaleDateString("en-US", {
     year: "numeric",
     month: "2-digit",
     day: "2-digit",
   })}
-</td>
+     </td>
       <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-300 text-center">
-        
-        {campaign.campaignName}
-        
 
-      </td>
-      <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-300 text-center">
-       <Link to={`/dashboard/client/${campaign.clientEmail}`}>
-       {campaign.pageName}
-       </Link>
-       
-      </td>        
-      <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-300 text-center">
-     
-        {campaign.clientName}
-      
-      </td>        
-      <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-300 text-center">
-     
-      $ {campaign.tBudged}
-      
-      </td>        
-
-
-      <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-300 text-center">
-       
-      $ {campaign.tSpent}
-     </td>    
-
-     
-     <td style={{  border: 'var(--border)'}}
-  className={`p-3 text-center ${
-    campaign.status === "Active" ? "text-green-800 font-bold" : "text-black font-bold"
-  }`}
->
-  {campaign.status}
-</td>
-
-
-
-
-
-
-      <td style={{  border: 'var(--border)'}} className="p-3 border-l-2 border-r-2 border-gray-300 text-center">
-      <div className="flex justify-center gap-3">
-        <div>
+       <div className="flex justify-start items-center ">
+       <div>
                       <button
-                        className="bg-green-700 hover:bg-blue-700 text-white px-2 py-1 rounded"
+                        className=" flex justify-center items-center gap-1   px-2 py-1 rounded"
                         onClick={() =>
                           document.getElementById(`modal_${campaign._id}`).showModal()
                         }
                       >
-                        Edit
+                       <FaEdit /> 
+                       <span>
+  {campaign.campaignName
+    .split(' ') // Split the campaign name into words
+    .slice(0, 4) // Take only the first 6 words
+    .join(' ') // Join the words back into a string
+    + (campaign.campaignName.split(' ').length > 5 ? '...' : '') // Add "..." if there are more than 6 words
+  }
+</span>
                       </button>
                       <dialog id={`modal_${campaign._id}`} className="modal">
   <div className="modal-box bg-white text-black">
@@ -404,15 +370,71 @@ console.log(sortedAdsAccounts);
     </form>
   </div>
 </dialog>
-                      </div>
-                        <button
-                           className="bg-red-700 hover:bg-blue-700 text-white px-2 py-1 rounded"
-                          onClick={() => handledelete(campaign._id)}
-                        >
-                          Delete
-                        </button>
-                      </div>
-</td>
+        </div>
+
+
+       </div>
+        
+
+      </td>
+      <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-300 text-start">
+       <Link to={`/dashboard/client/${campaign.clientEmail}`}>
+       <span>
+  {campaign.pageName
+    .split(' ') // Split the campaign name into words
+    .slice(0, 2) // Take only the first 6 words
+    .join(' ') // Join the words back into a string
+    + (campaign.pageName.split(' ').length > 5 ? '...' : '') // Add "..." if there are more than 6 words
+  }
+</span>
+       </Link>
+       
+      </td>        
+      <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-300 text-start">
+     
+        {campaign.clientName}
+      
+      </td>        
+      <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-300 text-center">
+     
+      $ {campaign.tBudged}
+      
+      </td>        
+
+
+      <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-300 text-center">
+       
+      $ {campaign.tSpent}
+     </td>    
+
+     
+
+      <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-l-2 border-gray-200 text-center">  <label className="inline-flex items-center cursor-pointer">
+  <input
+    type="checkbox"
+    className="sr-only"
+    checked={campaign.status === "Active"}
+    onChange={() => {
+      const newStatus = campaign.status === "Active" ? "Complete" : "Active";
+      handleUpdate2(campaign._id, newStatus);
+    }}
+  />
+  <div
+    className={`relative w-12 h-6 transition duration-200 ease-linear rounded-full ${
+      campaign.status === "Active" ? "bg-blue-700" : "bg-gray-500"
+    }`}
+  >
+    <span
+      className={`absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition-transform duration-200 ease-linear transform ${
+        campaign.status === "Active" ? "translate-x-6" : ""
+      }`}
+    ></span>
+  </div>
+</label>
+     </td>
+
+
+     
     </tr>
   ))}
   <tr style={{border: 'var(--border)', backgroundColor: 'var(--bg-color)',borderLeft: 'var(--border)', borderRight: 'var(--border)', color: 'var(--text-color)'}} className=" font-bold">
@@ -422,60 +444,12 @@ console.log(sortedAdsAccounts);
     <td className="p-3  border-gray-300 text-center">$ {totalBudged.toFixed(2)}</td>
     <td className="p-3  border-gray-300 text-center">$ {totalSpent.toFixed(2)}</td> 
     <td className="p-3  border-gray-300 text-start"></td> 
-    <td className="p-3  border-gray-300 text-start"></td> 
 
 
   </tr>
 </tbody>
           </table>  
-                    {/* Pagination Controls */}
-                    <div
-  style={{ backgroundColor: 'var(--bg-color)', color: 'var(--text-color2)' }}
-  className="flex justify-center items-center py-3 space-x-3"
->
-  {/* Previous Button */}
-  <button
-    className={`px-4 py-2 rounded-lg transition ${
-      currentPage === 1
-        ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-        : "bg-blue-500 text-white hover:bg-blue-600"
-    }`}
-    onClick={() => handlePageChange(currentPage - 1)}
-    disabled={currentPage === 1}
-  >
-    Previous
-  </button>
-
-  {/* Page Numbers */}
-  <div className="flex space-x-1">
-    {Array.from({ length: totalPages }, (_, i) => i + 1).map((pageNumber) => (
-      <button
-        key={pageNumber}
-        onClick={() => handlePageChange(pageNumber)}
-        className={`px-3 py-1 rounded-lg transition border ${
-          currentPage === pageNumber
-            ? "bg-blue-600 text-white"
-            : "bg-gray-200 text-gray-800 hover:bg-gray-300"
-        }`}
-      >
-        {pageNumber}
-      </button>
-    ))}
-  </div>
-
-  {/* Next Button */}
-  <button
-    className={`px-4 py-2 rounded-lg transition ${
-      currentPage === totalPages
-        ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-        : "bg-blue-500 text-white hover:bg-blue-600"
-    }`}
-    onClick={() => handlePageChange(currentPage + 1)}
-    disabled={currentPage === totalPages}
-  >
-    Next
-  </button>
-</div>
+          {isMoreItems && <p className="text-center mt-5">Loading more clients...</p>}
 
         </div>
         </div>

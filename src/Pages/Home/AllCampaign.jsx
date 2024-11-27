@@ -2,12 +2,12 @@ import { Link } from "react-router-dom";
 import useClients from "../../Hook/useClient";
 import useUsers from "../../Hook/useUsers";
 import { useEffect, useState } from "react";
-import useCampaings from "../../Hook/useCampaign";
 import UseAxiosPublic from "../../Axios/UseAxiosPublic";
 import Swal from "sweetalert2";
 import { Helmet } from "react-helmet-async";
 import { toast } from "react-toastify";
 import useMyCampaingsByEmail from "../../Hook/useMyCampaignByEmail";
+import { FaEdit, FaMinusSquare } from "react-icons/fa";
 
 const Campaigns = () => {
   const [users] = useUsers();
@@ -310,14 +310,13 @@ const Campaigns = () => {
           <table className="min-w-full text-center ">
             <thead className=" ">
               <tr className="" style={{border: 'var(--border)',borderLeft: 'var(--border)', borderRight: 'var(--border)', color: 'var(--text-color)'}}>
-                <th className="p-3 text-center">OFF/ON</th>
-                <th className="p-3 text-center">Date</th>
-                <th className="p-3 text-center">Campaign Name</th>
-                <th className="p-3 text-center">Client Name</th>
+                <th className="p-3 text-center">Action</th>
+                <th className="p-3 text-start">Campaign Name</th>
+                <th className="p-3 text-start">Client Name</th>
                 <th className="p-3 text-center">Total Budged</th>
                 <th className="p-3 text-center">Total spent</th>
-                <th className="p-3 text-center">Status</th>
-                <th className="p-3 text-center">Action</th>
+                <th className="p-3 text-center">Date</th>
+                <th className="p-3 text-center">OFF/ON</th>
               </tr>
             </thead>
             <tbody>
@@ -330,75 +329,11 @@ const Campaigns = () => {
                     : "bg-gray-200  text-left text-black border-b border-opacity-20"
                 }`}
               >
-                <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-l-2 border-gray-200 text-center">  <label className="inline-flex items-center cursor-pointer">
-  <input
-    type="checkbox"
-    className="sr-only"
-    checked={campaign.status === "Active"}
-    onChange={() => {
-      const newStatus = campaign.status === "Active" ? "Complete" : "Active";
-      handleUpdate2(campaign._id, newStatus);
-    }}
-  />
-  <div
-    className={`relative w-12 h-6 transition duration-200 ease-linear rounded-full ${
-      campaign.status === "Active" ? "bg-blue-700" : "bg-gray-500"
-    }`}
-  >
-    <span
-      className={`absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition-transform duration-200 ease-linear transform ${
-        campaign.status === "Active" ? "translate-x-6" : ""
-      }`}
-    ></span>
-  </div>
-</label>
-</td>
-                  <td style={{  border: 'var(--border)'}} className="p-3 border-l-2 border-r-2 border-gray-300 ">
-                  {new Date(campaign?.date).toLocaleDateString("en-GB")}
-                  </td>
-                  <td style={{  border: 'var(--border)'}} className="p-3 border-r-2  border-gray-300 text-start px-5 ">
-                    <div className="">
-                    
-                        {campaign.campaignName}
-                    </div>
-                  </td>
-               <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 hover:text-blue-700 hover:font-bold border-gray-300 text-center ">
-                   <Link to={`/dashboard/client/${campaign.clientEmail}`} className="">
-                       {campaign.clientName}
-                   </Link>
-                 </td>
 
-                  <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-300 text-center ">
-                  $ {campaign.tBudged}
-                  
-                  </td>
-                  <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-300 text-center ">
-                  $ {campaign.tSpent}
-                 
-                  </td>
-
-                  <td style={{  border: 'var(--border)'}}
-                    className={`p-3 border-r-2 text-center border-gray-300 ${
-                      campaign.status === "Active"
-                        ? " text-blue-600 font-bold"
-                        : campaign.status === "Complete"
-                        ? " text-gray-400 font-bold"
-                        : ""
-                    }`}
-                  >
-                    {campaign.status}
-                  </td>
                   <td style={{  border: 'var(--border)'}} className="p-3 border-l-2 border-r-2 border-gray-300 text-center">
       <div className="flex justify-center gap-3">
         <div>
-                      <button
-                        className="bg-green-700 hover:bg-blue-700 text-white px-2 py-1 rounded"
-                        onClick={() =>
-                          document.getElementById(`modal_${index}`).showModal()
-                        }
-                      >
-                        Edit
-                      </button>
+                     
                       <dialog id={`modal_${index}`} className="modal">
   <div className="modal-box bg-white text-black">
     <form onSubmit={(e) => handleUpdate(e, campaign._id)}>
@@ -478,24 +413,80 @@ const Campaigns = () => {
       </div>
     </form>
   </div>
-</dialog>
+           </dialog>
 
                       </div>
                         <button
-                         className="bg-red-700 hover:bg-blue-700 text-white px-2 py-1 rounded"
+                         className="text-red-600 text-xl hover:bg-blue-700  px-2 py-1 rounded"
                           onClick={() => handleDelete(campaign._id,campaign.campaignName)}
                         >
-                          Delete
+                           <FaMinusSquare  />
                         </button>
                       </div>
-</td>
+                 </td>
+
+               
                   
+                  <td style={{  border: 'var(--border)'}} className="p-3 border-r-2  border-gray-300 text-start px-5 ">
+                    <div className="">
+                    <button
+                        className="flex justify-start items-center gap-2"
+                        onClick={() =>
+                          document.getElementById(`modal_${index}`).showModal()
+                        }
+                      >
+                            <FaEdit />
+                        {campaign.campaignName}
+                      </button>
+                       
+                    </div>
+                  </td>
+               <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 hover:text-blue-700 hover:font-bold border-gray-300 text-start ">
+                   <Link to={`/dashboard/client/${campaign.clientEmail}`} className="">
+                       {campaign.clientName}
+                   </Link>
+                 </td>
+
+                  <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-300 text-center ">
+                  $ {campaign.tBudged}
+                  
+                  </td>
+                  <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-300 text-center ">
+                  $ {campaign.tSpent}
+                 
+                  </td>
+                  <td style={{  border: 'var(--border)'}} className="p-3 border-l-2 border-r-2 border-gray-300 text-center ">
+                  {new Date(campaign?.date).toLocaleDateString("en-GB")}
+                  </td>
+                  <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-l-2 border-gray-200 text-center">  <label className="inline-flex items-center cursor-pointer">
+  <input
+    type="checkbox"
+    className="sr-only"
+    checked={campaign.status === "Active"}
+    onChange={() => {
+      const newStatus = campaign.status === "Active" ? "Complete" : "Active";
+      handleUpdate2(campaign._id, newStatus);
+    }}
+  />
+  <div
+    className={`relative w-12 h-6 transition duration-200 ease-linear rounded-full ${
+      campaign.status === "Active" ? "bg-blue-700" : "bg-gray-500"
+    }`}
+  >
+    <span
+      className={`absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition-transform duration-200 ease-linear transform ${
+        campaign.status === "Active" ? "translate-x-6" : ""
+      }`}
+    ></span>
+  </div>
+</label>
+               </td>
                 </tr>
               ))}
               <tr style={{ backgroundColor: 'var(--bg-color)', color: 'var(--text-color)'}} className=" text-sm  font-bold">
                 <td style={{  border: 'var(--border)'}}
                   className="p-3 border  text-right"
-                  colSpan="4"
+                  colSpan="3"
                 >
                   Total :
                 </td>

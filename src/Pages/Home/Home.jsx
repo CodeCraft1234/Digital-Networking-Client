@@ -8,6 +8,7 @@ import { Helmet } from "react-helmet-async";
 import AdsDashboardHome from "../DashboardRoot/AdsHome";
 import ClientHome from "./ClientHome";
 import useUserr from "../../Hook/useUser";
+import AdminHome from "./AdminHome";
 
 const Home = () => {
     const { user } = useContext(AuthContext);
@@ -23,7 +24,7 @@ const Home = () => {
             {user ? (
                 <div>
                     {userr?.role === "admin" ? (
-                        <Banner />
+                        <AdminHome></AdminHome>
                     ) : userr?.role === "contributor" ? (
                         <AdsDashboardHome />
                     ) : userr?.role === "client" ? (

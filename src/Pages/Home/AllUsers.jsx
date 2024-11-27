@@ -11,6 +11,7 @@ import { Link } from "react-router-dom";
 import useAdsPayment from "../../Hook/useAdsPayment";
 import useAdsAccountCenter from "../../Hook/useAdsAccountCenter";
 import useAllEmployee from "../../Hook/useAllEmployee";
+import { FaEdit, FaMinusSquare } from "react-icons/fa";
 
 const AllUsers = () => {
   const [allEmployees,refetch]=useAllEmployee()
@@ -215,11 +216,11 @@ const AllUsers = () => {
           <table className="min-w-full text-center ">
             <thead className=" ">
               <tr className="" style={{border: 'var(--border)',borderLeft: 'var(--border)', borderRight: 'var(--border)', color: 'var(--text-color)'}}>
-                <th className="p-3 text-center">Sl</th>
+                  <th className="p-3 text-center">Action</th>
                 <th className="p-3 text-center">Profile</th>
-                <th className="p-3 text-center">Name</th>
+                <th className="p-3 text-start">Name</th>
                 <th className="p-3 text-center">Mobile</th>
-                <th className="p-3 text-center">Email</th>
+                <th className="p-3 text-start">Email</th>
                 {activeTab === 'employee' && (
                   <th className="p-3 text-center">Client</th>
                 )}
@@ -227,7 +228,6 @@ const AllUsers = () => {
                   <th className="p-3 text-center">Due</th>
                 )}
                 <th className="p-3 text-center">Role</th>
-                <th className="p-3 text-center">Action</th>
               </tr>
             </thead>
             <tbody>
@@ -241,7 +241,12 @@ const AllUsers = () => {
                  }`}
                >
                   <td style={{  border: 'var(--border)'}} className="p-3 border-l-2 border-r-2 border-gray-300 text-center">
-                    {index + 1}
+                  <button
+                      onClick={() => handleDelete(user._id)}
+                       className="text-red-600 text-xl hover:bg-blue-700  px-2 py-1 rounded"
+                    >
+                        <FaMinusSquare  />
+                    </button>
                   </td>
                   <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-300 text-center">
                     <img
@@ -263,7 +268,18 @@ const AllUsers = () => {
                     {user.contactNumber}
                   </td>
                   <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-300 text-center">
-                    {user.email}
+                  <button
+                         className="flex justify-start items-center gap-2"
+                        onClick={() =>
+                          document
+                            .getElementById(`my_modal_${user._id}`)
+                            .showModal()
+                        }
+                      >
+                       <FaEdit />
+                       <h1>{user.email}</h1>
+                      </button>
+                    
                   </td>
 
                                  {activeTab === 'contributor' && (
@@ -315,19 +331,35 @@ const AllUsers = () => {
                       <option value="client">Client</option>
                     </select>
                   </td>
-                  <td style={{  border: 'var(--border)'}} className="p-3 text-center border-r-2 border-gray-300">
-                  <button
-                        className="bg-green-700 mr-3 hover:bg-blue-700 text-white px-2 py-1 rounded"
-                        onClick={() =>
-                          document
-                            .getElementById(`my_modal_${user._id}`)
-                            .showModal()
-                        }
-                      >
-                       Edit
-                      </button>
+                 
+                </tr>
+              ))}
+            </tbody>
+            {activeTab === 'employee' && (
+  <tfoot>
+    <tr style={{ backgroundColor: 'var(--bg-color)', color: 'var(--text-color)'}} className="  py-5">
+      <td
+        colSpan={5}
+        className="text-right py-3 text-white font-bold"
+      >
+        Total :
+      </td>
+      <td
+        colSpan={1}
+        className="text-center font-bold"
+      >
+        {totalClientsForEmployees}
+      </td>
+      <td></td>
+      <td></td>
+      <td></td>
+    </tr>
+  </tfoot>
+)}
 
-                      <dialog id={`my_modal_${user._id}`} className="modal">
+
+
+<dialog id={`my_modal_${user._id}`} className="modal">
   <div className="modal-box bg-white">
     <form
       onSubmit={(e) =>
@@ -366,38 +398,6 @@ const AllUsers = () => {
     </form>
   </div>
                       </dialog>
-                    <button
-                      onClick={() => handleDelete(user._id)}
-                       className="bg-red-700 hover:bg-blue-700 text-white px-2 py-1 rounded"
-                    >
-                      Delete
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-            {activeTab === 'employee' && (
-  <tfoot>
-    <tr style={{ backgroundColor: 'var(--bg-color)', color: 'var(--text-color)'}} className="  py-5">
-      <td
-        colSpan={5}
-        className="text-right py-3 text-white font-bold"
-      >
-        Total :
-      </td>
-      <td
-        colSpan={1}
-        className="text-center font-bold"
-      >
-        {totalClientsForEmployees}
-      </td>
-      <td></td>
-      <td></td>
-      <td></td>
-    </tr>
-  </tfoot>
-)}
-
 {activeTab === 'contributor' && (
   <tfoot  style={{border: 'var(--border)',borderLeft: 'var(--border)', borderRight: 'var(--border)', color: 'var(--text-color)'}} className="">
     <tr>

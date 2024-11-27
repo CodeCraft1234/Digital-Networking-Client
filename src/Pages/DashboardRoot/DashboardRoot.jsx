@@ -168,7 +168,7 @@ const DashboardRoot = () => {
         </div>
         
         <div className="lg:ml-56  min-h-screen min-w-min  rounded-lg w-full lg:col-span-2">
-        <div style={{ backgroundColor: 'var(--bg-color)', color: 'var(--text-color)'}}  className="  font-bold mx-auto   fixed z-50 w-full mr-1 p-3 hidden md:block">
+        <div style={{ backgroundColor: 'var(--bg-colorNav)', color: 'var(--text-color)'}}  className="  font-bold mx-auto   fixed z-50 w-full mr-1 p-3 hidden md:block">
   <div className="left-0  items-center grid lg:grid-cols-3 gap-5">
 
     <div className="flex justify-start items-center ml-3 gap-5">

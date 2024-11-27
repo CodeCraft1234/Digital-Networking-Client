@@ -92,37 +92,6 @@ const MySellery = () => {
     }
   }, [users, email, employeePayment]);
 
-  const AxiosPublic = UseAxiosPublic();
-
-  const handleSellery = (e) => {
-    e.preventDefault();
-    const amount = parseFloat(e.target.amount.value);
-    const bonus = parseFloat(e.target.bonus.value);
-    const date = new Date(`${selectedMonth} 1, ${new Date().getFullYear()}`); // Create a date based on the selected month
-
-    const generateRandomId = () => {
-      return Math.floor(Math.random() * 1e13); // 1e13 generates a number between 0 and 9999999999999 (13 digits)
-    };
-    const id = generateRandomId();
-    const selleryData = {
-      id,
-      amount,
-      bonus,
-      date,
-      month: selectedMonth, // Use the selected month
-      email
-    };
-
-    AxiosPublic.post('/users/updateSellery', { email, selleryData })
-      .then(res => {
-        console.log(res.data);
-        refetch();
-        // Optional: Close the modal or do additional actions here
-      })
-      .catch(error => {
-        console.error("Error posting user data:", error);
-      });
-  };
 
   const downloadPDF = () => {
     const input = componentRef.current;
@@ -147,18 +116,15 @@ const MySellery = () => {
       <button onClick={downloadPDF} className="mb-5 p-3 bg-blue-500 text-white rounded">
         Download PDF
       </button>
-      <div  className="overflow-x-auto rounded-xl  text-center " style={{ backgroundColor: 'var(--bg-color)', color: 'var(--text-color)'}}>
+      <div  className="overflow-x-auto rounded-xl  text-center " style={{  color: 'var(--text-color)'}}>
           <table className="min-w-full text-center ">
             <thead className=" ">
-              <tr className="" style={{border: 'var(--border)',borderLeft: 'var(--border)', borderRight: 'var(--border)', color: 'var(--text-color)'}}>
-              <th className="p-3">SL</th>
+              <tr className="" style={{backgroundColor: 'var(--bg-color)', border: 'var(--border)',borderLeft: 'var(--border)', borderRight: 'var(--border)', color: 'var(--text-color)'}}>
               <th className="p-3">Month</th>
               <th className="p-3">Spent</th>
               <th className="p-3">T. Sellery</th>
               <th className="p-3">Paid Amount</th>
               <th className="p-3">Unpaid</th>
-              <th className="p-3">Bonus</th>
-       
             </tr>
           </thead>
           <tbody>
@@ -171,7 +137,7 @@ const MySellery = () => {
                   : "bg-gray-200  text-left text-black border-b border-opacity-20"
               }`}
             >
-                <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-300 text-center px-5">{index + 1}</td>
+                
                 <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-300 text-center px-5">
                   {data.month}
                 </td>
@@ -191,16 +157,14 @@ const MySellery = () => {
                 <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-300 text-center">
                   ৳ {data.totalSelleryPaid.toFixed(2)}
                 </td>
-                <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-300 text-center">
-                  ৳ {data.totalBonus.toFixed(2)}
-                </td>
+                
               
               </tr>
             ))}
           </tbody>
-          <tfoot className="font-bold ">
-            <tr style={{ backgroundColor: 'var(--bg-color)', color: 'var(--text-color)'}}>
-              <td className="p-3 text-right border-gray-300" colSpan="2">Total</td>
+          
+            <tr className='font-bold' style={{ backgroundColor: 'var(--bg-color)', color: 'var(--text-color)'}}>
+              <td className="p-3 text-right border-gray-300" colSpan="1">Total:</td>
               <td className="p-3 border-gray-300">
                 ${employeeData.reduce((acc, data) => acc + data.totalSpent, 0).toFixed(2)}
               </td>
@@ -214,12 +178,10 @@ const MySellery = () => {
               <td className="p-3 border-gray-300">
                 ৳ {(employeeData.reduce((acc, data) => acc + data.totalSelleryPaid, 0)).toFixed(2)}
               </td>
-              <td className="p-3 border-gray-300">
-                ৳ {(employeeData.reduce((acc, data) => acc + data.totalBonus, 0)).toFixed(2)}
-              </td>
+              
             
             </tr>
-          </tfoot>
+       
         </table>
       </div>
      

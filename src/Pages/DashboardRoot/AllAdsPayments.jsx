@@ -7,6 +7,7 @@ import Swal from "sweetalert2";
 import useUsers from "../../Hook/useUsers";
 import useAdsPayment from "../../Hook/useAdsPayment";
 import { Link } from "react-router-dom";
+import { FaEdit, FaMinusSquare } from "react-icons/fa";
 
 const AllAdsPayments = () => {
   const [adsPayment, refetch] = useAdsPayment();
@@ -308,14 +309,14 @@ const AllAdsPayments = () => {
           <table className="min-w-full text-center ">
             <thead style={{ backgroundColor: 'var(--bg-color)', color: 'var(--text-color)'}} className=" ">
               <tr className="" style={{border: 'var(--border)',borderLeft: 'var(--border)', borderRight: 'var(--border)', color: 'var(--text-color)'}}>
-              <th className="p-3"><span onClick={() => setSelectedCategory('pending')} >OFF</span> / <span onClick={() => setSelectedCategory('')} >ON</span></th>
+            
+              <th className="p-3">{displayedItems.length}</th>
               <th className="p-3">Date</th>
-              <th className="p-3">Contributor Name</th>
+              <th className="p-3 text-left">Contributor Name</th>
               <th className="p-3">Amount</th>
               <th className="p-3">Method</th>
               <th className="p-3">Note</th>
               <th className="p-3">Status</th>
-              <th className="p-3">Action</th>
             </tr>
           </thead>
           <tbody>
@@ -328,29 +329,23 @@ const AllAdsPayments = () => {
                    : "bg-gray-200  text-left text-black border-b border-opacity-20"
                }`}
              >
-                 <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-l-2 border-gray-200 text-center">  <label className="inline-flex items-center cursor-pointer">
-  <input
-    type="checkbox"
-    className="sr-only"
-    checked={payment.status !== "pending"}
-    onChange={() => {
-      const newStatus = payment.status !== "pending" ? "pending" : "Approved";
-      handleUpdate2(payment._id, newStatus);
-    }}
-  />
-  <div
-    className={`relative w-12 h-6 transition duration-200 ease-linear rounded-full ${
-      payment.status !== "pending" ? "bg-blue-700" : "bg-gray-500"
-    }`}
-  >
-    <span
-      className={`absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition-transform duration-200 ease-linear transform ${
-        payment.status !== "pending" ? "translate-x-6" : ""
-      }`}
-    ></span>
-  </div>
-</label>
-</td>
+               
+                <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-200 text-center">
+               <div className="flex justify-center gap-2">
+               <button
+                         className="text-red-600 text-xl hover:bg-blue-700  px-2 py-1 rounded"
+                          onClick={() => handleDelete(payment._id)}
+                        >
+                          <FaMinusSquare  />
+                        </button>
+                        <button
+                           className="flex justify-start items-center gap-2"
+                          onClick={() => handleEditClick(payment)}
+                        >
+                                <FaEdit />
+                        </button>
+               </div>
+                </td>
                 <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-200 text-center">
                 {new Date(payment.date).toLocaleDateString("en-GB")}
                 </td>
@@ -404,37 +399,32 @@ const AllAdsPayments = () => {
                 <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-200 text-center">
                   {payment.note}
                 </td>
-                <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-200 text-center">
-                {payment.status !== 'pending' ? (
-    <button
-     
-      className="text-green-700 font-bold px-2 py-1 rounded"
-    >
-      Approve
-    </button>
-  ) : (
-    <button
-     
-      className="text-blue-700 font-bold px-2 py-1 rounded"
-    >
-      Pending
-    </button>
-  )}
-                </td>
-                <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 gap-3 border-gray-200 text-center">
-                <button
-                          className="bg-green-700 mr-3 hover:bg-blue-700 text-white px-2 py-1 rounded"
-                          onClick={() => handleEditClick(payment)}
-                        >
-                               Edit
-                        </button>
-                        <button
-                          className="bg-red-700 hover:bg-blue-700 text-white px-2 py-1 rounded"
-                          onClick={() => handleDelete(payment._id)}
-                        >
-                          Delete
-                        </button>
-                </td>
+               
+              
+
+                <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-l-2 border-gray-200 text-center">  <label className="inline-flex items-center cursor-pointer">
+  <input
+    type="checkbox"
+    className="sr-only"
+    checked={payment.status !== "pending"}
+    onChange={() => {
+      const newStatus = payment.status !== "pending" ? "pending" : "Approved";
+      handleUpdate2(payment._id, newStatus);
+    }}
+  />
+  <div
+    className={`relative w-12 h-6 transition duration-200 ease-linear rounded-full ${
+      payment.status !== "pending" ? "bg-blue-700" : "bg-gray-500"
+    }`}
+  >
+    <span
+      className={`absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition-transform duration-200 ease-linear transform ${
+        payment.status !== "pending" ? "translate-x-6" : ""
+      }`}
+    ></span>
+  </div>
+</label>
+               </td>
               </tr>
             ))}
              <tr style={{ backgroundColor: 'var(--bg-color)', color: 'var(--text-color)'}} className="pb-5 font-bold">
@@ -445,7 +435,7 @@ const AllAdsPayments = () => {
               <td className="p-3 text-center"></td>
               <td className="p-3 text-center"></td>
               <td className="p-3 text-center"></td>
-              <td className="p-3 text-center"></td>
+             
             </tr>
           </tbody>
         </table>
