@@ -1,17 +1,23 @@
-import  { useState,  } from 'react';
+import  { useContext, useState,  } from 'react';
 import useUsers from '../../Hook/useUsers';  // Custom hook to fetch users
 import UseAxiosPublic from '../../Axios/UseAxiosPublic';
 import Swal from 'sweetalert2';
 import { Link } from 'react-router-dom';
 import { FaEdit, FaMinusSquare } from 'react-icons/fa';
+import { Helmet } from 'react-helmet-async';
+import { AuthContext } from '../../Security/AuthProvider';
+import useMyUser from '../../Hook/useMyUser';
+import useUserr from '../../Hook/useUser';
 
-const History = () => {
-  const [users,refetch] = useUsers(); 
+const MonthlySpend = () => {
+  const { user } = useContext(AuthContext);
+  const {userr}=useUserr(user?.email)
+  const [users]=useUsers()
+ 
   const currentDate = new Date();
 
   const [modalData2, setModalData2] = useState(null);
 
-  // Function to close the modal
   const closeModal = () => {
     setModalData2(null);
   };
@@ -20,8 +26,14 @@ const History = () => {
   const currentYear = currentDate.getFullYear().toString();
   const [sortYear, setSortYear] = useState(currentYear);
 
-  const initialTab = localStorage.getItem("activeTaballhistory") ;
+  const initialTab =
+  userr?.role === "admin"
+    ? localStorage.getItem("activeTaballhistory") || "all"
+    : user?.email;
+
   const [sortEmployee, setSortEmployee] = useState(initialTab);
+  const [myUser]=useMyUser(sortEmployee)
+  console.log(myUser);
   
   const changeTab = (tab) => {
     setSortEmployee(tab);
@@ -36,10 +48,7 @@ const History = () => {
     localStorage.setItem("activeTaballhistoryMonth", tab); 
   };
 
-  
-
-  // Flatten the monthlySpent data across all users
-  const flattenedData = users.filter(u=>u.role === 'employee').reduce((acc, user) => {
+  const flattenedData = myUser.filter(u=>u.role === 'employee').reduce((acc, user) => {
     if (user.monthlySpent) {
       const userSpentData = user.monthlySpent.map(spent => ({
         ...spent,
@@ -54,10 +63,16 @@ const History = () => {
 
   const sortedAccounts = flattenedData
   .filter(account => {
-    const matchEmployee = sortEmployee ? account.employeeName === sortEmployee : true;
-    const matchMonth = sortMonth ? new Date(account.date).toLocaleString('default', { month: 'long' }) === sortMonth : true;
-    const matchYear = sortYear ? new Date(account.date).getFullYear().toString() === sortYear : true;
-    return matchEmployee && matchMonth && matchYear;
+
+    const matchMonth = sortMonth 
+      ? new Date(account.date).toLocaleString('default', { month: 'long' }) === sortMonth
+      : true;
+
+    const matchYear = sortYear 
+      ? new Date(account.date).getFullYear().toString() === sortYear
+      : true;
+
+    return  matchMonth && matchYear;
   })
   .reduce((acc, currentAccount) => {
     const existingAccount = acc.find(account => account.accountName === currentAccount.accountName);
@@ -73,6 +88,7 @@ const History = () => {
   }, [])
   .sort((a, b) => a.accountName.localeCompare(b.accountName, undefined, { sensitivity: 'base' }));
 
+console.log(sortedAccounts);
 
   const AxiosPublic = UseAxiosPublic();
 
@@ -121,23 +137,40 @@ const History = () => {
 
   return (
     <div className='mx-5 my-5'>
+           <Helmet>
+                <title>Monthly Activity | Digital Network</title>
+                <link rel="canonical" href="https://www.example.com/" />
+            </Helmet>
+
       <div className='px-5 py-5 rounded-md' style={{ backgroundColor: 'var(--bg-color3)', color: 'var(--text-color)',border: 'var(--border)'}}>
       <div className="lg:flex lg:justify-start items-center gap-3 mb-5">
-        <div className='flex justify-center items-center'>
-          <select
-           style={{ backgroundColor: 'var(--bg-color2)',border: 'var(--border)', color: 'var(--text-color2)'}}
-            className="px-4 py-2 border rounded bg-white text-black border-black"
-            onChange={(e) => changeTab(e.target.value)}
-            value={sortEmployee || ""}
-          >
-            <option value="">Select Employee</option>
-            {users.map(user => (
-              user.role === 'employee' && (
-                <option key={user._id} value={user.name}>{user.name}</option>
-              )
-            ))}
-          </select>
-        </div>
+      <div className="w-full lg:w-auto flex justify-start gap-3">
+  {userr?.role === "admin" ? (
+    <div className="flex mt-1.5 justify-center">
+      <select
+        style={{
+          backgroundColor: "var(--bg-color2)",
+          border: "var(--border)",
+          color: "var(--text-color2)",
+        }}
+        className="border bg-white text-black py-2 lg:w-auto w-full border-gray-400 rounded px-2"
+        value={sortEmployee}
+        onChange={(e) => changeTab(e.target.value)}
+      >
+        <option value="all">All Employees</option>
+        {users
+          .filter((u) => u.role === "employee")
+          .map((employee) => (
+            <option key={employee._id} value={employee.email}>
+              {employee.name}
+            </option>
+          ))}
+      </select>
+    </div>
+  ) : (
+   <></>
+  )}
+</div>
       
         <div className='flex justify-center mt-5 lg:mt-0 gap-5 items-center'>
         <div>
@@ -175,11 +208,11 @@ const History = () => {
             <thead className=" ">
               <tr className="" style={{border: 'var(--border)',borderLeft: 'var(--border)', borderRight: 'var(--border)', color: 'var(--text-color)'}}>
               <th className="p-3">{sortedAccounts?.length}</th>
-              <th className="p-3">Employee Name</th>
-              <th className="p-3">Ad Account Name</th>
-              <th className="p-3">Month</th>
-              <th className="p-3">Total Spent</th>
-              <th className="p-3">Total Bill</th>
+              <th className="p-3 text-start">Employee Name</th>
+              <th className="p-3 text-start">Ad Account Name</th>
+              <th className="p-3 text-start">Month</th>
+              <th className="p-3 text-start">Total Spent</th>
+              <th className="p-3 text-start">Total Bill</th>
           
             </tr>
           </thead>
@@ -235,15 +268,22 @@ const History = () => {
                   </div>
                 
                 </td>
-                <td style={{  border: 'var(--border)'}} className="p-3 border-l-2 border-r-2 text-center border-gray-300">
+                <td style={{  border: 'var(--border)'}} className="p-3 border-l-2 border-r-2 text-start border-gray-300">
                   {new Date(account.date).toLocaleString('default', { month: 'long'})}
                 </td>
-                <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-300 text-center">
-                <span className='font-extrabold '>$</span> {account.totalSpentt.toFixed(2)}
+                <td style={{ border: 'var(--border)' }} className="p-3 border-r-2 border-gray-300 text-start">
+  <span className="font-extrabold">$</span>{" "}
+  {new Intl.NumberFormat('en-IN', {
+    maximumFractionDigits: 2,
+    minimumFractionDigits: 2,
+  }).format(account.totalSpentt)}
 </td>
-<td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-300 text-center">
-<span className='font-extrabold '>৳</span> {(account.totalSpentt * 140).toFixed(0)}
+<td style={{ border: 'var(--border)' }} className="p-3 border-r-2 border-gray-300 text-start">
+  <span className="font-extrabold">৳</span>{" "}
+  {new Intl.NumberFormat('en-IN').format(Math.round(account.totalSpentt * 140))}
 </td>
+
+
 
                
               </tr>
@@ -253,13 +293,19 @@ const History = () => {
           <tfoot className="">
   <tr style={{ backgroundColor: 'var(--bg-color)', color: 'var(--text-color)'}}>
     <td colSpan="4" className="p-3 font-bold text-right">Total</td>
-    <td className="p-3 font-bold text-center">
-      $ {sortedAccounts.reduce((sum, acc) => sum + acc.totalSpentt, 0).toFixed(2)}
-    </td>
-    <td className="p-3 font-bold text-center">
-    <span className='font-extrabold '>৳</span> {(sortedAccounts.reduce((sum, acc) => sum + acc.totalSpentt, 0) * 140).toFixed(0)}
-    </td>
-  
+    <td className="p-3 font-bold text-start">
+  $ {new Intl.NumberFormat('en-IN', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }).format(sortedAccounts.reduce((sum, acc) => sum + acc.totalSpentt, 0))}
+</td>
+<td className="p-3 font-bold text-start">
+  <span className="font-extrabold">৳</span>{" "}
+  {new Intl.NumberFormat('en-IN').format(
+    Math.round(sortedAccounts.reduce((sum, acc) => sum + acc.totalSpentt, 0) * 140)
+  )}
+</td>
+
   </tr>
 </tfoot>
 
@@ -305,4 +351,4 @@ const History = () => {
   );
 };
 
-export default History;
+export default MonthlySpend;

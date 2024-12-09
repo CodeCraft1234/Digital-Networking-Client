@@ -9,18 +9,27 @@ import Swal from "sweetalert2";
 import useMpymentsByEmail from "../../Hook/useMpaymentByEmail";
 import { FaMinusSquare } from "react-icons/fa";
 import BalanceCard from "../DashboardRoot/BalanceCard";
+import useFindClient from "./useFindClient";
+import useUsers from "../../Hook/useUsers";
 
 const ClientPaymentHistry = () => {
   const { user } = useContext(AuthContext);
   const param = useParams();
-  const [Mpayments,refetch]=useMpymentsByEmail(param?.email)
+  const {findClients , refetch}=useFindClient(param?.email)
+  const [Mpayments]=useMpymentsByEmail(param?.email)
   const AxiosPublic = UseAxiosPublic();
-  const [totalPayment, setTotalPayment] = useState(0);
   const [datas, setdatas] = useState();
   const [clients] = useClients();
   const [Histryy, setHistryy] = useState([]);
-  const [filteredHistory, setFilteredHistory] = useState([]);
-  const [selectedMonth, setSelectedMonth] = useState('');
+  const [users] = useUsers();
+
+  const initialTab2 = localStorage.getItem("activeTaballcampaignmonthsss2");
+  const [selectedMonth, setSortMonth] = useState(initialTab2 || (new Date().getMonth() + 1).toString());
+
+  const changeTab2 = (tab) => {
+    setSortMonth(tab);
+    localStorage.setItem("activeTaballcampaignmonthsss2", tab);
+  };
 
   useEffect(() => {
 
@@ -29,26 +38,16 @@ const ClientPaymentHistry = () => {
       const sortedHistry = Mpayments.sort((a, b) => new Date(b.date) - new Date(a.date));
       setHistryy(sortedHistry);
   
-      const totalBill = sortedHistry.reduce((acc, campaign) => acc + parseFloat(campaign.amount), 0);
-      setTotalPayment(totalBill);
   
       const clientData = clients.find((m) => m.clientEmail === param.email);
       setdatas(clientData);
     }
 
-    if (selectedMonth) {
-      const filtered = Histryy.filter(payment => {
-        const paymentDate = new Date(payment.date);
-        return (
-          paymentDate.getMonth() + 1 === parseInt(selectedMonth)
-        );
-      });
-      setFilteredHistory(filtered);
-    } else {
-      setFilteredHistory(Histryy); 
-    }
-  }, [selectedMonth, Histryy,param?.email, Mpayments, clients]);
+  }, [users,selectedMonth,user?.email, Histryy,param?.email, Mpayments, clients]);
 
+  const generateRandomId = () => {
+    return Math.floor(Math.random() * 1e13); 
+  };
   
   const handlePayment = async (e) => {
     e.preventDefault();
@@ -57,127 +56,34 @@ const ClientPaymentHistry = () => {
     const date =  e.target.date.value;
     const note = e.target.note.value;
     const clientEmail = param?.email;
-    const clientName = datas?.clientName;
     const employeeEmail = user?.email;
-  
-    const body = {
+    const ids=param?.email
+    const payments = {
       paymentMethod,
       amount,
       note,
+      id:ids,
+      ids: generateRandomId(), 
       clientEmail,
-      clientName,
+      clientName:findClients.clientName,
       employeeEmail,
       date,
     };
-  
-    const datas2={title: `Payment ${amount} from ${clientName} `,date:new Date(),user:user?.displayName}
-       AxiosPublic.post(`/MPayment`, body)
-       .then(res=>{
-        AxiosPublic.post("/activity", datas2)
-        .then((res) => {
-          refetch();
-          document.getElementById("my_modal_2").close()
-          console.log(res.data);
-        })
-        toast.success("Payment successful");
+    AxiosPublic.post("/clients/payments", {
+      id: ids, 
+      payments,
+    })
+      .then((res) => {
+        console.log("Payment successful:", res.data);
         refetch();
         document.getElementById("my_modal_8").close();
-        console.log(res.data);
-       })
-
-    if (paymentMethod === "bank") {
-      const employeeName = user?.displayName;
-      const payAmount = e.target.amount.value;  // Use the amount for payAmount
-      const bankData = {
-        employeeName,
-        employeeEmail,
-        payAmount,
-        note,
-        paymentMethod,
-        date,
-        status: 'pending'
-      };
-      const datas={title: `Payment ${amount} from ${clientName} in ${paymentMethod}`,date:new Date(),user:user?.displayName}
-      try {
-        const response = await AxiosPublic.post("/employeePayment", bankData);
-        toast.success("Bank payment request sent successfully!");
-        refetch();
-        AxiosPublic.post("/activity", datas)
-        .then((res) => {
-          refetch();
-          document.getElementById("my_modal_2").close()
-          console.log(res.data);
-        })
-        console.log(response.data);
-        document.getElementById("my_modal_1").close();
-      } catch (error) {
-        console.error("Error posting bank payment:", error);
-        toast.error("Failed to send bank payment request");
-      }
-    }
-
-    if (paymentMethod === "DBBLBank") {
-      const employeeName = user?.displayName;
-      const payAmount = e.target.amount.value;  // Use the amount for payAmount
-      const bankData = {
-        employeeName,
-        employeeEmail,
-        payAmount,
-        note,
-        paymentMethod,
-        date,
-        status: 'pending'
-      };
-      const datas={title: `Payment ${amount} from ${clientName} in ${paymentMethod}`,date:new Date(),user:user?.displayName}
-      try {
-        const response = await AxiosPublic.post("/employeePayment", bankData);
-        AxiosPublic.post("/activity", datas)
-        .then((res) => {
-          refetch();
-          document.getElementById("my_modal_2").close()
-          console.log(res.data);
-        })
-        toast.success("Bank payment request sent successfully!");
-        refetch();
-        console.log(response.data);
-        document.getElementById("my_modal_1").close();
-      } catch (error) {
-        console.error("Error posting bank payment:", error);
-        toast.error("Failed to send bank payment request");
-      }
-    }
-
-    if (paymentMethod === "IBBLBank") {
-      const employeeName = user?.displayName;
-      const payAmount = e.target.amount.value;  // Use the amount for payAmount
-      const bankData = {
-        employeeName,
-        employeeEmail,
-        payAmount,
-        note,
-        paymentMethod,
-        date,
-        status: 'pending'
-      };
-  
-      try {
-        const response = await AxiosPublic.post("/employeePayment", bankData);
-        AxiosPublic.post("/activity", datas)
-        .then((res) => {
-          refetch();
-          document.getElementById("my_modal_2").close()
-          console.log(res.data);
-        })
-        toast.success("Bank payment request sent successfully!");
-        refetch();
-        console.log(response.data);
-        document.getElementById("my_modal_1").close();
-      } catch (error) {
-        console.error("Error posting bank payment:", error);
-        toast.error("Failed to send bank payment request");
-      }
-    }
-
+        toast.success("Payment successful");
+      })
+      .catch((error) => {
+        console.error("Error posting payment:", error);
+        toast.error("Payment failed");
+      });
+    
   };
   
   const handleUpdatePayment = async (e, id,clientName) => {
@@ -204,35 +110,29 @@ const ClientPaymentHistry = () => {
     }
   };
   
-  const handledelete = async (id) => {
-    const datas={title: `Delete Payment from client profile`,date:new Date(),user:user?.displayName}
-    const result = await Swal.fire({
-      title: 'Are you sure?',
-      text: "You won't be able to revert this!",
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'Yes, delete it!',
+  const handledelete = (ids, id) => {
+    Swal.fire({
+        title: 'Are you sure?',
+        text: "You won't be able to revert this!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, delete it!'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            AxiosPublic.delete(`/clientPayment/delete/${id}/${ids}`)
+                .then((res) => {
+                    toast.success("Campaign deleted successfully!");
+                    refetch(); // Refresh data after deletion
+                })
+                .catch((error) => {
+                    console.error("Error deleting campaign:", error);
+                    toast.error("Failed to delete the campaign. Please try again.");
+                });
+        }
     });
-  
-    if (result.isConfirmed) {
-      try {
-        await AxiosPublic.delete(`/Mpayment/${id}`);
-        AxiosPublic.post("/activity", datas)
-        .then((res) => {
-          refetch();
-          document.getElementById("my_modal_2").close()
-          console.log(res.data);
-        })
-        toast.success("Payment deleted successfully");
-        refetch(); // Update the data after deletion
-      } catch (error) {
-        console.error("Error deleting payment:", error);
-        toast.error("Failed to delete payment");
-      }
-    }
-  };
+};
 
   const today = new Date();
   const formattedDate = today.toISOString().split('T')[0];  
@@ -243,13 +143,13 @@ const ClientPaymentHistry = () => {
             <div style={{ backgroundColor: 'var(--bg-color3)', color: 'var(--text-color)', border: 'var(--border)' }}      className="lg:mt-5 mt-5 px-5 py-2 rounded-lg mx-5">
                <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-8 gap-3 lg:gap-3 mt-3 mb-3">
     
-                 <BalanceCard img={`https://i.ibb.co/bHMLyvM/b-Kash-Merchant.png`} amount={filteredHistory?.filter(h => h.paymentMethod === 'bkashMarchent')?.reduce((acc, payment) => acc + payment?.amount, 0)}></BalanceCard>
-                 <BalanceCard img={`https://i.ibb.co/520Py6s/bkash-1.png`} amount={filteredHistory?.filter(h => h.paymentMethod === 'bkashPersonal')?.reduce((acc, payment) => acc + payment?.amount, 0)}></BalanceCard>
-                 <BalanceCard img={`https://i.ibb.co/JQBQBcF/nagad-marchant.png`} amount={filteredHistory?.filter(h => h.paymentMethod === 'nagadPersonal')?.reduce((acc, payment) => acc + payment?.amount, 0)}></BalanceCard>
-                 <BalanceCard img={`https://i.ibb.co/QkTM4M3/rocket.png`} amount={filteredHistory?.filter(h => h.paymentMethod === 'rocketPersonal')?.reduce((acc, payment) => acc + payment?.amount, 0)}></BalanceCard>
-                 <BalanceCard img={`https://i.ibb.co.com/kG9cBXJ/BBBLBank.png`} amount={filteredHistory?.filter(h => h.paymentMethod === 'bank')?.reduce((acc, payment) => acc + payment?.amount, 0)}></BalanceCard>
-                 <BalanceCard img={`https://i.ibb.co.com/vH2fPBm/DBBLBank.png`} amount={filteredHistory?.filter(h => h.paymentMethod === 'DBBLBank')?.reduce((acc, payment) => acc + payment?.amount, 0)}></BalanceCard>
-                 <BalanceCard img={`https://i.ibb.co.com/pnS6nt4/IBBLBank.png`} amount={filteredHistory?.filter(h => h.paymentMethod === 'IBBLBank')?.reduce((acc, payment) => acc + payment?.amount, 0)}></BalanceCard>
+                 <BalanceCard img={`https://i.ibb.co/bHMLyvM/b-Kash-Merchant.png`} amount={findClients?.payments?.filter(h => h?.paymentMethod === 'bkashMarchent')?.reduce((acc, payment) => acc + payment?.amount, 0)}></BalanceCard>
+                 <BalanceCard img={`https://i.ibb.co/520Py6s/bkash-1.png`} amount={findClients?.payments?.filter(h => h?.paymentMethod === 'bkashPersonal')?.reduce((acc, payment) => acc + payment?.amount, 0)}></BalanceCard>
+                 <BalanceCard img={`https://i.ibb.co/JQBQBcF/nagad-marchant.png`} amount={findClients?.payments?.filter(h => h?.paymentMethod === 'nagadPersonal')?.reduce((acc, payment) => acc + payment?.amount, 0)}></BalanceCard>
+                 <BalanceCard img={`https://i.ibb.co/QkTM4M3/rocket.png`} amount={findClients?.payments?.filter(h => h?.paymentMethod === 'rocketPersonal')?.reduce((acc, payment) => acc + payment?.amount, 0)}></BalanceCard>
+                 <BalanceCard img={`https://i.ibb.co.com/kG9cBXJ/BBBLBank.png`} amount={findClients?.payments?.filter(h => h?.paymentMethod === 'bank')?.reduce((acc, payment) => acc + payment?.amount, 0)}></BalanceCard>
+                 <BalanceCard img={`https://i.ibb.co.com/vH2fPBm/DBBLBank.png`} amount={findClients?.payments?.filter(h => h?.paymentMethod === 'DBBLBank')?.reduce((acc, payment) => acc + payment?.amount, 0)}></BalanceCard>
+                 <BalanceCard img={`https://i.ibb.co.com/pnS6nt4/IBBLBank.png`} amount={findClients?.payments?.filter(h => h?.paymentMethod === 'IBBLBank')?.reduce((acc, payment) => acc + payment?.amount, 0)}></BalanceCard>
              
                  <div 
                    style={{ backgroundColor: '#d9f8d9', border: 'var(--border)' }} 
@@ -258,7 +158,10 @@ const ClientPaymentHistry = () => {
                    <h1 className="px-3 text-black text-xl font-bold text-center">TOTAL</h1>
                    <p className="balance-card-text text-lg mt-2 lg:text-xl font-bold text-gray-700">
                      <span className="text-lg lg:text-xl font-extrabold">৳</span>
-                     {filteredHistory?.reduce((acc, payment) => acc + payment?.amount, 0)}
+                     {findClients?.payments?.reduce(
+      (acc, payment) => acc + parseFloat(payment?.amount || 0),
+      0
+    ).toFixed(0)}
                    </p>
                  </div>
                </div>
@@ -267,7 +170,7 @@ const ClientPaymentHistry = () => {
       <div style={{ backgroundColor: 'var(--bg-color3)', color: 'var(--text-color)',border: 'var(--border)'}} className="  rounded-lg px-5 m-5 ">
         <div>
 
-       <div className="flex  items-center justify-between ">
+       <div className="flex  items-center mt-4 mb-2 justify-between ">
         <button
       className="font-avenir hover:bg-indigo-700 px-4 p-2 w-full lg:w-auto   bg-[#05a0db]  rounded-lg text-white"
        onClick={() => document.getElementById("my_modal_8").showModal()}
@@ -275,10 +178,9 @@ const ClientPaymentHistry = () => {
         Pay Now
 </button>
 
- <div className="mb-4">
-   <label htmlFor="month" className="block">Select Month:</label>
-   <select id="month" value={selectedMonth}  style={{ backgroundColor: 'var(--bg-color2)',border: 'var(--border)', color: 'var(--text-color2)'}} onChange={(e) => setSelectedMonth(e.target.value)} className="border bg-white text-black rounded p-2">
-     <option value="">Months</option>
+ <div className="mb-2">
+   <select id="month" value={selectedMonth}  style={{ backgroundColor: 'var(--bg-color2)',border: 'var(--border)', color: 'var(--text-color2)'}} onChange={(e) => changeTab2(e.target.value)} className="border bg-white text-black rounded p-2">
+     <option value="all">Select Months</option>
      <option value="1">January</option>
      <option value="2">February</option>
      <option value="3">March</option>
@@ -444,18 +346,28 @@ const ClientPaymentHistry = () => {
           <table className="min-w-full text-center ">
             <thead className=" ">
               <tr className="" style={{border: 'var(--border)',borderLeft: 'var(--border)', borderRight: 'var(--border)', color: 'var(--text-color)'}}>
-                <th style={{  border: 'var(--border)'}} className="p-3 ">{filteredHistory.length}</th>
-                <th style={{  border: 'var(--border)'}} className="p-3">Payment Date</th>
-                <th style={{  border: 'var(--border)'}} className="p-3 ">Client Name</th>
-                <th style={{  border: 'var(--border)'}} className="p-3">Payment Amount</th>
-                <th style={{  border: 'var(--border)'}} className="p-3">Payment Method</th>
-                <th style={{  border: 'var(--border)'}} className="p-3"> Note</th>
+                <th style={{  border: 'var(--border)'}} className="p-3 text-start">{findClients?.payments?.length} Items</th>
+                <th style={{  border: 'var(--border)'}} className="p-3 text-start">Date</th>
+                <th style={{  border: 'var(--border)'}} className="p-3 text-start">Client Name</th>
+                <th style={{  border: 'var(--border)'}} className="p-3 text-start">Amount</th>
+                <th style={{  border: 'var(--border)'}} className="p-3 text-start">Payment Method</th>
+                <th style={{  border: 'var(--border)'}} className="p-3 text-start"> Note</th>
               </tr>
             </thead>
             <tbody>
-              {filteredHistory.sort((a, b) => new Date(b.date) - new Date(a.date))?.sort((a, b) => new Date(b.date) - new Date(a.date))?.map((payment, index) => (
+              {findClients?.payments
+  ?.filter(payment => payment && payment.date)
+  .filter(payment => {
+    const paymentDate = new Date(payment.date);
+    if (selectedMonth === 'all') {
+      return true; // Show all data if 'all' is selected
+    }
+    return paymentDate.getMonth() + 1 === parseInt(selectedMonth, 10); // Filter based on the selected month
+  })
+  ?.sort((a, b) => new Date(b.date) - new Date(a.date)) // Sort by date (newest first)
+  ?.map((payment, index) => (
                 <tr style={{ backgroundColor: 'var(--bg-table)', color: 'var(--text-color2)'}}
-                key={payment._id}
+                key={payment.id}
                 className={`${
                   index % 2 === 0
                     ? "bg-white text-left text-black border-b border-opacity-20"
@@ -465,7 +377,7 @@ const ClientPaymentHistry = () => {
                   <td style={{  border: 'var(--border)'}} className="p-3  border-r-2 border-l-2 border-gray-200 text-center">
                   <button
     className=" hover:bg-blue-700 text-[#f86c6b] text-xl px-2 py-1 rounded"
-    onClick={() => handledelete(payment._id)}
+    onClick={() => handledelete(payment.ids ,payment.id)}
   >
     <FaMinusSquare  />
   </button>
@@ -538,25 +450,7 @@ const ClientPaymentHistry = () => {
                     {" "}
                     {payment.note}
                   </td>
-                   {/* <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-200 text-center">
-                    
-                  <div className="flex justify-center items-center gap-3">
-  <div>
-    <button
-      className=" flex justify-center items-center gap-1   px-2 py-1 rounded"
-      onClick={() =>
-        document.getElementById(`modal_${payment._id}`).showModal()
-      }
-    >
-       <FaEdit />
-    </button>
 
-
-  </div>
- 
-</div>
-
-                  </td> */}
                       <dialog id={`modal_${payment?._id}`} className="modal">
       <div className="modal-box text-black bg-white font-bold">
         <form onSubmit={(e) => handleUpdatePayment(e, payment?._id,payment?.clientName)}>
@@ -629,12 +523,15 @@ const ClientPaymentHistry = () => {
                 </tr>
               ))}
               <tr style={{ backgroundColor: 'var(--bg-color)', color: 'var(--text-color)'}} className="  font-bold">
-                <td style={{  border: 'var(--border)'}} className="p-3 text-center" colSpan="3">
+                <td style={{  border: 'var(--border)'}} className="p-3 text-right" colSpan="3">
                   Total Amount :
                 </td>
                 <td style={{  border: 'var(--border)'}} className="p-3 text-center">
                   <span className="text-md mr-1 font-extrabold">৳</span>{" "}
-                  {totalPayment}
+                  {findClients?.payments?.reduce(
+      (acc, payment) => acc + parseFloat(payment?.amount || 0),
+      0
+    ).toFixed(0)}
                 </td>
                 <td style={{  border: 'var(--border)'}} className="p-3 text-center"></td>
                 <td style={{  border: 'var(--border)'}} className="p-3 text-center"></td>

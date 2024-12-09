@@ -1,168 +1,363 @@
-import { useContext, useEffect, useState } from "react";
-import useUsers from "../../Hook/useUsers";
-import { Link } from "react-router-dom";
+import  { useEffect, useState, useMemo, useContext } from 'react';
+import { Helmet } from 'react-helmet-async';
+import useMyClientsByEmail from '../../Hook/useMyClientsByEmail';
+import useAllEmployee from '../../Hook/useAllEmployee';
+import useMyEmployeePayments from '../../Hook/useMyemployeePayments';
+import useUsers from '../../Hook/useUsers';
+import { AuthContext } from '../../Security/AuthProvider';
+import useUserr from '../../Hook/useUser';
 
-import { AuthContext } from "../../Security/AuthProvider";
-import useEmployeePayment from "../../Hook/useEmployeePayment";
-import { FaEdit } from "react-icons/fa";
-import axios from "axios";
-import Swal from "sweetalert2";
-import { Helmet } from "react-helmet-async";
-
+const months = [
+  'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'
+];
 
 const Summery = () => {
-  const [users,refetch] = useUsers(); 
-  const [payoneerTotal, setPayoneerTotal] = useState(0); 
-const {user}=useContext(AuthContext)
-const [ddd, setDdd] = useState(null);
+  const {user}=useContext(AuthContext)
+  const [users]=useUsers()
+  const [allEmployees]=useAllEmployee()
+  const [employees, setEmployees] = useState([]);
+  const [employees2, setEmployees2] = useState();
+  const {userr}=useUserr(user?.email)
+  
+  const initialTab3 =
+  userr?.role === "admin"
+    ? localStorage.getItem("activeTabsummeryEmployee") || "all"
+    : user?.email;
 
-useEffect(() => {
-    if (users && user) {
-        const fff = users.find(u => u.email === user?.email);
-        console.log(fff);
-        setDdd(fff || {}); // Update state with found user or an empty object
+  const [selectedEmployee, setSelectedEmployee] = useState(initialTab3);
+  const [myclients]=useMyClientsByEmail(selectedEmployee)
+  const [MyEmployeePayment]=useMyEmployeePayments(selectedEmployee)
+
+  const changeTab = (tab) => {
+    setSelectedEmployee(tab);
+    localStorage.setItem("activeTabsummeryEmployee", tab); 
+  };
+
+  useEffect(() => {
+    if (allEmployees) {
+      const employeeList = allEmployees.filter((u) => u.role === "employee");
+      setEmployees(employeeList);
     }
-}, [users, user]);
-
-
-
-const [employee,setEmployee]=useState([])
-useEffect(() => {
-    if (users && user) {
-        const fff = users.filter(u => u.role === 'employee');
-        console.log(fff);
-        setEmployee(fff || {}); // Update state with found user or an empty object
+    if (allEmployees) {
+      const employeeList = allEmployees.find((u) => u.email === user?.email);
+      setEmployees2(employeeList);
     }
-}, [users, user]);
+  }, [allEmployees,user]);
 
+ 
+  const getRecentMonths = () => {
+    const today = new Date();
+    let monthsList = [];
+    for (let i = 0; i < 12; i++) {
+      const month = new Date(today.getFullYear(), today.getMonth() - i, 1);
+      monthsList.push(month.toLocaleString('default', { month: 'long' }));
+    }
+    return monthsList.reverse();
+  };
 
+  const recentMonths = getRecentMonths();
 
+  const employeeData = useMemo(() => {
+    const relevantUsers = selectedEmployee
+      ? users.filter(u => u.role === 'employee' && u.email === selectedEmployee)
+      : users.filter(u => u.role === 'employee')
 
-const [bkashMarchentTotal, setBkashMarchentTotal] = useState(0);
-const [bkashPersonalTotal2, setBkashPersonalTotal2] = useState(0);
-const [nagadPersonalTotal2, setNagadPersonalTotal] = useState(0);
-const [rocketPersonalTotal2, setRocketPersonalTotal] = useState(0);
+    return relevantUsers.flatMap(user => {
 
-const calculateTotalAmount = (users, paymentMethod) => {
-  return users.reduce((acc, user) => acc + (parseFloat(user[paymentMethod]) || 0), 0);
-};
+      const paymentByMonth = MyEmployeePayment.filter(m=>m.status === 'Approved')
+      .reduce((acc, payment) => {
+        const month = new Date(payment.date).toLocaleString('default', { month: 'long' });
+        acc[month] = (acc[month] || 0) + parseFloat(payment.payAmount);
+        return acc;
+      }, {});
 
-useEffect(() => {
-  const totalBkashMarchent = calculateTotalAmount(users, 'bkashMarchent');
-  const totalBkashPersonal = calculateTotalAmount(users, 'bkashPersonal');
-  const totalNagadPersonal = calculateTotalAmount(users, 'nagadPersonal');
-  const totalRocketPersonal = calculateTotalAmount(users, 'rocketPersonal');
-  const totalpayoneer = calculateTotalAmount(users, 'payoneer');
+      const paymentByMonth2 = myclients
+      ?.flatMap(client => client.payments || [])
+      ?.reduce((acc, payment) => {
+        if (payment && payment.date) {
+          const month = new Date(payment.date).toLocaleString('default', { month: 'long' });
+          acc[month] = (acc[month] || 0) + (parseFloat(payment.amount) || 0);
+        }
+        return acc;
+      }, {});
+    
 
-  setBkashMarchentTotal(totalBkashMarchent);
-  setBkashPersonalTotal2(totalBkashPersonal);
-  setNagadPersonalTotal(totalNagadPersonal);
-  setRocketPersonalTotal(totalRocketPersonal);
-  setPayoneerTotal(totalpayoneer);
+      return recentMonths.map(month => {
+        const monthlySpentData = (userr?.monthlySpent || [])
+        .filter(spent =>
+          new Date(spent.date).toLocaleString('default', { month: 'long' }) === month
+        )
+        .sort((a, b) => {
+          if (a.accountName < b.accountName) return -1;
+          if (a.accountName > b.accountName) return 1;
+          return new Date(a.date) - new Date(b.date);
+        })
+        .reduce((acc, current) => {
+          const existingAccount = acc.find(item => item.accountName === current.accountName);
+          if (existingAccount) {
+            if (new Date(current.date) > new Date(existingAccount.date)) {
+              acc = acc.filter(item => item.accountName !== existingAccount.accountName); 
+              acc.push(current); 
+            }
+          } else {
+            acc.push(current); 
+          }
+          return acc;
+        }, []);
+      
+      const totalSpent = monthlySpentData.reduce((acc, spent) => acc + spent.totalSpentt, 0);
 
-}, [users]);
+        const selleryData = (userr?.sellery || []).filter(sell => sell.month === month);
+        const totalSellery = selleryData.reduce((acc, sell) => acc + sell.amount, 0);
+        const totalBonus = selleryData.reduce((acc, sell) => acc + sell.bonus, 0);
+        const totalAdminPay = paymentByMonth[month] || 0;
+        const totalClientPay = paymentByMonth2[month] || 0;
 
-
-const handleUpdateTotalBudget = (e, id) => {
-  e.preventDefault();
-  const tBudged = e.target.tBudged.value;
-  const body = { payoneer: tBudged };
-  console.log(body);
-
-  axios.put(`https://digital-networking-server.vercel.app/users/payoneer/${id}`, body)
-    .then((res) => {
-      console.log(res.data);
-      refetch();  // Make sure this function correctly refetches the updated data
-      Swal.fire({
-        title: "Good job!",
-        text: "Total Budget updated!",
-        icon: "success",
-      });
-    })
-    .catch((error) => {
-      console.error("Error updating account:", error);
-      Swal.fire({
-        icon: "error",
-        title: "Oops...",
-        text: "Failed to update account!",
-      });
+        return {
+          month,
+          totalSpent,
+          totalSellery,
+          totalBonus,
+          totalBill: totalSpent * 140,
+          totalDue: totalSpent * 140 - totalAdminPay,
+          totalSelleryPaid: totalSpent * 7 - totalSellery,
+          totalAdminPay,
+          totalClientPay 
+        };
+      }).sort((a, b) => months.indexOf(a.month) - months.indexOf(b.month)); // Sort by month
     });
-};
+  }, [allEmployees,myclients, selectedEmployee, MyEmployeePayment, recentMonths]);
 
-
-
-return (
-
-        <div className="mt-5 p-4 dark:text-green-800">
-             <Helmet>
+  return (
+    <div className='m-3 lg:m-5'>
+      <Helmet>
         <title>Summery | Digital Network </title>
         <link rel="canonical" href="https://www.example.com/" />
       </Helmet>
-    <div className="">
-     <div className="overflow-x-auto mt-6">
-     <table className="min-w-full text-xs md:text-base">
-        <thead className="bg-[#5db646] text-white font-bold text-sm md:text-xl">
-          <tr>
-            <th className="p-3 text-center">Employee Name</th>
-         
-            {ddd?.role === 'admin' && (
-              <>
-               
-                <th className="p-3 text-center">
-                  <img className="w-18 h-9 mx-auto" src="https://i.ibb.co/bHMLyvM/b-Kash-Merchant.png" alt="bKash Merchant" />
-                </th>
-                <th className="p-3 text-center">
-                  <img className="w-18 h-9 mx-auto" src="https://i.ibb.co/520Py6s/bkash-1.png" alt="bKash Personal" />
-                </th>
-                <th className="p-3 text-center">
-                  <img className="w-18 h-9 mx-auto" src="https://i.ibb.co/JQBQBcF/nagad-marchant.png" alt="Nagad Personal" />
-                </th>
-                <th className="p-3 text-center">
-                  <img className="w-18 h-9 mx-auto" src="https://i.ibb.co/QkTM4M3/rocket.png" alt="Rocket Personal" />
-                </th>
-               
-               
-               
-              </>
-              
-            )}
-             <th className="p-3 text-center">
-                  <img className="w-28 h-6 mx-auto" src="https://i.ibb.co/3WVZGdz/PAYO-BIG-aa26e6e0.png" alt="Payoneer" />
-                </th>
-          </tr>
-        </thead>
-        {employee.map((userr, index) => (
-          <tbody className="text-black text-sm md:text-xl" key={userr._id}>
-            <tr className={`${index % 2 === 0 ? "bg-gray-100" : "bg-white"} border-b border-opacity-20`}>
-              <td className="p-3 hover:bg-gradient-to-r from-gray-100 via-gray-300 to-gray-100  font-bold -sm flex flex-col md:flex-row justify-start text-center ml-2 md:ml-10 items-center gap-2  border-r-2 border-gray-300">
-                  <img className="w-10 h-10 rounded-full" src={userr?.photo} alt="" />
-                <h1 >{userr.name}</h1>
-              </td>
-              <td className="p-3 text-center  border-r-2 border-gray-300">$ {userr?.payoneer}</td>
-            </tr>
-          </tbody>
-        ))}
-        <tfoot>
-          {ddd?.role === 'admin' && (
-            <tr className="border-b border-opacity-20 bg-green-800 font-bold p-5 text-white text-sm md:text-lg">
 
-              <td className="p-3 text-center">Total BDT</td>
-              <td className="p-3 text-center">৳ {bkashMarchentTotal}</td>
-              <td className="p-3 text-center">৳ {bkashPersonalTotal2}</td>
-              <td className="p-3 text-center">৳ {nagadPersonalTotal2}</td>
-              <td className="p-3 text-center">৳ {rocketPersonalTotal2}</td>
-             
-            </tr>
-          )}
-           <td className="p-3 bg-green-800 text-white text-center"></td>
-           <td className="p-3 bg-green-800 text-white text-center">$ {payoneerTotal}</td>
-        </tfoot>
-      </table>
-    </div>
-      </div>
       
-        </div>
-    );
+<div style={{ backgroundColor: 'var(--bg-color3)', color: 'var(--text-color)', border: 'var(--border)' }} className="grid grid-cols-2 p-5 rounded-lg md:grid-cols-2 lg:grid-cols-6 text-black sm:grid-cols-2 gap-5 justify-around">
+  <div className="px-5 py-10 rounded-2xl bg-[#81c784] text-black shadow-lg text-center">
+    <h2 className="text-xl font-bold">Total Spent</h2>
+    <p className="lg:text-2xl text-xl font-bold mt-2">
+      $ {new Intl.NumberFormat('en-IN').format(employeeData.reduce((acc, data) => acc + data.totalSpent, 0).toFixed(2))}
+    </p>
+  </div>
+
+  <div className="px-5 py-10 rounded-2xl bg-[#64b5f6] text-black shadow-lg text-center">
+    <h2 className="text-xl font-bold">Total BDT</h2>
+    <p className="lg:text-2xl text-xl font-bold mt-2">
+      <span className="lg:text-2xl text-xl font-extrabold">৳</span> {new Intl.NumberFormat('en-IN').format(employeeData.reduce((acc, data) => acc + data.totalBill, 0).toFixed(0))}
+    </p>
+  </div>
+
+
+  <div className="px-5 py-10 rounded-2xl bg-[#ce93d8] text-black shadow-lg text-center">
+    <h2 className="text-xl font-bold">Employee Pay</h2>
+    <p className="lg:text-2xl text-xl font-bold mt-2">
+      <span className="lg:text-2xl text-xl font-extrabold">৳</span> {new Intl.NumberFormat('en-IN').format(employeeData.reduce((acc, data) => acc + data.totalAdminPay, 0).toFixed(0))}
+    </p>
+  </div>
+  <div className="px-5 py-10 rounded-2xl bg-[#ffb74d] text-black shadow-lg text-center">
+    <h2 className="lg:text-2xl text-xl font-bold">Client Pay</h2>
+    <p className="lg:text-2xl text-xl font-bold mt-2">
+      <span className="text-2xl font-extrabold">৳</span> {new Intl.NumberFormat('en-IN').format(
+  myclients
+  ?.flatMap(client => client.payments || [])?.reduce((acc, payment) => acc + parseFloat(payment?.amount || 0), 0)
+)}
+
+    </p>
+  </div>
+
+
+
+  <div className="px-5 py-10 rounded-2xl bg-[#e57373] text-black shadow-lg text-center">
+  {/* Conditional Heading */}
+  <h2 className="text-xl font-bold">
+    {(() => {
+      const result = employeeData.reduce((acc, data) => acc + data.totalBill, 0) - 
+                    employeeData.reduce((acc, data) => acc + data.totalAdminPay, 0);
+      if (result < 0) {
+        return "Employee Advance"; // Show this when the result is negative
+      } else if (result > 0) {
+        return "Employee Due"; // Show this when the result is positive
+      } else {
+        return "Employee Clear"; // Show this when the result is 0
+      }
+    })()}
+  </h2>
+  
+  <p className="lg:text-2xl text-xl font-bold mt-2">
+    <span className="lg:text-2xl text-xl font-extrabold">৳ </span> 
+    {new Intl.NumberFormat('en-IN').format(
+      Math.abs(
+        employeeData.reduce((acc, data) => acc + data.totalBill, 0) - 
+        employeeData.reduce((acc, data) => acc + data.totalAdminPay, 0)
+      ).toFixed(0)
+    )}
+  </p>
+</div>
+
+
+
+<div className="px-5 py-10 rounded-2xl bg-[#ff8a65] text-black shadow-lg text-center">
+  {/* Conditional Heading */}
+  <h2 className="text-xl font-bold">
+    {(() => {
+      const result = employeeData.reduce((acc, data) => acc + data.totalBill, 0) - 
+      myclients
+      ?.flatMap(client => client.payments || [])?.reduce((acc, payment) => acc + parseFloat(payment?.amount || 0), 0);
+
+      if (result < 0) {
+        return "Client Advance"; // Show this when the result is negative
+      } else if (result > 0) {
+        return "Client Due"; // Show this when the result is positive
+      } else {
+        return "Client Clear"; // Show this when the result is 0
+      }
+    })()}
+  </h2>
+  
+  <p className="lg:text-2xl text-xl font-bold mt-2">
+    <span className="lg:text-2xl text-xl font-extrabold">৳ </span> 
+    {new Intl.NumberFormat('en-IN').format(
+      Math.abs(
+        employeeData.reduce((acc, data) => acc + data.totalBill, 0) - 
+        myclients
+  ?.flatMap(client => client.payments || [])?.reduce((acc, payment) => acc + parseFloat(payment?.amount || 0), 0)
+      ).toFixed(0)
+    )}
+  </p>
+</div>
+
+</div>
+
+
+
+
+      <div className="p-5 mt-5 rounded-lg " style={{ backgroundColor: 'var(--bg-color3)', color: 'var(--text-color)',border: 'var(--border)'}}>
+
+      <div className="w-full lg:w-auto mb-5 flex justify-start gap-3">
+  {userr?.role === "admin" ? (
+    <div className="flex mt-1.5 justify-center">
+      <select
+        style={{
+          backgroundColor: "var(--bg-color2)",
+          border: "var(--border)",
+          color: "var(--text-color2)",
+        }}
+        className="border bg-white text-black py-2 lg:w-auto w-full border-gray-400 rounded px-2"
+        value={selectedEmployee}
+        onChange={(e) => changeTab(e.target.value)}
+      >
+        <option value="all">All Employees</option>
+        {users
+          .filter((u) => u.role === "employee")
+          .map((employee) => (
+            <option key={employee._id} value={employee.email}>
+              {employee.name}
+            </option>
+          ))}
+      </select>
+    </div>
+  ) : (
+   <></>
+  )}
+</div>
+     
+      <div  className="overflow-x-auto rounded-xl  text-center " style={{ backgroundColor: 'var(--bg-color)', color: 'var(--text-color)'}}>
+          <table className="min-w-full text-center ">
+            <thead className=" ">
+              <tr className="" style={{border: 'var(--border)',borderLeft: 'var(--border)', borderRight: 'var(--border)', color: 'var(--text-color)'}}>
+            
+              <th className="p-3 text-left">Month</th>
+              <th className="p-3 text-left">Campaings</th>
+              <th className="p-3 text-left">Total Spent</th>
+              <th className="p-3 text-left">Total BDT</th>
+              <th className="p-3 text-left">Admin Payment</th>
+              <th className="p-3 text-left">Client Payment</th>
+              <th className="p-3 text-left">Admin Due</th>
+            </tr>
+          </thead>
+          <tbody>
+          {employeeData.map((data, index) => (
+    <tr style={{ backgroundColor: 'var(--bg-table)', color: 'var(--text-color2)'}}
+    key={data._id}
+    className={`${
+      index % 2 === 0
+        ? "bg-white text-left text-black border-b border-opacity-20"
+        : "bg-gray-200  text-left text-black border-b border-opacity-20"
+    }`}
+  >
+      
+      <td style={{  border: 'var(--border)'}} className="p-3 border border-gray-300">{data.month}</td>
+      <td style={{ border: 'var(--border)' }} className="p-3 border border-gray-300">
+  ${new Intl.NumberFormat('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(data.totalSpent)}
+</td>
+      <td style={{ border: 'var(--border)' }} className="p-3 border border-gray-300">
+  ${new Intl.NumberFormat('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(data.totalSpent)}
+</td>
+<td style={{ border: 'var(--border)' }} className="p-3 border border-gray-300">
+  ৳{new Intl.NumberFormat('en-IN', { maximumFractionDigits: 0 }).format(data.totalBill)}
+</td>
+<td style={{ border: 'var(--border)' }} className="p-3 border border-gray-300">
+  ৳{new Intl.NumberFormat('en-IN', { maximumFractionDigits: 0 }).format(data.totalAdminPay)}
+</td>
+<td style={{ border: 'var(--border)' }} className="p-3 border border-gray-300">
+  ৳{new Intl.NumberFormat('en-IN', { maximumFractionDigits: 0 }).format(data.totalClientPay)}
+</td>
+<td style={{ border: 'var(--border)' }} className="p-3 border border-gray-300">
+  ৳{new Intl.NumberFormat('en-IN', { maximumFractionDigits: 0 }).format(data.totalClientPay - data.totalAdminPay)}
+</td>
+
+      
+    </tr>
+  ))}
+
+
+</tbody>
+<tfoot className=" font-bold ">
+  <tr style={{ backgroundColor: 'var(--bg-color)', color: 'var(--text-color)'}}>
+    <td className="p-3 text-right border-gray-300" colSpan="1">Total</td>
+    <td className="p-3 text-start border-gray-300">
+  ${new Intl.NumberFormat('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(
+    employeeData.reduce((acc, data) => acc + data.totalSpent, 0)
+  )}
+</td>
+<td className="p-3 text-start border-gray-300">
+  ৳{new Intl.NumberFormat('en-IN', { maximumFractionDigits: 0 }).format(
+    employeeData.reduce((acc, data) => acc + data.totalBill, 0)
+  )}
+</td>
+<td className="p-3 text-start border-gray-300">
+  ৳{new Intl.NumberFormat('en-IN', { maximumFractionDigits: 0 }).format(
+    employeeData.reduce((acc, data) => acc + data.totalAdminPay, 0)
+  )}
+</td>
+<td className="p-3 text-start border-gray-300">
+  ৳{new Intl.NumberFormat('en-IN', { maximumFractionDigits: 0 }).format(
+    myclients
+    ?.flatMap(client => client.payments || [])?.reduce((acc, payment) => acc + parseFloat(payment?.amount || 0), 0)
+  )}
+</td>
+<td className="p-3 text-start border-gray-300">
+  ৳{new Intl.NumberFormat('en-IN', { maximumFractionDigits: 0 }).format(
+    myclients
+    ?.flatMap(client => client.payments || [])?.reduce((acc, payment) => acc + parseFloat(payment?.amount || 0), 0) -
+    employeeData.reduce((acc, data) => acc + data.totalAdminPay, 0)
+  )}
+</td>
+
+    
+  </tr>
+</tfoot>
+
+        </table>
+      </div>
+    </div>
+
+    </div>
+  );
 };
 
 export default Summery;

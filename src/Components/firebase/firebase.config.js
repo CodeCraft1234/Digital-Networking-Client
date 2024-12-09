@@ -6,12 +6,12 @@ import { getAuth } from "firebase/auth";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyAiFsDaPMDxsShFobypo0kzXQEOI6zBH8E",
-  authDomain: "dimple-firebase-e6967.firebaseapp.com",
-  projectId: "dimple-firebase-e6967",
-  storageBucket: "dimple-firebase-e6967.appspot.com",
-  messagingSenderId: "500986617128",
-  appId: "1:500986617128:web:5c6489b21a10699186841d"
+  apiKey: "AIzaSyAEIlRD1Ci_U87aHJh9tCmsCLscqf19ISs",
+  authDomain: "sports-events-c37b9.firebaseapp.com",
+  projectId: "sports-events-c37b9",
+  storageBucket: "sports-events-c37b9.firebasestorage.app",
+  messagingSenderId: "30047919735",
+  appId: "1:30047919735:web:a63247c0c1ce4451e87072"
 };
 
 // Initialize Firebase

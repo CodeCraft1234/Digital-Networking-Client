@@ -1,31 +1,16 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext } from "react";
 import { AuthContext } from "../../Security/AuthProvider";
 import AdminDashboard from "./AdminDashboard";
 import EmployeeDashboard from "./EmployeeDashboard";
 import AdsDashboard from "./AdsDashboard";
 import ClientDashboard from "./ClientDashboard"; // Make sure this is imported
-import Skilitonloader from "./Skilitonloader"; // Import the SkeletonLoader component
-import useAllEmployee from "../../Hook/useAllEmployee";
+import DeveloperDashboard from "./DeveloperDashboard";
+import useUserr from "../../Hook/useUser";
+import DesignerDashboard from "./DesignerDashboard";
 
 const Dashboard = ({ showSidebar }) => {
   const { user } = useContext(AuthContext); // Get the authenticated user from the context
-  const [allEmployees]=useAllEmployee()
-  const [userr, setDdd] = useState({}); 
-  useEffect(() => {
-      if (allEmployees && user) {
-          const fff = allEmployees.find(u => u.email === user?.email);
-          setDdd(fff || {}); 
-      }
-  }, [allEmployees, user]);
-  const [showSkeleton, setShowSkeleton] = useState(true); // State to track skeleton display
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setShowSkeleton(false);
-    }, 1000); 
-
-    return () => clearTimeout(timer); 
-  }, [userr, user]);
+  const {userr}=useUserr(user?.email) 
 
   return (
     <div
@@ -39,6 +24,10 @@ const Dashboard = ({ showSidebar }) => {
             <AdminDashboard />
           ) : userr?.role === "contributor" ? (
             <AdsDashboard />
+          ) : userr?.role === "webDeveloper" ? (
+            <DeveloperDashboard />
+          ) : userr?.role === "graphicDesigner" ? (
+            <DesignerDashboard />
           ) : userr?.role === "employee" ? (
             <EmployeeDashboard />
           ) : (

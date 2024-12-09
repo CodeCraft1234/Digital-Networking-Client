@@ -1,13 +1,12 @@
-
 import { useEffect, useState } from "react";
 import UseAxiosPublic from "../../Axios/UseAxiosPublic";
 import { Helmet } from "react-helmet-async";
 import Swal from "sweetalert2";
-import { Link } from "react-router-dom";
 import useUsers from "../../Hook/useUsers";
 import useEmployeePayment from "../../Hook/useEmployeePayment";
 import { toast } from "react-toastify";
 import { FaEdit, FaMinusSquare } from "react-icons/fa";
+import { ImCross } from "react-icons/im";
 
 const EmployeePayments = () => {
   const [employeePayment, refetch] = useEmployeePayment()
@@ -15,14 +14,13 @@ const EmployeePayments = () => {
   const [selectedCategory, setSelectedCategory] = useState("");
   const [filteredData, setFilteredData] = useState([]);
   const [users] = useUsers();
-  const [employees, setEmployees] = useState([]);
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
-
   const [selectedPayment, setSelectedPayment] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-
+  const [employees, setEmployees] = useState([]);
   const initialTab = localStorage.getItem("activeTaballClientspays") ;
   const [sortMonth, setSortMonth] = useState(initialTab); 
+  const [filteredData2,setFilteredData2]=useState([])
   
   const changeTab = (tab) => {
     setSortMonth(tab);
@@ -45,13 +43,14 @@ const EmployeePayments = () => {
     localStorage.setItem("activeTabSelectedStatus", tab);
   };
   
+
+
   useEffect(() => {
+
     if (users) {
       setEmployees(users.filter((u) => u.role === "employee"));
     }
-  }, [users]);
-  
-  useEffect(() => {
+
     const filtered = employeePayment.filter((payment) => {
       const paymentDate = new Date(payment.date);
       const selectedDateObject = selectedDate ? new Date(selectedDate) : null;
@@ -68,6 +67,7 @@ const EmployeePayments = () => {
   
     setFilteredData(filtered);
   }, [
+    users,
     sortMonth,
     selectedDate,
     selectedCategory, 
@@ -77,7 +77,7 @@ const EmployeePayments = () => {
     selectedYear,
   ]);
 
-  const [filteredData2,setFilteredData2]=useState([])
+
 
   useEffect(() => {
     const filtered = employeePayment?.filter((payment) => {
@@ -148,7 +148,6 @@ const EmployeePayments = () => {
 
   }, [filteredData2]);
 
-    // Open and close modal for payment editing
     const handleEditClick = (payment) => {
       setSelectedPayment(payment);
       setIsModalOpen(true);
@@ -241,13 +240,46 @@ const EmployeePayments = () => {
       };
     }, []);
 
-    console.log(displayedItems);
+    const today = new Date();
+    const formattedDate = today.toISOString().split('T')[0];  
+  
+    const handlePayment = async (e) => {
+      e.preventDefault();
+      const email = e.target.email.value;
+      const employeeName = employees.find(e=>e.email === email).name;
+      const employeeEmail = email
+      const payAmount = e.target.payAmount.value;
+      const charge = e.target.charge.value;
+      const paymentMethod = e.target.paymentMethod.value;
+      const note = e.target.note.value;
+      const date = e.target.date.value;
+  
+      const data = {
+        employeeName,
+        employeeEmail,
+        payAmount,
+        note,
+        charge,
+        paymentMethod,
+        date,
+        status:'Approved'
+      };
+  
+
+      AxiosPublic.post("/employeePayment",
+        data
+      )
+        .then((res) => {
+          toast.success("Send successful!");
+          refetch();
+          console.log(res.data);
+          document.getElementById("my_modal_1").close()
+         
+        })
+  
+    };
   return (
     <div className="m-5">
-      <Helmet>
-        <title>Employee Payments | Digital Network </title>
-        <link rel="canonical" href="https://www.example.com/" />
-      </Helmet>
 
       <div style={{ backgroundColor: 'var(--bg-color3)', color: 'var(--text-color)', border: 'var(--border)' }} className="grid grid-cols-2 p-5 rounded-lg sm:grid-cols-2 md:grid-cols-3 gap-3 lg:gap-5 lg:grid-cols-6 px-5">
   {[
@@ -261,16 +293,26 @@ const EmployeePayments = () => {
    
 
   ].map(({ category, img, amount,charge, bgColor }) => (
-    <div style={{ backgroundColor: bgColor, border: 'var(--border)' }} key={category} onClick={() => setSelectedCategory(category)} className="balance-card bg-white rounded-2xl shadow-lg p-5 text-center transition-transform transform hover:scale-105 border-0">
-      <img className="balance-card-img h-20" src={img} alt={category} />
-      <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700">
-        <span className="text-lg lg:text-xl font-extrabold">৳</span> {new Intl.NumberFormat('en-IN').format(amount)}
-      </p>
+<div
+  style={{
+    backgroundColor: bgColor,
+    border: "var(--border)",
+  }}
+  key={category}
+  onClick={() => setSelectedCategory(category)}
+  className="balance-card bg-white rounded-2xl shadow-lg p-5 text-center transition-transform transform hover:scale-105 border-0"
+>
+  <img
+    className=" h-20 w-full "
+    src={img}
+    alt={category}
+  />
+  <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700">
+    <span className="text-lg lg:text-xl font-extrabold">৳</span>{" "}
+    {new Intl.NumberFormat("en-IN").format(amount)}
+  </p>
+</div>
 
-      {/* <p className="balance-card-text text-lg lg:text-xl font-bold text-red-700">
-        <span className="text-lg lg:text-2xl font-extrabold">৳</span> {new Intl.NumberFormat('en-IN').format(charge)}
-      </p> */}
-    </div>
   ))}
 
   <div style={{ backgroundColor: '#d9f8d9', border: 'var(--border)' }} onClick={() => setSelectedCategory('All')} className="balance-card bg-white pt-3 rounded-2xl shadow-lg p-5 text-center transition-transform transform hover:scale-105 border-0">
@@ -286,7 +328,7 @@ const EmployeePayments = () => {
     <h1 className="text-lg mt-1 lg:text-xl text-red-700 font-extrabold">
      <span >৳ </span> 
       {new Intl.NumberFormat('en-IN').format(
-        displayedItems.reduce((acc, item) => acc + (isNaN(parseFloat(item?.charge)) ? 0 : parseFloat(item?.charge)), 0)
+        filteredData2?.filter(d=>d.status === 'Approved')?.reduce((acc, item) => acc + (isNaN(parseFloat(item?.charge)) ? 0 : parseFloat(item?.charge)), 0)
       )}
     </h1>
    
@@ -297,7 +339,172 @@ const EmployeePayments = () => {
 
      <div className='  my-5 mt-5 rounded-lg' style={{ backgroundColor: 'var(--bg-color3)', color: 'var(--text-color)',border: 'var(--border)'}}>
 
-      <div className="lg:flex text-black lg:justify-start my-3 lg:my-0 lg:ml-5  items-center">
+     <div className="flex flex-col md:flex-row justify-start lg:justify-between items-center gap-5 lg:px-5 lg:p-0 px-5">
+   <div className="flex justify-start">
+    <button
+      className="font-avenir px-6 hover:bg-indigo-700 py-2 bg-[#05a0db] rounded-lg text-white"
+      onClick={() => document.getElementById("my_modal_1").showModal()}
+    >
+      Pay Admin
+    </button>
+    <dialog id="my_modal_1" className="modal">
+      <div className="modal-box bg-white text-black font-bold">
+        <form onSubmit={(e) => handlePayment(e)}>
+
+          <div className="grid lg:grid-cols-2">
+
+          </div>
+          <div className="">
+            <h1
+              className="text-black flex hover:text-red-500 justify-end text-end cursor-pointer"
+              onClick={() => document.getElementById("my_modal_1").close()}
+            >
+              <ImCross />
+            </h1>
+            <div className="grid lg:grid-cols-2 gap-3">
+
+            <div className="mb-4">
+            <label className="block text-gray-250">Date</label>
+            <input
+              type="date"
+              name="date"
+              required
+              defaultValue={formattedDate}
+              className="w-full border text-black bg-white border-black rounded p-2 "
+            />
+          </div>
+          <div className="flex  justify-center text-center items-center">
+         <select
+          
+           className="border bg-white w-full   py-2 mt-2  text-black border-black rounded p-2 "
+           name="email"
+         >
+           {employees.map((employee) => (
+             <option key={employee._id} value={employee.email}>
+               {employee.name}
+             </option>
+           ))}
+         </select>
+       </div>
+            </div>
+
+              <div className="grid lg:grid-cols-2 gap-3">
+              <div className="mb-4 ">
+            <label className="block text-gray-250">Amount</label>
+            <input
+              required
+              type="number"
+              name="payAmount"
+              placeholder="0"
+              className="w-full border bg-white border-black rounded p-2 mt-1"
+            />
+          </div>
+          <div className="mb-4">
+            <label className="block text-gray-250">Charge</label>
+            <input
+              required
+              type="number"
+              name="charge"
+              placeholder="0"
+              defaultValue={0}
+              className="w-full border bg-white border-black rounded p-2 mt-1"
+            />
+          </div>
+              </div>
+            
+          </div>
+          
+
+          <div className="mb-4">
+  <div className="mt-2 grid lg:grid-cols-3">
+    <div className="form-control">
+      <label className="label flex justify-start items-center gap-2 cursor-pointer">
+        <input
+          type="radio"
+          name="paymentMethod"
+          value="bank"
+          className="radio radio-primary"
+        />
+        <span className="label-text text-black">Brack Bank</span>
+      </label>
+    </div>
+    <div className="form-control">
+      <label className="label flex justify-start items-center gap-2 cursor-pointer">
+        <input
+          type="radio"
+          name="paymentMethod"
+          value="DBBLBank"
+          className="radio radio-primary"
+        />
+        <span className="label-text text-black">DBBL Bank</span>
+      </label>
+    </div>
+    <div className="form-control">
+      <label className="label flex justify-start items-center gap-2 cursor-pointer">
+        <input
+          type="radio"
+          name="paymentMethod"
+          value="IBBLBank"
+          className="radio radio-primary"
+        />
+        <span className="label-text text-black">Islami Bank</span>
+      </label>
+    </div>
+    <div className="form-control">
+      <label className="label flex justify-start items-center gap-2 cursor-pointer">
+        <input
+          type="radio"
+          name="paymentMethod"
+          value="bkashPersonal"
+          className="radio radio-primary"
+        />
+        <span className="label-text text-black">bKash</span>
+      </label>
+    </div>
+    <div className="form-control">
+      <label className="label flex justify-start items-center gap-2 cursor-pointer">
+        <input
+          type="radio"
+          name="paymentMethod"
+          value="nagadPersonal"
+          className="radio radio-primary"
+        />
+        <span className="label-text text-black">Nagad</span>
+      </label>
+    </div>
+  </div>
+</div>
+
+
+
+
+          <div className="mb-4">
+            <label className="block text-gray-250">Note (Optional)</label>
+            <input
+              type="text"
+              name="note"
+              placeholder="type note..."
+              className="w-full border bg-white border-black rounded p-2 mt-1"
+            />
+          </div>
+          <div className="grid mt-8 lg:grid-cols-2 gap-3">
+            <form method="dialog">
+              <button className="p-2 w-full hover:bg-red-700 rounded-lg bg-red-600 text-white text-center">
+                Close
+              </button>
+            </form>
+            <button
+              type="submit"
+              className="font-avenir w-full hover:bg-indigo-700 px-3 pt-2 rounded-lg flex justify-center text-white bg-[#05a0db]"
+            >
+              Submit
+            </button>
+          </div>
+        </form>
+      </div>
+    </dialog>
+  </div>
+  <div className="lg:flex text-black lg:justify-start my-3 lg:my-0 lg:ml-5  items-center">
         <div className="flex justify-center items-center lg:mr-3 ">
 
 
@@ -377,19 +584,21 @@ const EmployeePayments = () => {
         </div>
       
       </div>
+  </div>
+    
 
       <div className="overflow-x-auto rounded-xl mx-5 mb-5 text-center " >
           <table className="min-w-full text-center ">
             <thead style={{ backgroundColor: 'var(--bg-color)', color: 'var(--text-color)'}}  className=" ">
               <tr className="" style={{border: 'var(--border)',borderLeft: 'var(--border)', borderRight: 'var(--border)', color: 'var(--text-color)'}}>
-              <th className="p-3">Action</th>
-              <th className="p-3">Date</th>
+              <th className="p-3">{displayedItems.length}</th>
+              <th className="p-3 text-left">Date</th>
               <th className="p-3 text-start">Employee Name</th>
-              <th className="p-3">Amount</th>
-              <th className="p-3">Charge</th>
-              <th className="p-3">Payment Method</th>
-              <th className="p-3">Note</th>
-              <th className="p-3">Status</th>
+              <th className="p-3 text-start">Amount</th>
+              <th className="p-3 text-start">Charge</th>
+              <th className="p-3 text-center">Payment Method</th>
+              <th className="p-3 text-start">Note</th>
+              <th className="p-3 ">Status</th>
             
             </tr>
           </thead>
@@ -413,7 +622,7 @@ const EmployeePayments = () => {
                         </button>
                 </td>
                 
-                <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-200 text-center">
+                <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-200 text-start">
                 {new Date(payment.date).toLocaleDateString("en-GB")}
                 </td>
                
@@ -429,13 +638,14 @@ const EmployeePayments = () => {
                         </button>
 
                 </td>
-                <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-200 text-center">
-                  ৳ {payment.payAmount}
-                </td>
-                <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-200 text-center">
-                  ৳ {payment.charge || 0}
-                </td>
-                <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-200 text-center">
+                <td style={{ border: 'var(--border)' }} className="p-3 border-r-2 border-gray-200 text-start">
+  ৳ {new Intl.NumberFormat('en-IN').format(payment.payAmount)}
+</td>
+<td style={{ border: 'var(--border)' }} className="p-3 border-r-2 border-gray-200 text-start">
+  ৳ {new Intl.NumberFormat('en-IN').format(payment.charge || 0)}
+</td>
+
+                <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-200 text-start">
                 {payment.paymentMethod === "DBBLBank" && (
                     <img
                       className="h-10 w-32 flex my-auto items-center mx-auto justify-center"
@@ -487,7 +697,7 @@ const EmployeePayments = () => {
                   )}
                 </td>
 
-                <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-200 text-center">
+                <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-200 text-start">
                   {payment.note}
                 </td>
 
@@ -522,12 +732,18 @@ const EmployeePayments = () => {
               <td className="p-3 text-right" colSpan="3">
                 Total Amount :
               </td>
-              <td className="p-3 text-center">৳ {bkashPersonal + bkashMarcent + nagadPersonal + rocketPersonal + bankTotal}</td>
-              <td className="p-3 text-center">৳ {displayedItems.reduce((acc, item) => {
-    const charge = parseFloat(item?.charge);
-    return acc + (isNaN(charge) ? 0 : charge); 
-  }, 0)}
+              <td className="p-3 text-start">৳ {new Intl.NumberFormat('en-IN').format(
+        Number(bkashPersonal) + Number(bkashMarcent) +  + Number(nagadPersonal) + Number(DBBLBankTotal)  + Number(IBBLBankTotal) + Number(rocketPersonal) + Number(bankTotal) + Number(nagadMarchent)
+      )}</td>
+              <td className="p-3 text-start">
+  ৳ {new Intl.NumberFormat('en-IN').format(
+    displayedItems.reduce((acc, item) => {
+      const charge = parseFloat(item?.charge);
+      return acc + (isNaN(charge) ? 0 : charge);
+    }, 0)
+  )}
 </td>
+
 
               <td className="p-3 text-center"></td>
               <td className="p-3 text-center"></td>
@@ -543,78 +759,112 @@ const EmployeePayments = () => {
         <div className="fixed inset-0 flex items-center text-black justify-center bg-black bg-opacity-50">
           <div className="bg-white p-6 rounded-lg">
             <h2 className="text-lg font-medium text-center text-black mb-4">Edit Payment</h2>
-            <form onSubmit={handleUpdate}>
-              <div className="mb-4">
-                <label htmlFor="date" className="block text-gray-700">
-                  Date
-                </label>
-                <input
-                  type="date"
-                  id="date"
-                  name="date"
-                  defaultValue={selectedPayment.date}
-                  className="w-full border bg-white border-gray-300 p-2 rounded-lg"
-                  required
-                />
-              </div>
-              <div className="mb-4 text-black">
-                <label htmlFor="amount" className="block text-black">
-                  Payment Amount
-                </label>
-                <input
-                  type="number"
-                  id="amount"
-                  name="amount"
-                  defaultValue={selectedPayment.payAmount}
-                  className="w-full border bg-white border-gray-300 p-2 rounded-lg"
-                  required
-                />
-              </div>
-              <div className="mb-4">
-                <label htmlFor="method" className="block text-gray-700">
-                  Payment Method
-                </label>
-                <select
-                  id="method"
-                  name="method"
-                  defaultValue={selectedPayment.paymentMethod}
-                  className="w-full border bg-white border-gray-300 p-2 rounded-lg"
-                  required
-                >
-                  <option value="bank">Brack Bank</option>
-                  <option value="DBBLBank">DBBL Bank</option>
-                  <option value="IBBLBank">IBBL Bank</option>
-                  <option value="bkashPersonal">bKash Personal</option>
-                  <option value="nagadPersonal">Nagad Personal</option>
-                </select>
-              </div>
-              <div className="mb-4">
-                <label htmlFor="note" className="block text-gray-700">
-                  Note
-                </label>
-                <textarea
-                  id="note"
-                  name="note"
-                  defaultValue={selectedPayment.note}
-                  className="w-full border bg-white border-gray-300 p-2 rounded-lg"
-                ></textarea>
-              </div>
-              <div className="flex w-full justify-center">
-                <button
-                  type="button"
-                  onClick={handleCancel}
-                  className="bg-red-500 text-white hover:bg-red-700 px-4 py-2 rounded mr-2"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="bg-blue-500 hover:bg-indigo-700 text-white px-4 py-2 rounded"
-                >
-                  Update
-                </button>
-              </div>
-            </form>
+            <form onSubmit={(e) => handleUpdate(e, selectedPayment._id, selectedPayment)}>
+
+<div className="mb-4">
+  <h1
+    className=" text-black flex hover:text-red-500  justify-end  text-end"
+    onClick={() =>
+     setIsModalOpen(false)
+    }
+  >
+    <ImCross />
+  </h1>
+  <label className="block text-black text-xl font-bold">
+    {" "}
+   Edit Admin Pay Amount
+  </label>
+  
+</div>
+<div className="mb-4">
+  <label className="block text-left text-gray-700"> Date</label>
+  <input
+    type="date"
+    defaultValue={selectedPayment.date}
+    name="date"
+    className="w-full border bg-green-200 border-black rounded p-2 mt-1"
+  />
+</div>
+
+<div className="grid grid-cols-2 gap-3">
+<div className="mb-4">
+  <label className="block text-left text-gray-700">
+    {" "}
+    New Amount
+  </label>
+  <input
+    required
+    type="number"
+    name="amount"
+    defaultValue={selectedPayment?.payAmount}
+    className="w-full border bg-white border-black rounded p-2 mt-1"
+  />
+</div>
+<div className="mb-4">
+<label className="block text-gray-250">Charge</label>
+<input
+required
+type="number"
+name="charge"
+placeholder="0"
+defaultValue={selectedPayment?.charge}
+className="w-full border bg-white border-black rounded p-2 mt-1"
+/>
+</div>
+</div>
+
+
+
+<div className="mb-4">
+  <label className="block text-left text-gray-700">Method</label>
+  <select
+    required
+    name="paymentMethod"
+    defaultValue={selectedPayment.paymentMethod}
+    className="w-full border bg-white border-black rounded p-2 mt-1"
+  >
+    <option value="bank">Brack Bank</option>
+    <option value="IBBLbank">Islami Bank</option>
+    <option value="DBBLBank">DBBL Bank</option>
+
+    <option value="bkashPersonal">
+      bKash 
+    </option>
+    <option value="nagadPersonal">
+      Nagad 
+    </option> 
+  </select>
+</div>
+
+<div className="mb-4">
+  <label className="block text-left text-gray-700">Note</label>
+  <input
+   
+    type="text"
+    name="note"
+    defaultValue={selectedPayment?.note}
+    className="w-full border bg-white border-black rounded p-2 mt-1"
+  />
+</div>
+
+<div className="modal-action grid grid-cols-2 gap-3 mt-4">
+  <button
+    type="button"
+    className="p-2 hover:bg-red-700 rounded-lg bg-red-600 text-white"
+    onClick={() =>
+      setIsModalOpen(false)
+    }
+  >
+    Close
+  </button>
+  <button
+    type="submit"
+    className="font-avenir hover:bg-indigo-700 px-3 py-1 bg-[#05a0db] rounded-lg text-white"
+  >
+    Update
+  </button>
+</div>
+</form>
           </div>
         </div>
       )}

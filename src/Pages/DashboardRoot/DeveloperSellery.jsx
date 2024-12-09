@@ -20,13 +20,13 @@ const DeveloperSellery = () => {
   const [currentuser,setCurrentuser]=useState([])
 
   const [employees, setEmployees] = useState([]);
-  const initialTab = localStorage.getItem("activeTabsummeryEmployeedS") || "allEmployee";
+  const initialTab = localStorage.getItem("activeTabsummeryEmployeedSs") || "allEmployee";
   const [selectedEmployee, setSelectedEmployee] = useState(initialTab);
   const [usersSellery, refetch] = useUsersSellery(selectedEmployee);
 
   const changeTab = (tab) => {
     setSelectedEmployee(tab);
-    localStorage.setItem("activeTabsummeryEmployeedS", tab); 
+    localStorage.setItem("activeTabsummeryEmployeedSs", tab); 
   };
 
 
@@ -192,8 +192,9 @@ const DeveloperSellery = () => {
 
   return (
     <div className='m-5'>
+ 
       <Helmet>
-        <title>E.M Sellery | Digital Network </title>
+        <title>Developers Salary | Digital Network </title>
         <link rel="canonical" href="https://www.example.com/" />
       </Helmet>
 
@@ -233,6 +234,9 @@ const DeveloperSellery = () => {
           value={selectedEmployee}
           onChange={(e) => changeTab(e.target.value)}
         >
+          <option  value={' '}>
+              Select One
+            </option>
           {employees.map((employee) => (
             <option key={employee._id} value={employee.email}>
               {employee.name}
@@ -272,13 +276,14 @@ const DeveloperSellery = () => {
                   {data.month}
                 </td>
 
-                <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-300 text-center">
-                  ৳ {data.totalBasic.toFixed(2)}
-                </td>
+     
+                <td style={{ border: 'var(--border)' }} className="p-3 border-r-2 border-gray-300 text-center">
+  ৳ {new Intl.NumberFormat('en-IN').format(data.totalBasic.toFixed(0))}
+</td>
 
-                <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-300 text-center">
-                  ৳{data.totalSellery.toFixed(2)}
-                </td>
+<td style={{ border: 'var(--border)' }} className="p-3 border-r-2 border-gray-300 text-center">
+  ৳ {new Intl.NumberFormat('en-IN').format(data.totalSellery.toFixed(0))}
+</td>
  
               
                 <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-300 text-center">
@@ -294,14 +299,17 @@ const DeveloperSellery = () => {
           </tbody>
           <tfoot className=" font-bold ">
           <tr style={{ backgroundColor: 'var(--bg-color)', color: 'var(--text-color)'}}>
-            <td style={{  border: 'var(--border)'}} className="p-3 text-right" colSpan="1">Total</td>
+          <td style={{ border: 'var(--border)' }} className="p-3 text-right" colSpan="1">
+  Total
+</td>
 
-            <td style={{  border: 'var(--border)'}} className="p-3">
-              ৳ {employeeData.reduce((acc, data) => acc + data.totalBonus, 0).toFixed(2)}
-            </td>
-            <td style={{  border: 'var(--border)'}} className="p-3">
-              ৳ {employeeData.reduce((acc, data) => acc + data.totalSellery, 0).toFixed(2)}
-            </td>
+<td style={{ border: 'var(--border)' }} className="p-3">
+  ৳ {new Intl.NumberFormat('en-IN').format(employeeData.reduce((acc, data) => acc + data.totalBasic, 0).toFixed(2))}
+</td>
+<td style={{ border: 'var(--border)' }} className="p-3">
+  ৳ {new Intl.NumberFormat('en-IN').format(employeeData.reduce((acc, data) => acc + data.totalSellery, 0).toFixed(2))}
+</td>
+
           
            
           </tr>

@@ -7,9 +7,12 @@ import useClients from "../../Hook/useClient";
 import useUsers from "../../Hook/useUsers";
 import PaymentHistry from "./ClientPaymentHistry";
 import { Helmet } from "react-helmet-async";
-import ClientCampaign from "./ClientCampaign";
+import ClientCampaign from "./ClientMetaAds";
 import useMpayment from "../../Hook/UseMpayment";
 import ClientHistory from "../DashboardRoot/ClientHistory";
+import ClientPageSetup from "./ClientPageSetup";
+import ClientGoogleAds from "./ClientGoogleAds";
+import useFindClient from "./useFindClient";
 
 const ClientProfile = () => {
   const { user } = useContext(AuthContext);
@@ -18,6 +21,7 @@ const ClientProfile = () => {
   const param = useParams();
   const [clients]=useClients()
   const [datas,setdatas]=useState()
+  const {findClients , refetch}=useFindClient(param?.email)
 
   useEffect(() => {
   if (param?.email) {
@@ -89,7 +93,7 @@ const ClientProfile = () => {
   return (
     <div className="mt-5">
        <Helmet>
-       <title>{`${datas?.clientName} | ${user?.displayName}`}</title>
+       <title>{`${findClients?.clientName} | ${user?.displayName}`}</title>
         <link rel="canonical" href="https://www.example.com/" />
       </Helmet>
 
@@ -100,26 +104,47 @@ const ClientProfile = () => {
           src={ddd?.photo} 
           alt="" 
         />
-        <h1 style={{ color: 'var(--text-color2)'}} className="lg:text-4xl mt-4  sm:text-2xl md:text-3xl font-bold text-center">
-          {datas?.clientName}
+        <h1 style={{ color: 'var(--text-color2)'}} className="lg:text-2xl mt-4 uppercase sm:text-2xl md:text-3xl font-bold text-center">
+          {findClients?.clientName} 
+        </h1>
+        <h1 style={{ color: 'var(--text-color2)'}} className="lg:text-2xl mt-4  sm:text-2xl md:text-3xl font-bold text-center">
+        {findClients?.clientPhone}
         </h1>
 
-        <div className="flex lg:justify-center rounded-md gap-5 p-2 justify-center items-center px-5 lg:mt-5 mt-5 mx-5">
+        <div className="flex lg:justify-center rounded-md gap-3 p-2 justify-center items-center px-5 lg:mt-5 mt-5 mx-3">
+        <button 
+     
+     className={getButtonClass('paymentHistory')}
+     onClick={() => changeTab('paymentHistory')}
+   >
+     Payment
+   </button>
       <button 
        
           className={getButtonClass('clientCampaign')}
           onClick={() => changeTab('clientCampaign')}
         >
-          Campaign
+          Meta Ads
         </button>
-        
-      <button 
+
+        <button 
+       
+       className={getButtonClass('clientgoogleAds')}
+       onClick={() => changeTab('clientgoogleAds')}
+     >
+       Google Ads
+     </button>
      
-          className={getButtonClass('paymentHistory')}
-          onClick={() => changeTab('paymentHistory')}
-        >
-          Payment
-        </button>
+        
+     
+
+        <button 
+     
+     className={getButtonClass('clientPageSetup')}
+     onClick={() => changeTab('clientPageSetup')}
+   >
+     Page Setup 
+   </button>
       <button 
      
           className={getButtonClass('clientHistory')}
@@ -127,6 +152,8 @@ const ClientProfile = () => {
         >
           Summery
         </button>
+    
+      
       </div>
       </div>
 
@@ -135,7 +162,10 @@ const ClientProfile = () => {
   
       {activeTab === 'paymentHistory' && <PaymentHistry email={userr?.email} />}
       {activeTab === 'clientCampaign' && <ClientCampaign email={userr?.email} />}
+      {activeTab === 'clientPageSetup' && <ClientPageSetup email={userr?.email} />}
       {activeTab === 'clientHistory' && <ClientHistory email={userr?.email} />}
+      {activeTab === 'PageMonetization' && <ClientHistory email={userr?.email} />}
+      {activeTab === 'clientgoogleAds' && <ClientGoogleAds email={userr?.email} />}
     </div>
   );
 };

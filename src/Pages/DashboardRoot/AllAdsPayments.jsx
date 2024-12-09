@@ -203,10 +203,7 @@ const AllAdsPayments = () => {
 
   return (
     <div className="m-5">
-      <Helmet>
-        <title>Contributor Payments | Digital Network </title>
-        <link rel="canonical" href="https://www.example.com/" />
-      </Helmet>
+
       <div style={{ backgroundColor: 'var(--bg-color3)', color: 'var(--text-color)', border: 'var(--border)' }} className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-7 gap-3 lg:gap-5 px-5 p-5 rounded-lg">
   {[
     { category: 'bkashMarchent', img: 'https://i.ibb.co/bHMLyvM/b-Kash-Merchant.png', amount: bkashMarcent, bgColor: '#f7e8e8' }, // Light red for bKash Merchant
@@ -219,23 +216,35 @@ const AllAdsPayments = () => {
     { category: 'bank', img: 'https://i.ibb.co/PZc0P4w/brac-bank-seeklogo.png', amount: bankTotal, bgColor: '#f2f2f2' }, // Light grey for Bank
     { category: 'total', img: '', amount: bkashPersonal + bkashMarcent + nagadPersonal + rocketPersonal + bankTotal, total: true, bgColor: '#d9f8d9' } // Light green for Total
   ].map(({ category, img, amount, total, bgColor }) => (
-    <div key={category} onClick={() => setSearchQuery(category)} style={{ backgroundColor: bgColor, border: 'var(--border)' }} className="balance-card bg-white rounded-2xl shadow-lg p-5 text-center transition-transform transform hover:scale-105 border-0">
-      {total ? (
-        <>
-          <h1 className="text-3xl font-bold text-black">Total BDT</h1>
-          <p className="balance-card-text text-lg lg:text-2xl mt-8 font-bold text-gray-700">
-            <span className="text-lg lg:text-2xl font-extrabold">৳</span> {new Intl.NumberFormat('en-IN').format(amount)}
-          </p>
-        </>
-      ) : (
-        <>
-          <img className="balance-card-img" src={img} alt={category} />
-          <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700">
-            <span className="text-lg lg:text-2xl font-extrabold">৳</span> {new Intl.NumberFormat('en-IN').format(amount)}
-          </p>
-        </>
-      )}
-    </div>
+<div
+  key={category}
+  onClick={() => setSearchQuery(category)}
+  style={{ backgroundColor: bgColor, border: "var(--border)" }}
+  className="balance-card bg-white rounded-2xl shadow-lg p-5 text-center transition-transform transform hover:scale-105 border-0"
+>
+  {total ? (
+    <>
+      <h1 className="text-3xl font-bold mt-3 text-black">Total BDT</h1>
+      <p className="balance-card-text text-lg lg:text-2xl mt-8 font-bold text-gray-700">
+        <span className="text-lg lg:text-2xl font-extrabold">৳</span>{" "}
+        {new Intl.NumberFormat("en-IN").format(amount)}
+      </p>
+    </>
+  ) : (
+    <>
+      <img
+        className=" h-20 "
+        src={img}
+        alt={category}
+      />
+      <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700">
+        <span className="text-lg lg:text-2xl font-extrabold">৳</span>{" "}
+        {new Intl.NumberFormat("en-IN").format(amount)}
+      </p>
+    </>
+  )}
+</div>
+
   ))}
 </div>
 
@@ -261,25 +270,11 @@ const AllAdsPayments = () => {
     <div className="flex justify-center items-center">
       <select
        style={{ backgroundColor: 'var(--bg-color2)',border: 'var(--border)', color: 'var(--text-color2)'}}
-        value={selectedYear}
-        onChange={(e) => setSelectedYear(parseInt(e.target.value))}
-        className="year-selector py-2 px-6 border border-gray-600 mt-1 bg-white text-black"
-      >
-        {years.map((year) => (
-          <option className="bg-white text-black" key={year} value={year}>
-            {year}
-          </option>
-        ))}
-      </select>
-    </div>
-    <div className="flex justify-center items-center">
-      <select
-       style={{ backgroundColor: 'var(--bg-color2)',border: 'var(--border)', color: 'var(--text-color2)'}}
         value={sortMonth}
         onChange={(e) => changeTab(e.target.value)}
         className="border bg-white text-black border-gray-400 rounded p-2 mt-1"
       >
-        <option value="all">All Month</option>
+        <option value="all">Select Month</option>
         {[
           "January",
           "February",
@@ -300,6 +295,21 @@ const AllAdsPayments = () => {
         ))}
       </select>
     </div>
+    <div className="flex justify-center items-center">
+      <select
+       style={{ backgroundColor: 'var(--bg-color2)',border: 'var(--border)', color: 'var(--text-color2)'}}
+        value={selectedYear}
+        onChange={(e) => setSelectedYear(parseInt(e.target.value))}
+        className="year-selector py-2 px-6 border border-gray-600 mt-1 bg-white text-black"
+      >
+        {years.map((year) => (
+          <option className="bg-white text-black" key={year} value={year}>
+            {year}
+          </option>
+        ))}
+      </select>
+    </div>
+    
   </div>
 </div>
 
@@ -311,11 +321,11 @@ const AllAdsPayments = () => {
               <tr className="" style={{border: 'var(--border)',borderLeft: 'var(--border)', borderRight: 'var(--border)', color: 'var(--text-color)'}}>
             
               <th className="p-3">{displayedItems.length}</th>
-              <th className="p-3">Date</th>
+              <th className="p-3 text-start">Date</th>
               <th className="p-3 text-left">Contributor Name</th>
-              <th className="p-3">Amount</th>
+              <th className="p-3 text-start">Amount</th>
               <th className="p-3">Method</th>
-              <th className="p-3">Note</th>
+              <th className="p-3 text-start">Note</th>
               <th className="p-3">Status</th>
             </tr>
           </thead>
@@ -346,7 +356,7 @@ const AllAdsPayments = () => {
                         </button>
                </div>
                 </td>
-                <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-200 text-center">
+                <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-200 text-start">
                 {new Date(payment.date).toLocaleDateString("en-GB")}
                 </td>
                
@@ -356,8 +366,8 @@ const AllAdsPayments = () => {
                 </Link>
                   
                 </td>
-                <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-200 text-center">
-                  ৳ {payment.payAmount}
+                <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-200 text-start">
+                  ৳  {new Intl.NumberFormat('en-IN').format(payment.payAmount)}
                 </td>
                 <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-200 text-center">
                   {payment.paymentMethod === "bkashMarchent" && (
@@ -396,7 +406,7 @@ const AllAdsPayments = () => {
                     />
                   )}
                 </td>
-                <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-200 text-center">
+                <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-200 text-start">
                   {payment.note}
                 </td>
                
@@ -431,7 +441,7 @@ const AllAdsPayments = () => {
               <td className="p-3 text-right" colSpan="3">
                 Total :
               </td>
-              <td className="p-3 text-center">৳ {totalPayment}</td>
+              <td className="p-3 text-start">৳ {totalPayment}</td>
               <td className="p-3 text-center"></td>
               <td className="p-3 text-center"></td>
               <td className="p-3 text-center"></td>

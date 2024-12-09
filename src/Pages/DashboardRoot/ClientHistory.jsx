@@ -6,9 +6,11 @@ import jsPDF from "jspdf";
 import useCampaingsByEmail from "../../Hook/useCampaignsByEmail";
 import useMpymentsByEmail from "../../Hook/useMpaymentByEmail";
 import BalanceCard from "./BalanceCard";
+import useFindClient from "../Home/useFindClient";
 
 const ClientHistory = () => {
   const param = useParams();
+  const {findClients}=useFindClient(param?.email)
   const [clients] = useClients();
   const [campaignss]=useCampaingsByEmail(param?.email)
   const [totalSpent, setTotalSpent] = useState(0);
@@ -72,11 +74,10 @@ const ClientHistory = () => {
     }
   }, [selectedMonth, Histryy]);
 
-  // Function to get total payment for each month
   const getMonthlyTotal = (month) => {
-    return filteredHistory
-      .filter(payment => new Date(payment.date).getMonth() + 1 === month)
-      .reduce((acc, payment) => acc + parseFloat(payment.amount), 0);
+    return findClients?.payments
+      ?.filter(payment => new Date(payment?.date).getMonth() + 1 === month)
+      .reduce((acc, payment) => acc + parseFloat(payment?.amount), 0);
   };
 
   const pdfRef = useRef();
@@ -117,28 +118,40 @@ const ClientHistory = () => {
 
         <div className="px-5 py-10 rounded-2xl  bg-[#91a33a] text-white shadow-lg text-center">
           <h2 className="lg:text-xl text-sm font-bold">Total Spent</h2>
-          <p className="lg:text-2xl text-xl font-bold mt-2"> $ {totalSpent.toFixed(2)}</p>
+          <p className="lg:text-2xl text-xl font-bold mt-2"> $ {findClients?.campaings?.reduce((acc, payment) => acc + parseFloat(payment?.tSpent || 0), 0).toFixed(2)}</p>
         </div>
 
         <div className="px-5 py-10 rounded-2xl bg-[#5422c0] text-white shadow-lg text-center">
           <h2 className="lg:text-xl text-sm font-bold">Total Bill</h2>
           <p className="lg:text-2xl text-xl font-bold mt-2">
-             <span className="lg:text-2xl text-xl font-extrabold">৳</span> {totalBills.toFixed(0)}
+             <span className="lg:text-2xl text-xl font-extrabold">৳</span> {findClients?.campaings?.reduce(
+    (acc, campaign) =>
+      acc + parseFloat(campaign?.tSpent || 0) * parseFloat(campaign?.dollerRate || 0),
+    0
+  ).toFixed(0)}
           </p>
         </div>
 
         <div className="px-5 py-10 rounded-2xl  bg-[#05a0db] text-white shadow-lg text-center">
           <h2 className="lg:text-xl text-sm font-bold">Total Paid</h2>
-          <p className="lg:text-2xl text-xl font-bold mt-2"> <span className="lg:text-2xl text-xl font-extrabold">৳</span> {parseInt(totalPaymeent).toFixed(0)}</p>
+          <p className="lg:text-2xl text-xl font-bold mt-2"> <span className="lg:text-2xl text-xl font-extrabold">৳</span> {findClients?.payments?.reduce((acc, payment) => acc + parseFloat(payment?.amount || 0), 0).toFixed(0)}</p>
         </div>
 
         <div className="px-5 py-10 rounded-2xl  bg-[#ce1a38] text-white shadow-lg text-center">
           <h2 className="lg:text-xl text-sm font-bold">Total <span>
-  {((totalBills - totalPaymeent).toFixed(0))  >= 0 ? 'Due' : 'Advance'}
+  {((findClients?.campaings?.reduce(
+    (acc, campaign) =>
+      acc + parseFloat(campaign?.tSpent || 0) * parseFloat(campaign?.dollerRate || 0),
+    0
+  ).toFixed(0) - findClients?.payments?.reduce((acc, payment) => acc + parseFloat(payment?.amount || 0), 0).toFixed(0)).toFixed(0))  >= 0 ? 'Due' : 'Advance'}
 </span>
 </h2>
           <p className="lg:text-2xl text-xl font-bold mt-2">
-          <span className="lg:text-2xl text-xl font-extrabold">৳</span> {Math.abs((totalBills - totalPaymeent).toFixed(0))}
+          <span className="lg:text-2xl text-xl font-extrabold">৳</span> {Math.abs((findClients?.campaings?.reduce(
+    (acc, campaign) =>
+      acc + parseFloat(campaign?.tSpent || 0) * parseFloat(campaign?.dollerRate || 0),
+    0
+  ).toFixed(2) - findClients?.payments?.reduce((acc, payment) => acc + parseFloat(payment?.amount || 0), 0).toFixed(2)).toFixed(0))}
           </p>
         </div>
       </div>
@@ -146,16 +159,29 @@ const ClientHistory = () => {
 
 
       <div className="mx-5">
-  <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-7 gap-3 lg:gap-3  mb-5">
+      <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-8 gap-3 lg:gap-3 mt-3 mb-3">
     
+    <BalanceCard img={`https://i.ibb.co/bHMLyvM/b-Kash-Merchant.png`} amount={findClients?.payments?.filter(h => h?.paymentMethod === 'bkashMarchent')?.reduce((acc, payment) => acc + payment?.amount, 0)}></BalanceCard>
+    <BalanceCard img={`https://i.ibb.co/520Py6s/bkash-1.png`} amount={findClients?.payments?.filter(h => h?.paymentMethod === 'bkashPersonal')?.reduce((acc, payment) => acc + payment?.amount, 0)}></BalanceCard>
+    <BalanceCard img={`https://i.ibb.co/JQBQBcF/nagad-marchant.png`} amount={findClients?.payments?.filter(h => h?.paymentMethod === 'nagadPersonal')?.reduce((acc, payment) => acc + payment?.amount, 0)}></BalanceCard>
+    <BalanceCard img={`https://i.ibb.co/QkTM4M3/rocket.png`} amount={findClients?.payments?.filter(h => h?.paymentMethod === 'rocketPersonal')?.reduce((acc, payment) => acc + payment?.amount, 0)}></BalanceCard>
+    <BalanceCard img={`https://i.ibb.co.com/kG9cBXJ/BBBLBank.png`} amount={findClients?.payments?.filter(h => h?.paymentMethod === 'bank')?.reduce((acc, payment) => acc + payment?.amount, 0)}></BalanceCard>
+    <BalanceCard img={`https://i.ibb.co.com/vH2fPBm/DBBLBank.png`} amount={findClients?.payments?.filter(h => h?.paymentMethod === 'DBBLBank')?.reduce((acc, payment) => acc + payment?.amount, 0)}></BalanceCard>
+    <BalanceCard img={`https://i.ibb.co.com/pnS6nt4/IBBLBank.png`} amount={findClients?.payments?.filter(h => h?.paymentMethod === 'IBBLBank')?.reduce((acc, payment) => acc + payment?.amount, 0)}></BalanceCard>
 
-  <BalanceCard img={`https://i.ibb.co/bHMLyvM/b-Kash-Merchant.png`} amount={filteredHistory?.filter(h => h.paymentMethod === 'bkashMarchent')?.reduce((acc, payment) => acc + payment?.amount, 0)}></BalanceCard>
-                 <BalanceCard img={`https://i.ibb.co/520Py6s/bkash-1.png`} amount={filteredHistory?.filter(h => h.paymentMethod === 'bkashPersonal')?.reduce((acc, payment) => acc + payment?.amount, 0)}></BalanceCard>
-                 <BalanceCard img={`https://i.ibb.co/JQBQBcF/nagad-marchant.png`} amount={filteredHistory?.filter(h => h.paymentMethod === 'nagadPersonal')?.reduce((acc, payment) => acc + payment?.amount, 0)}></BalanceCard>
-                 <BalanceCard img={`https://i.ibb.co/QkTM4M3/rocket.png`} amount={filteredHistory?.filter(h => h.paymentMethod === 'rocketPersonal')?.reduce((acc, payment) => acc + payment?.amount, 0)}></BalanceCard>
-                 <BalanceCard img={`https://i.ibb.co.com/kG9cBXJ/BBBLBank.png`} amount={filteredHistory?.filter(h => h.paymentMethod === 'bank')?.reduce((acc, payment) => acc + payment?.amount, 0)}></BalanceCard>
-                 <BalanceCard img={`https://i.ibb.co.com/vH2fPBm/DBBLBank.png`} amount={filteredHistory?.filter(h => h.paymentMethod === 'DBBLBank')?.reduce((acc, payment) => acc + payment?.amount, 0)}></BalanceCard>
-                 <BalanceCard img={`https://i.ibb.co.com/pnS6nt4/IBBLBank.png`} amount={filteredHistory?.filter(h => h.paymentMethod === 'IBBLBank')?.reduce((acc, payment) => acc + payment?.amount, 0)}></BalanceCard>
+    <div 
+  style={{ backgroundColor: '#d9f8d9', border: 'var(--border)' }} 
+  className="balance-card rounded-2xl p-5 text-center shadow-xl transition-transform transform hover:scale-105"
+>
+  <h1 className="px-3 text-black text-xl font-bold text-center">TOTAL</h1>
+  <p className="balance-card-text text-lg mt-2 lg:text-xl font-bold text-gray-700">
+    <span className="text-lg lg:text-xl font-extrabold">৳</span>
+    {findClients?.payments?.reduce(
+      (acc, payment) => acc + parseFloat(payment?.amount || 0),
+      0
+    ).toFixed(0)}
+  </p>
+</div>
 
   </div>
 </div>
@@ -196,7 +222,7 @@ const ClientHistory = () => {
                   </td>
                   <td style={{ border: 'var(--border)' }} className="p-3 border-r-2 border-gray-200 text-center">
                     <span className="text-md mr-1 font-extrabold">৳</span>
-                    {getMonthlyTotal(month).toFixed(2)}
+                    {getMonthlyTotal(month)?.toFixed(0)}
                   </td>
                 </tr>
               );
@@ -207,13 +233,16 @@ const ClientHistory = () => {
               </td>
               <td style={{ border: 'var(--border)' }} className="p-3 text-center">
                 <span className="text-md mr-1 font-extrabold">৳</span>
-                {filteredHistory.reduce((acc, payment) => acc + parseFloat(payment.amount), 0).toFixed(2)}
+                {findClients?.payments?.reduce(
+      (acc, payment) => acc + parseFloat(payment?.amount || 0),
+      0
+    ).toFixed(0)}
               </td>
             </tr>
           </tbody>
         </table>
       </div>
-</div>
+     </div>
     
     </div>
   );

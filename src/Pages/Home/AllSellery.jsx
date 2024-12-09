@@ -3,7 +3,7 @@ import EmployeePayments from './EmployeePayments';
 import AllClientsPayments from './AllClientsPayments';
 import AllAdsPayments from '../DashboardRoot/AllAdsPayments';
 import { Helmet } from 'react-helmet-async';
-import Sellery from '../DashboardRoot/Sellery';
+import Sellery from '../DashboardRoot/Salary.jsx';
 import DeveloperSellery from '../DashboardRoot/DeveloperSellery';
 import DesignersSellery from '../DashboardRoot/DesignerSellery.jsx';
 
@@ -39,7 +39,7 @@ const AllSellery = () => {
                         className={getButtonClass('marketerSellery')}
                         onClick={() => changeTab('marketerSellery')}
                     >
-                        Marketer
+                        Marketers
                     </button>
 
                     {/* Clients Pay Button */}
@@ -47,7 +47,7 @@ const AllSellery = () => {
                         className={getButtonClass('developerSellery')}
                         onClick={() => changeTab('developerSellery')}
                     >
-                        Developer
+                        Developers
                     </button>
 
                     {/* Contributor Pay Button */}
@@ -55,7 +55,7 @@ const AllSellery = () => {
                         className={getButtonClass('designerSellery')}
                         onClick={() => changeTab('designerSellery')}
                     >
-                        Designer
+                        Designers
                     </button>
                 </div>
             </div>

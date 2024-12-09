@@ -33,7 +33,7 @@ const EmployeeProfile = () => {
 
   return (
     <div className="my-5">
-      <Helmet>
+      {/* <Helmet>
         <title>Digital Network | Employee Profile</title>
         <link rel="canonical" href="https://www.tacobell.com/" />
       </Helmet>
@@ -130,7 +130,7 @@ const EmployeeProfile = () => {
       {activeTab === 'adminPay' && <EmployeeAdminPay email={userr?.email} />}
       {activeTab === 'clientPay' && <EmployeeClientPay email={userr?.email} />}
       {activeTab === 'history' && <EmployeeMyHistory email={userr?.email} />}
-      {activeTab === 'summery' && <EmployeeMySummery email={userr?.email} />}
+      {activeTab === 'summery' && <EmployeeMySummery email={userr?.email} />} */}
     </div>
   );
 };

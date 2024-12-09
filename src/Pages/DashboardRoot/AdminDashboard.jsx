@@ -46,38 +46,50 @@ const AdminDashboard = () => {
             Dashboard
           </NavLink>
 
-          <NavLink
-            to="dashboard/allAdSAccount"
-            className="text-white hover:bg-[#f89320] hover:text-black py-2 px-3 rounded-lg flex items-center"
-            style={({ isActive }) => getActiveStyle(isActive)}
-          >
-            <MdAccountCircle className="w-6 h-6 mr-2" /> Ads Accounts
-          </NavLink>
+          
          
           <NavLink
-            to="dashboard/allCampaign"
-            className="text-white hover:bg-[#f89320] hover:text-black py-2 px-3 rounded-lg flex items-center"
-            style={({ isActive }) => getActiveStyle(isActive)}
-          >
-            <MdCampaign className="w-6 h-6 mr-2" />All Campaigns
-          </NavLink>
-
-          <NavLink
-                  to="dashboard/allUsers"
-                  className="text-white hover:bg-[#f89320] hover:text-black py-2 px-3 rounded-lg flex items-center"
-                  style={({ isActive }) => getActiveStyle(isActive)}
-                >
-                  <FaPeopleGroup className="w-6 h-6 mr-2" />
-                  All Users
-                </NavLink>
-          <NavLink
-                  to="dashboard/allClients"
+                  to="dashboard/clients"
                   className="text-white hover:bg-[#f89320] hover:text-black py-2 px-3 rounded-lg flex items-center"
                   style={({ isActive }) => getActiveStyle(isActive)}
                 >
                   <IoPeopleSharp className="w-6 h-6 mr-2" />
-                 All Clients
+                 Clients
                 </NavLink>
+          <NavLink
+            to="dashboard/metaAds"
+            className="text-white hover:bg-[#f89320] hover:text-black py-2 px-3 rounded-lg flex items-center"
+            style={({ isActive }) => getActiveStyle(isActive)}
+          >
+            <MdCampaign className="w-6 h-6 mr-2" />Meta Ads
+          </NavLink>
+
+          <NavLink
+            to="dashboard/googleAds"
+            className="text-white hover:bg-[#f89320] hover:text-black py-2 px-3 rounded-lg flex items-center"
+            style={({ isActive }) => getActiveStyle(isActive)}
+          >
+            <MdCampaign className="w-6 h-6 mr-2" />Google Ads
+          </NavLink>
+
+          <NavLink
+            to="dashboard/pageSetup"
+            className="text-white hover:bg-[#f89320] hover:text-black py-2 px-4 rounded-lg flex items-center"
+            style={({ isActive }) => getActiveStyle(isActive)}
+          >
+            <MdCampaign className="w-6 h-6 mr-2" />
+            Page Setup
+          </NavLink>
+         
+          <NavLink
+                  to="dashboard/graphicDesign"
+                  className="text-white hover:bg-[#f89320] hover:text-black py-2 px-3 rounded-lg flex items-center"
+                  style={({ isActive }) => getActiveStyle(isActive)}
+                >
+                  <IoPeopleSharp className="w-6 h-6 mr-2" />
+                 Graphic Design
+                </NavLink>
+        
           <NavLink
            to="dashboard/allPayments"
             className="text-white hover:bg-[#f89320] hover:text-black py-2 px-3 rounded-lg flex items-center"
@@ -88,28 +100,49 @@ const AdminDashboard = () => {
           </NavLink>
        
           <NavLink
-            to={`dashboard/AllSummery`}
+            to="/dashboard/salary"
+            className="text-white hover:bg-[#f89320] hover:text-black py-2 px-3 rounded-lg flex items-center"
+            style={({ isActive }) => getActiveStyle(isActive)}
+          >
+            <IoMdCash  className="w-6 h-6 mr-2" />All Salary
+          </NavLink>
+
+          <NavLink
+            to="dashboard/allAdSAccount"
+            className="text-white hover:bg-[#f89320] hover:text-black py-2 px-3 rounded-lg flex items-center"
+            style={({ isActive }) => getActiveStyle(isActive)}
+          >
+            <MdAccountCircle className="w-6 h-6 mr-2" /> Ads Account
+          </NavLink>
+         
+          <NavLink
+            to={`dashboard/monthlySpend`}
+            className="text-white hover:bg-[#f89320] hover:text-black py-2 px-4 rounded-lg flex items-center"
+            style={({ isActive }) => getActiveStyle(isActive)}
+          >
+            <FaHistory className="w-6 h-6 mr-2" />
+            Monthly Spend
+          </NavLink>
+
+          <NavLink
+            to={`dashboard/summery`}
             className="text-white hover:bg-[#f89320] hover:text-black py-2 px-3 rounded-lg flex items-center"
             style={({ isActive }) => getActiveStyle(isActive)}
           >
             <LuActivitySquare  className="w-6 h-6 mr-2" />
            All Summery
           </NavLink>
+
          
+
           <NavLink
-            to="/dashboard/history"
-            className="text-white hover:bg-[#f89320] hover:text-black py-2 px-3 rounded-lg flex items-center"
-            style={({ isActive }) => getActiveStyle(isActive)}
-          >
-           <FaHistory className="w-6 h-6 mr-2" />History
-          </NavLink>
-          <NavLink
-            to="/dashboard/sellery"
-            className="text-white hover:bg-[#f89320] hover:text-black py-2 px-3 rounded-lg flex items-center"
-            style={({ isActive }) => getActiveStyle(isActive)}
-          >
-            <IoMdCash  className="w-6 h-6 mr-2" />Salary
-          </NavLink>
+                  to="dashboard/allUsers"
+                  className="text-white hover:bg-[#f89320] hover:text-black py-2 px-3 rounded-lg flex items-center"
+                  style={({ isActive }) => getActiveStyle(isActive)}
+                >
+                  <FaPeopleGroup className="w-6 h-6 mr-2" />
+                  All Users
+                </NavLink>
 
           <NavLink
             to="dashboard/payoneer"
@@ -128,14 +161,14 @@ const AdminDashboard = () => {
            Bank Info
           </NavLink>
           
-          <NavLink
+          {/* <NavLink
             to={`dashboard/notification`}
             className="text-white hover:bg-[#f89320] hover:text-black py-2 px-4 rounded-lg flex items-center"
             style={({ isActive }) => getActiveStyle(isActive)}
           >
            <IoNotificationsCircleSharp   className="w-6 h-6 mr-2" />
            Notification
-          </NavLink>
+          </NavLink> */}
           
         </ul>
       </div>

@@ -7,12 +7,30 @@ import { ImCross } from "react-icons/im";
 import Swal from "sweetalert2";
 import useMyEmployeePayments from "../../Hook/useMyemployeePayments";
 import { FaEdit, FaMinusSquare } from "react-icons/fa";
+import useUserr from "../../Hook/useUser";
+import useUsers from "../../Hook/useUsers";
 
 const AdminPayments = () => {
   const { user } = useContext(AuthContext);
-  const [MyEmployeePayment,refetch]=useMyEmployeePayments(user?.email)
+  const {userr}=useUserr(user?.email)
+  const [users]=useUsers()
+  
+  const initialTab3 =
+  userr?.role === "admin"
+    ? localStorage.getItem("activeTaballcampaignmonthsss8") || "all"
+    : user?.email;
+
+  const [selectedEmployee3, setSelectedEmployee3] = useState(initialTab3);
+
+  const changeTab2 = (tab) => {
+    setSelectedEmployee3(tab); // Update the state
+    localStorage.setItem("activeTaballcampaignmonthsss3", tab); // Update localStorage
+  };
+
+  const [MyEmployeePayment,refetch]=useMyEmployeePayments(selectedEmployee3)
   const [selectedCategory, setSelectedCategory] = useState("");
   const [filteredData, setFilteredData] = useState([]);
+  const [filteredData2, setFilteredData2] = useState([]);
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   const AxiosPublic=UseAxiosPublic()
   const [selectedDate, setSelectedDate] = useState("");
@@ -28,6 +46,10 @@ const AdminPayments = () => {
   const initialStatus = localStorage.getItem("activeTabSelectedStatuss") || 'All';
   const [selectedStatus2, setSelectedStatus2] = useState(initialStatus);
 
+  const changeTab3 = (tab) => {
+    setSelectedStatus2(tab);
+    localStorage.setItem("activeTabSelectedStatuss", tab);
+  };
 
   useEffect(() => {
     const filtered = MyEmployeePayment.filter((payment) => {
@@ -50,10 +72,27 @@ const AdminPayments = () => {
     selectedStatus2,
     selectedYear,
   ]);
+
+  useEffect(() => {
+    const filtered = MyEmployeePayment.filter((payment) => {
+      const paymentDate = new Date(payment.date);
+      return (
+        (selectedStatus2 === 'All' || payment.status === selectedStatus2) &&
+        (!sortMonth || paymentDate.getMonth() + 1 === parseInt(sortMonth)) &&
+        (!selectedYear || paymentDate.getFullYear() === parseInt(selectedYear))
+      );
+    });
   
-  const [bkashMarcent, setBkashMarcentTotal] = useState(0);
+    setFilteredData2(filtered);
+  }, [
+    sortMonth,
+    selectedCategory, 
+    MyEmployeePayment,
+    selectedStatus2,
+    selectedYear,
+  ]);
+  
   const [nagadPersonal, setNagadPersonalTotal] = useState(0);
-  const [nagadMarchent, setNagadMarchentTotal] = useState(0);
   const [bkashPersonal, setBkashPersonalTotal] = useState(0);
   const [rocketPersonal, setRocketPersonalTotal] = useState(0);
   const [bankTotal, setBankTotal] = useState(0);
@@ -61,7 +100,7 @@ const AdminPayments = () => {
   const [DBBLBankTotal, setDBBLBankTotal] = useState(0);
 
   useEffect(() => {
-    const filtered = filteredData; 
+    const filtered = filteredData2; 
 
     const filter3 = filtered.filter(d => d.paymentMethod === 'nagadPersonal');
     const total3 = filter3.reduce((acc, datas) => acc + parseFloat(datas.payAmount), 0);
@@ -78,18 +117,21 @@ const AdminPayments = () => {
     const filter6 = filtered.filter(d => d.paymentMethod === 'bank');
     const total6 = filter6.reduce((acc, datas) => acc + parseFloat(datas.payAmount), 0);
     setBankTotal(total6);
+
     const filter8 = filtered.filter(d => d.paymentMethod === 'IBBLBank');
     const total8 = filter8.reduce((acc, datas) => acc + parseFloat(datas.payAmount), 0);
     setIBBLBankTotal(total8);
+
     const filter9 = filtered.filter(d => d.paymentMethod === 'DBBLBank');
     const total9 = filter9.reduce((acc, datas) => acc + parseFloat(datas.payAmount), 0);
     setDBBLBankTotal(total9);
-  }, [filteredData]);
+
+  }, [filteredData2]);
   
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 20;
 
-  const displayedItems = filteredData.slice(0, currentPage * itemsPerPage);
+  const displayedItems = filteredData.sort((a, b) => new Date(b.date) - new Date(a.date)).slice(0, currentPage * itemsPerPage);
   const isMoreItems = currentPage * itemsPerPage < filteredData.length;
 
   useEffect(() => {
@@ -108,6 +150,8 @@ const AdminPayments = () => {
     };
   }, []);
 
+  const today = new Date();
+  const formattedDate = today.toISOString().split('T')[0];  
 
   const handlePayment = async (e) => {
     e.preventDefault();
@@ -130,12 +174,21 @@ const AdminPayments = () => {
       status:'pending'
     };
 
+    const datas = {
+      title: `added ${payAmount} in in ${paymentMethod}`,
+      date: new Date(),
+      user: user?.displayName,
+      email:user?.email
+    };
+
     AxiosPublic.post("/employeePayment",
       data
     )
       .then((res) => {
         toast.success("Send successful!");
         refetch();
+        AxiosPublic.post("/activity", datas).then(() => {
+        });
         console.log(res.data);
         document.getElementById("my_modal_1").close()
        
@@ -155,16 +208,24 @@ const AdminPayments = () => {
 
     const previousAmount = payment.payAmount; 
 
-    // PATCH request to update the payment
+    const datas = {
+      title: `added ${payAmount} in in ${paymentMethod}`,
+      date: new Date(),
+      user: user?.displayName,
+      email:user?.email
+    };
+
     AxiosPublic.patch(`/employeePayment/${id}`,
       updatedPaymentData
     )
     .then(() => {
       refetch();
       document.getElementById(`modal_${id}`).close();
-      toast.success("Update successful!");
+      toast.success("Updated successful!");
+
+      AxiosPublic.post("/activity", datas).then(() => {
+      });
   
-      // POST request to send edit notification with previous and updated data
       AxiosPublic.post('/editNotification', {
           ppayAmount: previousAmount,
           pdate: payment.date,
@@ -193,12 +254,15 @@ const AdminPayments = () => {
     .catch(err => console.error("Error updating payment:", err));
   };
   
-  
-
-  
-
   const handleDelete = (id, note, paymentMethod, charge, payAmount, date) => {
-    // Show confirmation dialog
+
+    const datas = {
+      title: `Deleted ${payAmount} from ${paymentMethod} `,
+      date: new Date(),
+      user: user?.displayName,
+      email:user?.email
+    };
+
     Swal.fire({
       title: 'Are you sure?',
       text: "You won't be able to revert this!",
@@ -209,13 +273,13 @@ const AdminPayments = () => {
       confirmButtonText: 'Yes, delete it!'
     }).then((result) => {
       if (result.isConfirmed) {
-        // Proceed with delete
+
         AxiosPublic.delete(`/employeePayment/${id}`)
           .then((res) => {
             toast.success("Delete successful!");
             refetch();
-  
-            // Store deleted data in the notification collection
+            AxiosPublic.post("/activity", datas).then(() => {
+            });
             AxiosPublic.post('/notification', {
               type: 'delete',
               paymentId: id,
@@ -244,9 +308,20 @@ const AdminPayments = () => {
     });
   };
 
-  const today = new Date();
-  const formattedDate = today.toISOString().split('T')[0];  // "YYYY-MM-DD" format
+  const handleUpdate2 = (id, newStatus) => {
+    const body = { status: newStatus };
   
+    AxiosPublic.patch(`/employeePayment/status/${id}`, body)
+      .then((res) => {
+        console.log(res.data);
+        refetch();
+      })
+      .catch((error) => {
+        console.error("Error updating campaign:", error);
+        toast.error("Failed to update campaign");
+      });
+  };
+
   return (
     <div className="m-5">
       <ToastContainer />
@@ -274,10 +349,10 @@ const AdminPayments = () => {
 
   <div style={{ backgroundColor: '#d9f8d9', border: 'var(--border)' }} onClick={() => setSelectedCategory('All')} className="balance-card bg-white  rounded-2xl shadow-lg p-5 text-center transition-transform hover:scale-105 border-0">
     <h1 className="text-xl font-bold text-black">
-      <p className="mb-5">Total</p> <span className="text-lg lg:text-xl font-extrabold">৳</span> {new Intl.NumberFormat('en-IN').format(bkashPersonal + DBBLBankTotal + IBBLBankTotal +  bkashMarcent + nagadPersonal + nagadMarchent + rocketPersonal + bankTotal)}
+      <p className="mb-5">Total</p> <span className="text-lg lg:text-xl font-extrabold">৳</span> {new Intl.NumberFormat('en-IN').format(bkashPersonal + DBBLBankTotal + IBBLBankTotal + rocketPersonal +  nagadPersonal  +  bankTotal)}
     </h1>
     <h1 className="text-xl font-bold mt-2 text-red-800">
-       <span className="text-lg lg:text-xl font-extrabold">৳</span> {new Intl.NumberFormat('en-IN').format(displayedItems.reduce((acc, item) => acc + (isNaN(parseFloat(item?.charge)) ? 0 : parseFloat(item?.charge)), 0))}
+       <span className="text-lg lg:text-xl font-extrabold">৳</span> {new Intl.NumberFormat('en-IN').format(filteredData2.reduce((acc, item) => acc + (isNaN(parseFloat(item?.charge)) ? 0 : parseFloat(item?.charge)), 0))}
     </h1>
   </div>
 </div>
@@ -437,8 +512,36 @@ const AdminPayments = () => {
 
   <div className="lg:flex text-black lg:justify-start my-3 lg:my-0 lg:ml-5  items-center">
         
-        <div className="flex mt-2 lg:mt-0 justify-center text-center gap-2 lg:gap-5 items-center">
+        <div className="flex mt-2 lg:mt-0 justify-center text-center gap-2 lg:gap-3 items-center">
 
+        <div className="w-full lg:w-auto flex justify-start gap-3">
+  {userr?.role === "admin" ? (
+    <div className="flex mt-1.5 justify-center">
+      <select
+        style={{
+          backgroundColor: "var(--bg-color2)",
+          border: "var(--border)",
+          color: "var(--text-color2)",
+        }}
+        className="border bg-white text-black py-2 lg:w-auto w-full border-gray-400 rounded px-2"
+        value={selectedEmployee3}
+        onChange={(e) => changeTab2(e.target.value)}
+      >
+        <option value="all">All Employees</option>
+        {users
+          .filter((u) => u.role === "employee")
+          .map((employee) => (
+            <option key={employee._id} value={employee.email}>
+              {employee.name}
+            </option>
+          ))}
+      </select>
+    </div>
+  ) : (
+   <></>
+  )}
+</div>
+       
         <input
     style={{ backgroundColor: 'var(--bg-color2)',border: 'var(--border)', color: 'var(--text-color2)'}}
     type="date"
@@ -475,6 +578,7 @@ const AdminPayments = () => {
               ))}
             </select>
           </div>
+
           <div className=" lg:flex text-black justify-center items-center">
         <select
         style={{ backgroundColor: 'var(--bg-color2)',border: 'var(--border)', color: 'var(--text-color2)'}}
@@ -489,6 +593,21 @@ const AdminPayments = () => {
           ))}
         </select>
       </div>
+      <div className="flex  justify-center text-center items-center">
+
+<select
+ style={{ backgroundColor: 'var(--bg-color2)',border: 'var(--border)', color: 'var(--text-color2)'}}
+  className="border bg-white w-full     text-black border-gray-400 rounded p-2 mt-1 "
+  value={selectedStatus2}
+  onChange={(e) => changeTab3(e.target.value)}
+>
+  <option value="All">All Status</option>
+  <option value="pending">Pending</option>
+  <option value="Approved">Approved</option>
+ 
+</select>
+</div>
+
         </div>
       
       </div>
@@ -497,12 +616,13 @@ const AdminPayments = () => {
 
 
 
-<div  className="overflow-x-auto  rounded-xl mx-5 text-center " style={{ backgroundColor: 'var(--bg-color)', color: 'var(--text-color)'}}>
+       <div className="overflow-x-auto  rounded-xl mx-5 text-center " style={{ backgroundColor: 'var(--bg-color)', color: 'var(--text-color)'}}>
           <table className="min-w-full  text-center ">
             <thead className=" ">
               <tr className="" style={{border: 'var(--border)',borderLeft: 'var(--border)', borderRight: 'var(--border)', color: 'var(--text-color)'}}>
-              <th style={{  border: 'var(--border)'}} className="p-3 ">{displayedItems.length}</th>
+              <th style={{  border: 'var(--border)'}} className="p-3 ">{displayedItems.length} Items</th>
               <th style={{  border: 'var(--border)'}} className="p-3">Date</th>
+              <th style={{  border: 'var(--border)'}} className="p-3">Employee Name</th>
               <th style={{  border: 'var(--border)'}} className="p-3">Amount</th>
               <th style={{  border: 'var(--border)'}} className="p-3">Charge</th>
               <th style={{  border: 'var(--border)'}} className="p-3">Payment Method</th>
@@ -512,7 +632,7 @@ const AdminPayments = () => {
             </tr>
           </thead>
           <tbody>
-            {displayedItems.sort((a, b) => new Date(b.date) - new Date(a.date))?.map((payment, index) => (
+            {displayedItems?.map((payment, index) => (
                <tr style={{ backgroundColor: 'var(--bg-table)', color: 'var(--text-color2)'}}
                key={payment._id}
                className={`${
@@ -522,7 +642,7 @@ const AdminPayments = () => {
                }`}
              >
                 <td style={{  border: 'var(--border)'}} className="p-3  border-r-2 border-l-2 border-gray-200 text-center">
-                <div className="flex justify-center items-center gap-3 ">
+                <div className="flex justify-center items-center ">
                 <button
                     className=" hover:bg-blue-700 text-[#f86c6b] text-xl px-2 py-1 rounded"
                     onClick={() => handleDelete(payment._id,payment?.note,payment.paymentMethod,payment?.charge,payment?.payAmount,payment.date)}
@@ -662,6 +782,9 @@ const AdminPayments = () => {
                   {new Date(payment.date).toLocaleDateString("en-GB")}
                 </td>
                 <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-200 text-center">
+                  {payment.employeeName}
+                </td>
+                <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-200 text-center">
                   ৳ {payment.payAmount}
                 </td>
                 <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-200 text-center">
@@ -718,25 +841,54 @@ const AdminPayments = () => {
                   {" "}
                   {payment.note}
                 </td>
-                <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-200 text-center">
-                  {" "}
-                  {payment.status === 'pending' ? <p className="text-blue-700 font-bold">Pending</p> : <p className="text-green-800 font-bold">Approved</p>}
-                </td>
-
-                
+            
+                <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-l-2 border-gray-200 text-center">  <label className="inline-flex items-center cursor-pointer">
+  <input
+    type="checkbox"
+    className="sr-only"
+    checked={payment.status !== "pending"}
+    onChange={() => {
+      const newStatus = payment.status !== "pending" ? "pending" : "Approved";
+      handleUpdate2(payment._id, newStatus);
+    }}
+  />
+  <div
+    className={`relative w-12 h-6 transition duration-200 ease-linear rounded-full ${
+      payment.status !== "pending" ? "bg-blue-700" : "bg-gray-500"
+    }`}
+  >
+    <span
+      className={`absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition-transform duration-200 ease-linear transform ${
+        payment.status !== "pending" ? "translate-x-6" : ""
+      }`}
+    ></span>
+  </div>
+</label>
+</td>
               </tr>
             ))}
             <tr style={{border: 'var(--border)',borderLeft: 'var(--border)', borderRight: 'var(--border)', color: 'var(--text-color)'}} className=" font-bold">
               <td></td>
+              <td></td>
               <td style={{  border: 'var(--border)'}} className="p-3 text-right" >
                 Total :
               </td>
-              <td style={{  border: 'var(--border)'}} className="p-3 text-center">৳ {bkashPersonal + bkashMarcent + nagadPersonal + rocketPersonal + bankTotal}</td>
-              <td className="p-3 text-center">
-  ৳ {new Intl.NumberFormat('en-IN').format(
-        displayedItems.reduce((acc, item) => acc + (isNaN(parseFloat(item?.charge)) ? 0 : parseFloat(item?.charge)), 0)
-      )}
-</td>
+
+              <td style={{ border: 'var(--border)' }} className="p-3 text-center">
+  ৳ {new Intl.NumberFormat('en-IN', {
+    maximumFractionDigits: 2, // To ensure two decimal places if required
+  }).format(
+    bkashPersonal + nagadPersonal + bankTotal + DBBLBankTotal + IBBLBankTotal + rocketPersonal
+  )}
+              </td>
+               <td className="p-3 text-center">
+  ৳ {new Intl.NumberFormat('en-IN', {
+    maximumFractionDigits: 2, // Ensure consistency in decimals
+  }).format(
+    displayedItems.reduce((acc, item) => acc + (isNaN(parseFloat(item?.charge)) ? 0 : parseFloat(item?.charge)), 0)
+  )}
+              </td>
+
 
               <td className="p-3 text-center"></td>
               <td className="p-3 text-center"></td>

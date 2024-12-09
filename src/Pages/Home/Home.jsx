@@ -1,19 +1,19 @@
-import { useContext, useEffect, useState } from "react";
-import Banner from "./Banner";
+import { useContext } from "react";
 import { AuthContext } from "../../Security/AuthProvider";
 import Login from "../../Security/Login";
-import useUsers from "../../Hook/useUsers";
 import MyProfile from "./MyProfile";
 import { Helmet } from "react-helmet-async";
 import AdsDashboardHome from "../DashboardRoot/AdsHome";
 import ClientHome from "./ClientHome";
 import useUserr from "../../Hook/useUser";
 import AdminHome from "./AdminHome";
+import DeveloperHome from "./DeveloperHome";
+import DesignerHome from "./DesignerHome";
 
 const Home = () => {
     const { user } = useContext(AuthContext);
     const {userr}=useUserr(user?.email)
-
+    
     return (
         <div>
             <Helmet>
@@ -27,6 +27,10 @@ const Home = () => {
                         <AdminHome></AdminHome>
                     ) : userr?.role === "contributor" ? (
                         <AdsDashboardHome />
+                    ) : userr?.role === "webDeveloper" ? (
+                        <DeveloperHome />
+                    ) : userr?.role === "graphicDesigner" ? (
+                        <DesignerHome />
                     ) : userr?.role === "client" ? (
                         <ClientHome />
                     ) : (

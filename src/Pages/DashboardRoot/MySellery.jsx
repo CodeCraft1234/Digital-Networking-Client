@@ -1,8 +1,5 @@
-import React, { useContext, useEffect, useState, useRef } from 'react';
-import { useParams } from 'react-router-dom';
+import { useContext, useEffect, useState, useRef } from 'react';
 import useUsers from '../../Hook/useUsers';
-import { FaEdit } from 'react-icons/fa';
-import UseAxiosPublic from '../../Axios/UseAxiosPublic';
 import useEmployeePayment from '../../Hook/useEmployeePayment';
 import { AuthContext } from '../../Security/AuthProvider';
 import { Helmet } from 'react-helmet-async';
@@ -17,26 +14,21 @@ const MySellery = () => {
   const [employeePayment] = useEmployeePayment();
   const { user } = useContext(AuthContext);
   const email = user?.email;
-  const [users, refetch] = useUsers();
+  const [users] = useUsers();
   const [employeeData, setEmployeeData] = useState([]);
-  const [selectedMonth, setSelectedMonth] = useState(''); // State to track the selected month
 
-  const componentRef = useRef(null); // Reference to capture the component for PDF
+  const componentRef = useRef(null); 
 
   useEffect(() => {
-    // Filter users with role 'employee'
     const employees = users.filter(user => user.role === 'employee');
 
-    // Find the specific user based on the email
     const filteredUser = employees.find(user => user.email === email);
 
     if (filteredUser) {
       const { monthlySpent, sellery } = filteredUser;
 
-      // Filter employee payments by email
       const employeePayments = employeePayment.filter(payment => payment.employeeEmail === email);
 
-      // Create a mapping of total payAmount by month
       const paymentByMonth = months.reduce((acc, month) => {
         const monthPayments = employeePayments.filter(payment => new Date(payment.date).toLocaleString('default', { month: 'long' }) === month);
         const totalPayAmount = monthPayments.reduce((sum, payment) => sum + parseFloat(payment.payAmount), 0);
@@ -71,7 +63,6 @@ const MySellery = () => {
         }, []);
       
       const totalSpent = monthlySpentData.reduce((acc, spent) => acc + spent.totalSpentt, 0);
-      
         const totalSellery = selleryData.reduce((acc, sell) => acc + sell.amount, 0);
         const totalBonus = selleryData.reduce((acc, sell) => acc + sell.bonus, 0);
         const totalAdminPay = paymentByMonth[month] || 0;
@@ -84,7 +75,7 @@ const MySellery = () => {
           totalBill: totalSpent * 140,
           totalDue: totalSpent * 140 - totalAdminPay,
           totalSelleryPaid: totalSpent * 7 - totalSellery,
-          totalAdminPay // Add totalAdminPay to the data
+          totalAdminPay 
         };
       });
 
@@ -146,7 +137,7 @@ const MySellery = () => {
                 </td>
                 <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-300 text-center">
                   ৳ {
-    (data.totalSpent * (["October", "November", "December"].includes(data.month) ? 6 : 7)).toFixed(0)
+    (data.totalSpent * (["October", "November", "December"].includes(data.month) ? 7 : 7)).toFixed(0)
   }
                 </td>
                 <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-300 text-center">

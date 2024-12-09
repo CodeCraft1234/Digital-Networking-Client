@@ -11,9 +11,9 @@
 
 /* Dark theme */
 [data-theme="light"] {
-    --bg-colorNav:  #0087c5; 
+    --bg-colorNav:  #dfdfdf; 
     --bg-colorSide: #394148;
-    --bg-colorActive: #333b41; 
+    --bg-colorActive: #d8e3eb; 
     --bg-color: #dfdfdf;
     --bg-color2: white; 
     --bg-color3: #ffffff; 
@@ -91,6 +91,84 @@ body {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
+
+td {
+    border: var(--border);
+    padding: 0.75rem; /* Equivalent to Tailwind's p-3 */
+    text-align: left; /* Equivalent to text-left */
+    border-right: 2px solid var(--border); /* Border for separation */
+    transition: background-color 0.3s ease, color 0.3s ease, border 0.3s ease; /* Smooth transition */
+}
+
+
+/* buttons */
+
+button {
+    font-family: inherit; /* Inherit font family */
+    border: none; /* Remove default borders */
+    cursor: pointer; /* Add pointer cursor for buttons */
+    transition: background-color 0.3s ease, color 0.3s ease; /* Smooth transitions */
+    padding: 0.5rem 1rem; /* Default padding */
+    border-radius: 0.5rem; /* Rounded corners */
+    font-weight: bold; /* Bold text */
+    text-align: center;
+  }
+  
+  /* Submit button styles */
+  .submit {
+    background-color: var(--bg-color-submit, #05a0db); /* Default blue color */
+    color: white;
+    padding: 0.25rem 1rem
+  }
+  
+  .submit:hover {
+    background-color: var(--bg-color-submit-hover, #007ab8); /* Darker blue on hover */
+  }
+  
+  /* Cancel button styles */
+  .cancel {
+    background-color: var(--bg-color-cancel, #e53e3e); /* Default red color */
+    color: white;
+    padding: 0.25rem 1rem
+  }
+  
+  .cancel:hover {
+    background-color: var(--bg-color-cancel-hover, #c53030); /* Darker red on hover */
+  }
+  
+  /* Close button styles */
+  .close {
+    background-color: var(--bg-color-close, #e53e3e); /* Default red color */
+    color: white;
+    padding: 0.25rem 1rem
+  }
+  
+  .close:hover {
+    background-color: var(--bg-color-close-hover, #c53030); /* Darker red on hover */
+  }
+  
+  /* Update button styles */
+  .update {
+    background-color: var(--bg-color-update, #05a0db); /* Default blue color */
+    color: white;
+    padding: 0.25rem 1rem
+  }
+  
+  .update:hover {
+    background-color: var(--bg-color-update-hover, #007ab8); /* Darker blue on hover */
+  }
+  
+  /* Add Client button styles */
+  .add {
+    background-color: var(--bg-color-add-client, #05a0db); /* Default blue color */
+    color: white;
+    padding: 0.25rem 1rem; /* Larger padding for Add Client */
+    font-size: 1rem; /* Font size */
+  }
+  
+  .add:hover {
+    background-color: var(--bg-color-add-client-hover, #007ab8); /* Darker blue on hover */
+  }
   
   
   

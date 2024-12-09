@@ -121,7 +121,7 @@ const MySummery = () => {
   return (
     <div className='mx-5 lg:mt-5 mb-5'>
       <Helmet>
-        <title>Activity | Digital Network </title>
+        <title>My Summery | Digital Network </title>
         <link rel="canonical" href="https://www.example.com/" />
       </Helmet>
 
@@ -140,6 +140,13 @@ const MySummery = () => {
     </p>
   </div>
 
+
+  <div className="px-5 py-10 rounded-2xl bg-[#ce93d8] text-black shadow-lg text-center">
+    <h2 className="text-xl font-bold">Employee Pay</h2>
+    <p className="lg:text-2xl text-xl font-bold mt-2">
+      <span className="lg:text-2xl text-xl font-extrabold">৳</span> {new Intl.NumberFormat('en-IN').format(employeeData.reduce((acc, data) => acc + data.totalAdminPay, 0).toFixed(0))}
+    </p>
+  </div>
   <div className="px-5 py-10 rounded-2xl bg-[#ffb74d] text-black shadow-lg text-center">
     <h2 className="lg:text-2xl text-xl font-bold">Client Pay</h2>
     <p className="lg:text-2xl text-xl font-bold mt-2">
@@ -150,27 +157,65 @@ const MySummery = () => {
     </p>
   </div>
 
-  <div className="px-5 py-10 rounded-2xl bg-[#ce93d8] text-black shadow-lg text-center">
-    <h2 className="text-xl font-bold">Employee Pay</h2>
-    <p className="lg:text-2xl text-xl font-bold mt-2">
-      <span className="lg:text-2xl text-xl font-extrabold">৳</span> {new Intl.NumberFormat('en-IN').format(employeeData.reduce((acc, data) => acc + data.totalAdminPay, 0).toFixed(0))}
-    </p>
-  </div>
+
 
   <div className="px-5 py-10 rounded-2xl bg-[#e57373] text-black shadow-lg text-center">
-    <h2 className="text-xl font-bold">Employee Due</h2>
-    <p className="lg:text-2xl text-xl font-bold mt-2">
-      <span className="lg:text-2xl text-xl font-extrabold">৳</span> {new Intl.NumberFormat('en-IN').format((employeeData.reduce((acc, data) => acc + data.totalBill, 0) - employeeData.reduce((acc, data) => acc + data.totalAdminPay, 0)).toFixed(0))}
-    </p>
-  </div>
+  {/* Conditional Heading */}
+  <h2 className="text-xl font-bold">
+    {(() => {
+      const result = employeeData.reduce((acc, data) => acc + data.totalBill, 0) - 
+                    employeeData.reduce((acc, data) => acc + data.totalAdminPay, 0);
+      if (result < 0) {
+        return "Employee Advance"; // Show this when the result is negative
+      } else if (result > 0) {
+        return "Employee Due"; // Show this when the result is positive
+      } else {
+        return "Employee Clear"; // Show this when the result is 0
+      }
+    })()}
+  </h2>
+  
+  <p className="lg:text-2xl text-xl font-bold mt-2">
+    <span className="lg:text-2xl text-xl font-extrabold">৳ </span> 
+    {new Intl.NumberFormat('en-IN').format(
+      Math.abs(
+        employeeData.reduce((acc, data) => acc + data.totalBill, 0) - 
+        employeeData.reduce((acc, data) => acc + data.totalAdminPay, 0)
+      ).toFixed(0)
+    )}
+  </p>
+</div>
 
-  <div className="px-5 py-10 rounded-2xl bg-[#ff8a65] text-black shadow-lg text-center">
-    <h2 className="text-xl font-bold">Client Due</h2>
-    <p className="lg:text-2xl text-xl font-bold mt-2">
-      <span className="lg:text-2xl text-xl font-extrabold">৳</span> {new Intl.NumberFormat('en-IN').format((employeeData.reduce((acc, data) => acc + data.totalBill, 0) - tPay
-        .reduce((acc, payment) => acc + parseFloat(payment?.amount || 0), 0).toFixed(0)))}
-    </p>
-  </div>
+
+
+<div className="px-5 py-10 rounded-2xl bg-[#ff8a65] text-black shadow-lg text-center">
+  {/* Conditional Heading */}
+  <h2 className="text-xl font-bold">
+    {(() => {
+      const result = employeeData.reduce((acc, data) => acc + data.totalBill, 0) - 
+                    tPay.reduce((acc, payment) => acc + parseFloat(payment?.amount || 0), 0);
+
+      if (result < 0) {
+        return "Client Advance"; // Show this when the result is negative
+      } else if (result > 0) {
+        return "Client Due"; // Show this when the result is positive
+      } else {
+        return "Client Clear"; // Show this when the result is 0
+      }
+    })()}
+  </h2>
+  
+  <p className="lg:text-2xl text-xl font-bold mt-2">
+    <span className="lg:text-2xl text-xl font-extrabold">৳ </span> 
+    {new Intl.NumberFormat('en-IN').format(
+      Math.abs(
+        employeeData.reduce((acc, data) => acc + data.totalBill, 0) - 
+        tPay.reduce((acc, payment) => acc + parseFloat(payment?.amount || 0), 0)
+      ).toFixed(0)
+    )}
+  </p>
+</div>
+
 </div>
 
 
@@ -187,7 +232,7 @@ const MySummery = () => {
               <th className="p-3">Total BDT</th>
               <th className="p-3">Admin Payment</th>
               <th className="p-3">Client Payment</th>
-              <th className="p-3">Due</th>
+              <th className="p-3">Admin Due</th>
             </tr>
           </thead>
           <tbody>
@@ -202,11 +247,22 @@ const MySummery = () => {
   >
       
       <td style={{  border: 'var(--border)'}} className="p-3 border border-gray-300">{data.month}</td>
-      <td style={{  border: 'var(--border)'}} className="p-3 border border-gray-300">${data.totalSpent.toFixed(2)}</td>
-      <td style={{  border: 'var(--border)'}} className="p-3 border border-gray-300">৳{data.totalBill.toFixed(0)}</td>
-      <td style={{  border: 'var(--border)'}} className="p-3 border border-gray-300">৳{data.totalAdminPay.toFixed(0)}</td>
-      <td style={{  border: 'var(--border)'}} className="p-3 border border-gray-300">৳{data.totalClientPay.toFixed(0)}</td>
-      <td style={{  border: 'var(--border)'}} className="p-3 border border-gray-300">৳{(data.totalClientPay - data.totalAdminPay).toFixed(0)}</td>
+      <td style={{ border: 'var(--border)' }} className="p-3 border border-gray-300">
+  ${new Intl.NumberFormat('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(data.totalSpent)}
+</td>
+<td style={{ border: 'var(--border)' }} className="p-3 border border-gray-300">
+  ৳{new Intl.NumberFormat('en-IN', { maximumFractionDigits: 0 }).format(data.totalBill)}
+</td>
+<td style={{ border: 'var(--border)' }} className="p-3 border border-gray-300">
+  ৳{new Intl.NumberFormat('en-IN', { maximumFractionDigits: 0 }).format(data.totalAdminPay)}
+</td>
+<td style={{ border: 'var(--border)' }} className="p-3 border border-gray-300">
+  ৳{new Intl.NumberFormat('en-IN', { maximumFractionDigits: 0 }).format(data.totalClientPay)}
+</td>
+<td style={{ border: 'var(--border)' }} className="p-3 border border-gray-300">
+  ৳{new Intl.NumberFormat('en-IN', { maximumFractionDigits: 0 }).format(data.totalClientPay - data.totalAdminPay)}
+</td>
+
       
     </tr>
   ))}
@@ -217,27 +273,32 @@ const MySummery = () => {
   <tr style={{ backgroundColor: 'var(--bg-color)', color: 'var(--text-color)'}}>
     <td className="p-3 text-right border-gray-300" colSpan="1">Total</td>
     <td className="p-3 border-gray-300">
-      ${employeeData.reduce((acc, data) => acc + data.totalSpent, 0).toFixed(2)}
-    </td>
-    <td className="p-3 border-gray-300">
-      ৳ {employeeData.reduce((acc, data) => acc + data.totalBill, 0).toFixed(0)}
-    </td>
+  ${new Intl.NumberFormat('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(
+    employeeData.reduce((acc, data) => acc + data.totalSpent, 0)
+  )}
+</td>
+<td className="p-3 border-gray-300">
+  ৳{new Intl.NumberFormat('en-IN', { maximumFractionDigits: 0 }).format(
+    employeeData.reduce((acc, data) => acc + data.totalBill, 0)
+  )}
+</td>
+<td className="p-3 border-gray-300">
+  ৳{new Intl.NumberFormat('en-IN', { maximumFractionDigits: 0 }).format(
+    employeeData.reduce((acc, data) => acc + data.totalAdminPay, 0)
+  )}
+</td>
+<td className="p-3 border-gray-300">
+  ৳{new Intl.NumberFormat('en-IN', { maximumFractionDigits: 0 }).format(
+    tPay.reduce((acc, payment) => acc + parseFloat(payment?.amount || 0), 0)
+  )}
+</td>
+<td className="p-3 border-gray-300">
+  ৳{new Intl.NumberFormat('en-IN', { maximumFractionDigits: 0 }).format(
+    tPay.reduce((acc, payment) => acc + parseFloat(payment?.amount || 0), 0) -
+    employeeData.reduce((acc, data) => acc + data.totalAdminPay, 0)
+  )}
+</td>
 
-    <td className="p-3 border-gray-300">
-      ৳ {employeeData.reduce((acc, data) => acc + data.totalAdminPay, 0).toFixed(0)}
-    </td>
-
-    <td className="p-3 border-gray-300">
-      ৳ {tPay
-        .reduce((acc, payment) => acc + parseFloat(payment?.amount || 0), 0).toFixed(0)}
-    </td>
-
-   
-    <td className="p-3 border-gray-300">
-      ৳ {(tPay
-        .reduce((acc, payment) => acc + parseFloat(payment?.amount || 0), 0).toFixed(0) - 
-          employeeData.reduce((acc, data) => acc + data.totalAdminPay, 0)).toFixed(0)}
-    </td>
     
   </tr>
 </tfoot>

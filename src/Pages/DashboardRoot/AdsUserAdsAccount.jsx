@@ -259,7 +259,7 @@ const AdsUserAdsAccount = () => {
     };
 
     AxiosPublic.post(
-      "https://digital-networking-server.vercel.app/adsPayment",
+      "https://hishab-2025.vercel.app/adsPayment",
       data
     )
       .then((res) => {
@@ -283,7 +283,7 @@ const AdsUserAdsAccount = () => {
       const body2 = { [paymentMethod]: fields[paymentMethod] };
     
       try {
-        const res = await axios.put(`https://digital-networking-server.vercel.app/users/${paymentMethod}/${userdata._id}`, body2);
+        const res = await axios.put(`https://hishab-2025.vercel.app/users/${paymentMethod}/${userdata._id}`, body2);
         console.log(res.data);
         refetch();  // Make sure this function correctly refetches the updated data
       } catch (error) {
@@ -314,7 +314,7 @@ const AdsUserAdsAccount = () => {
   console.log(data)
 
     useEffect(()=>{
-      AxiosPublic.get(`https://digital-networking-server.vercel.app/users/${userr.email}`)
+      AxiosPublic.get(`https://hishab-2025.vercel.app/users/${userr.email}`)
       .then(res=>{
         console.log(res.data)
         setData(res.data)
@@ -350,7 +350,7 @@ const AdsUserAdsAccount = () => {
       const body = { totalSpent: parseFloat(totalSpent)  };
       const ids=generateRandomId()
    
-      axios.put(`https://digital-networking-server.vercel.app/adsAccountCenter/totalSpent/${id}`, body)
+      axios.put(`https://hishab-2025.vercel.app/adsAccountCenter/totalSpent/${id}`, body)
         .then((res) => {
           console.log(res.data);
           refetch();

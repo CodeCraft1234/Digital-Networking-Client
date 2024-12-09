@@ -6,7 +6,6 @@ import useMypymentsByEmail from "../../Hook/useMyMPayments";
 import { AuthContext } from "../../Security/AuthProvider";
 import useUsers from "../../Hook/useUsers";
 import useEmployeePayment from "../../Hook/useEmployeePayment";
-import useMpayment from "../../Hook/UseMpayment";
 import useMyCampaingsByEmail from "../../Hook/useMyCampaignByEmail";
 import { BsCashStack } from "react-icons/bs";
 import useActivity from "../../Hook/useActivity";
@@ -14,7 +13,7 @@ import { TbReorder } from "react-icons/tb";
 import { RiMoneyDollarCircleLine } from "react-icons/ri";
 import { LiaMoneyBillWaveSolid } from "react-icons/lia";
 import { MdCampaign } from "react-icons/md";
-import { Bar } from "react-chartjs-2";
+import { Bar, Pie } from "react-chartjs-2";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -24,12 +23,21 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
+import useMyEmployeePayments from "../../Hook/useMyemployeePayments";
+import LineChart from "./LineChart";
+import PieChart from "./PieChart";
+import RadarChart from "./RaderChart";
+import DoughnutChart from "./DouughtOurChart";
+import useMyMyActivityEmail from "../../Hook/useMyActivity";
+import useMyActivity from "../../Hook/useMyActivity";
+
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
 const months = [
   'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'
 ];
+
 
 const EmployeeHome = () => {
   const [users] = useUsers();
@@ -38,6 +46,7 @@ const EmployeeHome = () => {
   const [Mypayments]=useMypymentsByEmail(user?.email)
   const [mycampaigns] = useMyCampaingsByEmail(user?.email);
   const [myclients]=useMyClientsByEmail(user?.email)
+  const [MyEmployeePayment]=useMyEmployeePayments(user?.email)
 
   const tPay2 = mycampaigns?.filter(campaign =>
     myclients.some(client => client.clientEmail === campaign.clientEmail)
@@ -48,42 +57,70 @@ const EmployeeHome = () => {
   const startOfWeek = new Date(today.getFullYear(), today.getMonth(), today.getDate() - today.getDay());
   const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
 
-  // Filter clients for today
   const todayClients = myclients?.filter(client => {
     const clientDate = new Date(client.date);
     return clientDate.toDateString() === today.toDateString();
   });
 
-  // Filter clients for this week
   const weeklyClients = myclients?.filter(client => {
     const clientDate = new Date(client.date);
     return clientDate >= startOfWeek && clientDate <= today;
   });
 
-  // Filter clients for this month
   const monthlyClients = myclients?.filter(client => {
     const clientDate = new Date(client.date);
     return clientDate >= startOfMonth && clientDate <= today;
   });
 
-  // Filter clients for today
   const todayCamClients = tPay2?.filter(client => {
     const clientDate = new Date(client.date);
     return clientDate.toDateString() === today.toDateString();
   });
 
-  // Filter clients for this week
   const weeklyCamClients = tPay2?.filter(client => {
     const clientDate = new Date(client.date);
     return clientDate >= startOfWeek && clientDate <= today;
   });
 
-  // Filter clients for this month
   const monthlCamyClients = tPay2?.filter(client => {
     const clientDate = new Date(client.date);
     return clientDate >= startOfMonth && clientDate <= today;
   });
 
+
+  function isInThisWeek(date) {
+    const currentDate = new Date();
+    const startOfWeek = currentDate.getDate() - currentDate.getDay(); // Get the start of the current week
+    const endOfWeek = startOfWeek + 6; // Get the end of the current week
+    const startOfWeekDate = new Date(currentDate.setDate(startOfWeek));
+    const endOfWeekDate = new Date(currentDate.setDate(endOfWeek));
+    const paymentDate = new Date(date);
+  
+    return paymentDate >= startOfWeekDate && paymentDate <= endOfWeekDate;
+  }
+
+  const todayPayAmountTotal = MyEmployeePayment
+    .filter(payment => {
+      const paymentDate = new Date(payment.date);
+      return paymentDate.toDateString() === today.toDateString(); // Filter only today's data
+    })
+    .reduce((acc, payment) => acc + parseFloat(payment.payAmount || 0), 0); // Sum the payAmount values
+  
+
+    const thisWeekPayAmountTotal = MyEmployeePayment
+    .filter(payment => isInThisWeek(payment.date)) 
+    .filter(f=>f.status === 'Approved')
+    .reduce((acc, payment) => acc + parseFloat(payment.payAmount || 0), 0);
+
+      const thisMonthPayAmountTotal = MyEmployeePayment
+            .filter(payment => {
+    const paymentDate = new Date(payment.date);
+    return paymentDate.getMonth() === today.getMonth() && paymentDate.getFullYear() === today.getFullYear(); // Check if the payment is in the current month
+             })
+             .filter(f=>f.status === 'Approved')
+           .reduce((acc, payment) => acc + parseFloat(payment.payAmount || 0), 0);
+
+      
 
 
   
@@ -91,8 +128,6 @@ const EmployeeHome = () => {
     myclients.some(client => client.clientEmail === campaign.clientEmail)
   );
 
-
-  // Calculate today's total amount
   const todayTotal = tPay
     ?.filter(payment => {
       const paymentDate = new Date(payment.date);
@@ -100,7 +135,6 @@ const EmployeeHome = () => {
     })
     .reduce((sum, payment) => sum + payment.amount, 0);
   
-  // Calculate this week's total amount
   const weeklyTotal = tPay
     ?.filter(payment => {
       const paymentDate = new Date(payment.date);
@@ -108,21 +142,16 @@ const EmployeeHome = () => {
     })
     .reduce((sum, payment) => sum + payment.amount, 0);
   
-  // Calculate this month's total amount
   const monthlyTotal = tPay
     ?.filter(payment => {
       const paymentDate = new Date(payment.date);
       return paymentDate >= startOfMonth && paymentDate <= today;
     })
     .reduce((sum, payment) => sum + payment.amount, 0);
-  
-
-          
+       
   /////////////////////////////////////////////////////////////////////////////////
 
-
   const email = user?.email;
-
   const [employeeDatas, setEmployeeData] = useState([]);
   const [filteredUsers, setFilterUser] = useState();
   console.log(filteredUsers,users);
@@ -192,37 +221,195 @@ const EmployeeHome = () => {
       setEmployeeData(monthlyData);
     }
   }, [users, email, employeePayment]);
+
+  const [myActivity]=useMyActivity(email)
   const [activity]=useActivity()
 
-
-
-    // Sample Data
-    const data = {
-      labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
-      datasets: [
-        {
-          label: "Sales",
-          data: [300, 500, 400, 700, 800, 600],
-          backgroundColor: "rgba(75, 192, 192, 0.6)",
-          borderColor: "rgba(75, 192, 192, 1)",
-          borderWidth: 1,
-        },
-      ],
-    };
-  
-    // Chart Options
-    const options = {
+    const options27 = {
       responsive: true,
       plugins: {
         legend: {
-          position: "top",
+          display: false, 
         },
-        title: {
-          display: true,
-          text: "Monthly Sales Data",
+        tooltip: {
+          callbacks: {
+            label: (context) =>
+              `৳ ${new Intl.NumberFormat("en-IN").format(context.raw)}`,
+          },
+        },
+      },
+      scales: {
+        x: {
+          title: {
+            display: true,
+            text: "Time Period",
+          },
+        },
+        y: {
+          beginAtZero: true,
+          title: {
+            display: true,
+            text: "Income (৳)",
+          },
         },
       },
     };
+    const options3 = {
+      responsive: true,
+      plugins: {
+        legend: {
+          display: false, // Hides the legend
+        },
+        tooltip: {
+          callbacks: {
+            label: (context) =>
+              `৳ ${new Intl.NumberFormat("en-IN").format(context.raw)}`, // Formats the tooltip values
+          },
+        },
+      },
+      scales: {
+        x: {
+          title: {
+            display: true,
+           
+          },
+        },
+        y: {
+          beginAtZero: true,
+          title: {
+            display: true,
+            text: "Income (৳)", // Label for the y-axis
+          },
+        },
+      },
+    };
+    
+    const data3 = {
+      labels: ["Today", "This Week", "This Month"], // Labels for the x-axis
+      datasets: [
+        {
+          label: "Income (৳)", // Tooltip label
+          data: [
+            todayClients.length, // Assuming these are arrays, we use .length for count
+            weeklyClients.length,
+            monthlyClients.length,
+          ],
+          backgroundColor: ["#1abc9c", "#3498db", "#9b59b6"], // Custom colors
+          borderWidth: 1, // Border thickness
+        },
+      ],
+    };
+
+    const options4 = {
+      responsive: true,
+      plugins: {
+        legend: {
+          display: false, // Hides the legend
+        },
+        tooltip: {
+          callbacks: {
+            label: (context) =>
+              `৳ ${new Intl.NumberFormat("en-IN").format(context.raw)}`, // Formats the tooltip values
+          },
+        },
+      },
+      scales: {
+        x: {
+          title: {
+            display: true,
+           
+          },
+        },
+        y: {
+          beginAtZero: true,
+          title: {
+            display: true,
+            text: "Income (৳)", // Label for the y-axis
+          },
+        },
+      },
+    };
+    
+    const data4 = {
+      labels: ["Total Salary", "Total Paid", "Total Unpaid"], // Labels for the x-axis
+      datasets: [
+        {
+          label: "Income (৳)", // Tooltip label
+          data: [
+            (employeeDatas.reduce((acc, data) => acc + data.totalSpent * 7, 0)).toFixed(2), // Assuming these are arrays, we use .length for count
+            (
+              employeeDatas.reduce((acc, data) => acc + data.totalSpent * 7, 0) -
+              employeeDatas.reduce((acc, data) => acc + data.totalSelleryPaid, 0)
+            ).toFixed(2),
+            (employeeDatas.reduce((acc, data) => acc + data.totalSelleryPaid, 0)).toFixed(2),
+          ],
+          backgroundColor: ["#1abc9c", "#3498db", "#9b59b6"], // Custom colors
+          borderWidth: 1, // Border thickness
+        },
+      ],
+    };
+
+    const options5 = {
+      responsive: true,
+      plugins: {
+        legend: {
+          display: false, // Hides the legend
+        },
+        tooltip: {
+          callbacks: {
+            label: (context) =>
+              `৳ ${new Intl.NumberFormat("en-IN").format(context.raw)}`, // Formats the tooltip values
+          },
+        },
+      },
+      scales: {
+        x: {
+          title: {
+            display: true,
+           
+          },
+        },
+        y: {
+          beginAtZero: true,
+          title: {
+            display: true,
+            text: "Income (৳)", // Label for the y-axis
+          },
+        },
+      },
+    };
+    
+    const data5 = {
+      labels: ["Today", "This Week", "This Month"], // Labels for the x-axis
+      datasets: [
+        {
+          label: "Income (৳)", // Tooltip label
+          data: [
+            todayCamClients.length ,
+            weeklyCamClients.length,
+            monthlCamyClients.length,
+          ],
+          backgroundColor: ["#1abc9c", "#3498db", "#9b59b6"], // Custom colors
+          borderWidth: 1, // Border thickness
+        },
+      ],
+    };
+    
+
+
+
+    const data27 = {
+      labels: ["Today", "This Week", "This Month"],
+      datasets: [
+        {
+          label: "Income (৳)",
+          data: [todayTotal, weeklyTotal, monthlyTotal],
+          backgroundColor: ["#1abc9c", "#3498db", "#9b59b6"], // Custom colors
+          borderWidth: 1,
+        },
+      ],
+    }
+
   return (
 
     <div className="m-5 ">  
@@ -238,26 +425,10 @@ const EmployeeHome = () => {
                         <div className="">
 
                        <div className="grid lg:grid-cols-2 gap-5">
-                       <div style={{ backgroundColor: 'var(--bg-color3)', color: 'var(--text-color2)', border: 'var(--border)' }} className="bg-gray-800  mb-5   rounded-lg">
-                    <h1 style={{ border: 'var(--border)' }} className="font-bold text-xl  rounded-t-lg border-gray-300 p-2 pl-4">Orders</h1>
-                      <div style={{ border: 'var(--border)' }} className="flex p-3  rounded-b-lg  justify-start gap-3 pl-4 items-center">
-                      <p className="text-7xl">
-                      <TbReorder />
-                  </p>
-                   <div className="space-y-1">
-                 
-                   <p>Today Orders: <span className="font-bold"><span className="text-sm font-extrabold">৳</span> {todayClients.length}</span></p>
-                    
-                    <p>This week Orders: <span className="font-bold">
-                    <span className="text-sm font-extrabold">৳</span> {weeklyClients.length}
-                       </span></p>
-                    <p>This Month Orders: <span className="font-bold"><span className="text-sm font-extrabold">৳</span> {monthlyClients.length}</span></p>
-                    
-                 </div>
-                      </div>
-                   </div>
 
-                 <div style={{ backgroundColor: 'var(--bg-color3)', color: 'var(--text-color2)', border: 'var(--border)' }} className="bg-gray-800  mb-5   rounded-lg">
+                      
+
+                        <div style={{ backgroundColor: 'var(--bg-color3)', color: 'var(--text-color2)', border: 'var(--border)' }} className="bg-gray-800  mb-5   rounded-lg">
                     <h1 style={{ border: 'var(--border)' }} className="font-bold text-xl  rounded-t-lg border-gray-300 p-2 pl-4">Income</h1>
                       <div style={{ border: 'var(--border)' }} className="flex p-3  rounded-b-lg  justify-start gap-3 pl-4 items-center">
                       <p className="text-7xl">
@@ -273,23 +444,129 @@ const EmployeeHome = () => {
                     <p>This Month Income: <span className="font-bold"><span className="text-sm font-extrabold">৳</span> {monthlyTotal}</span></p>
                  </div>
                       </div>
-                 </div>
                        </div>
 
-                        <div className="bg-gray-100 border border-gray-500 mb-5 p-4 rounded-lg shadow-lg">
-      <h2 className="text-xl font-bold text-gray-700 mb-4">Graph Chart</h2>
-      <Bar data={data} options={options} />
-    </div>
+                       <div style={{ backgroundColor: 'var(--bg-color3)', color: 'var(--text-color2)', border: 'var(--border)' }} className="bg-gray-800  mb-5   rounded-lg">
+                    <h1 style={{ border: 'var(--border)' }} className="font-bold text-xl  rounded-t-lg border-gray-300 p-2 pl-4">Admin Payments</h1>
+                      <div style={{ border: 'var(--border)' }} className="flex p-3  rounded-b-lg  justify-start gap-3 pl-4 items-center">
+                      <p className="text-7xl">
+                      <TbReorder />
+                  </p>
+
+                   <div className="space-y-1">
+                 
+                   <p>Today Payments: <span className="font-bold"><span className="text-sm font-extrabold">৳</span> {todayPayAmountTotal}</span></p>
+                    
+                    <p>This week Payments: <span className="font-bold">
+                    <span className="text-sm font-extrabold">৳</span> {thisWeekPayAmountTotal}
+                       </span></p>
+                    <p>This Month Payments: <span className="font-bold"><span className="text-sm font-extrabold">৳</span> {thisMonthPayAmountTotal}</span></p>
+                    
+                 </div>
+
+                      </div>
+                      </div>
+
+                       </div>
+
+
+                {/* //////////////////bar chart///////////////////////// */}
+                <div className="p-5 rounded-lg mb-5" style={{ backgroundColor: 'var(--bg-color3)', color: 'var(--text-color2)', border: 'var(--border)' }}>
+                        <h2 style={{ backgroundColor: 'var(--bg-color3)', color: 'var(--text-color2)',  }} className=" font-bold p-3">Admin Payment & Transaction Overview</h2>
+
+                        <LineChart MyEmployeePayment={MyEmployeePayment} tPay={tPay}></LineChart>
+                        </div>
+                      
+                        
+                       <div className="grid lg:grid-cols-2 gap-5 ">
+                      
+                       <PieChart data27={data27} options27={options27}></PieChart>
+
+                        <RadarChart data3={data3} options3={options3}></RadarChart>
+                   
+                         <div
+      style={{
+        backgroundColor: "var(--bg-color3)",
+        color: "var(--text-color2)",
+        border: "var(--border)",
+      }}
+      className="bg-gray-800 mb-5 rounded-lg p-5"
+    >
+      <h1
+      
+        className="font-bold text-xl rounded-t-lg border-gray-300 pb-3"
+      >
+        Salary Overview
+      </h1>
+      <Bar data={data4} options={options4} />
                         </div>
 
+                         <div
+      style={{
+        backgroundColor: "var(--bg-color3)",
+        color: "var(--text-color2)",
+        border: "var(--border)",
+      }}
+      className="bg-gray-800 mb-5 rounded-lg p-5"
+    >
+      <h1
+      
+        className="font-bold text-xl rounded-t-lg border-gray-300 pb-3"
+      >
+        Campaign Overview
+      </h1>
+      <Bar data={data5} options={options5} />
+                        </div>
+
+                       </div>
+
+                     
+                        </div>
+               {/* //////////////////bar chart///////////////////////// */}
 
                     </div>
 
                     <div  className="col-span-2 ">
                     <div  className=" rounded-lg  text-white  gap-5">
+                    <div style={{ backgroundColor: 'var(--bg-color3)', color: 'var(--text-color2)', border: 'var(--border)' }} className="bg-gray-800  mb-5   rounded-lg">
+                    <h1 style={{ border: 'var(--border)' }} className="font-bold text-xl  rounded-t-lg border-gray-300 p-2 pl-4">Orders</h1>
+                      <div style={{ border: 'var(--border)' }} className="flex p-3  rounded-b-lg  justify-start gap-3 pl-4 items-center">
+                      <p className="text-7xl">
+                      <TbReorder />
+                  </p>
+                   <div className="space-y-1">
+                 
+                   <p>Today Orders: <span className="font-bold"><span className="text-sm font-extrabold"></span> {todayClients.length}</span></p>
                     
+                    <p>This week Orders: <span className="font-bold">
+                    <span className="text-sm font-extrabold"></span> {weeklyClients.length}
+                       </span></p>
+                    <p>This Month Orders: <span className="font-bold"><span className="text-sm font-extrabold"></span> {monthlyClients.length}</span></p>
                     
+                 </div>
+                      </div>
+                   </div>
+                    
+                   <div style={{ backgroundColor: 'var(--bg-color3)', color: 'var(--text-color2)', border: 'var(--border)' }} className="bg-gray-800  my-5   rounded-lg">
+                    <h1 style={{ border: 'var(--border)' }} className="font-bold text-xl  rounded-t-lg border-gray-300 p-2 pl-4">Campaigns</h1>
+                      <div style={{ border: 'var(--border)' }} className="flex p-3  rounded-b-lg  justify-start gap-3 pl-4 items-center">
+                      <p className="text-7xl">
+                      <MdCampaign />
 
+                  </p>
+                   <div className="space-y-1">
+                 
+                   <p>Today Campaigns: <span className="font-bold"><span className="text-sm font-extrabold"></span> {todayCamClients.length}</span></p>
+                    
+                    <p>This week Campaigns: <span className="font-bold">
+                    <span className="text-sm font-extrabold"></span> {weeklyCamClients.length}
+                       </span></p>
+                    <p>This Month Campaigns: <span className="font-bold"><span className="text-sm font-extrabold"></span> {monthlCamyClients.length}</span></p>
+                  
+                 </div>
+                      </div>
+                 </div>
+                 
                  <div style={{ backgroundColor: 'var(--bg-color3)', color: 'var(--text-color2)', border: 'var(--border)' }} className="bg-gray-800 mb-5    rounded-lg">
                     <h1 style={{ border: 'var(--border)' }} className="font-bold text-xl  rounded-t-lg border-gray-300 p-2 pl-4">Spend</h1>
                       <div style={{ border: 'var(--border)' }} className="flex p-3  rounded-b-lg  justify-start gap-3 pl-4 items-center">
@@ -369,8 +646,9 @@ const EmployeeHome = () => {
 
                  </div>
 
+               
 
-                    <div style={{ backgroundColor: 'var(--bg-color3)', color: 'var(--text-color2)', border: 'var(--border)' }} className="bg-gray-800     rounded-lg">
+                    <div style={{ backgroundColor: 'var(--bg-color3)', color: 'var(--text-color2)', border: 'var(--border)' }} className="bg-gray-800   mb-5  rounded-lg">
                     <h1 style={{ border: 'var(--border)' }} className="font-bold text-xl  rounded-t-lg border-gray-300 p-2 pl-4">Salary</h1>
                       <div style={{ border: 'var(--border)' }} className="flex p-3  rounded-b-lg  justify-start gap-3 pl-4 items-center">
                       <p className="text-7xl">
@@ -390,26 +668,8 @@ const EmployeeHome = () => {
                  </div>
                       </div>
                  </div>
-
-                 <div style={{ backgroundColor: 'var(--bg-color3)', color: 'var(--text-color2)', border: 'var(--border)' }} className="bg-gray-800  my-5   rounded-lg">
-                    <h1 style={{ border: 'var(--border)' }} className="font-bold text-xl  rounded-t-lg border-gray-300 p-2 pl-4">Campaigns</h1>
-                      <div style={{ border: 'var(--border)' }} className="flex p-3  rounded-b-lg  justify-start gap-3 pl-4 items-center">
-                      <p className="text-7xl">
-                      <MdCampaign />
-
-                  </p>
-                   <div className="space-y-1">
-                 
-                   <p>Today Campaigns: <span className="font-bold"><span className="text-sm font-extrabold">৳</span> {todayCamClients.length}</span></p>
                     
-                    <p>This week Campaigns: <span className="font-bold">
-                    <span className="text-sm font-extrabold">৳</span> {weeklyCamClients.length}
-                       </span></p>
-                    <p>This Month Campaigns: <span className="font-bold"><span className="text-sm font-extrabold">৳</span> {monthlCamyClients.length}</span></p>
-                  
-                 </div>
-                      </div>
-                 </div>
+               
                 
                         </div>
 
@@ -420,46 +680,70 @@ const EmployeeHome = () => {
     backgroundColor: "var(--bg-color3)",
     color: "var(--text-color2)",
     border: "var(--border)",
+    width: "100%",
   }}
-  className="bg-gray-800 mb-5 rounded-lg"
+  className="bg-gray-50 mb-5 rounded-lg shadow-lg"
 >
   <h1
-    style={{ border: "var(--border)" }}
-    className="font-bold text-xl rounded-t-lg border-gray-300 p-2 pl-4"
+    style={{
+      border: "var(--border)",
+      backgroundColor: "var(--bg-header)",
+      color: "var(--text-color1)",
+    }}
+    className="font-bold text-xl rounded-t-lg border-gray-300 p-4"
   >
     Activity Log
   </h1>
 
-  <div className="p-4 text-black">
-    <table className="w-full border-collapse border border-gray-300">
-      <thead className="bg-white rounded-t-lg text-black">
-        <tr className="rounded-t-lg" style={{backgroundColor: 'var(--bg-color)' ,border: 'var(--border)',borderLeft: 'var(--border)', borderRight: 'var(--border)', color: 'var(--text-color)'}}>
-          <th  className="border border-gray-300 px-4 py-2">Time</th>
-          <th className="border border-gray-300 px-4 py-2">User</th>
-          <th className="border border-gray-300 px-4 py-2">Message</th>
-        </tr>
-      </thead>
-      <tbody className="text-black">
-      {
-  activity
-    .sort((a, b) => new Date(b.date) - new Date(a.date)) // Sort by date descending
-    .slice(0, 10) // Get the latest 10 logs
-    .map((a) => (
-      <tr key={a._id}>
-        <td style={{ backgroundColor: 'var(--bg-table)', color: 'var(--text-color2)'}} className="border border-gray-300 px-4 py-2">
-          {new Date(a.date).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
-        </td>
-        <td style={{ backgroundColor: 'var(--bg-table)', color: 'var(--text-color2)'}} className="border border-gray-300 px-4 py-2">{a.user.split(" ")[0]}</td>
-        <td style={{ backgroundColor: 'var(--bg-table)', color: 'var(--text-color2)'}} className="border border-gray-300 px-4 py-2">{a.title}</td>
-      </tr>
-    ))
-}
-
-       
-      </tbody>
-    </table>
+  <div className="p-4">
+    <div
+      style={{
+        maxHeight: "600px", // Scrollable container height
+        overflowY: "auto",
+      }}
+    >
+      <table className="w-full border-collapse">
+        <thead>
+          <tr
+            style={{
+              backgroundColor: "var(--bg-header)",
+              color: "var(--text-color1)",
+              borderBottom: "2px solid var(--border-color)",
+            }}
+          >
+            <th className="text-left p-3">Time</th>
+            <th className="text-left p-3">User</th>
+            <th className="text-left p-3">Message</th>
+          </tr>
+        </thead>
+        <tbody>
+          {activity?.filter(e=>e.email === user?.email).map((a) => (
+            <tr
+              key={a._id}
+              style={{
+                backgroundColor: "var(--bg-row)",
+                color: "var(--text-color2)",
+              }}
+              className="hover:bg-gray-200"
+            >
+              <td className="p-3 border-b border-gray-300 text-sm">
+                {new Date(a.date).toLocaleTimeString([], {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                })}
+              </td>
+              <td className="p-3 border-b border-gray-300 text-sm">
+                {a.user.split(" ")[0]}
+              </td>
+              <td className="p-3 border-b border-gray-300 text-sm">{a.title}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
   </div>
-</div>
+                     </div>
+
 
 
                     </div>
@@ -468,3 +752,5 @@ const EmployeeHome = () => {
   );
 };
 export default EmployeeHome;
+
+

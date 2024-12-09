@@ -29,12 +29,14 @@ const Profile2 = () => {
     localStorage.setItem("activeTabMyadsAccountStatuss", tab); 
   };
 
-
-  
   const sortedAdsAccounts = adsAccounts.filter((account) =>
     (selectedStatus ? account.status === selectedStatus : true) &&
     (searchQuery ? account.accountName.toLowerCase().includes(searchQuery.toLowerCase()) : true)
   ).sort((a, b) => a.accountName.localeCompare(b.accountName));
+
+  const today = new Date();
+  const formattedDate = today.toISOString().split('T')[0];  // "YYYY-MM-DD" format
+
 
   useEffect(() => {
     const fff = users.find((u) => u.email === user?.email);
@@ -68,9 +70,19 @@ const Profile2 = () => {
     const status='Active'
     const data = { accountName,totalSpent,currentBallence,threshold, paymentDate,status, employeeEmail,employeerName };
 
+    const datas = {
+      title: `added ${accountName} in My AdsAccount`,
+      date: new Date(),
+      user: user?.displayName,
+      email:user?.email
+    };
+
     AxiosPublic.post("/adsAccount", data).then((res) => {
       toast.success("Post created successfully!");
       refetch()
+      AxiosPublic.post("/activity", datas).then(() => {
+        toast.success(`${accountName} has been successfully added`);
+      });
       document.getElementById("my_modal_3").close()
     });
   };
@@ -83,16 +95,33 @@ const handleUpdate = (e, id) => {
   const threshold = e.target.threshold.value;
   const body = { accountName,currentBallence,paymentDate, threshold };
 
+  const datas = {
+    title: `Updated ${accountName} in My AdsAccount`,
+    date: new Date(),
+    user: user?.displayName,
+    email:user?.email
+  };
   AxiosPublic.patch(`/adsAccount/${id}`,body
   )
     .then((res) => {
-      
+      console.log(res.data);
+      AxiosPublic.post("/activity", datas).then(() => {
+        toast.success(`${accountName} has been successfully updated`);
+      });
       refetch()
       setModalData(null)
     });
 };
 
-const handleDelete = (id) => {
+const handleDelete = (id,accountName) => {
+
+  const datas = {
+    title: `Deleted ${accountName} from My AdsAccount`,
+    date: new Date(),
+    user: user?.displayName,
+    email:user?.email
+  };
+
   Swal.fire({
     title: 'Are you sure?',
     text: "You won't be able to revert this!",
@@ -108,6 +137,11 @@ const handleDelete = (id) => {
         .then((res) => {
           toast.success("Ads Account deleted successfully!");
           refetch();
+          console.log(res.data);
+          AxiosPublic.post("/activity", datas).then(() => {
+            document.getElementById("my_modal_2").close();
+            toast.success(`Successfully added ${accountName}`);
+          });
         })
     }
   });
@@ -115,16 +149,22 @@ const handleDelete = (id) => {
 
 const handleUpdate2 = (id, newStatus) => {
   const body = { status: newStatus };
+  const datas = {
+    title: `Updated ${newStatus} in My AdsAccount`,
+    date: new Date(),
+    user: user?.displayName,
+    email:user?.email
+  };
   AxiosPublic.patch(`/adsAccount/status/${id}`, body)
     .then((res) => {
       refetch();
+      console.log(res.data);
+      AxiosPublic.post("/activity", datas).then(() => {
+        toast.success(`${newStatus} has been successfully updated`);
+      });
      
     })
 };
-
-const today = new Date();
-const formattedDate = today.toISOString().split('T')[0];  // "YYYY-MM-DD" format
-
 
   return (
     <div className=" px-5 mt-5 dark:text-green-800">
@@ -261,7 +301,7 @@ const formattedDate = today.toISOString().split('T')[0];  // "YYYY-MM-DD" format
                <div className="flex justify-center gap-3">
                  <button
                    className=" flex text-red-600 text-xl justify-center items-center gap-1   px-2 py-1 rounded"
-                  onClick={() => handleDelete(account._id)}
+                  onClick={() => handleDelete(account._id,account.accountName)}
                 >
                    <FaMinusSquare  />
                 </button>

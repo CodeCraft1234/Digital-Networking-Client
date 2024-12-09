@@ -172,7 +172,7 @@ const Campaigns = () => {
 
   const handleUpdate2 = (id, newStatus) => {
     const body = { status: newStatus };
-    AxiosPublic.patch(`https://digital-networking-server.vercel.app/campaings/status/${id}`, body)
+    AxiosPublic.patch(`https://hishab-2025.vercel.app/campaings/status/${id}`, body)
       .then((res) => {
         console.log(res.data);
         refetch();
@@ -194,7 +194,7 @@ const Campaigns = () => {
   return (
     <div className="m-5">
      <Helmet>
-        <title>All Campaigns | Digital Network </title>
+        <title>All Campaign | Digital Network </title>
         <link rel="canonical" href="https://www.example.com/" />
       </Helmet>
       <div className='px-5 py-5 mt-5 rounded-lg' style={{ backgroundColor: 'var(--bg-color3)', color: 'var(--text-color)',border: 'var(--border)'}}>
@@ -310,12 +310,12 @@ const Campaigns = () => {
           <table className="min-w-full text-center ">
             <thead className=" ">
               <tr className="" style={{border: 'var(--border)',borderLeft: 'var(--border)', borderRight: 'var(--border)', color: 'var(--text-color)'}}>
-                <th className="p-3 text-center">Action</th>
+                <th className="p-3 text-center">{displayedItems.length}</th>
                 <th className="p-3 text-start">Campaign Name</th>
                 <th className="p-3 text-start">Client Name</th>
-                <th className="p-3 text-center">Total Budged</th>
-                <th className="p-3 text-center">Total spent</th>
-                <th className="p-3 text-center">Date</th>
+                <th className="p-3 text-left">Total Budged</th>
+                <th className="p-3 text-left">Total spent</th>
+                <th className="p-3 text-left">Date</th>
                 <th className="p-3 text-center">OFF/ON</th>
               </tr>
             </thead>
@@ -447,15 +447,15 @@ const Campaigns = () => {
                    </Link>
                  </td>
 
-                  <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-300 text-center ">
+                  <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-300 text-start ">
                   $ {campaign.tBudged}
                   
                   </td>
-                  <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-300 text-center ">
+                  <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-300 text-start ">
                   $ {campaign.tSpent}
                  
                   </td>
-                  <td style={{  border: 'var(--border)'}} className="p-3 border-l-2 border-r-2 border-gray-300 text-center ">
+                  <td style={{  border: 'var(--border)'}} className="p-3 border-l-2 border-r-2 border-gray-300 text-start ">
                   {new Date(campaign?.date).toLocaleDateString("en-GB")}
                   </td>
                   <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-l-2 border-gray-200 text-center">  <label className="inline-flex items-center cursor-pointer">
@@ -490,14 +490,14 @@ const Campaigns = () => {
                 >
                   Total :
                 </td>
-                <td style={{  border: 'var(--border)'}} className="p-3 border  text-center">
+                <td style={{  border: 'var(--border)'}} className="p-3 border  text-start">
                   $ {totalBudged.toFixed(2) || 0}
                 </td>
-                <td style={{  border: 'var(--border)'}} className="p-3 border  text-center">
+                <td style={{  border: 'var(--border)'}} className="p-3 border  text-start">
   {`$ ${totalSpent.toFixed(2)}`}
 </td>
-                <td  className="p-3   text-center"></td>
-                <td className="p-3   text-center"></td>
+                <td  className="p-3   text-start"></td>
+                <td className="p-3   text-start"></td>
               </tr>
             </tbody>
           </table>

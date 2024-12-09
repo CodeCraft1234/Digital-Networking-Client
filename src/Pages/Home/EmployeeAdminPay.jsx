@@ -168,7 +168,7 @@ const EmployeeAdminPay = ({email}) => {
     };
 
     AxiosPublic.post(
-      "https://digital-networking-server.vercel.app/employeePayment",
+      "https://hishab-2025.vercel.app/employeePayment",
       data
     )
       .then((res) => {

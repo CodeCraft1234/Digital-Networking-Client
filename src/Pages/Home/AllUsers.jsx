@@ -10,11 +10,11 @@ import useClients from "../../Hook/useClient";
 import { Link } from "react-router-dom";
 import useAdsPayment from "../../Hook/useAdsPayment";
 import useAdsAccountCenter from "../../Hook/useAdsAccountCenter";
-import useAllEmployee from "../../Hook/useAllEmployee";
 import { FaEdit, FaMinusSquare } from "react-icons/fa";
+import AllClients from "./AllClients";
 
 const AllUsers = () => {
-  const [allEmployees,refetch]=useAllEmployee()
+  const [users,refetch]=useUsers()
   const { user } = useContext(AuthContext); // Get current user
   const [employees, setEmployees] = useState([]); // State to hold filtered employees
   const [employees2, setEmployees2] = useState([]); // State to hold filtered employees
@@ -26,28 +26,27 @@ const AllUsers = () => {
   
   const initialTab = localStorage.getItem("activeTab") || "all";
   const [activeTab, setActiveTab] = useState(initialTab);
-  console.log(activeTab);
 
   useEffect(() => {
-    if (allEmployees && activeTab !== 'all') {
-      const employeeList = allEmployees.filter((u) => u.role === activeTab);
+    if (users && activeTab !== 'all') {
+      const employeeList = users.filter((u) => u.role === activeTab);
       setEmployees(employeeList);
-      const employeeList2 = allEmployees.filter((u) => u.role === 'graphicDesigner');
+      const employeeList2 = users.filter((u) => u.role === 'graphicDesigner');
       setEmployees2(employeeList2);
-      const employeeList3 = allEmployees.filter((u) => u.role === 'admin');
+      const employeeList3 = users.filter((u) => u.role === 'admin');
       setEmployees3(employeeList3);
-      const employeeList4 = allEmployees.filter((u) => u.role === 'employee');
+      const employeeList4 = users.filter((u) => u.role === 'employee');
       setEmployees4(employeeList4);
-      const employeeList5 = allEmployees.filter((u) => u.role === 'webDeveloper');
+      const employeeList5 = users.filter((u) => u.role === 'webDeveloper');
       setEmployees5(employeeList5);
-      const employeeList6 = allEmployees.filter((u) => u.role === 'contributor');
+      const employeeList6 = users.filter((u) => u.role === 'contributor');
       setEmployees6(employeeList6);
-      const employeeList7 = allEmployees.filter((u) => u.role === 'client');
+      const employeeList7 = users.filter((u) => u.role === 'client');
       setEmployees7(employeeList7);
     } else {
-      setEmployees(allEmployees); 
+      setEmployees(users); 
     }
-  }, [allEmployees, activeTab]);
+  }, [users, activeTab]);
 
   const AxiosPublic = UseAxiosPublic();
 
@@ -155,7 +154,7 @@ const AllUsers = () => {
   return (
     <div className="my-5 mx-5 ">
       <Helmet>
-        <title>All Users | Digital Network</title>
+        <title>All User | Digital Network</title>
         <link rel="canonical" href="https://www.example.com/" />
       </Helmet>
 
@@ -172,7 +171,7 @@ const AllUsers = () => {
       className={getButtonClass('all')}
       onClick={() => changeTab('all')}
     >
-      All Users ({allEmployees.length})
+      All Users ({users.length})
     </button>
     <button 
       className={getButtonClass('admin')}
@@ -210,16 +209,23 @@ const AllUsers = () => {
     >
       Users ({employees7.length})
     </button>
+    <button 
+      className={getButtonClass('allClient')}
+      onClick={() => changeTab('allClient')}
+    >
+      Client ({employees7.length})
+    </button>
   </div>
 </div>
-      <div  className="overflow-x-auto rounded-xl  text-center " style={{ backgroundColor: 'var(--bg-color)', color: 'var(--text-color)'}}>
+        {
+          activeTab === 'allClient' ? <AllClients></AllClients> :  <div  className="overflow-x-auto rounded-xl  text-center " style={{ backgroundColor: 'var(--bg-color)', color: 'var(--text-color)'}}>
           <table className="min-w-full text-center ">
             <thead className=" ">
               <tr className="" style={{border: 'var(--border)',borderLeft: 'var(--border)', borderRight: 'var(--border)', color: 'var(--text-color)'}}>
                   <th className="p-3 text-center">Action</th>
                 <th className="p-3 text-center">Profile</th>
                 <th className="p-3 text-start">Name</th>
-                <th className="p-3 text-center">Mobile</th>
+                <th className="p-3 text-left">Mobile</th>
                 <th className="p-3 text-start">Email</th>
                 {activeTab === 'employee' && (
                   <th className="p-3 text-center">Client</th>
@@ -256,15 +262,9 @@ const AllUsers = () => {
                     />
                   </td>
                   <td style={{  border: 'var(--border)'}} className="p-3 hover:text-indigo-700 hover:font-bold border-r-2 border-gray-300 text-start">
-                    {
-                      user.role === 'contributor' ? <Link to={`/dashboard/adsuserInfo/${user?.email}`}>
                       {user.name}
-                      </Link> : <Link to={`/dashboard/userinfo/${user?.email}`}>
-                      {user.name}
-                      </Link>
-                    }
                   </td>
-                  <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-300 text-center">
+                  <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-300 text-left">
                     {user.contactNumber}
                   </td>
                   <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-300 text-center">
@@ -279,7 +279,45 @@ const AllUsers = () => {
                        <FaEdit />
                        <h1>{user.email}</h1>
                       </button>
-                    
+                      <dialog id={`my_modal_${user._id}`} className="modal">
+  <div className="modal-box bg-white">
+    <form
+      onSubmit={(e) =>
+        handleUpdate(e, user?._id, )
+      }
+    >
+      <h1 className="text-black font-bold text-start">Name</h1>
+      <input
+        className="text-black inline-block w-full mb-5 p-3 border border-black bg-white"
+        type="text"
+        name="name"
+        required
+        defaultValue={user?.name}
+        id=""
+      />
+      <h1 className="text-black font-bold text-start">Contact Number</h1>
+      <input
+        type="number"
+        name="contactNumber"
+        placeholder="01..."
+        defaultValue={user?.contactNumber}
+        className="w-full rounded p-2 mt-3 bg-white text-black border border-gray-700"
+      />
+
+      <button
+        type="submit"
+        className="mt-4 font-avenir px-3 mx-auto py-1 rounded-lg text-white bg-[#05a0db]"
+      >
+        Update
+      </button>
+    </form>
+    <form method="dialog">
+      <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
+        ✕
+      </button>
+    </form>
+  </div>
+                      </dialog>
                   </td>
 
                                  {activeTab === 'contributor' && (
@@ -359,45 +397,8 @@ const AllUsers = () => {
 
 
 
-<dialog id={`my_modal_${user._id}`} className="modal">
-  <div className="modal-box bg-white">
-    <form
-      onSubmit={(e) =>
-        handleUpdate(e, user?._id, )
-      }
-    >
-      <h1 className="text-black font-bold text-start">Name</h1>
-      <input
-        className="text-black inline-block w-full mb-5 p-3 border border-black bg-white"
-        type="text"
-        name="name"
-        required
-        defaultValue={user?.name}
-        id=""
-      />
-      <h1 className="text-black font-bold text-start">Contact Number</h1>
-      <input
-        type="number"
-        name="contactNumber"
-        placeholder="01..."
-        defaultValue={user?.contactNumber}
-        className="w-full rounded p-2 mt-3 bg-white text-black border border-gray-700"
-      />
 
-      <button
-        type="submit"
-        className="mt-4 font-avenir px-3 mx-auto py-1 rounded-lg text-white bg-[#05a0db]"
-      >
-        Update
-      </button>
-    </form>
-    <form method="dialog">
-      <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
-        ✕
-      </button>
-    </form>
-  </div>
-                      </dialog>
+
 {activeTab === 'contributor' && (
   <tfoot  style={{border: 'var(--border)',borderLeft: 'var(--border)', borderRight: 'var(--border)', color: 'var(--text-color)'}} className="">
     <tr>
@@ -435,6 +436,9 @@ const AllUsers = () => {
 
           </table>
         </div>
+        }
+       
+
       </div>
     </div>
   );

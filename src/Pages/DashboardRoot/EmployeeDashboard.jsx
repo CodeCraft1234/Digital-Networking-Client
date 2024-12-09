@@ -59,30 +59,39 @@ const EmployeeDashboard = () => {
             Dashboard
           </NavLink>
           <NavLink
-                  to="dashboard/myClients"
+                  to="dashboard/clients"
                   className="text-white hover:bg-[#f89320] hover:text-black py-2 px-4 rounded-lg flex items-center"
                   style={({ isActive }) => getActiveStyle(isActive)}
                 >
                   <FaPeopleGroup className="w-6 h-6 mr-2" />
-                  My Clients
+                 My Client
                 </NavLink>
           <NavLink
-            to="dashboard/myCampaigns"
+            to="dashboard/metaAds"
             className="text-white hover:bg-[#f89320] hover:text-black py-2 px-4 rounded-lg flex items-center"
             style={({ isActive }) => getActiveStyle(isActive)}
           >
             <MdCampaign className="w-6 h-6 mr-2" />
-            Campaigns
+            Meta Ads
           </NavLink>
-         
           <NavLink
-            to={`dashboard/myAdsAccount`}
+            to="dashboard/googleAds"
             className="text-white hover:bg-[#f89320] hover:text-black py-2 px-4 rounded-lg flex items-center"
             style={({ isActive }) => getActiveStyle(isActive)}
           >
-            <MdAccountCircle className="w-6 h-6 mr-2" />
-            Ads Accounts
+            <MdCampaign className="w-6 h-6 mr-2" />
+            Google Ads
           </NavLink>
+          <NavLink
+            to="dashboard/pageSetup"
+            className="text-white hover:bg-[#f89320] hover:text-black py-2 px-4 rounded-lg flex items-center"
+            style={({ isActive }) => getActiveStyle(isActive)}
+          >
+            <MdCampaign className="w-6 h-6 mr-2" />
+            Page Setup
+          </NavLink>
+         
+         
          
           <NavLink
             to={`dashboard/myPayments`}
@@ -90,33 +99,44 @@ const EmployeeDashboard = () => {
             style={({ isActive }) => getActiveStyle(isActive)}
           >
             <MdAccountCircle className="w-6 h-6 mr-2" />
-           My Payments
+           My Payment
           </NavLink>
           <NavLink
-            to={`dashboard/mySellery`}
+            to={`dashboard/salary`}
             className="text-white hover:bg-[#f89320] hover:text-black py-2 px-4 rounded-lg flex items-center"
             style={({ isActive }) => getActiveStyle(isActive)}
           >
             <MdOutlineSummarize className="w-6 h-6 mr-2" />
             My Salary
           </NavLink>
+
           <NavLink
-            to={`dashboard/myhistory`}
+            to={`dashboard/myAdsAccount`}
+            className="text-white hover:bg-[#f89320] hover:text-black py-2 px-4 rounded-lg flex items-center"
+            style={({ isActive }) => getActiveStyle(isActive)}
+          >
+            <MdAccountCircle className="w-6 h-6 mr-2" />
+            Ads Account
+          </NavLink>
+
+          <NavLink
+            to={`dashboard/monthlySpend`}
             className="text-white hover:bg-[#f89320] hover:text-black py-2 px-4 rounded-lg flex items-center"
             style={({ isActive }) => getActiveStyle(isActive)}
           >
             <FaHistory className="w-6 h-6 mr-2" />
-            My History
+            Monthly Spend
           </NavLink>
 
           <NavLink
-            to={`dashboard/mySummery`}
+            to={`dashboard/summery`}
             className="text-white hover:bg-[#f89320] hover:text-black py-2 px-4 rounded-lg flex items-center"
             style={({ isActive }) => getActiveStyle(isActive)}
           >
             <LuActivitySquare  className="w-6 h-6 mr-2" />
            My Summery
           </NavLink>
+         
           <NavLink
             to="dashboard/payoneer"
             className="text-white hover:bg-[#f89320] hover:text-black py-2 px-3 rounded-lg flex items-center"

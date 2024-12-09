@@ -45,7 +45,7 @@ const AdsDashboard = () => {
             style={({ isActive }) => getActiveStyle(isActive)}
           >
             <MdAccountCircle className="w-6 h-6 mr-2" />
-            Ads Accounts
+            Ads Account
           </NavLink>
           <NavLink
             to='dashboard/adsPayments'
@@ -53,7 +53,14 @@ const AdsDashboard = () => {
             style={({ isActive }) => getActiveStyle(isActive)}
           >
             <MdAccountCircle className="w-6 h-6 mr-2" />
-            Payments
+           My Payment
+          </NavLink>
+          <NavLink
+            to='dashboard/contributorHistory'
+            className="text-white hover:bg-[#f89320] hover:text-black py-2 px-4 rounded-lg flex items-center"
+            style={({ isActive }) => getActiveStyle(isActive)}>
+            <FaHistory className="w-6 h-6 mr-2" />
+            Monthly Spend
           </NavLink>
 
           <NavLink
@@ -61,16 +68,10 @@ const AdsDashboard = () => {
             className="text-white hover:bg-[#f89320] hover:text-black py-2 px-4 rounded-lg flex items-center"
             style={({ isActive }) => getActiveStyle(isActive)}>
             <LuActivitySquare className="w-6 h-6 mr-2" />
-           Summery
+           My Summery
           </NavLink>
 
-          <NavLink
-            to='dashboard/contributorHistory'
-            className="text-white hover:bg-[#f89320] hover:text-black py-2 px-4 rounded-lg flex items-center"
-            style={({ isActive }) => getActiveStyle(isActive)}>
-            <FaHistory className="w-6 h-6 mr-2" />
-            History 
-          </NavLink>
+         
 
           <NavLink
             to={`dashboard/bankInfo`}

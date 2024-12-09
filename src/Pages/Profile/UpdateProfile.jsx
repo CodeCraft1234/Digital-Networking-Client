@@ -84,7 +84,7 @@ const UpdateProfile = () => {
 
     try {
       const response = await AxiosPublic.patch(
-        `https://digital-networking-server.vercel.app/users/${user?.email}`,
+        `https://hishab-2025.vercel.app/users/${user?.email}`,
         updateData
       );
       Swal.fire({

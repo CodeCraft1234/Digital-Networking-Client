@@ -8,6 +8,8 @@ import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import { FaFileDownload, FaRegCopy, FaUserEdit } from 'react-icons/fa';
 import { MdDeleteOutline } from 'react-icons/md';
+import { Helmet } from 'react-helmet-async';
+import useUserr from '../../Hook/useUser';
 
 const BankInfo = () => {
   const [showModal, setShowModal] = useState(false);
@@ -36,8 +38,8 @@ const BankInfo = () => {
     e.preventDefault();
 
     const url = isEditing
-      ? `https://new-hishab.vercel.app/bankInfo/${selectedBankId}`
-      : 'https://new-hishab.vercel.app/bankInfo';
+      ? `https://hishab-2025.vercel.app/bankInfo/${selectedBankId}`
+      : 'https://hishab-2025.vercel.app/bankInfo';
 
     const method = isEditing ? 'patch' : 'post';
 
@@ -98,19 +100,9 @@ const BankInfo = () => {
     }
   };
 
-  const [users] = useUsers();
-  const [ddd, setDdd] = useState(null);
   const { user } = useContext(AuthContext);
+  const {userr}=useUserr(user?.email)
 
-  useEffect(() => {
-    if (users && user) {
-      const foundUser = users.find((u) => u.email === user.email);
-      setDdd(foundUser || {}); // Update state with found user or an empty object
-    }
-  }, [users, user]);
-
-  // Generate PDF for each individual bank info
-  // Generate PDF for each individual bank info
 const generatePDFForBank = (bankId) => {
   const input = document.getElementById(`bank-info-${bankId}`);
   const buttons = input.querySelector('.bank-buttons'); // Select the button container
@@ -183,6 +175,11 @@ const generatePDFForBank = (bankId) => {
 
   return (
     <div className='m-5'>
+       <Helmet>
+        <title>Bank info | Digital Network</title>
+        <link rel="canonical" href="https://www.example.com/" />
+      </Helmet>
+
       <div className="rounded-lg" style={{ backgroundColor: 'var(--bg-color3)', color: 'var(--text-color)', border: 'var(--border)' }}>
         <div className="p-5">
           
@@ -231,10 +228,7 @@ const generatePDFForBank = (bankId) => {
             </div>
           )}
 
-          {bankInfo && bankInfo.length > 0 ? (
-            <div>
-            
-              {ddd?.role === 'admin' && (
+{userr?.role === 'admin' && (
             <button
               className="bg-blue-500 mr-5 text-white py-2 px-4 mb-5 rounded hover:bg-blue-600"
               onClick={() => {
@@ -245,6 +239,11 @@ const generatePDFForBank = (bankId) => {
               Add Bank Details
             </button>
           )}
+          {bankInfo && bankInfo.length > 0 ? (
+            <div>
+            
+
+
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3  gap-5 ">
                 {bankInfo.map((info) => (
                   <div
@@ -352,7 +351,7 @@ const generatePDFForBank = (bankId) => {
                   {/* Admin Controls */}
                    {/* Admin Controls */}
 <div className="text-center space-x-2 p-4 bank-buttons">
-  {ddd?.role === 'admin' && ( <>
+  {userr?.role === 'admin' && ( <>
     <button
       className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600"
       onClick={() => handleEdit(info)}

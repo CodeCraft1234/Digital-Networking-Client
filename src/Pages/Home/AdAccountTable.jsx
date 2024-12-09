@@ -26,7 +26,7 @@ const AdAccountTable = () => {
 
    const hadleclick=(id)=>{
     console.log(data)
-    AxiosPublic.patch(`https://digital-networking-server.vercel.app/ads/${id}`,data)
+    AxiosPublic.patch(`https://hishab-2025.vercel.app/ads/${id}`,data)
     .then(res=>{
      console.log(res.data)
      refetch()

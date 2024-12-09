@@ -2,15 +2,40 @@ import { Link } from "react-router-dom";
 import useAdsAccount from "../../Hook/useAdAccount";
 import { FaEdit, FaMinusSquare } from "react-icons/fa";
 import useUsers from "../../Hook/useUsers";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { toast } from "react-toastify";
 import UseAxiosPublic from "../../Axios/UseAxiosPublic";
-import axios from "axios";
 import { ImCross } from "react-icons/im";
+import { Helmet } from "react-helmet-async";
+import { IoIosAddCircleOutline } from "react-icons/io";
+import useAllEmployee from "../../Hook/useAllEmployee";
+import useMyAdsAccountByEmail from "../../Hook/useMyAdsAccountNyEmail";
+import { AuthContext } from "../../Security/AuthProvider";
+import useUserr from "../../Hook/useUser";
+import useUserr2 from "../../Hook/useUser2";
 
 const AdsAccount = () => {
-    const [adsAccount, refetch] = useAdsAccount();
-    const [users] = useUsers();
+
+  const { user } = useContext(AuthContext);
+  const [users]=useUsers()
+  const {userr}=useUserr(user?.email)
+  
+  const initialTab3 =
+  userr?.role === "admin"
+    ? localStorage.getItem("activeTaballcampaignmonthsss8") || "all"
+    : user?.email;
+
+const [selectedEmployee3, setSelectedEmployee3] = useState(initialTab3);
+
+const {userr2}=useUserr2(selectedEmployee3)
+
+  const changeTab3 = (tab) => {
+    setSelectedEmployee3(tab); // Update the state
+    localStorage.setItem("activeTaballcampaignmonthsss3", tab); // Update localStorage
+  };
+
+    const [adsAccount] = useAdsAccount();
+    console.log(adsAccount);
     const [searchQuery, setSearchQuery] = useState("");
     const AxiosPublic = UseAxiosPublic();
     const [modalData, setModalData] = useState(null);
@@ -18,26 +43,15 @@ const AdsAccount = () => {
     const initialTab = localStorage.getItem("activeTabAlladsAccountStatus") || "Active";
     const initialTab2 = localStorage.getItem("activeTabAlladsAccountEmail") || "all";
     const [selectedEmail, setSelectedEmail] = useState(initialTab2 );
+    const [myAdsAccount,refetch]=useMyAdsAccountByEmail(selectedEmployee3)
     const [selectedStatus, setSelectedStatus] = useState(initialTab);
-    
+    const [allEmployees] = useAllEmployee([]);
+
     const changeTab = (tab) => {
       setSelectedStatus(tab);
       localStorage.setItem("activeTabAlladsAccountStatus", tab); 
     };
     
-    const changeTab2 = (tab) => {
-      setSelectedEmail(tab);
-      localStorage.setItem("activeTabAlladsAccountEmail", tab); 
-    };
-
-    const filteredAdsAccount = adsAccount
-    .filter((account) =>
-      (selectedStatus ? account.status === selectedStatus : true) &&
-      (selectedEmail === "all" || account.employeeEmail === selectedEmail) &&
-      (searchQuery ? account.accountName.toLowerCase().includes(searchQuery.toLowerCase()) : true)
-    )
-    .sort((a, b) => a.accountName.localeCompare(b.accountName, undefined, { sensitivity: 'base' }));
-  
 
       const handleUpdate = (e, id) => {
         e.preventDefault();
@@ -74,18 +88,9 @@ const AdsAccount = () => {
       e.preventDefault();
       const totalSpent = e.target.totalSpent.value;
       const date = e.target.date.value;
-      const body = { totalSpent: parseFloat(totalSpent)};
       const ids=generateRandomId()
    
-      AxiosPublic.put(`/adsAccount/totalSpent/${id}`, body)
-        .then((res) => {
-          refetch();
-          setModalData2(null);
-        })
-        .catch((error) => {
-          console.error("Error updating total spent:", error);
-        });
-    
+
       const totalSpentt = parseFloat(totalSpent);
       const monthlySpent = {
         ids,
@@ -98,6 +103,7 @@ const AdsAccount = () => {
       AxiosPublic.post('/users/update', { email: employeeEmail, monthlySpent })
         .then(res => {
           console.log(res.data);
+          setModalData2(null);
         })
         .catch(error => {
           console.error("Error posting user data:", error);
@@ -118,49 +124,149 @@ const AdsAccount = () => {
         });
     };
 
+    const handleAddAdsAcount = (e) => {
+      e.preventDefault();
+      const accountName = e.target.accountName.value;
+      const paymentDate = e.target.paymentDate.value;
+      const employeeEmail = e.target.employeeEmail.value;
+      const employeerName = allEmployees.find(e=>e.email === employeeEmail).name;
+      const currentBallence=0
+      const threshold=0
+      const totalSpent=0
+      const status='Active'
+      const data = { accountName,totalSpent,currentBallence,threshold, paymentDate,status, employeeEmail,employeerName };
+  
+      console.log(data);
+      AxiosPublic.post("/adsAccount", data).then((res) => {
+        toast.success("Post created successfully!");
+        console.log(res.data);
+        refetch()
+        document.getElementById("my_modal_3").close()
+      });
+    };
+
     const today = new Date();
-    const formattedDate = today.toISOString().split('T')[0];  // "YYYY-MM-DD" format
+    const formattedDate = today.toISOString().split('T')[0]; 
 
     return (
-        <div style={{ backgroundColor: 'var(--bg-color3)', color: 'var(--text-color)',border: 'var(--border)'}} className="m-5 rounded-lg p-5">
-           
-           <div style={{ backgroundColor: 'var(--bg-color3)', color: 'var(--text-color)'}} className=" flex justify-center lg:justify-start    mb-5  mx-auto   items-center gap-3 ">
+        <div style={{ backgroundColor: 'var(--bg-color3)', color: 'var(--text-color)',border: 'var(--border)'}} className="m-5 rounded-lg ">
+           <Helmet>
+             <title>All Ads Account | Digital Network </title>
+             <link rel="canonical" href="https://www.example.com/" />
+           </Helmet>
+           <div style={{ backgroundColor: 'var(--bg-colorNav)', color: 'var(--text-color2)'}} className="w-full mb-5 border-b border-gray-500 py-1 sm:w-auto">
+                 <button 
+                     className="flex gap-1 items-center  px-6 ml-5 p-2 rounded-lg  w-full sm:w-auto"
+                      onClick={() => document.getElementById("my_modal_3").showModal()}
+                        >
+                     <IoIosAddCircleOutline /> <span className="inline">Add an Ads Account</span>
+                      </button>
+    
+               <dialog id="my_modal_3" className="modal">
+      <div className="modal-box bg-white">
+        <form onSubmit={(e) => handleAddAdsAcount(e)}>
+          <div className="mb-4">
+            <h1
+              className="text-black flex hover:text-red-500 justify-end"
+              onClick={() => document.getElementById("my_modal_3").close()}
+            >
+              <ImCross />
+            </h1>
+              <div className="gid lg:grid-cols-2 gap-3">
+              <div>
+           <label className="block text-black">Date</label>
+            <input
+              required
+              type="date"
+              name="paymentDate"
+              defaultValue={formattedDate}
+              className="w-full border bg-green-300 border-gray-600 text-black rounded p-2 mt-1"
+            />
+           </div>
 
-            <div className="flex  lg:mb-0 justify-center">
+        <div className="mt-5">
+          <label className="block text-black">Select Employee</label>
+         <select
+          
+           className="border bg-white w-full mt-1  py-2   text-black border-black rounded p-2 "
+           name="employeeEmail"
+         >
+           {allEmployees?.map((employee) => (
+             <option key={employee._id} value={employee.email}>
+               {employee.name}
+             </option>
+           ))}
+         </select>
+       </div>
+              </div>
+          </div>
+          
+          <div className="mb-4">
+            <label className="block text-black">Account Name</label>
+            <input
+              type="text"
+              required
+              name="accountName"
+              placeholder="type here..."
+              className="w-full border border-gray-600 text-black bg-white rounded p-2 mt-1"
+            />
+          </div>
+          
+          <div className="modal-action grid grid-cols-2 gap-4">
+            <button
+              type="button"
+              className="p-2 rounded-lg bg-red-600 text-white text-center w-full"
+              onClick={() => document.getElementById("my_modal_3").close()}
+            >
+              Close
+            </button>
+            <button
+              type="submit"
+              className="font-avenir px-3 py-2 rounded-lg text-white bg-[#05a0db] w-full"
+            >
+              Send
+            </button>
+          </div>
+        </form>
+      </div>
+               </dialog>
+          </div>
+
+          <div>
+
+           <div style={{ backgroundColor: 'var(--bg-color3)', color: 'var(--text-color)'}} className=" rounded-lg ">
+
+
+            <div className="flex justify-center lg:justify-start  ml-5  mb-5  mx-auto   items-center gap-3 ">
+       
+            <div className="flex  justify-center gap-3">
+            <div className="w-full lg:w-auto flex justify-start gap-3">
+  {userr?.role === "admin" ? (
+    <div className="flex mt-1.5 justify-center">
       <select
-       style={{ backgroundColor: 'var(--bg-color2)',border: 'var(--border)', color: 'var(--text-color2)'}}
-        name="email"
-        value={selectedEmail}
-        onChange={(e) => changeTab2(e.target.value)}
-        className="border bg-white text-black  text-sm border-black rounded p-2"
+        style={{
+          backgroundColor: "var(--bg-color2)",
+          border: "var(--border)",
+          color: "var(--text-color2)",
+        }}
+        className="border bg-white text-black py-2 lg:w-auto w-full border-gray-400 rounded px-2"
+        value={selectedEmployee3}
+        onChange={(e) => changeTab3(e.target.value)}
       >
-        <option className="text-sm" value="all">All Employees</option>
+        <option value="all">All Employees</option>
         {users
-          ?.filter((u) => u.role === "employee")
-          .map((user) => (
-            <option key={user._id} value={user.email}>
-              {user.name}
+          .filter((u) => u.role === "employee")
+          .map((employee) => (
+            <option key={employee._id} value={employee.email}>
+              {employee.name}
             </option>
           ))}
       </select>
-
-      <div>
-        {selectedEmail === "all"
-          ? adsAccount.map((account) => (
-              <div key={account.id}> 
-                <p>{account.name}</p> 
-              </div>
-            ))
-          : adsAccount
-              .filter((account) => account.userEmail === selectedEmail)
-              .map((account) => (
-                <div key={account.id}> 
-                  <p>{account.name}</p> 
-                </div>
-              ))}
-      </div>
     </div>
-            <div className="flex  justify-center gap-3">
+  ) : (
+   <></>
+  )}
+</div>
             <div className="flex text-sm lg:mb-0  justify-center">
                 <select
                  style={{ backgroundColor: 'var(--bg-color2)',border: 'var(--border)', color: 'var(--text-color2)'}}
@@ -174,40 +280,65 @@ const AdsAccount = () => {
                   <option value="Disable">Disable</option>
                 </select>
               </div>
+
+              <div className=" flex mb-5 lg:mb-0 justify-center">
+   <input
+    style={{ backgroundColor: 'var(--bg-color2)',border: 'var(--border)', color: 'var(--text-color2)'}}
+     type="text"
+     placeholder="Search by campaign name"
+     className="border bg-white    rounded-l-lg p-1 flex-1"
+     value={searchQuery}
+     onChange={(e) => setSearchQuery(e.target.value)}
+    />
+    <button
+     className="bg-black  text-white border border-black shadow-2xl rounded-r-lg p-2 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
+     onClick={() => {/* Add search functionality here */}}
+    >
+     Search
+    </button>
+  </div>
           
+            </div>
             </div>
           
 
 
             </div>
          
-            <div  className="overflow-x-auto rounded-xl  text-center " >
+            <div  className="overflow-x-auto rounded-xl m-5 text-center " >
           <table className="min-w-full text-center ">
             <thead style={{ backgroundColor: 'var(--bg-color)', color: 'var(--text-color)'}} className=" ">
               <tr className="" style={{border: 'var(--border)',borderLeft: 'var(--border)', borderRight: 'var(--border)', color: 'var(--text-color)'}}>
                 <th className="p-3 " >
-                  Action
+                  {myAdsAccount.length}
                 </th>
                 <th className="p-3 text-start">Ad Account Name</th>
                 <th className="p-3  text-start">Employeer Name</th>
                 <th className="p-3 text-start">Current Balance</th>
                 <th className="p-3 text-start">Threshold</th>
                 <th className="p-3 text-start">Spend</th>
-                <th className="p-3">Payment Date</th>
+                <th className="p-3 text-center">Payment Date</th>
                 
                 <th className="p-3">OFF/ON</th>
               </tr>
             </thead>
             <tbody>
-              {filteredAdsAccount.map((account, index) => (
-                <tr style={{ backgroundColor: 'var(--bg-table)', color: 'var(--text-color2)'}}
-                key={account._id}
-                className={`${
-                  index % 2 === 0
-                    ? "bg-white text-left text-black border-b border-opacity-20"
-                    : "bg-gray-200  text-left text-black border-b border-opacity-20"
-                }`}
-              >
+            {myAdsAccount
+             ?.filter((account) =>
+              (selectedStatus ? account.status === selectedStatus : true) &&
+              (searchQuery ? account.accountName.toLowerCase().includes(searchQuery.toLowerCase()) : true)
+            )
+  ?.sort((a, b) =>
+    a.accountName.localeCompare(b.accountName, undefined, { sensitivity: 'base' })
+  )
+  ?.map((account, index) => (
+    <tr
+      key={account._id}
+      style={{ backgroundColor: 'var(--bg-table)', color: 'var(--text-color2)' }}
+      className={`text-left text-black border-b border-opacity-20 ${
+        index % 2 === 0 ? "bg-white" : "bg-gray-200"
+      }`}
+    >
                     <td style={{  border: 'var(--border)'}}
                     className={`p-3 border-r-2  text-center border-gray-300  `}
                   >
@@ -298,13 +429,13 @@ const AdsAccount = () => {
                 <td className="p-3  text-right" colSpan="4">
                   Total :
                 </td>
-                <td className="p-3 text-center border-gray-300  ">
+                <td className="p-3 text-start border-gray-300  ">
                 <span className=" text-xm font-extrabold">$</span> {adsAccount.reduce(
         (acc, account) => acc + parseFloat(account.currentBallence || 0),
         0
       ).toFixed(2)}
                 </td>
-                <td className="p-3 text-center  border-gray-300  ">
+                <td className="p-3 text-start  border-gray-300  ">
                 <span className=" text-xm font-extrabold">$</span> {adsAccount.reduce(
         (acc, account) => acc + parseFloat(account.threshold || 0),
         0
@@ -324,7 +455,8 @@ const AdsAccount = () => {
 
             </tbody>
           </table>
-        </div>
+          </div>
+          </div>
 
         {modalData && (
      <dialog className="modal" open>

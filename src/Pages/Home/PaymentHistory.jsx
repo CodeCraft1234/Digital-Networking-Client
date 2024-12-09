@@ -3,6 +3,9 @@ import EmployeePayments from './EmployeePayments';
 import AllClientsPayments from './AllClientsPayments';
 import AllAdsPayments from '../DashboardRoot/AllAdsPayments';
 import { Helmet } from 'react-helmet-async';
+import SalaryPayments from './SalaryPayment';
+import ClientPayments from '../DashboardRoot/ClientPayments';
+import AdminPayments from '../DashboardRoot/AdminPayments';
 
 const PaymentHistory = () => {
 
@@ -25,7 +28,7 @@ const PaymentHistory = () => {
     return (
         <div>
             <Helmet>
-                <title>Payment History | Digital Network</title>
+                <title>Payments History | Digital Network</title>
                 <link rel="canonical" href="https://www.example.com/" />
             </Helmet>
 
@@ -54,13 +57,19 @@ const PaymentHistory = () => {
                     >
                         Contributor Pay
                     </button>
+                    <button
+                        className={getButtonClass('salaryPay')}
+                        onClick={() => changeTab('salaryPay')}
+                    >
+                        Salary Pay
+                    </button>
                 </div>
             </div>
 
-            {/* Tab Content */}
             {activeTab === 'contributorPay' && <AllAdsPayments />}
-            {activeTab === 'employeerPay' && <EmployeePayments />}
-            {activeTab === 'clientsPay' && <AllClientsPayments />}
+            {activeTab === 'employeerPay' && <AdminPayments />}
+            {activeTab === 'clientsPay' && <ClientPayments />}
+            {activeTab === 'salaryPay' && <SalaryPayments />}
         </div>
     );
 };

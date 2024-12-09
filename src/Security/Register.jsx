@@ -31,27 +31,30 @@ const Register = () => {
     });
     const name = data.name;
     const email = data.email;
+    const contactNumber = data.phone;
     const password = data.password;
     const photo = res.data.data.display_url;
     
-    console.log(res.data.data.display_url);
-    console.log(name, email, password, photo);
-
-    // create user and update profiles
     createUser(email, password)
       .then((result) => {
         navigate(location.state ? location.state : "/");
         updateProfiles(name, photo);
-        console.log(result.user);
-        console.log(email, name, photo);
         const date = new Date();
-        const userInfo = { email, name, photo, date, role: 'client', };
-        AxiosPublic.post("/users", userInfo).then((res) => {
-          console.log(res.data);
+        const userInfo = {
+          email,
+          name,
+          photo,
+          date,
+          contactNumber,
+          password,
+          role: 'client', };
+
+        AxiosPublic.post("/users", userInfo)
+        .then((res) => {
+          console.log(res.data)
         });
-        // new product created for server side here
         navigate("/");
-        return toast.success("user created successfully");
+        return toast.success(`${name} created successfully`);
       })
       .catch((error) => {
         console.log(error);
@@ -90,6 +93,13 @@ const Register = () => {
                   type="email"
                   placeholder="Enter your email address"
                   className="input input-bordered text-black text-xs font-normal "
+                  required
+                />
+                <input
+                  {...register("phone", { required: true })}
+                  type="phone"
+                  placeholder="Enter your phone number"
+                  className="input input-bordered mt-5 text-black text-xs font-normal "
                   required
                 />
 

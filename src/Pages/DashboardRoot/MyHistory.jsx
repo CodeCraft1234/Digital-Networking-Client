@@ -1,6 +1,7 @@
 import { useContext, useState } from 'react';
 import useUsers from '../../Hook/useUsers';  // Custom hook to fetch users
 import { AuthContext } from '../../Security/AuthProvider';
+import { Helmet } from 'react-helmet-async';
 
 const MyHistory = () => {
   const [users] = useUsers(); 
@@ -63,6 +64,10 @@ const MyHistory = () => {
 
   return (
     <div className='mx-5 mt-5 lg:my-5 mb-5'>
+       <Helmet>
+                <title>My Monthly Activity | Digital Network</title>
+                <link rel="canonical" href="https://www.example.com/" />
+            </Helmet>
       <div className="p-5 rounded-lg " style={{ backgroundColor: 'var(--bg-color3)', color: 'var(--text-color)',border: 'var(--border)'}} >
       <div className="flex justify-center lg:justify-start items-center gap-3 mb-5">
         <div>

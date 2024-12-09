@@ -126,7 +126,7 @@ const formattedDate = today.toISOString().split('T')[0];
     <div className=" px-5 mt-5 dark:text-green-800">
        <ToastContainer />
        <Helmet>
-        <title>My Ads Account | Digital Network </title>
+        <title>My Ads Accounts | Digital Network </title>
         <link rel="canonical" href="https://www.example.com/" />
       </Helmet>
 

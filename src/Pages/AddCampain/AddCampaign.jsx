@@ -23,7 +23,7 @@ const AddCampaign = () => {
         const data={campaignName,clientEmail,pageName,tBudged,email,tSpent,dollerRate,date}
        console.log(data)
        
-       AxiosPublic.post('https://digital-networking-server.vercel.app/campaigns',data)
+       AxiosPublic.post('https://hishab-2025.vercel.app/campaigns',data)
        .then(res=>{
         console.log(res.data)
         Swal.fire({
