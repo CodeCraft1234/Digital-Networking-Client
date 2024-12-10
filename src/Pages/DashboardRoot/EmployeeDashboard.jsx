@@ -59,7 +59,7 @@ const EmployeeDashboard = () => {
             Dashboard
           </NavLink>
           <NavLink
-                  to="dashboard/clients"
+                  to="/clients"
                   className="text-white hover:bg-[#f89320] hover:text-black py-2 px-4 rounded-lg flex items-center"
                   style={({ isActive }) => getActiveStyle(isActive)}
                 >
@@ -67,7 +67,7 @@ const EmployeeDashboard = () => {
                  My Client
                 </NavLink>
           <NavLink
-            to="dashboard/metaAds"
+            to="/metaAds"
             className="text-white hover:bg-[#f89320] hover:text-black py-2 px-4 rounded-lg flex items-center"
             style={({ isActive }) => getActiveStyle(isActive)}
           >
@@ -75,7 +75,7 @@ const EmployeeDashboard = () => {
             Meta Ads
           </NavLink>
           <NavLink
-            to="dashboard/googleAds"
+            to="/googleAds"
             className="text-white hover:bg-[#f89320] hover:text-black py-2 px-4 rounded-lg flex items-center"
             style={({ isActive }) => getActiveStyle(isActive)}
           >
@@ -83,7 +83,7 @@ const EmployeeDashboard = () => {
             Google Ads
           </NavLink>
           <NavLink
-            to="dashboard/pageSetup"
+            to="/pageSetup"
             className="text-white hover:bg-[#f89320] hover:text-black py-2 px-4 rounded-lg flex items-center"
             style={({ isActive }) => getActiveStyle(isActive)}
           >
@@ -94,7 +94,7 @@ const EmployeeDashboard = () => {
          
          
           <NavLink
-            to={`dashboard/myPayments`}
+            to={`/myPayments`}
             className="text-white hover:bg-[#f89320] hover:text-black py-2 px-4 rounded-lg flex items-center"
             style={({ isActive }) => getActiveStyle(isActive)}
           >
@@ -102,7 +102,7 @@ const EmployeeDashboard = () => {
            My Payment
           </NavLink>
           <NavLink
-            to={`dashboard/salary`}
+            to={`/salary`}
             className="text-white hover:bg-[#f89320] hover:text-black py-2 px-4 rounded-lg flex items-center"
             style={({ isActive }) => getActiveStyle(isActive)}
           >
@@ -111,7 +111,7 @@ const EmployeeDashboard = () => {
           </NavLink>
 
           <NavLink
-            to={`dashboard/myAdsAccount`}
+            to={`/adsAccount`}
             className="text-white hover:bg-[#f89320] hover:text-black py-2 px-4 rounded-lg flex items-center"
             style={({ isActive }) => getActiveStyle(isActive)}
           >
@@ -120,7 +120,7 @@ const EmployeeDashboard = () => {
           </NavLink>
 
           <NavLink
-            to={`dashboard/monthlySpend`}
+            to={`/monthlySpend`}
             className="text-white hover:bg-[#f89320] hover:text-black py-2 px-4 rounded-lg flex items-center"
             style={({ isActive }) => getActiveStyle(isActive)}
           >
@@ -129,7 +129,7 @@ const EmployeeDashboard = () => {
           </NavLink>
 
           <NavLink
-            to={`dashboard/summery`}
+            to={`/summery`}
             className="text-white hover:bg-[#f89320] hover:text-black py-2 px-4 rounded-lg flex items-center"
             style={({ isActive }) => getActiveStyle(isActive)}
           >
@@ -138,14 +138,14 @@ const EmployeeDashboard = () => {
           </NavLink>
          
           <NavLink
-            to="dashboard/payoneer"
+            to="/payoneer"
             className="text-white hover:bg-[#f89320] hover:text-black py-2 px-3 rounded-lg flex items-center"
             style={({ isActive }) => getActiveStyle(isActive)}
           >
             <FaPaypal className="w-6 h-6 mr-2" /> Payoneer
           </NavLink>
           <NavLink
-            to={`dashboard/bankInfo`}
+            to={`/bankInfo`}
             className="text-white hover:bg-[#f89320] hover:text-black py-2 px-4 rounded-lg flex items-center"
             style={({ isActive }) => getActiveStyle(isActive)}
           >

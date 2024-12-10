@@ -8,7 +8,7 @@ import {
 import { IoMdCash,  } from 'react-icons/io';
 import { RxDashboard } from "react-icons/rx";
 import { MdAccountCircle, MdCampaign,  MdOutlinePayments,  } from "react-icons/md";
-import {  IoNotificationsCircleSharp, IoPeopleSharp } from "react-icons/io5";
+import {  IoPeopleSharp } from "react-icons/io5";
 import { FaPeopleGroup } from "react-icons/fa6";
 import { LuActivitySquare } from "react-icons/lu";
 import { CiBank } from "react-icons/ci";
@@ -49,7 +49,7 @@ const AdminDashboard = () => {
           
          
           <NavLink
-                  to="dashboard/clients"
+                  to="/clients"
                   className="text-white hover:bg-[#f89320] hover:text-black py-2 px-3 rounded-lg flex items-center"
                   style={({ isActive }) => getActiveStyle(isActive)}
                 >
@@ -57,7 +57,7 @@ const AdminDashboard = () => {
                  Clients
                 </NavLink>
           <NavLink
-            to="dashboard/metaAds"
+            to="/metaAds"
             className="text-white hover:bg-[#f89320] hover:text-black py-2 px-3 rounded-lg flex items-center"
             style={({ isActive }) => getActiveStyle(isActive)}
           >
@@ -65,7 +65,7 @@ const AdminDashboard = () => {
           </NavLink>
 
           <NavLink
-            to="dashboard/googleAds"
+            to="/googleAds"
             className="text-white hover:bg-[#f89320] hover:text-black py-2 px-3 rounded-lg flex items-center"
             style={({ isActive }) => getActiveStyle(isActive)}
           >
@@ -73,7 +73,7 @@ const AdminDashboard = () => {
           </NavLink>
 
           <NavLink
-            to="dashboard/pageSetup"
+            to="/pageSetup"
             className="text-white hover:bg-[#f89320] hover:text-black py-2 px-4 rounded-lg flex items-center"
             style={({ isActive }) => getActiveStyle(isActive)}
           >
@@ -81,17 +81,9 @@ const AdminDashboard = () => {
             Page Setup
           </NavLink>
          
+         
           <NavLink
-                  to="dashboard/graphicDesign"
-                  className="text-white hover:bg-[#f89320] hover:text-black py-2 px-3 rounded-lg flex items-center"
-                  style={({ isActive }) => getActiveStyle(isActive)}
-                >
-                  <IoPeopleSharp className="w-6 h-6 mr-2" />
-                 Graphic Design
-                </NavLink>
-        
-          <NavLink
-           to="dashboard/allPayments"
+           to="/allPayments"
             className="text-white hover:bg-[#f89320] hover:text-black py-2 px-3 rounded-lg flex items-center"
             style={({ isActive }) => getActiveStyle(isActive)}
           >
@@ -100,7 +92,7 @@ const AdminDashboard = () => {
           </NavLink>
        
           <NavLink
-            to="/dashboard/salary"
+            to="/salary"
             className="text-white hover:bg-[#f89320] hover:text-black py-2 px-3 rounded-lg flex items-center"
             style={({ isActive }) => getActiveStyle(isActive)}
           >
@@ -108,7 +100,7 @@ const AdminDashboard = () => {
           </NavLink>
 
           <NavLink
-            to="dashboard/allAdSAccount"
+            to="/AdsAccount"
             className="text-white hover:bg-[#f89320] hover:text-black py-2 px-3 rounded-lg flex items-center"
             style={({ isActive }) => getActiveStyle(isActive)}
           >
@@ -116,7 +108,7 @@ const AdminDashboard = () => {
           </NavLink>
          
           <NavLink
-            to={`dashboard/monthlySpend`}
+            to={`/monthlySpend`}
             className="text-white hover:bg-[#f89320] hover:text-black py-2 px-4 rounded-lg flex items-center"
             style={({ isActive }) => getActiveStyle(isActive)}
           >
@@ -125,7 +117,7 @@ const AdminDashboard = () => {
           </NavLink>
 
           <NavLink
-            to={`dashboard/summery`}
+            to={`/summery`}
             className="text-white hover:bg-[#f89320] hover:text-black py-2 px-3 rounded-lg flex items-center"
             style={({ isActive }) => getActiveStyle(isActive)}
           >
@@ -136,7 +128,7 @@ const AdminDashboard = () => {
          
 
           <NavLink
-                  to="dashboard/allUsers"
+                  to="/allUsers"
                   className="text-white hover:bg-[#f89320] hover:text-black py-2 px-3 rounded-lg flex items-center"
                   style={({ isActive }) => getActiveStyle(isActive)}
                 >
@@ -145,7 +137,7 @@ const AdminDashboard = () => {
                 </NavLink>
 
           <NavLink
-            to="dashboard/payoneer"
+            to="/payoneer"
             className="text-white hover:bg-[#f89320] hover:text-black py-2 px-3 rounded-lg flex items-center"
             style={({ isActive }) => getActiveStyle(isActive)}
           >
@@ -153,22 +145,13 @@ const AdminDashboard = () => {
           </NavLink>
 
 <NavLink
-            to={`dashboard/bankInfo`}
+            to={`/bankInfo`}
             className="text-white hover:bg-[#f89320] hover:text-black py-2 px-4 rounded-lg flex items-center"
             style={({ isActive }) => getActiveStyle(isActive)}
           >
            <CiBank   className="w-6 h-6 mr-2" />
            Bank Info
           </NavLink>
-          
-          {/* <NavLink
-            to={`dashboard/notification`}
-            className="text-white hover:bg-[#f89320] hover:text-black py-2 px-4 rounded-lg flex items-center"
-            style={({ isActive }) => getActiveStyle(isActive)}
-          >
-           <IoNotificationsCircleSharp   className="w-6 h-6 mr-2" />
-           Notification
-          </NavLink> */}
           
         </ul>
       </div>

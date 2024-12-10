@@ -5,10 +5,10 @@ const useMyEmployeePayments = (email) => {
     const AxiosPublic = UseAxiosPublic();
 
     const { refetch, data: MyEmployeePayment = [] } = useQuery({
-        queryKey: ['MyEmployeePayment', email],
+        queryKey: ['MyEmployeePayments', email],
         queryFn: async () => {
             if (!email) return [];
-            const res = await AxiosPublic.get(`/MyEmployeePayment/${email}`);
+            const res = await AxiosPublic.get(`/MyEmployeePayments/${email}`);
             return res.data;
         },
         enabled: !!email 

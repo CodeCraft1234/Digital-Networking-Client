@@ -20,14 +20,14 @@ const ClientPayments = () => {
   
   const initialTab3 =
   userr?.role === "admin"
-    ? localStorage.getItem("activeTaballcampaignmonthsss8") || "all"
-    : user?.email;
+  ? localStorage.getItem("act") || "all" 
+  : localStorage.getItem("act") || user?.email; 
 
 const [selectedEmployee3, setSelectedEmployee3] = useState(initialTab3);
 
   const changeTab3 = (tab) => {
     setSelectedEmployee3(tab); // Update the state
-    localStorage.setItem("activeTaballcampaignmonthsss3", tab); // Update localStorage
+    localStorage.setItem("act", tab); // Update localStorage
   };
 
 
@@ -179,7 +179,7 @@ const [selectedEmployee3, setSelectedEmployee3] = useState(initialTab3);
 {/* ///////////////////////////////////////////////////////////////// */}
 <div className='px-5 py-5  my-5 mt-5 rounded-lg' style={{ backgroundColor: 'var(--bg-color3)', color: 'var(--text-color)',border: 'var(--border)'}}>
 
-<div className="lg:flex text-black lg:justify-start mb-5 gap-3 items-center">
+<div className="lg:flex text-black lg:justify-end mb-5 gap-3 items-center">
   <div className="flex flex-wrap lg:flex-nowrap gap-3 lg:gap-3 justify-center items-center">
 
     <div className="flex flex-wrap gap-3  justify-center items-start">
@@ -275,7 +275,12 @@ const [selectedEmployee3, setSelectedEmployee3] = useState(initialTab3);
             </tr>
           </thead>
           <tbody>
-            {myclients?.flatMap(client => client.payments || [])?.map((payment, index) => (
+            {myclients?.flatMap(client => client.payments || [])
+            ?.filter(item => 
+              (!selectedYear || new Date(item?.date).getFullYear() === parseInt(selectedYear)) &&
+              (sortMonth === 'all' || new Date(item.date).getMonth() + 1 === parseInt(sortMonth, 10))
+            )
+            ?.map((payment, index) => (
               <tr style={{ backgroundColor: 'var(--bg-table)', color: 'var(--text-color2)'}}
               key={payment?._id}
               className={`${

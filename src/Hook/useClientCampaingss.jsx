@@ -4,17 +4,17 @@ import UseAxiosPublic from "../Axios/UseAxiosPublic";
 
 
 
-const useClients = () => {
+const useClientsCampaingss = () => {
     const AxiosPublic=UseAxiosPublic()
-    const { refetch, data: clientsPayments=[]}=useQuery({
+    const { refetch, data: clientsCampaingss=[]}=useQuery({
         queryKey:['clients'],
         queryFn: async () => {
-            const res=await AxiosPublic.get(`/clientsPaymentss`)
+            const res=await AxiosPublic.get(`/clientsCampaingss`)
             return res.data
         }
     })
-return [clientsPayments,refetch]
+return [clientsCampaingss,refetch]
 
 };
 
-export default useClients;
+export default useClientsCampaingss;

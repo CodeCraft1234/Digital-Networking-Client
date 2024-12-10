@@ -1,4 +1,4 @@
-import  { useEffect, useState, useMemo, useContext } from 'react';
+import  { useState, useMemo, useContext } from 'react';
 import { Helmet } from 'react-helmet-async';
 import useMyClientsByEmail from '../../Hook/useMyClientsByEmail';
 import useAllEmployee from '../../Hook/useAllEmployee';
@@ -6,6 +6,7 @@ import useMyEmployeePayments from '../../Hook/useMyemployeePayments';
 import useUsers from '../../Hook/useUsers';
 import { AuthContext } from '../../Security/AuthProvider';
 import useUserr from '../../Hook/useUser';
+import useMyUser from '../../Hook/useMyUser';
 
 const months = [
   'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'
@@ -15,36 +16,25 @@ const Summery = () => {
   const {user}=useContext(AuthContext)
   const [users]=useUsers()
   const [allEmployees]=useAllEmployee()
-  const [employees, setEmployees] = useState([]);
-  const [employees2, setEmployees2] = useState();
   const {userr}=useUserr(user?.email)
   
   const initialTab3 =
   userr?.role === "admin"
-    ? localStorage.getItem("activeTabsummeryEmployee") || "all"
-    : user?.email;
+  ? localStorage.getItem("a7") || "all" 
+  : localStorage.getItem("a7") || user?.email; 
 
   const [selectedEmployee, setSelectedEmployee] = useState(initialTab3);
   const [myclients]=useMyClientsByEmail(selectedEmployee)
+  const [myUser]=useMyUser(selectedEmployee)
+  console.log(myUser);
   const [MyEmployeePayment]=useMyEmployeePayments(selectedEmployee)
+  console.log(MyEmployeePayment);
 
   const changeTab = (tab) => {
     setSelectedEmployee(tab);
-    localStorage.setItem("activeTabsummeryEmployee", tab); 
+    localStorage.setItem("a7", tab); 
   };
 
-  useEffect(() => {
-    if (allEmployees) {
-      const employeeList = allEmployees.filter((u) => u.role === "employee");
-      setEmployees(employeeList);
-    }
-    if (allEmployees) {
-      const employeeList = allEmployees.find((u) => u.email === user?.email);
-      setEmployees2(employeeList);
-    }
-  }, [allEmployees,user]);
-
- 
   const getRecentMonths = () => {
     const today = new Date();
     let monthsList = [];
@@ -59,8 +49,8 @@ const Summery = () => {
 
   const employeeData = useMemo(() => {
     const relevantUsers = selectedEmployee
-      ? users.filter(u => u.role === 'employee' && u.email === selectedEmployee)
-      : users.filter(u => u.role === 'employee')
+      ? myUser.filter(u => u.role === 'employee')
+      : myUser.filter(u => u.role === 'employee')
 
     return relevantUsers.flatMap(user => {
 
@@ -83,7 +73,7 @@ const Summery = () => {
     
 
       return recentMonths.map(month => {
-        const monthlySpentData = (userr?.monthlySpent || [])
+        const monthlySpentData = (user?.monthlySpent || [])
         .filter(spent =>
           new Date(spent.date).toLocaleString('default', { month: 'long' }) === month
         )
@@ -106,8 +96,10 @@ const Summery = () => {
         }, []);
       
       const totalSpent = monthlySpentData.reduce((acc, spent) => acc + spent.totalSpentt, 0);
+      const totalSpentMeta = monthlySpentData?.filter(f=>f.role === 'metaSpend').reduce((acc, spent) => acc + spent.totalSpentt, 0);
+      const totalSpentGoogle = monthlySpentData?.filter(f=>f.role === 'googleSpend').reduce((acc, spent) => acc + spent.totalSpentt, 0);
 
-        const selleryData = (userr?.sellery || []).filter(sell => sell.month === month);
+        const selleryData = (user?.sellery || []).filter(sell => sell.month === month);
         const totalSellery = selleryData.reduce((acc, sell) => acc + sell.amount, 0);
         const totalBonus = selleryData.reduce((acc, sell) => acc + sell.bonus, 0);
         const totalAdminPay = paymentByMonth[month] || 0;
@@ -115,10 +107,14 @@ const Summery = () => {
 
         return {
           month,
+          totalSpentMeta,
+          totalSpentGoogle,
           totalSpent,
           totalSellery,
           totalBonus,
           totalBill: totalSpent * 140,
+          totalMeta: totalSpentMeta * 140,
+          totalGoogle: totalSpentGoogle * 150,
           totalDue: totalSpent * 140 - totalAdminPay,
           totalSelleryPaid: totalSpent * 7 - totalSellery,
           totalAdminPay,
@@ -271,8 +267,10 @@ const Summery = () => {
               <tr className="" style={{border: 'var(--border)',borderLeft: 'var(--border)', borderRight: 'var(--border)', color: 'var(--text-color)'}}>
             
               <th className="p-3 text-left">Month</th>
-              <th className="p-3 text-left">Campaings</th>
-              <th className="p-3 text-left">Total Spent</th>
+              <th className="p-3 text-left">Meta Spend</th>
+              <th className="p-3 text-left">Meta BDT</th>
+              <th className="p-3 text-left">Google Spend</th>
+              <th className="p-3 text-left">Google BDT</th>
               <th className="p-3 text-left">Total BDT</th>
               <th className="p-3 text-left">Admin Payment</th>
               <th className="p-3 text-left">Client Payment</th>
@@ -291,14 +289,22 @@ const Summery = () => {
   >
       
       <td style={{  border: 'var(--border)'}} className="p-3 border border-gray-300">{data.month}</td>
+
       <td style={{ border: 'var(--border)' }} className="p-3 border border-gray-300">
-  ${new Intl.NumberFormat('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(data.totalSpent)}
-</td>
-      <td style={{ border: 'var(--border)' }} className="p-3 border border-gray-300">
-  ${new Intl.NumberFormat('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(data.totalSpent)}
+  ${new Intl.NumberFormat('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(data.totalSpentMeta)}
 </td>
 <td style={{ border: 'var(--border)' }} className="p-3 border border-gray-300">
-  ৳{new Intl.NumberFormat('en-IN', { maximumFractionDigits: 0 }).format(data.totalBill)}
+  ৳{new Intl.NumberFormat('en-IN', { maximumFractionDigits: 0 }).format(data.totalMeta)}
+</td>
+      <td style={{ border: 'var(--border)' }} className="p-3 border border-gray-300">
+  ${new Intl.NumberFormat('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(data.totalSpentGoogle)}
+</td>
+
+<td style={{ border: 'var(--border)' }} className="p-3 border border-gray-300">
+  ৳{new Intl.NumberFormat('en-IN', { maximumFractionDigits: 0 }).format(data.totalGoogle)}
+</td>
+<td style={{ border: 'var(--border)' }} className="p-3 border border-gray-300">
+  ৳{new Intl.NumberFormat('en-IN', { maximumFractionDigits: 0 }).format(data.totalGoogle + data.totalMeta)}
 </td>
 <td style={{ border: 'var(--border)' }} className="p-3 border border-gray-300">
   ৳{new Intl.NumberFormat('en-IN', { maximumFractionDigits: 0 }).format(data.totalAdminPay)}
@@ -320,28 +326,44 @@ const Summery = () => {
   <tr style={{ backgroundColor: 'var(--bg-color)', color: 'var(--text-color)'}}>
     <td className="p-3 text-right border-gray-300" colSpan="1">Total</td>
     <td className="p-3 text-start border-gray-300">
-  ${new Intl.NumberFormat('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(
-    employeeData.reduce((acc, data) => acc + data.totalSpent, 0)
+  $ {new Intl.NumberFormat('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(
+    employeeData.reduce((acc, data) => acc + data.totalSpentMeta, 0)
+  )}
+</td>
+    <td className="p-3 text-start border-gray-300">
+    ৳ {new Intl.NumberFormat('en-IN', { minimumFractionDigits: 0, maximumFractionDigits: 2 }).format(
+    employeeData.reduce((acc, data) => acc + data.totalMeta, 0)
+  )}
+</td>
+    <td className="p-3 text-start border-gray-300">
+  $ {new Intl.NumberFormat('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(
+    employeeData.reduce((acc, data) => acc + data.totalSpentGoogle, 0)
+  )}
+</td>
+    <td className="p-3 text-start border-gray-300">
+    ৳ {new Intl.NumberFormat('en-IN', { minimumFractionDigits: 0, maximumFractionDigits: 2 }).format(
+    employeeData.reduce((acc, data) => acc + data.totalGoogle, 0)
   )}
 </td>
 <td className="p-3 text-start border-gray-300">
-  ৳{new Intl.NumberFormat('en-IN', { maximumFractionDigits: 0 }).format(
-    employeeData.reduce((acc, data) => acc + data.totalBill, 0)
+  ৳ {new Intl.NumberFormat('en-IN', { maximumFractionDigits: 0 }).format(
+    employeeData.reduce((acc, data) => acc + data.totalGoogle , 0) + 
+    employeeData.reduce((acc, data) => acc + data.totalMeta , 0)
   )}
 </td>
 <td className="p-3 text-start border-gray-300">
-  ৳{new Intl.NumberFormat('en-IN', { maximumFractionDigits: 0 }).format(
+  ৳ {new Intl.NumberFormat('en-IN', { maximumFractionDigits: 0 }).format(
     employeeData.reduce((acc, data) => acc + data.totalAdminPay, 0)
   )}
 </td>
 <td className="p-3 text-start border-gray-300">
-  ৳{new Intl.NumberFormat('en-IN', { maximumFractionDigits: 0 }).format(
+  ৳ {new Intl.NumberFormat('en-IN', { maximumFractionDigits: 0 }).format(
     myclients
     ?.flatMap(client => client.payments || [])?.reduce((acc, payment) => acc + parseFloat(payment?.amount || 0), 0)
   )}
 </td>
 <td className="p-3 text-start border-gray-300">
-  ৳{new Intl.NumberFormat('en-IN', { maximumFractionDigits: 0 }).format(
+  ৳ {new Intl.NumberFormat('en-IN', { maximumFractionDigits: 0 }).format(
     myclients
     ?.flatMap(client => client.payments || [])?.reduce((acc, payment) => acc + parseFloat(payment?.amount || 0), 0) -
     employeeData.reduce((acc, data) => acc + data.totalAdminPay, 0)

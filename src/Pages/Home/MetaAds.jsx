@@ -18,15 +18,15 @@ const MetaAds = () => {
   const {userr}=useUserr(user?.email)
   
   const initialTab3 =
-    userr?.role === "admin"
-      ? localStorage.getItem("activeTaballcampaignmonthsss5") || "all"
-      : user?.email;
+  userr?.role === "admin"
+  ? localStorage.getItem("activeTab") || "all" 
+  : localStorage.getItem("activeTab") || user?.email; 
 
   const [selectedEmployee3, setSelectedEmployee3] = useState(initialTab3);
 
   const changeTab3 = (tab) => {
     setSelectedEmployee3(tab); 
-    localStorage.setItem("activeTaballcampaignmonthsss5", tab); // Update localStorage
+    localStorage.setItem("activeTab", tab); // Update localStorage
   };
 
   const [myclients, refetch] = useMyClientsByEmail(selectedEmployee3);
@@ -102,20 +102,20 @@ const MetaAds = () => {
       user: user?.displayName,
     };
 
-    AxiosPublic.patch(`/clientCampaign/update/${id}/${ids}`, body)
-      .then((res) => {
-        console.log(res.data);
-        refetch();
-        AxiosPublic.post("/activity", datas).then(() => {
-          document.getElementById(`modal_${ids}`).close();
-          toast.success(`${campaignName} has been successfully updated`);
-        });
+    AxiosPublic.patch(`/clientCampaings/update/${id}/${ids}`, body)
+    .then((res) => {
+      console.log(res.data);
+      refetch();
+      AxiosPublic.post("/activity", datas).then(() => {
         document.getElementById(`modal_${ids}`).close();
-      })
-      .catch((error) => {
-        console.error("Error updating campaign:", error);
-        toast.error("Failed to update campaign");
+        toast.success(`${campaignName} has been successfully updated`);
       });
+      document.getElementById(`modal_${ids}`).close();
+    })
+    .catch((error) => {
+      console.error("Error updating campaign:", error);
+      toast.error("Failed to update campaign");
+    });
   };
 
 
@@ -339,7 +339,18 @@ const MetaAds = () => {
   )}
 </div>
 
-
+<div>
+         <select
+        style={{ backgroundColor: 'var(--bg-color2)', border: 'var(--border)', color: 'var(--text-color2)' }}
+        className="bg-white border  text-black border-gray-400 rounded p-2 mt-1.5"
+        value={selectedEmployee}
+        onChange={(e) => changeTab(e.target.value)}
+      >
+        <option value="all">Select Status</option>
+        <option value="Active">Active</option>
+        <option value="Complete">Complete</option>
+      </select>
+        </div>
   
 
         <div className="w-full lg:w-auto flex flex-col justify-center items-start">
@@ -428,7 +439,9 @@ const MetaAds = () => {
             {displayedItems
   ?.flatMap(client => client.campaings || [])
   .filter(item => 
-    item.role === 'metaAds' &&
+    item.role === 'metaAds' && 
+    (selectedEmployee === 'all' || item.status === selectedEmployee) &&
+    (!selectedYear || new Date(item.date).getFullYear() === parseInt(selectedYear)) &&
     item.campaignName?.toLowerCase().includes(searchQuery.toLowerCase()) &&
     (sortMonth === 'all' || new Date(item.date).getMonth() + 1 === parseInt(sortMonth, 10))
   )

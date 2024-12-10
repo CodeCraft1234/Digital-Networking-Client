@@ -9,22 +9,24 @@ import useMyEmployeePayments from "../../Hook/useMyemployeePayments";
 import { FaEdit, FaMinusSquare } from "react-icons/fa";
 import useUserr from "../../Hook/useUser";
 import useUsers from "../../Hook/useUsers";
+import useAllEmployee from "../../Hook/useAllEmployee";
 
 const AdminPayments = () => {
   const { user } = useContext(AuthContext);
   const {userr}=useUserr(user?.email)
   const [users]=useUsers()
+  const [allEmployees] = useAllEmployee([]);
   
   const initialTab3 =
   userr?.role === "admin"
-    ? localStorage.getItem("activeTaballcampaignmonthsss8") || "all"
-    : user?.email;
+  ? localStorage.getItem("activ") || "all" 
+  : localStorage.getItem("activ") || user?.email; 
 
   const [selectedEmployee3, setSelectedEmployee3] = useState(initialTab3);
 
   const changeTab2 = (tab) => {
     setSelectedEmployee3(tab); // Update the state
-    localStorage.setItem("activeTaballcampaignmonthsss3", tab); // Update localStorage
+    localStorage.setItem("activ", tab); // Update localStorage
   };
 
   const [MyEmployeePayment,refetch]=useMyEmployeePayments(selectedEmployee3)
@@ -155,8 +157,8 @@ const AdminPayments = () => {
 
   const handlePayment = async (e) => {
     e.preventDefault();
-    const employeeName = user?.displayName;
-    const employeeEmail = user?.email;
+    const employeeEmail = e.target.employeeEmail?.value || user?.email;
+    const employeeName = allEmployees.find(e => e.email === employeeEmail)?.name || user?.displayName;
     const payAmount = e.target.payAmount.value;
     const charge = e.target.charge.value;
     const paymentMethod = e.target.paymentMethod.value;
@@ -417,7 +419,26 @@ const AdminPayments = () => {
             />
           </div>
               </div>
-            
+
+             {
+                  userr?.role === "admin" && 
+                  <div className="mt-5">
+                  <label className="block text-black">Select Employee</label>
+                 <select
+                  
+                   className="border bg-white w-full mt-1  py-2   text-black border-black rounded p-2 "
+                   name="employeeEmail"
+                 >
+                   {allEmployees?.filter(f=>f.role === 'employee').map((employee) => (
+                     <option key={employee._id} value={employee.email}>
+                       {employee.name}
+                     </option>
+                   ))}
+                 </select>
+               </div>
+             }
+             
+
           </div>
 
           <div className="mb-4">
@@ -542,13 +563,7 @@ const AdminPayments = () => {
   )}
 </div>
        
-        <input
-    style={{ backgroundColor: 'var(--bg-color2)',border: 'var(--border)', color: 'var(--text-color2)'}}
-    type="date"
-    className="border bg-green-300 text-black border-gray-400 rounded p-2 mt-1"
-    value={selectedDate}
-    onChange={(e) => setSelectedDate(e.target.value)}
-  />
+       
        
           <div className="flex lg:mt-1 justify-center text-center items-center">
             <select

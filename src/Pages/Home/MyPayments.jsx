@@ -1,55 +1,44 @@
-import { useContext, useEffect, useState } from "react";
-import useAdsPayment from "../../Hook/useAdsPayment";
-import useEmployeePayment from "../../Hook/useEmployeePayment";
-import useMpayment from "../../Hook/UseMpayment";
+import { useState } from "react";
 import AdminPayments from "../DashboardRoot/AdminPayments";
 import ClientPayments from "../DashboardRoot/ClientPayments";
-import { AuthContext } from "../../Security/AuthProvider";
 
 
 const MyPayments = () => {
-    const {user}=useContext(AuthContext)
-    const [employeePayment]=useEmployeePayment()
-    const [MPayment] = useMpayment();
-    const initialTab = localStorage.getItem("activeTabAdminPayment") || "adminPay";
-    const [activeTab, setActiveTab] = useState(initialTab);
-  
+  const initialTab = localStorage.getItem("activeTabP") || "employeerPay";
+  const [activeTab, setActiveTab] = useState(initialTab);
+
     const changeTab = (tab) => {
         setActiveTab(tab);
-        localStorage.setItem("activeTabAdminPayment", tab); // Store the active tab in local storage
-      };
+        localStorage.setItem("activeTabP", tab); 
+    };
 
     const getButtonClass = (tab) => 
-        `px-1 py-2 rounded ${activeTab === tab ? ' text-blue-700 font-bold' : ' text-black font-md'}`;
-    
-    const [employeePay,setEmployeePay]=useState([])
-    const [clientPay,setClientPay]=useState([])
-    useEffect(()=>{
-        const emPay=employeePayment.filter(e=>e.employeeEmail === user?.email)
-        setEmployeePay(emPay)
-        const cliPay=MPayment.filter(e=>e.employeeEmail === user?.email)
-        setClientPay(cliPay)
-    },[])
+        `px-3 py-1 lg:px-4 lg:py-2 text-md lg:text-lg rounded-lg transition duration-300 ease-in-out ${
+            activeTab === tab 
+                ? 'bg-blue-600 text-white shadow-lg transform scale-105'  // Active tab styles
+                : 'bg-red-400 text-white hover:bg-gray-300 hover:shadow-md' // Inactive tab styles
+        }`;
 
     return (
       <div>
 
-      <div style={{ backgroundColor: 'var(--bg-color3)', color: 'var(--text-color)',border: 'var(--border)'}} className="flex lg:justify-center rounded-md p-2 justify-center items-center gap-1 lg:mt-5 mt-5 mx-5">
- <button 
-  style={{ backgroundColor: 'var(--bg-table)', color: 'var(--text-color2)'}}
-     className={getButtonClass('adminPay')}
-     onClick={() => changeTab('adminPay')}
-   >
-     Admin Pay 
-   </button>
-   <p className='font-extrabold text-blue-800 text-2xl'>|</p>
- <button 
-  style={{ backgroundColor: 'var(--bg-table)', color: 'var(--text-color2)'}}
-     className={getButtonClass('clientsPay')}
-     onClick={() => changeTab('clientsPay')}
-   >
-     Clients Pay 
-   </button>
+      <div  className="flex lg:justify-center gap-3 rounded-md p-2 justify-center items-center   mt-3 mx-5">
+
+
+                   <button
+                        className={getButtonClass('adminPay')}
+                        onClick={() => changeTab('adminPay')}
+                    >
+                        Admin Pay
+                    </button>
+
+                    {/* Clients Pay Button */}
+                    <button
+                        className={getButtonClass('clientsPay')}
+                        onClick={() => changeTab('clientsPay')}
+                    >
+                        Clients Pay 
+                    </button>
 
        </div>
 

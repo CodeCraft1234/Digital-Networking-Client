@@ -22,47 +22,56 @@ const PageSetup = () => {
     const param = useParams()
     const [campaignss]=useCampaingsByEmail(param?.email)
     const [clients]=useClients()
-    const [datas,setdatas]=useState()
     const AxiosPublic = UseAxiosPublic();
-    const [totalSpent, setTotalSpent] = useState(0);
-    const [totalBills, setTotalBills] = useState(0);
     const [users] = useUsers();
     const [ddd, setDdd] = useState(null);
     const [adsAccount] = useAdsAccount();
+    const [employees, setEmployees] = useState([]);
 
 
     const initialTab3 =
     userr?.role === "admin"
-      ? localStorage.getItem("activeTaballcampaignmonthsss8") || "all"
-      : user?.email;
+    ? localStorage.getItem("activeT") || "all" 
+    : localStorage.getItem("activeT") || user?.email; 
+  
+    const [selectedEmployee3, setSelectedEmployee3] = useState(initialTab3);
+  
+    const changeTab3 = (tab) => {
+      setSelectedEmployee3(tab); // Update the state
+      localStorage.setItem("activeT", tab); // Update localStorage
+    };
 
-  const [selectedEmployee3, setSelectedEmployee3] = useState(initialTab3);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
 
-  const changeTab3 = (tab) => {
-    setSelectedEmployee3(tab); // Update the state
-    localStorage.setItem("activeTaballcampaignmonthsss8", tab); // Update localStorage
-  };
+const initialTab = localStorage.getItem("activeTabsummeryEmpy") || "all";
+const [selectedEmployee, setSelectedEmployee] = useState(initialTab);
+
+const changeTab = (tab) => {
+setSelectedEmployee(tab);
+localStorage.setItem("activeTabsummeryEmpy", tab);
+};
+
+const initialTab2 = localStorage.getItem("activeTabalu");
+const [sortMonth, setSortMonth] = useState(initialTab2 || (new Date().getMonth() + 1).toString());
+
+const changeTab2 = (tab) => {
+setSortMonth(tab);
+localStorage.setItem("activeTabalu", tab);
+};
 
     const [myclients,refetch] = useMyClientsByEmail(selectedEmployee3);
 
     useEffect(() => {
-        const realdata = clients.find((m) => m.clientEmail === param?.email);
-        setdatas(realdata)
+
+      if (users) {
+        setEmployees(users.filter((u) => u.role === "employee"));
+      }
+
 
         const fff = users.find((u) => u.email === user?.email);
         setDdd(fff || {}); 
 
-      const totalBill = campaignss.reduce(
-        (acc, campaign) => acc + parseFloat(campaign.tSpent) * parseFloat(campaign.dollerRate),
-        0
-      );
-      setTotalBills(totalBill);
-    
-      const totalSpent = campaignss.reduce(
-        (acc, campaign) => acc + parseFloat(campaign.tSpent),
-        0
-      );
-      setTotalSpent(totalSpent);
 
 
     }, [clients, users, user, param?.email, campaignss, adsAccount]);
@@ -103,63 +112,6 @@ const PageSetup = () => {
     };
     
   
-    const handleaddblog = (e) => {
-      e.preventDefault();
-      const itemName = e.target.itemName.value;
-      const clientEmail = param?.email;
-      const pageName = e.target.pageName.value;
-      const clientName = datas?.clientName
-      const totalBill = e.target.totalBill.value;
-      const pageUrl = e.target.pageUrl.value;
-      const email = user?.email;
-      const status = "Active";
-      const date = e.target.date.value;
-      const ids = param?.email;
-
-      const generateRandomId = () => {
-        let randomId = '';
-        for (let i = 0; i < 20; i++) {
-          randomId += Math.floor(Math.random() * 10); // Append a random digit (0-9)
-        }
-        return randomId;
-      };
-
-      const idu=generateRandomId()
-  
-      const pageService = {
-        itemName,
-        id: ids,
-        ids: parseFloat(idu),
-        clientEmail,
-        pageName,
-        status,
-        pageUrl,
-        totalBill,
-        email,
-        date,
-        clientName
-      };
-    
-      const datas2 = {
-        title: `Added ${itemName} in Client campaign`,
-        date: new Date(),
-        user: user?.displayName,
-      };
-  
-      AxiosPublic.post("/clients/pageService", { // Correct endpoint
-        id: ids,
-        pageService,
-      })
-      .then((res) => {
-        console.log(res.data);
-        AxiosPublic.post("/activity", datas2).then(() => {
-          toast.success(`${itemName} has been successfully updated`);
-        });
-        document.getElementById(`my_modal_2`).close();
-        refetch();
-      });
-    };
-
     const handledelete = (ids, id) => {
       Swal.fire({
           title: 'Are you sure?',
@@ -215,17 +167,6 @@ const PageSetup = () => {
         });
 };
 
-       const [totalPaymeent, setTotalPayment] = useState([]);
-       const [Mpayments]=useMpymentsByEmail(param?.email)
-     
-       useEffect(() => {
-         const totalBill = Mpayments.reduce(
-           (acc, campaign) => acc + parseFloat(campaign.amount),
-           0
-         );
-         setTotalPayment(totalBill);
-       }, [ Mpayments]);
-
        const today = new Date();
        const formattedDate = today.toISOString()?.split('T')[0];  // "YYYY-MM-DD" format
        
@@ -253,123 +194,10 @@ const PageSetup = () => {
 
       <div style={{ backgroundColor: 'var(--bg-color3)', color: 'var(--text-color)',border: 'var(--border)'}} className="  rounded-lg p-5 mx-1 my-5 ">
         
-        <div className="flex justify-start gap-3 items-center">
-        <div>
+        <div className="flex justify-end gap-3 items-center">
+       
+        <div className="ml-5 flex mb-5 lg:mb-0 gap-3 justify-center">
 
-<button
-className="font-avenir hover:bg-indigo-700 px-5 p-2 lg:w-auto w-full mx-auto   bg-[#05a0db] rounded-lg text-white"
-onClick={() => document.getElementById("my_modal_2").showModal()}
->
-Add a Item
-</button>
-
-<dialog id="my_modal_2" className="modal overflow-hidden">
-<div className="modal-box bg-white">
-  <section className="dark:text-gray-100">
-    <Form
-      onSubmit={handleaddblog}
-      className=" w-full  p-1 mx-auto space-y-5 rounded-md  text-black font-bold"
-    >
-      <div>
-        <h1 className="text-2xl mb-4 text-center font-bold text-black">
-          Add a Item
-        </h1>
-        <div className="mb-4">
-          <label htmlFor="date" className="block mb-1">
-            Date
-          </label>
-          <input
-            id="date"
-            name="date"
-            type="date"
-            placeholder="type...."
-            required
-            defaultValue={formattedDate}
-            className="w-full border border-gray-600 text-black bg-green-300 rounded p-2 mt-1"
-          />
-        </div>
-
-      <div className="grid lg:grid-cols-2 gap-3 items-center">
-      <div className="mb-4">
-          <label htmlFor="name" className="block mb-1 ml-1">
-            Item Name
-          </label>
-          <input
-            id="name"
-            name="itemName"
-            type="text"
-            placeholder="type...."
-            required
-            className="w-full border border-gray-600 text-black bg-white rounded p-2 mt-1"
-          />
-        </div>
-        <div>
-          <label htmlFor="totalBudged" className="block mb-1 ml-1">
-            Total Bill
-          </label>
-          <input
-            step="0.01"
-            id="totalBill"
-            name="totalBudged"
-            type="number"
-            placeholder="type...."
-            required
-            className="w-full border border-gray-600 text-black bg-white rounded p-2 mt-1"
-          />
-        </div>
-      </div>
-
-      <div className="flex items-center gap-2">
-      <div className="mb-4">
-          <label htmlFor="pageName" className="block mb-1 ml-1">
-            Page Name
-          </label>
-          <input
-            id="pageName"
-            name="pageName"
-            type="text"
-            placeholder="type...."
-            required
-            className="w-full border border-gray-600 text-black bg-white rounded p-2 mt-1"
-          />
-        </div>
-        <div className="mb-4">
-          <label htmlFor="name" className="block mb-1 ml-1">
-          Page Url <span className="text-red-600">(Optional)</span>
-          </label>
-          <input
-            id="name"
-            name="pageUrl"
-            type="text"
-            placeholder="type...."
-            className="w-full border border-gray-600 text-black bg-white rounded p-2 mt-1"
-          />
-        </div>
-      </div>
-        
-      </div>
-
-      <div className="grid grid-cols-2 gap-3 mt-4">
-      <button
-          type="button"
-          className="p-2 hover:bg-red-700 rounded-lg bg-red-600 text-white text-center"
-          onClick={() => document.getElementById("my_modal_2").close()}
-        >
-          Close
-        </button>
-        <button
-          type="submit"
-          className="font-avenir px-3 py-2 hover:bg-indigo-700 bg-[#05a0db] rounded-lg text-white text-center"
-        >
-          Submit
-        </button>
-        
-      </div>
-    </Form>
-  </section>
-</div>
-</dialog>
-</div>
         <div className="w-full lg:w-auto flex justify-start gap-3">
   {userr?.role === "admin" ? (
     <div className="flex mt-1.5 justify-center">
@@ -397,6 +225,86 @@ Add a Item
    <></>
   )}
 </div>
+
+<div>
+       <select
+      style={{ backgroundColor: 'var(--bg-color2)', border: 'var(--border)', color: 'var(--text-color2)' }}
+      className="bg-white border  text-black border-gray-400 rounded p-2 mt-1.5"
+      value={selectedEmployee}
+      onChange={(e) => changeTab(e.target.value)}
+    >
+      <option value="all">Select Status</option>
+      <option value="Active">Active</option>
+      <option value="Complete">Complete</option>
+    </select>
+      </div>
+
+      <div className="w-full lg:w-auto flex flex-col justify-center items-start">
+      <select
+        style={{
+          backgroundColor: 'var(--bg-color2)',
+          border: 'var(--border)',
+          color: 'var(--text-color2)',
+        }}
+        className="w-full lg:w-auto border bg-white text-black border-gray-400 rounded p-2 mt-1"
+        value={sortMonth}
+        onChange={(e) => changeTab2(e.target.value)}
+      >
+        
+        {[
+          'January',
+          'February',
+          'March',
+          'April',
+          'May',
+          'June',
+          'July',
+          'August',
+          'September',
+          'October',
+          'November',
+          'December',
+        ].map((month, index) => (
+          <option key={index + 1} value={index + 1}>
+            {month}
+          </option>
+        ))}
+      </select>
+    </div>
+
+
+
+    <div className=" lg:flex text-black justify-center items-center">
+      <select
+      style={{ backgroundColor: 'var(--bg-color2)',border: 'var(--border)', color: 'var(--text-color2)'}}
+        className=" rounded-md p-2 mt-1"
+        value={selectedYear}
+        onChange={(e) => setSelectedYear(e.target.value)}
+      >
+        {Array.from({ length: 31 }, (_, i) => 2020 + i).map((year) => (
+          <option key={year} value={year}>
+            {year}
+          </option>
+        ))}
+      </select>
+    </div>
+ <div>
+ <input
+  style={{ backgroundColor: 'var(--bg-color2)',border: 'var(--border)', color: 'var(--text-color2)'}}
+   type="text"
+   placeholder="Search by campaign name"
+   className="border bg-white  text-black placeholder-gray-500 py-2 mt-1 border-gray-700 rounded-l-lg p-1 flex-1"
+   value={searchQuery}
+   onChange={(e) => setSearchQuery(e.target.value)}
+  />
+  <button
+   className="bg-black  text-white border border-black shadow-2xl rounded-r-lg p-2 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
+   onClick={() => {/* Add search functionality here */}}
+  >
+   Search
+  </button>
+ </div>
+</div>
         </div>
 
 
@@ -418,7 +326,14 @@ Add a Item
               </tr>
             </thead>
             <tbody>
-              {myclients?.flatMap(client => client.pageService || [])?.map((work, index) => (
+              {myclients?.flatMap(client => client.pageService || [])
+              ?.filter(item => 
+                (selectedEmployee === 'all' || item.status === selectedEmployee) &&
+                (!selectedYear || new Date(item.date).getFullYear() === parseInt(selectedYear)) &&
+                item?.itemName?.toLowerCase().includes(searchQuery.toLowerCase()) &&
+                (sortMonth === 'all' || new Date(item.date).getMonth() + 1 === parseInt(sortMonth, 10))
+              )
+              .map((work, index) => (
                  <tr style={{ backgroundColor: 'var(--bg-table)', color: 'var(--text-color2)'}}
                  key={work._id}
                  className={`${

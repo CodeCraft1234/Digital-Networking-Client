@@ -22,14 +22,18 @@ const Salary = () => {
   const [users] = useUsers();
   const [allEmployees] = useAllEmployee([]);
 
-  // Determine initial selected tab
-  const initialTab = userr?.role === "admin" ? localStorage.getItem("ac") || "all" : user?.email;
+
+  const initialTab =
+  userr?.role === "admin"
+  ? localStorage.getItem("a") || "all" 
+  : localStorage.getItem("a") || user?.email; 
+
   const [selectedEmployee, setSelectedEmployee] = useState(initialTab);
 
   // Change tab and save selection to local storage
   const changeTab = (tab) => {
     setSelectedEmployee(tab);
-    localStorage.setItem("ac", tab);
+    localStorage.setItem("a", tab);
   };
 
   // Fetch data based on selected employee

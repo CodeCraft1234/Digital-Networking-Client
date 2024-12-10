@@ -93,40 +93,60 @@ const router = createBrowserRouter([
         element:<CampaignTable2></CampaignTable2>
        },
       {
-        path:'dashboard/metaAds',
+        path:'/metaAds',
         element:<MetaAds></MetaAds>
        },
       {
-        path:'dashboard/googleAds',
+        path:'/googleAds',
         element:<GoogleAds></GoogleAds>
        },
       {
-        path:'dashboard/pageSetup',
+        path:'/pageSetup',
         element:<PageSetup></PageSetup>
        },
       {
-        path:'dashboard/monthlySpend',
+        path:'/monthlySpend',
         element:<MonthlySpend></MonthlySpend>
        },
 
        {
-        path:'dashboard/clients',
+        path:'/clients',
         element:<Clients></Clients>
       },
       {
-        path:'/dashboard/bankInfo',
+        path:'/bankInfo',
         element:<BankInfo></BankInfo>
        },
        {
-        path:'dashboard/summery',
+        path:'/summery',
         element:<Summery></Summery>
        },
        {
-        path:'dashboard/salary',
+        path:'/salary',
         element:<Salary></Salary>
        },
 
+       {
+        path:'/allPayments',
+        element:<PaymentHistory></PaymentHistory>
+       },
 
+       {
+        path:'/AdsAccount',
+        element:<AdsAccount></AdsAccount>
+      },
+      {
+        path:'/allUsers',
+        element:<AllUsers></AllUsers>
+      },
+      {
+        path:'/payoneer',
+        element:<Payoneer></Payoneer>
+       },
+      {
+        path:'/myPayments',
+        element:<MyPayments></MyPayments>
+       },
        {
         path:'/dashboard/adsPayments',
         element:<AdsPayments></AdsPayments>
@@ -176,15 +196,9 @@ const router = createBrowserRouter([
         path:'dashboard/allAdSAccount',
         element:<AdsAccount></AdsAccount>
       },
-      {
-        path:'dashboard/allAdSAccount',
-        element:<AdsAccount></AdsAccount>
-      },
 
-      {
-        path:'dashboard/allUsers',
-        element:<AllUsers></AllUsers>
-      },
+
+
       {
         path:'dashboard',
         element:<ClientHome></ClientHome>
@@ -209,10 +223,7 @@ const router = createBrowserRouter([
         path:'dashboard/history',
         element:<History></History>
        },
-       {
-        path:'dashboard/allPayments',
-        element:<PaymentHistory></PaymentHistory>
-       },
+
 
        {
         path:'dashboard/allEmployeeClients/:email',
@@ -227,10 +238,7 @@ const router = createBrowserRouter([
         path:'dashboard/myPayments',
         element:<MyPayments></MyPayments>
        },
-       {
-        path:'dashboard/payoneer',
-        element:<Payoneer></Payoneer>
-       },
+
        {
         path:'dashboard/notification',
         element:<Notification></Notification>

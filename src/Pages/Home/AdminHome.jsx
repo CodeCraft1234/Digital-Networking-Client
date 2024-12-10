@@ -2,7 +2,6 @@
 import { Helmet } from "react-helmet-async";
 import useUsers from "../../Hook/useUsers";
 import useEmployeePayment from "../../Hook/useEmployeePayment";
-import useMpayment from "../../Hook/UseMpayment";
 import { BsCashCoin, BsCashStack } from "react-icons/bs";
 import useActivity from "../../Hook/useActivity";
 import { TbReorder } from "react-icons/tb";
@@ -18,86 +17,82 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
-import useCampaings from "../../Hook/useCampaign";
+
 import useClients from "../../Hook/useClient";
 import LineChart from "./LineChart";
 import PieChart from "./PieChart";
 import RadarChart from "./RaderChart";
+import useClientsCampaingss from "../../Hook/useClientCampaingss";
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
 
 const AdminHome = () => {
   const [users] = useUsers();
+  const [clientsPayments]=useClients()
+  const [clientsCampaingss]=useClientsCampaingss()
   const [employeePayment] = useEmployeePayment();
-  const [MPayment]=useMpayment()
-  const [campaigns]=useCampaings()
-  const [clients]=useClients()
-  console.log(MPayment,employeePayment);
 
-  const tPay2 = campaigns?.filter(campaign =>
-    clients.some(client => client.clientEmail === campaign.clientEmail)
-  );
+
   
   const today = new Date();
   const startOfWeek = new Date(today.getFullYear(), today.getMonth(), today.getDate() - today.getDay());
   const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
 
-  const todayClients = clients?.filter(client => {
+  const todayClients = clientsPayments?.filter(client => {
     const clientDate = new Date(client.date);
     return clientDate.toDateString() === today.toDateString();
   });
 
-  const weeklyClients = clients?.filter(client => {
+  const weeklyClients = clientsPayments?.filter(client => {
     const clientDate = new Date(client.date);
     return clientDate >= startOfWeek && clientDate <= today;
   });
 
-  const monthlyClients = clients?.filter(client => {
+  const monthlyClients = clientsPayments?.filter(client => {
     const clientDate = new Date(client.date);
     return clientDate >= startOfMonth && clientDate <= today;
   });
 
-  const todayCamClients = tPay2?.filter(client => {
+  const todayCamClients = clientsCampaingss?.filter(client => {
     const clientDate = new Date(client.date);
     return clientDate.toDateString() === today.toDateString();
   });
 
-  const weeklyCamClients = tPay2?.filter(client => {
+  const weeklyCamClients = clientsCampaingss?.filter(client => {
     const clientDate = new Date(client.date);
     return clientDate >= startOfWeek && clientDate <= today;
   });
 
-  const monthlCamyClients = tPay2?.filter(client => {
+  const monthlCamyClients = clientsCampaingss?.filter(client => {
     const clientDate = new Date(client.date);
     return clientDate >= startOfMonth && clientDate <= today;
   });
 
-  const tPay = MPayment?.filter(campaign =>
-    clients.some(client => client.clientEmail === campaign.clientEmail)
-  );
 
-  const todayTotal = tPay
-    ?.filter(payment => {
-      const paymentDate = new Date(payment.date);
-      return paymentDate.toDateString() === today.toDateString();
-    })
-    .reduce((sum, payment) => sum + payment.amount, 0);
-  
-  const weeklyTotal = tPay
-    ?.filter(payment => {
-      const paymentDate = new Date(payment.date);
-      return paymentDate >= startOfWeek && paymentDate <= today;
-    })
-    .reduce((sum, payment) => sum + payment.amount, 0);
-  
-  const monthlyTotal = tPay
-    ?.filter(payment => {
-      const paymentDate = new Date(payment.date);
-      return paymentDate >= startOfMonth && paymentDate <= today;
-    })
-    .reduce((sum, payment) => sum + payment.amount, 0);
-       
+  const todayTotal = clientsPayments
+  ?.flatMap(client => client.payments) // Flatten all payments into a single array
+  ?.filter(payment => {
+    const paymentDate = new Date(payment?.date); // Ensure `payment.date` exists and is a valid date
+    return paymentDate.toDateString() === today.toDateString();
+  })
+  .reduce((sum, payment) => sum + payment.amount, 0);
+
+const weeklyTotal = clientsPayments
+  ?.flatMap(client => client.payments) // Flatten all payments into a single array
+  ?.filter(payment => {
+    const paymentDate = new Date(payment?.date);
+    return paymentDate >= startOfWeek && paymentDate <= today;
+  })
+  .reduce((sum, payment) => sum + payment.amount, 0);
+
+const monthlyTotal = clientsPayments
+  ?.flatMap(client => client.payments) // Flatten all payments into a single array
+  ?.filter(payment => {
+    const paymentDate = new Date(payment?.date);
+    return paymentDate >= startOfMonth && paymentDate <= today;
+  })
+  .reduce((sum, payment) => sum + payment.amount, 0);
   /////////////////////////////////////////////////////////////////////////////////
 
 
@@ -368,10 +363,10 @@ const AdminHome = () => {
                  
                    <p>Today Income: <span className="font-bold"><span className="text-sm font-extrabold">৳</span> {todayTotal}</span></p>
                     
-                    <p>This Week Income: <span className="font-bold">
+                    <p>Last 7 days Income: <span className="font-bold">
                     <span className="text-sm font-extrabold">৳</span> {weeklyTotal}
                        </span></p>
-                    <p>This Month Income: <span className="font-bold"><span className="text-sm font-extrabold">৳</span> {monthlyTotal}</span></p>
+                    <p>Last 30 days Income: <span className="font-bold"><span className="text-sm font-extrabold">৳</span> {monthlyTotal}</span></p>
                  </div>
                       </div>
                      </div>
@@ -390,10 +385,10 @@ const AdminHome = () => {
                  
                    <p>Today Payments: <span className="font-bold"><span className="text-sm font-extrabold">৳</span> {todayPayAmountTotal}</span></p>
                     
-                    <p>This week Payments: <span className="font-bold">
+                    <p>Last 7 days Payment: <span className="font-bold">
                     <span className="text-sm font-extrabold">৳</span> {thisWeekPayAmountTotal}
                        </span></p>
-                    <p>This Month Payments: <span className="font-bold"><span className="text-sm font-extrabold">৳</span> {thisMonthPayAmountTotal}</span></p>
+                    <p>Last 30 days Payment: <span className="font-bold"><span className="text-sm font-extrabold">৳</span> {thisMonthPayAmountTotal}</span></p>
                     
                  </div>
 
@@ -407,7 +402,7 @@ const AdminHome = () => {
                         <div className="p-5 rounded-lg mb-5" style={{ backgroundColor: 'var(--bg-color3)', color: 'var(--text-color2)', border: 'var(--border)' }}>
                         <h2 style={{ backgroundColor: 'var(--bg-color3)', color: 'var(--text-color2)',  }} className=" font-bold p-3">Admin Payment & Transaction Overview</h2>
 
-                     <LineChart MyEmployeePayment={employeePayment} tPay={tPay}></LineChart>
+                     <LineChart MyEmployeePayment={employeePayment} tPay={clientsPayments}></LineChart>
                         </div>
                         
                        <div className="grid lg:grid-cols-2 gap-5 ">
@@ -469,10 +464,10 @@ const AdminHome = () => {
                  
                    <p>Today Orders: <span className="font-bold"><span className="text-sm font-extrabold"></span> {todayClients.length}</span></p>
                     
-                    <p>This week Orders: <span className="font-bold">
+                    <p>Last 7 days Order: <span className="font-bold">
                     <span className="text-sm font-extrabold"></span> {weeklyClients.length}
                        </span></p>
-                    <p>This Month Orders: <span className="font-bold"><span className="text-sm font-extrabold"></span> {monthlyClients.length}</span></p>
+                    <p>Last 30 days Order: <span className="font-bold"><span className="text-sm font-extrabold"></span> {monthlyClients.length}</span></p>
                     
                  </div>
                       </div>
@@ -489,10 +484,10 @@ const AdminHome = () => {
                  
                    <p>Today Campaigns: <span className="font-bold"><span className="text-sm font-extrabold"></span> {todayCamClients.length}</span></p>
                     
-                    <p>This week Campaigns: <span className="font-bold">
+                    <p>Last 7 days Campaigns: <span className="font-bold">
                     <span className="text-sm font-extrabold"></span> {weeklyCamClients.length}
                        </span></p>
-                    <p>This Month Campaigns: <span className="font-bold"><span className="text-sm font-extrabold"></span> {monthlCamyClients.length}</span></p>
+                    <p>Last 30 days Campaigns: <span className="font-bold"><span className="text-sm font-extrabold"></span> {monthlCamyClients.length}</span></p>
                   
                  </div>
                       </div>

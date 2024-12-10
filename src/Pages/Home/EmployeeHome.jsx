@@ -27,8 +27,6 @@ import useMyEmployeePayments from "../../Hook/useMyemployeePayments";
 import LineChart from "./LineChart";
 import PieChart from "./PieChart";
 import RadarChart from "./RaderChart";
-import DoughnutChart from "./DouughtOurChart";
-import useMyMyActivityEmail from "../../Hook/useMyActivity";
 import useMyActivity from "../../Hook/useMyActivity";
 
 

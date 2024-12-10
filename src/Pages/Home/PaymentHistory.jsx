@@ -1,23 +1,25 @@
-import { useState } from 'react';
-import EmployeePayments from './EmployeePayments';
-import AllClientsPayments from './AllClientsPayments';
+import { useContext, useState } from 'react';
 import AllAdsPayments from '../DashboardRoot/AllAdsPayments';
 import { Helmet } from 'react-helmet-async';
 import SalaryPayments from './SalaryPayment';
 import ClientPayments from '../DashboardRoot/ClientPayments';
 import AdminPayments from '../DashboardRoot/AdminPayments';
+import { AuthContext } from '../../Security/AuthProvider';
+import useUserr from '../../Hook/useUser';
 
 const PaymentHistory = () => {
 
-    const initialTab = localStorage.getItem("activeTabPayment") || "employeerPay";
+    const { user } = useContext(AuthContext);
+    const {userr}=useUserr(user?.email)
+
+    const initialTab = localStorage.getItem("activeTabP") || "employeerPay";
     const [activeTab, setActiveTab] = useState(initialTab);
 
     const changeTab = (tab) => {
         setActiveTab(tab);
-        localStorage.setItem("activeTabPayment", tab); // Store the active tab in local storage
+        localStorage.setItem("activeTabP", tab); 
     };
 
-    // Dynamic classes for active and inactive buttons
     const getButtonClass = (tab) => 
         `px-3 py-1 lg:px-4 lg:py-2 text-md lg:text-lg rounded-lg transition duration-300 ease-in-out ${
             activeTab === tab 
@@ -51,12 +53,15 @@ const PaymentHistory = () => {
                     </button>
 
                     {/* Contributor Pay Button */}
-                    <button
+                    {
+                        userr?.role === 'admin' &&  <button
                         className={getButtonClass('contributorPay')}
                         onClick={() => changeTab('contributorPay')}
                     >
                         Contributor Pay
                     </button>
+                    }
+                   
                     <button
                         className={getButtonClass('salaryPay')}
                         onClick={() => changeTab('salaryPay')}

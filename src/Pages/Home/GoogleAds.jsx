@@ -18,19 +18,18 @@ const GoogleAds = () => {
   const {userr}=useUserr(user?.email)
   
   const initialTab3 =
-    userr?.role === "admin"
-      ? localStorage.getItem("activeTaballcampaignmonthsss7") || "all"
-      : user?.email;
+  userr?.role === "admin"
+  ? localStorage.getItem("activeTa") || "all" 
+  : localStorage.getItem("activeTa") || user?.email; 
 
   const [selectedEmployee3, setSelectedEmployee3] = useState(initialTab3);
 
   const changeTab3 = (tab) => {
-    setSelectedEmployee3(tab); // Update the state
-    localStorage.setItem("activeTaballcampaignmonthsss7", tab); // Update localStorage
+    setSelectedEmployee3(tab); 
+    localStorage.setItem("activeTa", tab); // Update localStorage
   };
 
   const [myclients, refetch] = useMyClientsByEmail(selectedEmployee3);
-  console.log(myclients);
 
   const AxiosPublic=UseAxiosPublic()
   const [mycampaigns] = useMyCampaingsByEmail(user?.email);
@@ -103,20 +102,20 @@ const GoogleAds = () => {
       user: user?.displayName,
     };
 
-    AxiosPublic.patch(`/clientCampaign/update/${id}/${ids}`, body)
-      .then((res) => {
-        console.log(res.data);
-        refetch();
-        AxiosPublic.post("/activity", datas).then(() => {
-          document.getElementById(`modal_${ids}`).close();
-          toast.success(`${campaignName} has been successfully updated`);
-        });
+    AxiosPublic.patch(`/clientCampaings/update/${id}/${ids}`, body)
+    .then((res) => {
+      console.log(res.data);
+      refetch();
+      AxiosPublic.post("/activity", datas).then(() => {
         document.getElementById(`modal_${ids}`).close();
-      })
-      .catch((error) => {
-        console.error("Error updating campaign:", error);
-        toast.error("Failed to update campaign");
+        toast.success(`${campaignName} has been successfully updated`);
       });
+      document.getElementById(`modal_${ids}`).close();
+    })
+    .catch((error) => {
+      console.error("Error updating campaign:", error);
+      toast.error("Failed to update campaign");
+    });
   };
 
 
@@ -347,7 +346,7 @@ const GoogleAds = () => {
         value={selectedEmployee}
         onChange={(e) => changeTab(e.target.value)}
       >
-        <option value="All">Status</option>
+        <option value="all">Select Status</option>
         <option value="Active">Active</option>
         <option value="Complete">Complete</option>
       </select>
@@ -443,6 +442,8 @@ const GoogleAds = () => {
   ?.flatMap(client => client.campaings || [])
   .filter(item => 
     item.role === 'googleAds' &&
+    (selectedEmployee === 'all' || item.status === selectedEmployee) &&
+    (!selectedYear || new Date(item.date).getFullYear() === parseInt(selectedYear)) &&
     item?.campaignName?.toLowerCase().includes(searchQuery.toLowerCase()) &&
     (sortMonth === 'all' || new Date(item.date).getMonth() + 1 === parseInt(sortMonth, 10))
   )

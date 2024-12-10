@@ -19,21 +19,22 @@ const Clients = () => {
   const { userr } = useUserr(user?.email); // Fetch user info
   const [users] = useUsers(); // Fetch all users
   
-  // Default tab: admin can view "all" or specific users; others see only their own data
   const initialTab3 =
-    userr?.role === "admin"
-      ? localStorage.getItem("activeTaballcampaignmonthsss3") || "all"
-      : user?.email;
+  userr?.role === "admin"
+    ? localStorage.getItem("activeTaba") || "all" 
+    : localStorage.getItem("activeTaba") || user?.email; 
+
+
   
   const [selectedEmployee3, setSelectedEmployee3] = useState(initialTab3);
   
-  // Fetch clients data based on the selected employee
   const [myclients, refetch] = useMyClientsByEmail(selectedEmployee3);
+  console.log(myclients,selectedEmployee3);
   
   // Function to change the selected employee and store it in localStorage
   const changeTab3 = (tab) => {
     setSelectedEmployee3(tab);
-    localStorage.setItem("activeTaballcampaignmonthsss3", tab);
+    localStorage.setItem("activeTaba", tab);
     refetch(); // Refetch the data when tab changes
   };
   

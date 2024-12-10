@@ -1,12 +1,12 @@
-
 import { Line } from "react-chartjs-2";
-import "chart.js/auto"; // Ensures the Chart.js works correctly with React
+import "chart.js/auto"; // Ensures Chart.js works correctly with React
 
-const LineChart = ({ MyEmployeePayment, tPay }) => {
+const LineChart = ({ MyEmployeePayment = [], tPay = [] }) => {
   const today = new Date();
 
   // Helper function to check if a date is in the given month and year
   const isInThisMonth = (date, month, year) => {
+    if (!date) return false; // Guard against invalid dates
     const paymentDate = new Date(date);
     return paymentDate.getMonth() === month && paymentDate.getFullYear() === year;
   };
@@ -28,11 +28,13 @@ const LineChart = ({ MyEmployeePayment, tPay }) => {
     );
 
     // Transaction Totals
-    const monthlyTransactions = tPay?.filter((payment) =>
-      isInThisMonth(payment.date, month, today.getFullYear())
+    const monthlyTransactions = tPay.flatMap((entry) =>
+      entry.payments?.filter((payment) =>
+        isInThisMonth(payment?.date, month, today.getFullYear())
+      )
     );
     const monthlyTransactionTotal = monthlyTransactions.reduce(
-      (sum, payment) => sum + parseFloat(payment.amount || 0),
+      (sum, payment) => sum + parseFloat(payment?.amount || 0),
       0
     );
 
@@ -71,7 +73,7 @@ const LineChart = ({ MyEmployeePayment, tPay }) => {
       legend: {
         position: "top",
         labels: {
-          color: 'var(--text-color)', // Legend text color
+          color: "var(--text-color)", // Legend text color
         },
       },
       tooltip: {
@@ -83,13 +85,13 @@ const LineChart = ({ MyEmployeePayment, tPay }) => {
     scales: {
       x: {
         ticks: {
-          color: 'var(--text-color)', // X-axis text color
+          color: "var(--text-color)", // X-axis text color
         },
       },
       y: {
         beginAtZero: true,
         ticks: {
-          color: 'var(--text-color)',// Y-axis text color
+          color: "var(--text-color)", // Y-axis text color
           callback: (value) => `$${value.toFixed(2)}`, // Format Y-axis ticks
         },
       },

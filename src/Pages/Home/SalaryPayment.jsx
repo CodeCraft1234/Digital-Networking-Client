@@ -18,15 +18,15 @@ const SalaryPayments = () => {
   
   const initialTab3 =
   userr?.role === "admin"
-    ? localStorage.getItem("activeTaballcampaignmonthsss8") || "all"
-    : user?.email;
+  ? localStorage.getItem("ac") || "all" 
+  : localStorage.getItem("ac") || user?.email; 
 
   const [selectedEmployee3, setSelectedEmployee3] = useState(initialTab3);
   const {userr2}=useUserr2(selectedEmployee3)
 
   const changeTab2 = (tab) => {
     setSelectedEmployee3(tab); 
-    localStorage.setItem("activeTaballcampaignmonthsss3", tab); 
+    localStorage.setItem("ac", tab); 
   };
 
   const [MySalaryPayment,refetch]=useMySalaryPayments(selectedEmployee3)
