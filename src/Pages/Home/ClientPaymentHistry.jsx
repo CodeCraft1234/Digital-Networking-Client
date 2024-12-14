@@ -53,86 +53,82 @@ const ClientPaymentHistry = () => {
     e.preventDefault();
     const paymentMethod = e.target.paymentMethod.value;
     const amount = parseFloat(e.target.amount.value);
-    const date =  e.target.date.value;
+    const date = e.target.date.value;
     const note = e.target.note.value;
     const clientEmail = param?.email;
     const employeeEmail = user?.email;
-    const ids=param?.email
+    const ids = param?.email;
     const payments = {
       paymentMethod,
       amount,
       note,
-      id:ids,
-      ids: generateRandomId(), 
+      id: ids,
+      ids: generateRandomId(),
       clientEmail,
-      clientName:findClients.clientName,
+      clientName: findClients.clientName,
       employeeEmail,
       date,
     };
-    AxiosPublic.post("/clients/payments", {
-      id: ids, 
-      payments,
-    })
-      .then((res) => {
-        console.log("Payment successful:", res.data);
-        refetch();
-        document.getElementById("my_modal_8").close();
-        toast.success("Payment successful");
-      })
-      .catch((error) => {
-        console.error("Error posting payment:", error);
-        toast.error("Payment failed");
-      });
     
+    try {
+      const res = await AxiosPublic.post("/clients/payments", { id: ids, payments });
+      console.log("Payment successful:", res.data);
+      refetch();
+      document.getElementById("my_modal_8").close();
+      toast.success(`Payment of ${amount} via ${paymentMethod} was successful!`);
+    } catch (error) {
+      console.error("Error posting payment:", error);
+      toast.error(`Payment failed: ${error?.response?.data?.message || "An error occurred"}`);
+    }
   };
   
-  const handleUpdatePayment = async (e, id,clientName) => {
+  
+  const handleUpdatePayment = async (e, id, clientName) => {
     e.preventDefault();
     const amount = parseFloat(e.target.amount.value);
     const date = e.target.date.value;
     const note = e.target.note.value;
     const paymentMethod = e.target.paymentMethod.value;
     const body = { note, amount, date, paymentMethod };
-    const datas={title: `Update Payment ${amount} from ${clientName} in ${paymentMethod}`,date:new Date(),user:user?.displayName}
+    const datas = { title: `Update Payment ${amount} from ${clientName} in ${paymentMethod}`, date: new Date(), user: user?.displayName };
+    
     try {
       await AxiosPublic.patch(`/Mpayment/${id}`, body);
-      AxiosPublic.post("/activity", datas)
-      .then((res) => {
-        refetch();
-        document.getElementById("my_modal_2").close()
-        console.log(res.data);
-      })
+      await AxiosPublic.post("/activity", datas);
       refetch();
       document.getElementById(`modal_${id}`).close();
+      toast.success(`Payment updated: ${amount} from ${clientName} via ${paymentMethod}`);
     } catch (error) {
       console.error("Error updating payment:", error);
-      toast.error("Failed to update payment");
+      toast.error(`Failed to update payment: ${error?.response?.data?.message || "An error occurred"}`);
     }
   };
   
+  
   const handledelete = (ids, id) => {
     Swal.fire({
-        title: 'Are you sure?',
-        text: "You won't be able to revert this!",
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
-        confirmButtonText: 'Yes, delete it!'
+      title: 'Are you sure?',
+      text: "You won't be able to revert this!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, delete it!'
     }).then((result) => {
-        if (result.isConfirmed) {
-            AxiosPublic.delete(`/clientPayment/delete/${id}/${ids}`)
-                .then((res) => {
-                    toast.success("Campaign deleted successfully!");
-                    refetch(); // Refresh data after deletion
-                })
-                .catch((error) => {
-                    console.error("Error deleting campaign:", error);
-                    toast.error("Failed to delete the campaign. Please try again.");
-                });
-        }
+      if (result.isConfirmed) {
+        AxiosPublic.delete(`/clientPayment/delete/${id}/${ids}`)
+          .then((res) => {
+            toast.success("Payment deleted successfully!");
+            refetch(); // Refresh data after deletion
+          })
+          .catch((error) => {
+            console.error("Error deleting payment:", error);
+            toast.error(`Failed to delete payment: ${error?.response?.data?.message || "An error occurred"}`);
+          });
+      }
     });
-};
+  };
+  
 
   const today = new Date();
   const formattedDate = today.toISOString().split('T')[0];  
@@ -172,7 +168,7 @@ const ClientPaymentHistry = () => {
 
        <div className="flex  items-center mt-4 mb-2 justify-between ">
         <button
-      className="font-avenir hover:bg-indigo-700 px-4 p-2 w-full lg:w-auto   bg-[#05a0db]  rounded-lg text-white"
+      className="add"
        onClick={() => document.getElementById("my_modal_8").showModal()}
      >
         Pay Now
@@ -310,13 +306,13 @@ const ClientPaymentHistry = () => {
 </div>
 
 
-  <div className="mb-4">
+            <div className="mb-4">
             <label className="block text-gray-700">Note (optional)</label>
             <input
              placeholder="type note..."
               type="text"
               name="note"
-              className="w-full border border-gray-600 text-black bg-white rounded p-2 mt-1"
+              className="input2"
             />
           </div>
          </div>
@@ -325,14 +321,14 @@ const ClientPaymentHistry = () => {
         <div className="grid grid-cols-2 gap-3 mt-8">
           <button
             type="button"
-            className="p-2 hover:bg-red-700 rounded-lg bg-red-600 text-white text-center"
+            className="close"
             onClick={() => document.getElementById("my_modal_8").close()}
           >
             Close
           </button>
           <button
             type="submit"
-            className="font-avenir hover:bg-indigo-700 px-3 py-2 bg-[#2220af] rounded-lg text-white text-center"
+            className="submit"
           >
             Pay Now
           </button>
@@ -388,8 +384,8 @@ const ClientPaymentHistry = () => {
                 
                   <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-200 text-start">
                     {payment.clientName}
-                   
                   </td>
+
                   <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-200 text-center">
                     <span className="text-md mr-1 font-extrabold">৳</span>{" "}
                     {payment.amount}

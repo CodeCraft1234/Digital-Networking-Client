@@ -29,11 +29,11 @@ const AdsAccount = () => {
     return (
         <div>
             <Helmet>
-                <title>Payments History | Digital Network</title>
+                <title>Ads Account | Digital Network</title>
                 <link rel="canonical" href="https://www.example.com/" />
             </Helmet>
 
-            <div className="px-2 mx-5   mt-5 rounded-lg" >
+            <div className=" rounded-lg" >
                 <div className="flex justify-center items-center gap-5 my-5">
                     {/* Employeer Pay Button */}
                     <button

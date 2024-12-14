@@ -6,7 +6,6 @@ import { useContext, useState } from "react";
 import { toast } from "react-toastify";
 import UseAxiosPublic from "../../Axios/UseAxiosPublic";
 import { ImCross } from "react-icons/im";
-import { Helmet } from "react-helmet-async";
 import { IoIosAddCircleOutline } from "react-icons/io";
 import useAllEmployee from "../../Hook/useAllEmployee";
 import useMyAdsAccountByEmail from "../../Hook/useMyAdsAccountNyEmail";
@@ -14,21 +13,20 @@ import { AuthContext } from "../../Security/AuthProvider";
 import useUserr from "../../Hook/useUser";
 
 const GoogleAdsAccount = () => {
-
   const { user } = useContext(AuthContext);
   const [users]=useUsers()
   const {userr}=useUserr(user?.email)
   
   const initialTab3 =
   userr?.role === "admin"
-  ? localStorage.getItem("a3") || "all" 
-  : localStorage.getItem("a3") || user?.email; 
+  ? localStorage.getItem("a2") || "all" 
+  : localStorage.getItem("a2") || user?.email; 
 
 const [selectedEmployee3, setSelectedEmployee3] = useState(initialTab3);
 
   const changeTab3 = (tab) => {
-    setSelectedEmployee3(tab); // Update the state
-    localStorage.setItem("a3", tab); // Update localStorage
+    setSelectedEmployee3(tab); 
+    localStorage.setItem("a2", tab); 
   };
 
     const [adsAccount] = useAdsAccount();
@@ -36,14 +34,14 @@ const [selectedEmployee3, setSelectedEmployee3] = useState(initialTab3);
     const AxiosPublic = UseAxiosPublic();
     const [modalData, setModalData] = useState(null);
     const [modalData2, setModalData2] = useState(null);
-    const initialTab = localStorage.getItem("activeTabAlladsAccountStatus") || "Active";
+    const initialTab = localStorage.getItem("activeTabAlladsAccountStatus4") || "Active";
     const [myAdsAccount,refetch]=useMyAdsAccountByEmail(selectedEmployee3)
     const [selectedStatus, setSelectedStatus] = useState(initialTab);
     const [allEmployees] = useAllEmployee([]);
 
     const changeTab = (tab) => {
       setSelectedStatus(tab);
-      localStorage.setItem("activeTabAlladsAccountStatus", tab); 
+      localStorage.setItem("activeTabAlladsAccountStatus4", tab); 
     };
     
 
@@ -90,8 +88,8 @@ const [selectedEmployee3, setSelectedEmployee3] = useState(initialTab3);
         ids,
         totalSpentt,
         accountName,
-        role:'googleSpend',
         date,
+        role:'googleSpend',
         employeeName
       };
   
@@ -129,6 +127,7 @@ const [selectedEmployee3, setSelectedEmployee3] = useState(initialTab3);
       const threshold=0
       const totalSpent=0
       const status='Active'
+      
       const data = { accountName,totalSpent,currentBallence,threshold,role:'googleAdsAccount', paymentDate,status, employeeEmail,employeerName };
   
       console.log(data);
@@ -144,12 +143,9 @@ const [selectedEmployee3, setSelectedEmployee3] = useState(initialTab3);
     const formattedDate = today.toISOString().split('T')[0]; 
 
     return (
-        <div style={{ backgroundColor: 'var(--bg-color3)', color: 'var(--text-color)',border: 'var(--border)'}} className="m-5 rounded-lg ">
-           <Helmet>
-             <title>All Ads Account | Digital Network </title>
-             <link rel="canonical" href="https://www.example.com/" />
-           </Helmet>
-       
+        <div style={{ backgroundColor: 'var(--bg-color3)', color: 'var(--text-color)',border: 'var(--border)'}} className=" rounded-lg ">
+ 
+          
 
           <div>
 
@@ -157,12 +153,12 @@ const [selectedEmployee3, setSelectedEmployee3] = useState(initialTab3);
 
 
             <div className="flex justify-between lg:justify-between  ml-5  my-5  mx-auto   items-center gap-3 ">
-            <div >
+            <div>
                  <button 
-                     className="add flex justify-start gap-1 items-center"
+                     className="add f-center"
                       onClick={() => document.getElementById("my_modal_3").showModal()}
                         >
-                     <IoIosAddCircleOutline /> <span className="inline">Add Google Account</span>
+                     <IoIosAddCircleOutline /> <span className="inline">Add Meta Account</span>
                       </button>
     
                <dialog id="my_modal_3" className="modal">
@@ -170,28 +166,28 @@ const [selectedEmployee3, setSelectedEmployee3] = useState(initialTab3);
         <form onSubmit={(e) => handleAddAdsAcount(e)}>
           <div className="mb-4">
             <h1
-              className="text-black flex hover:text-red-500 justify-end"
+              className="text-black hover:text-red-500 f-end"
               onClick={() => document.getElementById("my_modal_3").close()}
             >
               <ImCross />
             </h1>
-              <div className="gid lg:grid-cols-2 gap-3">
-              <div>
+              <div className="grid lg:grid-cols-2 items-center gap-3">
+              <div className="col-span-1">
            <label className="block text-black">Date</label>
             <input
               required
               type="date"
               name="paymentDate"
               defaultValue={formattedDate}
-              className="w-full border bg-green-300 border-gray-600 text-black rounded p-2 mt-1"
+              className="input2"
             />
            </div>
 
-        <div className="mt-5">
+        <div className="col-span-1 w-full">
           <label className="block text-black">Select Employee</label>
          <select
           
-           className="border bg-white w-full mt-1  py-2   text-black border-black rounded p-2 "
+           className="select2 w-full"
            name="employeeEmail"
          >
            {allEmployees?.filter(f=>f.role === 'employee').map((employee) => (
@@ -211,21 +207,21 @@ const [selectedEmployee3, setSelectedEmployee3] = useState(initialTab3);
               required
               name="accountName"
               placeholder="type here..."
-              className="w-full border border-gray-600 text-black bg-white rounded p-2 mt-1"
+              className="input2"
             />
           </div>
           
           <div className="modal-action grid grid-cols-2 gap-4">
             <button
               type="button"
-              className="p-2 rounded-lg bg-red-600 text-white text-center w-full"
+              className="close"
               onClick={() => document.getElementById("my_modal_3").close()}
             >
               Close
             </button>
             <button
               type="submit"
-              className="font-avenir px-3 py-2 rounded-lg text-white bg-[#05a0db] w-full"
+              className="add"
             >
               Send
             </button>
@@ -234,17 +230,14 @@ const [selectedEmployee3, setSelectedEmployee3] = useState(initialTab3);
       </div>
                </dialog>
           </div>
-            <div className="flex  justify-center gap-3">
-            <div className="w-full lg:w-auto flex justify-start gap-3">
+
+            <div className="f-center">
+            <div className="w-full lg:w-auto f-start ">
   {userr?.role === "admin" ? (
     <div className="flex  justify-center">
       <select
-        style={{
-          backgroundColor: "var(--bg-color2)",
-          border: "var(--border)",
-          color: "var(--text-color2)",
-        }}
-        className="border bg-white text-black py-2 lg:w-auto w-full border-gray-400 rounded px-2"
+        
+        className="select2"
         value={selectedEmployee3}
         onChange={(e) => changeTab3(e.target.value)}
       >
@@ -264,11 +257,11 @@ const [selectedEmployee3, setSelectedEmployee3] = useState(initialTab3);
 </div>
             <div className="flex text-sm lg:mb-0  justify-center">
                 <select
-                 style={{ backgroundColor: 'var(--bg-color2)',border: 'var(--border)', color: 'var(--text-color2)'}}
+                 
                   name="status"
                   value={selectedStatus}
                   onChange={(e) => changeTab(e.target.value)}
-                  className="border text-sm bg-white px-4 text-black border-black rounded p-2 "
+                  className="select2 "
                 >
                   <option value="">All Status</option>
                   <option value="Active">Active</option>
@@ -276,21 +269,15 @@ const [selectedEmployee3, setSelectedEmployee3] = useState(initialTab3);
                 </select>
               </div>
 
-              <div className=" flex mb-5 lg:mb-0 justify-center">
+              <div className=" f-center">
    <input
-    style={{ backgroundColor: 'var(--bg-color2)',border: 'var(--border)', color: 'var(--text-color2)'}}
+   
      type="text"
      placeholder="Search by campaign name"
-     className="border bg-white    rounded-l-lg p-1 flex-1"
+     className="input2"
      value={searchQuery}
      onChange={(e) => setSearchQuery(e.target.value)}
     />
-    <button
-     className="bg-black  text-white border border-black shadow-2xl rounded-r-lg p-2 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
-     onClick={() => {/* Add search functionality here */}}
-    >
-     Search
-    </button>
   </div>
           
             </div>
@@ -300,21 +287,20 @@ const [selectedEmployee3, setSelectedEmployee3] = useState(initialTab3);
 
             </div>
          
-            <div  className="overflow-x-auto rounded-xl m-5 text-center " >
+            <div  className="table-div px-4 pb-4" >
           <table className="min-w-full text-center ">
-            <thead style={{ backgroundColor: 'var(--bg-color)', color: 'var(--text-color)'}} className=" ">
-              <tr className="" style={{border: 'var(--border)',borderLeft: 'var(--border)', borderRight: 'var(--border)', color: 'var(--text-color)'}}>
-                <th className="p-3 " >
-                  {myAdsAccount.length}
+            <thead>
+              <tr className="tr1">
+                <th className="text-center" >
+                  Items {myAdsAccount.length}
                 </th>
-                <th className="p-3 text-start">Google Account Name</th>
-                <th className="p-3  text-start">Employeer Name</th>
-                <th className="p-3 text-start">Current Balance</th>
-                <th className="p-3 text-start">Threshold</th>
-                <th className="p-3 text-start">Spend</th>
-                <th className="p-3 text-center">Payment Date</th>
-                
-                <th className="p-3">OFF/ON</th>
+                <th>Meta Account Name</th>
+                <th>Employeer Name</th>
+                <th>Current Balance</th>
+                <th>Threshold</th>
+                <th>Spend</th>
+                <th>Payment Date</th>
+                <th className="text-center">Status</th>
               </tr>
             </thead>
             <tbody>
@@ -328,62 +314,41 @@ const [selectedEmployee3, setSelectedEmployee3] = useState(initialTab3);
     a.accountName.localeCompare(b.accountName, undefined, { sensitivity: 'base' })
   )
   ?.map((account, index) => (
-    <tr
-      key={account._id}
-      style={{ backgroundColor: 'var(--bg-table)', color: 'var(--text-color2)' }}
-      className={`text-left text-black border-b border-opacity-20 ${
-        index % 2 === 0 ? "bg-white" : "bg-gray-200"
-      }`}
-    >
-                    <td style={{  border: 'var(--border)'}}
-                    className={`p-3 border-r-2  text-center border-gray-300  `}
-                  >
-               <div className="flex justify-center gap-3">
+                     <tr
+                     key={account._id}
+                    className={`tr2`}
+                   >
+                  <td
+                    className={`text-center  `}>
                         <button
-                          className="text-red-600 text-xl hover:bg-blue-700  px-2 py-1 rounded"
+                          className="delete"
                           onClick={() => handleDelete(account._id)}
                         >
                           <FaMinusSquare  />
                         </button>
-                      
-                      </div>
-                  </td>
-
-                
-
-                  <td style={{  border: 'var(--border)'}} className="p-3 border-r-2  border-gray-300 text-start px-5 ">
-                    <div className="">
+                   </td> 
+                  <td>
                     <button
-                         className="flex justify-start items-center gap-2"
+                         className="f-start edit"
                           onClick={() => setModalData(account)}
                         >
                           <FaEdit />
                            <h1> {account.accountName}</h1>
                         </button>
-                     
-                    
-                    </div>
                   </td>
-
-                  <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 hover:text-blue-700 hover:font-bold border-gray-300 text-start px-5 ">
+                  <td>
                     <Link to={`/dashboard/userInfo/${account?.employeeEmail}`}>
                     {account.employeerName}
                     </Link>
                 
                   </td>
-                
-                
-                  <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-300 text-start">
-                  <span className=" text-xm font-extrabold">৳</span> {account.currentBallence}
-                  </td>
-                  <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-300 text-start ">
-                  <span className=" text-xm font-extrabold">৳</span> {account.threshold}
-                  </td>
-                  <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-300 text-center ">
+                  <td>৳ {account.currentBallence} </td>
+                  <td> ৳ {account.threshold}</td>
+                  <td>
                     <div className="relative group flex items-center justify-center ">
                       <h1><span className=" text-xm font-extrabold">৳</span> {account.totalSpent}</h1>
                       <button
-                      className="text-black text-center px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                      className="edit"
                      onClick={() => setModalData2(account)}
                    >
                 <FaEdit />
@@ -391,65 +356,54 @@ const [selectedEmployee3, setSelectedEmployee3] = useState(initialTab3);
 
                     </div>
                   </td>
-                  <td style={{  border: 'var(--border)'}} className="p-3 border-l-2 border-r-2 text-center border-gray-300 ">
+                  <td>
                     {new Date(account.paymentDate).toLocaleDateString("en-GB")}
                   </td>
-                  <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-l-2 border-gray-200 text-center">  <label className="inline-flex items-center cursor-pointer">
+                  <td  className="text-center"> 
+
+                  <label className="status-label">
   <input
     type="checkbox"
-    className="sr-only"
     checked={account.status === "Active"}
     onChange={() => {
       const newStatus = account.status === "Active" ? "Disable" : "Active";
       handleUpdate2(account._id, newStatus);
     }}
   />
-  <div
-    className={`relative w-12 h-6 transition duration-200 ease-linear rounded-full ${
-      account.status === "Active" ? "bg-blue-700" : "bg-gray-500"
-    }`}
-  >
-    <span
-      className={`absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition-transform duration-200 ease-linear transform ${
-        account.status === "Active" ? "translate-x-6" : ""
-      }`}
-    ></span>
+  <div className={account.status === "Active" ? "active" : "inactive"}>
+    <span className={account.status === "Active" ? "active" : ""}></span>
   </div>
 </label>
-                 </td>
 
+                 </td>
                 </tr>
               ))}
 
-<tr style={{backgroundColor: 'var(--bg-color)',border: 'var(--border)',borderLeft: 'var(--border)', borderRight: 'var(--border)', color: 'var(--text-color)'}} className="font-bold">
-                <td className="p-3  text-right" colSpan="3">
+                <tr  className="font-bold tr1">
+                <td className="  text-right" colSpan="3">
                   Total :
                 </td>
-                <td className="p-3 text-start border-gray-300  ">
-                <span className=" text-xm font-extrabold">$</span> {adsAccount.reduce(
+                <td >
+                $ {adsAccount.reduce(
         (acc, account) => acc + parseFloat(account.currentBallence || 0),
         0
       ).toFixed(2)}
                 </td>
-                <td className="p-3 text-start  border-gray-300  ">
-                <span className=" text-xm font-extrabold">$</span> {adsAccount.reduce(
+                <td>
+               $ {adsAccount.reduce(
         (acc, account) => acc + parseFloat(account.threshold || 0),
         0
       ).toFixed(2)}
                 </td>
-                <td className="p-3 text-start  border-gray-300 ">
-                <span className=" text-xm font-extrabold">$</span>  {adsAccount.reduce(
+                <td >
+               $ {adsAccount.reduce(
         (acc, account) => acc + parseFloat(account.totalSpent || 0),
         0
       ).toFixed(2)}
                 </td>
-                <td className="p-3 border-gray-300 text-center"></td>
-                <td className="p-3 border-gray-300 text-center"></td>
-              
+                <td></td>
+                <td></td>
               </tr>
-        
-
-
             </tbody>
           </table>
           </div>

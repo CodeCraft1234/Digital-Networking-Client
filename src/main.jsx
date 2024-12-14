@@ -126,10 +126,7 @@ const router = createBrowserRouter([
         element:<Salary></Salary>
        },
 
-       {
-        path:'/allPayments',
-        element:<PaymentHistory></PaymentHistory>
-       },
+
 
        {
         path:'/AdsAccount',
@@ -146,6 +143,10 @@ const router = createBrowserRouter([
       {
         path:'/myPayments',
         element:<MyPayments></MyPayments>
+       },
+       {
+        path:'/allPayments',
+        element:<PaymentHistory></PaymentHistory>
        },
        {
         path:'/dashboard/adsPayments',

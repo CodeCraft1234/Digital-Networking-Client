@@ -7,6 +7,7 @@ import axios from "axios";
 import { Helmet } from "react-helmet-async";
 import useAdsPayment from "../../Hook/useAdsPayment";
 import { toast } from "react-toastify";
+import useUserr from "../../Hook/useUser";
 
 const  AllAdsPayments = () => {
   const { user } = useContext(AuthContext);
@@ -108,6 +109,8 @@ const  AllAdsPayments = () => {
     setUserData(finder)
   },[users,user?.email])
 
+  const {userr}=useUserr(user?.email)
+
   const handlePayment =async (e) => {
     e.preventDefault();
     const employeeName=user?.displayName
@@ -138,10 +141,10 @@ const  AllAdsPayments = () => {
       })
 
       const fields = {
-        bkashMarchent: (userdata.bkashMarchent || 0) - payAmount,
-        bkashPersonal: (userdata.bkashPersonal || 0) - payAmount,
-        nagadPersonal: (userdata.nagadPersonal || 0) - payAmount,
-        rocketPersonal: (userdata.rocketPersonal || 0) - payAmount,
+        bkashMarchent: (userr.bkashMarchent || 0) - payAmount,
+        bkashPersonal: (userr.bkashPersonal || 0) - payAmount,
+        nagadPersonal: (userr.nagadPersonal || 0) - payAmount,
+        rocketPersonal: (userr.rocketPersonal || 0) - payAmount,
       };
     
       if (!fields[paymentMethod]) {

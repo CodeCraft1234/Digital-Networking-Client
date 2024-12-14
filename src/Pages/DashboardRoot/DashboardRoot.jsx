@@ -429,7 +429,7 @@ const DashboardRoot = () => {
   </div>
 </div>
 
-<div style={{ backgroundColor: 'var(--bg-color2)'}} className="lg:pt-16 pt-12   min-h-screen h-full  " >
+<div style={{ backgroundColor: 'var(--bg-color2)'}} className="lg:pt-20 mt-2 pt-12 px-5    min-h-screen h-full  " >
   <Outlet />
 </div>
 

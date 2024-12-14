@@ -1,7 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../../Security/AuthProvider";
 import UseAxiosPublic from "../../Axios/UseAxiosPublic";
-import { Helmet } from "react-helmet-async";
 import { toast, ToastContainer } from "react-toastify";
 import { ImCross } from "react-icons/im";
 import Swal from "sweetalert2";
@@ -10,11 +9,14 @@ import useUserr from "../../Hook/useUser";
 import useUsers from "../../Hook/useUsers";
 import useMySalaryPayments from "../../Hook/useMySalaryPayment";
 import useUserr2 from "../../Hook/useUser2";
+import useAllEmployee from "../../Hook/useAllEmployee";
+import BalanceCard from "../DashboardRoot/BalanceCard";
 
 const SalaryPayments = () => {
   const { user } = useContext(AuthContext);
   const {userr}=useUserr(user?.email)
   const [users]=useUsers()
+  const [allEmployees] = useAllEmployee([]);
   
   const initialTab3 =
   userr?.role === "admin"
@@ -22,7 +24,6 @@ const SalaryPayments = () => {
   : localStorage.getItem("ac") || user?.email; 
 
   const [selectedEmployee3, setSelectedEmployee3] = useState(initialTab3);
-  const {userr2}=useUserr2(selectedEmployee3)
 
   const changeTab2 = (tab) => {
     setSelectedEmployee3(tab); 
@@ -157,8 +158,8 @@ const SalaryPayments = () => {
 
   const handlePayment = async (e) => {
     e.preventDefault();
-    const employeeName = userr2?.name;
-    const employeeEmail = userr2?.email;
+    const employeeEmail = e.target.employeeEmail?.value || user?.email;
+    const employeeName = allEmployees?.find(e => e.email === employeeEmail)?.name || user?.displayName;
     const payAmount = e.target.payAmount.value;
     const charge = e.target.charge.value;
     const paymentMethod = e.target.paymentMethod.value;
@@ -324,185 +325,160 @@ const SalaryPayments = () => {
       });
   };
 
+  const options = [
+    "January", "February", "March", "April", "May", "June",
+    "July", "August", "September", "October", "November", "December"
+  ];
+  
+  const years = Array.from({ length: 31 }, (_, i) => 2020 + i);
   return (
-    <div className="m-5">
+    <div className="">
       <ToastContainer />
-      <Helmet>
-        <title>Admin Payment | Digital Network </title>
-        <link rel="canonical" href="https://www.example.com/" />
-      </Helmet>
-      <div style={{ backgroundColor: 'var(--bg-color3)', color: 'var(--text-color)', border: 'var(--border)' }} className="grid grid-cols-2 p-5 rounded-lg sm:grid-cols-2 md:grid-cols-3 gap-3 lg:gap-5 lg:grid-cols-6 px-5">
-  {[
-    { category: 'bank', img: 'https://i.ibb.co/PZc0P4w/brac-bank-seeklogo.png', amount: bankTotal, bgColor: '#f2f2f2' },
-    { category: 'DBBLBank', img: 'https://i.ibb.co.com/nnN8KW0/DBBL.png', amount: DBBLBankTotal, bgColor: '#f2f2f2' },
-    { category: 'IBBLBank', img: 'https://i.ibb.co.com/yfMSDcd/IBBL.png', amount: IBBLBankTotal, bgColor: '#f2f2f2' },
-    { category: 'bkashPersonal', img: 'https://i.ibb.co/520Py6s/bkash-1.png', amount: bkashPersonal, bgColor: '#ffe6f7' },
-    { category: 'nagadPersonal', img: 'https://i.ibb.co/JQBQBcF/nagad-marchant.png', amount: nagadPersonal, bgColor: '#fff2cc' },
-    // { category: 'rocketPersonal', img: 'https://i.ibb.co/QkTM4M3/rocket.png', amount: rocketPersonal, bgColor: '#e0f7fa' },
-    
-  ].map(({ category, img, amount, bgColor }) => (
-    <div key={category} onClick={() => setSelectedCategory(category)} style={{ backgroundColor: bgColor, border: 'var(--border)' }} className="balance-card bg-white rounded-2xl shadow-lg p-5 text-center transition-transform hover:scale-105 border-0">
-      <img className="balance-card-img mx-auto h-16" src={img} alt={category} />
-      <p className="balance-card-text text-lg lg:text-2xl font-bold text-gray-700">
-        <span className="text-lg lg:text-2xl font-extrabold">৳</span> {new Intl.NumberFormat('en-IN').format(amount)}
-      </p>
-    </div>
-  ))}
 
-  <div style={{ backgroundColor: '#d9f8d9', border: 'var(--border)' }} onClick={() => setSelectedCategory('All')} className="balance-card bg-white  rounded-2xl shadow-lg p-5 text-center transition-transform hover:scale-105 border-0">
-    <h1 className=" font-bold mt-3 text-2xl text-black">
-      <p className="mb-5">Total</p> <span className="text-lg lg:text-xl font-extrabold">৳</span> {new Intl.NumberFormat('en-IN').format(bkashPersonal + DBBLBankTotal + IBBLBankTotal + rocketPersonal +  nagadPersonal  +  bankTotal)}
-    </h1>
-    {/* <h1 className="text-xl font-bold mt-2 text-red-800">
-       <span className="text-lg lg:text-xl font-extrabold">৳</span> {new Intl.NumberFormat('en-IN').format(filteredData2.reduce((acc, item) => acc + (isNaN(parseFloat(item?.charge)) ? 0 : parseFloat(item?.charge)), 0))}
-    </h1> */}
-  </div>
+
+        <div className="grid grid-cols-2 rounded-lg sm:grid-cols-2 md:grid-cols-3 gap-3 lg:gap-5 lg:grid-cols-6 ">
+<div onClick={() => setSelectedCategory('bank')}>
+<BalanceCard  img={`https://i.ibb.co/PZc0P4w/brac-bank-seeklogo.png`} amount={bankTotal}></BalanceCard>
+</div>
+<div onClick={() => setSelectedCategory('DBBLBank')}>
+<BalanceCard  img={`https://i.ibb.co.com/nnN8KW0/DBBL.png`} amount={DBBLBankTotal}></BalanceCard>
+</div>
+<div onClick={() => setSelectedCategory('IBBLBank')}>
+<BalanceCard  img={`https://i.ibb.co.com/yfMSDcd/IBBL.png`} amount={IBBLBankTotal}></BalanceCard>
+</div>
+<div onClick={() => setSelectedCategory('bkashPersonal')}>
+<BalanceCard  img={`https://i.ibb.co/520Py6s/bkash-1.png`} amount={bkashPersonal}></BalanceCard>
+</div>
+<div onClick={() => setSelectedCategory('nagadPersonal')}>
+<BalanceCard  img={`https://i.ibb.co/JQBQBcF/nagad-marchant.png`} amount={nagadPersonal}></BalanceCard>
 </div>
 
+<div onClick={() => setSelectedCategory('All')}
+                   style={{ backgroundColor: '#d9f8d9', border: 'var(--border)' }} 
+                   className="balance-card rounded-2xl p-5 text-center shadow-xl transition-transform transform hover:scale-105">
+<h1 className="px-3 text-black text-xl font-bold text-center">TOTAL</h1>
+      <p className="balance-card-text text-lg mt-2 lg:text-xl font-bold text-gray-700">
+        <span className="text-lg lg:text-xl font-extrabold">৳</span> {bankTotal + DBBLBankTotal + IBBLBankTotal + bkashPersonal + nagadPersonal }
+      </p>
+    </div>
+        </div>
 
 
+     <div className="side-space my-5">
 
-     <div className=" my-5 rounded-md pb-5" style={{ backgroundColor: 'var(--bg-color3)', color: 'var(--text-color)',border: 'var(--border)'}}>
-     <div className="flex flex-col md:flex-row justify-start lg:justify-between items-center gap-5 lg:px-5 lg:p-0 px-5">
-<div className="flex justify-start">
+     <div className="flex flex-col mb-4 md:flex-row justify-start lg:justify-between items-center gap-5  ">
+
+     <div className="f-start">
+
     <button
-      className="font-avenir px-6 hover:bg-indigo-700 py-2 bg-[#05a0db] rounded-lg text-white"
+      className="add"
       onClick={() => document.getElementById("my_modal_1").showModal()}
     >
       Pay Admin
     </button>
+
     <dialog id="my_modal_1" className="modal">
       <div className="modal-box bg-white text-black font-bold">
-        <form onSubmit={(e) => handlePayment(e)}>
+        <form onSubmit={handlePayment}>
 
-          <div className="grid lg:grid-cols-2">
-
-          </div>
-          <div className="">
-            <h1
-              className="text-black flex hover:text-red-500 justify-end text-end cursor-pointer"
+          <div className="flex justify-end">
+            <ImCross
+              className="cursor-pointer hover:text-red-500"
               onClick={() => document.getElementById("my_modal_1").close()}
-            >
-              <ImCross />
-            </h1>
-            <div className="mb-4">
-            <label className="block text-gray-250">Date</label>
-            <input
-              type="date"
-              name="date"
-              required
-              defaultValue={formattedDate}
-              className="w-full border text-black bg-white border-black rounded p-2 mt-1"
             />
           </div>
 
-              <div className="grid lg:grid-cols-2 gap-3">
-              <div className="mb-4 ">
-            <label className="block text-gray-250">Amount</label>
-            <input
-              required
-              type="number"
-              name="payAmount"
-              placeholder="0"
-              className="w-full border bg-white border-black rounded p-2 mt-1"
-            />
-          </div>
-          <div className="mb-4">
-            <label className="block text-gray-250">Charge</label>
-            <input
-              required
-              type="number"
-              name="charge"
-              placeholder="0"
-              defaultValue={0}
-              className="w-full border bg-white border-black rounded p-2 mt-1"
-            />
-          </div>
-              </div>
-            
-          </div>
-
-          <div className="mb-4">
-  <div className="mt-2 grid lg:grid-cols-3">
-    <div className="form-control">
-      <label className="label flex justify-start items-center gap-2 cursor-pointer">
-        <input
-          type="radio"
-          name="paymentMethod"
-          value="bank"
-          className="radio radio-primary"
-        />
-        <span className="label-text text-black">Brack Bank</span>
-      </label>
-    </div>
-    <div className="form-control">
-      <label className="label flex justify-start items-center gap-2 cursor-pointer">
-        <input
-          type="radio"
-          name="paymentMethod"
-          value="DBBLBank"
-          className="radio radio-primary"
-        />
-        <span className="label-text text-black">DBBL Bank</span>
-      </label>
-    </div>
-    <div className="form-control">
-      <label className="label flex justify-start items-center gap-2 cursor-pointer">
-        <input
-          type="radio"
-          name="paymentMethod"
-          value="IBBLBank"
-          className="radio radio-primary"
-        />
-        <span className="label-text text-black">Islami Bank</span>
-      </label>
-    </div>
-    <div className="form-control">
-      <label className="label flex justify-start items-center gap-2 cursor-pointer">
-        <input
-          type="radio"
-          name="paymentMethod"
-          value="bkashPersonal"
-          className="radio radio-primary"
-        />
-        <span className="label-text text-black">bKash</span>
-      </label>
-    </div>
-    <div className="form-control">
-      <label className="label flex justify-start items-center gap-2 cursor-pointer">
-        <input
-          type="radio"
-          name="paymentMethod"
-          value="nagadPersonal"
-          className="radio radio-primary"
-        />
-        <span className="label-text text-black">Nagad</span>
-      </label>
-    </div>
-  </div>
+          
+<div className="grid lg:grid-cols-2 gap-3">
+<div>
+              <label>Date</label>
+              <input
+                type="date"
+                name="date"
+                required
+                defaultValue={formattedDate}
+                className="input2"
+              />
+            </div>
+            <div>
+              <label>Amount</label>
+              <input
+                type="number"
+                name="payAmount"
+                required
+                placeholder="0"
+                className="input2"
+              />
+            </div>
 </div>
 
 
+          <div className="grid lg:grid-cols-2 gap-3 mt-4">
+         
+            <div>
+              <label>Charge</label>
+              <input
+                type="number"
+                name="charge"
+                required
+                defaultValue={0}
+                className="input2"
+              />
+            </div>
+            {userr?.role === "admin" && (
+            <div >
+              <label className="block text-black" >Select Employee</label>
+              <select name="employeeEmail" className="select2">
+                {allEmployees
+                  ?.filter((f) => f.role === "employee")
+                  .map((employee) => (
+                    <option key={employee._id} value={employee.email}>
+                      {employee.name}
+                    </option>
+                  ))}
+              </select>
+            </div>
+          )}
+          </div>
 
 
-          <div className="mb-4">
-            <label className="block text-gray-250">Note (Optional)</label>
+         
+
+          <div className="grid lg:grid-cols-3 gap-3 mt-4">
+            {["bank", "DBBLBank", "IBBLBank", "bkashPersonal", "nagadPersonal"].map(
+              (method, index) => (
+                <label key={index} className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="radio"
+                    name="paymentMethod"
+                    value={method}
+                    className="radio radio-primary"
+                  />
+                  <span>{method}</span>
+                </label>
+              )
+            )}
+          </div>
+          <div className="mt-4">
+            <label>Note (Optional)</label>
             <input
               type="text"
               name="note"
-              placeholder="type note..."
-              className="w-full border bg-white border-black rounded p-2 mt-1"
+              placeholder="Type note..."
+              className="input2"
             />
           </div>
-          <div className="grid mt-8 lg:grid-cols-2 gap-3">
-            <form method="dialog">
-              <button className="p-2 w-full hover:bg-red-700 rounded-lg bg-red-600 text-white text-center">
-                Close
-              </button>
-            </form>
+          <div className="grid lg:grid-cols-2 gap-3 mt-5">
+            <button
+              type="button"
+              onClick={() => document.getElementById("my_modal_1").close()}
+              className="close"
+            >
+              Close
+            </button>
             <button
               type="submit"
-              className="font-avenir w-full hover:bg-indigo-700 px-3 pt-2 rounded-lg flex justify-center text-white bg-[#05a0db]"
+              className="add"
             >
               Submit
             </button>
@@ -510,142 +486,83 @@ const SalaryPayments = () => {
         </form>
       </div>
     </dialog>
-  </div>
+     </div>
 
-  <div className="lg:flex text-black lg:justify-start my-3 lg:my-0 lg:ml-5  items-center">
-        
-        <div className="flex mt-2 lg:mt-0 justify-center text-center gap-2 lg:gap-3 items-center">
-
-        <div className="w-full lg:w-auto flex justify-start gap-3">
-  {userr?.role === "admin" ? (
-    <div className="flex mt-1.5 justify-center">
-      <select
-        style={{
-          backgroundColor: "var(--bg-color2)",
-          border: "var(--border)",
-          color: "var(--text-color2)",
-        }}
-        className="border bg-white text-black py-2 lg:w-auto w-full border-gray-400 rounded px-2"
-        value={selectedEmployee3}
-        onChange={(e) => changeTab2(e.target.value)}
-      >
-        <option value="all">All Employees</option>
-        {users
-          .filter((u) => ["employee", "graphicDesign", "webDeveloper","staf"].includes(u.role))
-          .map((employee) => (
-            <option key={employee._id} value={employee.email}>
-              {employee.name}
-            </option>
-          ))}
-      </select>
-    </div>
-  ) : (
-   <></>
-  )}
-</div>
-      
-
-        <input
-    style={{ backgroundColor: 'var(--bg-color2)',border: 'var(--border)', color: 'var(--text-color2)'}}
-    type="date"
-    className="border bg-green-300 text-black border-gray-400 rounded p-2 mt-1"
-    value={selectedDate}
-    onChange={(e) => setSelectedDate(e.target.value)}
-  />
-       
-          <div className="flex lg:mt-1 justify-center text-center items-center">
-            <select
-            style={{ backgroundColor: 'var(--bg-color2)',border: 'var(--border)', color: 'var(--text-color2)'}}
-              className=" w-full  mt-1  lg:my-5  t rounded-md p-2 "
-              value={sortMonth}
-              onChange={(e) => changeTab(e.target.value)}
-            >
-              <option value="">Select Month</option>
-              {[
-                "January",
-                "February",
-                "March",
-                "April",
-                "May",
-                "June",
-                "July",
-                "August",
-                "September",
-                "October",
-                "November",
-                "December",
-              ].map((month, index) => (
-                <option key={index + 1} value={index + 1}>
-                  {month}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div className=" lg:flex text-black justify-center items-center">
+     <div className="lg:ml-5 f-start">
+    <div className="f-center">
+      {userr?.role === "admin" && (
         <select
-        style={{ backgroundColor: 'var(--bg-color2)',border: 'var(--border)', color: 'var(--text-color2)'}}
-          className=" rounded-md p-2 mt-1"
-          value={selectedYear}
-          onChange={(e) => setSelectedYear(e.target.value)}
+          className="select2"
+          value={selectedEmployee3}
+          onChange={(e) => changeTab2(e.target.value)}
         >
-          {Array.from({ length: 31 }, (_, i) => 2020 + i).map((year) => (
-            <option key={year} value={year}>
-              {year}
-            </option>
+          <option value="all">All Employees</option>
+          {users.filter((u) => ["employee", "graphicDesign", "webDeveloper", "staf"].includes(u.role)).map((employee) => (
+            <option key={employee._id} value={employee.email}>{employee.name}</option>
           ))}
         </select>
-      </div>
-      <div className="flex  justify-center text-center items-center">
+      )}
 
-<select
- style={{ backgroundColor: 'var(--bg-color2)',border: 'var(--border)', color: 'var(--text-color2)'}}
-  className="border bg-white w-full     text-black border-gray-400 rounded p-2 mt-1 "
-  value={selectedStatus2}
-  onChange={(e) => changeTab3(e.target.value)}
->
-  <option value="All">All Status</option>
-  <option value="pending">Pending</option>
-  <option value="Approved">Approved</option>
- 
-</select>
-</div>
+      <select
+        className="select2"
+        value={sortMonth}
+        onChange={(e) => changeTab(e.target.value)}
+      >
+        <option value="">Select Month</option>
+        {options.map((month, i) => (
+          <option key={i + 1} value={i + 1}>{month}</option>
+        ))}
+      </select>
+
+      <select
+        className="select2"
+        value={selectedYear}
+        onChange={(e) => setSelectedYear(e.target.value)}
+      >
+        {years.map((year) => (
+          <option key={year} value={year}>{year}</option>
+        ))}
+      </select>
+
+      <select
+        className="select2"
+        value={selectedStatus2}
+        onChange={(e) => changeTab3(e.target.value)}
+      >
+        <option value="All">All Status</option>
+        <option value="pending">Pending</option>
+        <option value="Approved">Approved</option>
+      </select>
+    </div>
+     </div>
+
         </div>
-      
-      </div>
-
-        </div>
 
 
 
-<div  className="overflow-x-auto  rounded-xl mx-5 text-center " style={{ backgroundColor: 'var(--bg-color)', color: 'var(--text-color)'}}>
+       <div  className="table-div">
           <table className="min-w-full  text-center ">
             <thead className=" ">
-              <tr className="" style={{border: 'var(--border)',borderLeft: 'var(--border)', borderRight: 'var(--border)', color: 'var(--text-color)'}}>
-              <th style={{  border: 'var(--border)'}} className="p-3 ">{displayedItems.length}</th>
-              <th style={{  border: 'var(--border)'}} className="p-3">Date</th>
-              <th style={{  border: 'var(--border)'}} className="p-3">Employee Name</th>
-              <th style={{  border: 'var(--border)'}} className="p-3">Amount</th>
-              {/* <th style={{  border: 'var(--border)'}} className="p-3">Charge</th> */}
-              <th style={{  border: 'var(--border)'}} className="p-3">Payment Method</th>
-              <th style={{  border: 'var(--border)'}} className="p-3"> Note</th>
-              <th style={{  border: 'var(--border)'}} className="p-3">Status</th>
-             
+              <tr className="tr1">
+              <th className="text-center ">Items {displayedItems.length}</th>
+              <th>Date</th>
+              <th>Employee Name</th>
+              <th>Amount</th>
+              <th>Payment Method</th>
+              <th> Note</th>
+              <th className="text-center">Status</th>
             </tr>
           </thead>
           <tbody>
             {displayedItems?.map((payment, index) => (
-               <tr style={{ backgroundColor: 'var(--bg-table)', color: 'var(--text-color2)'}}
+               <tr 
                key={payment._id}
-               className={`${
-                 index % 2 === 0
-                   ? "bg-white text-left text-black border-b border-opacity-20"
-                   : "bg-gray-200  text-left text-black border-b border-opacity-20"
-               }`}
+               className={`tr2`}
              >
-                <td style={{  border: 'var(--border)'}} className="p-3  border-r-2 border-l-2 border-gray-200 text-center">
-                <div className="flex justify-center items-center gap-3 ">
+                <td className="text-center">
+                <div className="f-center">
                 <button
-                    className=" hover:bg-blue-700 text-[#f86c6b] text-xl px-2 py-1 rounded"
+                    className="delete"
                     onClick={() => handleDelete(payment._id,payment?.note,payment.paymentMethod,payment?.charge,payment?.payAmount,payment.date)}
                   >
                      <span >
@@ -653,7 +570,7 @@ const SalaryPayments = () => {
                           </span>
                   </button>
                  <button
-                  className=" flex justify-center text-xl items-center gap-1   px-2 py-1 rounded"
+                  className="edit"
                     onClick={() =>
                       document
                         .getElementById(`modal_${payment._id}`)
@@ -662,188 +579,115 @@ const SalaryPayments = () => {
                   >
                     <FaEdit />
                   </button>
-                  <dialog id={`modal_${payment._id}`} className="modal">
-                    <div className="modal-box bg-white text-black font-bold">
-                    <form onSubmit={(e) => handleUpdatePayment(e, payment._id, payment)}>
 
-                        <div className="mb-4">
-                          <h1
-                            className=" text-black flex hover:text-red-500  justify-end  text-end"
-                            onClick={() =>
-                              document
-                                .getElementById(`modal_${payment._id}`)
-                                .close()
-                            }
-                          >
-                            <ImCross />
-                          </h1>
-                          <label className="block text-black text-xl font-bold">
-                            {" "}
-                           Edit Admin Pay Amount
-                          </label>
-                          
-                        </div>
-                        <div className="mb-4">
-                          <label className="block text-left text-gray-700"> Date</label>
-                          <input
-                            type="date"
-                            defaultValue={payment.date}
-                            name="date"
-                            className="w-full border bg-green-200 border-black rounded p-2 mt-1"
-                          />
-                        </div>
+              <dialog id={`modal_${payment._id}`} className="modal">
+  <div className="modal-box bg-white text-black font-bold">
+    <form onSubmit={(e) => handleUpdatePayment(e, payment._id, payment)}>
+      <h1
+        className="text-black flex hover:text-red-500 justify-end"
+        onClick={() => document.getElementById(`modal_${payment._id}`).close()}
+      >
+        <ImCross />
+      </h1>
+      <h2 className="text-xl font-bold">Edit Admin Pay Amount</h2>
 
-                       <div className="grid grid-cols-2 gap-3">
-                       <div className="mb-4">
-                          <label className="block text-left text-gray-700">
-                            {" "}
-                            New Amount
-                          </label>
-                          <input
-                            required
-                            type="number"
-                            name="payAmount"
-                            defaultValue={payment?.payAmount}
-                            className="w-full border bg-white border-black rounded p-2 mt-1"
-                          />
-                        </div>
-                        <div className="mb-4">
-            <label className="block text-gray-250">Charge</label>
-            <input
-              required
-              type="number"
-              name="charge"
-              placeholder="0"
-              defaultValue={payment?.charge}
-              className="w-full border bg-white border-black rounded p-2 mt-1"
-            />
-          </div>
-                       </div>
+      {[
+        { label: "Date", name: "date", type: "date", value: payment.date },
+        { label: "New Amount", name: "payAmount", type: "number", value: payment.payAmount },
+        { label: "Charge", name: "charge", type: "number", value: payment.charge },
+        { label: "Note", name: "note", type: "text", value: payment.note },
+      ].map(({ label, name, type, value }, idx) => (
+        <div key={idx} className="mb-4">
+          <label className="block text-left text-gray-700">{label}</label>
+          <input
+            required
+            type={type}
+            name={name}
+            defaultValue={value}
+            className="input2"
+          />
+        </div>
+      ))}
 
-                        
+      <div className="mb-4">
+        <label className="block text-left text-gray-700">Method</label>
+        <select
+          required
+          name="paymentMethod"
+          defaultValue={payment.paymentMethod}
+          className="select2 w-full"
+        >
+          {["bank", "IBBLbank", "DBBLBank", "bkashPersonal", "nagadPersonal"].map((method, idx) => (
+            <option key={idx} value={method}>{method}</option>
+          ))}
+        </select>
+      </div>
 
-                        <div className="mb-4">
-                          <label className="block text-left text-gray-700">Method</label>
-                          <select
-                            required
-                            name="paymentMethod"
-                            defaultValue={payment.paymentMethod}
-                            className="w-full border bg-white border-black rounded p-2 mt-1"
-                          >
-                            <option value="bank">Brack Bank</option>
-                            <option value="IBBLbank">Islami Bank</option>
-                            <option value="DBBLBank">DBBL Bank</option>
+      <div className="modal-action grid grid-cols-2 gap-3 mt-4">
+        {[
+          { label: "Close", color: "bg-red-600 hover:bg-red-700", action: () => document.getElementById(`modal_${payment._id}`).close() },
+          { label: "Update", color: "bg-[#05a0db] hover:bg-indigo-700", action: null },
+        ].map(({ label, color, action }, idx) => (
+          <button
+            key={idx}
+            type={action ? "button" : "submit"}
+            className={`p-2 rounded-lg text-white ${color}`}
+            onClick={action || null}
+          >
+            {label}
+          </button>
+        ))}
+      </div>
+    </form>
+  </div>
+            </dialog>
 
-                            <option value="bkashPersonal">
-                              bKash 
-                            </option>
-                            <option value="nagadPersonal">
-                              Nagad 
-                            </option> 
-                          </select>
-                        </div>
-
-                        <div className="mb-4">
-                          <label className="block text-left text-gray-700">Note</label>
-                          <input
-                            required
-                            type="text"
-                            name="note"
-                            defaultValue={payment?.note}
-                            className="w-full border bg-white border-black rounded p-2 mt-1"
-                          />
-                        </div>
-
-                        <div className="modal-action grid grid-cols-2 gap-3 mt-4">
-                          <button
-                            type="button"
-                            className="p-2 hover:bg-red-700 rounded-lg bg-red-600 text-white"
-                            onClick={() =>
-                              document
-                                .getElementById(`modal_${payment._id}`)
-                                .close()
-                            }
-                          >
-                            Close
-                          </button>
-                          <button
-                            type="submit"
-                            className="font-avenir hover:bg-indigo-700 px-3 py-1 bg-[#05a0db] rounded-lg text-white"
-                          >
-                            Update
-                          </button>
-                        </div>
-                      </form>
-                    </div>
-                  </dialog>
                   
                  </div>
                 </td>
-                <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-200 text-center">
+
+                <td>
                   {new Date(payment.date).toLocaleDateString("en-GB")}
                 </td>
-                <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-200 text-center">
+
+                <td>
                   {payment.employeeName}
                 </td>
-                <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-200 text-center">
+
+                <td>
                   ৳ {payment.payAmount}
                 </td>
-                {/* <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-200 text-center">
-                  ৳ {payment.charge || 0}
-                </td> */}
 
-                <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-200 text-center">
-                 
-                  {payment.paymentMethod === "bkashPersonal" && (
-                    <img
-                      className="h-10 w-24 flex my-auto items-center mx-auto justify-center"
-                      src="https://i.ibb.co.com/f8LcKV0/bKash.png"
-                      alt=""
-                    />
-                  )}
-                  {payment.paymentMethod === "rocketPersonal" && (
-                    <img
-                      className="h-10 w-24 flex my-auto items-center mx-auto justify-center"
-                      src="https://i.ibb.co/QkTM4M3/rocket.png"
-                      alt=""
-                    />
-                  )}
-                  {payment.paymentMethod === "nagadPersonal" && (
-                    <img
-                      className="h-10 w-24 flex my-auto items-center mx-auto justify-center"
-                      src="https://i.ibb.co/JQBQBcF/nagad-marchant.png"
-                      alt=""
-                    />
-                  )}
-                  {payment.paymentMethod === "DBBLBank" && (
-                    <img
-                      className="h-10 w-32 flex my-auto items-center mx-auto justify-center"
-                      src="https://i.ibb.co.com/nnN8KW0/DBBL.png"
-                      alt=""
-                    />
-                  )}
-                  {payment.paymentMethod === "IBBLBank" && (
-                    <img
-                      className="h-10 w-32 flex my-auto items-center mx-auto justify-center"
-                      src="https://i.ibb.co.com/yfMSDcd/IBBL.png"
-                      alt=""
-                    />
-                  )}
-                  
-                  {payment.paymentMethod === "bank" && (
-                    <img
-                      className="h-12 w-13 flex my-auto items-center mx-auto justify-center"
-                      src="https://i.ibb.co/PZc0P4w/brac-bank-seeklogo.png"
-                      alt=""
-                    />
-                  )}
-                </td>
-                <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-200 text-center">
+                <td>
+  {[
+    { method: "bkashPersonal", src: "https://i.ibb.co.com/f8LcKV0/bKash.png", size: "h-10 w-24" },
+    { method: "rocketPersonal", src: "https://i.ibb.co/QkTM4M3/rocket.png", size: "h-10 w-24" },
+    { method: "nagadPersonal", src: "https://i.ibb.co/JQBQBcF/nagad-marchant.png", size: "h-10 w-24" },
+    { method: "DBBLBank", src: "https://i.ibb.co.com/nnN8KW0/DBBL.png", size: "h-10 w-32" },
+    { method: "IBBLBank", src: "https://i.ibb.co.com/yfMSDcd/IBBL.png", size: "h-10 w-32" },
+    { method: "bank", src: "https://i.ibb.co/PZc0P4w/brac-bank-seeklogo.png", size: "h-12 w-13" },
+  ].map(
+    (item) =>
+      payment.paymentMethod === item.method && (
+        <img
+          key={item.method}
+          className={`${item.size} flex my-auto items-center mx-auto justify-center`}
+          src={item.src}
+          alt=""
+        />
+      )
+  )}
+               </td>
+
+                <td>
                   {" "}
                   {payment.note}
                 </td>
             
-                <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-l-2 border-gray-200 text-center">  <label className="inline-flex items-center cursor-pointer">
+                <td> 
+
+             <label className="inline-flex items-center cursor-pointer">
+
   <input
     type="checkbox"
     className="sr-only"
@@ -853,6 +697,7 @@ const SalaryPayments = () => {
       handleUpdate2(payment._id, newStatus);
     }}
   />
+
   <div
     className={`relative w-12 h-6 transition duration-200 ease-linear rounded-full ${
       payment.status !== "pending" ? "bg-blue-700" : "bg-gray-500"
@@ -864,36 +709,28 @@ const SalaryPayments = () => {
       }`}
     ></span>
   </div>
+
 </label>
-</td>
+               </td>
+
               </tr>
             ))}
-            <tr style={{border: 'var(--border)',borderLeft: 'var(--border)', borderRight: 'var(--border)', color: 'var(--text-color)'}} className=" font-bold">
+            <tr className="font-bold tr1">
               <td></td>
               <td></td>
-              <td style={{  border: 'var(--border)'}} className="p-3 text-right" >
+              <td className="text-right" >
                 Total :
               </td>
-
-              <td style={{ border: 'var(--border)' }} className="p-3 text-center">
+              <td>
   ৳ {new Intl.NumberFormat('en-IN', {
-    maximumFractionDigits: 2, // To ensure two decimal places if required
+    maximumFractionDigits: 2, 
   }).format(
     bkashPersonal + nagadPersonal + bankTotal + DBBLBankTotal + IBBLBankTotal + rocketPersonal
   )}
               </td>
-               {/* <td className="p-3 text-center">
-  ৳ {new Intl.NumberFormat('en-IN', {
-    maximumFractionDigits: 2, // Ensure consistency in decimals
-  }).format(
-    displayedItems.reduce((acc, item) => acc + (isNaN(parseFloat(item?.charge)) ? 0 : parseFloat(item?.charge)), 0)
-  )}
-              </td> */}
-
-
-              <td className="p-3 text-center"></td>
-              <td className="p-3 text-center"></td>
-          
+              <td></td>
+              <td></td>
+              <td></td>
             </tr>
           </tbody>
         </table>

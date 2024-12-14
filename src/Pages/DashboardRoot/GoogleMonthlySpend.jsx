@@ -137,10 +137,7 @@ console.log(sortedAccounts);
 
   return (
     <div className='mx-5 my-5'>
-           <Helmet>
-                <title>Monthly Activity | Digital Network</title>
-                <link rel="canonical" href="https://www.example.com/" />
-            </Helmet>
+       
 
       <div className='px-5 py-5 rounded-md' style={{ backgroundColor: 'var(--bg-color3)', color: 'var(--text-color)',border: 'var(--border)'}}>
       <div className="lg:flex lg:justify-start items-center gap-3 mb-5">

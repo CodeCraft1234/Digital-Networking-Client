@@ -14,6 +14,7 @@
     --bg-colorNav:  #dfdfdf; 
     --bg-colorSide: #394148;
     --bg-colorActive: #d8e3eb; 
+    --bg-colorCard: #d8e3eb; 
     --bg-color: #dfdfdf;
     --bg-color2: white; 
     --bg-color3: #ffffff; 
@@ -25,7 +26,8 @@
 [data-theme="dark"] {
     --bg-colorNav: #394148; 
     --bg-colorSide: #394148;
-    --bg-colorActive: #333b41; 
+    --bg-colorActive: #333b41;
+    --bg-colorCard: #333b41;  
     --bg-color: #394148;
     --bg-color2: #2e353a; 
     --bg-color3: #394148; 
@@ -40,6 +42,7 @@
     --bg-colorNav: #0087c5; 
     --bg-colorSide: #f5f5f5; 
     --bg-colorActive: #008BC9; 
+    --bg-colorCard: #0087c5; 
     --bg-color: #4285F4; 
     --bg-color2:  #e9ebee; 
     --bg-color3: white; 
@@ -54,6 +57,7 @@
     --bg-colorNav: #4dbd74; 
     --bg-colorSide: #f5f5f5; 
     --bg-colorActive: #15be79; 
+    --bg-colorCard: #278664; 
     --bg-color: #278664; 
     --bg-color2:  #e9ebee; 
     --bg-color3: white; 
@@ -67,6 +71,7 @@
     --bg-colorNav: #e83e8c; 
     --bg-colorSide: #ffe6f1; 
     --bg-colorActive: #ffb3d2; 
+    --bg-colorCard: #e45c9c; 
     --bg-color: #ffb3d2; 
     --bg-color2:  #e9ebee; 
     --bg-color3: #ffe6f1; 
@@ -118,7 +123,7 @@ button {
   .submit {
     background-color: var(--bg-color-submit, #05a0db); /* Default blue color */
     color: white;
-    padding: 0.25rem 1rem
+    padding: 0.5rem 1rem
   }
   
   .submit:hover {
@@ -129,7 +134,7 @@ button {
   .cancel {
     background-color: var(--bg-color-cancel, #e53e3e); /* Default red color */
     color: white;
-    padding: 0.25rem 1rem
+    padding: 0.5rem 1rem
   }
   
   .cancel:hover {
@@ -140,7 +145,7 @@ button {
   .close {
     background-color: var(--bg-color-close, #e53e3e); /* Default red color */
     color: white;
-    padding: 0.25rem 1rem
+    padding: 0.5rem 1rem
   }
   
   .close:hover {
@@ -151,7 +156,7 @@ button {
   .update {
     background-color: var(--bg-color-update, #05a0db); /* Default blue color */
     color: white;
-    padding: 0.25rem 1rem
+    padding: 0.50rem 1rem
   }
   
   .update:hover {
@@ -162,13 +167,302 @@ button {
   .add {
     background-color: var(--bg-color-add-client, #05a0db); /* Default blue color */
     color: white;
-    padding: 0.25rem 1rem; /* Larger padding for Add Client */
+    padding: 0.50rem 1rem; /* Larger padding for Add Client */
     font-size: 1rem; /* Font size */
   }
   
   .add:hover {
     background-color: var(--bg-color-add-client-hover, #007ab8); /* Darker blue on hover */
   }
+
+  .delete {
+    @apply hover:bg-blue-700 text-[#f86c6b] text-xl px-2 py-1 rounded;
+  }
+  .edit {
+    @apply   rounded;
+  }
+  
+
+
+
+
+
+  /* ////////////card-div////////////////// */
+
+  .card-div {
+    background-color: #f7e8e8;
+    border: var(--border); /* Assumes you have a --border variable in your CSS */
+    border-radius: 1.5rem; /* Rounded corners */
+    padding: 1.25rem; /* Tailwind's `p-5` equivalent */
+    text-align: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Tailwind's `shadow-xl` equivalent */
+    transition: transform 0.3s ease;
+  }
+
+  /* //////////////logo///////////////////// */
+  .logo {
+    display: block; /* Ensures it’s treated as a block element for centering */
+    margin: 0 auto; /* Centers the image horizontally */
+    height: 2.5rem; /* Sets a consistent height */
+    transition: transform 0.3s ease; /* Adds a smooth hover effect */
+  }
+  
+  .logo:hover {
+    transform: scale(1.1); /* Slight zoom effect on hover */
+  }
+
+  /* ///////////////card title//////////// */
+  .card-title {
+    font-size: 1.125rem; /* Tailwind's `text-lg` equivalent */
+    font-weight: 700; /* Tailwind's `font-bold` */
+    color: #4b5563; /* Tailwind's `text-gray-700` */
+    text-align: center; /* Horizontally centers the text */
+    display: flex; /* Enables flexbox for vertical centering */
+    justify-content: center; /* Centers content horizontally */
+    align-items: center; /* Centers content vertically */
+    height: 100%; /* Ensure the element takes full height of the parent */
+  }
+  
+  .card-title span {
+    font-size: 1.25rem; /* Tailwind's `text-xl` equivalent */
+    font-weight: 800; /* Tailwind's `font-extrabold` */
+  }
+  
+
+  /* ///////////////input//////////////// */
+
+.input2 {
+  width: 100%; /* Full width */
+  border: var(--border); /* Use the border variable */
+  color: var(--text-color2); /* Text color from the CSS variable */
+  background-color: var(--bg-color2); /* Background color from the CSS variable */
+  border-radius: 0.375rem; /* Rounded corners */
+  padding: 0.5rem 1.5rem; /* Padding */
+}
+
+.input:focus , input:focus {
+  outline: none;
+  border-color: var(--border); /* Border color on focus */
+  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.3); /* Focus effect */
+}
+
+
+.select2 {
+  background-color: var(--bg-color2); /* Background color from CSS variable */
+  border: var(--border); /* Border from CSS variable */
+  color: var(--text-color2); /* Text color from CSS variable */
+  border-radius: 0.375rem; /* Rounded corners */
+  padding: 0.5rem; /* Padding */
+  font-size: 1rem; /* Font size */
+  font-weight: 500; /* Font weight */
+}
+
+.select:focus {
+  outline: none;
+  border-color: var(--border); /* Border on focus */
+  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.3); /* Focus shadow */
+}
+
+/* ///////////////label text//////////////// */
+.label-text {
+  color: var(--text-color);
+}
+
+/* ///////////////status label //////////////// */
+.status-label {
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.status-label input {
+  display: none; /* equivalent to sr-only in Tailwind */
+}
+
+.status-label div {
+  position: relative;
+  width: 3rem; /* 12px in Tailwind (w-12) */
+  height: 1.5rem; /* 6px in Tailwind (h-6) */
+  transition: background-color 0.2s ease, transform 0.2s ease; /* Add transition for transform */
+  border-radius: 9999px; /* rounded-full in Tailwind */
+}
+
+.status-label div.active {
+  background-color: #ce7c19; /* bg-blue-700 */
+}
+
+.status-label div.inactive {
+  background-color: #6b7280; /* bg-gray-500 */
+}
+
+.status-label span {
+  position: absolute;
+  top: 0.25rem; /* 1 in Tailwind (top-1) */
+  left: 0.25rem; /* 1 in Tailwind (left-1) */
+  width: 1rem; /* 4px in Tailwind (w-4) */
+  height: 1rem; /* 4px in Tailwind (h-4) */
+  background-color: white;
+  border-radius: 9999px;
+  transition: transform 0.2s ease; /* Smooth transition for thumb movement */
+}
+
+.status-label span.active {
+  transform: translateX(1.5rem); /* translate-x-6 */
+}
+
+
+/* ///////////////table css ///////////////////////// */
+/* ///////////////tr /////////////////////////////// */
+
+.tr1 {
+  background-color: var(--bg-color); /* Uses the CSS variable for background color */
+  border: var(--border);             /* Sets the border style using the variable */
+  border-left: var(--border);        /* Ensures left border matches the variable */
+  border-right: var(--border);       /* Ensures right border matches the variable */
+  color: var(--text-color);          /* Sets the text color using the variable */
+}
+
+.tr1 th {
+  padding: 0.75rem;                  /* Matches Tailwind's p-3 for padding */
+  text-align: start;                 /* Aligns text to the start (left by default) */
+}
+
+.tr1 th.text-center {
+  text-align: center;                /* Aligns text to the center for specific columns */
+}
+
+
+
+.tr2 {
+  background-color: var(--bg-table); /* Base background color */
+  color: var(--text-color2);         /* Base text color */
+  transition: background-color 0.3s ease; /* Smooth transition for hover effect */
+}
+
+.tr2:hover {
+  background-color: #a9bce8; /* Hover background color (gray-200) */
+}
+
+td {
+  border: var(--border);         /* Use the defined border variable */
+  padding: 0.75rem;              /* Equivalent to Tailwind's p-3 */
+  border-right: 1px solid #9ca3af; /* Equivalent to border-gray-400 */
+  border-left: 1px solid #9ca3af;
+  text-align: start;            /* Align text to the center */
+}
+
+
+
+/*//////////////////////////card-container////////////////////////*/
+
+
+.color-card-title {
+  font-size: 1.5rem; /* Equivalent to text-2xl for large screens */
+  font-weight: bold;
+}
+
+@media (max-width: 1024px) {
+  .color-card-title {
+    font-size: 1.25rem; /* Equivalent to text-xl for smaller screens */
+  }
+}
+
+.color-card-subtitle {
+  font-size: 1rem; /* Default font size (text-md) */
+  font-weight: bold;
+  margin-top: 0.5rem; /* Equivalent to mt-2 */
+}
+
+.color-card-subtitle .currency-symbol {
+  font-size: 1.25rem; /* Default text-md size */
+  font-weight: 800; /* Apply extra bold */
+}
+
+@media (min-width: 768px) {
+  .color-card-subtitle {
+    font-size: 1.875rem; /* Equivalent to text-3xl for medium screens */
+  }
+
+  .color-card-subtitle .currency-symbol {
+    font-size: 1.5rem; /* Slightly larger size for currency symbol on medium screens */
+  }
+}
+
+@media (min-width: 1024px) {
+  .color-card-subtitle {
+    font-size: 1.5rem; /* Equivalent to text-4xl for large screens */
+  }
+
+  .color-card-subtitle .currency-symbol {
+    font-size: 1.5rem; /* Larger size for currency symbol on large screens */
+  }
+}
+
+
+
+/* ////////////////////flex///////////////// */
+
+.f-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.75rem; 
+}
+
+.f-between {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem; 
+}
+
+.f-end {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
+}
+.f-start {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem; 
+}
+
+.f-end {
+  display: flex;
+  justify-content: end;
+  align-items: center;
+  gap: 0.75rem; 
+}
+
+/* //////////////////side spece///////////// */
+.side-space {
+  @apply px-4 py-4 overflow-x-auto rounded-md;
+  background-color: var(--bg-color3);
+  color: var(--text-color);
+  border: var(--border);
+}
+/* //////////////////table-div///////////// */
+.table-div {
+  @apply overflow-x-auto rounded-xl text-center;
+  color: var(--text-color);
+}
+
+
+
+
+
+
+
+
+
+
+  
+  
+  
+  
+  
   
   
   

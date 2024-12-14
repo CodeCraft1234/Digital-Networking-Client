@@ -25,7 +25,7 @@ const MonthlySpend = () => {
     return (
         <div>
             <Helmet>
-                <title>Payments History | Digital Network</title>
+                <title>Monthly Spend | Digital Network</title>
                 <link rel="canonical" href="https://www.example.com/" />
             </Helmet>
 

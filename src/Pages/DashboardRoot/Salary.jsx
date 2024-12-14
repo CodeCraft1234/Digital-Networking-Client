@@ -10,6 +10,7 @@ import toast from 'react-hot-toast';
 import UseAxiosPublic from '../../Axios/UseAxiosPublic';
 import useUserr2 from '../../Hook/useUser2';
 import { ImCross } from 'react-icons/im';
+import SummaryCard from '../Home/SummeryCard';
 
 const months = [
   'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'
@@ -25,15 +26,26 @@ const Salary = () => {
 
   const initialTab =
   userr?.role === "admin"
-  ? localStorage.getItem("a") || "all" 
-  : localStorage.getItem("a") || user?.email; 
+  ? localStorage.getItem("a9") || "all" 
+  : localStorage.getItem("a9") || user?.email; 
 
   const [selectedEmployee, setSelectedEmployee] = useState(initialTab);
 
-  // Change tab and save selection to local storage
   const changeTab = (tab) => {
     setSelectedEmployee(tab);
-    localStorage.setItem("a", tab);
+    localStorage.setItem("a9", tab);
+  };
+
+
+  const initialTab5 =
+  userr?.role === "admin"
+  ? localStorage.getItem("a99") || "all" 
+  : localStorage.getItem("a99") || user?.email; 
+  const [selectedRole, setSelectedRole] = useState(initialTab5);
+
+  const changeTab5 = (tab) => {
+    setSelectedRole(tab);
+    localStorage.setItem("a99", tab);
   };
 
   // Fetch data based on selected employee
@@ -146,69 +158,33 @@ const Salary = () => {
 
   };
   
+  const formatValue = (value, decimals = 2) =>
+    new Intl.NumberFormat('en-IN', { minimumFractionDigits: decimals, maximumFractionDigits: decimals }).format(value);
 
+  console.log(selectedRole);
 
   return (
-    <div className='m-5'>
+    <div className=''>
       <Helmet>
-        <title>Marketers Salary | Digital Network </title>
+        <title>Salary | Digital Network </title>
         <link rel="canonical" href="https://www.example.com/" />
       </Helmet>
 
-      <div style={{ backgroundColor: 'var(--bg-color3)', color: 'var(--text-color)',border: 'var(--border)'}} className="grid my-5 p-5 rounded-lg grid-cols-2 md:grid-cols-2 lg:grid-cols-4 text-black sm:grid-cols-2 gap-5 justify-around ">
-        <div className="px-5 py-10 rounded-2xl  bg-[#91a33a] text-white shadow-lg text-center">
-          <h2 className="text-xl font-bold">Total Spent</h2>
-          <p className="lg:text-xl text-xl font-bold mt-5">
-  $ {new Intl.NumberFormat('en-IN', { maximumFractionDigits: 2 }).format(
-    employeeData.reduce((acc, data) => acc + data.totalSpent, 0).toFixed(0)
-  )}
-</p>
+      <div  className="grid   rounded-lg grid-cols-2 md:grid-cols-2 lg:grid-cols-4 text-black sm:grid-cols-2 gap-5 justify-around ">
 
-        </div>
-
-        <div className="px-5 py-10 rounded-2xl bg-[#5422c0] text-white shadow-lg text-center">
-          <h2 className="text-xl font-bold">Total Salery</h2>
-          <p className="lg:text-xl text-xl font-bold mt-5">
-  <span className="lg:text-xl text-xl font-extrabold">৳</span> 
-  {new Intl.NumberFormat('en-IN').format(
-    employeeData.reduce((acc, data) => acc + data.totalSpent * 7, 0).toFixed(0)
-  )}
-</p>
-
-        </div>
-
-        <div className="px-5 py-10 rounded-2xl  bg-[#05a0db] text-white shadow-lg text-center">
-          <h2 className="lg:text-xl text-xl font-bold">Total Paid</h2>
-          <p className="lg:text-xl text-xl font-bold mt-5">
-  <span className="text-2xl font-extrabold">৳</span>
-  {new Intl.NumberFormat('en-IN').format(
-    employeeData.reduce((acc, data) => acc + data.totalSellery, 0).toFixed(0)
-  )}
-</p>
-
-        </div>
-
-        <div className="px-5 py-10 rounded-2xl  bg-[#ce1a38] text-white shadow-lg text-center">
-          <h2 className="text-xl font-bold">Total Unpaid</h2>
-          <p className="lg:text-xl text-xl font-bold mt-5">
-  <span className="lg:text-xl text-xl font-extrabold">৳</span> 
-  {new Intl.NumberFormat('en-IN').format(
-    employeeData.reduce((acc, data) => acc + data.totalSelleryPaid, 0).toFixed(0)
-  )}
-</p>
-
-        </div>
-
-
+      <SummaryCard title="Total Spent" value={formatValue(employeeData.reduce((acc, data) => acc + data.totalSpent, 0).toFixed(0))} />
+      <SummaryCard title="Total Salery" value={formatValue(employeeData.reduce((acc, data) => acc + data.totalSpent * 7, 0).toFixed(0))} />
+      <SummaryCard title="Total Paid" value={formatValue(employeeData.reduce((acc, data) => acc + data.totalSellery, 0).toFixed(0))} />
+      <SummaryCard title="Total Unpaid" value={formatValue( employeeData.reduce((acc, data) => acc + data.totalSelleryPaid, 0).toFixed(0))} />
       </div>
 
-      <div className='px-5 pb-5 pt-5 my-5 mt-5  rounded-lg' style={{ backgroundColor: 'var(--bg-color3)', color: 'var(--text-color)',border: 'var(--border)'}}>
+      <div className='side-space mt-5'>
    
 
 
 
-<div className='flex mb-5 justify-start items-center gap-3'>
-<div className="flex  justify-start">
+<div className='f-start mb-4'>
+<div className="f-start">
     <button
       className="font-avenir px-6 hover:bg-indigo-700 py-2 bg-[#05a0db] rounded-lg text-white"
       onClick={() => document.getElementById("my_modal_1").showModal()}
@@ -231,14 +207,15 @@ const Salary = () => {
             </h1>
 
             
-            <div className="mb-4">
+<div className='grid lg:grid-cols-2 gap-3'>
+<div className="mb-4">
             <label className="block text-gray-250">Date</label>
             <input
               type="date"
               name="date"
               required
               defaultValue={formattedDate}
-              className="w-full border text-black bg-white border-black rounded p-2 mt-1"
+              className="input2"
             />
           </div>
 
@@ -246,7 +223,7 @@ const Salary = () => {
          <label className="block text-black">Select Employee</label>
          <select
           
-           className="border bg-white w-full mt-1  py-2   text-black border-black rounded p-2 "
+           className="select2 w-full"
            name="employeeEmail"
          >
            {allEmployees?.filter(f=> f.role !== 'admin').map((employee) => (
@@ -256,6 +233,7 @@ const Salary = () => {
            ))}
          </select>
        </div>
+</div>
 
               <div className="grid lg:grid-cols-2 gap-3">
               <div className="mb-4 ">
@@ -265,7 +243,7 @@ const Salary = () => {
               type="number"
               name="payAmount"
               placeholder="0"
-              className="w-full border bg-white border-black rounded p-2 mt-1"
+              className="input2"
             />
           </div>
           <div className="mb-4">
@@ -276,7 +254,7 @@ const Salary = () => {
               name="charge"
               placeholder="0"
               defaultValue={0}
-              className="w-full border bg-white border-black rounded p-2 mt-1"
+              className="input2"
             />
           </div>
               </div>
@@ -287,63 +265,28 @@ const Salary = () => {
 
           <div className="mb-4">
   <div className="mt-2 grid lg:grid-cols-3">
-    <div className="form-control">
-      <label className="label flex justify-start items-center gap-2 cursor-pointer">
-        <input
-          type="radio"
-          name="paymentMethod"
-          value="bank"
-          className="radio radio-primary"
-        />
-        <span className="label-text text-black">Brack Bank</span>
-      </label>
-    </div>
-    <div className="form-control">
-      <label className="label flex justify-start items-center gap-2 cursor-pointer">
-        <input
-          type="radio"
-          name="paymentMethod"
-          value="DBBLBank"
-          className="radio radio-primary"
-        />
-        <span className="label-text text-black">DBBL Bank</span>
-      </label>
-    </div>
-    <div className="form-control">
-      <label className="label flex justify-start items-center gap-2 cursor-pointer">
-        <input
-          type="radio"
-          name="paymentMethod"
-          value="IBBLBank"
-          className="radio radio-primary"
-        />
-        <span className="label-text text-black">Islami Bank</span>
-      </label>
-    </div>
-    <div className="form-control">
-      <label className="label flex justify-start items-center gap-2 cursor-pointer">
-        <input
-          type="radio"
-          name="paymentMethod"
-          value="bkashPersonal"
-          className="radio radio-primary"
-        />
-        <span className="label-text text-black">bKash</span>
-      </label>
-    </div>
-    <div className="form-control">
-      <label className="label flex justify-start items-center gap-2 cursor-pointer">
-        <input
-          type="radio"
-          name="paymentMethod"
-          value="nagadPersonal"
-          className="radio radio-primary"
-        />
-        <span className="label-text text-black">Nagad</span>
-      </label>
-    </div>
+    {[
+      { value: "bank", label: "Brack Bank" },
+      { value: "DBBLBank", label: "DBBL Bank" },
+      { value: "IBBLBank", label: "Islami Bank" },
+      { value: "bkashPersonal", label: "bKash" },
+      { value: "nagadPersonal", label: "Nagad" },
+    ].map(({ value, label }) => (
+      <div className="form-control" key={value}>
+        <label className="label flex justify-start items-center gap-2 cursor-pointer">
+          <input
+            type="radio"
+            name="paymentMethod"
+            value={value}
+            className="radio radio-primary"
+          />
+          <span className="label-text text-black">{label}</span>
+        </label>
+      </div>
+    ))}
   </div>
 </div>
+
 
 
 
@@ -375,107 +318,117 @@ const Salary = () => {
     </dialog>
   </div>
   
-      <select
-    style={{
-        backgroundColor: "var(--bg-color2)",
-        border: "var(--border)",
-        color: "var(--text-color2)",
-    }}
-    className="border bg-white  text-black py-2 lg:w-auto w-full border-gray-400 rounded px-2"
+
+    <div className='f-end'>
+    {
+    userr?.role === 'admin' &&   <select
+    className="select2"
+    value={selectedRole}
+    onChange={(e) => changeTab5(e.target.value)}
+>
+            <option value="employee">Employee</option>
+            <option value="graphicDesigner">GraphicDesign</option>
+            <option value="webDeveloper">Web Developer</option>
+   </select>
+  }
+
+
+  {
+    userr?.role === 'admin' &&   <select
+    className="select2"
     value={selectedEmployee}
     onChange={(e) => changeTab(e.target.value)}
 >
-    <option value="all">All Employees</option>
+<option value="all">
+  All{" "}
+  {selectedRole === "employee"
+    ? "Employee"
+    : selectedRole === "graphicDesigner"
+    ? "Graphic Designer"
+    : selectedRole === "webDeveloper"
+    ? "Web Developer"
+    : "Users"}
+</option>
+
     {users
-        .filter((u) => ["employee", "graphicDesign", "webDeveloper", "staf"].includes(u.role))
+        .filter((u) => [selectedRole].includes(u.role))
         .map((employee) => (
             <option key={employee._id} value={employee.email}>
                 {employee.name}
             </option>
         ))}
       </select>
+  }
+    </div>
+    
 </div>
 
-       <div className="overflow-x-auto rounded-xl  text-center " style={{  color: 'var(--text-color)'}}>
+       <div className="table-div  " >
     <table className="min-w-full text-center ">
       <thead className=" ">
-        <tr className="" style={{backgroundColor: 'var(--bg-color)',border: 'var(--border)',borderLeft: 'var(--border)', borderRight: 'var(--border)', color: 'var(--text-color)'}}>
-          
-              <th style={{  border: 'var(--border)'}} className="p-3 text-start">Month</th>
-              <th style={{  border: 'var(--border)'}} className="p-3 text-start">Spent</th>
-              <th style={{  border: 'var(--border)'}} className="p-3 text-start">T. Sellery</th>
-              <th style={{  border: 'var(--border)'}} className="p-3 text-start">Unpaid</th>
-              <th style={{  border: 'var(--border)'}} className="p-3 text-start">Paid</th>
+        <tr className="tr1">
+              <th >Month</th>
+              <th >Spent</th>
+              <th >T. Sellery</th>
+              <th >Unpaid</th>
+              <th >Paid</th>
             </tr>
           </thead>
           <tbody>
             {employeeData.map((data, index) => (
-              <tr style={{ backgroundColor: 'var(--bg-table)', color: 'var(--text-color2)'}}
+              <tr 
               key={data._id}
-              className={`${
-                index % 2 === 0
-                  ? "bg-white text-left text-black border-b border-opacity-20"
-                  : "bg-gray-200  text-left text-black border-b border-opacity-20"
-              }`}
+              className={`tr2`}
              >
                 
-                <td style={{  border: 'var(--border)'}}  className="p-3 hover:text-blue-600 cursor-pointer border-r-2 border-gray-300 text-start px-5">
-                  {data.month}
-                </td>
-                <td style={{ border: 'var(--border)' }} className="p-3 border-r-2 border-gray-300 text-start">
+                <td>{data.month}</td>
+                <td>
   $ {new Intl.NumberFormat('en-IN').format(data.totalSpent.toFixed(2))}
-</td>
-<td style={{ border: 'var(--border)' }} className="p-3 border-r-2 border-gray-300 text-start">
+              </td>
+              <td>
   ৳ {
     new Intl.NumberFormat('en-IN').format(
       (data.totalSpent * (["October", "November", "December"].includes(data.month) ? 7 : 7)).toFixed(0)
     )
   }
-</td>
-<td style={{ border: 'var(--border)' }} className="p-3 border-r-2 border-gray-300 text-start">
+             </td>
+              <td>
   ৳ {new Intl.NumberFormat('en-IN').format(data.totalSelleryPaid.toFixed(2))}
-</td>
-<td style={{ border: 'var(--border)' }} className="p-3 border-r-2 border-gray-300 text-start">
+               </td>
+              <td>
   ৳ {new Intl.NumberFormat('en-IN').format(data.totalSellery.toFixed(2))}
-</td>
-
-
-              
+               </td>
               </tr>
             ))}
           </tbody>
           <tfoot className=" font-bold ">
-          <tr style={{ backgroundColor: 'var(--bg-color)', color: 'var(--text-color)'}}>
-            <td style={{  border: 'var(--border)'}} className="p-3 text-right" colSpan="1">Total</td>
-            <td style={{ border: 'var(--border)' }} className="p-3 text-start">
+          <tr className='tr1'>
+            <td  className=" text-right" colSpan="1">Total</td>
+            <td >
   $ {new Intl.NumberFormat('en-IN').format(
     employeeData.reduce((acc, data) => acc + data.totalSpent, 0).toFixed(2)
   )}
-</td>
-<td style={{ border: 'var(--border)' }} className="p-3 text-start">
+            </td>
+            <td>
   ৳ {new Intl.NumberFormat('en-IN').format(
     employeeData.reduce((acc, data) => acc + data.totalSpent * 7, 0).toFixed(2)
   )}
-</td>
-<td style={{ border: 'var(--border)' }} className="p-3 text-start">
+            </td>
+              <td>
   ৳ {new Intl.NumberFormat('en-IN').format(
     employeeData.reduce((acc, data) => acc + data.totalSellery, 0).toFixed(2)
   )}
-</td>
-<td style={{ border: 'var(--border)' }} className="p-3 text-start">
+             </td>
+           <td>
   ৳ {new Intl.NumberFormat('en-IN').format(
     employeeData.reduce((acc, data) => acc + data.totalSelleryPaid, 0).toFixed(2)
   )}
-</td>
-
-          
-          
+           </td>
           </tr>
         </tfoot>
         </table>
       </div>
       </div>
-
     </div>
   );
 };

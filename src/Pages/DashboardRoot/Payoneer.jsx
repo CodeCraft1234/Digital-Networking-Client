@@ -221,8 +221,9 @@ const Payoneer = () => {
   return (
     <div className="m-5">
       <ToastContainer />
+
       <Helmet>
-        <title>Admin Payment | Digital Network </title>
+        <title>Payoneer | Digital Network </title>
         <link rel="canonical" href="https://www.example.com/" />
       </Helmet>
 
@@ -309,6 +310,29 @@ const Payoneer = () => {
             />
           </div>
 
+          <div className="mb-4">
+          <div className="mb-4">
+                <label className="block text-black">Payoneer Email</label>
+                <select
+                  required
+                  name="payoneerEmail"
+                  className="w-full border border-gray-600 text-black bg-white rounded p-2 mt-2"
+                >
+                  <option selected disabled className="text-black" value="">
+                    Select an email
+                  </option>
+                  {
+                    payoneerEmail.map(email=>  <option key={email._id} value={email.payoneerEmail}>
+                      {email.payoneerEmail}
+                      </option>)
+                  }
+                  
+                   
+                </select>
+              </div>
+         </div>
+
+
               <div className="grid lg:grid-cols-2 gap-3">
               <div className="mb-4 ">
             <label className="block text-gray-250">Amount</label>
@@ -339,28 +363,7 @@ const Payoneer = () => {
             
           </div>
 
-          <div className="mb-4">
-          <div className="mb-4">
-                <label className="block text-black">Payoneer Email</label>
-                <select
-                  required
-                  name="payoneerEmail"
-                  className="w-full border border-gray-600 text-black bg-white rounded p-2 mt-2"
-                >
-                  <option className="text-black" value="">
-                    Select an email
-                  </option>
-                  {
-                    payoneerEmail.map(email=>  <option key={email._id} value={email.payoneerEmail}>
-                      {email.payoneerEmail}
-                      </option>)
-                  }
-                  
-                   
-                </select>
-              </div>
-         </div>
-
+         
 
 
 

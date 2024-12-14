@@ -1,6 +1,7 @@
 import { useState } from "react";
 import AdminPayments from "../DashboardRoot/AdminPayments";
 import ClientPayments from "../DashboardRoot/ClientPayments";
+import { Helmet } from "react-helmet-async";
 
 
 const MyPayments = () => {
@@ -21,8 +22,11 @@ const MyPayments = () => {
 
     return (
       <div>
-
-      <div  className="flex lg:justify-center gap-3 rounded-md p-2 justify-center items-center   mt-3 mx-5">
+  <Helmet>
+        <title>My Payment | Digital Network </title>
+        <link rel="canonical" href="https://www.example.com/" />
+      </Helmet>
+      <div  className="flex lg:justify-center gap-3 rounded-md  justify-center items-center ">
 
 
                    <button
@@ -44,7 +48,6 @@ const MyPayments = () => {
 
  {activeTab === 'adminPay' && <AdminPayments></AdminPayments>}
  {activeTab === 'clientsPay' && <ClientPayments></ClientPayments>}
-
 
    </div>
 

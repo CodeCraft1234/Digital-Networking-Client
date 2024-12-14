@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../../Security/AuthProvider";
 import UseAxiosPublic from "../../Axios/UseAxiosPublic";
@@ -6,7 +6,6 @@ import Swal from "sweetalert2";
 import { Helmet } from "react-helmet-async";
 import { ImCross } from "react-icons/im";
 import { toast } from "react-toastify";
-import useMyCampaingsByEmail from "../../Hook/useMyCampaignByEmail";
 import useMyClientsByEmail from "../../Hook/useMyClientsByEmail";
 import { FaEdit, FaMinusSquare } from "react-icons/fa";
 
@@ -30,11 +29,7 @@ const MetaAds = () => {
   };
 
   const [myclients, refetch] = useMyClientsByEmail(selectedEmployee3);
-
   const AxiosPublic=UseAxiosPublic()
-  const [mycampaigns] = useMyCampaingsByEmail(user?.email);
-  const [totalSpent, setTotalSpent] = useState(0);
-  const [totalBudged, setTotalBudged] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
 
@@ -54,23 +49,21 @@ const MetaAds = () => {
     localStorage.setItem("activeTaballcampaignmonthsss", tab);
   };
 
-
-
-  const tspent = mycampaigns
-      
-  ?.filter(campaign => myclients.some(client => client.clientEmail === campaign.clientEmail))
-  console.log(tspent,mycampaigns);
-
-  const filteredItems = tspent.filter((item) =>
-    item?._id.toLowerCase().includes(searchQuery.toLowerCase())
-  );
-
-
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 20;
 
   const displayedItems = myclients.sort((a, b) => new Date(b.date) - new Date(a.date))?.slice(0, currentPage * itemsPerPage);
   const isMoreItems = currentPage * itemsPerPage < myclients.length;
+
+  const filteredCampaigns = displayedItems
+  ?.flatMap(client => client.campaings || []) // Flatten the campaigns array
+  ?.filter(item =>
+    item.role === 'metaAds' && // Filter based on role
+    (selectedEmployee === 'all' || item.status === selectedEmployee) && // Filter based on employee status
+    (!selectedYear || new Date(item.date).getFullYear() === parseInt(selectedYear)) && // Filter based on year
+    item.campaignName?.toLowerCase().includes(searchQuery.toLowerCase()) && // Filter based on campaign name search
+    (sortMonth === 'all' || new Date(item.date).getMonth() + 1 === parseInt(sortMonth, 10)) // Filter based on selected month
+  );
 
   useEffect(() => {
     const handleScroll = () => {
@@ -130,7 +123,7 @@ const MetaAds = () => {
         confirmButtonText: 'Yes, delete it!'
     }).then((result) => {
         if (result.isConfirmed) {
-            AxiosPublic.delete(`/clientCampaing/delete/${id}/${ids}`)
+            AxiosPublic.delete(`/clientCampaings/delete/${id}/${ids}`)
                 .then((res) => {
                     toast.success("Campaign deleted successfully!");
                     refetch(); // Refresh data after deletion
@@ -150,7 +143,7 @@ const MetaAds = () => {
         user: user?.displayName,
     };
     
-    AxiosPublic.put(`/clientCampaing/${id}/${ids}`, { status })
+    AxiosPublic.put(`/clientCampaings/${id}/${ids}`, { status })
         .then((res) => {
             console.log("Update Response:", res.data);
             refetch(); // Refresh data after update
@@ -174,13 +167,14 @@ const MetaAds = () => {
         });
 };
 
+const navigate = useNavigate();
 
      const handleaddblog = (e) => {
       e.preventDefault();
       const clientName = e.target.clientName.value;
       const clientPhone = e.target.clientPhone.value;
       const clientEmail = e.target.clientEmail.value;
-      const employeeEmail = selectedEmployee3;
+      const employeeEmail = user?.email;
       const tBudged = 0;
       const tSpent = 0;
       const tBill = 0;
@@ -211,6 +205,7 @@ const MetaAds = () => {
       AxiosPublic.post("/clients", data)
         .then((res) => {
           refetch();
+          navigate('/clients'); // Navigate to the /clients route
           console.log(res.data);
           AxiosPublic.post("/activity", datas).then(() => {
             document.getElementById("my_modal_2").close();
@@ -224,426 +219,273 @@ const MetaAds = () => {
     };
    const [users]=useUsers()
 
+   const truncateText = (text, wordLimit) => {
+    const words = text.split(" ");
+    return words.length > wordLimit
+      ? words.slice(0, wordLimit).join(" ") + "..."
+      : text;
+  };
+
+  const InputField = ({ label, name, defaultValue, disabled, type = "text" }) => (
+    <div className="mb-4">
+      <label className="block text-left text-gray-700">{label}</label>
+      <input
+        type={type}
+        name={name}
+        defaultValue={defaultValue}
+        disabled={disabled}
+        className="w-full bg-white border border-gray-700 rounded p-2 mt-1"
+      />
+    </div>
+  );
+  
+  
   return (
-    <div className="lg:mt-5 overflow-x-auto  mt-5 mb-10 mx-5">
+    <div>
       <Helmet>
-        <title>Campaigns | Digital Network </title>
+        <title>Meta Ads | Digital Network </title>
         <link rel="canonical" href="https://www.example.com/" />
       </Helmet>
-      <div className='px-4 py-4 overflow-x-auto  rounded-md' style={{ backgroundColor: 'var(--bg-color3)', color: 'var(--text-color)',border: 'var(--border)'}}>
-      <div className="flex flex-col mb-0 lg:mb-5 sm:flex-row justify-between items-center gap-5">
+      <div className='side-spece'>
 
-      <div className="flex lg:justify-center justify-center mb-4 lg:mb-0 text-gray-500 lg:mx-2 pb-1 items-center gap-3">
+      <div className="flex flex-col mb-5 sm:flex-row justify-between items-center gap-5">
 
-<div className='flex justify-center'>
-   <div>
-     <button
-       className="font-avenir hover:bg-red-700 px-3 text-sm mx-auto py-1.5 bg-[#05a0db] rounded-lg text-white"
-       onClick={() => document.getElementById("my_modal_2").showModal()}
-     >
-       Add Client
-     </button>
-     <dialog id="my_modal_2" className="modal">
-       <div className="modal-box bg-white text-black font-bold">
-         <form onSubmit={handleaddblog}>
-           <div className="mb-4">
-             <h1
-               className="text-black flex hover:text-red-500 justify-end text-end"
-               onClick={() => document.getElementById("my_modal_2").close()}
-             >
-               <ImCross />
-             </h1>
-             <label className="block text-black">Client Name</label>
-             <input
-               id="name"
-               name="clientName"
-               type="text"
-               required
-               className="w-full bg-white border-2 border-black rounded p-2 mt-1"
-             />
-           </div>
-
-           <div className="mb-4">
-             <label className="block text-black">Client Phone</label>
-             <input
-               id="clientPhone"
-               name="clientPhone"
-               type="number"
-               required
-               className="w-full bg-white border-2 border-black rounded p-2 mt-1"
-             />
-           </div>
-           <div className="mb-4">
-             <label className="block text-black">Client Email</label>
-             <input
-               id="clientEmail"
-               name="clientEmail"
-               type="email"
-               required
-               className="w-full bg-white border-2 border-black rounded p-2 mt-1"
-             />
-           </div>
-
-           <div className="grid mt-8 grid-cols-2 gap-3">
-             <button
-               type="button"
-               onClick={() => document.getElementById("my_modal_2").close()}
-               className="p-2 hover:bg-red-700 rounded-lg bg-red-600 text-white text-center"
-             >
-               Close
-             </button>
-             <button
-               type="submit"
-               className="font-avenir hover:bg-indigo-700 px-3 py-1 bg-[#05a0db] rounded text-white"
-             >
-               Submit
-             </button>
-           </div>
-         </form>
-       </div>
-     </dialog>
-   </div>
-</div>
-
-</div>
-  
-
-
-  <div className="ml-5 flex mb-5 lg:mb-0 gap-3 justify-center">
-
-  <div className="w-full lg:w-auto flex justify-start gap-3">
-  {userr?.role === "admin" ? (
-    <div className="flex mt-1.5 justify-center">
-      <select
-        style={{
-          backgroundColor: "var(--bg-color2)",
-          border: "var(--border)",
-          color: "var(--text-color2)",
-        }}
-        className="border bg-white text-black py-2 lg:w-auto w-full border-gray-400 rounded px-2"
-        value={selectedEmployee3}
-        onChange={(e) => changeTab3(e.target.value)}
+  <div className="flex justify-center items-center gap-3">
+  <button
+    className="add"
+    onClick={() => document.getElementById("clientModal").showModal()}
+  >
+    Add Client
+  </button>
+  <dialog id="clientModal" className="modal">
+    <form  className="modal-box bg-white text-black" onSubmit={handleaddblog}>
+      <h1
+        className="flex justify-end  hover:text-red-500"
+        onClick={() => document.getElementById("clientModal").close()}
       >
-        <option value="all">All Employees</option>
-        {users
-          .filter((u) => u.role === "employee")
-          .map((employee) => (
-            <option key={employee._id} value={employee.email}>
-              {employee.name}
-            </option>
-          ))}
-      </select>
-    </div>
-  ) : (
-   <></>
-  )}
-</div>
+        <ImCross />
+      </h1>
+      {["Client Name", "Client Phone", "Client Email"].map((label, i) => (
+        <div key={i} className="mb-4">
+         <label className="text-black">{label}</label>
 
-<div>
-         <select
-        style={{ backgroundColor: 'var(--bg-color2)', border: 'var(--border)', color: 'var(--text-color2)' }}
-        className="bg-white border  text-black border-gray-400 rounded p-2 mt-1.5"
-        value={selectedEmployee}
-        onChange={(e) => changeTab(e.target.value)}
-      >
-        <option value="all">Select Status</option>
-        <option value="Active">Active</option>
-        <option value="Complete">Complete</option>
-      </select>
+          <input
+            name={
+              label === "Client Name"
+                ? "clientName"
+                : label === "Client Phone"
+                ? "clientPhone"
+                : "clientEmail"
+            }
+            type={i === 1 ? "number" : i === 2 ? "email" : "text"}
+            required
+            className="input2"
+          />
         </div>
-  
+      ))}
+      <div className="grid grid-cols-2 gap-3 mt-8">
+        <button
+          type="button"
+          onClick={() => document.getElementById("clientModal").close()}
+          className="close"
+        >
+          Close
+        </button>
+        <button type="submit" className="add">
+          Submit
+        </button>
+      </div>
+    </form>
+  </dialog>
+</div>
 
-        <div className="w-full lg:w-auto flex flex-col justify-center items-start">
-        <select
-          style={{
-            backgroundColor: 'var(--bg-color2)',
-            border: 'var(--border)',
-            color: 'var(--text-color2)',
-          }}
-          className="w-full lg:w-auto border bg-white text-black border-gray-400 rounded p-2 mt-1"
-          value={sortMonth}
-          onChange={(e) => changeTab2(e.target.value)}
-        >
-          
-          {[
-            'January',
-            'February',
-            'March',
-            'April',
-            'May',
-            'June',
-            'July',
-            'August',
-            'September',
-            'October',
-            'November',
-            'December',
-          ].map((month, index) => (
-            <option key={index + 1} value={index + 1}>
-              {month}
-            </option>
-          ))}
-        </select>
-      </div>
-      
-      <div className=" lg:flex text-black justify-center items-center">
-        <select
-        style={{ backgroundColor: 'var(--bg-color2)',border: 'var(--border)', color: 'var(--text-color2)'}}
-          className=" rounded-md p-2 mt-1"
-          value={selectedYear}
-          onChange={(e) => setSelectedYear(e.target.value)}
-        >
-          {Array.from({ length: 31 }, (_, i) => 2020 + i).map((year) => (
-            <option key={year} value={year}>
-              {year}
-            </option>
-          ))}
-        </select>
-      </div>
-   <div>
-   <input
-    style={{ backgroundColor: 'var(--bg-color2)',border: 'var(--border)', color: 'var(--text-color2)'}}
-     type="text"
-     placeholder="Search by campaign name"
-     className="border bg-white  text-black placeholder-gray-500 py-2 mt-1 border-gray-700 rounded-l-lg p-1 flex-1"
-     value={searchQuery}
-     onChange={(e) => setSearchQuery(e.target.value)}
-    />
-    <button
-     className="bg-black  text-white border border-black shadow-2xl rounded-r-lg p-2 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
-     onClick={() => {/* Add search functionality here */}}
-    >
-     Search
-    </button>
-   </div>
+  <div className="flex gap-3">
+  {userr?.role === "admin" && (
+    <select className="select2" value={selectedEmployee3} onChange={(e) => changeTab3(e.target.value)}>
+      <option value="all">All Employees</option>
+      {users.filter((u) => u.role === "employee").map((e) => (
+        <option key={e._id} value={e.email}>{e.name}</option>
+      ))}
+    </select>
+  )}
+  <select className="select2" value={selectedEmployee} onChange={(e) => changeTab(e.target.value)}>
+    <option value="all">Select Status</option>
+    <option value="Active">Active</option>
+    <option value="Complete">Complete</option>
+  </select>
+  <select className="select2" value={sortMonth} onChange={(e) => changeTab2(e.target.value)}>
+    {["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
+      .map((month, i) => <option key={i} value={i + 1}>{month}</option>)}
+  </select>
+  <select className="select2" value={selectedYear} onChange={(e) => setSelectedYear(e.target.value)}>
+    {Array.from({ length: 31 }, (_, i) => 2020 + i).map((year) => (
+      <option key={year} value={year}>{year}</option>
+    ))}
+  </select>
+  <div className="flex">
+    <input type="text" placeholder="Search by campaign name" className="input2" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
+    <button className="bg-black text-white rounded-r-lg px-3 hover:bg-blue-600" onClick={() => {}}>Search</button>
   </div>
-
+</div>
      </div>
 
-     <div  className="overflow-x-auto rounded-xl  text-center " style={{ color: 'var(--text-color)'}}>
-          <table className="min-w-full text-center ">
+     <div className=" table-div" >
+          <table className="min-w-full ">
             <thead className=" ">
-              <tr className="" style={{border: 'var(--border)', backgroundColor: 'var(--bg-color)',borderLeft: 'var(--border)', borderRight: 'var(--border)', color: 'var(--text-color)'}}>
-                <th className="p-3 text-center  border-gray-300">{displayedItems.length}</th>
-                <th className="p-3 text-center  border-gray-300">Date</th>
-                <th className="p-3 text-start  border-gray-300">Campaign Name</th>
-                <th className="p-3 text-start  border-gray-300">Client Name</th>
-                <th className="p-3 text-start  border-gray-300">Page Name</th>
-                <th className="p-3 text-center  border-gray-300">Budged</th>
-                <th className="p-3 text-center  border-gray-300">Spend</th>
-                <th className="p-3 text-center  border-gray-300">Total Bill</th>
-                <th className="p-3 text-center  border-gray-300">Status</th>
+              <tr className="tr1" >
+                <th className=" text-center">{displayedItems.length}</th>
+                <th >Date</th>
+                <th >Campaign Name</th>
+                <th >Client Name</th>
+                <th >Page Name</th>
+                <th >Budged</th>
+                <th >Spend</th>
+                <th >Total Bill</th>
+                <th className="text-center">Status</th>
               </tr>
             </thead>
             <tbody>
-            {displayedItems
-  ?.flatMap(client => client.campaings || [])
-  .filter(item => 
-    item.role === 'metaAds' && 
-    (selectedEmployee === 'all' || item.status === selectedEmployee) &&
-    (!selectedYear || new Date(item.date).getFullYear() === parseInt(selectedYear)) &&
-    item.campaignName?.toLowerCase().includes(searchQuery.toLowerCase()) &&
-    (sortMonth === 'all' || new Date(item.date).getMonth() + 1 === parseInt(sortMonth, 10))
-  )
+            {filteredCampaigns
   ?.map((work, index) => (
-    <tr style={{ backgroundColor: 'var(--bg-table)', color: 'var(--text-color2)'}}
-                 key={work._id}
-                 className={`${
-                   index % 2 === 0
-                     ? "bg-white text-left text-black border-b border-opacity-20"
-                     : "bg-gray-200  text-left text-black border-b border-opacity-20"
-                 }`}
-               >
-                <td style={{  border: 'var(--border)'}} className="p-3 border-l-2 border-r-2 border-gray-300 text-center">
-      <div className="flex justify-center gap-3">
-                
-                        <button
-                           className=" hover:bg-blue-700 text-[#f86c6b] text-xl px-2 py-1 rounded"
-                          onClick={() => handledelete(work.ids ,work.id,)}
-                        >
-                         <span >
-                          <FaMinusSquare  />
-                          </span>
-                        </button>
-                      </div>
-     </td>
-                      
-                  <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-200 text-center">
-                  {new Date(work?.date).toLocaleDateString("en-GB")}
-                  </td>
-                  
-                  <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-200 text-left">
-                  <button
-                        className=" flex justify-center items-center gap-1   px-2 py-1 rounded"
-                        onClick={() =>
-                          document.getElementById(`modal_${work.ids}`).showModal()
-                          }
-                      >
-                       <FaEdit /> 
-                       <span>
-  {work.campaignName
-    .split(' ') // Split the campaign name into words
-    .slice(0, 4) // Take only the first 6 words
-    .join(' ') // Join the words back into a string
-    + (work.campaignName.split(' ').length > 4 ? '...' : '') // Add "..." if there are more than 6 words
-  }
-</span>
-                      </button>
-                      <dialog id={`modal_${work.ids}`} className="modal">
-<div className="modal-box bg-white text-black">
-<form onSubmit={(e) => handleUpdate(e, work.ids ,work.id)}>
-<div className="mb-4">
-<label className="block text-left text-gray-700">
-Campaign Name
-</label>
-<input
-type="text"
-name="campaignName"
-defaultValue={work.campaignName}
+<tr key={work._id} className="tr2">
+  <td className="text-center">
+      <button
+        className="delete"
+        onClick={() => handledelete(work.ids, work.id)}
+      >
+        <FaMinusSquare />
+      </button>
+  </td>
 
-className="w-full bg-white border border-gray-700 rounded p-2 mt-1"
-/>
-</div>
-<div className="mb-4">
-<label className="block text-left text-gray-700">
-Account Name
-</label>
-<input
-type="text"
-name="adsAccount"
-defaultValue={work.adsAccount}
-disabled
-className="w-full bg-white border border-gray-700 rounded p-2 mt-1"
-/>
-</div>
+  <td>{new Date(work?.date).toLocaleDateString("en-GB")}</td>
 
-<div className="mb-4">
-<label className="block text-left text-gray-700">
-Total Budged
-</label>
-<input
-type="number"
-name="tBudged"
-defaultValue={work.tBudged}
-step="0.01"
-className="w-full bg-white border border-gray-700 rounded p-2 mt-1"
-/>
-</div>
-<div className="mb-4">
-<label className="block text-left text-gray-700">
-Total Spent
-</label>
-<input
-type="number"
-name="totalSpent"
-defaultValue={work.tSpent}
-step="0.01"
-className="w-full bg-white border border-gray-700 rounded p-2 mt-1"
-/>
-</div>
+  <td>
+    <button
+      className=" edit flex justify-center items-center gap-1 px-2 py-1 rounded"
+      onClick={() =>
+        document.getElementById(`modal_${work.ids}`).showModal()
+      }
+    >
+      <FaEdit />
+      <span>
+        {truncateText(work.campaignName, 4)}
+      </span>
+    </button>
 
-<div className="mb-4">
-<label className="block text-left text-gray-700">
-Dollers Rate
-</label>
-<input
-step="0.01"
-type="number"
-name="dollerRate"
-defaultValue={work.dollerRate}
-className="w-full bg-white border border-gray-700 rounded p-2 mt-1"
-/>
-</div>
+    <dialog id={`modal_${work.ids}`} className="modal">
+      <div className="modal-box bg-white text-black">
+        <form onSubmit={(e) => handleUpdate(e, work.ids, work.id)}>
+          <InputField
+            label="Campaign Name"
+            name="campaignName"
+            defaultValue={work.campaignName}
+          />
+          <InputField
+            label="Account Name"
+            name="adsAccount"
+            defaultValue={work.adsAccount}
+            disabled
+          />
+          <InputField
+            label="Total Budget"
+            name="tBudged"
+            defaultValue={work.tBudged}
+            type="number"
+          />
+          <InputField
+            label="Total Spent"
+            name="totalSpent"
+            defaultValue={work.tSpent}
+            type="number"
+          />
+          <InputField
+            label="Dollar Rate"
+            name="dollerRate"
+            defaultValue={work.dollerRate}
+            type="number"
+          />
 
-<div className="grid grid-cols-2 gap-3 mt-4">
-<button
-type="button"
-className="p-2 hover:bg-red-700 rounded-lg bg-red-600 text-white text-center"
-onClick={() =>
-document.getElementById(`modal_${work.ids}`).close()
-}
->
-Close
-</button>
-<button
-type="submit"
-className="font-avenir hover:bg-indigo-700 px-3 py-2 bg-[#05a0db] rounded-lg text-white text-center"
->
-Update
-</button>
+          <div className="grid grid-cols-2 gap-3 mt-4">
+            <button
+              type="button"
+              className="close"
+              onClick={() =>
+                document.getElementById(`modal_${work.ids}`).close()
+              }
+            >
+              Close
+            </button>
+            <button
+              type="submit"
+              className="add"
+            >
+              Update
+            </button>
+          </div>
+        </form>
+      </div>
+    </dialog>
+  </td>
 
-</div>
-</form>
-</div>
-                </dialog>
-                  
-                  </td>
-                  <td style={{  border: 'var(--border)'}} className="p-3 hover:text-blue-700 hover:font-bold border-r-2 border-gray-200 text-left">
-                  
-                   {work.pageName
-    .split(' ') 
-    .slice(0, 4) 
-    .join(' ') 
-    + (work.pageName.split(' ').length > 4 ? '...' : '') // Add "..." if there are more than 6 words
-  } 
-                  
-                  </td>
-                  
-                  <td  style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-200 text-center">
-                    {work.adsAccount}
-                  </td>
+  <td>{truncateText(work.pageName, 4)}</td>
+  <td>{work.adsAccount}</td>
+  <td>$ {work.tBudged}</td>
+  <td>$ {work.tSpent}</td>
+  <td>
+    <span className="text-md mr-1 font-extrabold">৳</span>
+    {parseInt(work.tSpent * work.dollerRate)}
+  </td>
 
-                  <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-200 text-center">
-                  $ {work.tBudged}
-                  </td>
-
-                  <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-200 text-center">
-                  $ {work.tSpent}
-                  </td>
-
-                  <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-200 text-center">
-                    <span className="text-md mr-1 font-extrabold">৳</span>
-                    {parseInt(work.tSpent * work.dollerRate)}
-                  </td>
-                  <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-l-2 border-gray-200 text-center">  <label className="inline-flex items-center cursor-pointer">
+  <td className="text-center">
+  <label className="status-label">
   <input
     type="checkbox"
-    className="sr-only"
     checked={work.status === "Active"}
     onChange={() => {
       const newStatus = work.status === "Active" ? "Complete" : "Active";
-      handleUpdate2(work.ids ,work.id, newStatus);
+      handleUpdate2(work.ids, work.id, newStatus);
     }}
   />
-  <div
-    className={`relative w-12 h-6 transition duration-200 ease-linear rounded-full ${
-      work.status === "Active" ? "bg-blue-700" : "bg-gray-500"
-    }`}
-  >
-    <span
-      className={`absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition-transform duration-200 ease-linear transform ${
-        work.status === "Active" ? "translate-x-6" : ""
-      }`}
-    ></span>
+  <div className={work.status === "Active" ? "active" : "inactive"}>
+    <span className={work.status === "Active" ? "active" : ""}></span>
   </div>
 </label>
-                   </td>
 
-                 
-                
-                </tr>
+  </td>
+</tr>
+
+
   ))}
-  <tr style={{border: 'var(--border)', backgroundColor: 'var(--bg-color)',borderLeft: 'var(--border)', borderRight: 'var(--border)', color: 'var(--text-color)'}} className=" font-bold">
-    <td className="p-3  border-gray-300 text-right" colSpan="5">
-      Total :
-    </td>
-    <td className="p-3  border-gray-300 text-center">$ {totalBudged.toFixed(2)}</td>
-    <td className="p-3  border-gray-300 text-center">$ {totalSpent.toFixed(2)}</td> 
-    <td className="p-3  border-gray-300 text-start"></td> 
-    <td className="p-3  border-gray-300 text-start"></td> 
+  <tr className="tr1 font-bold">
+  <td className="text-right" colSpan="5">
+    Total:
+  </td>
+  
+  <td>
+    $ {new Intl.NumberFormat('en-IN', { maximumFractionDigits: 2 }).format(
+     filteredCampaigns
+        ?.reduce((acc, work) => acc + (isNaN(parseFloat(work?.tBudged)) ? 0 : parseFloat(work?.tBudged)), 0)
+    )}
+  </td>
+  
+  <td>
+    $ {new Intl.NumberFormat('en-IN', { maximumFractionDigits: 2 }).format(
+      filteredCampaigns
+        .reduce((acc, work) => acc + (isNaN(parseFloat(work?.tSpent)) ? 0 : parseFloat(work?.tSpent)), 0)
+    )}
+  </td>
 
+  <td>
+    <span className="text-md mr-1 font-extrabold">৳</span>
+    {new Intl.NumberFormat('en-IN').format(
+      filteredCampaigns
+        .reduce((acc, work) => acc + (isNaN(parseFloat(work?.tSpent)) ? 0 : parseFloat(work?.tSpent * work.dollerRate)), 0)
+    )}
+  </td>
 
-  </tr>
+  <td className=""></td>
+</tr>
+
 </tbody>
           </table>  
           {isMoreItems && <p className="text-center mt-5">Loading more clients...</p>}
