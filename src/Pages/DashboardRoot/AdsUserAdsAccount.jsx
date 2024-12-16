@@ -15,9 +15,7 @@ const AdsUserAdsAccount = () => {
     const { user } = useContext(AuthContext);
     const [users] = useUsers();
     const [ddd, setDdd] = useState(null);
-    console.log(ddd);
     const {email}=useParams()
-    console.log(email);
   
     useEffect(() => {
         if (users && user) {
@@ -50,12 +48,10 @@ const AdsUserAdsAccount = () => {
       const dollerRate=125
       const status='Active'
   
-  
       const data = { accountName,dollerRate,totalSpent,currentBallence,threshold, paymentDate,status, employeeEmail,employeerName };
   
       AxiosPublic.post("/adsAccountCenter", data).then((res) => {
         console.log(res.data);
-        // toast.success("add successful");
         refetch()
         
       });
@@ -314,12 +310,12 @@ const AdsUserAdsAccount = () => {
   console.log(data)
 
     useEffect(()=>{
-      AxiosPublic.get(`https://hishab-2025.vercel.app/users/${userr.email}`)
+      AxiosPublic.get(`https://hishab-2025.vercel.app/users/${userr?.email}`)
       .then(res=>{
         console.log(res.data)
         setData(res.data)
       })
-    },[])
+    },[userr?.email])
 
 
     const handleUpdate2 = (id, newStatus) => {

@@ -23,15 +23,35 @@ import LineChart from "./LineChart";
 import PieChart from "./PieChart";
 import RadarChart from "./RaderChart";
 import useClientsCampaingss from "../../Hook/useClientCampaingss";
+import { AuthContext } from "../../Security/AuthProvider";
+import { useContext, useEffect } from "react";
+import useUserr from "../../Hook/useUser";
+import useMyEmployeePayments from "../../Hook/useMyemployeePayments";
+import useOnlyClientEmailByEmail from "../../Hook/useOnlyClientEmailByEmail";
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
 
 const AdminHome = () => {
   const [users] = useUsers();
-  const [clientsPayments]=useClients()
-  const [clientsCampaingss]=useClientsCampaingss()
-  const [employeePayment] = useEmployeePayment();
+  const { user } = useContext(AuthContext);
+  const {userr}=useUserr(user?.email)
+
+  const email = userr?.role === "admin" ? "all" : user?.email;
+
+  const [clientsPayments] = useClients(email);
+
+  
+  const [onlyClientEmails] = useOnlyClientEmailByEmail(email);
+  
+  
+  const [clientsCampaingss]=useClientsCampaingss(userr?.role === "admin" ? "all" : user?.email)
+  console.log(onlyClientEmails,clientsCampaingss);
+
+  const [MyEmployeePayment] = useMyEmployeePayments(
+    userr?.role === "admin" ? "all" : user?.email
+  );
+  
 
 
   
@@ -39,17 +59,17 @@ const AdminHome = () => {
   const startOfWeek = new Date(today.getFullYear(), today.getMonth(), today.getDate() - today.getDay());
   const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
 
-  const todayClients = clientsPayments?.filter(client => {
+  const todayClients = onlyClientEmails?.filter(client => {
     const clientDate = new Date(client.date);
     return clientDate.toDateString() === today.toDateString();
   });
 
-  const weeklyClients = clientsPayments?.filter(client => {
+  const weeklyClients = onlyClientEmails?.filter(client => {
     const clientDate = new Date(client.date);
     return clientDate >= startOfWeek && clientDate <= today;
   });
 
-  const monthlyClients = clientsPayments?.filter(client => {
+  const monthlyClients = onlyClientEmails?.filter(client => {
     const clientDate = new Date(client.date);
     return clientDate >= startOfMonth && clientDate <= today;
   });
@@ -312,7 +332,7 @@ const monthlyTotal = clientsPayments
   };
   
 
-  const todayPayAmountTotal = employeePayment
+  const todayPayAmountTotal = MyEmployeePayment
   
     .filter(payment => {
       const paymentDate = new Date(payment.date);
@@ -322,13 +342,13 @@ const monthlyTotal = clientsPayments
     .reduce((acc, payment) => acc + parseFloat(payment.payAmount || 0), 0); // Sum the payAmount values
   
 
-    const thisWeekPayAmountTotal = employeePayment
+    const thisWeekPayAmountTotal = MyEmployeePayment
     .filter(payment => isInThisWeek(payment.date)) 
     .filter(f => f.status === 'Approved')
     .reduce((acc, payment) => acc + parseFloat(payment.payAmount || 0), 0);
   
 
-      const thisMonthPayAmountTotal = employeePayment
+      const thisMonthPayAmountTotal = MyEmployeePayment
                   .filter(payment => {
     const paymentDate = new Date(payment.date);
     return paymentDate.getMonth() === today.getMonth() && paymentDate.getFullYear() === today.getFullYear(); // Check if the payment is in the current month
@@ -338,7 +358,7 @@ const monthlyTotal = clientsPayments
 
   return (
 
-    <div className="m-5 ">  
+    <div>  
 
       <Helmet>
         <title> Dashboard | Digital Network</title>
@@ -402,7 +422,7 @@ const monthlyTotal = clientsPayments
                         <div className="p-5 rounded-lg mb-5" style={{ backgroundColor: 'var(--bg-color3)', color: 'var(--text-color2)', border: 'var(--border)' }}>
                         <h2 style={{ backgroundColor: 'var(--bg-color3)', color: 'var(--text-color2)',  }} className=" font-bold p-3">Admin Payment & Transaction Overview</h2>
 
-                     <LineChart MyEmployeePayment={employeePayment} tPay={clientsPayments}></LineChart>
+                     <LineChart MyEmployeePayment={MyEmployeePayment} tPay={clientsPayments}></LineChart>
                         </div>
                         
                        <div className="grid lg:grid-cols-2 gap-5 ">

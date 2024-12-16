@@ -14,32 +14,21 @@ import AllEmployee from "./Pages/AllEmployee/AllEmployee";
 import UpdateProfile from "./Pages/Profile/UpdateProfile";
 import Profile from "./Pages/Profile/EmployeeProfile";
 import PrivateRoute from "./Security/PrivateRoute";
-import SalarySheet from "./Components/SalarySheet/SalarySheet";
-import AddClient from "./Pages/Home/AddClient";
 import UserProfile from "./Pages/Home/ClientProfile";
-import Profile2 from "./Pages/Home/Profile2";
-import EmployeeMonthlySalary from "./Pages/Home/EmployeerMouthlySelery";
-import MyCampaigns from "./Pages/Home/MetaAds";
 import { HelmetProvider } from "react-helmet-async";
-import MyClients from "./Pages/Home/Clients";
 import EmployeePayments from "./Pages/Home/EmployeePayments";
 import DashboardRoot from "./Pages/DashboardRoot/DashboardRoot";
 import Banner from "./Pages/Home/Banner";
 import AllUsers from "./Pages/Home/AllUsers";
 import CampaignTable2 from "./Pages/Home/EmployeeHome";
 import Users from "./Pages/DashboardRoot/Users";
-import AddEmployee from "./Pages/DashboardRoot/AddEmployee";
 import Summery from "./Pages/DashboardRoot/Summery";
-import AdsAccountCenter from "./Pages/DashboardRoot/Routes/AdsAccountCenter";
-import AdsPayments from "./Pages/DashboardRoot/AdsPayments";
 import AdsDashboardHome from "./Pages/DashboardRoot/AdsHome";
 import AdsUser from "./Pages/DashboardRoot/AdsUser";
 import AdsProfile from "./Pages/DashboardRoot/AdsProfile";
 import MySellery from "./Pages/DashboardRoot/MySellery";
 import History from "./Pages/DashboardRoot/MonthlySpend";
-import EmployeerSellery from "./Pages/DashboardRoot/EmployeerSellery";
 import EmployeeClients from "./Pages/Home/EmployeeClients";
-import AllSummery from "./Pages/DashboardRoot/Summery";
 import PaymentHistory from "./Pages/Home/PaymentHistory";
 import AdsAccount from "./Pages/Home/AdsAccount";
 import MyPayments from "./Pages/Home/MyPayments";
@@ -53,7 +42,6 @@ import ContriHistory from "./Pages/DashboardRoot/ContriHistory";
 import ContriSummery from "./Pages/DashboardRoot/ContriSummery";
 import ClientHistory from "./Pages/DashboardRoot/ClientHistory";
 import OthersSellery from "./Pages/DashboardRoot/OthersSellery";
-import AllSellery from "./Pages/Home/AllSellery";
 import DeveloperSalary2 from "./Pages/Home/DeveloperSalary2";
 import MetaAds from "./Pages/Home/MetaAds";
 import GoogleAds from "./Pages/Home/GoogleAds";
@@ -61,6 +49,9 @@ import PageSetup from "./Pages/Home/PageSetup";
 import Clients from "./Pages/Home/Clients";
 import Salary from "./Pages/DashboardRoot/Salary";
 import MonthlySpend from "./Pages/DashboardRoot/MonthlySpend";
+import AllAdsPayments from "./Pages/DashboardRoot/ContributorPayments";
+import AdsUserAdsAccount from "./Pages/DashboardRoot/AdsUserAdsAccount";
+import ClientProfile from "./Pages/Home/ClientProfile";
 
 const router = createBrowserRouter([
   {
@@ -85,11 +76,11 @@ const router = createBrowserRouter([
         element:<Banner></Banner>
        },
       {
-        path:'/dashboard/ads/home',
+        path:'/',
         element:<AdsDashboardHome></AdsDashboardHome>
        },
       {
-        path:'/dashboard/employee/home',
+        path:'/employee/home',
         element:<CampaignTable2></CampaignTable2>
        },
       {
@@ -126,8 +117,6 @@ const router = createBrowserRouter([
         element:<Salary></Salary>
        },
 
-
-
        {
         path:'/AdsAccount',
         element:<AdsAccount></AdsAccount>
@@ -149,52 +138,52 @@ const router = createBrowserRouter([
         element:<PaymentHistory></PaymentHistory>
        },
        {
-        path:'/dashboard/adsPayments',
-        element:<AdsPayments></AdsPayments>
+        path:'/adsPayments',
+        element:<AllAdsPayments></AllAdsPayments>
        },
        {
-        path:'/dashboard/contributorSummery',
+        path:'/contributorSummery',
         element:<ContriSummery></ContriSummery>
        },
        {
-        path:'/dashboard/contributorHistory',
+        path:'/contributorHistory',
         element:<ContriHistory></ContriHistory>
        },
        {
-        path:'/dashboard/notification',
+        path:'/notification',
         element:<Notification></Notification>
        },
 
        {
-        path:'/dashboard/adsUser',
+        path:'/adsUser',
         element:<AdsUser></AdsUser>
        },
        {
-        path:'/dashboard/client/:email',
-        element:<UserProfile></UserProfile>,
+        path:'/client/:email',
+        element:<ClientProfile></ClientProfile>,
        },
        {
-        path:'/dashboard/userInfo/:email',
+        path:'/userInfo/:email',
         element:<Profile></Profile>,
        },
        {
-        path:'/dashboard/adsuserInfo/:email',
+        path:'/adsuserInfo/:email',
         element:<AdsProfile></AdsProfile>,
        },
        {
-        path:'/dashboard/payments/:email',
+        path:'/payments/:email',
         element:<UserProfile></UserProfile>,
        },
        {
-        path:'dashboard/employeePayment',
+        path:'/employeePayment',
         element:<EmployeePayments></EmployeePayments>
        },
        {
-        path:'dashboard/allEmployee',
+        path:'/allEmployee',
         element:<AllEmployee></AllEmployee>
        },
        {
-        path:'dashboard/allAdSAccount',
+        path:'/allAdSAccount',
         element:<AdsAccount></AdsAccount>
       },
 
@@ -205,56 +194,52 @@ const router = createBrowserRouter([
         element:<ClientHome></ClientHome>
       },
       {
-        path:'dashboard/clientCampaigns',
+        path:'/clientCampaigns',
         element:<ClientCampaign2></ClientCampaign2>
       },
       {
-        path:'dashboard/paymentsClient',
+        path:'/paymentsClient',
         element:<ClientPaymentHistry2></ClientPaymentHistry2>
       },
       {
-        path:'dashboard/Users',
+        path:'/Users',
         element:<Users></Users>
       },
       {
-        path:'dashboard/updateProfile',
+        path:'/updateProfile',
         element:<UpdateProfile></UpdateProfile>
       },
        {
-        path:'dashboard/history',
+        path:'/history',
         element:<History></History>
        },
 
 
        {
-        path:'dashboard/allEmployeeClients/:email',
+        path:'/allEmployeeClients/:email',
         element:<EmployeeClients></EmployeeClients>
        },
 
        {
-        path:'dashboard/mySellery',
+        path:'/mySellery',
         element:<MySellery></MySellery>
        },
        {
-        path:'dashboard/myPayments',
+        path:'/myPayments',
         element:<MyPayments></MyPayments>
        },
 
        {
-        path:'dashboard/notification',
+        path:'/notification',
         element:<Notification></Notification>
        },
        {
-        path:'dashboard/clientHistory',
+        path:'/clientHistory',
         element:<ClientHistory></ClientHistory>
        },
+
        {
-        path:'dashboard/employeeMonthlySelary',
-        element:<EmployeeMonthlySalary></EmployeeMonthlySalary>
-       },
-    
-       {
-        path:'dashboard/myAdsAccount',
+        path:'/myAdsAccount',
         element:<AdsAccount />,
        },
        {
@@ -266,9 +251,8 @@ const router = createBrowserRouter([
         element:<OthersSellery></OthersSellery>,
        },
        {
-        path:'dashboard/adsAccountCenter/:email',
-        element:<AdsAccountCenter></AdsAccountCenter>,
-        loader: ({ params }) => fetch(`https://hishab-2025.vercel.app/users/${params.email}`)
+        path:'/adsAccountCenter',
+        element:<AdsUserAdsAccount></AdsUserAdsAccount>,
        },
     ]
    }

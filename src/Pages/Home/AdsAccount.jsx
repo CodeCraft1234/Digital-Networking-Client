@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import AllAdsPayments from '../DashboardRoot/AllAdsPayments';
+import AllAdsPayments from '../DashboardRoot/ContributorPayments';
 import { Helmet } from 'react-helmet-async';
 import SalaryPayments from './SalaryPayment';
 import ClientPayments from '../DashboardRoot/ClientPayments';
@@ -37,16 +37,16 @@ const AdsAccount = () => {
                 <div className="flex justify-center items-center gap-5 my-5">
                     {/* Employeer Pay Button */}
                     <button
-                        className={getButtonClass('MetaAdsAccount')}
-                        onClick={() => changeTab('MetaAdsAccount')}
+                        className={getButtonClass('meta')}
+                        onClick={() => changeTab('meta')}
                     >
                       <SiMeta />  Meta AdsAccount
                     </button>
 
                     {/* Clients Pay Button */}
                     <button
-                        className={getButtonClass('GoogleAdsAccount')}
-                        onClick={() => changeTab('GoogleAdsAccount')}
+                        className={getButtonClass('google')}
+                        onClick={() => changeTab('google')}
                     >
                     <SiGoogleads /> Google AdsAccount
                     </button>
@@ -54,8 +54,7 @@ const AdsAccount = () => {
                 </div>
             </div>
 
-            {activeTab === 'MetaAdsAccount' && <MetaAdsAccount />}
-            {activeTab === 'GoogleAdsAccount' && <GoogleAdsAccount />}
+            <MetaAdsAccount data1={activeTab} />
         </div>
     );
 };

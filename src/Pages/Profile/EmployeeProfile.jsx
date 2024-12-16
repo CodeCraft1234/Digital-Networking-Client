@@ -1,138 +1,92 @@
-import "./profile.css";
-import { useLoaderData } from "react-router-dom";
-import { useState } from "react";
-import CampaignTable from "../Home/EmployeeClient";
-import UserAdAccount from "../../Components/UserAdAccount/MyAdsAccount";
-import EmployeerSellery from "../DashboardRoot/EmployeerSellery";
-import { Helmet } from "react-helmet-async";
-import EmployeeAdminPay from "../Home/EmployeeAdminPay";
-import EmployeeClientPay from "../DashboardRoot/EmployeeClientPay";
-import EmployeeCampaign from "../Home/EmployeeCampaign";
-import EmployeeMyHistory from "../Home/EmployeeMyHistory";
-import EmployeeMySummery from "../DashboardRoot/EmployeeMySummery";
-import EmployeeClient from "../Home/EmployeeClient";
+import  { useState } from "react";
+import Select from "react-select";
 
-const EmployeeProfile = () => {
-  const userr = useLoaderData();
+// Example data for districts and areas
+const districtOptions = [
+  { value: "dhaka", label: "Dhaka" },
+  { value: "chattogram", label: "Chattogram" },
+  { value: "khulna", label: "Khulna" },
+  { value: "sylhet", label: "Sylhet" },
+];
 
-  const initialTab = localStorage.getItem("activeTabProfile") || "adsAccount";
-  const [activeTab, setActiveTab] = useState(initialTab); // Default to 'userAdAccount'
+const areaOptions = {
+  dhaka: [
+    { value: "uttara", label: "Uttara" },
+    { value: "gulshan", label: "Gulshan" },
+    { value: "dhanmondi", label: "Dhanmondi" },
+  ],
+  chattogram: [
+    { value: "agrabad", label: "Agrabad" },
+    { value: "pahartali", label: "Pahartali" },
+  ],
+  khulna: [
+    { value: "sonadanga", label: "Sonadanga" },
+    { value: "khulna-sadar", label: "Khulna Sadar" },
+  ],
+  sylhet: [
+    { value: "zubilee", label: "Zubilee" },
+    { value: "amberkhana", label: "Amberkhana" },
+  ],
+};
 
-  const getButtonClass = (tab) => 
-    `px-3 py-1 lg:px-4 lg:py-2 text-md lg:text-lg rounded-lg transition duration-300 ease-in-out ${
-        activeTab === tab 
-            ? 'bg-blue-600 text-white shadow-lg transform scale-105'  // Active tab styles
-            : 'bg-red-400 text-white hover:bg-gray-300 hover:shadow-md' // Inactive tab styles
-    }`;
+const Sellery2 = () => {
+  const [selectedDistrict, setSelectedDistrict] = useState(null);
+  const [selectedArea, setSelectedArea] = useState(null);
 
-  const changeTab = (tab) => {
-    setActiveTab(tab);
-    localStorage.setItem("activeTabProfile", tab); // Store the active tab in local storage
+  const handleDistrictChange = (selectedOption) => {
+    setSelectedDistrict(selectedOption);
+    setSelectedArea(null); // Reset area selection when district changes
   };
 
+  const handleAreaChange = (selectedOption) => {
+    setSelectedArea(selectedOption);
+  };
+
+  const checkAvailability = () => {
+    if (selectedDistrict && selectedArea) {
+      alert(
+        'sagdsag'
+      );
+    } else {
+      alert("Please select both district and area.");
+    }
+  };
 
   return (
-    <div className="my-5">
-      {/* <Helmet>
-        <title>Digital Network | Employee Profile</title>
-        <link rel="canonical" href="https://www.tacobell.com/" />
-      </Helmet>
-      
-      <div className="">
-        <img 
-          className="rounded-full border-2 p-2 border-black mx-auto sm:w-20 h-20 lg:w-32 lg:h-32" 
-          src={userr?.photo} 
-          alt="" 
+    <div style={{ padding: "20px", maxWidth: "400px", margin: "auto" }}>
+      <h2>Check Coverage</h2>
+      <div style={{ marginBottom: "20px" }}>
+        <Select
+          options={districtOptions}
+          placeholder="Select District"
+          onChange={handleDistrictChange}
+          value={selectedDistrict}
         />
-        <h1 style={{ color: 'var(--text-color2)'}} className="lg:text-4xl mt-4 text-gray sm:text-2xl md:text-3xl font-bold text-center">
-          {userr?.name}
-        </h1>
       </div>
-      
-
-
-    
-     {
-      userr.role === 'employee' ? 
-      <div className="lg:flex lg:justify-center grid grid-cols-3 px-3  mb-3 lg:mb-0  items-center gap-5 mt-5">
-      <button 
-      className={getButtonClass('adsAccount')}
-      onClick={() => changeTab('adsAccount')}
-    >
-      Ads Account
-    </button>
-    <p className='font-extrabold hidden lg:visible text-blue text-2xl'>|</p>
-  <button 
-      className={getButtonClass('client')}
-      onClick={() => changeTab('client')}
-    >
-      Clients
-    </button>
-    <p className='font-extrabold hidden lg:visible text-blue text-2xl'>|</p>
-
-    <button 
-      className={getButtonClass('campaign')}
-      onClick={() => changeTab('campaign')}
-    >
-      Campaigns
-    </button>
-    <p className='font-extrabold hidden lg:visible text-blue text-2xl'>|</p>
-    <button 
-      className={getButtonClass('adminPay')}
-      onClick={() => changeTab('adminPay')}
-    >
-      Admin Pay
-    </button>
-    <p className='font-extrabold hidden lg:visible text-blue text-2xl'>|</p>
-    <button 
-      className={getButtonClass('clientPay')}
-      onClick={() => changeTab('clientPay')}
-    >
-      Client Pay
-    </button>
-    <p className='font-extrabold hidden lg:visible text-blue text-2xl'>|</p>
-
-    <button 
-      className={getButtonClass('history')}
-      onClick={() => changeTab('history')}
-    >
-      History
-    </button>
-    <button 
-      className={getButtonClass('summery')}
-      onClick={() => changeTab('summery')}
-    >
-      Summery
-    </button>
-    
-    <button 
-    className={getButtonClass('sellery')}
-    onClick={() => changeTab('sellery')}
-  >
-    Sellery
-  </button>
-  </div> : <div className="flex justify-center items-center my-5">
-         <button 
-          className={getButtonClass('sellery')}
-          onClick={() => changeTab('sellery')}
-        >
-          Sellery
-        </button>
+      <div style={{ marginBottom: "20px" }}>
+        <Select
+          options={selectedDistrict ? areaOptions[selectedDistrict.value] : []}
+          placeholder="Select Area"
+          onChange={handleAreaChange}
+          value={selectedArea}
+          isDisabled={!selectedDistrict} // Disable until district is selected
+        />
       </div>
-     }
-       
-      
-
-      {activeTab === 'client' && <EmployeeClient email={userr?.email} />}
-      {activeTab === 'campaign' && <EmployeeCampaign email={userr?.email} />}
-      {activeTab === 'adsAccount' && <UserAdAccount email={userr?.email} />}
-      {activeTab === 'sellery' && <EmployeerSellery />}
-      {activeTab === 'adminPay' && <EmployeeAdminPay email={userr?.email} />}
-      {activeTab === 'clientPay' && <EmployeeClientPay email={userr?.email} />}
-      {activeTab === 'history' && <EmployeeMyHistory email={userr?.email} />}
-      {activeTab === 'summery' && <EmployeeMySummery email={userr?.email} />} */}
+      <button
+        onClick={checkAvailability}
+        style={{
+          padding: "10px 20px",
+          backgroundColor: "#4caf50",
+          color: "white",
+          border: "none",
+          borderRadius: "5px",
+          cursor: "pointer",
+        }}
+      >
+        Check Availability
+      </button>
     </div>
   );
 };
 
-export default EmployeeProfile;
+export default Sellery2;

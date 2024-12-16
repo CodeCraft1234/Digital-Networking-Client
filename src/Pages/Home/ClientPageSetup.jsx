@@ -12,18 +12,16 @@ import useCampaingsByEmail from "../../Hook/useCampaignsByEmail";
 import useMpymentsByEmail from "../../Hook/useMpaymentByEmail";
 import { FaEdit, FaMinusSquare } from "react-icons/fa";
 import useFindClient from "./useFindClient";
+import SummaryCard from "./SummeryCard";
 
 const ClientPageSetup = () => {
     const { user } = useContext(AuthContext);
     const param = useParams()
     const {findClients , refetch}=useFindClient(param?.email)
-    console.log(findClients.pageService);
     const [campaignss]=useCampaingsByEmail(param?.email)
     const [clients]=useClients()
     const [datas,setdatas]=useState()
     const AxiosPublic = UseAxiosPublic();
-    const [totalSpent, setTotalSpent] = useState(0);
-    const [totalBills, setTotalBills] = useState(0);
     const [users] = useUsers();
     const [ddd, setDdd] = useState(null);
     const [adsAccount] = useAdsAccount();
@@ -34,19 +32,6 @@ const ClientPageSetup = () => {
 
         const fff = users.find((u) => u.email === user?.email);
         setDdd(fff || {}); 
-
-      const totalBill = campaignss.reduce(
-        (acc, campaign) => acc + parseFloat(campaign.tSpent) * parseFloat(campaign.dollerRate),
-        0
-      );
-      setTotalBills(totalBill);
-    
-      const totalSpent = campaignss.reduce(
-        (acc, campaign) => acc + parseFloat(campaign.tSpent),
-        0
-      );
-      setTotalSpent(totalSpent);
-
 
     }, [clients, users, user, param?.email, campaignss, adsAccount]);
 
@@ -198,49 +183,28 @@ const ClientPageSetup = () => {
         });
 };
 
-       const [totalPaymeent, setTotalPayment] = useState([]);
-       const [Mpayments]=useMpymentsByEmail(param?.email)
-     
-       useEffect(() => {
-         const totalBill = Mpayments.reduce(
-           (acc, campaign) => acc + parseFloat(campaign.amount),
-           0
-         );
-         setTotalPayment(totalBill);
-       }, [ Mpayments]);
-
        const today = new Date();
-       const formattedDate = today.toISOString()?.split('T')[0];  // "YYYY-MM-DD" format
+       const formattedDate = today.toISOString()?.split('T')[0];  
        
     return (
         <div>
-            <div className="p-5">
+            <div className="mt-5">
 
-            <div style={{ backgroundColor: 'var(--bg-color3)', color: 'var(--text-color)',border: 'var(--border)'}}  className="grid grid-cols-2  rounded-lg md:grid-cols-2 lg:grid-cols-2 text-black sm:grid-cols-2 gap-3 lg:gap-3 justify-around p-5">
+            <div   className="grid grid-cols-2 mb-5 rounded-lg md:grid-cols-2 lg:grid-cols-2 text-black sm:grid-cols-2 gap-3 lg:gap-5 justify-around ">
 
-        <div className="px-5 py-10 rounded-2xl bg-[#5422c0] text-white shadow-lg text-center">
-          <h2 className="lg:text-2xl text-sm font-bold">Total Bill</h2>
-          <p className="lg:text-2xl text-xl font-bold mt-2">
-             <span className="lg:text-2xl text-xl font-extrabold">৳</span> {findClients?.pageService?.reduce((acc, payment) => acc + parseFloat(payment?.totalBill || 0), 0).toFixed(2) || 0}
-          </p>
-        </div>
-
-        <div className="px-5 py-10 rounded-2xl  bg-[#05a0db] text-white shadow-lg text-center">
-          <h2 className="lg:text-xl text-sm font-bold">Total Paid</h2>
-          <p className="lg:text-2xl text-xl font-bold mt-2"> <span className="lg:text-2xl text-xl font-extrabold">৳</span> {findClients?.pageService?.reduce((acc, payment) => acc + parseFloat(payment?.totalPaid || 0), 0).toFixed(2) || 0}</p>
-        </div>
-
+        <SummaryCard title="Total Bill" value={findClients?.pageService?.reduce((acc, payment) => acc + parseFloat(payment?.totalBill || 0), 0).toFixed(2) || 0} />
+        <SummaryCard title="Total Paid" value={findClients?.pageService?.reduce((acc, payment) => acc + parseFloat(payment?.totalPaid || 0), 0).toFixed(2) || 0} />
 
           </div>
 
-      <div style={{ backgroundColor: 'var(--bg-color3)', color: 'var(--text-color)',border: 'var(--border)'}} className="  rounded-lg p-5 mx-1 my-5 ">
+      <div  className="  side-space ">
         
   <div>
 
     {
       ddd?.role ==='employee' && 
       <button
-      className="font-avenir hover:bg-indigo-700 px-5 p-2 lg:w-auto w-full mx-auto   bg-[#05a0db] rounded-lg text-white"
+      className="add"
       onClick={() => document.getElementById("my_modal_2").showModal()}
     >
       Add a Item
@@ -269,7 +233,7 @@ const ClientPageSetup = () => {
                   placeholder="type...."
                   required
                   defaultValue={formattedDate}
-                  className="w-full border border-gray-600 text-black bg-green-300 rounded p-2 mt-1"
+                  className="input2"
                 />
               </div>
 
@@ -284,7 +248,7 @@ const ClientPageSetup = () => {
                   type="text"
                   placeholder="type...."
                   required
-                  className="w-full border border-gray-600 text-black bg-white rounded p-2 mt-1"
+                  className="input2"
                 />
               </div>
               <div>
@@ -298,7 +262,7 @@ const ClientPageSetup = () => {
                   type="number"
                   placeholder="type...."
                   required
-                  className="w-full border border-gray-600 text-black bg-white rounded p-2 mt-1"
+                  className="input2"
                 />
               </div>
             </div>
@@ -314,7 +278,7 @@ const ClientPageSetup = () => {
                   type="text"
                   placeholder="type...."
                   required
-                  className="w-full border border-gray-600 text-black bg-white rounded p-2 mt-1"
+                  className="input2"
                 />
               </div>
               <div className="mb-4">
@@ -326,7 +290,7 @@ const ClientPageSetup = () => {
                   name="pageUrl"
                   type="text"
                   placeholder="type...."
-                  className="w-full border border-gray-600 text-black bg-white rounded p-2 mt-1"
+                  className="input2"
                 />
               </div>
             </div>
@@ -336,14 +300,14 @@ const ClientPageSetup = () => {
             <div className="grid grid-cols-2 gap-3 mt-4">
             <button
                 type="button"
-                className="p-2 hover:bg-red-700 rounded-lg bg-red-600 text-white text-center"
+                className="close"
                 onClick={() => document.getElementById("my_modal_2").close()}
               >
                 Close
               </button>
               <button
                 type="submit"
-                className="font-avenir px-3 py-2 hover:bg-indigo-700 bg-[#05a0db] rounded-lg text-white text-center"
+                className="add"
               >
                 Submit
               </button>
@@ -355,36 +319,31 @@ const ClientPageSetup = () => {
     </dialog>
   </div>
 
-  <div  className="overflow-x-auto rounded-xl mt-5  text-center " style={{ backgroundColor: 'var(--bg-color)', color: 'var(--text-color)'}}>
+  <div  className="table-div mt-5" >
           <table className="min-w-full text-center ">
             <thead className=" ">
-              <tr className="" style={{border: 'var(--border)',borderLeft: 'var(--border)', borderRight: 'var(--border)', color: 'var(--text-color)'}}>  
-                <th style={{  border: 'var(--border)'}} className="p-3">{campaignss?.length}</th>
-                <th style={{  border: 'var(--border)'}} className="p-3">Date</th>
-                <th style={{  border: 'var(--border)'}} className="p-3 text-start">Item Name</th>
-                <th style={{  border: 'var(--border)'}} className="p-3 text-start">Page Name</th>
-                <th style={{  border: 'var(--border)'}} className="p-3">Total Bill</th>
-                <th style={{  border: 'var(--border)'}} className="p-3">Total Paid</th>
-                <th style={{  border: 'var(--border)'}} className="p-3">Total Due</th>
-                <th style={{  border: 'var(--border)'}} className="p-3">Status</th>
+              <tr className="tr1" >  
+                <th  className="text-center">Items {campaignss?.length}</th>
+                <th >Date</th>
+                <th >Item Name</th>
+                <th >Page Name</th>
+                <th >Total Bill</th>
+                <th >Total Paid</th>
+                <th >Total Due</th>
+                <th  className="text-center">Status</th>
  
               </tr>
             </thead>
             <tbody>
               {findClients.pageService?.map((work, index) => (
-                 <tr style={{ backgroundColor: 'var(--bg-table)', color: 'var(--text-color2)'}}
+                 <tr 
                  key={work._id}
-                 className={`${
-                   index % 2 === 0
-                     ? "bg-white text-left text-black border-b border-opacity-20"
-                     : "bg-gray-200  text-left text-black border-b border-opacity-20"
-                 }`}
+                 className={`tr2`}
                >
-                <td style={{  border: 'var(--border)'}} className="p-3 border-l-2 border-r-2 border-gray-300 text-center">
-      <div className="flex justify-center gap-3">
-                
+                <td  className="text-center">
+                  <div className="f-center">
                         <button
-                           className=" hover:bg-blue-700 text-[#f86c6b] text-xl px-2 py-1 rounded"
+                           className=" delete"
                           onClick={() => handledelete( work.ids ,work.id)}
                         >
                          <span >
@@ -394,13 +353,13 @@ const ClientPageSetup = () => {
                       </div>
                </td>
                       
-                  <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-200 text-center">
+                  <td>
                   {new Date(work?.date).toLocaleDateString("en-GB")}
                   </td>
                   
-                  <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-200 text-left">
+                  <td >
                   <button
-                        className=" flex justify-center items-center gap-1   px-2 py-1 rounded"
+                        className=" edit"
                         onClick={() =>
                           document.getElementById(`modal_${work.ids}`).showModal()
                           }
@@ -427,7 +386,7 @@ type="text"
 name="itemName"
 defaultValue={work.itemName}
 
-className="w-full bg-white border border-gray-700 rounded p-2 mt-1"
+className="input2"
 />
 </div>
 
@@ -440,7 +399,7 @@ type="number"
 name="totalBill"
 defaultValue={work.totalBill}
 step="0.01"
-className="w-full bg-white border border-gray-700 rounded p-2 mt-1"
+className="input2"
 />
 </div>
 <div className="mb-4">
@@ -452,7 +411,7 @@ type="number"
 name="totalPaid"
 defaultValue={work.totalPaid}
 step="0.01"
-className="w-full bg-white border border-gray-700 rounded p-2 mt-1"
+className="input2"
 />
 </div>
 
@@ -460,7 +419,7 @@ className="w-full bg-white border border-gray-700 rounded p-2 mt-1"
 <div className="grid grid-cols-2 gap-3 mt-4">
 <button
 type="button"
-className="p-2 hover:bg-red-700 rounded-lg bg-red-600 text-white text-center"
+className="close"
 onClick={() =>
 document.getElementById(`modal_${work.ids}`).close()
 }
@@ -469,7 +428,7 @@ Close
 </button>
 <button
 type="submit"
-className="font-avenir hover:bg-indigo-700 px-3 py-2 bg-[#05a0db] rounded-lg text-white text-center"
+className="add"
 >
 Update
 </button>
@@ -495,72 +454,66 @@ Update
                   
                 
 
-                  <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-200 text-center">
+                  <td >
                   ৳ {work.totalBill || 0}
                   </td>
-                  <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-200 text-center">
+                  <td >
                   ৳ {work?.totalPaid || 0}
                   </td>
 
                  
 
-                  <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-200 text-center">
+                  <td >
                     <span className="text-md mr-1 font-extrabold">৳</span>
                      {(work.totalBill || 0) - (work?.totalPaid || 0)}
                   </td>
-                  <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-l-2 border-gray-200 text-center">  <label className="inline-flex items-center cursor-pointer">
+
+
+                  <td className="text-center">
+  <label className="status-label">
   <input
     type="checkbox"
-    className="sr-only"
     checked={work.status === "Active"}
     onChange={() => {
       const newStatus = work.status === "Active" ? "Complete" : "Active";
       handleUpdate2(work.ids ,work.id, newStatus);
     }}
   />
-  <div
-    className={`relative w-12 h-6 transition duration-200 ease-linear rounded-full ${
-      work.status === "Active" ? "bg-blue-700" : "bg-gray-500"
-    }`}
-  >
-    <span
-      className={`absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition-transform duration-200 ease-linear transform ${
-        work.status === "Active" ? "translate-x-6" : ""
-      }`}
-    ></span>
+  <div className={work.status === "Active" ? "active" : "inactive"}>
+    <span className={work.status === "Active" ? "active" : ""}></span>
   </div>
 </label>
-</td>
 
+  </td>
                  
-                
+
                 </tr>
               ))}
-              <tr style={{border: 'var(--border)',borderLeft: 'var(--border)', borderRight: 'var(--border)', color: 'var(--text-color)'}} className=" font-bold">
-                <td  className="p-3  text-center"></td>
+              <tr  className="tr1 font-bold">
+                <td  ></td>
                 <td   className="p-3 text-right" colSpan="3">
                   Total:
                 </td>
-                <td  style={{  border: 'var(--border)'}} className="p-3 text-center">
+                <td  >
                   <span className="text-sm mr-1 font-extrabold">$</span>{" "}
                   {findClients?.pageService?.reduce((acc, payment) => acc + parseFloat(payment?.totalBill || 0), 0).toFixed(2) || 0}
                 </td>
-                <td style={{  border: 'var(--border)'}} className="p-3 text-center">
+                <td >
                   <span className="text-sm mr-1 font-extrabold">৳</span>{" "}
                   {findClients?.pageService?.reduce((acc, payment) => acc + parseFloat(payment?.totalPaid || 0), 0).toFixed(2) || 0}
                 </td>
-                <td style={{  border: 'var(--border)'}} className="p-3 text-center">
+                <td >
                   <span className="text-sm mr-1 font-extrabold">৳</span>{" "}
                   {findClients?.pageService?.reduce((acc, payment) => acc + parseFloat(payment?.totalBill || 0), 0).toFixed(2) - findClients?.pageService?.reduce((acc, payment) => acc + parseFloat(payment?.totalPaid || 0), 0).toFixed(2) || 0}
                 </td>
                 {ddd?.role === "admin" ? (
                   <>
-                    <td style={{  border: 'var(--border)'}} className="p-3 text-center"></td>
+                    <td ></td>
                   
                   </>
                 ) : (
                   <>
-                   <td style={{  border: 'var(--border)'}} className="p-3 text-center"></td>
+                   <td ></td>
 
                  
                   </>

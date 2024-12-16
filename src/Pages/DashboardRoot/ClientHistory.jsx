@@ -7,6 +7,7 @@ import useCampaingsByEmail from "../../Hook/useCampaignsByEmail";
 import useMpymentsByEmail from "../../Hook/useMpaymentByEmail";
 import BalanceCard from "./BalanceCard";
 import useFindClient from "../Home/useFindClient";
+import SummaryCard from "../Home/SummeryCard";
 
 const ClientHistory = () => {
   const param = useParams();
@@ -110,56 +111,57 @@ const ClientHistory = () => {
   
 
   return (
-    <div className="m-4">
+    <div className=" mt-5">
 
 
-<div className="rounded-lg" style={{ backgroundColor: 'var(--bg-color3)', color: 'var(--text-color)',border: 'var(--border)'}} >
-<div  className="grid grid-cols-2  rounded-lg md:grid-cols-2 lg:grid-cols-4 text-black sm:grid-cols-2 gap-3 lg:gap-3 justify-around p-5">
+<div className="rounded-lg" >
+<div  className="grid grid-cols-2  rounded-lg md:grid-cols-2 lg:grid-cols-4 text-black sm:grid-cols-2 gap-3 lg:gap-5 justify-around ">
 
-        <div className="px-5 py-10 rounded-2xl  bg-[#91a33a] text-white shadow-lg text-center">
-          <h2 className="lg:text-xl text-sm font-bold">Total Spent</h2>
-          <p className="lg:text-2xl text-xl font-bold mt-2"> $ {findClients?.campaings?.reduce((acc, payment) => acc + parseFloat(payment?.tSpent || 0), 0).toFixed(2)}</p>
-        </div>
 
-        <div className="px-5 py-10 rounded-2xl bg-[#5422c0] text-white shadow-lg text-center">
-          <h2 className="lg:text-xl text-sm font-bold">Total Bill</h2>
-          <p className="lg:text-2xl text-xl font-bold mt-2">
-             <span className="lg:text-2xl text-xl font-extrabold">৳</span> {findClients?.campaings?.reduce(
+<SummaryCard title="Total Spent" value={findClients?.campaings?.reduce((acc, payment) => acc + parseFloat(payment?.tSpent || 0), 0).toFixed(2)} />
+        <SummaryCard title="Total Bill" value={findClients?.campaings?.reduce(
     (acc, campaign) =>
       acc + parseFloat(campaign?.tSpent || 0) * parseFloat(campaign?.dollerRate || 0),
     0
-  ).toFixed(0)}
-          </p>
-        </div>
+  ).toFixed(0)} />
 
-        <div className="px-5 py-10 rounded-2xl  bg-[#05a0db] text-white shadow-lg text-center">
-          <h2 className="lg:text-xl text-sm font-bold">Total Paid</h2>
-          <p className="lg:text-2xl text-xl font-bold mt-2"> <span className="lg:text-2xl text-xl font-extrabold">৳</span> {findClients?.payments?.reduce((acc, payment) => acc + parseFloat(payment?.amount || 0), 0).toFixed(0)}</p>
-        </div>
+        <SummaryCard title="Total Paid" value={findClients?.payments?.reduce((acc, payment) => acc + parseFloat(payment?.amount || 0), 0).toFixed(0) || 0} />
+        <SummaryCard 
+  title={`Total ${
+    (findClients?.campaings?.reduce(
+      (acc, campaign) =>
+        acc + parseFloat(campaign?.tSpent || 0) * parseFloat(campaign?.dollerRate || 0),
+      0
+    ) -
+      findClients?.payments?.reduce(
+        (acc, payment) => acc + parseFloat(payment?.amount || 0),
+        0
+      )) >= 0
+      ? 'Due'
+      : 'Advance'
+  }`}
+  value={
+    Math.abs(
+      (findClients?.campaings?.reduce(
+        (acc, campaign) =>
+          acc + parseFloat(campaign?.tSpent || 0) * parseFloat(campaign?.dollerRate || 0),
+        0
+      ) -
+        (findClients?.payments?.reduce(
+          (acc, payment) => acc + parseFloat(payment?.amount || 0),
+          0
+        ) || 0)) // Ensure payments reduce has a default of 0 if null/undefined
+    ).toFixed(0) || 0
+  }
+/>
 
-        <div className="px-5 py-10 rounded-2xl  bg-[#ce1a38] text-white shadow-lg text-center">
-          <h2 className="lg:text-xl text-sm font-bold">Total <span>
-  {((findClients?.campaings?.reduce(
-    (acc, campaign) =>
-      acc + parseFloat(campaign?.tSpent || 0) * parseFloat(campaign?.dollerRate || 0),
-    0
-  ).toFixed(0) - findClients?.payments?.reduce((acc, payment) => acc + parseFloat(payment?.amount || 0), 0).toFixed(0)).toFixed(0))  >= 0 ? 'Due' : 'Advance'}
-</span>
-</h2>
-          <p className="lg:text-2xl text-xl font-bold mt-2">
-          <span className="lg:text-2xl text-xl font-extrabold">৳</span> {Math.abs((findClients?.campaings?.reduce(
-    (acc, campaign) =>
-      acc + parseFloat(campaign?.tSpent || 0) * parseFloat(campaign?.dollerRate || 0),
-    0
-  ).toFixed(2) - findClients?.payments?.reduce((acc, payment) => acc + parseFloat(payment?.amount || 0), 0).toFixed(2)).toFixed(0))}
-          </p>
-        </div>
+
       </div>
 
 
 
-      <div className="mx-5">
-      <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-8 gap-3 lg:gap-3 mt-3 mb-3">
+      <div >
+      <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-8 gap-3 lg:gap-5 mt-5 mb-3">
     
     <BalanceCard img={`https://i.ibb.co/bHMLyvM/b-Kash-Merchant.png`} amount={findClients?.payments?.filter(h => h?.paymentMethod === 'bkashMarchent')?.reduce((acc, payment) => acc + payment?.amount, 0)}></BalanceCard>
     <BalanceCard img={`https://i.ibb.co/520Py6s/bkash-1.png`} amount={findClients?.payments?.filter(h => h?.paymentMethod === 'bkashPersonal')?.reduce((acc, payment) => acc + payment?.amount, 0)}></BalanceCard>
@@ -222,13 +224,13 @@ const ClientHistory = () => {
                   </td>
                   <td style={{ border: 'var(--border)' }} className="p-3 border-r-2 border-gray-200 text-center">
                     <span className="text-md mr-1 font-extrabold">৳</span>
-                    {getMonthlyTotal(month)?.toFixed(0)}
+                    {getMonthlyTotal(month)?.toFixed(0) || 0}
                   </td>
                 </tr>
               );
             })}
             <tr style={{ backgroundColor: 'var(--bg-color)', color: 'var(--text-color)' }} className="font-bold">
-              <td style={{ border: 'var(--border)' }} className="p-3 text-center" colSpan="2">
+              <td  className="p-3 text-right" colSpan="2">
                 Total Amount:
               </td>
               <td style={{ border: 'var(--border)' }} className="p-3 text-center">
@@ -236,7 +238,7 @@ const ClientHistory = () => {
                 {findClients?.payments?.reduce(
       (acc, payment) => acc + parseFloat(payment?.amount || 0),
       0
-    ).toFixed(0)}
+    ).toFixed(0) || 0}
               </td>
             </tr>
           </tbody>

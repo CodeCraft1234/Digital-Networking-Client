@@ -10,8 +10,9 @@ import useUserr from "../../Hook/useUser";
 import useUsers from "../../Hook/useUsers";
 import useAllEmployee from "../../Hook/useAllEmployee";
 import BalanceCard from "./BalanceCard";
+import useMyContributorPayment from "../../Hook/useMyContributorPayments";
 
-const AdminPayments = () => {
+const ContributorPayments = () => {
   const { user } = useContext(AuthContext);
   const {userr}=useUserr(user?.email)
   const [users]=useUsers()
@@ -29,7 +30,7 @@ const AdminPayments = () => {
     localStorage.setItem("activ", tab); // Update localStorage
   };
 
-  const [MyEmployeePayment,refetch]=useMyEmployeePayments(selectedEmployee3)
+  const [MyContributorPayment,refetch]=useMyContributorPayment(selectedEmployee3)
   const [selectedCategory, setSelectedCategory] = useState("");
   const [filteredData, setFilteredData] = useState([]);
   const [filteredData2, setFilteredData2] = useState([]);
@@ -53,7 +54,7 @@ const AdminPayments = () => {
   };
 
   useEffect(() => {
-    const filtered = MyEmployeePayment.filter((payment) => {
+    const filtered = MyContributorPayment.filter((payment) => {
       const paymentDate = new Date(payment.date);
       return (
         (selectedStatus2 === 'All' || payment.status === selectedStatus2) &&
@@ -69,13 +70,13 @@ const AdminPayments = () => {
   }, [
     sortMonth,
     selectedCategory, 
-    MyEmployeePayment,
+    MyContributorPayment,
     selectedStatus2,
     selectedYear,
   ]);
 
   useEffect(() => {
-    const filtered = MyEmployeePayment.filter((payment) => {
+    const filtered = MyContributorPayment.filter((payment) => {
       const paymentDate = new Date(payment.date);
       return (
         (selectedStatus2 === 'All' || payment.status === selectedStatus2) &&
@@ -88,7 +89,7 @@ const AdminPayments = () => {
   }, [
     sortMonth,
     selectedCategory, 
-    MyEmployeePayment,
+    MyContributorPayment,
     selectedStatus2,
     selectedYear,
   ]);
@@ -182,7 +183,7 @@ const AdminPayments = () => {
       email:user?.email
     };
 
-    AxiosPublic.post("/employeePayment",
+    AxiosPublic.post("/contributorPayment",
       data
     )
       .then((res) => {
@@ -217,7 +218,7 @@ const AdminPayments = () => {
       email:user?.email
     };
 
-    AxiosPublic.patch(`/employeePayment/${id}`,
+    AxiosPublic.patch(`/contributorPayment/${id}`,
       updatedPaymentData
     )
     .then(() => {
@@ -276,7 +277,7 @@ const AdminPayments = () => {
     }).then((result) => {
       if (result.isConfirmed) {
 
-        AxiosPublic.delete(`/employeePayment/${id}`)
+        AxiosPublic.delete(`/contributorPayment/${id}`)
           .then((res) => {
             toast.success("Delete successful!");
             refetch();
@@ -313,7 +314,7 @@ const AdminPayments = () => {
   const handleUpdate2 = (id, newStatus) => {
     const body = { status: newStatus };
   
-    AxiosPublic.patch(`/employeePayment/status/${id}`, body)
+    AxiosPublic.patch(`/contributorPayment/status/${id}`, body)
       .then((res) => {
         console.log(res.data);
         refetch();
@@ -424,14 +425,14 @@ const AdminPayments = () => {
         />
       </div>
 
-   
+  
      <div>
       {userr?.role === "admin" && (
         <div className="mb-4">
           <label className="block text-black">Select Employee</label>
           <select className="select2 w-full" name="employeeEmail">
             {allEmployees
-              ?.filter((f) => f.role === "employee")
+              ?.filter((f) => f.role === "contributor")
               .map(({ _id, email, name }) => (
                 <option key={_id} value={email}>
                   {name}
@@ -525,7 +526,7 @@ const AdminPayments = () => {
       >
         <option value="all">All Employees</option>
         {users
-          .filter((u) => u.role === "employee")
+          .filter((u) => u.role === "contributor")
           .map((employee) => (
             <option key={employee._id} value={employee.email}>
               {employee.name}
@@ -827,4 +828,4 @@ const AdminPayments = () => {
   );
 };
 
-export default AdminPayments;
+export default ContributorPayments;

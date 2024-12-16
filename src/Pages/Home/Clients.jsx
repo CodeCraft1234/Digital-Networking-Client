@@ -151,24 +151,24 @@ const Clients = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 20;
 
+  // Determine the items to display based on the current page
   const displayedItems = myclients?.slice(0, currentPage * itemsPerPage);
   const isMoreItems = currentPage * itemsPerPage < myclients.length;
 
   useEffect(() => {
-    const handleScroll = () => {
-      if (
-        window.innerHeight + document.documentElement.scrollTop + 100 >=
-        document.documentElement.scrollHeight
-      ) {
+    // Automatically load more items every second
+    const interval = setInterval(() => {
+      if (isMoreItems) {
         setCurrentPage((prevPage) => prevPage + 1);
+      } else {
+        clearInterval(interval); // Clear interval when all items are loaded
       }
-    };
+    }, 1000); // Load 20 more items every second
 
-    window.addEventListener("scroll", handleScroll);
     return () => {
-      window.removeEventListener("scroll", handleScroll);
+      clearInterval(interval); // Clean up interval on component unmount
     };
-  }, []);
+  }, [isMoreItems]); // Re-run effect if `isMoreItems` changes
 
   const calculate = (callback) => displayedItems.reduce((acc, client) => acc + callback(client), 0);
 
@@ -368,7 +368,7 @@ const Clients = () => {
                   </dialog>
                 </td>
                 <td>
-                  <Link to={`/dashboard/client/${campaign.id}`} className="flex gap-2 items-center hover:font-bold">
+                  <Link to={`/client/${campaign.id}`} className="flex gap-2 items-center hover:font-bold">
                     {campaign.clientName}
                     {campaign.campaings?.some(({ status }) => status === 'Active') && (
                       <svg width="20" height="20" fill="green" viewBox="0 0 24 24">
@@ -419,7 +419,7 @@ const Clients = () => {
                     })()}`}
                   >
                  <div className='flex justify-center items-center gap-1'>
-                 <span className=' font-bold text-xl'>৳</span><span>
+                 <span className=' font-bold  text-lg'>৳</span><span>
   {(
     Math.abs(
       (

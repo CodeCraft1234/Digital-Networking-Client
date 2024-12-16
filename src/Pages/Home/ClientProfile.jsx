@@ -13,6 +13,7 @@ import ClientHistory from "../DashboardRoot/ClientHistory";
 import ClientPageSetup from "./ClientPageSetup";
 import ClientGoogleAds from "./ClientGoogleAds";
 import useFindClient from "./useFindClient";
+import ClientMetaAds from "./ClientMetaAds";
 
 const ClientProfile = () => {
   const { user } = useContext(AuthContext);
@@ -64,6 +65,7 @@ const ClientProfile = () => {
   
   const initialTab = localStorage.getItem("activeTabClientProfile") || "clientCampaign";
   const [activeTab, setActiveTab] = useState(initialTab)
+  console.log(activeTab);
 
   const getButtonClass = (tab) => 
     `px-3 py-1 lg:px-4 lg:py-2 text-md lg:text-lg rounded-lg transition duration-300 ease-in-out ${
@@ -91,13 +93,13 @@ const ClientProfile = () => {
 
 
   return (
-    <div className="mt-5">
+    <div className="">
        <Helmet>
        <title>{`${findClients?.clientName} | ${user?.displayName}`}</title>
         <link rel="canonical" href="https://www.example.com/" />
       </Helmet>
 
-      <div  style={{ backgroundColor: 'var(--bg-color3)', color: 'var(--text-color)',border: 'var(--border)'}} className="mx-5 p-5 rounded-lg">
+      <div  style={{ backgroundColor: 'var(--bg-color3)', color: 'var(--text-color)',border: 'var(--border)'}} className="p-5 rounded-lg">
 
         <img 
           className="rounded-full border-2 p-2 border-black mx-auto w-20 h-20 lg:w-32 lg:h-32" 
@@ -121,16 +123,16 @@ const ClientProfile = () => {
    </button>
       <button 
        
-          className={getButtonClass('clientCampaign')}
-          onClick={() => changeTab('clientCampaign')}
+          className={getButtonClass('metaAds')}
+          onClick={() => changeTab('metaAds')}
         >
           Meta Ads
         </button>
 
         <button 
        
-       className={getButtonClass('clientgoogleAds')}
-       onClick={() => changeTab('clientgoogleAds')}
+       className={getButtonClass('googleAds')}
+       onClick={() => changeTab('googleAds')}
      >
        Google Ads
      </button>
@@ -161,11 +163,11 @@ const ClientProfile = () => {
 
   
       {activeTab === 'paymentHistory' && <PaymentHistry email={userr?.email} />}
-      {activeTab === 'clientCampaign' && <ClientCampaign email={userr?.email} />}
       {activeTab === 'clientPageSetup' && <ClientPageSetup email={userr?.email} />}
       {activeTab === 'clientHistory' && <ClientHistory email={userr?.email} />}
       {activeTab === 'PageMonetization' && <ClientHistory email={userr?.email} />}
-      {activeTab === 'clientgoogleAds' && <ClientGoogleAds email={userr?.email} />}
+      {activeTab === 'metaAds' && <ClientMetaAds data1={activeTab} email={userr?.email} />}
+      {activeTab === 'googleAds' && <ClientMetaAds data1={activeTab} email={userr?.email} />}
     </div>
   );
 };

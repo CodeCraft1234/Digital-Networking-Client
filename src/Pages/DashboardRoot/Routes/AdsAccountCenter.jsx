@@ -14,7 +14,6 @@ const AdsAccountCenter = () => {
     const { user } = useContext(AuthContext);
     const [users] = useUsers();
     const [ddd, setDdd] = useState(null);
-    console.log(ddd);
     const {email}=useParams()
     console.log(email);
   

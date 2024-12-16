@@ -29,29 +29,24 @@ const MonthlySpend = () => {
                 <link rel="canonical" href="https://www.example.com/" />
             </Helmet>
 
-            <div className="px-2 mx-5   mt-5 rounded-lg" >
-                <div className="flex justify-center items-center gap-5 my-5">
-                    {/* Employeer Pay Button */}
+            <div className=" rounded-lg" >
+                <div className="f-center mt-2 mb-5">
                     <button
-                        className={getButtonClass('MetaAdsAccount')}
-                        onClick={() => changeTab('MetaAdsAccount')}
+                        className={getButtonClass('metaSpend')}
+                        onClick={() => changeTab('metaSpend')}
                     >
                       <SiMeta />  Meta Spend
                     </button>
 
-                    {/* Clients Pay Button */}
                     <button
-                        className={getButtonClass('GoogleAdsAccount')}
-                        onClick={() => changeTab('GoogleAdsAccount')}
+                        className={getButtonClass('googleSpend')}
+                        onClick={() => changeTab('googleSpend')}
                     >
                     <SiGoogleads /> Google Spend
                     </button>
-
                 </div>
             </div>
-
-            {activeTab === 'MetaAdsAccount' && <MetaMonthlySpend />}
-            {activeTab === 'GoogleAdsAccount' && <GoogleMonthlySpend />}
+             <MetaMonthlySpend data={activeTab}/>
         </div>
     );
 };

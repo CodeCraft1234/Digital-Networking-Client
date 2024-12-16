@@ -1,13 +1,11 @@
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useState } from 'react';
 import Axios from 'axios';
 import useBankInfo from '../../Hook/useBankInfo';
-import useUsers from '../../Hook/useUsers';
 import { AuthContext } from '../../Security/AuthProvider';
 import UseAxiosPublic from '../../Axios/UseAxiosPublic';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
-import { FaFileDownload, FaRegCopy, FaUserEdit } from 'react-icons/fa';
-import { MdDeleteOutline } from 'react-icons/md';
+import { FaEdit, FaFileDownload, FaMinusSquare, FaRegCopy } from 'react-icons/fa';
 import { Helmet } from 'react-helmet-async';
 import useUserr from '../../Hook/useUser';
 
@@ -107,7 +105,6 @@ const generatePDFForBank = (bankId) => {
   const input = document.getElementById(`bank-info-${bankId}`);
   const buttons = input.querySelector('.bank-buttons'); // Select the button container
 
-  // Temporarily hide the buttons
   buttons.style.display = 'none';
 
   html2canvas(input).then((canvas) => {
@@ -128,26 +125,16 @@ const generatePDFForBank = (bankId) => {
       pdf.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
       heightLeft -= pageHeight;
     }
-
-    // Save the PDF with a unique filename
     pdf.save(`bank_info_${bankId}.pdf`);
-
-    // Show the buttons again after generating the PDF
     buttons.style.display = '';
   }).catch((err) => {
     console.error('Error generating PDF:', err);
-    // Ensure that the buttons are shown again in case of an error
     buttons.style.display = '';
   });
 };
 
+  const [copiedBankId, setCopiedBankId] = useState(null); 
 
-
-
-
-  const [copiedBankId, setCopiedBankId] = useState(null); // State to track the copied bank info ID
-
-  // Copy bank info to clipboard and update button text to 'Copied'
   const copyBankInfoToClipboard = (info) => {
     const bankDetails = `
       Bank Name: ${info.bankName || 'N/A'}
@@ -162,9 +149,9 @@ const generatePDFForBank = (bankId) => {
 
     navigator.clipboard.writeText(bankDetails)
       .then(() => {
-        setCopiedBankId(info._id); // Set the copied bank info ID to show 'Copied' text
+        setCopiedBankId(info._id); 
         setTimeout(() => {
-          setCopiedBankId(null); // Revert back to 'Copy' after 2 seconds
+          setCopiedBankId(null); 
         }, 2000);
       })
       .catch((err) => {
@@ -174,7 +161,7 @@ const generatePDFForBank = (bankId) => {
 
 
   return (
-    <div className='m-5'>
+    <div className=''>
        <Helmet>
         <title>Bank info | Digital Network</title>
         <link rel="canonical" href="https://www.example.com/" />
@@ -244,147 +231,106 @@ const generatePDFForBank = (bankId) => {
             
 
 
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3  gap-5 ">
-                {bankInfo.map((info) => (
-                  <div
-                  id={`bank-info-${info._id}`} // Assign a unique ID to each bank info
-                  className="text-black   shadow-lg rounded-lg my-6"
-                  key={info._id}
-                  style={{
-                    width: '100%',
-                    margin: 'auto',
-                   border: 'var(--border)',
-                    overflow: 'hidden'
-                  }}
-                >
-                  {/* Highlighted Bank Name */}
-                  <div  
-                    style={{
-                      backgroundColor: 'var(--bg-color)',
-                      color: 'var(--text-color)',
-                      padding: '15px 20px',
-                      textAlign: 'center'
-                    }}
+ <div className="table-div ">
+          <table className="min-w-full text-center ">
+            <thead className=" ">
+              <tr className="tr1" >  
+                {userr.role === 'admin' && <th className="text-center">Items {bankInfo?.length}</th>}
+                <th >Bank Name</th>
+                <th >Holder Name</th>
+                <th >Account</th>
+                <th >Branch</th>
+                <th >District</th>
+                <th >Routing Number</th>
+                <th >Card</th>
+                <th className="text-center">Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {bankInfo
+              .map((work, index) => (
+                 <tr 
+                 key={work._id}
+                 className={`tr2`}
+               >
+                {
+                  userr.role === 'admin' && <td className="text-center"> 
+                  <button
+                     className=" delete"
+                     onClick={() => handleDelete(work._id)}
                   >
-                    <h1  className="font-bold text-xl">
-                      {info.bankName || 'N/A'}
-                    </h1>
-                  </div>
-                
-                  {/* Bank Details Table */}
-                  <table className='text-black px-10'  style={{ color: 'var(--text-color2)', width: '100%',   }}>
-                    <tbody>
-                      <tr className="">
-                        <td style={{ fontWeight: 'bold', padding: '12px', border: 'var(--border)' }}>
-                          Bank Name:
-                        </td>
-                        <td style={{ padding: '12px', border: 'var(--border)' }}>
-                          {info.bankName || 'N/A'}
-                        </td>
-                      </tr>
-                
-                      <tr className="">
-                        <td style={{ fontWeight: 'bold', padding: '12px', border: 'var(--border)' }}>
-                          Holder Name:
-                        </td>
-                        <td style={{ padding: '12px', border: 'var(--border)' }}>
-                          {info.name || 'N/A'}
-                        </td>
-                      </tr>
-                
-                      <tr className="">
-                        <td style={{ fontWeight: 'bold', padding: '12px', border: 'var(--border)' }}>
-                          Account:
-                        </td>
-                        <td style={{ padding: '12px', border: 'var(--border)' }}>
-                          {info.account || 'N/A'}
-                        </td>
-                      </tr>
-                
-                      <tr className="">
-                        <td style={{ fontWeight: 'bold', padding: '12px', border: 'var(--border)' }}>
-                          Branch:
-                        </td>
-                        <td style={{ padding: '12px', border: 'var(--border)' }}>
-                          {info.branch || 'N/A'}
-                        </td>
-                      </tr>
-                
-                      <tr className="">
-                        <td style={{ fontWeight: 'bold', padding: '12px', border: 'var(--border)' }}>
-                          District:
-                        </td>
-                        <td style={{ padding: '12px', border: 'var(--border)' }}>
-                          {info.district || 'N/A'}
-                        </td>
-                      </tr>
-                
-                      <tr className="">
-                        <td style={{ fontWeight: 'bold', padding: '12px',border: 'var(--border)' }}>
-                          Swift Code:
-                        </td>
-                        <td style={{ padding: '12px', border: 'var(--border)' }}>
-                          {info.swiftCode || 'N/A'}
-                        </td>
-                      </tr>
-                
-                      <tr className="">
-                        <td style={{ fontWeight: 'bold', padding: '12px', border: 'var(--border)' }}>
-                          Routing Number:
-                        </td>
-                        <td style={{ padding: '12px', border: 'var(--border)' }}>
-                          {info.routingNumber || 'N/A'}
-                        </td>
-                      </tr>
-                
-                      <tr className="">
-                        <td style={{ fontWeight: 'bold', padding: '12px', border: 'var(--border)' }}>
-                          Card:
-                        </td>
-                        <td style={{ padding: '12px', border: 'var(--border)' }}>
-                          {info.card || 'N/A'}
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                
-                  {/* Admin Controls */}
-                   {/* Admin Controls */}
-<div className="text-center space-x-2 p-4 bank-buttons">
-  {userr?.role === 'admin' && ( <>
-    <button
-      className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600"
-      onClick={() => handleEdit(info)}
-    >
-      <FaUserEdit />
-    </button>
-
-    <button
-      className="bg-red-500 text-white py-2 px-4 rounded hover:bg-red-600"
-      onClick={() => handleDelete(info._id)}
-    >
-      <MdDeleteOutline />
-    </button>
-  </>)}
+                   <span >
+                    <FaMinusSquare  />
+                    </span>
+                  </button> 
+              </td>
+                }
+                     
+                      
+                  <td>
+                  {work?.bankName}
+                  </td>
+                  <td>
+                    {
+                       userr.role === 'admin' ?  <button
+                       className="f-start edit"
+                       onClick={() => handleEdit(work)}
+                     >
+                      <FaEdit /> 
+                      <span>
+ {work.name
+   ?.split(' ') 
+   .slice(0, 4) 
+   .join(' ') 
+   + (work.name?.split(' ').length > 4 ? '...' : '') 
+ }
+</span>
+                   </button> :  <span>
+ {work.name
+   ?.split(' ') 
+   .slice(0, 4) 
+   .join(' ') 
+   + (work.name?.split(' ').length > 4 ? '...' : '') 
+ }
+</span>
+                    }
+                  </td>
+                  <td>
+                  {work?.account}
+                  </td>
+                  <td>
+                  {work?.branch}
+                  </td>
+                  <td>
+                  {work?.district}
+                  </td>
+                  <td>
+                  {work?.routingNumber}
+                  </td>
+                  <td>
+                  {work?.card}
+                  </td>
+                  <td>
+                  <div className="text-center  bank-buttons">
   <button
-    className="bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600"
-    onClick={() => generatePDFForBank(info._id)}
+    className=" py-2  rounded hover:bg-green-600"
+    onClick={() => generatePDFForBank(work._id)}
   >
     <FaFileDownload />
   </button>
   <button
-    className={`bg-[#8189dc] text-white py-2 px-4 rounded hover:bg-green-600`}
-    onClick={() => copyBankInfoToClipboard(info)}
+    className={` py-2 px-4 rounded hover:bg-green-600`}
+    onClick={() => copyBankInfoToClipboard(work)}
   >
-    {copiedBankId === info._id ? 'Copied' : <FaRegCopy />}
+    {copiedBankId === work._id ? 'Copied' : <FaRegCopy />}
   </button>
 </div>
-
-                
-                </div>
-                
-                ))}
-              </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
             </div>
           ) : (
             <div>No bank information found.</div>

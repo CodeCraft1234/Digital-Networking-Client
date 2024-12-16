@@ -6,14 +6,13 @@ import { useContext, useState } from "react";
 import { toast } from "react-toastify";
 import UseAxiosPublic from "../../Axios/UseAxiosPublic";
 import { ImCross } from "react-icons/im";
-import { Helmet } from "react-helmet-async";
 import { IoIosAddCircleOutline } from "react-icons/io";
 import useAllEmployee from "../../Hook/useAllEmployee";
 import useMyAdsAccountByEmail from "../../Hook/useMyAdsAccountNyEmail";
 import { AuthContext } from "../../Security/AuthProvider";
 import useUserr from "../../Hook/useUser";
 
-const MetaAdsAccount = () => {
+const MetaAdsAccount = ({data1}) => {
   const { user } = useContext(AuthContext);
   const [users]=useUsers()
   const {userr}=useUserr(user?.email)
@@ -90,7 +89,7 @@ const [selectedEmployee3, setSelectedEmployee3] = useState(initialTab3);
         totalSpentt,
         accountName,
         date,
-        role:'metaSpend',
+        role:`${data1}Spend`,
         employeeName
       };
   
@@ -129,7 +128,7 @@ const [selectedEmployee3, setSelectedEmployee3] = useState(initialTab3);
       const totalSpent=0
       const status='Active'
       
-      const data = { accountName,totalSpent,currentBallence,threshold,role:'metaAdsAccount', paymentDate,status, employeeEmail,employeerName };
+      const data = { accountName,totalSpent,currentBallence,threshold,role:`${data1}AdsAccount`, paymentDate,status, employeeEmail,employeerName };
   
       console.log(data);
       AxiosPublic.post("/adsAccount", data).then((res) => {
@@ -306,7 +305,7 @@ const [selectedEmployee3, setSelectedEmployee3] = useState(initialTab3);
             </thead>
             <tbody>
             {myAdsAccount
-            ?.filter(f=>f.role === 'metaAdsAccount')
+            ?.filter(f=>f.role === `${data1}AdsAccount`)
              ?.filter((account) =>
               (selectedStatus ? account.status === selectedStatus : true) &&
               (searchQuery ? account.accountName.toLowerCase().includes(searchQuery.toLowerCase()) : true)
@@ -343,20 +342,22 @@ const [selectedEmployee3, setSelectedEmployee3] = useState(initialTab3);
                     </Link>
                 
                   </td>
-                  <td>৳ {account.currentBallence} </td>
-                  <td> ৳ {account.threshold}</td>
+                  <td>$ {account.currentBallence} </td>
+                  <td>$ {account.threshold}</td>
                   <td>
-                    <div className="relative group flex items-center justify-center ">
-                      <h1><span className=" text-xm font-extrabold">৳</span> {account.totalSpent}</h1>
-                      <button
-                      className="edit"
-                     onClick={() => setModalData2(account)}
-                   >
-                <FaEdit />
-               </button>
+  <div className="relative group flex items-center justify-center">
+    <h1>
+      <span className="text-xm font-extrabold">$</span> {account.totalSpent}
+    </h1>
+    <button
+      className="edit opacity-0 group-hover:opacity-100 transition-opacity duration-300 ml-2"
+      onClick={() => setModalData2(account)}
+    >
+      <FaEdit />
+    </button>
+  </div>
+</td>
 
-                    </div>
-                  </td>
                   <td>
                     {new Date(account.paymentDate).toLocaleDateString("en-GB")}
                   </td>
@@ -385,19 +386,22 @@ const [selectedEmployee3, setSelectedEmployee3] = useState(initialTab3);
                   Total :
                 </td>
                 <td >
-                $ {adsAccount.reduce(
+                $ {myAdsAccount
+            ?.filter(f=>f.role === `${data1}AdsAccount`).reduce(
         (acc, account) => acc + parseFloat(account.currentBallence || 0),
         0
       ).toFixed(2)}
                 </td>
                 <td>
-               $ {adsAccount.reduce(
+               $ {myAdsAccount
+            ?.filter(f=>f.role === `${data1}AdsAccount`).reduce(
         (acc, account) => acc + parseFloat(account.threshold || 0),
         0
       ).toFixed(2)}
                 </td>
                 <td >
-               $ {adsAccount.reduce(
+               $ {myAdsAccount
+            ?.filter(f=>f.role === `${data1}AdsAccount`).reduce(
         (acc, account) => acc + parseFloat(account.totalSpent || 0),
         0
       ).toFixed(2)}

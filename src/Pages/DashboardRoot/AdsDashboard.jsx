@@ -31,7 +31,7 @@ const AdsDashboard = () => {
         <ul className="space-y-1">
         
           <NavLink
-            to="/dashboard/ads/home"
+            to="/"
             className="text-white hover:bg-[#f89320] hover:text-black py-2 px-4 rounded-lg flex items-center"
             style={({ isActive }) => getActiveStyle(isActive)}
           >
@@ -40,7 +40,7 @@ const AdsDashboard = () => {
           </NavLink>
       
           <NavLink
-            to={`dashboard/adsAccountCenter/${user?.email}`}
+            to={`/adsAccountCenter`}
             className="text-white hover:bg-[#f89320] hover:text-black py-2 px-4 rounded-lg flex items-center"
             style={({ isActive }) => getActiveStyle(isActive)}
           >
@@ -48,7 +48,7 @@ const AdsDashboard = () => {
             Ads Account
           </NavLink>
           <NavLink
-            to='dashboard/adsPayments'
+            to='/adsPayments'
             className="text-white hover:bg-[#f89320] hover:text-black py-2 px-4 rounded-lg flex items-center"
             style={({ isActive }) => getActiveStyle(isActive)}
           >
@@ -56,7 +56,7 @@ const AdsDashboard = () => {
            My Payment
           </NavLink>
           <NavLink
-            to='dashboard/contributorHistory'
+            to='/contributorHistory'
             className="text-white hover:bg-[#f89320] hover:text-black py-2 px-4 rounded-lg flex items-center"
             style={({ isActive }) => getActiveStyle(isActive)}>
             <FaHistory className="w-6 h-6 mr-2" />
@@ -64,7 +64,7 @@ const AdsDashboard = () => {
           </NavLink>
 
           <NavLink
-            to='dashboard/contributorSummery'
+            to='/contributorSummery'
             className="text-white hover:bg-[#f89320] hover:text-black py-2 px-4 rounded-lg flex items-center"
             style={({ isActive }) => getActiveStyle(isActive)}>
             <LuActivitySquare className="w-6 h-6 mr-2" />
@@ -74,7 +74,7 @@ const AdsDashboard = () => {
          
 
           <NavLink
-            to={`dashboard/bankInfo`}
+            to={`/bankInfo`}
             className="text-white hover:bg-[#f89320] hover:text-black py-2 px-4 rounded-lg flex items-center"
             style={({ isActive }) => getActiveStyle(isActive)}
           >

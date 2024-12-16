@@ -1,11 +1,12 @@
 import { useContext, useState } from 'react';
-import AllAdsPayments from '../DashboardRoot/AllAdsPayments';
+import AllAdsPayments from '../DashboardRoot/ContributorPayments';
 import { Helmet } from 'react-helmet-async';
 import SalaryPayments from './SalaryPayment';
 import ClientPayments from '../DashboardRoot/ClientPayments';
 import AdminPayments from '../DashboardRoot/AdminPayments';
 import { AuthContext } from '../../Security/AuthProvider';
 import useUserr from '../../Hook/useUser';
+import ContributorPayments from '../DashboardRoot/ContributorPayments';
 
 const PaymentHistory = () => {
 
@@ -71,7 +72,7 @@ const PaymentHistory = () => {
                 </div>
             </div>
 
-            {activeTab === 'contributorPay' && <AllAdsPayments />}
+            {activeTab === 'contributorPay' && <ContributorPayments />}
             {activeTab === 'employeerPay' && <AdminPayments />}
             {activeTab === 'clientsPay' && <ClientPayments />}
             {activeTab === 'salaryPay' && <SalaryPayments />}

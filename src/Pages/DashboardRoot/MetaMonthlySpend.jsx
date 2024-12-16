@@ -4,12 +4,11 @@ import UseAxiosPublic from '../../Axios/UseAxiosPublic';
 import Swal from 'sweetalert2';
 import { Link } from 'react-router-dom';
 import { FaEdit, FaMinusSquare } from 'react-icons/fa';
-import { Helmet } from 'react-helmet-async';
 import { AuthContext } from '../../Security/AuthProvider';
 import useMyUser from '../../Hook/useMyUser';
 import useUserr from '../../Hook/useUser';
 
-const MetaMonthlySpend = () => {
+const MetaMonthlySpend = ({data}) => {
   const { user } = useContext(AuthContext);
   const {userr}=useUserr(user?.email)
   const [users]=useUsers()
@@ -32,7 +31,7 @@ const MetaMonthlySpend = () => {
   : localStorage.getItem("a4") || user?.email; 
 
   const [sortEmployee, setSortEmployee] = useState(initialTab);
-  const [myUser]=useMyUser(sortEmployee)
+  const [myUser,refetch]=useMyUser(sortEmployee)
   console.log(myUser);
   
   const changeTab = (tab) => {
@@ -136,10 +135,10 @@ console.log(sortedAccounts);
   };
 
   return (
-    <div className='mx-5 my-5'>
-
+    <div>
       <div className='px-5 py-5 rounded-md' style={{ backgroundColor: 'var(--bg-color3)', color: 'var(--text-color)',border: 'var(--border)'}}>
       <div className="lg:flex lg:justify-start items-center gap-3 mb-5">
+
       <div className="w-full lg:w-auto flex justify-start gap-3">
   {userr?.role === "admin" ? (
     <div className="flex  justify-center">
@@ -166,9 +165,8 @@ console.log(sortedAccounts);
   ) : (
    <></>
   )}
-</div>
+      </div>
       
-        <div className='flex justify-center mt-5 lg:mt-0 gap-5 items-center'>
         <div>
          <select
           style={{ backgroundColor: 'var(--bg-color2)',border: 'var(--border)', color: 'var(--text-color2)'}}
@@ -181,9 +179,8 @@ console.log(sortedAccounts);
               <option key={month} value={month}>{month}</option>
             ))}
           </select>
-          </div>
-        
         </div>
+
         <div>
          <select
           style={{ backgroundColor: 'var(--bg-color2)',border: 'var(--border)', color: 'var(--text-color2)'}}
@@ -197,42 +194,38 @@ console.log(sortedAccounts);
             ))}
           </select>
          </div>
+
       </div>
 
-      <div  className="overflow-x-auto rounded-xl  text-center " style={{ backgroundColor: 'var(--bg-color)', color: 'var(--text-color)'}}>
+      <div  className="table-div ">
           <table className="min-w-full text-center ">
             <thead className=" ">
-              <tr className="" style={{border: 'var(--border)',borderLeft: 'var(--border)', borderRight: 'var(--border)', color: 'var(--text-color)'}}>
-              <th className="p-3">{sortedAccounts?.length}</th>
-              <th className="p-3 text-start">Employee Name</th>
-              <th className="p-3 text-start">Ad Account Name</th>
-              <th className="p-3 text-start">Month</th>
-              <th className="p-3 text-start">Total Spent</th>
-              <th className="p-3 text-start">Total Bill</th>
-          
+              <tr className="tr1">
+              <th className="p-3 text-center">Items {sortedAccounts?.length}</th>
+              <th>Employee Name</th>
+              <th>Ad Account Name</th>
+              <th>Month</th>
+              <th>Total Spent</th>
+              <th>Total Bill</th>
             </tr>
           </thead>
           <tbody >
-            {sortedAccounts?.filter(f=>f.role === 'metaSpend').map((account, index) => (
-              <tr  style={{ backgroundColor: 'var(--bg-table)', color: 'var(--text-color2)'}}
+            {sortedAccounts?.filter(f=>f.role === data).map((account, index) => (
+              <tr 
               key={account._id}
-              className={`${
-                index % 2 === 0
-                  ? "bg-white text-left text-black border-b border-opacity-20"
-                  : "bg-gray-200  text-left text-black border-b border-opacity-20"
-              }`}
+              className={`tr2`}
             >
-                <td style={{  border: 'var(--border)',}} className="p-3 border-r-2 border-gray-300 text-center px-5"> <button
-                      className=" hover:bg-blue-700 text-[#f86c6b] text-xl px-2 py-1 rounded" 
+                <td  className="text-center">
+                    <button
+                      className=" delete" 
                       onClick={(e) => handleDelete(e, account.employeeId, account.ids)} // Ensure correct 
                     >
                       <FaMinusSquare />
-                    </button></td>
-
-                <td style={{  border: 'var(--border)'}} className="p-3 border-r-2  font-semibold hover:text-blue-700 hover:font-bold border-gray-300 text-start px-5">
+                    </button>
+                </td>
+                <td>
   <Link to={`/dashboard/userInfo/${account?.employeeEmail}`} className="flex items-center">
     {
-      // Find the user based on their email
       users?.find(u => u.email === account.employeeEmail)?.photo && (
         <img 
           className='h-10 w-10 rounded-full mr-3' 
@@ -243,67 +236,53 @@ console.log(sortedAccounts);
     }
     <span>{account.employeeName}</span>
   </Link>
-                 </td>
-
-
-               
-              
-                <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-300 text-start px-5">
-
-                <div onClick={() => setModalData2(account)} className="flex justify-left items-center gap-1">
+                </td>        
+                <td>
+                <div onClick={() => setModalData2(account)} className="f-left ">
                     <div>
                       <button
-                      className=" flex justify-center items-center gap-1   px-2 py-1 rounded"
-                      
+                      className=" f-center "
                       >
                        <FaEdit />  <span>{account.accountName}</span>
                       </button>
                     </div>
-                  
-                   
                   </div>
-                
                 </td>
-                <td style={{  border: 'var(--border)'}} className="p-3 border-l-2 border-r-2 text-start border-gray-300">
+                <td>
                   {new Date(account.date).toLocaleString('default', { month: 'long'})}
                 </td>
-                <td style={{ border: 'var(--border)' }} className="p-3 border-r-2 border-gray-300 text-start">
+                <td>
   <span className="font-extrabold">$</span>{" "}
   {new Intl.NumberFormat('en-IN', {
     maximumFractionDigits: 2,
     minimumFractionDigits: 2,
   }).format(account.totalSpentt)}
-</td>
-<td style={{ border: 'var(--border)' }} className="p-3 border-r-2 border-gray-300 text-start">
+                </td>
+                <td>
   <span className="font-extrabold">৳</span>{" "}
   {new Intl.NumberFormat('en-IN').format(Math.round(account.totalSpentt * 140))}
-</td>
-
-
-
-               
+               </td>
               </tr>
             ))}
           </tbody>
 
           <tfoot className="">
-  <tr style={{ backgroundColor: 'var(--bg-color)', color: 'var(--text-color)'}}>
-    <td colSpan="4" className="p-3 font-bold text-right">Total</td>
-    <td className="p-3 font-bold text-start">
+            <tr className='tr1 font-bold'>
+     <td colSpan="4" className="text-right">Total</td>
+     <td>
   $ {new Intl.NumberFormat('en-IN', {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
-  }).format(sortedAccounts.reduce((sum, acc) => sum + acc.totalSpentt, 0))}
-</td>
-<td className="p-3 font-bold text-start">
+  }).format(sortedAccounts?.filter(f=>f.role === data).reduce((sum, acc) => sum + acc.totalSpentt, 0))}
+     </td>
+     <td>
   <span className="font-extrabold">৳</span>{" "}
   {new Intl.NumberFormat('en-IN').format(
-    Math.round(sortedAccounts.reduce((sum, acc) => sum + acc.totalSpentt, 0) * 140)
+    Math.round(sortedAccounts?.filter(f=>f.role === data).reduce((sum, acc) => sum + acc.totalSpentt, 0) * 140)
   )}
-</td>
-
-  </tr>
-</tfoot>
+    </td>
+            </tr>
+         </tfoot>
 
         </table>
       </div>
@@ -320,20 +299,20 @@ console.log(sortedAccounts);
                 type="text"
                 name="totalSpentt"
                 defaultValue={modalData2.totalSpentt}
-                className="w-full bg-white border-black border rounded p-2 mt-1"
+                className="input2"
               />
             </div>
             <div className="grid grid-cols-2 gap-3">
               <button
                 onClick={closeModal}
                 type="button"
-                className="font-avenir px-3 py-1 bg-red-600 rounded-lg text-white"
+                className="close"
               >
                 Close
               </button>
               <button
                 type="submit"
-                className="font-avenir px-3 py-1 bg-[#05a0db] rounded-lg text-white"
+                className="add"
               >
                 Update
               </button>

@@ -144,12 +144,8 @@ const [selectedEmployee3, setSelectedEmployee3] = useState(initialTab3);
 
     {userr?.role === "admin" && (
       <select
-        style={{
-          backgroundColor: "var(--bg-color2)",
-          border: "var(--border)",
-          color: "var(--text-color2)",
-        }}
-        className="border bg-white text-black py-2 lg:w-auto w-full border-gray-400 rounded px-2"
+       
+        className="select2"
         value={selectedEmployee3}
         onChange={(e) => changeTab3(e.target.value)}
       >
@@ -165,12 +161,8 @@ const [selectedEmployee3, setSelectedEmployee3] = useState(initialTab3);
     )}
 
     <select
-      style={{
-        backgroundColor: "var(--bg-color2)",
-        border: "var(--border)",
-        color: "var(--text-color2)",
-      }}
-      className="border bg-white text-black border-gray-400 rounded p-2 mt-1.5"
+    
+      className="select2"
       value={sortMonth}
       onChange={(e) => changeTab(e.target.value)}
     >
@@ -196,12 +188,8 @@ const [selectedEmployee3, setSelectedEmployee3] = useState(initialTab3);
     </select>
 
     <select
-      style={{
-        backgroundColor: "var(--bg-color2)",
-        border: "var(--border)",
-        color: "var(--text-color2)",
-      }}
-      className="hidden lg:flex border bg-white text-black border-gray-400 rounded p-2 mt-1"
+     
+      className="select2"
       value={selectedYear}
       onChange={(e) => setSelectedYear(e.target.value)}
     >

@@ -400,7 +400,27 @@ const SalaryPayments = () => {
                 className="input2"
               />
             </div>
-            <div>
+
+            {userr?.role === "admin" && (
+            <div >
+              <label className="block text-black" >Select Employee</label>
+              <select name="employeeEmail" className="select2 w-full">
+                {allEmployees
+                  ?.filter((f) => f.role === "employee")
+                  .map((employee) => (
+                    <option key={employee._id} value={employee.email}>
+                      {employee.name}
+                    </option>
+                  ))}
+              </select>
+            </div>
+          )}
+
+</div>
+
+
+          <div className="grid lg:grid-cols-2 gap-3 mt-4">
+          <div>
               <label>Amount</label>
               <input
                 type="number"
@@ -410,10 +430,6 @@ const SalaryPayments = () => {
                 className="input2"
               />
             </div>
-</div>
-
-
-          <div className="grid lg:grid-cols-2 gap-3 mt-4">
          
             <div>
               <label>Charge</label>
@@ -425,20 +441,7 @@ const SalaryPayments = () => {
                 className="input2"
               />
             </div>
-            {userr?.role === "admin" && (
-            <div >
-              <label className="block text-black" >Select Employee</label>
-              <select name="employeeEmail" className="select2">
-                {allEmployees
-                  ?.filter((f) => f.role === "employee")
-                  .map((employee) => (
-                    <option key={employee._id} value={employee.email}>
-                      {employee.name}
-                    </option>
-                  ))}
-              </select>
-            </div>
-          )}
+
           </div>
 
 

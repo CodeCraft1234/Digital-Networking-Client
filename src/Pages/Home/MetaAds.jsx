@@ -50,20 +50,11 @@ const MetaAds = () => {
   };
 
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 20;
+  const itemsPerPage = 50;
 
   const displayedItems = myclients.sort((a, b) => new Date(b.date) - new Date(a.date))?.slice(0, currentPage * itemsPerPage);
   const isMoreItems = currentPage * itemsPerPage < myclients.length;
 
-  const filteredCampaigns = displayedItems
-  ?.flatMap(client => client.campaings || []) // Flatten the campaigns array
-  ?.filter(item =>
-    item.role === 'metaAds' && // Filter based on role
-    (selectedEmployee === 'all' || item.status === selectedEmployee) && // Filter based on employee status
-    (!selectedYear || new Date(item.date).getFullYear() === parseInt(selectedYear)) && // Filter based on year
-    item.campaignName?.toLowerCase().includes(searchQuery.toLowerCase()) && // Filter based on campaign name search
-    (sortMonth === 'all' || new Date(item.date).getMonth() + 1 === parseInt(sortMonth, 10)) // Filter based on selected month
-  );
 
   useEffect(() => {
     const handleScroll = () => {
@@ -80,6 +71,18 @@ const MetaAds = () => {
       window.removeEventListener("scroll", handleScroll);
     };
   }, []);
+
+  const filteredCampaigns = displayedItems
+  ?.flatMap(client => client.campaings || []) // Flatten the campaigns array
+  ?.filter(item =>
+    item.role === 'metaAds' && // Filter based on role
+    (selectedEmployee === 'all' || item.status === selectedEmployee) && // Filter based on employee status
+    (!selectedYear || new Date(item.date).getFullYear() === parseInt(selectedYear)) && // Filter based on year
+    item.campaignName?.toLowerCase().includes(searchQuery.toLowerCase()) && // Filter based on campaign name search
+    (sortMonth === 'all' || new Date(item.date).getMonth() + 1 === parseInt(sortMonth, 10)) // Filter based on selected month
+  );
+
+
   
   const handleUpdate = (e, ids, id) => {
     e.preventDefault();
@@ -250,7 +253,7 @@ const navigate = useNavigate();
 
       <div className="flex flex-col mb-5 sm:flex-row justify-between items-center gap-5">
 
-  <div className="flex justify-center items-center gap-3">
+  <div className="f-center ">
   <button
     className="add"
     onClick={() => document.getElementById("clientModal").showModal()}

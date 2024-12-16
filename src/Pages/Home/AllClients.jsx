@@ -341,8 +341,8 @@ const AllClients = () => {
                  <tbody>
                 {displayedItems
                     .filter(item => 
-                      item.clientPhone.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                      item.clientName.toLowerCase().includes(searchQuery.toLowerCase())
+                      item?.clientPhone.toLowerCase().includes(searchQuery) ||
+                      item?.clientName.toLowerCase().includes(searchQuery)
                     )
                     .sort((a, b) => a.clientName.localeCompare(b.clientName)).map((campaign, index) => (
              <tr style={{ backgroundColor: 'var(--bg-table)', color: 'var(--text-color2)'}}

@@ -136,8 +136,8 @@ const ClientPaymentHistry = () => {
   return (
     <div>
 
-            <div style={{ backgroundColor: 'var(--bg-color3)', color: 'var(--text-color)', border: 'var(--border)' }}      className="lg:mt-5 mt-5 px-5 py-2 rounded-lg mx-5">
-               <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-8 gap-3 lg:gap-3 mt-3 mb-3">
+            <div className=" my-5">
+               <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-8 gap-3 lg:gap-5 mt-3 mb-3">
     
                  <BalanceCard img={`https://i.ibb.co/bHMLyvM/b-Kash-Merchant.png`} amount={findClients?.payments?.filter(h => h?.paymentMethod === 'bkashMarchent')?.reduce((acc, payment) => acc + payment?.amount, 0)}></BalanceCard>
                  <BalanceCard img={`https://i.ibb.co/520Py6s/bkash-1.png`} amount={findClients?.payments?.filter(h => h?.paymentMethod === 'bkashPersonal')?.reduce((acc, payment) => acc + payment?.amount, 0)}></BalanceCard>
@@ -163,10 +163,10 @@ const ClientPaymentHistry = () => {
                </div>
               </div>
 
-      <div style={{ backgroundColor: 'var(--bg-color3)', color: 'var(--text-color)',border: 'var(--border)'}} className="  rounded-lg px-5 m-5 ">
+      <div className="  side-space ">
         <div>
 
-       <div className="flex  items-center mt-4 mb-2 justify-between ">
+       <div className="flex  items-center  mb-3 justify-between ">
         <button
       className="add"
        onClick={() => document.getElementById("my_modal_8").showModal()}
@@ -174,8 +174,8 @@ const ClientPaymentHistry = () => {
         Pay Now
 </button>
 
- <div className="mb-2">
-   <select id="month" value={selectedMonth}  style={{ backgroundColor: 'var(--bg-color2)',border: 'var(--border)', color: 'var(--text-color2)'}} onChange={(e) => changeTab2(e.target.value)} className="border bg-white text-black rounded p-2">
+ <div className="mb-3">
+   <select id="month" value={selectedMonth}   onChange={(e) => changeTab2(e.target.value)} className="select2">
      <option value="all">Select Months</option>
      <option value="1">January</option>
      <option value="2">February</option>
@@ -205,7 +205,7 @@ const ClientPaymentHistry = () => {
               name="date"
               required
               defaultValue={formattedDate}
-              className="w-full border bg-white border-black rounded p-2 mt-1"
+              className="input2"
             />
           </div>
        
@@ -215,95 +215,37 @@ const ClientPaymentHistry = () => {
               required
               type="number"
               name="amount"
-              className="w-full border border-gray-600 text-black bg-white rounded p-2 mt-1"
+              className="input2"
             />
           </div>
           
           <div className="mb-4">
 
           <div className="mt-2 grid mb-4 lg:grid-cols-3">
-  <div className="form-control">
-    <label className="label flex justify-start items-center gap-2 cursor-pointer">
-      <input
-        type="radio"
-        name="paymentMethod"
-        value="bkashMarchent"
-        className="radio radio-primary"
-      />
-      <span className="label-text text-black">Bkash Marchent</span>
-    </label>
-  </div>
-
-  <div className="form-control">
-    <label className="label flex justify-start items-center gap-2 cursor-pointer">
-      <input
-        type="radio"
-        name="paymentMethod"
-        value="bkashPersonal"
-        className="radio radio-primary"
-      />
-      <span className="label-text text-black">Bkash Personal</span>
-    </label>
-  </div>
-
-  <div className="form-control">
-    <label className="label flex justify-start items-center gap-2 cursor-pointer">
-      <input
-        type="radio"
-        name="paymentMethod"
-        value="nagadPersonal"
-        className="radio radio-primary"
-      />
-      <span className="label-text text-black">Nagad Personal</span>
-    </label>
-  </div>
-
-  <div className="form-control">
-    <label className="label flex justify-start items-center gap-2 cursor-pointer">
-      <input
-        type="radio"
-        name="paymentMethod"
-        value="rocketPersonal"
-        className="radio radio-primary"
-      />
-      <span className="label-text text-black">Rocket Personal</span>
-    </label>
-  </div>
-
-  <div className="form-control">
-    <label className="label flex justify-start items-center gap-2 cursor-pointer">
-      <input
-        type="radio"
-        name="paymentMethod"
-        value="bank"
-        className="radio radio-primary"
-      />
-      <span className="label-text text-black">Brack Bank</span>
-    </label>
-  </div>
-  <div className="form-control">
-    <label className="label flex justify-start items-center gap-2 cursor-pointer">
-      <input
-        type="radio"
-        name="paymentMethod"
-        value="DBBLBank"
-        className="radio radio-primary"
-      />
-      <span className="label-text text-black">DBBL Bank</span>
-    </label>
-  </div>
-  <div className="form-control">
-    <label className="label flex justify-start items-center gap-2 cursor-pointer">
-      <input
-        type="radio"
-        name="paymentMethod"
-        value="IBBLBank"
-        className="radio radio-primary"
-      />
-      <span className="label-text text-black">IBBL Bank</span>
-    </label>
-  </div>
+  {[
+    { value: "bkashMarchent", label: "Bkash Marchent" },
+    { value: "bkashPersonal", label: "Bkash Personal" },
+    { value: "nagadPersonal", label: "Nagad Personal" },
+    { value: "rocketPersonal", label: "Rocket Personal" },
+    { value: "bank", label: "Brack Bank" },
+    { value: "DBBLBank", label: "DBBL Bank" },
+    { value: "IBBLBank", label: "IBBL Bank" },
+  ].map(({ value, label }) => (
+    <div className="form-control" key={value}>
+      <label className="label flex justify-start items-center gap-2 cursor-pointer">
+        <input
+          type="radio"
+          name="paymentMethod"
+          value={value}
+          className="radio radio-primary"
+          required
+        />
+        <span className="label-text text-black">{label}</span>
+      </label>
+    </div>
+  ))}
 </div>
+
 
 
             <div className="mb-4">
@@ -338,16 +280,16 @@ const ClientPaymentHistry = () => {
   </dialog>
        </div>
 
-        <div  className="overflow-x-auto rounded-xl mb-5  text-center " style={{ backgroundColor: 'var(--bg-color)', color: 'var(--text-color)'}}>
+        <div  className="table-div " style={{ backgroundColor: 'var(--bg-color)', color: 'var(--text-color)'}}>
           <table className="min-w-full text-center ">
             <thead className=" ">
-              <tr className="" style={{border: 'var(--border)',borderLeft: 'var(--border)', borderRight: 'var(--border)', color: 'var(--text-color)'}}>
-                <th style={{  border: 'var(--border)'}} className="p-3 text-start">{findClients?.payments?.length} Items</th>
-                <th style={{  border: 'var(--border)'}} className="p-3 text-start">Date</th>
-                <th style={{  border: 'var(--border)'}} className="p-3 text-start">Client Name</th>
-                <th style={{  border: 'var(--border)'}} className="p-3 text-start">Amount</th>
-                <th style={{  border: 'var(--border)'}} className="p-3 text-start">Payment Method</th>
-                <th style={{  border: 'var(--border)'}} className="p-3 text-start"> Note</th>
+              <tr className="tr1" >
+                <th  className="text-center">{findClients?.payments?.length} Items</th>
+                <th>Date</th>
+                <th>Client Name</th>
+                <th>Amount</th>
+                <th className="text-center">Payment Method</th>
+                <th> Note</th>
               </tr>
             </thead>
             <tbody>
@@ -356,21 +298,17 @@ const ClientPaymentHistry = () => {
   .filter(payment => {
     const paymentDate = new Date(payment.date);
     if (selectedMonth === 'all') {
-      return true; // Show all data if 'all' is selected
+      return true; 
     }
-    return paymentDate.getMonth() + 1 === parseInt(selectedMonth, 10); // Filter based on the selected month
+    return paymentDate.getMonth() + 1 === parseInt(selectedMonth, 10); month
   })
-  ?.sort((a, b) => new Date(b.date) - new Date(a.date)) // Sort by date (newest first)
+  ?.sort((a, b) => new Date(b.date) - new Date(a.date)) 
   ?.map((payment, index) => (
-                <tr style={{ backgroundColor: 'var(--bg-table)', color: 'var(--text-color2)'}}
+                <tr 
                 key={payment.id}
-                className={`${
-                  index % 2 === 0
-                    ? "bg-white text-left text-black border-b border-opacity-20"
-                    : "bg-gray-200  text-left text-black border-b border-opacity-20"
-                }`}
+                className={`tr2`}
               >
-                  <td style={{  border: 'var(--border)'}} className="p-3  border-r-2 border-l-2 border-gray-200 text-center">
+                  <td  className=" text-center">
                   <button
     className=" hover:bg-blue-700 text-[#f86c6b] text-xl px-2 py-1 rounded"
     onClick={() => handledelete(payment.ids ,payment.id)}
@@ -378,20 +316,20 @@ const ClientPaymentHistry = () => {
     <FaMinusSquare  />
   </button>
                   </td>
-                  <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-200 text-center">
+                  <td >
                   {new Date(payment.date).toLocaleDateString("en-GB")}
                   </td>
                 
-                  <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-200 text-start">
+                  <td>
                     {payment.clientName}
                   </td>
 
-                  <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-200 text-center">
+                  <td >
                     <span className="text-md mr-1 font-extrabold">৳</span>{" "}
                     {payment.amount}
                   </td>
 
-                  <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 border-gray-200 text-center">
+                  <td  className=" text-center">
                     {payment.paymentMethod === "bkashMarchent" && (
                       <img
                         className="h-10 w-24 flex mx-auto my-auto items-center justify-center"
@@ -442,7 +380,7 @@ const ClientPaymentHistry = () => {
                       />
                     )}
                   </td>
-                  <td style={{  border: 'var(--border)'}} className="p-3 border-r-2 text-center border-gray-200 ">
+                  <td >
                     {" "}
                     {payment.note}
                   </td>
@@ -456,7 +394,7 @@ const ClientPaymentHistry = () => {
               type="date"
               defaultValue={payment?.date}
               name="date"
-              className="w-full border bg-green-300 border-black p-2 rounded-lg"
+              className="input2"
             />
           </div>
           <div className="mb-4">
@@ -465,7 +403,7 @@ const ClientPaymentHistry = () => {
               type="number"
               name="amount"
               defaultValue={payment?.amount}
-              className="w-full border bg-white border-black p-2 rounded-lg"
+              className="input2"
             />
           </div>
           
@@ -474,7 +412,7 @@ const ClientPaymentHistry = () => {
             <select
               name="paymentMethod"
               defaultValue={payment?.paymentMethod}
-              className="w-full border bg-white border-black p-2 rounded-lg"
+              className="select2"
             >
               <option value="bkashMarchent">Bkash Marchent</option>
               <option value="bkashPersonal">Bkash Personal</option>
@@ -491,22 +429,21 @@ const ClientPaymentHistry = () => {
               type="text"
               name="note"
               defaultValue={payment?.note}
-              className="w-full border bg-white border-black p-2 rounded-lg"
+              className="input2"
             />
           </div>
 
-          {/* Buttons at the bottom in a two-grid layout */}
           <div className="grid grid-cols-2 gap-3 mt-4">
             <button
               type="button"
-              className="p-2 rounded-lg hover:bg-red-700 bg-red-600 text-white text-center"
+              className="close"
               onClick={() => document.getElementById(`modal_${payment._id}`).close()}
             >
               Close
             </button>
             <button
               type="submit"
-              className="font-avenir hover:bg-indigo-700 px-3 py-2 bg-[#05a0db] rounded-lg text-white text-center"
+              className="add"
             >
               Update
             </button>
@@ -518,19 +455,19 @@ const ClientPaymentHistry = () => {
 
                 </tr>
               ))}
-              <tr style={{ backgroundColor: 'var(--bg-color)', color: 'var(--text-color)'}} className="  font-bold">
-                <td style={{  border: 'var(--border)'}} className="p-3 text-right" colSpan="3">
+              <tr  className=" tr1 font-bold">
+                <td  className="text-right" colSpan="3">
                   Total Amount :
                 </td>
-                <td style={{  border: 'var(--border)'}} className="p-3 text-center">
+                <td >
                   <span className="text-md mr-1 font-extrabold">৳</span>{" "}
                   {findClients?.payments?.reduce(
       (acc, payment) => acc + parseFloat(payment?.amount || 0),
       0
     ).toFixed(0)}
                 </td>
-                <td style={{  border: 'var(--border)'}} className="p-3 text-center"></td>
-                <td style={{  border: 'var(--border)'}} className="p-3 text-center"></td>
+                <td></td>
+                <td></td>
               </tr>
             </tbody>
           </table>

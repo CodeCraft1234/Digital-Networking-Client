@@ -34,7 +34,7 @@ const Home = () => {
                     ) : userr?.role === "client" ? (
                         <ClientHome />
                     ) : (
-                        <MyProfile />
+                        <AdminHome></AdminHome>
                     )}
                 </div>
             ) : (
