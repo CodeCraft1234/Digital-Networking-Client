@@ -28,14 +28,14 @@ const PageSetup = () => {
 
     const initialTab3 =
     userr?.role === "admin"
-    ? localStorage.getItem("activeT") || "all" 
-    : localStorage.getItem("activeT") || user?.email; 
+    ? localStorage.getItem(`activeTabag35${user?.email}`) || "all" 
+    : localStorage.getItem(`activeTabag35${user?.email}`) || user?.email; 
   
     const [selectedEmployee3, setSelectedEmployee3] = useState(initialTab3);
   
     const changeTab3 = (tab) => {
       setSelectedEmployee3(tab); // Update the state
-      localStorage.setItem("activeT", tab); // Update localStorage
+      localStorage.setItem(`activeTabag35${user?.email}`, tab); // Update localStorage
     };
 
   const [searchQuery, setSearchQuery] = useState("");
@@ -69,12 +69,14 @@ localStorage.setItem("activeTabalu", tab);
 
     const handleUpdate = (e, ids, id) => {
       e.preventDefault();
-    
       const itemName = e.target.itemName.value;
+      const pageName = e.target.pageName.value;
       const totalBill = e.target.totalBill.value;
-      const totalPaid = e.target.totalPaid.value;
+      const pageUrl = e.target.pageUrl.value;
+      const role = e.target.role.value;
 
-      const body = { itemName, totalPaid, totalBill };
+      const body = { itemName, pageUrl, totalBill, role, pageName };
+      console.log(body);
 
       const datas = {
         title: `Updated ${itemName} in My Clients`,
@@ -164,29 +166,72 @@ localStorage.setItem("activeTabalu", tab);
       </Helmet>
             <div >
 
-            <div  className="grid grid-cols-2 mb-5  rounded-lg md:grid-cols-2 lg:grid-cols-2 text-black sm:grid-cols-2 gap-3 lg:gap-5 justify-around ">
-
-        <SummaryCard title="Total Bill" value={(myclients?.flatMap(client => client.pageService || [])?.reduce((acc, payment) => acc + parseFloat(payment?.totalBill || 0), 0).toFixed(2) || 0)} />
-        <SummaryCard title="Total Paid" value={(myclients?.flatMap(client => client.pageService || []).reduce((acc, payment) => acc + parseFloat(payment?.totalPaid || 0), 0).toFixed(2) || 0)} />
-
-          </div>
-
+           
       <div className="side-space">
         
-      <div className="flex justify-end gap-3 mb-4 items-center">
-  {userr?.role === "admin" && (
+      <div className="f-between  mb-4 ">
 
-    <select
-      className="select2"
-      value={selectedEmployee3}
-      onChange={(e) => changeTab3(e.target.value)}
-    >
-      <option value="all">All Employees</option>
-      {users.filter(u => u.role === "employee").map(employee => (
-        <option key={employee._id} value={employee.email}>{employee.name}</option>
+     <div>
+     {
+                userr?.role === 'employee' ?
+        <button
+      className="add"
+       onClick={() => document.getElementById("my_modal_8").showModal()}
+     >
+        Pay Now
+</button> : <div></div>}
+     </div>
+<div className="f-end   ">
+{userr?.role === "admin" && (
+
+<select
+  className="select2"
+  value={selectedEmployee3}
+  onChange={(e) => changeTab3(e.target.value)}
+>
+  <option value="all">Select Digital Marketer</option>
+  {users.filter(u => u.role === "employee").map(employee => (
+    <option key={employee._id} value={employee.email}>{employee.name}</option>
+  ))}
+</select>
+)}
+
+
+
+
+  <select
+   className="select2"
+    value={sortMonth}
+    onChange={(e) => changeTab2(e.target.value)}
+  >
+    <option  value='all'>Select Month</option>
+    {['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+      .map((month, index) => (
+        <option key={index + 1} value={index + 1}>{month}</option>
       ))}
-    </select>
-  )}
+  </select>
+
+  <select
+  className="select2"
+  value={selectedYear}
+  onChange={(e) => setSelectedYear(e.target.value)}
+>
+  <option value="">Select Year</option>
+  {[
+    ...new Set(
+      myclients
+        ?.flatMap(client => client.pageService || []) // Flatten data
+        ?.map(item => new Date(item.date).getFullYear()) // Extract years
+    ),
+  ]
+    .sort((a, b) => a - b) // Sort years in ascending order
+    .map(year => (
+      <option key={year} value={year}>
+        {year}
+      </option>
+    ))}
+</select>
+
 
   <select
    className="select2"
@@ -196,27 +241,6 @@ localStorage.setItem("activeTabalu", tab);
     <option value="all">Select Status</option>
     <option value="Active">Active</option>
     <option value="Complete">Complete</option>
-  </select>
-
-  <select
-   className="select2"
-    value={sortMonth}
-    onChange={(e) => changeTab2(e.target.value)}
-  >
-    {['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
-      .map((month, index) => (
-        <option key={index + 1} value={index + 1}>{month}</option>
-      ))}
-  </select>
-
-  <select
-    className="select2"
-    value={selectedYear}
-    onChange={(e) => setSelectedYear(e.target.value)}
-  >
-    {Array.from({ length: 31 }, (_, i) => 2020 + i).map((year) => (
-      <option key={year} value={year}>{year}</option>
-    ))}
   </select>
 
   
@@ -230,6 +254,7 @@ localStorage.setItem("activeTabalu", tab);
       onChange={(e) => setSearchQuery(e.target.value)}
     />
   </div>
+  </div>
 </div>
 
 
@@ -242,8 +267,6 @@ localStorage.setItem("activeTabalu", tab);
                 <th >Item Name</th>
                 <th >Page Name</th>
                 <th >Total Bill</th>
-                <th >Total Paid</th>
-                <th >Total Due</th>
                 <th className="text-center">Status</th>
               </tr>
             </thead>
@@ -260,7 +283,10 @@ localStorage.setItem("activeTabalu", tab);
                  key={work._id}
                  className={`tr2`}
                >
-                     <td className="text-center"> 
+                   {
+                      user &&
+                <td  className="text-center">
+                  <div className="f-center">
                         <button
                            className=" delete"
                           onClick={() => handledelete( work.ids ,work.id)}
@@ -268,8 +294,107 @@ localStorage.setItem("activeTabalu", tab);
                          <span >
                           <FaMinusSquare  />
                           </span>
-                        </button> 
-                    </td>
+                          
+                        </button>
+                        <button
+                        className=" edit"
+                        onClick={() =>
+                          document.getElementById(`modal_${work.ids}`).showModal()
+                          }
+                      >
+                       <FaEdit /> 
+                       
+                      </button>
+                      </div>
+              
+               <dialog id={`modal_${work.ids}`} className="modal">
+               <div className="modal-box bg-white text-black">
+               <form onSubmit={(e) => handleUpdate(e, work.ids, work.id)}>
+  <div className="grid lg:grid-cols-2 gap-3">
+    <div className="mb-4">
+      <label className="block text-left text-gray-700">Item Name</label>
+      <input
+        type="text"
+        name="itemName"
+        defaultValue={work.itemName}
+        className="input2"
+      />
+    </div>
+    <div className="mb-4">
+      <label className="block text-left text-gray-700">Page Name</label>
+      <input
+        type="text"
+        name="pageName"
+        defaultValue={work.pageName}
+        className="input2"
+      />
+    </div>
+  </div>
+
+  <div className="grid lg:grid-cols-2 gap-3">
+    <div className="mb-4">
+      <label className="block text-left text-gray-700">Page URL</label>
+      <input
+        type="text"
+        name="pageUrl"
+        defaultValue={work.pageUrl}
+        className="input2"
+      />
+    </div>
+    <div className="mb-4">
+      <label className="block text-left text-gray-700">Total Bill</label>
+      <input
+        type="number"
+        name="totalBill"
+        defaultValue={work.totalBill}
+        step="0.01"
+        className="input2"
+      />
+    </div>
+  </div>
+
+  <div className="mt-2 grid mb-4 lg:grid-cols-2">
+    {[
+      { value: "pageSetup", label: "Page Setup" },
+      { value: "pageMonitization", label: "Page Monitization" },
+      { value: "graphicDesign", label: "Graphic Design" },
+      { value: "webDesign", label: "Web Design" },
+    ].map(({ value, label }) => (
+      <div className="form-control" key={value}>
+        <label className="label flex justify-start items-center gap-2 cursor-pointer">
+          <input
+            type="radio"
+            name="role"
+            value={value}
+            defaultChecked={work?.role === value} // Check if the role matches
+            className="radio radio-primary"
+            required
+          />
+          <span className="label-text text-black">{label}</span>
+        </label>
+      </div>
+    ))}
+  </div>
+
+  <div className="grid grid-cols-2 gap-3 mt-4">
+    <button
+      type="button"
+      className="close"
+      onClick={() =>
+        document.getElementById(`modal_${work.ids}`).close()
+      }
+    >
+      Close
+    </button>
+    <button type="submit" className="add">
+      Update
+    </button>
+  </div>
+</form>
+
+               </div>
+                                    </dialog>  </td>
+               }
                       
                   <td>
                   {new Date(work?.date).toLocaleDateString("en-GB")}
@@ -277,14 +402,8 @@ localStorage.setItem("activeTabalu", tab);
                   
                   <td>
 
-                     <button
-                        className="f-start edit"
-                        onClick={() =>
-                          document.getElementById(`modal_${work.ids}`).showModal()
-                          }
-                      >
-                       <FaEdit /> 
-                       <span>
+                     
+                    <span>
   {work.itemName
     ?.split(' ') 
     .slice(0, 4) 
@@ -292,39 +411,6 @@ localStorage.setItem("activeTabalu", tab);
     + (work.itemName?.split(' ').length > 4 ? '...' : '') 
   }
 </span>
-                    </button>
-
-                    <dialog id={`modal_${work.ids}`} className="modal">
-  <div className="modal-box bg-white text-black">
-    <form onSubmit={(e) => handleUpdate(e, work.ids, work.id)}>
-      {['itemName', 'totalBill', 'totalPaid'].map((field, index) => (
-        <div className="mb-4" key={index}>
-          <label className="block text-left text-gray-700">{field.replace(/([A-Z])/g, ' $1')}</label>
-          <input
-            type={field === 'totalBill' || field === 'totalPaid' ? 'number' : 'text'}
-            name={field}
-            defaultValue={work[field]}
-            step={field === 'totalBill' || field === 'totalPaid' ? '0.01' : undefined}
-            className="w-full bg-white border border-gray-700 rounded p-2 mt-1"
-          />
-        </div>
-      ))}
-      <div className="grid grid-cols-2 gap-3 mt-4">
-        <button
-          type="button"
-          className="close"
-          onClick={() => document.getElementById(`modal_${work.ids}`).close()}
-        >
-          Close
-        </button>
-        <button type="submit" className="add">
-          Update
-        </button>
-      </div>
-    </form>
-  </div>
-                     </dialog>
-
                   </td>
 
                   <td>
@@ -344,14 +430,9 @@ localStorage.setItem("activeTabalu", tab);
                   ৳ {work.totalBill || 0}
                   </td>
 
-                  <td >
-                  ৳ {work?.totalPaid || 0}
-                  </td>
+                  
 
-                  <td >
-                    <span className="text-md mr-1 font-extrabold">৳</span>
-                     {(work.totalBill || 0) - (work?.totalPaid || 0)}
-                  </td>
+                
                   <td className="text-center">
 
                   <label className="status-label">
@@ -379,14 +460,8 @@ localStorage.setItem("activeTabalu", tab);
                   <span className="text-sm mr-1 font-extrabold">$</span>{" "}
                   {myclients?.flatMap(client => client.pageService || []).reduce((acc, payment) => acc + parseFloat(payment?.totalBill || 0), 0).toFixed(0) || 0}
                 </td>
-                <td >
-                  <span className="text-sm mr-1 font-extrabold">৳</span>{" "}
-                  {myclients?.flatMap(client => client.pageService || []).reduce((acc, payment) => acc + parseFloat(payment?.totalPaid || 0), 0).toFixed(0) || 0}
-                </td>
-                <td>
-                  <span className="text-sm mr-1 font-extrabold">৳</span>{" "}
-                  {myclients?.flatMap(client => client.pageService || []).reduce((acc, payment) => acc + parseFloat(payment?.totalBill || 0), 0).toFixed(0) - myclients?.flatMap(client => client.pageService || []).reduce((acc, payment) => acc + parseFloat(payment?.totalPaid || 0), 0).toFixed(0) || 0}
-                </td>
+              
+               
                 {ddd?.role === "admin" ? (
                   <>
                     <td ></td>
@@ -400,6 +475,7 @@ localStorage.setItem("activeTabalu", tab);
             </tbody>
           </table>
         </div>
+
         </div>
       </div>
         </div>

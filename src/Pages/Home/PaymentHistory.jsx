@@ -1,5 +1,4 @@
 import { useContext, useState } from 'react';
-import AllAdsPayments from '../DashboardRoot/ContributorPayments';
 import { Helmet } from 'react-helmet-async';
 import SalaryPayments from './SalaryPayment';
 import ClientPayments from '../DashboardRoot/ClientPayments';
@@ -31,24 +30,24 @@ const PaymentHistory = () => {
     return (
         <div>
             <Helmet>
-                <title>Payment | Digital Network</title>
+                <title>{activeTab} | Digital Network</title>
                 <link rel="canonical" href="https://www.example.com/" />
             </Helmet>
 
-            <div className="px-2 mx-5   mt-5 rounded-lg" >
-                <div className="flex justify-center items-center gap-5 my-5">
+            <div className="px-2 mx-5   rounded-lg" >
+                <div className="flex justify-center items-center gap-5 mb-5">
                     {/* Employeer Pay Button */}
                     <button
-                        className={getButtonClass('employeerPay')}
-                        onClick={() => changeTab('employeerPay')}
+                        className={getButtonClass('Digital Marketer Pay')}
+                        onClick={() => changeTab('Digital Marketer Pay')}
                     >
-                        Employer Pay
+                       Digital Marketer Pay
                     </button>
 
                     {/* Clients Pay Button */}
                     <button
-                        className={getButtonClass('clientsPay')}
-                        onClick={() => changeTab('clientsPay')}
+                        className={getButtonClass('Clients Pay')}
+                        onClick={() => changeTab('Clients Pay')}
                     >
                         Clients Pay
                     </button>
@@ -56,26 +55,26 @@ const PaymentHistory = () => {
                     {/* Contributor Pay Button */}
                     {
                         userr?.role === 'admin' &&  <button
-                        className={getButtonClass('contributorPay')}
-                        onClick={() => changeTab('contributorPay')}
+                        className={getButtonClass('Contributor Pay')}
+                        onClick={() => changeTab('Contributor Pay')}
                     >
                         Contributor Pay
                     </button>
                     }
                    
                     <button
-                        className={getButtonClass('salaryPay')}
-                        onClick={() => changeTab('salaryPay')}
+                        className={getButtonClass('Salary Pay')}
+                        onClick={() => changeTab('Salary Pay')}
                     >
                         Salary Pay
                     </button>
                 </div>
             </div>
 
-            {activeTab === 'contributorPay' && <ContributorPayments />}
-            {activeTab === 'employeerPay' && <AdminPayments />}
-            {activeTab === 'clientsPay' && <ClientPayments />}
-            {activeTab === 'salaryPay' && <SalaryPayments />}
+            {activeTab === 'Contributor Pay' && <ContributorPayments />}
+            {activeTab === 'Digital Marketer Pay' && <AdminPayments />}
+            {activeTab === 'Clients Pay' && <ClientPayments />}
+            {activeTab === 'Salary Pay' && <SalaryPayments />}
         </div>
     );
 };

@@ -11,6 +11,8 @@ import useAllEmployee from "../../Hook/useAllEmployee";
 import useMyAdsAccountByEmail from "../../Hook/useMyAdsAccountNyEmail";
 import { AuthContext } from "../../Security/AuthProvider";
 import useUserr from "../../Hook/useUser";
+import { Helmet } from "react-helmet-async";
+import Swal from "sweetalert2";
 
 const MetaAdsAccount = ({data1}) => {
   const { user } = useContext(AuthContext);
@@ -19,23 +21,23 @@ const MetaAdsAccount = ({data1}) => {
   
   const initialTab3 =
   userr?.role === "admin"
-  ? localStorage.getItem("a2") || "all" 
-  : localStorage.getItem("a2") || user?.email; 
+    ? localStorage.getItem(`activeTabag2${user?.email}`) || "all" 
+    : localStorage.getItem(`activeTabag2${user?.email}`) || user?.email; 
 
-const [selectedEmployee3, setSelectedEmployee3] = useState(initialTab3);
+    const [selectedEmployee3, setSelectedEmployee3] = useState(initialTab3);
+    const [myAdsAccount,refetch]=useMyAdsAccountByEmail(selectedEmployee3)
 
   const changeTab3 = (tab) => {
     setSelectedEmployee3(tab); 
-    localStorage.setItem("a2", tab); 
+    localStorage.setItem(`activeTabag2${user?.email}`, tab); 
   };
 
-    const [adsAccount] = useAdsAccount();
     const [searchQuery, setSearchQuery] = useState("");
     const AxiosPublic = UseAxiosPublic();
     const [modalData, setModalData] = useState(null);
     const [modalData2, setModalData2] = useState(null);
     const initialTab = localStorage.getItem("activeTabAlladsAccountStatus") || "Active";
-    const [myAdsAccount,refetch]=useMyAdsAccountByEmail(selectedEmployee3)
+
     const [selectedStatus, setSelectedStatus] = useState(initialTab);
     const [allEmployees] = useAllEmployee([]);
 
@@ -66,16 +68,33 @@ const [selectedEmployee3, setSelectedEmployee3] = useState(initialTab3);
           });
       };
   
-    const handleDelete = (id) => {
-          AxiosPublic.delete(`/adsAccount/${id}`).then((res) => {
-            refetch();
-          });
-    };
+      const handleDelete = (id) => {
+        // Show SweetAlert2 confirmation dialog
+        Swal.fire({
+          title: "Are you sure?",
+          text: "You won't be able to revert this!",
+          icon: "warning",
+          showCancelButton: true,
+          confirmButtonColor: "#3085d6",
+          cancelButtonColor: "#d33",
+          confirmButtonText: "Yes, delete it!",
+        }).then((result) => {
+          if (result.isConfirmed) {
+            // If confirmed, proceed with the delete request
+            AxiosPublic.delete(`/adsAccount/${id}`).then((res) => {
+              // Show success message
+              Swal.fire("Deleted!", "The item has been deleted.", "success");
+              refetch(); // Refetch the data
+            });
+          }
+        });
+      };
+      
   
     const generateRandomId = () => {
       return Math.floor(Math.random() * 1e13); 
     };
-  
+
     const handleUpdateTotalSpent = (e, id,  accountName, employeeEmail, employeeName) => {
       e.preventDefault();
       const totalSpent = e.target.totalSpent.value;
@@ -84,6 +103,8 @@ const [selectedEmployee3, setSelectedEmployee3] = useState(initialTab3);
    
 
       const totalSpentt = parseFloat(totalSpent);
+      const data5 = { totalSpent:totalSpentt }
+
       const monthlySpent = {
         ids,
         totalSpentt,
@@ -92,8 +113,19 @@ const [selectedEmployee3, setSelectedEmployee3] = useState(initialTab3);
         role:`${data1}Spend`,
         employeeName
       };
-  
-      AxiosPublic.post('/users/update', { email: employeeEmail, monthlySpent })
+
+      const monthlySpent2 = {
+        ids,
+        totalSpentt,
+        accountName,
+        date,
+        role:`${data1}Spend`,
+        employeeName
+      };
+
+     
+      if(data1 === 'contributor'){
+        AxiosPublic.post('/users/update2', { email: employeeEmail, monthlySpent2 })
         .then(res => {
           console.log(res.data);
           setModalData2(null);
@@ -101,6 +133,25 @@ const [selectedEmployee3, setSelectedEmployee3] = useState(initialTab3);
         .catch(error => {
           console.error("Error posting user data:", error);
         });
+      }else{
+        AxiosPublic.post('/users/update', { email: employeeEmail, monthlySpent })
+        .then(res => {
+          console.log(res.data);
+
+          AxiosPublic.patch(`/adsAccount/spend/${id}`, data5)
+          .then(res=>{
+            refetch();
+            console.log(res.data)})
+
+
+          setModalData2(null);
+        })
+        .catch(error => {
+          console.error("Error posting user data:", error);
+        });
+      }
+  
+      
     };
   
     const handleUpdate2 = (id, newStatus) => {
@@ -119,25 +170,47 @@ const [selectedEmployee3, setSelectedEmployee3] = useState(initialTab3);
 
     const handleAddAdsAcount = (e) => {
       e.preventDefault();
+    
       const accountName = e.target.accountName.value;
       const paymentDate = e.target.paymentDate.value;
-      const employeeEmail = e.target.employeeEmail.value;
-      const employeerName = allEmployees.find(e=>e.email === employeeEmail).name;
-      const currentBallence=0
-      const threshold=0
-      const totalSpent=0
-      const status='Active'
-      
-      const data = { accountName,totalSpent,currentBallence,threshold,role:`${data1}AdsAccount`, paymentDate,status, employeeEmail,employeerName };
-  
+    
+      const employeeEmail = e.target.employeeEmail?.value || userr?.email;
+    
+      const employeerName =
+        allEmployees.find((e) => e.email === employeeEmail)?.name || userr?.name;
+    
+      const currentBallence = 0;
+      const threshold = 0;
+      const totalSpent = 0;
+      const status = "Active";
+    
+      const data = {
+        accountName,
+        totalSpent,
+        currentBallence,
+        threshold,
+        role: `${data1}AdsAccount`,
+        paymentDate,
+        status,
+        employeeEmail,
+        employeerName,
+      };
+    
       console.log(data);
-      AxiosPublic.post("/adsAccount", data).then((res) => {
-        toast.success("Post created successfully!");
-        console.log(res.data);
-        refetch()
-        document.getElementById("my_modal_3").close()
-      });
+    
+      AxiosPublic.post("/adsAccount", data)
+        .then((res) => {
+          toast.success("Post created successfully!");
+          console.log(res.data);
+          refetch();
+          document.getElementById("my_modal_3").close();
+        })
+        .catch((err) => {
+          console.error("Error posting data:", err);
+          toast.error("Failed to create post. Please try again.");
+        });
     };
+    
 
     const today = new Date();
     const formattedDate = today.toISOString().split('T')[0]; 
@@ -145,7 +218,14 @@ const [selectedEmployee3, setSelectedEmployee3] = useState(initialTab3);
     return (
         <div style={{ backgroundColor: 'var(--bg-color3)', color: 'var(--text-color)',border: 'var(--border)'}} className=" rounded-lg ">
  
-          
+           <Helmet>
+            <title>
+              {`${(data1 ? data1.charAt(0).toUpperCase() + data1.slice(1).toLowerCase() : 'Contributor')} Ads Account | Digital Network`}
+            </title>
+            <link rel="canonical" href="https://www.example.com/" />
+          </Helmet>
+
+
 
           <div>
 
@@ -154,12 +234,16 @@ const [selectedEmployee3, setSelectedEmployee3] = useState(initialTab3);
 
             <div className="flex justify-between lg:justify-between  ml-5  my-5  mx-auto   items-center gap-3 ">
             <div>
-                 <button 
-                     className="add f-center"
-                      onClick={() => document.getElementById("my_modal_3").showModal()}
-                        >
-                     <IoIosAddCircleOutline /> <span className="inline">Add Meta Account</span>
-                      </button>
+
+              {
+                userr?.role !== 'contributor' &&  <button 
+                className="add f-center"
+                 onClick={() => document.getElementById("my_modal_3").showModal()}
+                   >
+                <span className="font-bold text-lg"><IoIosAddCircleOutline /></span> <span className="inline">Add {data1} Account</span>
+                 </button>
+              }
+                    
     
                       <dialog id="my_modal_3" className="modal">
       <div className="modal-box bg-white">
@@ -171,9 +255,9 @@ const [selectedEmployee3, setSelectedEmployee3] = useState(initialTab3);
             >
               <ImCross />
             </h1>
-              <div className="grid lg:grid-cols-2 items-center gap-3">
-              <div className="col-span-1">
-           <label className="block text-black">Date</label>
+             
+            <div className="col-span-1">
+            <label className="block text-black">Date</label>
             <input
               required
               type="date"
@@ -183,21 +267,30 @@ const [selectedEmployee3, setSelectedEmployee3] = useState(initialTab3);
             />
            </div>
 
-        <div className="col-span-1 w-full">
-          <label className="block text-black">Select Employee</label>
-         <select
-          
-           className="select2 w-full"
-           name="employeeEmail"
-         >
-           {allEmployees?.filter(f=>f.role === 'employee').map((employee) => (
-             <option key={employee._id} value={employee.email}>
-               {employee.name}
-             </option>
-           ))}
-         </select>
-       </div>
-              </div>
+          {
+            userr?.role === 'admin' && <div className="col-span-1 mt-4 w-full">
+            <label className="block text-black">Select {(data1 !== 'contributor' ? 'employee' : data1)}</label>
+           <select
+            required
+             className="select2 w-full"
+             name="employeeEmail"
+           >
+             <option disabled selected value=''>
+                Select {(data1 !== 'contributor' ? 'employee' : data1)}
+               </option>
+               {allEmployees
+?.filter((f) => f.role === (data1 !== 'contributor' ? 'employee' : data1))
+  .map((employee) => (
+    <option key={employee._id} value={employee.email}>
+      {employee.name}
+    </option>
+  ))}
+
+           </select>
+         </div>
+          }
+
+           
           </div>
           
           <div className="mb-4">
@@ -241,9 +334,12 @@ const [selectedEmployee3, setSelectedEmployee3] = useState(initialTab3);
         value={selectedEmployee3}
         onChange={(e) => changeTab3(e.target.value)}
       >
-        <option value="all">All Employees</option>
+      <option value="all">
+  {data1 === "contributor" ? "Select Contributor" : "Select Digital Marketer"}
+</option>
+
         {users
-          .filter((u) => u.role === "employee")
+         ?.filter((u) =>u.role === (data1 === "contributor" ? "contributor" : "employee"))
           .map((employee) => (
             <option key={employee._id} value={employee.email}>
               {employee.name}
@@ -263,7 +359,7 @@ const [selectedEmployee3, setSelectedEmployee3] = useState(initialTab3);
                   onChange={(e) => changeTab(e.target.value)}
                   className="select2 "
                 >
-                  <option value="">All Status</option>
+                  <option value="">Select Status</option>
                   <option value="Active">Active</option>
                   <option value="Disable">Disable</option>
                 </select>
@@ -287,25 +383,39 @@ const [selectedEmployee3, setSelectedEmployee3] = useState(initialTab3);
 
             </div>
          
-            <div  className="table-div px-4 pb-4" >
-          <table className="min-w-full text-center ">
+            <div  className="table-div m-4" >
+          <table className="min-w-full rounded-lg text-center ">
             <thead>
               <tr className="tr1">
+              {
+                  userr?.role !== 'contributor' ? 
                 <th className="text-center" >
-                  Items {myAdsAccount.length}
-                </th>
-                <th>Meta Account Name</th>
+                 {myAdsAccount
+          ?.filter(f => f.role === `${data1 || 'contributor'}AdsAccount`)
+             ?.filter((account) =>
+              (selectedStatus ? account.status === selectedStatus : true) &&
+              (searchQuery ? account.accountName.toLowerCase().includes(searchQuery.toLowerCase()) : true)
+            )
+  ?.sort((a, b) =>
+    a.accountName.localeCompare(b.accountName, undefined, { sensitivity: 'base' })
+  )
+  ?.length} Items 
+                </th> : <th className="text-center">SL</th> }
                 <th>Employeer Name</th>
-                <th>Current Balance</th>
+                <th>{data1.charAt(0).toUpperCase() + data1.slice(1)} Account Name</th>
                 <th>Threshold</th>
-                <th>Spend</th>
+                <th>Current Balance</th>
+                <th className="text-center">Spend</th>
                 <th>Payment Date</th>
-                <th className="text-center">Status</th>
+                {
+                  userr?.role !== 'contributor' &&    <th className="text-center">Status</th>
+                }
+              
               </tr>
             </thead>
             <tbody>
             {myAdsAccount
-            ?.filter(f=>f.role === `${data1}AdsAccount`)
+          ?.filter(f => f.role === `${data1 || 'contributor'}AdsAccount`)
              ?.filter((account) =>
               (selectedStatus ? account.status === selectedStatus : true) &&
               (searchQuery ? account.accountName.toLowerCase().includes(searchQuery.toLowerCase()) : true)
@@ -318,49 +428,60 @@ const [selectedEmployee3, setSelectedEmployee3] = useState(initialTab3);
                      key={account._id}
                     className={`tr2`}
                    >
+                     {
+                  userr?.role !== 'contributor' ?
                   <td
                     className={`text-center  `}>
+                        <div className="f-center ">
                         <button
                           className="delete"
                           onClick={() => handleDelete(account._id)}
                         >
                           <FaMinusSquare  />
                         </button>
-                   </td> 
-                  <td>
-                    <button
+
+                        <button
                          className="f-start edit"
                           onClick={() => setModalData(account)}
                         >
                           <FaEdit />
-                           <h1> {account.accountName}</h1>
+                          
                         </button>
-                  </td>
-                  <td>
-                    <Link to={`/dashboard/userInfo/${account?.employeeEmail}`}>
-                    {account.employeerName}
-                    </Link>
+                        </div>
+                   </td> : <td className="text-center">{index + 1}</td> }
+                   <td>
+                  
+                  {account.employeerName}
                 
-                  </td>
-                  <td>$ {account.currentBallence} </td>
-                  <td>$ {account.threshold}</td>
+              
+                </td>
                   <td>
+                  <h1> {account.accountName}</h1>
+                  
+                  </td>
+                 
+                  <td>$ {account.threshold}</td>
+                  <td>$ {account.currentBallence} </td>
+                  <td className="text-center">
   <div className="relative group flex items-center justify-center">
     <h1>
       <span className="text-xm font-extrabold">$</span> {account.totalSpent}
     </h1>
-    <button
+    {userr?.role === 'admin' &&  <button
       className="edit opacity-0 group-hover:opacity-100 transition-opacity duration-300 ml-2"
       onClick={() => setModalData2(account)}
     >
       <FaEdit />
-    </button>
+    </button>}
+   
   </div>
 </td>
 
                   <td>
                     {new Date(account.paymentDate).toLocaleDateString("en-GB")}
                   </td>
+                  {
+                  userr?.role !== 'contributor' && 
                   <td  className="text-center"> 
 
                   <label className="status-label">
@@ -377,7 +498,7 @@ const [selectedEmployee3, setSelectedEmployee3] = useState(initialTab3);
   </div>
 </label>
 
-                 </td>
+                 </td>}
                 </tr>
               ))}
 
@@ -392,6 +513,7 @@ const [selectedEmployee3, setSelectedEmployee3] = useState(initialTab3);
         0
       ).toFixed(2)}
                 </td>
+
                 <td>
                $ {myAdsAccount
             ?.filter(f=>f.role === `${data1}AdsAccount`).reduce(
@@ -399,7 +521,7 @@ const [selectedEmployee3, setSelectedEmployee3] = useState(initialTab3);
         0
       ).toFixed(2)}
                 </td>
-                <td >
+                <td className="text-center">
                $ {myAdsAccount
             ?.filter(f=>f.role === `${data1}AdsAccount`).reduce(
         (acc, account) => acc + parseFloat(account.totalSpent || 0),
@@ -407,7 +529,9 @@ const [selectedEmployee3, setSelectedEmployee3] = useState(initialTab3);
       ).toFixed(2)}
                 </td>
                 <td></td>
-                <td></td>
+                {
+                  userr?.role !== 'contributor' && 
+                <td></td> }
               </tr>
             </tbody>
           </table>

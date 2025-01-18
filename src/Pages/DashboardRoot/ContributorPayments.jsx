@@ -20,17 +20,18 @@ const ContributorPayments = () => {
   
   const initialTab3 =
   userr?.role === "admin"
-  ? localStorage.getItem("activ") || "all" 
-  : localStorage.getItem("activ") || user?.email; 
+  ? localStorage.getItem(`acti3${user?.email}`) || "all" 
+  : localStorage.getItem(`acti3${user?.email}`) || user?.email; 
 
   const [selectedEmployee3, setSelectedEmployee3] = useState(initialTab3);
 
   const changeTab2 = (tab) => {
     setSelectedEmployee3(tab); // Update the state
-    localStorage.setItem("activ", tab); // Update localStorage
+    localStorage.setItem(`acti3${user?.email}`, tab); // Update localStorage
   };
 
   const [MyContributorPayment,refetch]=useMyContributorPayment(selectedEmployee3)
+  console.log(MyContributorPayment);
   const [selectedCategory, setSelectedCategory] = useState("");
   const [filteredData, setFilteredData] = useState([]);
   const [filteredData2, setFilteredData2] = useState([]);
@@ -160,7 +161,6 @@ const ContributorPayments = () => {
     const employeeEmail = e.target.employeeEmail?.value || user?.email;
     const employeeName = allEmployees.find(e => e.email === employeeEmail)?.name || user?.displayName;
     const payAmount = e.target.payAmount.value;
-    const charge = e.target.charge.value;
     const paymentMethod = e.target.paymentMethod.value;
     const note = e.target.note.value;
     const date = e.target.date.value;
@@ -170,7 +170,6 @@ const ContributorPayments = () => {
       employeeEmail,
       payAmount,
       note,
-      charge,
       paymentMethod,
       date,
       status:'pending'
@@ -368,25 +367,21 @@ const ContributorPayments = () => {
     </div>
   ))}
 
-                <div 
-                  style={{ backgroundColor: '#d9f8d9', border: 'var(--border)' }}
-                  onClick={() => setSelectedCategory('All')}
+
+                 <div 
+                 onClick={() => setSelectedCategory('All')}
+                 style={{ backgroundColor: '#f7e8e8', border: 'var(--border)' }} 
                    className="balance-card rounded-2xl  text-center shadow-xl transition-transform transform hover:scale-105"
                  >
-                   <h1 className="px-3 text-black text-md font-bold text-center">TOTAL</h1>
-                   <p className="balance-card-text text-md  lg:text-md font-bold text-gray-700">
-                     <span className="text-md lg:text-md font-extrabold">৳</span>
-                     {new Intl.NumberFormat('en-IN').format(
-        Object.values(totals).reduce((sum, val) => sum + val, 0)
-      )}
-                   </p>
-                   <p className="balance-card-text text-md  lg:text-md font-bold text-gray-700">
-                     <span className="text-lg lg:text-md font-extrabold">৳</span>
-                     {new Intl.NumberFormat('en-IN').format(
+                   <h1 className="px-3 text-black text-xl font-bold text-center">TOTAL</h1>
+                   <p className="card-title pb-5">
+  <span>৳ </span>
+  {new Intl.NumberFormat('en-IN').format(
         filteredData2.reduce((acc, item) => acc + (parseFloat(item?.charge) || 0), 0)
       )}
-                   </p>
-                 </div>
+</p>
+
+         </div>
 
               </div>
 
@@ -414,7 +409,9 @@ const ContributorPayments = () => {
         <ImCross />
       </h1>
 
-     <div className="mb-4">
+     
+      <div className="grid lg:grid-cols-2 gap-3">
+      <div className="mb-4">
         <label className="block text-gray-250">Date</label>
         <input
           type="date"
@@ -424,29 +421,8 @@ const ContributorPayments = () => {
           className="input2"
         />
       </div>
-
-  
-     <div>
-      {userr?.role === "admin" && (
-        <div className="mb-4">
-          <label className="block text-black">Select Employee</label>
-          <select className="select2 w-full" name="employeeEmail">
-            {allEmployees
-              ?.filter((f) => f.role === "contributor")
-              .map(({ _id, email, name }) => (
-                <option key={_id} value={email}>
-                  {name}
-                </option>
-              ))}
-          </select>
-        </div>
-      )}
-      </div>
-
-      <div className="grid lg:grid-cols-2 gap-3 mb-4">
         {[
           { name: "payAmount", label: "Amount", placeholder: "0" },
-          { name: "charge", label: "Charge", placeholder: "0", defaultValue: 0 },
         ].map(({ name, label, placeholder, defaultValue }) => (
           <div key={name}>
             <label className="block text-gray-250">{label}</label>
@@ -461,6 +437,25 @@ const ContributorPayments = () => {
           </div>
         ))}
       </div>
+  
+     <div>
+      {userr?.role === "admin" && (
+        <div className="mb-4">
+          <label className="block text-black">Select Contributor</label>
+          <select className="select2 w-full" name="employeeEmail">
+            {allEmployees
+              ?.filter((f) => f.role === "contributor")
+              .map(({ _id, email, name }) => (
+                <option key={_id} value={email}>
+                  {name}
+                </option>
+              ))}
+          </select>
+        </div>
+      )}
+      </div>
+
+    
 
      <div className="mb-4">
         <div className="mt-2 grid lg:grid-cols-3">
@@ -524,7 +519,7 @@ const ContributorPayments = () => {
         value={selectedEmployee3}
         onChange={(e) => changeTab2(e.target.value)}
       >
-        <option value="all">All Employees</option>
+        <option value="all">All Contributor</option>
         {users
           .filter((u) => u.role === "contributor")
           .map((employee) => (
@@ -563,17 +558,22 @@ const ContributorPayments = () => {
               ))}
             </select>
 
-          <select
-          className=" select2"
-          value={selectedYear}
-          onChange={(e) => setSelectedYear(e.target.value)}
-        >
-          {Array.from({ length: 31 }, (_, i) => 2020 + i).map((year) => (
-            <option key={year} value={year}>
-              {year}
-            </option>
-          ))}
-          </select>
+
+            <select
+  className="select2"
+  value={selectedYear}
+  onChange={(e) => setSelectedYear(e.target.value)}
+>
+  <option value="">Select Year</option> {/* Default option */}
+  {[...new Set(displayedItems?.map((campaign) => new Date(campaign.date).getFullYear()))]
+    .sort((a, b) => a - b) // Ensure the years are sorted in ascending order
+    .map((year) => (
+      <option key={year} value={year}>
+        {year}
+      </option>
+    ))}
+</select>
+
    
           <select
   className="select2 "
@@ -600,7 +600,6 @@ const ContributorPayments = () => {
               <th>Date</th>
               <th>Employee Name</th>
               <th>Amount</th>
-              <th>Charge</th>
               <th className="text-center ">Payment Method</th>
               <th> Note</th>
               <th className="text-center ">Status</th>
@@ -650,7 +649,6 @@ const ContributorPayments = () => {
       {[
         { label: "Date", type: "date", name: "date", value: payment.date },
         { label: "New Amount", type: "number", name: "payAmount", value: payment?.payAmount },
-        { label: "Charge", type: "number", name: "charge", value: payment?.charge, placeholder: "0" },
         { label: "Note", type: "text", name: "note", value: payment?.note }
       ].map(({ label, type, name, value, placeholder }, idx) => (
         <div className="mb-4" key={idx}>
@@ -717,9 +715,7 @@ const ContributorPayments = () => {
                 <td>
                   ৳ {payment.payAmount}
                 </td>
-                <td>
-                  ৳ {payment.charge || 0}
-                </td>
+               
 
                 <td>
   {[
@@ -808,13 +804,7 @@ const ContributorPayments = () => {
     bkashPersonal + nagadPersonal + bankTotal + DBBLBankTotal + IBBLBankTotal + rocketPersonal
   )}
               </td>
-               <td>
-  ৳ {new Intl.NumberFormat('en-IN', {
-    maximumFractionDigits: 2, // Ensure consistency in decimals
-  }).format(
-    displayedItems.reduce((acc, item) => acc + (isNaN(parseFloat(item?.charge)) ? 0 : parseFloat(item?.charge)), 0)
-  )}
-              </td>
+
               <td></td>
               <td></td>
               <td></td>

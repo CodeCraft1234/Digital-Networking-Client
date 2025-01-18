@@ -9,7 +9,6 @@ import usePayoneerData from "../../Hook/usePayoneerData";
 import useUserr from "../../Hook/useUser";
 import { AuthContext } from "../../Security/AuthProvider";
 import usePayoneerEmail from "../../Hook/usePayoneerEmail";
-import SummaryCard from "../Home/SummeryCard";
 import PayoneerEmail from "./PayoneerEmail";
 
 const Payoneer = () => {
@@ -19,7 +18,7 @@ const Payoneer = () => {
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   const AxiosPublic=UseAxiosPublic()
   const { user } = useContext(AuthContext);
-    const {userr}=useUserr(user?.email)
+  const {userr}=useUserr(user?.email)
 
   const initialTab = localStorage.getItem("activeTaballClientspayss") ;
   const [sortMonth, setSortMonth] = useState(initialTab); 
@@ -36,6 +35,7 @@ const Payoneer = () => {
     setSelectedStatus2(tab);
     localStorage.setItem("activeTabSelectedStatuss", tab);
   };
+
   const initialStatus4 = localStorage.getItem("activeTabSelectedStatusse") || 'All';
   const [selectedStatus4, setSelectedStatus4] = useState(initialStatus4);
 
@@ -119,7 +119,6 @@ const Payoneer = () => {
 
   };
 
-
   const handleUpdatePayment = (e, id) => {
     e.preventDefault();
     const amount = parseFloat(e.target.amount.value);
@@ -172,7 +171,6 @@ const Payoneer = () => {
     });
   };
 
-
   const handleUpdate2 = (id, newStatus) => {
     const body = { status: newStatus };
   
@@ -196,24 +194,10 @@ const Payoneer = () => {
         <link rel="canonical" href="https://www.example.com/" />
       </Helmet>
 
-
-      <div className="grid mb-5  rounded-lg grid-cols-2 md:grid-cols-2 lg:grid-cols-2 text-black sm:grid-cols-2 gap-5 justify-around ">
-
-      <SummaryCard title="Total Doller" value={new Intl.NumberFormat('en-IN', {
-    maximumFractionDigits: 2,
-  }).format(displayedItems.reduce((acc, datas) => acc + parseFloat(datas.amount || 0), 0))} />
-      <SummaryCard title="Total BDT" value={new Intl.NumberFormat('en-IN', {
-    maximumFractionDigits: 2,
-  }).format(displayedItems.reduce(
-    (sum, campaign) =>
-      sum +
-      (parseFloat(campaign?.amount || 0) * parseFloat(campaign?.dollerRate || 0)),
-    0))} />
-      </div>
-
      <div className=" side-space mb-5">
      <div className=" flex-col md:flex-row f-start lg:justify-between items-center gap-5 ">
-         {
+          <div>
+          {
                   userr?.role === "admin" ? 
                   <div className="f-start">
                    <button
@@ -223,11 +207,12 @@ const Payoneer = () => {
                   Buy Doller
                 </button>
 
-     <PayoneerEmail></PayoneerEmail>
+                <PayoneerEmail></PayoneerEmail>
                  </div> :<></>
 
                  
                 }
+          </div>
                                 <dialog id="my_modal_1" className="modal">
                   <div className="modal-box overflow-hidden bg-white text-black font-bold">
                     <form onSubmit={(e) => handlePayment(e)}>
@@ -261,7 +246,7 @@ const Payoneer = () => {
                             <select
                               required
                               name="payoneerEmail"
-                              className="select2 w-full"
+                              className="select2 py-2.5 w-full"
                             >
                               <option selected disabled className="text-black" value="">
                                 Select an email
@@ -349,7 +334,22 @@ const Payoneer = () => {
         
         <div className="f-center ">
        
-
+        <div className=" lg:f-center ">
+        <select
+  className="select2"
+  value={selectedYear}
+  onChange={(e) => setSelectedYear(e.target.value)}
+>
+  <option value="">Select Year</option> {/* Default option */}
+  {[...new Set(displayedItems?.map((campaign) => new Date(campaign.date).getFullYear()))]
+    .sort((a, b) => a - b) // Ensure the years are sorted in ascending order
+    .map((year) => (
+      <option key={year} value={year}>
+        {year}
+      </option>
+    ))}
+</select>
+      </div>
        <div className="f-center ">
 
 <select
@@ -396,20 +396,7 @@ const Payoneer = () => {
               ))}
             </select>
           </div>
-          <div className=" lg:f-center ">
-        <select
-       
-          className=" select2"
-          value={selectedYear}
-          onChange={(e) => setSelectedYear(e.target.value)}
-        >
-          {Array.from({ length: 31 }, (_, i) => 2020 + i).map((year) => (
-            <option key={year} value={year}>
-              {year}
-            </option>
-          ))}
-        </select>
-      </div>
+         
       <div className="f-center ">
 
 <select
@@ -469,7 +456,11 @@ const Payoneer = () => {
                           <FaMinusSquare  />
                           </span>
                   </button>
-               
+
+                  <div>
+                  <FaEdit />
+                  </div>
+
                   <dialog id={`modal_${payment._id}`} className="modal">
       <div className="modal-box text-start bg-white text-black font-bold">
         <form onSubmit={(e) => handleUpdatePayment(e,payment._id)}>
@@ -597,9 +588,6 @@ const Payoneer = () => {
                         .showModal()
                     }
                   >
-                    {
-                    userr?.role === "admin" && <FaEdit />
-                  }
                     <h1> {payment.payoneerEmail}</h1>
                   </button>
                   
@@ -670,7 +658,7 @@ const Payoneer = () => {
                <td >
                ৳ {new Intl.NumberFormat('en-IN', {
     maximumFractionDigits: 2,
-  }).format(displayedItems.reduce((acc, datas) => acc + parseFloat(datas.dollerRate || 0), 0))}
+  }).format(displayedItems.reduce((acc, datas) => acc + parseFloat(datas.dollerRate || 0), 0)) / displayedItems?.length}
               </td>
 
 

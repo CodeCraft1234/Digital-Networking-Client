@@ -99,7 +99,7 @@ const AllUsers = () => {
   };
 
   const getButtonClass = (tab) => 
-    `px-3 py-1 lg:px-4 lg:py-2 text-md lg:text-lg  transition duration-300 ease-in-out  ${
+    `px-3 py-1 lg:px-4 lg:py-2 rounded-lg text-md lg:text-lg  transition duration-300 ease-in-out  ${
         activeTab === tab 
             ? 'bg-blue-600 font-bold text-white transform scale-105'
             : 'hover:bg-blue-300 hover:shadow-md'
@@ -147,6 +147,7 @@ const AllUsers = () => {
         })
     };
 
+    console.log(users);
   return (
     <div className=" ">
       <Helmet>
@@ -162,48 +163,49 @@ const AllUsers = () => {
 
       <div   className="side-space">
       <div  className="f-start  ">
-  <div  style={{ color: 'var(--text-color2)'}} className="f-start  mb-5 ">
+  <div  style={{ color: 'var(--text-color2)'}} className="f-start cursor-pointer  mb-5 ">
     <a 
       className={getButtonClass('all')}
       onClick={() => changeTab('all')}
     >
-      All Users ({users.length})
+      All Users 
     </a>
     <a
       className={getButtonClass('admin')}
       onClick={() => changeTab('admin')}
     >
-      Administrator ({employees3.length})
+      Administrator 
     </a>
     <a 
       className={getButtonClass('employee')}
       onClick={() => changeTab('employee')}
     >
-      Employees ({employees4.length})
+      Digital Marketer 
+    </a>
+   
+    <a
+      className={getButtonClass('graphicDesigner')}
+      onClick={() => changeTab('graphicDesigner')}
+    >
+      Graphic Designer 
     </a>
     <a
       className={getButtonClass('webDeveloper')}
       onClick={() => changeTab('webDeveloper')}
     >
-      Web Developer ({employees5.length})
-    </a>
-    <a
-      className={getButtonClass('graphicDesigner')}
-      onClick={() => changeTab('graphicDesigner')}
-    >
-      Graphic Designer ({employees2.length})
+      Web Developer 
     </a>
     <a
       className={getButtonClass('contributor')}
       onClick={() => changeTab('contributor')}
     >
-      Contributor ({employees6.length})
+      Contributor
     </a>
     <a
       className={getButtonClass('client')}
       onClick={() => changeTab('client')}
     >
-      Users ({employees7.length})
+      Users 
     </a>
   </div>
 </div>
@@ -212,7 +214,7 @@ const AllUsers = () => {
           <table className="min-w-full text-center ">
             <thead className=" ">
               <tr className="tr1">
-                  <th className=" text-center">Action</th>
+                  <th className=" text-center">{employees.length} Users</th>
                 <th >Profile</th>
                 <th >Name</th>
                 <th >Mobile</th>
@@ -233,31 +235,14 @@ const AllUsers = () => {
                  className={`tr2`}
                >
                   <td  className="text-center">
+                  <div className="f-center">
                   <button
                       onClick={() => handleDelete(user._id)}
                        className="text-red-600 text-xl hover:bg-blue-700  px-2 py-1 rounded"
                     >
                         <FaMinusSquare  />
                     </button>
-                  </td>
-
-                  <td>
-                    <img
-                      className="h-16 w-16 flex justify-center items-center mx-auto rounded-full"
-                      src={user.photo}
-                      alt=""
-                    />
-                  </td>
-
-                  <td>
-                      {user.name}
-                  </td>
-
-                  <td>
-                    {user.contactNumber}
-                  </td>
-                  <td>
-                  <button
+                    <button
                          className="flex justify-start items-center gap-2"
                         onClick={() =>
                           document
@@ -266,8 +251,10 @@ const AllUsers = () => {
                         }
                       >
                        <FaEdit />
-                       <h1>{user.email}</h1>
+                   
                       </button>
+                  </div>
+
                       <dialog id={`my_modal_${user._id}`} className="modal">
   <div className="modal-box bg-white">
     <form
@@ -309,6 +296,26 @@ const AllUsers = () => {
                       </dialog>
                   </td>
 
+                  <td>
+                    <img
+                      className="h-16 w-16 flex justify-center items-center mx-auto rounded-full"
+                      src={user.photo}
+                      alt=""
+                    />
+                  </td>
+
+                  <td>
+                      {user.name}
+                  </td>
+
+                  <td>
+                    {user.contactNumber}
+                  </td>
+                  <td>
+                  <h1>{user.email}</h1>
+ 
+                  </td>
+
                                  {activeTab === 'contributor' && (
  <td>
   <span className="mr-1 text-xl font-bold">৳</span> 
@@ -340,7 +347,7 @@ const AllUsers = () => {
                       onChange={(e) => handleRoleChange(user._id, e.target.value)}
                     >
                       <option value="admin">Admin</option>
-                      <option value="employee">Employee</option>
+                      <option value="employee">Digital Marketer</option>
                       <option value="webDeveloper">Web Developer</option>
                       <option value="graphicDesigner">Graphic Designer</option>
                       <option value="contributor">Contributor</option>

@@ -35,17 +35,8 @@ const DesignerDashboard = () => {
             Dashboard
           </NavLink>
       
-         
           <NavLink
-            to='dashboard/bankInfo'
-            className="text-white hover:bg-[#f89320] hover:text-black py-2 px-4 rounded-lg flex items-center"
-            style={({ isActive }) => getActiveStyle(isActive)}
-          >
-             <MdAccountCircle className="w-6 h-6 mr-2" />
-            Work
-          </NavLink>
-          <NavLink
-            to='dashboard/bankInfo'
+            to='/graphicsDesign'
             className="text-white hover:bg-[#f89320] hover:text-black py-2 px-4 rounded-lg flex items-center"
             style={({ isActive }) => getActiveStyle(isActive)}
           >
@@ -53,15 +44,32 @@ const DesignerDashboard = () => {
             Graphic Design
           </NavLink>
           <NavLink
-            to='dashboard/myDevSalary'
+            to='/salaryPayments'
+            className="text-white hover:bg-[#f89320] hover:text-black py-2 px-4 rounded-lg flex items-center"
+            style={({ isActive }) => getActiveStyle(isActive)}
+          >
+            <MdAccountCircle className="w-6 h-6 mr-2" />
+            Salary Pay
+          </NavLink>
+          <NavLink
+            to='/summery'
+            className="text-white hover:bg-[#f89320] hover:text-black py-2 px-4 rounded-lg flex items-center"
+            style={({ isActive }) => getActiveStyle(isActive)}
+          >
+            <MdAccountCircle className="w-6 h-6 mr-2" />
+            My Summery
+          </NavLink>
+          <NavLink
+            to='/mySalary'
             className="text-white hover:bg-[#f89320] hover:text-black py-2 px-4 rounded-lg flex items-center"
             style={({ isActive }) => getActiveStyle(isActive)}
           >
             <MdAccountCircle className="w-6 h-6 mr-2" />
             Salary
           </NavLink>
+       
           <NavLink
-            to='dashboard/bankInfo'
+            to='/bankInfo'
             className="text-white hover:bg-[#f89320] hover:text-black py-2 px-4 rounded-lg flex items-center"
             style={({ isActive }) => getActiveStyle(isActive)}
           >

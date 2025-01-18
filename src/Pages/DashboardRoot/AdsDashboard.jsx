@@ -4,7 +4,6 @@ import { MdAccountCircle } from "react-icons/md";
 import { useContext } from "react";
 import { AuthContext } from "../../Security/AuthProvider";
 import { CiBank } from "react-icons/ci";
-import { LuActivitySquare } from "react-icons/lu";
 import { FaHistory } from "react-icons/fa";
 
 const AdsDashboard = () => {
@@ -40,7 +39,7 @@ const AdsDashboard = () => {
           </NavLink>
       
           <NavLink
-            to={`/adsAccountCenter`}
+            to={`/contributorAdsAccount`}
             className="text-white hover:bg-[#f89320] hover:text-black py-2 px-4 rounded-lg flex items-center"
             style={({ isActive }) => getActiveStyle(isActive)}
           >
@@ -48,7 +47,7 @@ const AdsDashboard = () => {
             Ads Account
           </NavLink>
           <NavLink
-            to='/adsPayments'
+            to='/contributorPayments'
             className="text-white hover:bg-[#f89320] hover:text-black py-2 px-4 rounded-lg flex items-center"
             style={({ isActive }) => getActiveStyle(isActive)}
           >
@@ -56,22 +55,20 @@ const AdsDashboard = () => {
            My Payment
           </NavLink>
           <NavLink
-            to='/contributorHistory'
+            to='/contributorSummery'
+            className="text-white hover:bg-[#f89320] hover:text-black py-2 px-4 rounded-lg flex items-center"
+            style={({ isActive }) => getActiveStyle(isActive)}>
+            <MdAccountCircle className="w-6 h-6 mr-2" />
+           My Summery
+          </NavLink>
+
+          <NavLink
+            to='/contributorMonthlySpend'
             className="text-white hover:bg-[#f89320] hover:text-black py-2 px-4 rounded-lg flex items-center"
             style={({ isActive }) => getActiveStyle(isActive)}>
             <FaHistory className="w-6 h-6 mr-2" />
             Monthly Spend
           </NavLink>
-
-          <NavLink
-            to='/contributorSummery'
-            className="text-white hover:bg-[#f89320] hover:text-black py-2 px-4 rounded-lg flex items-center"
-            style={({ isActive }) => getActiveStyle(isActive)}>
-            <LuActivitySquare className="w-6 h-6 mr-2" />
-           My Summery
-          </NavLink>
-
-         
 
           <NavLink
             to={`/bankInfo`}

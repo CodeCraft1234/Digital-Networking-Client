@@ -1,39 +1,21 @@
 import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../../Security/AuthProvider";
 import { useLoaderData, useParams } from "react-router-dom";
-import useCampaings from "../../Hook/useCampaign";
 import "react-toastify/dist/ReactToastify.css";
-import useClients from "../../Hook/useClient";
 import useUsers from "../../Hook/useUsers";
 import PaymentHistry from "./ClientPaymentHistry";
 import { Helmet } from "react-helmet-async";
-import ClientCampaign from "./ClientMetaAds";
-import useMpayment from "../../Hook/UseMpayment";
 import ClientHistory from "../DashboardRoot/ClientHistory";
 import ClientPageSetup from "./ClientPageSetup";
-import ClientGoogleAds from "./ClientGoogleAds";
 import useFindClient from "./useFindClient";
 import ClientMetaAds from "./ClientMetaAds";
+import { FaRegCopy } from "react-icons/fa";
 
 const ClientProfile = () => {
   const { user } = useContext(AuthContext);
   const userr = useLoaderData();
-  const [MPayment]=useMpayment()
   const param = useParams();
-  const [clients]=useClients()
-  const [datas,setdatas]=useState()
-  const {findClients , refetch}=useFindClient(param?.email)
-
-  useEffect(() => {
-  if (param?.email) {
-      const realdata = clients.find((m) => m.clientEmail === param?.email);
-      setdatas(realdata)
-    }
-  }, [param?.email, clients]);
-
-  const [campaign] = useCampaings();
-  const [totalSpent, setTotalSpent] = useState(0);
-  const [totalBills, setTotalBills] = useState(0);
+  const {findClients}=useFindClient(param?.email)
 
   const [users] = useUsers();
   const [ddd, setDdd] = useState(null);
@@ -46,23 +28,7 @@ const ClientProfile = () => {
     }
   }, [users, user]);
 
-  useEffect(() => {
-    const filtered = campaign.filter(
-      (campaign) => campaign.clientEmail === param?.email
-    );
-    const totalBill = filtered.reduce(
-      (acc, campaign) => acc + parseFloat(campaign.tSpent) * parseFloat(campaign.dollerRate),
-      0
-    );
-    setTotalBills(totalBill);
-  
-    const totalSpent = filtered.reduce(
-      (acc, campaign) => acc + parseFloat(campaign.tSpent),
-      0
-    );
-    setTotalSpent(totalSpent);
-  }, [campaign, param?.email]);
-  
+
   const initialTab = localStorage.getItem("activeTabClientProfile") || "clientCampaign";
   const [activeTab, setActiveTab] = useState(initialTab)
   console.log(activeTab);
@@ -79,18 +45,16 @@ const ClientProfile = () => {
     localStorage.setItem("activeTabClientProfile", tab); // Store the active tab in local storage
   };
   
-  const [totalPaymeent, setTotalPayment] = useState([]);
-
-  useEffect(() => {
-        const realdata = MPayment.filter((m) => m.clientEmail === param?.email);
-        const totalBill = realdata.reduce(
-          (acc, campaign) => acc + parseFloat(campaign.amount),
-          0
-        );
-        setTotalPayment(totalBill);
-  }, [param?.email,MPayment]);
-
-
+  const [copiedBankId, setCopiedBankId] = useState(false); 
+  const handleCopy = () => {
+    if (param?.email) {
+      navigator.clipboard.writeText(param.email).then(() => {
+        setCopiedBankId(true)
+      }).catch((error) => {
+        console.error("Failed to copy:", error);
+      });
+    }
+  };
 
   return (
     <div className="">
@@ -99,7 +63,7 @@ const ClientProfile = () => {
         <link rel="canonical" href="https://www.example.com/" />
       </Helmet>
 
-      <div  style={{ backgroundColor: 'var(--bg-color3)', color: 'var(--text-color)',border: 'var(--border)'}} className="p-5 rounded-lg">
+      <div   className=" rounded-lg">
 
         <img 
           className="rounded-full border-2 p-2 border-black mx-auto w-20 h-20 lg:w-32 lg:h-32" 
@@ -112,6 +76,16 @@ const ClientProfile = () => {
         <h1 style={{ color: 'var(--text-color2)'}} className="lg:text-2xl mt-4  sm:text-2xl md:text-3xl font-bold text-center">
         {findClients?.clientPhone}
         </h1>
+        <div className="text-center">
+      <button
+        className={` py-2 px-4 mt-5 bg-green-400 rounded-lg text-black hover:bg-green-600`}
+        onClick={handleCopy}
+      >
+        {copiedBankId === true ? 'Copied' : 'Copy Client Id'}
+      </button>
+    </div>
+
+      
 
         <div className="flex lg:justify-center rounded-md gap-3 p-2 justify-center items-center px-5 lg:mt-5 mt-5 mx-3">
         <button 

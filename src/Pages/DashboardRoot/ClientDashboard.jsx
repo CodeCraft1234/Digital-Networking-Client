@@ -1,8 +1,10 @@
 import { Link, NavLink } from "react-router-dom";
 import { RxDashboard } from "react-icons/rx";
-import { MdAccountCircle } from "react-icons/md";
-import { useContext } from "react";
+import { MdAccountCircle, MdOutlinePayments } from "react-icons/md";
+import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../../Security/AuthProvider";
+import { SiGoogleads, SiMeta } from "react-icons/si";
+import { RiPagesFill } from "react-icons/ri";
 
 const ClientDashboard = () => {
   const { user } = useContext(AuthContext);
@@ -12,9 +14,21 @@ const ClientDashboard = () => {
       : {}
   );
 
+  const [clientUser, setClientUser] = useState(null);
+  useEffect(() => {
+    const storedClientUser = localStorage.getItem("clientUser");
+    if (storedClientUser) {
+      setClientUser(storedClientUser); 
+    }
+  }, []);
+
+  const changeTab = (tab) => {
+    localStorage.setItem("activeTabClientProfile", tab); 
+  };
+
   return (
-    <div className="overflow-hidden h-screen">
-      <div className="w-[200px] bg-gray-900 text-white">
+    <div className="w-[225px]  text-white bg-gray-900 -mt-3 -ml-2 pr-2 min-h-screen">
+      <div >
         <div className="flex  items-center justify-center py-4">
           <Link to={"/"}>
             <img
@@ -36,20 +50,60 @@ const ClientDashboard = () => {
           </NavLink>
       
           <NavLink
-            to='dashboard/clientCampaigns'
+            to={`/client/metaAds/${clientUser}`}
             className="text-white hover:bg-[#f89320] hover:text-black py-2 px-4 rounded-lg flex items-center"
             style={({ isActive }) => getActiveStyle(isActive)}
+            onClick={() => changeTab('metaAds')}
           >
-            <MdAccountCircle className="w-6 h-6 mr-2" />
-            Campaigns
+            <SiMeta className="w-6 h-6 mr-2" />
+            Meta Ads
+          </NavLink>
+
+          <NavLink
+            to={`/client/googleAds/${clientUser}`}
+            className="text-white hover:bg-[#f89320] hover:text-black py-2 px-4 rounded-lg flex items-center"
+            style={({ isActive }) => getActiveStyle(isActive)}
+            onClick={() => changeTab('googleAds')}
+          >
+            <SiGoogleads className="w-6 h-6 mr-2" />
+            Google Ads
           </NavLink>
           <NavLink
-            to='dashboard/paymentsClient'
+            to={`/client/pageSetup/${clientUser}`}
             className="text-white hover:bg-[#f89320] hover:text-black py-2 px-4 rounded-lg flex items-center"
             style={({ isActive }) => getActiveStyle(isActive)}
+            onClick={() => changeTab('metaAds')}
+          >
+            <RiPagesFill className="w-6 h-6 mr-2" />
+            Page Setup
+          </NavLink>
+         
+          <NavLink
+            to={`/client/payments/${clientUser}`}
+            className="text-white hover:bg-[#f89320] hover:text-black py-2 px-4 rounded-lg flex items-center"
+            style={({ isActive }) => getActiveStyle(isActive)}
+            onClick={() => changeTab('metaAds')}
+          >
+            <MdOutlinePayments className="w-6 h-6 mr-2" />
+            My Payments
+          </NavLink>
+          <NavLink
+            to={`/client/summery/${clientUser}`}
+            className="text-white hover:bg-[#f89320] hover:text-black py-2 px-4 rounded-lg flex items-center"
+            style={({ isActive }) => getActiveStyle(isActive)}
+            onClick={() => changeTab('metaAds')}
           >
             <MdAccountCircle className="w-6 h-6 mr-2" />
-            Payments
+            My Summery
+          </NavLink>
+          <NavLink
+            to={`/bankInfo`}
+            className="text-white hover:bg-[#f89320] hover:text-black py-2 px-4 rounded-lg flex items-center"
+            style={({ isActive }) => getActiveStyle(isActive)}
+            onClick={() => changeTab('metaAds')}
+          >
+            <MdAccountCircle className="w-6 h-6 mr-2" />
+            Bank Info
           </NavLink>
 
         </ul>

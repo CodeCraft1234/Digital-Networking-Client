@@ -17,17 +17,29 @@ const SalaryPayments = () => {
   const {userr}=useUserr(user?.email)
   const [users]=useUsers()
   const [allEmployees] = useAllEmployee([]);
+
+  const initialTab5 =
+  userr?.role === "admin"
+  ? localStorage.getItem("a99") || "all" 
+  : localStorage.getItem("a99") || user?.email; 
+  const [selectedRole, setSelectedRole] = useState(initialTab5);
+
+  const changeTab5 = (tab) => {
+    setSelectedRole(tab);
+    localStorage.setItem("a99", tab);
+  };
+
   
   const initialTab3 =
   userr?.role === "admin"
-  ? localStorage.getItem("ac") || "all" 
-  : localStorage.getItem("ac") || user?.email; 
+  ? localStorage.getItem(`ac${user?.email}`) || "all" 
+  : localStorage.getItem(`ac${user?.email}`) || user?.email; 
 
   const [selectedEmployee3, setSelectedEmployee3] = useState(initialTab3);
 
   const changeTab2 = (tab) => {
     setSelectedEmployee3(tab); 
-    localStorage.setItem("ac", tab); 
+    localStorage.setItem(`ac${user?.email}`, tab); 
   };
 
   const [MySalaryPayment,refetch]=useMySalaryPayments(selectedEmployee3)
@@ -36,10 +48,9 @@ const SalaryPayments = () => {
   const [filteredData2, setFilteredData2] = useState([]);
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   const AxiosPublic=UseAxiosPublic()
-  const [selectedDate, setSelectedDate] = useState("");
 
   const initialTab = localStorage.getItem("activeTaballClientspayss") ;
-  const [sortMonth, setSortMonth] = useState(initialTab); 
+  const [sortMonth, setSortMonth] = useState(initialTab || (new Date().getMonth() + 1).toString()); 
   
   const changeTab = (tab) => {
     setSortMonth(tab);
@@ -161,7 +172,6 @@ const SalaryPayments = () => {
     const employeeEmail = e.target.employeeEmail?.value || user?.email;
     const employeeName = allEmployees?.find(e => e.email === employeeEmail)?.name || user?.displayName;
     const payAmount = e.target.payAmount.value;
-    const charge = e.target.charge.value;
     const paymentMethod = e.target.paymentMethod.value;
     const note = e.target.note.value;
     const date = e.target.date.value;
@@ -171,10 +181,8 @@ const SalaryPayments = () => {
       employeeEmail,
       payAmount,
       note,
-      charge,
       paymentMethod,
       date,
-      status:'pending'
     };
 
     const datas = {
@@ -206,7 +214,6 @@ const SalaryPayments = () => {
     const date = e.target.date.value;
     const note = e.target.note.value;
     const paymentMethod = e.target.paymentMethod.value;
-    const status = 'pending';
     const updatedPaymentData = { status, note, payAmount, date, paymentMethod };
 
     const previousAmount = payment.payAmount; 
@@ -311,24 +318,11 @@ const SalaryPayments = () => {
     });
   };
 
-  const handleUpdate2 = (id, newStatus) => {
-    const body = { status: newStatus };
-  
-    AxiosPublic.patch(`/salaryPayment/status/${id}`, body)
-      .then((res) => {
-        console.log(res.data);
-        refetch();
-      })
-      .catch((error) => {
-        console.error("Error updating campaign:", error);
-        toast.error("Failed to update campaign");
-      });
-  };
-
   const options = [
     "January", "February", "March", "April", "May", "June",
     "July", "August", "September", "October", "November", "December"
   ];
+
   
   const years = Array.from({ length: 31 }, (_, i) => 2020 + i);
   return (
@@ -353,14 +347,21 @@ const SalaryPayments = () => {
 <BalanceCard  img={`https://i.ibb.co/JQBQBcF/nagad-marchant.png`} amount={nagadPersonal}></BalanceCard>
 </div>
 
-<div onClick={() => setSelectedCategory('All')}
-                   style={{ backgroundColor: '#d9f8d9', border: 'var(--border)' }} 
-                   className="balance-card rounded-2xl p-5 text-center shadow-xl transition-transform transform hover:scale-105">
-<h1 className="px-3 text-black text-xl font-bold text-center">TOTAL</h1>
-      <p className="balance-card-text text-lg mt-2 lg:text-xl font-bold text-gray-700">
-        <span className="text-lg lg:text-xl font-extrabold">৳</span> {bankTotal + DBBLBankTotal + IBBLBankTotal + bkashPersonal + nagadPersonal }
-      </p>
-    </div>
+
+    <div 
+                 onClick={() => setSelectedCategory('All')}
+                 style={{ backgroundColor: '#f7e8e8', border: 'var(--border)' }} 
+                   className="balance-card rounded-2xl  text-center shadow-xl transition-transform transform hover:scale-105"
+                 >
+                   <h1 className="px-3 text-black text-xl font-bold text-center">TOTAL</h1>
+                   <p className="card-title pb-5">
+  <span>৳ </span>
+  {new Intl.NumberFormat('en-IN').format(
+       bankTotal + DBBLBankTotal + IBBLBankTotal + bkashPersonal + nagadPersonal
+      )}
+</p>
+
+         </div>
         </div>
 
 
@@ -368,143 +369,177 @@ const SalaryPayments = () => {
 
      <div className="flex flex-col mb-4 md:flex-row justify-start lg:justify-between items-center gap-5  ">
 
-     <div className="f-start">
-
-    <button
-      className="add"
-      onClick={() => document.getElementById("my_modal_1").showModal()}
-    >
-      Pay Admin
-    </button>
-
-    <dialog id="my_modal_1" className="modal">
-      <div className="modal-box bg-white text-black font-bold">
-        <form onSubmit={handlePayment}>
-
-          <div className="flex justify-end">
-            <ImCross
-              className="cursor-pointer hover:text-red-500"
-              onClick={() => document.getElementById("my_modal_1").close()}
-            />
-          </div>
-
-          
-<div className="grid lg:grid-cols-2 gap-3">
 <div>
-              <label>Date</label>
-              <input
-                type="date"
-                name="date"
-                required
-                defaultValue={formattedDate}
-                className="input2"
-              />
-            </div>
+{
+        userr?.role === 'admin' &&      <div className="f-start">
 
-            {userr?.role === "admin" && (
-            <div >
-              <label className="block text-black" >Select Employee</label>
-              <select name="employeeEmail" className="select2 w-full">
-                {allEmployees
-                  ?.filter((f) => f.role === "employee")
-                  .map((employee) => (
-                    <option key={employee._id} value={employee.email}>
-                      {employee.name}
-                    </option>
-                  ))}
-              </select>
-            </div>
-          )}
-
-</div>
-
-
-          <div className="grid lg:grid-cols-2 gap-3 mt-4">
-          <div>
-              <label>Amount</label>
-              <input
-                type="number"
-                name="payAmount"
-                required
-                placeholder="0"
-                className="input2"
-              />
-            </div>
-         
-            <div>
-              <label>Charge</label>
-              <input
-                type="number"
-                name="charge"
-                required
-                defaultValue={0}
-                className="input2"
-              />
-            </div>
-
-          </div>
-
-
-         
-
-          <div className="grid lg:grid-cols-3 gap-3 mt-4">
-            {["bank", "DBBLBank", "IBBLBank", "bkashPersonal", "nagadPersonal"].map(
-              (method, index) => (
-                <label key={index} className="flex items-center gap-2 cursor-pointer">
+        <button
+          className="add"
+          onClick={() => document.getElementById("my_modal_1").showModal()}
+        >
+          Pay Salary
+        </button>
+    
+        <dialog id="my_modal_1" className="modal">
+          <div className="modal-box bg-white text-black font-bold">
+            <form onSubmit={handlePayment}>
+    
+              <div className="flex justify-end">
+                <ImCross
+                  className="cursor-pointer hover:text-red-500"
+                  onClick={() => document.getElementById("my_modal_1").close()}
+                />
+              </div>
+    
+              
+    <div className="grid lg:grid-cols-2 gap-3">
+    <div>
+                  <label>Date</label>
                   <input
-                    type="radio"
-                    name="paymentMethod"
-                    value={method}
-                    className="radio radio-primary"
+                    type="date"
+                    name="date"
+                    required
+                    defaultValue={formattedDate}
+                    className="input2"
                   />
-                  <span>{method}</span>
-                </label>
-              )
-            )}
-          </div>
-          <div className="mt-4">
-            <label>Note (Optional)</label>
-            <input
-              type="text"
-              name="note"
-              placeholder="Type note..."
-              className="input2"
-            />
-          </div>
-          <div className="grid lg:grid-cols-2 gap-3 mt-5">
-            <button
-              type="button"
-              onClick={() => document.getElementById("my_modal_1").close()}
-              className="close"
-            >
-              Close
-            </button>
-            <button
-              type="submit"
-              className="add"
-            >
-              Submit
-            </button>
-          </div>
-        </form>
+                </div>
+    
+    
+    
+    
+                {userr?.role === "admin" && (
+                <div >
+                  <label className="block text-black" >Select Employee</label>
+                  <select name="employeeEmail" className="select2 w-full">
+                    {allEmployees?.filter(f=>f.role !== 'admin' && f.role !== 'contributor')
+                      .map((employee) => (
+                        <option key={employee._id} value={employee.email}>
+                          {employee.name}
+                        </option>
+                      ))}
+                  </select>
+                </div>
+              )}
+    
+    </div>
+    
+    
+             
+              <div>
+                  <label>Amount</label>
+                  <input
+                    type="number"
+                    name="payAmount"
+                    required
+                    placeholder="0"
+                    className="input2"
+                  />
+                </div>
+             
+               
+    
+                <div className="mb-4">
+        <div className="mt-2 grid lg:grid-cols-3">
+          {[
+            { value: "bank", label: "Brack Bank" },
+            { value: "DBBLBank", label: "DBBL Bank" },
+            { value: "IBBLBank", label: "Islami Bank" },
+            { value: "bkashPersonal", label: "bKash" },
+            { value: "nagadPersonal", label: "Nagad" },
+          ].map(({ value, label }) => (
+            <div className="form-control" key={value}>
+              <label className="label flex justify-start items-center gap-2 cursor-pointer">
+                <input
+                  type="radio"
+                  name="paymentMethod"
+                  value={value}
+                  className="radio radio-primary"
+                />
+                <span className="label-text text-black">{label}</span>
+              </label>
+            </div>
+          ))}
+        </div>
       </div>
-    </dialog>
-     </div>
+    
+             
+  
+              <div className="mt-4">
+                <label>Note (Optional)</label>
+                <input
+                  type="text"
+                  name="note"
+                  placeholder="Type note..."
+                  className="input2"
+                />
+              </div>
+              <div className="grid lg:grid-cols-2 gap-3 mt-5">
+                <button
+                  type="button"
+                  onClick={() => document.getElementById("my_modal_1").close()}
+                  className="close"
+                >
+                  Close
+                </button>
+                <button
+                  type="submit"
+                  className="add"
+                >
+                  Submit
+                </button>
+              </div>
+            </form>
+          </div>
+        </dialog>
+         </div>
+      }
+</div>
 
      <div className="lg:ml-5 f-start">
     <div className="f-center">
-      {userr?.role === "admin" && (
-        <select
-          className="select2"
-          value={selectedEmployee3}
+
+
+    <div className='f-end'>
+    {
+    userr?.role === 'admin' &&   <select
+    className="select2"
+    value={selectedRole}
+    onChange={(e) => changeTab5(e.target.value)}
+>
+            <option value="employee">Digital Marketer</option>
+            <option value="graphicDesigner">GraphicDesign</option>
+            <option value="webDeveloper">Web Developer</option>
+   </select>
+  }
+
+
+  {
+    userr?.role === 'admin' &&   <select
+    className="select2"
+    value={selectedEmployee3}
           onChange={(e) => changeTab2(e.target.value)}
-        >
-          <option value="all">All Employees</option>
-          {users.filter((u) => ["employee", "graphicDesign", "webDeveloper", "staf"].includes(u.role)).map((employee) => (
-            <option key={employee._id} value={employee.email}>{employee.name}</option>
-          ))}
-        </select>
-      )}
+>
+<option value="all">
+  All{" "}
+  {selectedRole === "employee"
+    ? "Marketer"
+    : selectedRole === "graphicDesigner"
+    ? "Graphic Designer"
+    : selectedRole === "webDeveloper"
+    ? "Web Developer"
+    : "Users"}
+</option>
+
+    {users
+        .filter((u) => [selectedRole].includes(u.role))
+        .map((employee) => (
+            <option key={employee._id} value={employee.email}>
+                {employee.name}
+            </option>
+        ))}
+      </select>
+  }
+    </div>
 
       <select
         className="select2"
@@ -518,14 +553,19 @@ const SalaryPayments = () => {
       </select>
 
       <select
-        className="select2"
-        value={selectedYear}
-        onChange={(e) => setSelectedYear(e.target.value)}
-      >
-        {years.map((year) => (
-          <option key={year} value={year}>{year}</option>
-        ))}
-      </select>
+  className="select2"
+  value={selectedYear}
+  onChange={(e) => setSelectedYear(e.target.value)}
+>
+  <option value="">Select Year</option> {/* Default option */}
+  {[...new Set(displayedItems?.map((campaign) => new Date(campaign.date).getFullYear()))]
+    .sort((a, b) => a - b) // Ensure the years are sorted in ascending order
+    .map((year) => (
+      <option key={year} value={year}>
+        {year}
+      </option>
+    ))}
+</select>
 
       <select
         className="select2"
@@ -551,9 +591,9 @@ const SalaryPayments = () => {
               <th>Date</th>
               <th>Employee Name</th>
               <th>Amount</th>
-              <th>Payment Method</th>
+              <th className="text-center">Payment Method</th>
               <th> Note</th>
-              <th className="text-center">Status</th>
+             
             </tr>
           </thead>
           <tbody>
@@ -597,7 +637,6 @@ const SalaryPayments = () => {
       {[
         { label: "Date", name: "date", type: "date", value: payment.date },
         { label: "New Amount", name: "payAmount", type: "number", value: payment.payAmount },
-        { label: "Charge", name: "charge", type: "number", value: payment.charge },
         { label: "Note", name: "note", type: "text", value: payment.note },
       ].map(({ label, name, type, value }, idx) => (
         <div key={idx} className="mb-4">
@@ -687,34 +726,6 @@ const SalaryPayments = () => {
                   {payment.note}
                 </td>
             
-                <td> 
-
-             <label className="inline-flex items-center cursor-pointer">
-
-  <input
-    type="checkbox"
-    className="sr-only"
-    checked={payment.status !== "pending"}
-    onChange={() => {
-      const newStatus = payment.status !== "pending" ? "pending" : "Approved";
-      handleUpdate2(payment._id, newStatus);
-    }}
-  />
-
-  <div
-    className={`relative w-12 h-6 transition duration-200 ease-linear rounded-full ${
-      payment.status !== "pending" ? "bg-blue-700" : "bg-gray-500"
-    }`}
-  >
-    <span
-      className={`absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition-transform duration-200 ease-linear transform ${
-        payment.status !== "pending" ? "translate-x-6" : ""
-      }`}
-    ></span>
-  </div>
-
-</label>
-               </td>
 
               </tr>
             ))}
@@ -733,7 +744,7 @@ const SalaryPayments = () => {
               </td>
               <td></td>
               <td></td>
-              <td></td>
+
             </tr>
           </tbody>
         </table>

@@ -38,12 +38,14 @@ const ClientPageSetup = () => {
 
     const handleUpdate = (e, ids, id) => {
       e.preventDefault();
-    
       const itemName = e.target.itemName.value;
+      const pageName = e.target.pageName.value;
       const totalBill = e.target.totalBill.value;
-      const totalPaid = e.target.totalPaid.value;
+      const pageUrl = e.target.pageUrl.value;
+      const role = e.target.role.value;
 
-      const body = { itemName, totalPaid, totalBill };
+      const body = { itemName, pageUrl, totalBill, role, pageName };
+      console.log(body);
 
       const datas = {
         title: `Updated ${itemName} in My Clients`,
@@ -79,6 +81,7 @@ const ClientPageSetup = () => {
       const clientName = datas?.clientName
       const totalBill = e.target.totalBill.value;
       const pageUrl = e.target.pageUrl.value;
+      const role = e.target.role.value;
       const email = user?.email;
       const status = "Active";
       const date = e.target.date.value;
@@ -104,6 +107,7 @@ const ClientPageSetup = () => {
         pageUrl,
         totalBill,
         email,
+        role,
         date,
         clientName
       };
@@ -190,19 +194,19 @@ const ClientPageSetup = () => {
         <div>
             <div className="mt-5">
 
-            <div   className="grid grid-cols-2 mb-5 rounded-lg md:grid-cols-2 lg:grid-cols-2 text-black sm:grid-cols-2 gap-3 lg:gap-5 justify-around ">
+            {/* <div   className="grid grid-cols-2 mb-5 rounded-lg md:grid-cols-2 lg:grid-cols-2 text-black sm:grid-cols-2 gap-3 lg:gap-5 justify-around ">
 
         <SummaryCard title="Total Bill" value={findClients?.pageService?.reduce((acc, payment) => acc + parseFloat(payment?.totalBill || 0), 0).toFixed(2) || 0} />
         <SummaryCard title="Total Paid" value={findClients?.pageService?.reduce((acc, payment) => acc + parseFloat(payment?.totalPaid || 0), 0).toFixed(2) || 0} />
 
-          </div>
+          </div> */}
 
       <div  className="  side-space ">
         
   <div>
 
     {
-      ddd?.role ==='employee' && 
+      user && 
       <button
       className="add"
       onClick={() => document.getElementById("my_modal_2").showModal()}
@@ -237,8 +241,8 @@ const ClientPageSetup = () => {
                 />
               </div>
 
-            <div className="grid lg:grid-cols-2 gap-3 items-center">
-            <div className="mb-4">
+            <div className="grid lg:grid-cols-2 mb-4 gap-3 items-center">
+            <div >
                 <label htmlFor="name" className="block mb-1 ml-1">
                   Item Name
                 </label>
@@ -267,7 +271,7 @@ const ClientPageSetup = () => {
               </div>
             </div>
 
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-3">
             <div className="mb-4">
                 <label htmlFor="pageName" className="block mb-1 ml-1">
                   Page Name
@@ -294,6 +298,28 @@ const ClientPageSetup = () => {
                 />
               </div>
             </div>
+
+            <div className="mt-2 grid mb-4 lg:grid-cols-2">
+  {[
+    { value: "pageSetup", label: "Page Setup" },
+    { value: "pageMonitization", label: "Page Monitization" },
+    { value: "graphicDesign", label: "Graphic Design" },
+    { value: "webDesign", label: "Web Design" },
+  ].map(({ value, label }) => (
+    <div className="form-control" key={value}>
+      <label className="label flex justify-start items-center gap-2 cursor-pointer">
+        <input
+          type="radio"
+          name="role"
+          value={value}
+          className="radio radio-primary"
+          required
+        />
+        <span className="label-text text-black">{label}</span>
+      </label>
+    </div>
+  ))}
+</div>
               
             </div>
 
@@ -322,16 +348,18 @@ const ClientPageSetup = () => {
   <div  className="table-div mt-5" >
           <table className="min-w-full text-center ">
             <thead className=" ">
-              <tr className="tr1" >  
-                <th  className="text-center">Items {campaignss?.length}</th>
+              <tr className="tr1" > 
+              {
+                      user && 
+                <th  className="text-center">Items {campaignss?.length}</th> }
                 <th >Date</th>
                 <th >Item Name</th>
                 <th >Page Name</th>
                 <th >Total Bill</th>
-                <th >Total Paid</th>
-                <th >Total Due</th>
-                <th  className="text-center">Status</th>
- 
+                <th >Service</th>
+                {
+                      user &&
+                <th  className="text-center">Status</th>}
               </tr>
             </thead>
             <tbody>
@@ -340,6 +368,8 @@ const ClientPageSetup = () => {
                  key={work._id}
                  className={`tr2`}
                >
+                {
+                      user &&
                 <td  className="text-center">
                   <div className="f-center">
                         <button
@@ -349,23 +379,114 @@ const ClientPageSetup = () => {
                          <span >
                           <FaMinusSquare  />
                           </span>
+                          
                         </button>
-                      </div>
-               </td>
-                      
-                  <td>
-                  {new Date(work?.date).toLocaleDateString("en-GB")}
-                  </td>
-                  
-                  <td >
-                  <button
+                        <button
                         className=" edit"
                         onClick={() =>
                           document.getElementById(`modal_${work.ids}`).showModal()
                           }
                       >
                        <FaEdit /> 
-                       <span>
+                       
+                      </button>
+                      </div>
+              
+               <dialog id={`modal_${work.ids}`} className="modal">
+               <div className="modal-box bg-white text-black">
+               <form onSubmit={(e) => handleUpdate(e, work.ids, work.id)}>
+  <div className="grid lg:grid-cols-2 gap-3">
+    <div className="mb-4">
+      <label className="block text-left text-gray-700">Item Name</label>
+      <input
+        type="text"
+        name="itemName"
+        defaultValue={work.itemName}
+        className="input2"
+      />
+    </div>
+    <div className="mb-4">
+      <label className="block text-left text-gray-700">Page Name</label>
+      <input
+        type="text"
+        name="pageName"
+        defaultValue={work.pageName}
+        className="input2"
+      />
+    </div>
+  </div>
+
+  <div className="grid lg:grid-cols-2 gap-3">
+    <div className="mb-4">
+      <label className="block text-left text-gray-700">Page URL</label>
+      <input
+        type="text"
+        name="pageUrl"
+        defaultValue={work.pageUrl}
+        className="input2"
+      />
+    </div>
+    <div className="mb-4">
+      <label className="block text-left text-gray-700">Total Bill</label>
+      <input
+        type="number"
+        name="totalBill"
+        defaultValue={work.totalBill}
+        step="0.01"
+        className="input2"
+      />
+    </div>
+  </div>
+
+  <div className="mt-2 grid mb-4 lg:grid-cols-2">
+    {[
+      { value: "pageSetup", label: "Page Setup" },
+      { value: "pageMonitization", label: "Page Monitization" },
+      { value: "graphicDesign", label: "Graphic Design" },
+      { value: "webDesign", label: "Web Design" },
+    ].map(({ value, label }) => (
+      <div className="form-control" key={value}>
+        <label className="label flex justify-start items-center gap-2 cursor-pointer">
+          <input
+            type="radio"
+            name="role"
+            value={value}
+            defaultChecked={work?.role === value} // Check if the role matches
+            className="radio radio-primary"
+            required
+          />
+          <span className="label-text text-black">{label}</span>
+        </label>
+      </div>
+    ))}
+  </div>
+
+  <div className="grid grid-cols-2 gap-3 mt-4">
+    <button
+      type="button"
+      className="close"
+      onClick={() =>
+        document.getElementById(`modal_${work.ids}`).close()
+      }
+    >
+      Close
+    </button>
+    <button type="submit" className="add">
+      Update
+    </button>
+  </div>
+</form>
+
+               </div>
+                                    </dialog>  </td>
+               }
+                      
+                  <td>
+                  {new Date(work?.date).toLocaleDateString("en-GB")}
+                  </td>
+                  
+                  <td >
+ <span>
   {work.itemName
     ?.split(' ') // Split the campaign name into words
     .slice(0, 4) // Take only the first 6 words
@@ -373,70 +494,7 @@ const ClientPageSetup = () => {
     + (work.itemName?.split(' ').length > 4 ? '...' : '') // Add "..." if there are more than 6 words
   }
 </span>
-                      </button>
-                      <dialog id={`modal_${work.ids}`} className="modal">
-<div className="modal-box bg-white text-black">
-<form onSubmit={(e) => handleUpdate(e, work.ids ,work.id)}>
-<div className="mb-4">
-<label className="block text-left text-gray-700">
-Item Name
-</label>
-<input
-type="text"
-name="itemName"
-defaultValue={work.itemName}
-
-className="input2"
-/>
-</div>
-
-<div className="mb-4">
-<label className="block text-left text-gray-700">
-Total Bill
-</label>
-<input
-type="number"
-name="totalBill"
-defaultValue={work.totalBill}
-step="0.01"
-className="input2"
-/>
-</div>
-<div className="mb-4">
-<label className="block text-left text-gray-700">
-Total Paid
-</label>
-<input
-type="number"
-name="totalPaid"
-defaultValue={work.totalPaid}
-step="0.01"
-className="input2"
-/>
-</div>
-
-
-<div className="grid grid-cols-2 gap-3 mt-4">
-<button
-type="button"
-className="close"
-onClick={() =>
-document.getElementById(`modal_${work.ids}`).close()
-}
->
-Close
-</button>
-<button
-type="submit"
-className="add"
->
-Update
-</button>
-
-</div>
-</form>
-</div>
-                     </dialog>
+                      
                   
                   </td>
                   <td style={{  border: 'var(--border)'}} className="p-3 hover:text-blue-700 hover:font-bold border-r-2 border-gray-200 text-left">
@@ -458,17 +516,12 @@ Update
                   ৳ {work.totalBill || 0}
                   </td>
                   <td >
-                  ৳ {work?.totalPaid || 0}
+                   {work?.role}
                   </td>
 
-                 
-
-                  <td >
-                    <span className="text-md mr-1 font-extrabold">৳</span>
-                     {(work.totalBill || 0) - (work?.totalPaid || 0)}
-                  </td>
-
-
+              {
+                user &&
+              
                   <td className="text-center">
   <label className="status-label">
   <input
@@ -484,28 +537,31 @@ Update
   </div>
 </label>
 
-  </td>
+  </td>}
                  
 
                 </tr>
               ))}
               <tr  className="tr1 font-bold">
-                <td  ></td>
+              {
+                user &&
+                <td  ></td>}
                 <td   className="p-3 text-right" colSpan="3">
                   Total:
                 </td>
                 <td  >
-                  <span className="text-sm mr-1 font-extrabold">$</span>{" "}
-                  {findClients?.pageService?.reduce((acc, payment) => acc + parseFloat(payment?.totalBill || 0), 0).toFixed(2) || 0}
+                  <span className="text-sm mr-1 font-extrabold">৳</span>{""}
+                  {findClients?.pageService?.reduce((acc, payment) => acc + parseFloat(payment?.totalBill || 0), 0).toFixed(0) || 0}
                 </td>
                 <td >
-                  <span className="text-sm mr-1 font-extrabold">৳</span>{" "}
-                  {findClients?.pageService?.reduce((acc, payment) => acc + parseFloat(payment?.totalPaid || 0), 0).toFixed(2) || 0}
+               
                 </td>
-                <td >
-                  <span className="text-sm mr-1 font-extrabold">৳</span>{" "}
-                  {findClients?.pageService?.reduce((acc, payment) => acc + parseFloat(payment?.totalBill || 0), 0).toFixed(2) - findClients?.pageService?.reduce((acc, payment) => acc + parseFloat(payment?.totalPaid || 0), 0).toFixed(2) || 0}
-                </td>
+                {
+                  user &&  <td >
+                 
+                  </td>
+                }
+               
                 {ddd?.role === "admin" ? (
                   <>
                     <td ></td>
@@ -513,7 +569,7 @@ Update
                   </>
                 ) : (
                   <>
-                   <td ></td>
+                
 
                  
                   </>

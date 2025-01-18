@@ -2,16 +2,19 @@ import  { useContext, useState,  } from 'react';
 import useUsers from '../../Hook/useUsers';  // Custom hook to fetch users
 import UseAxiosPublic from '../../Axios/UseAxiosPublic';
 import Swal from 'sweetalert2';
-import { Link } from 'react-router-dom';
 import { FaEdit, FaMinusSquare } from 'react-icons/fa';
 import { AuthContext } from '../../Security/AuthProvider';
 import useMyUser from '../../Hook/useMyUser';
 import useUserr from '../../Hook/useUser';
+import { Helmet } from 'react-helmet-async';
+import AllEmployee from '../AllEmployee/AllEmployee';
+import useAllEmployee from '../../Hook/useAllEmployee';
 
 const MetaMonthlySpend = ({data}) => {
   const { user } = useContext(AuthContext);
   const {userr}=useUserr(user?.email)
   const [users]=useUsers()
+  const [allEmployees] = useAllEmployee([]);
  
   const currentDate = new Date();
 
@@ -27,8 +30,8 @@ const MetaMonthlySpend = ({data}) => {
 
   const initialTab =
   userr?.role === "admin"
-  ? localStorage.getItem("a4") || "all" 
-  : localStorage.getItem("a4") || user?.email; 
+  ? localStorage.getItem(`ac8${user?.email}`) || "all" 
+  : localStorage.getItem(`ac8${user?.email}`) || user?.email; 
 
   const [sortEmployee, setSortEmployee] = useState(initialTab);
   const [myUser,refetch]=useMyUser(sortEmployee)
@@ -36,7 +39,7 @@ const MetaMonthlySpend = ({data}) => {
   
   const changeTab = (tab) => {
     setSortEmployee(tab);
-    localStorage.setItem("a4", tab); 
+    localStorage.setItem(`ac8${user?.email}`, tab); 
   };
 
   const initialTab2 = localStorage.getItem("activeTaballhistoryMonth") ;
@@ -134,10 +137,19 @@ console.log(sortedAccounts);
     });
   };
 
+  console.log(data);
   return (
     <div>
+
+<Helmet>
+  <title>
+    {`${data?.charAt(0).toUpperCase()}${data?.slice(1).toLowerCase()} Ads Account | Digital Network`}
+  </title>
+  <link rel="canonical" href="https://www.example.com/" />
+</Helmet>
+      
       <div className='px-5 py-5 rounded-md' style={{ backgroundColor: 'var(--bg-color3)', color: 'var(--text-color)',border: 'var(--border)'}}>
-      <div className="lg:flex lg:justify-start items-center gap-3 mb-5">
+      <div className="lg:flex lg:justify-end items-center gap-3 mb-5">
 
       <div className="w-full lg:w-auto flex justify-start gap-3">
   {userr?.role === "admin" ? (
@@ -152,9 +164,17 @@ console.log(sortedAccounts);
         value={sortEmployee}
         onChange={(e) => changeTab(e.target.value)}
       >
-        <option value="all">All Employees</option>
-        {users
-          .filter((u) => u.role === "employee")
+        <option value="all">
+       Select {data === "contributorSpend" ? "Contributor" : "Digital Marketer"}
+</option>
+
+        {allEmployees 
+              .filter(f => {
+                if (data === 'contributorSpend') {
+              return f.role === 'contributor'; 
+           }
+               return f.role === 'employee'; 
+           })
           .map((employee) => (
             <option key={employee._id} value={employee.email}>
               {employee.name}
@@ -182,17 +202,21 @@ console.log(sortedAccounts);
         </div>
 
         <div>
-         <select
-          style={{ backgroundColor: 'var(--bg-color2)',border: 'var(--border)', color: 'var(--text-color2)'}}
-            className="px-4 py-2 border rounded bg-white text-black border-black"
-            onChange={(e) => setSortYear(e.target.value)}
-            value={sortYear || ""}
-          >
-            <option value="">Select Year</option>
-            {Array.from({ length: 31 }, (_, i) => 2020 + i).map(year => (
-              <option key={year} value={year}>{year}</option>
-            ))}
-          </select>
+        <select
+    style={{ backgroundColor: 'var(--bg-color2)', border: 'var(--border)', color: 'var(--text-color2)' }}
+    className="px-4 py-2 border rounded bg-white text-black border-black"
+    onChange={(e) => setSortYear(e.target.value)}
+    value={sortYear || ""}
+  >
+    <option value="">Select Year</option>
+    {Array.from(new Set(sortedAccounts?.map(account => new Date(account.date).getFullYear())))
+      .sort((a, b) => b - a) // Sorting in descending order, adjust as needed
+      .map(year => (
+        <option key={year} value={year}>
+          {year}
+        </option>
+      ))}
+  </select>
          </div>
 
       </div>
@@ -201,7 +225,8 @@ console.log(sortedAccounts);
           <table className="min-w-full text-center ">
             <thead className=" ">
               <tr className="tr1">
-              <th className="p-3 text-center">Items {sortedAccounts?.length}</th>
+              <th className="p-3 text-center"> {
+                userr?.role === 'admin' ?  sortedAccounts?.length  : 'SL' } </th>
               <th>Employee Name</th>
               <th>Ad Account Name</th>
               <th>Month</th>
@@ -210,21 +235,27 @@ console.log(sortedAccounts);
             </tr>
           </thead>
           <tbody >
-            {sortedAccounts?.filter(f=>f.role === data).map((account, index) => (
+            {sortedAccounts?.filter(f => f.role === `${data || 'contributorSpend'}`)
+.map((account, index) => (
               <tr 
               key={account._id}
               className={`tr2`}
             >
-                <td  className="text-center">
-                    <button
-                      className=" delete" 
-                      onClick={(e) => handleDelete(e, account.employeeId, account.ids)} // Ensure correct 
-                    >
-                      <FaMinusSquare />
-                    </button>
-                </td>
+              <td  className="text-center">
+              {
+                userr?.role === 'admin' ? 
+                <button
+                  className=" delete" 
+                  onClick={(e) => handleDelete(e, account.employeeId, account.ids)} // Ensure correct 
+                >
+                  <FaMinusSquare />
+                </button> : <p>{index + 1}</p>
+              }
+            </td>
+             
+
                 <td>
-  <Link to={`/dashboard/userInfo/${account?.employeeEmail}`} className="flex items-center">
+  <div className="flex items-center">
     {
       users?.find(u => u.email === account.employeeEmail)?.photo && (
         <img 
@@ -235,17 +266,20 @@ console.log(sortedAccounts);
       )
     }
     <span>{account.employeeName}</span>
-  </Link>
+  </div>
                 </td>        
                 <td>
                 <div onClick={() => setModalData2(account)} className="f-left ">
+
+                {
+                userr?.role === 'admin' ? 
                     <div>
                       <button
                       className=" f-center "
                       >
                        <FaEdit />  <span>{account.accountName}</span>
                       </button>
-                    </div>
+                    </div> :  <span>{account.accountName}</span>}
                   </div>
                 </td>
                 <td>

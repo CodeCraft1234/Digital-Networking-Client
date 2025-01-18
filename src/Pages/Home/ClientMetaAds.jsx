@@ -1,46 +1,27 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext } from "react";
 import { AuthContext } from "../../Security/AuthProvider";
 import { Form, useParams } from "react-router-dom";
 import UseAxiosPublic from "../../Axios/UseAxiosPublic";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import useClients from "../../Hook/useClient";
-import useUsers from "../../Hook/useUsers";
-import useAdsAccount from "../../Hook/useAdAccount";
 import Swal from "sweetalert2";
-import useCampaingsByEmail from "../../Hook/useCampaignsByEmail";
-
 import { FaEdit, FaMinusSquare } from "react-icons/fa";
 import useFindClient from "./useFindClient";
 import SummaryCard from "./SummeryCard";
+import useMyAdsAccountByEmail from "../../Hook/useMyAdsAccountNyEmail";
+import useUserr from "../../Hook/useUser";
 
 const ClientMetaAds = ({data1}) => {
     const { user } = useContext(AuthContext);
+    const {userr}=useUserr(user?.email)
+    const initialTab = localStorage.getItem("activeTabClientProfile") || "clientCampaign";
+    const data2 = isNaN(data1) ? initialTab : data1; // Use isNaN() to check if data1 is NaN
     const param = useParams();
     const {findClients , refetch}=useFindClient(param?.email)
-    const [campaignss]=useCampaingsByEmail(param?.email)
-    const [clients]=useClients()
-    const [datas,setdatas]=useState()
     const AxiosPublic = UseAxiosPublic();
-    const [users] = useUsers();
-    const [ddd, setDdd] = useState(null);
-    const [adsAccount] = useAdsAccount();
-    const [adsAccounts, setAdsAccounts] = useState([]);
-
-    useEffect(() => {
-        const realdata = clients.find((m) => m.clientEmail === param?.email);
-        setdatas(realdata)
-
-        const fff = users.find((u) => u.email === user?.email);
-        setDdd(fff || {}); 
-
-
-      const filterdata = adsAccount.filter(
-        (m) => m.employeeEmail === user?.email
-      );
-      setAdsAccounts(filterdata);
-
-    }, [clients, users, user, param?.email, campaignss, adsAccount]);
+    
+    const [myAdsAccount]=useMyAdsAccountByEmail(user?.email)
+    console.log(myAdsAccount);
 
     const generateRandomId = () => {
       let randomId = '';
@@ -50,13 +31,12 @@ const ClientMetaAds = ({data1}) => {
       return randomId;
     };
     
-    
     const handleaddblog = (e) => {
       e.preventDefault();
       const campaignName = e.target.campaignName.value;
       const clientEmail = param?.email;
       const pageName = e.target.pageName.value;
-      const clientName = datas?.clientName;
+      const clientName = findClients?.clientName;
       const tBudged = e.target.totalBudged.value;
       const pageUrl = e.target.pageUrl.value;
       const adsAccount = e.target.adsAccount.value;
@@ -82,7 +62,7 @@ const ClientMetaAds = ({data1}) => {
         tSpent,
         dollerRate,
         date,
-        role:data1,
+        role:data2,
         clientName,
       };
     
@@ -91,7 +71,6 @@ const ClientMetaAds = ({data1}) => {
         date: new Date(),
         user: user?.displayName,
       };
-    
     
       AxiosPublic.post("/clients/campaings", { // Correct endpoint
         id: ids,
@@ -204,41 +183,41 @@ const ClientMetaAds = ({data1}) => {
             <div>
 
             <div  className="grid grid-cols-2 mt-5  rounded-lg md:grid-cols-2 lg:grid-cols-4 text-black sm:grid-cols-2 gap-3 lg:gap-3 justify-around ">
-        <SummaryCard title="Total Spent" value={findClients?.campaings?.reduce((acc, payment) => acc + parseFloat(payment?.tSpent || 0), 0).toFixed(2)} />
+        <SummaryCard title="Total Spend" value={findClients?.campaings?.reduce((acc, payment) => acc + parseFloat(payment?.tSpent || 0), 0).toFixed(2) || 0} />
         <SummaryCard title="Total Bill" value={findClients?.campaings?.reduce(
     (acc, campaign) =>
       acc + parseFloat(campaign?.tSpent || 0) * parseFloat(campaign?.dollerRate || 0),
     0
-  ).toFixed(0)} />
+  ).toFixed(0) || 0} />
 
         <SummaryCard title="Total Paid" value={findClients?.payments?.reduce((acc, payment) => acc + parseFloat(payment?.amount || 0), 0).toFixed(0)} />
-        <SummaryCard 
+        <SummaryCard
   title={`Total ${
     (findClients?.campaings?.reduce(
       (acc, campaign) =>
         acc + parseFloat(campaign?.tSpent || 0) * parseFloat(campaign?.dollerRate || 0),
       0
-    ) -
-      findClients?.payments?.reduce(
+    ) || 0) -
+      (findClients?.payments?.reduce(
         (acc, payment) => acc + parseFloat(payment?.amount || 0),
         0
-      )) >= 0
-      ? 'Due'
-      : 'Advance'
+      ) || 0) >= 0
+      ? "Due"
+      : "Advance"
   }`}
-  value={
+  value={(
     Math.abs(
       (findClients?.campaings?.reduce(
         (acc, campaign) =>
           acc + parseFloat(campaign?.tSpent || 0) * parseFloat(campaign?.dollerRate || 0),
         0
-      ) -
-        findClients?.payments?.reduce(
+      ) || 0) -
+        (findClients?.payments?.reduce(
           (acc, payment) => acc + parseFloat(payment?.amount || 0),
           0
-        ))
-    ).toFixed(0) || 0
-  }
+        ) || 0)
+    ) || 0
+  ).toFixed(0)}
 />
 
       </div>
@@ -247,8 +226,8 @@ const ClientMetaAds = ({data1}) => {
         
   <div>
 
-    {
-      ddd?.role ==='employee' && 
+  {
+      user && 
       <button
       className="add mb-5"
       onClick={() => document.getElementById("my_modal_2").showModal()}
@@ -266,7 +245,7 @@ const ClientMetaAds = ({data1}) => {
           >
             <div>
               <h1 className="text-2xl mb-4 text-center font-bold text-black">
-                Add a Campaign
+              <h1>{`Add ${data2.charAt(0).toUpperCase() + data2.slice(1).toLowerCase()} Campaing`}</h1>
               </h1>
               <div className="mb-4">
                 <label htmlFor="date" className="block mb-1">
@@ -298,16 +277,19 @@ const ClientMetaAds = ({data1}) => {
                 />
               </div>
               <div className="mb-4">
-                <label className="block text-black">Ads Account</label>
+              <label className="block text-black">
+               {`${data2.charAt(0).toUpperCase() + data2.slice(1).toLowerCase()} Account`}
+              </label>
                 <select
                 required
                   name="adsAccount"
                   className="w-full border border-gray-600 text-black bg-white rounded p-2 mt-2"
                 >
-                  <option className="text-black" value="">
-                    All Ads Account
+              <option className="text-black" value="">
+                      {`Select ${data2.charAt(0).toUpperCase() + data2.slice(1).toLowerCase()}`}
                   </option>
-                  {adsAccounts.map((ads) => (
+
+                  {myAdsAccount?.filter(f => f.role === `${data2}Account`).map((ads) => (
                     <option key={ads._id} value={ads?.accountName}>
                       {ads?.accountName}
                     </option>
@@ -369,7 +351,7 @@ const ClientMetaAds = ({data1}) => {
                   name="dollerRate"
                   type="number"
                   placeholder="type dollerRate"
-                  defaultValue={140}
+                  defaultValue={data1 === 'metaAds' ? 145 : 150}
                   required
                   className="w-full border border-gray-600 text-black bg-white rounded p-2 mt-1"
                 />
@@ -403,7 +385,9 @@ const ClientMetaAds = ({data1}) => {
           <table className="min-w-full text-center ">
             <thead className=" ">
               <tr className="tr1" >  
-                <th  className="p-3 text-center">{findClients?.metaAds?.filter(f=>f.role === 'metaAds')?.length}</th>
+              {
+                    user && <th  className="p-3 text-center">{findClients?.metaAds?.filter(f=>f.role === 'metaAds')?.length}</th>}
+                
                 <th >Date</th>
                 <th >Campaign Name</th>
                 <th >Page Name</th>
@@ -411,50 +395,69 @@ const ClientMetaAds = ({data1}) => {
                 <th >T. Budget</th>
                 <th >T. Spent</th>
                 <th >Total Bill</th>
-                <th >Status</th>
+                
+                   {
+                    user &&  <th >Status</th>
+                }
+                
               </tr>
             </thead>
             <tbody>
-              {findClients?.campaings?.filter(f=>f.role === data1)?.map((work, index) => (
+              {findClients?.campaings?.filter(f=>f.role === data2)?.map((work, index) => (
                  <tr 
                  key={work._id}
                  className={`tr2`}
                >
-                <td  className="text-center">
-       <div className="f-center">
                 
-                        <button
-                           className=" delete"
-                          onClick={() => handledelete(work.ids ,work.id,)}
-                        >
-                         <span >
-                          <FaMinusSquare  />
-                          </span>
-                        </button>
-                      </div>
-     </td>
+
+                {
+      user && <td  className="text-center">
+      <div className="f-center">
+                
+      <button
+         className=" delete"
+        onClick={() => handledelete(work.ids ,work.id,)}
+      >
+       <span >
+        <FaMinusSquare  />
+        </span>
+      </button>
+    </div>  </td>
+      }
+
+    
                       
                   <td >
                   {new Date(work?.date).toLocaleDateString("en-GB")}
                   </td>
                   
                   <td >
-                  <button
-                        className="f-start edit"
-                        onClick={() =>
-                          document.getElementById(`modal_${work.ids}`).showModal()
-                          }
-                      >
-                       <FaEdit /> 
-                       <span>
-  {work.campaignName
-    .split(' ') // Split the campaign name into words
-    .slice(0, 4) // Take only the first 6 words
-    .join(' ') // Join the words back into a string
-    + (work.campaignName.split(' ').length > 4 ? '...' : '') // Add "..." if there are more than 6 words
-  }
+                  {
+      user ? <button
+      className="f-start edit"
+      onClick={() =>
+        document.getElementById(`modal_${work.ids}`).showModal()
+        }
+    >
+     <FaEdit /> 
+     <span>
+{work.campaignName
+.split(' ') // Split the campaign name into words
+.slice(0, 4) // Take only the first 6 words
+.join(' ') // Join the words back into a string
++ (work.campaignName.split(' ').length > 4 ? '...' : '') // Add "..." if there are more than 6 words
+}
 </span>
-                      </button>
+    </button> : <span>
+{work.campaignName
+.split(' ') // Split the campaign name into words
+.slice(0, 4) // Take only the first 6 words
+.join(' ') // Join the words back into a string
++ (work.campaignName.split(' ').length > 4 ? '...' : '') // Add "..." if there are more than 6 words
+}
+</span>
+      }
+                  
                       <dialog id={`modal_${work.ids}`} className="modal">
 <div className="modal-box bg-white text-black">
 <form onSubmit={(e) => handleUpdate(e, work.ids ,work.id)}>
@@ -573,55 +576,63 @@ Update
                     {parseInt(work.tSpent * work.dollerRate)}
                   </td>
 
-                  <td className="text-center">
-  <label className="status-label">
-  <input
-    type="checkbox"
-    checked={work.status === "Active"}
-    onChange={() => {
-      const newStatus = work.status === "Active" ? "Complete" : "Active";
-      handleUpdate2(work.ids, work.id, newStatus);
-    }}
-  />
-  <div className={work.status === "Active" ? "active" : "inactive"}>
-    <span className={work.status === "Active" ? "active" : ""}></span>
-  </div>
-</label>
+                  
+                     {
+                      user &&                   <td className="text-center">
+                      <label className="status-label">
+                      <input
+                        type="checkbox"
+                        checked={work.status === "Active"}
+                        onChange={() => {
+                          const newStatus = work.status === "Active" ? "Complete" : "Active";
+                          handleUpdate2(work.ids, work.id, newStatus);
+                        }}
+                      />
+                      <div className={work.status === "Active" ? "active" : "inactive"}>
+                        <span className={work.status === "Active" ? "active" : ""}></span>
+                      </div>
+                    </label>
+                    
+                      </td>
+                  }
 
-  </td>
                  
                 </tr>
               ))}
               <tr  className="tr1 font-bold">
-                <td ></td>
+              {
+                      user && 
+                <td ></td> }
                 <td className=" text-right" colSpan="4">
                   Total:
                 </td>
                 <td  >
-                  <span className="text-sm mr-1 font-extrabold">$</span>{" "}
-                  {findClients?.campaings?.filter(f=>f.role === data1)?.reduce((acc, payment) => acc + parseFloat(payment?.tBudged || 0), 0).toFixed(2)}
+                  <span className="text-sm mr-1 font-extrabold">$</span>{""}
+                  {findClients?.campaings?.filter(f=>f.role === data2)?.reduce((acc, payment) => acc + parseFloat(payment?.tBudged || 0), 0).toFixed(2)}
                 </td>
                 <td  >
-                  <span className="text-sm mr-1 font-extrabold">$</span>{" "}
-                  {findClients?.campaings?.filter(f=>f.role === data1)?.reduce((acc, payment) => acc + parseFloat(payment?.tSpent || 0), 0).toFixed(2)}
+                  <span className="text-sm mr-1 font-extrabold">$</span>{""}
+                  {findClients?.campaings?.filter(f=>f.role === data2)?.reduce((acc, payment) => acc + parseFloat(payment?.tSpent || 0), 0).toFixed(2)}
                 </td>
                 <td >
-                  <span className="text-sm mr-1 font-extrabold">৳</span>{" "}
-                  {findClients?.campaings?.filter(f=>f.role === data1)?.reduce(
+                  <span className="text-sm mr-1 font-extrabold">৳</span>{""}
+                  {findClients?.campaings?.filter(f=>f.role === data2)?.reduce(
     (acc, campaign) =>
       acc + parseFloat(campaign?.tSpent || 0) * parseFloat(campaign?.dollerRate || 0),
     0
   ).toFixed(0)}
                 </td>
-                {ddd?.role === "admin" ? (
+                {userr?.role === "admin" ? (
                   <>
                     <td ></td>
                   
                   </>
                 ) : (
                   <>
+                   {
+                      user && 
                    <td ></td>
-
+                   }
                  
                   </>
                 )}

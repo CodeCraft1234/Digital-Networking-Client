@@ -1,18 +1,20 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { AuthContext } from "./AuthProvider";
 import UseAxiosPublic from "../Axios/UseAxiosPublic";
 import { useForm } from "react-hook-form";
-import "./Register.css";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 const image_hosting_key = "6fbc3358bbb1a92b78e2dee0f5ca1b94";
 const image_hosting_api = `https://api.imgbb.com/1/upload?key=${image_hosting_key}`;
+
 const Register = () => {
   const { createUser, updateProfiles } = useContext(AuthContext);
   const navigate = useNavigate();
   const location = useLocation();
   const AxiosPublic = UseAxiosPublic();
+  const [showPassword, setShowPassword] = useState(false);
 
   const {
     register,
@@ -21,129 +23,162 @@ const Register = () => {
   } = useForm();
 
   const onSubmit = async (data) => {
-    console.log(data.image);
-    // access the form data
-    const image = { image: data.image[0] };
-    const res = await AxiosPublic.post(image_hosting_api, image, {
-      headers: {
-        "content-type": "multipart/form-data",
-      },
-    });
-    const name = data.name;
-    const email = data.email;
-    const contactNumber = data.phone;
-    const password = data.password;
-    const photo = res.data.data.display_url;
-    
-    createUser(email, password)
-      .then((result) => {
-        navigate(location.state ? location.state : "/");
-        updateProfiles(name, photo);
-        const date = new Date();
-        const userInfo = {
-          email,
-          name,
-          photo,
-          date,
-          contactNumber,
-          password,
-          role: 'client', };
+    try {
+      const formData = new FormData();
+      formData.append("image", data.image[0]);
 
-        AxiosPublic.post("/users", userInfo)
-        .then((res) => {
-          console.log(res.data)
-        });
-        navigate("/");
-        return toast.success(`${name} created successfully`);
-      })
-      .catch((error) => {
-        console.log(error);
-        return toast.error("user already exists");
+      // Upload image to ImgBB
+      const imageResponse = await AxiosPublic.post(image_hosting_api, formData, {
+        headers: {
+          "content-type": "multipart/form-data",
+        },
       });
+
+      if (!imageResponse.data.success) {
+        throw new Error("Image upload failed. Please try again.");
+      }
+
+      const photo = imageResponse.data.data.display_url;
+      const { name, email, phone: contactNumber, password } = data;
+      const role = "client";
+
+      // Create user with Firebase Auth
+      await createUser(email, password);
+
+      // Update profile with name and photo
+      await updateProfiles(name, photo);
+
+      // Save user information to the database
+      const userInfo = {
+        email,
+        name,
+        photo,
+        contactNumber,
+        role,
+        date: new Date(),
+      };
+
+      await AxiosPublic.post("/users", userInfo);
+
+      toast.success(`${name} created successfully`);
+
+      // Redirect to the desired page
+      navigate(location.state?.from || "/");
+    } catch (error) {
+      console.error(error);
+      toast.error(error.message || "Registration failed. Please try again.");
+    }
   };
 
   return (
-    <div className="  min-h-screen">
-      <div className=" flex justify-center items-center mx-auto">
-        <div className="boxS mt-10">
-          <div className="loginN">
-            <div className="loginBxx">
-              <h2>
-                <i className="fa-solid fa-right-to-bracket"></i> Register
-                <i className="fa-solid fa-heart"></i>
-              </h2>
-              <form onSubmit={handleSubmit(onSubmit)}>
-                <input
-                  {...register("name", { required: true })}
-                  type="text"
-                  placeholder="Enter your name"
-                  className="input  input-bordered text-black text-xs font-normal "
-                  required
-                />
-
-                <input
-                  {...register("image")}
-                  type="file"
-                  placeholder="Enter your photo url"
-                  className="file-input file-input-bordered w-full max-w-xs my-5"
-                />
-
-                <input
-                  {...register("email", { required: true })}
-                  type="email"
-                  placeholder="Enter your email address"
-                  className="input input-bordered text-black text-xs font-normal "
-                  required
-                />
-                <input
-                  {...register("phone", { required: true })}
-                  type="phone"
-                  placeholder="Enter your phone number"
-                  className="input input-bordered mt-5 text-black text-xs font-normal "
-                  required
-                />
-
-                <input
-                  {...register("password", {
-                    required: true,
-                    maxLength: 20,
-                    minLength: 6,
-                  })}
-                  type="text"
-                  placeholder="Enter your password"
-                  className="input input-bordered text-black text-xs font-normal my-5"
-                  required
-                />
-
-                {errors.password?.type === "required" && (
-                  <span className="text-white"> password is required</span>
-                )}
-                {errors.password?.type === "maxLength" && (
-                  <span className="text-white"> max 20 carecter</span>
-                )}
-                {errors.password?.type === "minLength" && (
-                  <span className="text-white"> min 6 carecter</span>
-                )}
-
-                <div className="flex mt-3">
-                  
-                  <p className="flex font-normal text-xs">
-                  <input type="checkbox" className="justify-start" name="checkbox" id="" />
-                     <span className="font-bold">Accept Term & Conditions</span>
-                  </p>
-                </div>
-                <input type="submit" value="Register" className="my-5"/>
-
-                <div className="group mb-5">
-                  <Link className="text-[#F75B5F] " to="/forgetPassword">
-                    Already Have An Account ?
-                  </Link>
-                  <Link to="/login">Login</Link>
-                </div>
-              </form>
-            </div>
+    <div className="min-h-screen flex justify-center items-center bg-gray-100 p-4">
+      <div className="w-full max-w-md bg-white rounded-lg shadow-md p-6">
+        <h2 className="text-2xl font-semibold text-center text-gray-700 mb-6">Register</h2>
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 text-black">
+          {/* Name Input */}
+          <div>
+            <input
+              {...register("name", { required: "Name is required" })}
+              type="text"
+              placeholder="Enter your name"
+              className="w-full px-3 py-2 border bg-white border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 text-sm"
+            />
+            {errors.name && <span className="text-red-500 text-xs">{errors.name.message}</span>}
           </div>
-        </div>
+
+          {/* Image Upload */}
+          <div>
+            <input
+              {...register("image", { required: "Profile image is required" })}
+              type="file"
+              className="block w-full text-sm bg-white text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+            />
+            {errors.image && <span className="text-red-500 text-xs">{errors.image.message}</span>}
+          </div>
+
+          {/* Email Input */}
+          <div>
+            <input
+              {...register("email", {
+                required: "Email is required",
+                pattern: {
+                  value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                  message: "Invalid email address",
+                },
+              })}
+              type="email"
+              placeholder="Enter your email address"
+              className="w-full px-3 py-2 border bg-white border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 text-sm"
+            />
+            {errors.email && <span className="text-red-500 text-xs">{errors.email.message}</span>}
+          </div>
+
+          {/* Phone Input */}
+          <div>
+            <input
+              {...register("phone", {
+                required: "Phone number is required",
+                pattern: {
+                  value: /^[0-9]{10,15}$/,
+                  message: "Invalid phone number",
+                },
+              })}
+              type="text"
+              placeholder="Enter your phone number"
+              className="w-full px-3 py-2 border bg-white border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 text-sm"
+            />
+            {errors.phone && <span className="text-red-500 text-xs">{errors.phone.message}</span>}
+          </div>
+
+          {/* Password Input */}
+          <div className="relative">
+            <input
+              {...register("password", {
+                required: "Password is required",
+                minLength: {
+                  value: 6,
+                  message: "Password must be at least 6 characters",
+                },
+                maxLength: {
+                  value: 20,
+                  message: "Password cannot exceed 20 characters",
+                },
+              })}
+              type={showPassword ? "text" : "password"}
+              placeholder="Enter your password"
+              className="w-full px-3 py-2 border bg-white border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 text-sm"
+            />
+            <span
+              className="absolute top-1/2 transform -translate-y-1/2 right-3 cursor-pointer text-gray-500"
+              onClick={() => setShowPassword(!showPassword)}
+            >
+              {showPassword ? <FaEyeSlash /> : <FaEye />}
+            </span>
+            {errors.password && <span className="text-red-500 text-xs">{errors.password.message}</span>}
+          </div>
+
+          {/* Terms and Conditions */}
+          <div className="flex items-center text-sm">
+            <input type="checkbox" className="mr-2" />
+            <label className="text-gray-600">Accept Terms & Conditions</label>
+          </div>
+
+          {/* Submit Button */}
+          <div>
+            <input
+              type="submit"
+              value="Register"
+              className="w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600 transition-all cursor-pointer"
+            />
+          </div>
+
+          {/* Links */}
+          <div className="text-center text-sm">
+            <Link to="/login" className="text-blue-500 hover:underline">
+              Already Have An Account? Login
+            </Link>
+          </div>
+        </form>
       </div>
     </div>
   );

@@ -5,11 +5,13 @@ import { toast, ToastContainer } from "react-toastify";
 import { ImCross } from "react-icons/im";
 import Swal from "sweetalert2";
 import useMyEmployeePayments from "../../Hook/useMyemployeePayments";
-import { FaEdit, FaMinusSquare } from "react-icons/fa";
+import { FaCalendarAlt, FaEdit, FaMinusSquare } from "react-icons/fa";
 import useUserr from "../../Hook/useUser";
 import useUsers from "../../Hook/useUsers";
 import useAllEmployee from "../../Hook/useAllEmployee";
 import BalanceCard from "./BalanceCard";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 const AdminPayments = () => {
   const { user } = useContext(AuthContext);
@@ -19,14 +21,14 @@ const AdminPayments = () => {
   
   const initialTab3 =
   userr?.role === "admin"
-  ? localStorage.getItem("activ") || "all" 
-  : localStorage.getItem("activ") || user?.email; 
+  ? localStorage.getItem(`acti35${user?.email}`) || "all" 
+  : localStorage.getItem(`acti35${user?.email}`) || user?.email; 
 
   const [selectedEmployee3, setSelectedEmployee3] = useState(initialTab3);
 
   const changeTab2 = (tab) => {
     setSelectedEmployee3(tab); // Update the state
-    localStorage.setItem("activ", tab); // Update localStorage
+    localStorage.setItem(`acti35${user?.email}`, tab); // Update localStorage
   };
 
   const [MyEmployeePayment,refetch]=useMyEmployeePayments(selectedEmployee3)
@@ -52,27 +54,46 @@ const AdminPayments = () => {
     localStorage.setItem("activeTabSelectedStatuss", tab);
   };
 
+
+  
+  const [selectedDate, setSelectedDate] = useState(null);
+  const [showCalendar, setShowCalendar] = useState(false);
+
   useEffect(() => {
     const filtered = MyEmployeePayment.filter((payment) => {
       const paymentDate = new Date(payment.date);
-      return (
-        (selectedStatus2 === 'All' || payment.status === selectedStatus2) &&
-        (!sortMonth || paymentDate.getMonth() + 1 === parseInt(sortMonth)) &&
-
-        (selectedCategory === 'All' || selectedCategory === '' || payment.paymentMethod === selectedCategory) &&
-        
-        (!selectedYear || paymentDate.getFullYear() === parseInt(selectedYear))
-      );
+  
+      const matchesStatus =
+        selectedStatus2 === 'All' || payment.status === selectedStatus2;
+  
+      const matchesMonth =
+        !sortMonth || paymentDate.getMonth() + 1 === parseInt(sortMonth);
+  
+      const matchesCategory =
+        selectedCategory === 'All' ||
+        selectedCategory === '' ||
+        payment.paymentMethod === selectedCategory;
+  
+      const matchesYear =
+        !selectedYear || paymentDate.getFullYear() === parseInt(selectedYear);
+  
+      const matchesDate =
+        !selectedDate || paymentDate.toDateString() === new Date(selectedDate).toDateString();
+  
+      // Combine all conditions
+      return matchesStatus && matchesMonth && matchesCategory && matchesYear && matchesDate;
     });
   
     setFilteredData(filtered);
   }, [
     sortMonth,
-    selectedCategory, 
+    selectedCategory,
     MyEmployeePayment,
     selectedStatus2,
     selectedYear,
+    selectedDate,
   ]);
+  
 
   useEffect(() => {
     const filtered = MyEmployeePayment.filter((payment) => {
@@ -93,41 +114,7 @@ const AdminPayments = () => {
     selectedYear,
   ]);
   
-  const [nagadPersonal, setNagadPersonalTotal] = useState(0);
-  const [bkashPersonal, setBkashPersonalTotal] = useState(0);
-  const [rocketPersonal, setRocketPersonalTotal] = useState(0);
-  const [bankTotal, setBankTotal] = useState(0);
-  const [IBBLBankTotal, setIBBLBankTotal] = useState(0);
-  const [DBBLBankTotal, setDBBLBankTotal] = useState(0);
 
-  useEffect(() => {
-    const filtered = filteredData2; 
-
-    const filter3 = filtered.filter(d => d.paymentMethod === 'nagadPersonal');
-    const total3 = filter3.reduce((acc, datas) => acc + parseFloat(datas.payAmount), 0);
-    setNagadPersonalTotal(total3);
-
-    const filter4 = filtered.filter(d => d.paymentMethod === 'bkashPersonal');
-    const total4 = filter4.reduce((acc, datas) => acc + parseFloat(datas.payAmount), 0);
-    setBkashPersonalTotal(total4);
-
-    const filter5 = filtered.filter(d => d.paymentMethod === 'rocketPersonal');
-    const total5 = filter5.reduce((acc, datas) => acc + parseFloat(datas.payAmount), 0);
-    setRocketPersonalTotal(total5);
-
-    const filter6 = filtered.filter(d => d.paymentMethod === 'bank');
-    const total6 = filter6.reduce((acc, datas) => acc + parseFloat(datas.payAmount), 0);
-    setBankTotal(total6);
-
-    const filter8 = filtered.filter(d => d.paymentMethod === 'IBBLBank');
-    const total8 = filter8.reduce((acc, datas) => acc + parseFloat(datas.payAmount), 0);
-    setIBBLBankTotal(total8);
-
-    const filter9 = filtered.filter(d => d.paymentMethod === 'DBBLBank');
-    const total9 = filter9.reduce((acc, datas) => acc + parseFloat(datas.payAmount), 0);
-    setDBBLBankTotal(total9);
-
-  }, [filteredData2]);
   
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 20;
@@ -335,7 +322,7 @@ const AdminPayments = () => {
   });
   
   useEffect(() => {
-    const paymentMethods = ['nagadPersonal', 'bkashPersonal', 'rocketPersonal', 'bank', 'IBBLBank', 'DBBLBank'];
+    const paymentMethods = ['nagadPersonal', 'bkashPersonal', 'bank', 'IBBLBank', 'DBBLBank'];
     const updatedTotals = paymentMethods.reduce((acc, method) => {
       acc[method] = filteredData2
         .filter(d => d.paymentMethod === method)
@@ -353,6 +340,7 @@ const AdminPayments = () => {
     { category: 'nagadPersonal', img: 'https://i.ibb.co/JQBQBcF/nagad-marchant.png', bgColor: '#fff2cc' },
   ];
 
+
   return (
     <div className="mt-5">
       <ToastContainer />
@@ -362,30 +350,30 @@ const AdminPayments = () => {
 <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 lg:gap-5 rounded-lg">
   {cards.map(({ category, img, bgColor }) => (
 
-    <div onClick={() => setSelectedCategory(category)}  key={category}>
-       <BalanceCard  img={img} amount={new Intl.NumberFormat('en-IN').format(totals[category])}></BalanceCard>
-    </div>
+<div onClick={() => setSelectedCategory(category)} key={category}>
+  <BalanceCard 
+    img={img} 
+    amount={totals[category] || 0}
+  />
+</div>
+
   ))}
 
-                <div 
-                  style={{ backgroundColor: '#d9f8d9', border: 'var(--border)' }}
-                  onClick={() => setSelectedCategory('All')}
+ 
+         <div 
+                 onClick={() => setSelectedCategory('All')}
+                 style={{ backgroundColor: '#f7e8e8', border: 'var(--border)' }} 
                    className="balance-card rounded-2xl  text-center shadow-xl transition-transform transform hover:scale-105"
                  >
-                   <h1 className="px-3 text-black text-md font-bold text-center">TOTAL</h1>
-                   <p className="balance-card-text text-md  lg:text-md font-bold text-gray-700">
-                     <span className="text-md lg:text-md font-extrabold">৳</span>
-                     {new Intl.NumberFormat('en-IN').format(
+                   <h1 className="px-3 text-black text-xl font-bold text-center">TOTAL</h1>
+                   <p className="card-title pb-5">
+  <span>৳ </span>
+  {new Intl.NumberFormat('en-IN').format(
         Object.values(totals).reduce((sum, val) => sum + val, 0)
       )}
-                   </p>
-                   <p className="balance-card-text text-md  lg:text-md font-bold text-gray-700">
-                     <span className="text-lg lg:text-md font-extrabold">৳</span>
-                     {new Intl.NumberFormat('en-IN').format(
-        filteredData2.reduce((acc, item) => acc + (parseFloat(item?.charge) || 0), 0)
-      )}
-                   </p>
-                 </div>
+</p>
+
+         </div>
 
               </div>
 
@@ -397,12 +385,20 @@ const AdminPayments = () => {
 
      <div className="flex flex-col md:flex-row justify-start lg:justify-between items-center gap-5 ">
     <div className="flex justify-start">
-    <button
+      {
+        userr?.role === 'admin' ? <button
+        className="font-avenir px-6 hover:bg-indigo-700 py-2 bg-[#05a0db] rounded-lg text-white"
+        onClick={() => document.getElementById("my_modal_1").showModal()}
+      >
+        Pay Now
+      </button> :  <button
       className="font-avenir px-6 hover:bg-indigo-700 py-2 bg-[#05a0db] rounded-lg text-white"
       onClick={() => document.getElementById("my_modal_1").showModal()}
     >
       Pay Admin
     </button>
+      }
+   
     <dialog id="my_modal_1" className="modal">
   <div className="modal-box bg-white text-black font-bold">
     <form onSubmit={(e) => handlePayment(e)}>
@@ -428,7 +424,7 @@ const AdminPayments = () => {
      <div>
       {userr?.role === "admin" && (
         <div className="mb-4">
-          <label className="block text-black">Select Employee</label>
+          <label className="block text-black">Select Marketer</label>
           <select className="select2 w-full" name="employeeEmail">
             {allEmployees
               ?.filter((f) => f.role === "employee")
@@ -523,7 +519,7 @@ const AdminPayments = () => {
         value={selectedEmployee3}
         onChange={(e) => changeTab2(e.target.value)}
       >
-        <option value="all">All Employees</option>
+        <option value="all">Select Digital Marketer</option>
         {users
           .filter((u) => u.role === "employee")
           .map((employee) => (
@@ -535,44 +531,91 @@ const AdminPayments = () => {
               ) : (
              <></>
                )}
+         <div style={{ position: "relative", display: "inline-block" }}>
+        <button
+          onClick={() => setShowCalendar(!showCalendar)}
+          className="calendar-icon-button"
+          style={{
+            background: "none",
+            border: "none",
+            cursor: "pointer",
+            fontSize: "24px",
+            color: "#333",
+          }}
+        >
+          <FaCalendarAlt />
+        </button>
 
-            <select
-              className=" select2"
-              value={sortMonth}
-              onChange={(e) => changeTab(e.target.value)}
-            >
-              <option value="">Select Month</option>
-              {[
-                "January",
-                "February",
-                "March",
-                "April",
-                "May",
-                "June",
-                "July",
-                "August",
-                "September",
-                "October",
-                "November",
-                "December",
-              ].map((month, index) => (
-                <option key={index + 1} value={index + 1}>
-                  {month}
-                </option>
-              ))}
-            </select>
+        {showCalendar && (
+          <div style={{ position: "absolute", zIndex: 10 }}>
+            <DatePicker
+              selected={selectedDate}
+              onChange={(date) => {
+                setSelectedDate(date);
+                setShowCalendar(false); // Close calendar after selecting a date
+              }}
+              inline
+            />
+          </div>
+        )}
+      </div>
+
+<select
+  className="select2"
+  value={sortMonth}
+  onChange={(e) => changeTab(e.target.value)}
+>
+  <option value="">Select Month</option>
+  {[
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+  ]
+    .map((month, index) => {
+      // Get the unique months from the data
+      const monthsInData = [
+        ...new Set(
+          displayedItems?.map(item => new Date(item.date).getMonth() + 1) // Get months from the displayedItems data
+        ),
+      ];
+
+      // Check if the month is in the data
+      if (monthsInData.includes(index + 1)) {
+        return (
+          <option key={index} value={index + 1}>
+            {month}
+          </option>
+        );
+      }
+      return null;
+    })
+    .filter(option => option !== null)}
+</select>
+
 
           <select
-          className=" select2"
-          value={selectedYear}
-          onChange={(e) => setSelectedYear(e.target.value)}
-        >
-          {Array.from({ length: 31 }, (_, i) => 2020 + i).map((year) => (
-            <option key={year} value={year}>
-              {year}
-            </option>
-          ))}
-          </select>
+  className="select2"
+  value={selectedYear}
+  onChange={(e) => setSelectedYear(e.target.value)}
+>
+  <option value="">Select Year</option> {/* Default option */}
+  {[...new Set(displayedItems?.map((campaign) => new Date(campaign.date).getFullYear()))]
+    .sort((a, b) => a - b) // Ensure the years are sorted in ascending order
+    .map((year) => (
+      <option key={year} value={year}>
+        {year}
+      </option>
+    ))}
+</select>
    
           <select
   className="select2 "
@@ -584,6 +627,7 @@ const AdminPayments = () => {
   <option value="Approved">Approved</option>
  
          </select>
+
         
         </div>
       
@@ -597,7 +641,7 @@ const AdminPayments = () => {
               <tr className="tr1">
               <th className="text-center ">{displayedItems.length} Items</th>
               <th>Date</th>
-              <th>Employee Name</th>
+              <th>Marketer Name</th>
               <th>Amount</th>
               <th>Charge</th>
               <th className="text-center ">Payment Method</th>
@@ -646,45 +690,76 @@ const AdminPayments = () => {
       </h1>
       <h2 className="text-xl font-bold">Edit Admin Pay Amount</h2>
 
-      {[
-        { label: "Date", type: "date", name: "date", value: payment.date },
-        { label: "New Amount", type: "number", name: "payAmount", value: payment?.payAmount },
-        { label: "Charge", type: "number", name: "charge", value: payment?.charge, placeholder: "0" },
-        { label: "Note", type: "text", name: "note", value: payment?.note }
-      ].map(({ label, type, name, value, placeholder }, idx) => (
-        <div className="mb-4" key={idx}>
-          <label className="block text-left text-gray-700">{label}</label>
-          <input
-            type={type}
-            name={name}
-            defaultValue={value}
-            placeholder={placeholder}
-            className="w-full border bg-white border-black rounded p-2 mt-1"
-          />
-        </div>
-      ))}
+      <div className="space-y-4">
+  {/* Date Field */}
+  <div className="mb-4">
+    <label className="block text-left text-gray-700">Date</label>
+    <input
+      type="date"
+      name="date"
+      defaultValue={payment.date}
+      className="w-full border bg-white border-black rounded p-2 mt-1"
+    />
+  </div>
 
-      <div className="mb-4">
-        <label className="block text-left text-gray-700">Method</label>
-        <select
-          name="paymentMethod"
-          defaultValue={payment.paymentMethod}
+  {/* Amount and Charge Fields */}
+  <div className="grid lg:grid-cols-2 gap-4">
+    {[
+      { label: "New Amount", type: "number", name: "payAmount", value: payment?.payAmount },
+      { label: "Charge", type: "number", name: "charge", value: payment?.charge, placeholder: "0" }
+    ].map(({ label, type, name, value, placeholder }, idx) => (
+      <div className="" key={idx}>
+        <label className="block text-left text-gray-700">{label}</label>
+        <input
+          type={type}
+          name={name}
+          defaultValue={value}
+          placeholder={placeholder}
           className="w-full border bg-white border-black rounded p-2 mt-1"
-          required
-        >
-          {[
-            { value: "bank", label: "Brack Bank" },
-            { value: "IBBLbank", label: "Islami Bank" },
-            { value: "DBBLBank", label: "DBBL Bank" },
-            { value: "bkashPersonal", label: "bKash" },
-            { value: "nagadPersonal", label: "Nagad" }
-          ].map(({ value, label }, idx) => (
-            <option value={value} key={idx}>
-              {label}
-            </option>
-          ))}
-        </select>
+        />
       </div>
+    ))}
+  </div>
+
+  {/* Payment Method - Radio Buttons */}
+<div className=" grid lg:grid-cols-3 gap-2">
+  {[
+    { value: "bank", label: "Brack Bank" },
+    { value: "DBBLBank", label: "DBBL Bank" },
+    { value: "IBBLBank", label: "Islami Bank" },
+    { value: "bkashPersonal", label: "bKash" },
+    { value: "nagadPersonal", label: "Nagad" },
+  ].map(({ value, label }) => (
+    <div className="form-control" key={value}>
+      
+      <label className="label flex justify-start items-center gap-2 cursor-pointer">
+        <input
+          type="radio"
+          name="paymentMethod"
+          value={value}
+          defaultChecked={payment.paymentMethod === value} // Default selection
+          className="radio radio-primary"
+        />
+        <span className="label-text text-black">{label}</span>
+      </label>
+    </div>
+  ))}
+</div>
+
+
+  {/* Note Field */}
+  <div className="mb-4">
+    <label className="block text-left text-gray-700">Note</label>
+    <input
+      type="text"
+      name="note"
+      defaultValue={payment?.note}
+      className="w-full border bg-white border-black rounded p-2 mt-1"
+    />
+  </div>
+</div>
+
+
 
       <div className="modal-action grid grid-cols-2 gap-3 mt-4">
         {[
@@ -771,26 +846,35 @@ const AdminPayments = () => {
                   {payment.note}
                 </td>
             
+                {userr?.role === 'admin' &&
                 <td className="text-center">
-  <label className="status-label">
-    <input
-      type="checkbox"
-      className="sr-only"
-      checked={payment.status !== "pending"}
-      onChange={() => {
-        const newStatus = payment.status !== "pending" ? "pending" : "Approved";
-        handleUpdate2(payment._id, newStatus);
-      }}
-    />
-    <div
-      className={`status-switch ${payment.status !== "pending" ? "active" : "inactive"}`}
-    >
-      <span
-        className={`status-switch-thumb ${payment.status !== "pending" ? "active" : ""}`}
-      ></span>
-    </div>
-  </label>
-</td>
+                <label className="status-label">
+                  <input
+                    type="checkbox"
+                    className="sr-only"
+                    checked={payment.status !== "pending"}
+                    onChange={() => {
+                      const newStatus = payment.status !== "pending" ? "pending" : "Approved";
+                      handleUpdate2(payment._id, newStatus);
+                    }}
+                  />
+                  <div
+                    className={`status-switch ${payment.status !== "pending" ? "active" : "inactive"}`}
+                  >
+                    <span
+                      className={`status-switch-thumb ${payment.status !== "pending" ? "active" : ""}`}
+                    ></span>
+                  </div>
+                </label>
+              </td>
+                }
+
+                {userr?.role === 'employee' &&
+                <td className="text-center">
+                  <h1 className={`${payment.status !== "pending" ? "text-blue-700 font-bold" : ""}`}> {payment?.status}</h1>
+               
+              </td>
+                }
 
               </tr>
             ))}
@@ -804,14 +888,22 @@ const AdminPayments = () => {
   ৳ {new Intl.NumberFormat('en-IN', {
     maximumFractionDigits: 2, // To ensure two decimal places if required
   }).format(
-    bkashPersonal + nagadPersonal + bankTotal + DBBLBankTotal + IBBLBankTotal + rocketPersonal
+    displayedItems
+      ?.filter(f =>
+        ['nagadPersonal', 'bkashPersonal', 'bank', 'IBBLBank', 'DBBLBank'].includes(f.paymentMethod)
+      )
+      .reduce((acc, item) => acc + (isNaN(parseFloat(item?.payAmount)) ? 0 : parseFloat(item?.payAmount)), 0)
   )}
-              </td>
+</td>
+
                <td>
   ৳ {new Intl.NumberFormat('en-IN', {
     maximumFractionDigits: 2, // Ensure consistency in decimals
   }).format(
-    displayedItems.reduce((acc, item) => acc + (isNaN(parseFloat(item?.charge)) ? 0 : parseFloat(item?.charge)), 0)
+    displayedItems
+      ?.filter(f =>
+        ['nagadPersonal', 'bkashPersonal', 'bank', 'IBBLBank', 'DBBLBank'].includes(f.paymentMethod)
+      ).reduce((acc, item) => acc + (isNaN(parseFloat(item?.charge)) ? 0 : parseFloat(item?.charge)), 0)
   )}
               </td>
               <td></td>

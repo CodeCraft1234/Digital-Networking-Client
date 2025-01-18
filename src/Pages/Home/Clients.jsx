@@ -19,16 +19,17 @@ const Clients = () => {
   
   const initialTab3 =
   userr?.role === "admin"
-    ? localStorage.getItem("activeTaba") || "all" 
-    : localStorage.getItem("activeTaba") || user?.email; 
+    ? localStorage.getItem(`activeTabag${user?.email}`) || "all" 
+    : localStorage.getItem(`activeTabag${user?.email}`) || user?.email; 
 
 
   const [selectedEmployee3, setSelectedEmployee3] = useState(initialTab3);
   const [myclients, refetch] = useMyClientsByEmail(selectedEmployee3);
+  console.log(selectedEmployee3,user?.email);
   
   const changeTab3 = (tab) => {
     setSelectedEmployee3(tab);
-    localStorage.setItem("activeTaba", tab);
+    localStorage.setItem(`activeTabag${user?.email}`, tab);
     refetch(); 
   };
   
@@ -49,13 +50,11 @@ const Clients = () => {
       e.preventDefault();
       const clientName = e.target.clientName.value;
       const clientPhone = e.target.clientPhone.value;
-      const clientEmail = e.target.clientEmail.value;
       const employeeEmail = user?.email;
       const date = new Date();
     
       const data = {
         clientName,
-        clientEmail,
         clientPhone,
         id: generateRandomId(),
         employeeEmail,
@@ -122,8 +121,7 @@ const Clients = () => {
     e.preventDefault();
     const clientName = e.target.clientName.value;
     const clientPhone = e.target.clientPhone.value;
-    const clientEmail = e.target.clientEmail.value;
-    const body = { clientName, clientEmail, clientPhone };
+    const body = { clientName, clientPhone };
   
     const datas = {
       title: `Updated ${clientName} in My Clients`,
@@ -154,6 +152,7 @@ const Clients = () => {
   // Determine the items to display based on the current page
   const displayedItems = myclients?.slice(0, currentPage * itemsPerPage);
   const isMoreItems = currentPage * itemsPerPage < myclients.length;
+  console.log(myclients,displayedItems);
 
   useEffect(() => {
     // Automatically load more items every second
@@ -170,16 +169,67 @@ const Clients = () => {
     };
   }, [isMoreItems]); // Re-run effect if `isMoreItems` changes
 
-  const calculate = (callback) => displayedItems.reduce((acc, client) => acc + callback(client), 0);
+// Function to calculate total values based on a callback
+const calculate = (callback) =>
+  displayedItems.reduce((acc, client) => acc + callback(client), 0);
 
-  const formatValue = (value, decimals = 2) =>
-    new Intl.NumberFormat('en-IN', { minimumFractionDigits: decimals, maximumFractionDigits: decimals }).format(value);
+// Format numbers to a specified decimal precision
+const formatValue = (value, decimals = 2) =>
+  new Intl.NumberFormat('en-IN', {
+    minimumFractionDigits: decimals,
+    maximumFractionDigits: decimals,
+  }).format(value);
 
-  const totalSpent = calculate(client => (client.campaings || []).reduce((sum, c) => sum + parseFloat(c?.tSpent || 0), 0));
-  const totalBill = calculate(client => (client.campaings || []).reduce((sum, c) => sum + parseFloat(c?.tSpent || 0) * parseFloat(c?.dollerRate || 0), 0));
-  const totalPaid = calculate(client => (client.payments || []).reduce((sum, p) => sum + parseFloat(p?.amount || 0), 0));
-  const totalAdvanced = Math.abs(totalPaid);
-  
+// Total spent on campaigns
+const totalSpent = calculate(client =>
+  (client.campaings || []).reduce((sum, c) => sum + parseFloat(c?.tSpent || 0), 0)
+);
+
+// Total bill combining campaigns and page services
+const totalBill = calculate(client => {
+  // Campaigns total
+  const campaignTotal = (client.campaings || []).reduce((sum, c) => {
+    const tSpent = parseFloat(c?.tSpent || 0);
+    const dollerRate = parseFloat(c?.dollerRate || 0);
+    return sum + tSpent * dollerRate;
+  }, 0);
+
+  // Page services total
+  const pageServiceTotal = (client.pageService || []).reduce((sum, service) => {
+    const totalBill = parseFloat(service?.totalBill || 0);
+    return sum + totalBill;
+  }, 0);
+
+  return campaignTotal + pageServiceTotal;
+});
+
+// Total paid by clients
+const totalPaid = calculate(client =>
+  (client.payments || []).reduce((sum, p) => sum + parseFloat(p?.amount || 0), 0)
+);
+
+// Total advance payment (when total paid exceeds total bill)
+const totalAdvanced = calculate(client => {
+  const clientTotalBill = (client.campaings || []).reduce((sum, c) => {
+    const tSpent = parseFloat(c?.tSpent || 0);
+    const dollerRate = parseFloat(c?.dollerRate || 0);
+    return sum + tSpent * dollerRate;
+  }, 0) + 
+  (client.pageService || []).reduce((sum, service) => {
+    const totalBill = parseFloat(service?.totalBill || 0);
+    return sum + totalBill;
+  }, 0);
+
+  const clientTotalPaid = (client.payments || []).reduce(
+    (sum, p) => sum + parseFloat(p?.amount || 0),
+    0
+  );
+
+  return clientTotalPaid > clientTotalBill
+    ? clientTotalPaid - clientTotalBill
+    : 0; // Only include advance payments
+});
+
     return (
         <div >
            <ToastContainer />
@@ -192,14 +242,12 @@ const Clients = () => {
                <div className="grid mb-2 rounded-md lg:grid-cols-5 grid-cols-2 sm:grid-cols-2 gap-3     lg:gap-5 justify-around pb-3">
                   <SummaryCard title="Total Spent" value={formatValue(totalSpent)} />
                   <SummaryCard title="Total Bill" value={formatValue(totalBill, 0)} />
-                  <SummaryCard title="Total Paid" value={formatValue(totalPaid)} />
+                  <SummaryCard title="Total Paid" value={formatValue(totalPaid,0)} />
                   <SummaryCard title="Total Advanced" value={formatValue(totalAdvanced, 0)} />
-                  <SummaryCard title="Total Due" value={formatValue(0)} />
+                  <SummaryCard title="Total Due" value={formatValue(totalBill - totalPaid , 0)} />
                 </div>
     
 
-
-     
           <div className='px-4 pt-4 pb-5 rounded-md' style={{ backgroundColor: 'var(--bg-color3)', color: 'var(--text-color)',border: 'var(--border)'}}>
 
               <div className="flex flex-col lg:flex-row justify-between items-center">
@@ -223,7 +271,6 @@ const Clients = () => {
           {[
             { label: "Client Name", name: "clientName", type: "text" },
             { label: "Client Phone", name: "clientPhone", type: "number" },
-            { label: "Client Email", name: "clientEmail", type: "email" },
           ].map((field, i) => (
             <div className="mb-4" key={i}>
               <label className="block">{field.label}</label>
@@ -263,7 +310,7 @@ const Clients = () => {
       value={selectedEmployee3}
       onChange={(e) => changeTab3(e.target.value)}
     >
-      <option value="all">All Employees</option>
+      <option value="all">Select Digital Marketer</option>
       {users
         .filter((u) => u.role === "employee")
         .map(({ _id, email, name }) => (
@@ -304,7 +351,7 @@ const Clients = () => {
             <th>Total Budget</th>
             <th>Total Spent</th>
             <th>Total Bill</th>
-            <th>Payment Received</th>
+            <th>Payment RCV</th>
             <th className='text-center'>Total</th>
           </tr>
         </thead>
@@ -338,28 +385,28 @@ const Clients = () => {
                       <h1 className="text-md mb-5">
                         Client Name: <span className="text-blue-600 text-xl font-bold">{campaign.clientName}</span>
                       </h1>
-                      {['clientName', 'clientPhone', 'clientEmail'].map(field => (
+                      {['clientName', 'clientPhone'].map(field => (
                         <div className="mb-4" key={field}>
-                          <label className="block text-gray-700 capitalize">{field.replace('client', '')}</label>
+                          <label className="block text-gray-700 text-start capitalize">{field.replace('client', '')}</label>
                           <input
-                            type={field === 'clientEmail' ? 'email' : 'text'}
+                            type={field === 'email' || 'text'}
                             name={field}
                             defaultValue={campaign[field]}
-                            className="w-full border rounded p-2 mt-1"
+                            className="input2"
                           />
                         </div>
                       ))}
                       <div className="grid grid-cols-2 gap-3">
                         <button
                           type="button"
-                          className="hover:bg-red-700 px-3 py-1 bg-red-600 rounded-lg text-white"
+                          className="close"
                           onClick={() => document.getElementById(`modal_${campaign._id}`).close()}
                         >
                           Close
                         </button>
                         <button
                           type="submit"
-                          className="hover:bg-indigo-700 px-3 py-1 bg-[#05a0db] rounded-lg text-white"
+                          className="add"
                         >
                           Update
                         </button>
@@ -383,12 +430,19 @@ const Clients = () => {
                     $ {campaign.campaings?.reduce((acc, item) => acc + parseFloat(item[key] || 0), 0).toFixed(2) || 0}
                   </td>
                 ))}
-                <td>
-                  ৳ {campaign.campaings?.reduce(
-                    (acc, { tSpent = 0, dollerRate = 0 }) => acc + tSpent * dollerRate,
-                    0
-                  ).toFixed(2) || 0}
-                </td>
+              <td>
+  ৳ {(
+    (campaign.campaings?.reduce(
+      (acc, { tSpent = 0, dollerRate = 0 }) => acc + parseFloat(tSpent) * parseFloat(dollerRate),
+      0
+    ) || 0) +
+    (campaign?.pageService?.reduce((acc, payment) => {
+      const amount = payment?.totalBill ? parseFloat(payment.totalBill) : 0;
+      return acc + amount;
+    }, 0) || 0)
+  ).toFixed(2)}
+</td>
+
                 
                 <td>
                   ৳ {campaign?.payments?.reduce((acc, payment) => {
@@ -397,53 +451,73 @@ const Clients = () => {
                   }, 0).toFixed(2) || '0.00'}
                 </td>
 
-                <td className='text-center'>
-                  <span
-                    className={`w-20 px-2 py-0.5 rounded text-center inline-block ${(() => {
-                      const totalPayments = campaign?.payments?.reduce((acc, payment) => {
-                        // Ensure payment is an object and has an amount property that can be parsed
-                        const amount = payment && payment.amount ? parseFloat(payment.amount) : 0;
-                        return acc + amount;
-                      }, 0) || 0;
-                      
-                      const totalExpenses = campaign.campaings?.reduce(
-                        (acc, { tSpent = 0, dollerRate = 0 }) => acc + tSpent * dollerRate,
-                        0
-                      ) || 0;
-                      const difference = totalPayments - totalExpenses;
-                      return difference > 0
-                        ? 'bg-green-500 font-bold text-white'
-                        : difference < 0
-                        ? 'bg-red-800 font-bold text-white'
-                        : '';
-                    })()}`}
-                  >
-                 <div className='flex justify-center items-center gap-1'>
-                 <span className=' font-bold  text-lg'>৳</span><span>
-  {(
-    Math.abs(
-      (
-        (campaign.payments && Array.isArray(campaign.payments))
-          ? campaign.payments.reduce((acc, payment) => {
-              const { amount } = payment || {}; // Destructure safely, default to {} if null/undefined
-              return acc + (parseFloat(amount) || 0); // Safely parse amount
-            }, 0)
-          : 0
-      ) -
-      (
-        (campaign.campaings && Array.isArray(campaign.campaings))
-          ? campaign.campaings.reduce((acc, { tSpent = 0, dollerRate = 0 }) => acc + (parseFloat(tSpent) || 0) * (parseFloat(dollerRate) || 0), 0)
-          : 0
-      )
-    ) || 0
-  ).toFixed(0)}
-</span>
+                <td className="text-center">
+  <span
+    className={`w-20 px-2 py-0.5 rounded text-center inline-block ${(() => {
+      // Calculate total payments
+      const totalPayments = campaign?.payments?.reduce((acc, payment) => {
+        const amount = payment?.amount ? parseFloat(payment.amount) : 0; // Safely parse amount
+        return acc + amount;
+      }, 0) || 0;
 
-                    
+      // Calculate total expenses (campaings + pageService)
+      const totalCampaignExpenses = campaign?.campaings?.reduce((acc, { tSpent = 0, dollerRate = 0 }) => {
+        return acc + (parseFloat(tSpent) || 0) * (parseFloat(dollerRate) || 0);
+      }, 0) || 0;
 
-                 </div>
-                  </span>
-                </td>
+      const totalPageServiceExpenses = campaign?.pageService?.reduce((acc, service) => {
+        const bill = service?.totalBill ? parseFloat(service.totalBill) : 0; // Safely parse totalBill
+        return acc + bill;
+      }, 0) || 0;
+
+      const totalExpenses = totalCampaignExpenses + totalPageServiceExpenses;
+
+      // Calculate the difference
+      const difference = totalPayments - totalExpenses;
+
+      // Return the appropriate class based on the difference
+      return difference > 0
+        ? 'bg-green-500 font-bold text-white'
+        : difference < 0
+        ? 'bg-red-800 font-bold text-white'
+        : 'bg-yellow-300 font-bold text-black';
+    })()}`}
+  >
+    <div className="flex justify-center items-center gap-1">
+      <span className="font-bold text-lg">৳</span>
+      <span>
+        {(
+          Math.abs(
+            (
+              (campaign.payments && Array.isArray(campaign.payments))
+                ? campaign.payments.reduce((acc, payment) => {
+                    const amount = payment?.amount ? parseFloat(payment.amount) : 0;
+                    return acc + amount;
+                  }, 0)
+                : 0
+            ) -
+            (
+              (campaign.campaings && Array.isArray(campaign.campaings))
+                ? campaign.campaings.reduce((acc, { tSpent = 0, dollerRate = 0 }) => {
+                    return acc + (parseFloat(tSpent) || 0) * (parseFloat(dollerRate) || 0);
+                  }, 0)
+                : 0
+            ) -
+            (
+              (campaign.pageService && Array.isArray(campaign.pageService))
+                ? campaign.pageService.reduce((acc, service) => {
+                    const bill = service?.totalBill ? parseFloat(service.totalBill) : 0;
+                    return acc + bill;
+                  }, 0)
+                : 0
+            )
+          ) || 0
+        ).toFixed(0)}
+      </span>
+    </div>
+  </span>
+</td>
+
               </tr>
             ))}
           <tr className="tr1 font-bold">
@@ -455,13 +529,26 @@ const Clients = () => {
                 $ {displayedItems.reduce((acc, client) => acc + (client.campaings || []).reduce((sum, item) => sum + parseFloat(item[key] || 0), 0), 0).toFixed(2)}
               </td>
             ))}
-            <td>
-              ৳ {displayedItems.reduce(
-                (acc, client) =>
-                  acc + (client.campaings || []).reduce((sum, { tSpent = 0, dollerRate = 0 }) => sum + tSpent * dollerRate, 0),
-                0
-              ).toFixed(2)}
-            </td>
+<td>
+  ৳ {displayedItems.reduce(
+    (acc, client) => {
+      // Calculate the total from campaigns
+      const campaignTotal = (client.campaings || []).reduce((sum, { tSpent = 0, dollerRate = 0 }) => {
+        return sum + tSpent * dollerRate;
+      }, 0);
+
+      // Calculate the total from pageService
+      const pageServiceTotal = (client.pageService || []).reduce((sum, { totalBill = 0 }) => {
+        return sum + parseFloat(totalBill || 0);
+      }, 0);
+
+      // Add both totals to the accumulator
+      return acc + campaignTotal + pageServiceTotal;
+    },
+    0
+  ).toFixed(2)}
+</td>
+
             <td>
   ৳ {displayedItems.reduce(
     (acc, client) => {
@@ -484,14 +571,23 @@ const Clients = () => {
     displayedItems.reduce(
       (acc, client) =>
         acc +
+        // Calculate total from campaigns
         (client.campaings && Array.isArray(client.campaings)
           ? client.campaings.reduce(
               (sum, { tSpent = 0, dollerRate = 0 }) => sum + (parseFloat(tSpent) || 0) * (parseFloat(dollerRate) || 0),
               0
             )
+          : 0) +
+        // Calculate total from pageService
+        (client.pageService && Array.isArray(client.pageService)
+          ? client.pageService.reduce(
+              (sum, { totalBill = 0 }) => sum + parseFloat(totalBill) || 0,
+              0
+            )
           : 0),
       0
     ) -
+    // Calculate total from payments
     displayedItems.reduce(
       (acc, client) =>
         acc +
@@ -503,10 +599,8 @@ const Clients = () => {
           : 0),
       0
     )
-    
   ).toFixed(2)}
 </td>
-
 
           </tr>
         </tbody>

@@ -43,15 +43,27 @@ import ContriSummery from "./Pages/DashboardRoot/ContriSummery";
 import ClientHistory from "./Pages/DashboardRoot/ClientHistory";
 import OthersSellery from "./Pages/DashboardRoot/OthersSellery";
 import DeveloperSalary2 from "./Pages/Home/DeveloperSalary2";
-import MetaAds from "./Pages/Home/MetaAds";
-import GoogleAds from "./Pages/Home/GoogleAds";
+import MetaAds from "./Pages/Home/MetaGoogleAds";
 import PageSetup from "./Pages/Home/PageSetup";
 import Clients from "./Pages/Home/Clients";
 import Salary from "./Pages/DashboardRoot/Salary";
 import MonthlySpend from "./Pages/DashboardRoot/MonthlySpend";
-import AllAdsPayments from "./Pages/DashboardRoot/ContributorPayments";
 import AdsUserAdsAccount from "./Pages/DashboardRoot/AdsUserAdsAccount";
 import ClientProfile from "./Pages/Home/ClientProfile";
+import ClientLogin from "./Pages/Home/ClientLogin";
+import ClientMetaAds from "./Pages/Home/ClientMetaAds";
+import ClientPageSetup from "./Pages/Home/ClientPageSetup";
+import ClientPaymentHistry from "./Pages/Home/ClientPaymentHistry";
+import MetaAdsAccount from "./Pages/Home/MetaAdsAccount";
+import Monitization from "./Pages/Home/Monitization";
+import ContributorPayments from "./Pages/DashboardRoot/ContributorPayments";
+import ContributorMonthlySpend from "./Pages/DashboardRoot/ContributorMonthlySpend";
+import ContributorSummery from "./Pages/DashboardRoot/ContributorSummery";
+import WebDesign from "./Pages/Home/WebDesign";
+import GraphicDesign from "./Pages/Home/GraphicDesign";
+import SalaryPayments from "./Pages/Home/SalaryPayment";
+import DevGraphicSalary from "./Pages/DashboardRoot/DevGraphicsSalary";
+import NoticePad from "./Pages/DashboardRoot/NoticePad";
 
 const router = createBrowserRouter([
   {
@@ -61,6 +73,10 @@ const router = createBrowserRouter([
    {
     path:'/signup',
     element:<Register></Register>
+   },
+   {
+    path:'/clientLogin',
+    element:<ClientLogin></ClientLogin>
    },
   
   {
@@ -89,17 +105,72 @@ const router = createBrowserRouter([
        },
       {
         path:'/googleAds',
-        element:<GoogleAds></GoogleAds>
+        element:<MetaAds></MetaAds>
        },
       {
         path:'/pageSetup',
         element:<PageSetup></PageSetup>
        },
       {
+        path:'/monitization',
+        element:<Monitization></Monitization>
+       },
+      {
+        path:'/client/metaAds/:email',
+        element:<ClientMetaAds></ClientMetaAds>
+       },
+      {
+        path:'/client/googleAds/:email',
+        element:<ClientMetaAds></ClientMetaAds>
+       },
+      {
+        path:'/client/pageSetup/:email',
+        element:<ClientPageSetup></ClientPageSetup>
+       },
+      {
+        path:'/client/payments/:email',
+        element:<ClientPaymentHistry></ClientPaymentHistry>
+       },
+      {
+        path:'/client/summery/:email',
+        element:<ClientHistory></ClientHistory>
+       },
+      {
         path:'/monthlySpend',
         element:<MonthlySpend></MonthlySpend>
        },
-
+      {
+        path:'/contributorAdsAccount',
+        element:<MetaAdsAccount></MetaAdsAccount>
+       },
+      {
+        path:'/contributorMonthlySpend',
+        element:<ContributorMonthlySpend></ContributorMonthlySpend>
+       },
+      {
+        path:'/webdesign',
+        element:<WebDesign></WebDesign>
+       },
+      {
+        path:'/graphicsdesign',
+        element:<GraphicDesign></GraphicDesign>
+       },
+      {
+        path:'/salaryPayments',
+        element:<SalaryPayments></SalaryPayments>
+       },
+      {
+        path:'/mySalary',
+        element:<DevGraphicSalary></DevGraphicSalary>
+       },
+      {
+        path:'/contributorSummery',
+        element:<ContributorSummery></ContributorSummery>
+       },
+       {
+        path:'/contributorPayments',
+        element:<ContributorPayments></ContributorPayments>
+       },
        {
         path:'/clients',
         element:<Clients></Clients>
@@ -107,6 +178,10 @@ const router = createBrowserRouter([
       {
         path:'/bankInfo',
         element:<BankInfo></BankInfo>
+       },
+      {
+        path:'/noticePad',
+        element:<NoticePad></NoticePad>
        },
        {
         path:'/summery',
@@ -137,10 +212,7 @@ const router = createBrowserRouter([
         path:'/allPayments',
         element:<PaymentHistory></PaymentHistory>
        },
-       {
-        path:'/adsPayments',
-        element:<AllAdsPayments></AllAdsPayments>
-       },
+
        {
         path:'/contributorSummery',
         element:<ContriSummery></ContriSummery>

@@ -1,14 +1,15 @@
 import { Link, NavLink } from "react-router-dom";
 import { FaHistory, FaPaypal} from "react-icons/fa";
 import { RxDashboard } from "react-icons/rx";
-import { MdAccountCircle, MdCampaign, MdOutlineSummarize } from "react-icons/md";
+import { MdAccountCircle, MdCampaign, MdOutlinePayments, MdOutlineSummarize } from "react-icons/md";
 import { useContext } from "react";
 import { FaPeopleGroup } from "react-icons/fa6";
 import { AuthContext } from "../../Security/AuthProvider";
-import { LuActivitySquare } from "react-icons/lu";
 import { CiBank } from "react-icons/ci";
-
-
+import { SiGoogleads, SiMeta } from "react-icons/si";
+import { RiPagesFill } from "react-icons/ri";
+import { TbHeartRateMonitor } from "react-icons/tb";
+import { IoMdCash } from "react-icons/io";
 
 const BalanceCard = ({ title, amount }) => {
   return (
@@ -34,7 +35,9 @@ const EmployeeDashboard = () => {
       ? { backgroundColor: 'var(--bg-color)', color: 'var(--text-color)' }
       : {}
   );
-
+  const changeTab = (tab) => {
+    localStorage.setItem("activeTabClientProfile", tab); 
+  };
 
   return (
     <div className=" w-[225px] bg-gray-900 text-white -mt-3 -ml-2 pr-2 min-h-screen">
@@ -58,6 +61,15 @@ const EmployeeDashboard = () => {
             <RxDashboard className="w-6 h-6 mr-2" />
             Dashboard
           </NavLink>
+
+          <NavLink
+            to={`/adsAccount`}
+            className="text-white hover:bg-[#f89320] hover:text-black py-2 px-4 rounded-lg flex items-center"
+            style={({ isActive }) => getActiveStyle(isActive)}
+          >
+            <MdAccountCircle className="w-6 h-6 mr-2" />
+            Ads Account
+          </NavLink>
           <NavLink
                   to="/clients"
                   className="text-white hover:bg-[#f89320] hover:text-black py-2 px-4 rounded-lg flex items-center"
@@ -70,16 +82,18 @@ const EmployeeDashboard = () => {
             to="/metaAds"
             className="text-white hover:bg-[#f89320] hover:text-black py-2 px-4 rounded-lg flex items-center"
             style={({ isActive }) => getActiveStyle(isActive)}
+            onClick={() => changeTab('metaAds')}
           >
-            <MdCampaign className="w-6 h-6 mr-2" />
+            <SiMeta className="w-6 h-6 mr-2" />
             Meta Ads
           </NavLink>
           <NavLink
             to="/googleAds"
             className="text-white hover:bg-[#f89320] hover:text-black py-2 px-4 rounded-lg flex items-center"
             style={({ isActive }) => getActiveStyle(isActive)}
+            onClick={() => changeTab('googleAds')}
           >
-            <MdCampaign className="w-6 h-6 mr-2" />
+            <SiGoogleads className="w-6 h-6 mr-2" />
             Google Ads
           </NavLink>
           <NavLink
@@ -87,36 +101,35 @@ const EmployeeDashboard = () => {
             className="text-white hover:bg-[#f89320] hover:text-black py-2 px-4 rounded-lg flex items-center"
             style={({ isActive }) => getActiveStyle(isActive)}
           >
-            <MdCampaign className="w-6 h-6 mr-2" />
+            <RiPagesFill className="w-6 h-6 mr-2" />
             Page Setup
           </NavLink>
-         
-         
-         
           <NavLink
-            to={`/myPayments`}
+            to="/monitization"
             className="text-white hover:bg-[#f89320] hover:text-black py-2 px-4 rounded-lg flex items-center"
             style={({ isActive }) => getActiveStyle(isActive)}
           >
-            <MdAccountCircle className="w-6 h-6 mr-2" />
+            <TbHeartRateMonitor className="w-6 h-6 mr-2" />
+            Monitization
+          </NavLink>
+         
+         
+         
+          <NavLink
+            to={`/allPayments`}
+            className="text-white hover:bg-[#f89320] hover:text-black py-2 px-4 rounded-lg flex items-center"
+            style={({ isActive }) => getActiveStyle(isActive)}
+          >
+            <MdOutlinePayments className="w-6 h-6 mr-2" />
            My Payment
           </NavLink>
           <NavLink
-            to={`/salary`}
+            to={`/summery`}
             className="text-white hover:bg-[#f89320] hover:text-black py-2 px-4 rounded-lg flex items-center"
             style={({ isActive }) => getActiveStyle(isActive)}
           >
             <MdOutlineSummarize className="w-6 h-6 mr-2" />
-            My Salary
-          </NavLink>
-
-          <NavLink
-            to={`/adsAccount`}
-            className="text-white hover:bg-[#f89320] hover:text-black py-2 px-4 rounded-lg flex items-center"
-            style={({ isActive }) => getActiveStyle(isActive)}
-          >
-            <MdAccountCircle className="w-6 h-6 mr-2" />
-            Ads Account
+           My Summery
           </NavLink>
 
           <NavLink
@@ -127,15 +140,18 @@ const EmployeeDashboard = () => {
             <FaHistory className="w-6 h-6 mr-2" />
             Monthly Spend
           </NavLink>
-
           <NavLink
-            to={`/summery`}
+            to={`/salary`}
             className="text-white hover:bg-[#f89320] hover:text-black py-2 px-4 rounded-lg flex items-center"
             style={({ isActive }) => getActiveStyle(isActive)}
           >
-            <LuActivitySquare  className="w-6 h-6 mr-2" />
-           My Summery
+            <IoMdCash className="w-6 h-6 mr-2" />
+            My Salary
           </NavLink>
+
+         
+
+          
          
           <NavLink
             to="/payoneer"

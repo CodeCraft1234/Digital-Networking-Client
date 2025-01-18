@@ -6,21 +6,14 @@ import { AuthContext } from "../../Security/AuthProvider";
 const ClientLogin = () => {
   const { user, logOut } = useContext(AuthContext); // Get user and logOut function from AuthContext
   const [phoneNumber, setPhoneNumber] = useState("");
-  const [username, setUsername] = useState(""); // Add state for username
-  const navigate = useNavigate(); // Initialize useNavigate
+  const navigate = useNavigate(); 
 
   const handlePhoneSubmit = async (e) => {
     e.preventDefault();
 
-    if (phoneNumber && username) {
+    if (phoneNumber) {
       localStorage.removeItem("clientUser");
-      localStorage.removeItem("clientUsername");
-
-      // Store phone number and username in localStorage
       localStorage.setItem("clientUser", phoneNumber);
-      localStorage.setItem("clientUsername", username);
-
-      // If user is logged in, log them out
       if (user) {
         try {
           await logOut(); // Log the user out
@@ -30,7 +23,7 @@ const ClientLogin = () => {
         }
       }
 
-      navigate("/"); // Redirect to the home page or any route
+      navigate("/"); 
     } else {
       alert("Please enter both a valid phone number and username");
     }
@@ -41,29 +34,15 @@ const ClientLogin = () => {
       <div className="bg-white p-6 rounded-lg shadow-lg w-80">
         <h1 className="text-2xl font-bold mb-4 text-black text-center">Login</h1>
         <form onSubmit={handlePhoneSubmit}>
-          {/* Username Input */}
           <div className="mb-4">
             <label className="block text-gray-700 text-sm font-bold mb-2">
-              Username
-            </label>
-            <input
-              type="text"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              placeholder="Enter your username"
-              className="border border-gray-400 rounded bg-white text-black w-full py-2 px-3"
-            />
-          </div>
-          {/* Phone Number Input */}
-          <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2">
-              Mobile Number
+            Token Number
             </label>
             <input
               type="text"
               value={phoneNumber}
               onChange={(e) => setPhoneNumber(e.target.value)}
-              placeholder="Enter a mobile number"
+              placeholder="Enter a Token Number"
               className="border border-gray-400 rounded bg-white text-black w-full py-2 px-3"
             />
           </div>

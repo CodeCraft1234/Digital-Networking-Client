@@ -8,12 +8,17 @@ import html2canvas from 'html2canvas';
 import { FaEdit, FaFileDownload, FaMinusSquare, FaRegCopy } from 'react-icons/fa';
 import { Helmet } from 'react-helmet-async';
 import useUserr from '../../Hook/useUser';
+import { useForm } from 'react-hook-form';
+const image_hosting_key = "6fbc3358bbb1a92b78e2dee0f5ca1b94";
+const image_hosting_api = `https://api.imgbb.com/1/upload?key=${image_hosting_key}`;
 
 const BankInfo = () => {
   const [showModal, setShowModal] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [selectedBankId, setSelectedBankId] = useState(null);
   const [bankInfo, refetch] = useBankInfo();
+  const { register, handleSubmit, formState: { errors }, reset, setValue } = useForm();
+  console.log(bankInfo);
   const [formData, setFormData] = useState({
     bankName: '',
     name: '',
@@ -32,26 +37,57 @@ const BankInfo = () => {
     });
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-
-    const url = isEditing
-      ? `https://hishab-2025.vercel.app/bankInfo/${selectedBankId}`
-      : 'https://hishab-2025.vercel.app/bankInfo';
-
-    const method = isEditing ? 'patch' : 'post';
-
-    Axios[method](url, formData)
-      .then((res) => {
-        console.log('Response data:', res.data);
-        setShowModal(false);
-        refetch();
-        resetForm();
-      })
-      .catch((err) => {
-        console.error('Error posting data:', err);
-      });
+  const handleBankInfoSubmit = async (data) => {
+    const { image, ...otherFormData } = data;
+  
+    try {
+      let imageUrl = "";
+      // Check if an image is uploaded
+      if (image && image.length > 0) {
+        const formData = new FormData();
+        formData.append("image", image[0]); // Add the image file to FormData
+  
+        // Upload image to ImgBB
+        const imgResponse = await Axios.post(image_hosting_api, formData);
+  
+        // Check if the upload was successful
+        if (imgResponse.data && imgResponse.data.data) {
+          imageUrl = imgResponse.data.data.url;
+        } else {
+          console.error("ImgBB response is invalid:", imgResponse.data);
+          return;
+        }
+      }
+  
+      // Create payload with image URL
+      const payload = {
+        ...otherFormData,
+        imageUrl, // Add the image URL to the payload
+      };
+  
+      // Decide the API URL and method based on editing state
+      const url = isEditing
+        ? `https://hishab-2025.vercel.app/bankInfo/${selectedBankId}`
+        : "https://hishab-2025.vercel.app/bankInfo";
+      const method = isEditing ? "patch" : "post";
+  
+      // Post data to the server
+      const response = await Axios[method](url, payload);
+  
+      // Handle success
+      console.log("Response data:", response.data);
+      setShowModal(false);
+      refetch();
+      resetForm();
+    } catch (error) {
+      // Log and handle errors
+      console.error("Error in submitting bank info:", error);
+    }
   };
+  
+  
+  // Inside your component
+
 
   const resetForm = () => {
     setFormData({
@@ -163,7 +199,7 @@ const generatePDFForBank = (bankId) => {
   return (
     <div className=''>
        <Helmet>
-        <title>Bank info | Digital Network</title>
+        <title>Bank Info | Digital Network</title>
         <link rel="canonical" href="https://www.example.com/" />
       </Helmet>
 
@@ -177,40 +213,47 @@ const generatePDFForBank = (bankId) => {
                 <h2 className="text-2xl font-semibold mb-6 text-center">
                   {isEditing ? 'Edit Bank Details' : 'Enter Bank Details'}
                 </h2>
-                <form onSubmit={handleSubmit}>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                    {['bankName', 'name', 'account', 'branch', 'district', 'swiftCode', 'routingNumber', 'card'].map((label, idx) => (
-                      <div key={idx} className="col-span-1">
-                        <label className="block text-black bg-white font-medium mb-2">
-                          {label.replace(/([A-Z])/g, ' $1')}: 
-                        </label>
-                        <input
-                          type="text"
-                          name={label}
-                          value={formData[label]}
-                          onChange={handleChange}
-                          className="w-full p-2 border border-gray-300 rounded bg-white"
-                        />
-                      </div>
-                    ))}
-                  </div>
+                <form onSubmit={handleSubmit(handleBankInfoSubmit)}>
+    <div>
+      <label className="block text-gray-700 font-semibold mb-1">Logo (800x1200)</label>
+      <input
+        type="file"
+        {...register("image", { required: true })} // Register image input
+        className="w-full px-4 bg-white py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+      />
+    </div>
 
-                  <div className="flex justify-end mt-6 space-x-4">
-                    <button
-                      type="button"
-                      className="bg-gray-300 text-gray-700 py-2 px-4 rounded hover:bg-gray-400"
-                      onClick={() => setShowModal(false)}
-                    >
-                      Close
-                    </button>
-                    <button
-                      type="submit"
-                      className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600"
-                    >
-                      {isEditing ? 'Update' : 'Submit'}
-                    </button>
-                  </div>
-                </form>
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+      {["bankName", "name", "account", "branch", "district", "swiftCode", "routingNumber", "card"].map((label, idx) => (
+        <div key={idx} className="col-span-1">
+          <label className="block text-black bg-white font-medium mb-2">
+            {label.replace(/([A-Z])/g, " $1")}:
+          </label>
+          <input
+            type="text"
+            {...register(label)} // Register other inputs
+            className="w-full p-2 border border-gray-300 rounded bg-white"
+          />
+        </div>
+      ))}
+    </div>
+
+    <div className="flex justify-end mt-6 space-x-4">
+      <button
+        type="button"
+        className="bg-gray-300 text-gray-700 py-2 px-4 rounded hover:bg-gray-400"
+        onClick={() => setShowModal(false)}
+      >
+        Close
+      </button>
+      <button
+        type="submit"
+        className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600"
+      >
+        {isEditing ? "Update" : "Submit"}
+      </button>
+    </div>
+             </form>
               </div>
             </div>
           )}
@@ -235,13 +278,13 @@ const generatePDFForBank = (bankId) => {
           <table className="min-w-full text-center ">
             <thead className=" ">
               <tr className="tr1" >  
-                {userr.role === 'admin' && <th className="text-center">Items {bankInfo?.length}</th>}
+                {userr?.role === 'admin' && <th className="text-center">Items {bankInfo?.length}</th>}
                 <th >Bank Name</th>
-                <th >Holder Name</th>
+                <th >A/C Holder Name</th>
                 <th >Account</th>
                 <th >Branch</th>
                 <th >District</th>
-                <th >Routing Number</th>
+                {/* <th >Routing</th> */}
                 <th >Card</th>
                 <th className="text-center">Status</th>
               </tr>
@@ -254,8 +297,9 @@ const generatePDFForBank = (bankId) => {
                  className={`tr2`}
                >
                 {
-                  userr.role === 'admin' && <td className="text-center"> 
-                  <button
+                  userr?.role === 'admin' && <td className="text-center"> 
+              <div className='flex justify-center items-center gap-1'>
+              <button
                      className=" delete"
                      onClick={() => handleDelete(work._id)}
                   >
@@ -263,21 +307,32 @@ const generatePDFForBank = (bankId) => {
                     <FaMinusSquare  />
                     </span>
                   </button> 
+                  <button
+                       className="f-start edit"
+                       onClick={() => handleEdit(work)}
+                     >
+                      <FaEdit /> 
+
+                   </button>
+              </div>
               </td>
                 }
                      
                       
                   <td>
-                  {work?.bankName}
+
+                   
+                     <div className='flex justify-start items-center gap-2'>
+                     
+                    
+                    <img className='h-12 w-12 rounded-full' src={work?.imageUrl} alt="" />
+                    <span>
+                   {work?.bankName}
+                    </span>
+                     </div>
                   </td>
                   <td>
-                    {
-                       userr.role === 'admin' ?  <button
-                       className="f-start edit"
-                       onClick={() => handleEdit(work)}
-                     >
-                      <FaEdit /> 
-                      <span>
+                  <span>
  {work.name
    ?.split(' ') 
    .slice(0, 4) 
@@ -285,39 +340,28 @@ const generatePDFForBank = (bankId) => {
    + (work.name?.split(' ').length > 4 ? '...' : '') 
  }
 </span>
-                   </button> :  <span>
- {work.name
-   ?.split(' ') 
-   .slice(0, 4) 
-   .join(' ') 
-   + (work.name?.split(' ').length > 4 ? '...' : '') 
- }
-</span>
-                    }
                   </td>
                   <td>
-                  {work?.account}
-                  </td>
-                  <td>
-                  {work?.branch}
+  {work?.account
+    ? work.account.replace(/(\d{4})(\d{4})(\d+)/, "$1-$2-$3")
+    : ""}
+</td>
+
+                  <td >
+                  {work?.branch}   <img src={work?.image} alt="" />
                   </td>
                   <td>
                   {work?.district}
                   </td>
-                  <td>
+                  {/* <td>
                   {work?.routingNumber}
-                  </td>
+                  </td> */}
                   <td>
                   {work?.card}
                   </td>
                   <td>
                   <div className="text-center  bank-buttons">
-  <button
-    className=" py-2  rounded hover:bg-green-600"
-    onClick={() => generatePDFForBank(work._id)}
-  >
-    <FaFileDownload />
-  </button>
+
   <button
     className={` py-2 px-4 rounded hover:bg-green-600`}
     onClick={() => copyBankInfoToClipboard(work)}

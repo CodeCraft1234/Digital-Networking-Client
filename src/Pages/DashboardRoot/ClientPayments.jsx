@@ -2,7 +2,7 @@ import { useContext, useEffect, useState } from "react";
 import UseAxiosPublic from "../../Axios/UseAxiosPublic";
 import Swal from "sweetalert2";
 import { Link } from "react-router-dom";
-import { FaMinusSquare } from "react-icons/fa";
+import { FaEdit, FaMinusSquare } from "react-icons/fa";
 import useMyClientsByEmail from "../../Hook/useMyClientsByEmail";
 import toast from "react-hot-toast";
 import { AuthContext } from "../../Security/AuthProvider";
@@ -14,17 +14,25 @@ const ClientPayments = () => {
   const { user } = useContext(AuthContext);
   const [users]=useUsers()
   const {userr}=useUserr(user?.email)
+  const [payment, setModalData] = useState(null);
   
   const initialTab3 =
   userr?.role === "admin"
-  ? localStorage.getItem("act") || "all" 
-  : localStorage.getItem("act") || user?.email; 
+  ? localStorage.getItem(`acti${user?.email}`) || "all" 
+  : localStorage.getItem(`acti${user?.email}`) || user?.email; 
 
 const [selectedEmployee3, setSelectedEmployee3] = useState(initialTab3);
 
   const changeTab3 = (tab) => {
     setSelectedEmployee3(tab); // Update the state
-    localStorage.setItem("act", tab); // Update localStorage
+    localStorage.setItem(`acti${user?.email}`, tab); // Update localStorage
+  };
+  const initialTab4 = localStorage.getItem("actt3") || "All";
+const [selectedClient, setSelectedClient] = useState(initialTab4);
+
+  const changeTab4 = (tab) => {
+    setSelectedClient(tab); // Update the state
+    localStorage.setItem("actt3", tab); // Update localStorage
   };
 
   const [myclients, refetch] = useMyClientsByEmail(selectedEmployee3);
@@ -41,7 +49,7 @@ const [selectedEmployee3, setSelectedEmployee3] = useState(initialTab3);
   };
 
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 20;
+  const itemsPerPage = 50;
 
   const displayedItems = myclients.sort((a, b) => new Date(b.date) - new Date(a.date))?.slice(0, currentPage * itemsPerPage);
   const isMoreItems = currentPage * itemsPerPage < myclients.length;
@@ -86,11 +94,34 @@ const [selectedEmployee3, setSelectedEmployee3] = useState(initialTab3);
     });
 };
 
+
+   const handleUpdatePayment = async (e, ids, id) => {
+     e.preventDefault();
+     const amount = parseFloat(e.target.amount.value);
+     const date = e.target.date.value;
+     const note = e.target.note.value;
+     const paymentMethod = e.target.paymentMethod.value;
+     const body = { note, amount, date, paymentMethod };
+     const datas = { title: `Update Payment ${amount} from in ${paymentMethod}`, date: new Date(), user: user?.displayName };
+   
+     AxiosPublic.patch(`/clientPaymentsUp/updates/${id}/${ids}`, body)
+       .then((res) => {
+         refetch();
+         setModalData(null); 
+         toast.success(`Payment updated: ${amount} from via ${paymentMethod}`);
+         return AxiosPublic.post("/activity", datas); // Ensure the post request is made after the patch
+       })
+       .catch((error) => {
+         console.error("Error updating payment:", error);
+         toast.error(`Failed to update payment: ${error?.response?.data?.message || "An error occurred"}`);
+       });
+   };
+
   return (
     <div className="">
 
 
-      <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-8 gap-5 my-5 ">
+      <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-5 my-5 ">
 
         <div onClick={() => setSelectedCategory('bkashMarchent')}>
         <BalanceCard  img={`https://i.ibb.co/bHMLyvM/b-Kash-Merchant.png`} amount={myclients
@@ -123,23 +154,34 @@ const [selectedEmployee3, setSelectedEmployee3] = useState(initialTab3);
     
         <div 
                  onClick={() => setSelectedCategory('All')}
-                   style={{ backgroundColor: '#d9f8d9', border: 'var(--border)' }} 
-                   className="balance-card rounded-2xl p-5 text-center shadow-xl transition-transform transform hover:scale-105"
+                 style={{ backgroundColor: '#f7e8e8', border: 'var(--border)' }} 
+                   className="balance-card rounded-2xl  text-center shadow-xl transition-transform transform hover:scale-105"
                  >
                    <h1 className="px-3 text-black text-xl font-bold text-center">TOTAL</h1>
-                   <p className="balance-card-text text-lg mt-2 lg:text-xl font-bold text-gray-700">
-                     <span className="text-lg lg:text-xl font-extrabold">৳</span>
-                     {myclients
-                     ?.flatMap(client => client.payments || [])?.reduce(
-                      (acc, payment) => acc + parseFloat(payment?.amount || 0),
-                           0
-                      ).toFixed(0)}
-                   </p>
+                   <p className="card-title pb-5">
+  <span>৳ </span>
+  {new Intl.NumberFormat("en-IN", {
+    maximumFractionDigits: 0,
+  }).format(
+    myclients
+      ?.flatMap((client) => client.payments || [])
+      ?.reduce((acc, payment) => acc + parseFloat(payment?.amount || 0), 0)
+  )}
+</p>
+
          </div>
          </div>
 
 <div className='side-space' >
-<div className="f-end text-black  mb-5 ">
+<div className="f-between text-black  mb-5 ">
+{
+                userr?.role === 'employee' ?
+        <button
+      className="add"
+       onClick={() => document.getElementById("my_modal_8").showModal()}
+     >
+        Pay Now
+</button> : <div></div>}
   <div className="flex flex-wrap lg:flex-nowrap gap-3 justify-center items-center">
 
     {userr?.role === "admin" && (
@@ -149,7 +191,7 @@ const [selectedEmployee3, setSelectedEmployee3] = useState(initialTab3);
         value={selectedEmployee3}
         onChange={(e) => changeTab3(e.target.value)}
       >
-        <option value="all">All Employees</option>
+        <option value="all">Select Digital Marketer</option>
         {users
           .filter((u) => u.role === "employee")
           .map((employee) => (
@@ -159,6 +201,21 @@ const [selectedEmployee3, setSelectedEmployee3] = useState(initialTab3);
           ))}
       </select>
     )}
+
+
+<select 
+       className="select2"
+       value={selectedClient}
+       onChange={(e) => changeTab4(e.target.value)}
+     >
+       <option value="All">All Clients</option>
+       {myclients
+         .map((employee) => (
+           <option key={employee._id} value={employee.clientName}>
+             {employee.clientName}
+           </option>
+         ))}
+     </select>
 
     <select
     
@@ -188,17 +245,25 @@ const [selectedEmployee3, setSelectedEmployee3] = useState(initialTab3);
     </select>
 
     <select
-     
-      className="select2"
-      value={selectedYear}
-      onChange={(e) => setSelectedYear(e.target.value)}
-    >
-      {Array.from({ length: 31 }, (_, i) => 2020 + i).map((year) => (
-        <option key={year} value={year}>
-          {year}
-        </option>
-      ))}
-    </select>
+  className="select2"
+  value={selectedYear}
+  onChange={(e) => setSelectedYear(e.target.value)}
+>
+  <option value="" >Select Year</option>
+  {[...new Set(
+    (selectedClient === "All"
+      ? displayedItems?.flatMap(client => client.payments || [])
+      : displayedItems?.find(f => f.clientName === selectedClient)?.payments || []
+    ).map(payment => new Date(payment?.date).getFullYear())
+  )].sort((a, b) => a - b).map((year) => (
+    <option key={year} value={year}>
+      {year}
+    </option>
+  ))}
+</select>
+
+
+
 
   </div>
 </div>
@@ -208,7 +273,7 @@ const [selectedEmployee3, setSelectedEmployee3] = useState(initialTab3);
             <thead className=" ">
               <tr className="tr1">
               <th className="text-center">Items {myclients?.flatMap(client => client.payments || [])?.length}</th>
-              <th>Payment Date</th>
+              <th>Date</th>
               <th>Client Name</th>
               <th> Amount</th>
               <th className="text-center">Payment Method</th>
@@ -217,73 +282,106 @@ const [selectedEmployee3, setSelectedEmployee3] = useState(initialTab3);
             </tr>
           </thead>
           <tbody>
-            {displayedItems
-  ?.flatMap((client) => client.payments || [])
-  ?.filter((payment) => {
-    const paymentYear = new Date(payment?.date).getFullYear();
-    const paymentMonth = new Date(payment?.date).getMonth() + 1;
-
-    return (
-      (!selectedCategory || 
-       selectedCategory === "All" || 
-       payment?.paymentMethod === selectedCategory) &&
-      (!selectedYear || paymentYear === parseInt(selectedYear, 10)) &&
-      (sortMonth === "all" || paymentMonth === parseInt(sortMonth, 10))
-    );
-  })
-  ?.map((payment, index) => (
+          {(selectedClient === "All" 
+  ? displayedItems?.flatMap(client => client.payments || []) 
+  : displayedItems?.find(f => f.clientName === selectedClient)?.payments || []
+)?.filter(payment => {
+  const paymentYear = new Date(payment?.date).getFullYear();
+  const paymentMonth = new Date(payment?.date).getMonth() + 1;
+  return (!selectedCategory || selectedCategory === "All" || payment?.paymentMethod === selectedCategory) &&
+         (!selectedYear || paymentYear === parseInt(selectedYear, 10)) &&
+         (sortMonth === "all" || paymentMonth === parseInt(sortMonth, 10));
+})?.map((payment, index) => (
               <tr
               key={payment?._id}
               className={`tr2`}
             >
                 <td className=" text-center">
                 
-                        <div className="f-center">
-                        <button
-    className=" delete"
-    onClick={() => handledelete(payment.ids ,payment.id)}
-  >
-    <FaMinusSquare  />
-  </button>
-                        </div>
-                </td>
+                <div className="f-center">
+                <button
+className=" delete"
+onClick={() => handledelete(payment.ids ,payment.id)}
+>
+<FaMinusSquare  />
+</button>
+<button
+className=" edit"
+onClick={() => setModalData(payment)}
+>
+<FaEdit  />
+</button>
+                </div>
+
+                      
+
+               
+        </td>
                 <td >
                   {new Date(payment?.date).toLocaleDateString("en-GB")}
                 </td>
-                <td>
-                <Link to={`/dashboard/client/${payment?.clientEmail}`}>
+                <td className="hover:font-bold">
+                <Link  to={`/client/${payment?.clientEmail}`}>
                 {payment?.clientName}
                 </Link>
                 </td>
                 <td
 >
-  ৳{' '}
-  {new Intl.NumberFormat('en-IN').format(
-    parseFloat(payment?.amount || 0) // Use 0 as a fallback if payment.amount is null or undefined
-  )}
+  ৳ {payment?.amount || 0}
                </td>
-                <td>
+               <td>
   {[
-    { method: "bkashMarchent", src: "https://i.ibb.co/bHMLyvM/b-Kash-Merchant.png" },
-    { method: "bkashPersonal", src: "https://i.ibb.co/520Py6s/bkash-1.png" },
-    { method: "rocketPersonal", src: "https://i.ibb.co/QkTM4M3/rocket.png" },
-    { method: "nagadPersonal", src: "https://i.ibb.co/JQBQBcF/nagad-marchant.png" },
-    { method: "nagadMarchent", src: "https://i.ibb.co.com/WsDkLzc/Nagad-Marchant.png" },
-    { method: "DBBLBank", src: "https://i.ibb.co.com/nnN8KW0/DBBL.png", size: "h-12 w-13" },
-    { method: "IBBLBank", src: "https://i.ibb.co.com/yfMSDcd/IBBL.png", size: "h-12 w-13" },
-    { method: "bank", src: "https://i.ibb.co/PZc0P4w/brac-bank-seeklogo.png", size: "h-12 w-13" },
+    { 
+      method: "bkashMarchent", 
+      src: "https://i.ibb.co/bHMLyvM/b-Kash-Merchant.png" 
+    },
+    { 
+      method: "bkashPersonal", 
+      src: "https://i.ibb.co/520Py6s/bkash-1.png" 
+    },
+    { 
+      method: "rocketPersonal", 
+      src: "https://i.ibb.co/QkTM4M3/rocket.png" 
+    },
+    { 
+      method: "nagadPersonal", 
+      src: "https://i.ibb.co/JQBQBcF/nagad-marchant.png" 
+    },
+    { 
+      method: "nagadMarchent", 
+      src: "https://i.ibb.co/WsDkLzc/Nagad-Marchant.png" 
+    },
+    { 
+      method: "DBBLBank", 
+      src: "https://i.ibb.co/nnN8KW0/DBBL.png", 
+      width: "w-32", 
+      height: "h-10" 
+    },
+    { 
+      method: "IBBLBank", 
+      src: "https://i.ibb.co/yfMSDcd/IBBL.png", 
+      width: "w-32", 
+      height: "h-10" 
+    },
+    { 
+      method: "bank", 
+      src: "https://i.ibb.co/PZc0P4w/brac-bank-seeklogo.png", 
+      width: "w-13", 
+      height: "h-12" 
+    },
   ].map(
-    ({ method, src, size = "h-10 w-24" }) =>
+    ({ method, src, width = "w-24", height = "h-10" }) =>
       payment?.paymentMethod === method && (
         <img
           key={method}
-          className={`${size} flex mx-auto my-auto items-center justify-center`}
+          className={`${height} ${width} flex my-auto items-center mx-auto justify-center`}
           src={src}
           alt={method}
         />
       )
   )}
-                </td>
+</td>
+
                 <td>
                   {payment?.note}
                 </td>
@@ -295,8 +393,16 @@ const [selectedEmployee3, setSelectedEmployee3] = useState(initialTab3);
                 Total :
             </td>
             <td>
-  ৳ {new Intl.NumberFormat('en-IN').format(myclients
-  ?.flatMap(client => client.payments || [])?.reduce(
+  ৳ {new Intl.NumberFormat('en-IN').format((selectedClient === "All" 
+  ? displayedItems?.flatMap(client => client.payments || []) 
+  : displayedItems?.find(f => f.clientName === selectedClient)?.payments || []
+)?.filter(payment => {
+  const paymentYear = new Date(payment?.date).getFullYear();
+  const paymentMonth = new Date(payment?.date).getMonth() + 1;
+  return (!selectedCategory || selectedCategory === "All" || payment?.paymentMethod === selectedCategory) &&
+         (!selectedYear || paymentYear === parseInt(selectedYear, 10)) &&
+         (sortMonth === "all" || paymentMonth === parseInt(sortMonth, 10));
+})?.reduce(
       (acc, payment) => acc + parseFloat(payment?.amount || 0),
       0
     ).toFixed(0))}
@@ -307,6 +413,85 @@ const [selectedEmployee3, setSelectedEmployee3] = useState(initialTab3);
         </table>
       </div>
       </div>
+      {payment && (
+                      <dialog className="modal" open>
+                      <div className="modal-box text-black bg-white font-bold">
+                      <form onSubmit={(e) => handleUpdatePayment(e, payment.ids ,payment.id)}>
+                      <div className="mb-4">
+                          <label className="block text-left text-gray-700">Date</label>
+                          <input
+                            type="date"
+                            defaultValue={payment?.date}
+                            name="date"
+                            className="input2"
+                          />
+                        </div>
+                        <div className="mb-4">
+                          <label className="block text-left text-gray-700">Amount</label>
+                          <input
+                            type="number"
+                            name="amount"
+                            defaultValue={payment?.amount}
+                            className="input2"
+                          />
+                        </div>
+                        
+                        <div className="mb-4">
+                        <div className="mt-2 grid lg:grid-cols-3">
+                      {[
+                      { value: "bank", label: "Brack Bank" },
+                      { value: "DBBLBank", label: "DBBL Bank" },
+                      { value: "IBBLBank", label: "Islami Bank" },
+                      { value: "bkashMarchent", label: "Bkash Marchent" },
+                      { value: "bkashPersonal", label: "bKash Personal" },
+                      { value: "nagadPersonal", label: "Nagad Personal" },
+                      { value: "rocketPersonal", label: "Rocket Personal" },
+                      ].map(({ value, label }) => (
+                      <div className="form-control" key={value}>
+                      <label className="label flex justify-start items-center gap-2 cursor-pointer">
+                      <input
+                        type="radio"
+                        name="paymentMethod"
+                        value={value}
+                        defaultChecked={payment.paymentMethod === value}
+                        className="radio radio-primary"
+                      />
+                      <span className="label-text text-black">{label}</span>
+                      </label>
+                      </div>
+                      ))}
+                      </div>
+                      
+                      </div>
+                        <div className="mb-4">
+                          <label className="block text-left text-gray-700">Note</label>
+                          <input
+                            type="text"
+                            name="note"
+                            defaultValue={payment?.note}
+                            className="input2"
+                          />
+                        </div>
+                      
+                        <div className="grid grid-cols-2 gap-3 mt-4">
+                          <button
+                            type="button"
+                            className="close"
+                            onClick={() => setModalData(null)}
+                          >
+                            Close
+                          </button>
+                          <button
+                            type="submit"
+                            className="add"
+                          >
+                            Update
+                          </button>
+                        </div>
+                      </form>
+                      </div>
+                      </dialog>
+                      )}
         {isMoreItems && <p className="text-center mt-5">Loading more clients...</p>}
     </div>
   );

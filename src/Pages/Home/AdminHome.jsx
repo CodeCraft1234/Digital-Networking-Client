@@ -24,7 +24,7 @@ import PieChart from "./PieChart";
 import RadarChart from "./RaderChart";
 import useClientsCampaingss from "../../Hook/useClientCampaingss";
 import { AuthContext } from "../../Security/AuthProvider";
-import { useContext, useEffect } from "react";
+import { useContext } from "react";
 import useUserr from "../../Hook/useUser";
 import useMyEmployeePayments from "../../Hook/useMyemployeePayments";
 import useOnlyClientEmailByEmail from "../../Hook/useOnlyClientEmailByEmail";
@@ -46,7 +46,6 @@ const AdminHome = () => {
   
   
   const [clientsCampaingss]=useClientsCampaingss(userr?.role === "admin" ? "all" : user?.email)
-  console.log(onlyClientEmails,clientsCampaingss);
 
   const [MyEmployeePayment] = useMyEmployeePayments(
     userr?.role === "admin" ? "all" : user?.email
@@ -54,7 +53,6 @@ const AdminHome = () => {
   
 
 
-  
   const today = new Date();
   const startOfWeek = new Date(today.getFullYear(), today.getMonth(), today.getDate() - today.getDay());
   const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
@@ -612,7 +610,7 @@ const monthlyTotal = clientsPayments
                 })}
               </td>
               <td className="p-3 border-b border-gray-300 text-sm">
-                {a.user.split(" ")[0]}
+                {a.user?.split(" ")[0]}
               </td>
               <td className="p-3 border-b border-gray-300 text-sm">{a.title}</td>
             </tr>

@@ -8,7 +8,9 @@ const BalanceCard = ({ img, amount }) => {
         <img className="logo" src={img} alt="bKash Merchant" />
         <p className="card-title">
           <span>৳</span>
-          {amount}
+          {new Intl.NumberFormat("en-IN", {
+            maximumFractionDigits: 2,
+          }).format(isNaN(amount) ? 0 : amount)}
         </p>
       </div>
     </div>
