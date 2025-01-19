@@ -151,7 +151,7 @@ const NavBar = () => {
       </li>
       <li>
         <NavLink
-          to="/myCampaigns"
+          to="/campaigns"
           className="text-white bg-red-800 hover:bg-green-300 hover:text-black"
           activeClassName="bg-green-300"
         >

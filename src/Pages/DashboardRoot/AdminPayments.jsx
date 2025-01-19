@@ -335,7 +335,7 @@ const AdminPayments = () => {
   const cards = [
     { category: 'bank', img: 'https://i.ibb.co/PZc0P4w/brac-bank-seeklogo.png', bgColor: '#f2f2f2' },
     { category: 'DBBLBank', img: 'https://i.ibb.co/nnN8KW0/DBBL.png', bgColor: '#f2f2f2' },
-    { category: 'IBBLBank', img: 'https://i.ibb.co/yfMSDcd/IBBL.png', bgColor: '#f2f2f2' },
+    { category: 'IBBLBank', img: 'https://i.ibb.co.com/pnS6nt4/IBBLBank.png', bgColor: '#f2f2f2' },
     { category: 'bkashPersonal', img: 'https://i.ibb.co/520Py6s/bkash-1.png', bgColor: '#ffe6f7' },
     { category: 'nagadPersonal', img: 'https://i.ibb.co/JQBQBcF/nagad-marchant.png', bgColor: '#fff2cc' },
   ];
@@ -512,26 +512,8 @@ const AdminPayments = () => {
         
         <div className="flex mt-2  lg:mt-0 justify-center text-center gap-2 lg:gap-3 items-center">
 
-            {userr?.role === "admin" ? (
-      <select
-        
-        className="select2"
-        value={selectedEmployee3}
-        onChange={(e) => changeTab2(e.target.value)}
-      >
-        <option value="all">Select Digital Marketer</option>
-        {users
-          .filter((u) => u.role === "employee")
-          .map((employee) => (
-            <option key={employee._id} value={employee.email}>
-              {employee.name}
-            </option>
-          ))}
-      </select>
-              ) : (
-             <></>
-               )}
-         <div style={{ position: "relative", display: "inline-block" }}>
+       
+         {/* <div style={{ position: "relative", display: "inline-block" }}>
         <button
           onClick={() => setShowCalendar(!showCalendar)}
           className="calendar-icon-button"
@@ -552,13 +534,37 @@ const AdminPayments = () => {
               selected={selectedDate}
               onChange={(date) => {
                 setSelectedDate(date);
-                setShowCalendar(false); // Close calendar after selecting a date
+                setShowCalendar(false); 
               }}
               inline
             />
           </div>
         )}
-      </div>
+      </div> */}
+
+      {/* <h1 style={{ backgroundColor: '#f7e8e8', border: 'var(--border)' }}  className="rounded-lg p-2 text-black">
+        {selectedDate ? selectedDate.toLocaleDateString() : "No Date Selected"}
+      </h1> */}
+
+{userr?.role === "admin" ? (
+      <select
+        
+        className="select2"
+        value={selectedEmployee3}
+        onChange={(e) => changeTab2(e.target.value)}
+      >
+        <option value="all">Select Digital Marketer</option>
+        {users
+          .filter((u) => u.role === "employee")
+          .map((employee) => (
+            <option key={employee._id} value={employee.email}>
+              {employee.name}
+            </option>
+          ))}
+      </select>
+              ) : (
+             <></>
+               )}
 
 <select
   className="select2"
@@ -819,7 +825,7 @@ const AdminPayments = () => {
     },
     { 
       method: "IBBLBank", 
-      src: "https://i.ibb.co.com/yfMSDcd/IBBL.png", 
+      src: "https://i.ibb.co.com/pnS6nt4/IBBLBank.png", 
       width: "w-32" 
     },
     { 

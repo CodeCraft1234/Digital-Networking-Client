@@ -51,7 +51,7 @@ const MonthlySalary = () => {
         return payDate.toLocaleString('default', { month: 'long' }) === sortMonth && payDate.getFullYear() === selectedYear;
       });
 
-      const totalSpent = monthlySpentData.reduce((acc, spent) => acc + spent.totalSpentt, 0);
+      const totalSpent = monthlySpentData?.filter(f=>f.role === 'metaSpend' && 'googleSpend').reduce((acc, spent) => acc + spent.totalSpentt, 0);
       const totalSellery = selleryData.reduce((acc, sell) => acc + sell.amount, 0);
       const totalBonus = selleryData.reduce((acc, sell) => acc + sell.bonus, 0);
       const totalAdminPay = adminPayData.reduce((acc, pay) => acc + pay.adminPayAmount, 0);
@@ -335,7 +335,7 @@ const MonthlySalary = () => {
   ৳ {users
     ?.filter(e => e.email === user?.email)
     .map(user => user.adminPayments?.reduce((acc, curr) => acc + (parseFloat(curr.payAmount) || 0), 0) || 0)[0]
-    .toFixed(2)}
+    ?.toFixed(2)}
 </td>
 
 

@@ -1,7 +1,4 @@
 import { useState } from 'react';
-import EmployeePayments from './EmployeePayments';
-import AllClientsPayments from './AllClientsPayments';
-import AllAdsPayments from '../DashboardRoot/ContributorPayments.jsx';
 import { Helmet } from 'react-helmet-async';
 import Sellery from '../DashboardRoot/Salary.jsx';
 import DeveloperSellery from '../DashboardRoot/DeveloperSellery';

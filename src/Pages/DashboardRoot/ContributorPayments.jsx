@@ -348,7 +348,7 @@ const ContributorPayments = () => {
   const cards = [
     { category: 'bank', img: 'https://i.ibb.co/PZc0P4w/brac-bank-seeklogo.png', bgColor: '#f2f2f2' },
     { category: 'DBBLBank', img: 'https://i.ibb.co/nnN8KW0/DBBL.png', bgColor: '#f2f2f2' },
-    { category: 'IBBLBank', img: 'https://i.ibb.co/yfMSDcd/IBBL.png', bgColor: '#f2f2f2' },
+    { category: 'IBBLBank', img: 'https://i.ibb.co.com/pnS6nt4/IBBLBank.png', bgColor: '#f2f2f2' },
     { category: 'bkashPersonal', img: 'https://i.ibb.co/520Py6s/bkash-1.png', bgColor: '#ffe6f7' },
     { category: 'nagadPersonal', img: 'https://i.ibb.co/JQBQBcF/nagad-marchant.png', bgColor: '#fff2cc' },
   ];
@@ -532,31 +532,46 @@ const ContributorPayments = () => {
              <></>
                )}
 
-            <select
-              className=" select2"
-              value={sortMonth}
-              onChange={(e) => changeTab(e.target.value)}
-            >
-              <option value="">Select Month</option>
-              {[
-                "January",
-                "February",
-                "March",
-                "April",
-                "May",
-                "June",
-                "July",
-                "August",
-                "September",
-                "October",
-                "November",
-                "December",
-              ].map((month, index) => (
-                <option key={index + 1} value={index + 1}>
-                  {month}
-                </option>
-              ))}
-            </select>
+<select
+  className="select2"
+  value={sortMonth}
+  onChange={(e) => changeTab(e.target.value)}
+>
+  <option value="">Select Month</option>
+  {[
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+  ]
+    .map((month, index) => {
+      // Get the unique months from the data
+      const monthsInData = [
+        ...new Set(
+          displayedItems?.map(item => new Date(item.date).getMonth() + 1) // Get months from the displayedItems data
+        ),
+      ];
+
+      // Check if the month is in the data
+      if (monthsInData.includes(index + 1)) {
+        return (
+          <option key={index} value={index + 1}>
+            {month}
+          </option>
+        );
+      }
+      return null;
+    })
+    .filter(option => option !== null)}
+</select>
 
 
             <select
@@ -741,7 +756,7 @@ const ContributorPayments = () => {
     },
     { 
       method: "IBBLBank", 
-      src: "https://i.ibb.co.com/yfMSDcd/IBBL.png", 
+      src: "https://i.ibb.co.com/pnS6nt4/IBBLBank.png", 
       width: "w-32" 
     },
     { 

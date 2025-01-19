@@ -199,38 +199,71 @@ localStorage.setItem("activeTabalu", tab);
 
 
 
-  <select
-   className="select2"
-    value={sortMonth}
-    onChange={(e) => changeTab2(e.target.value)}
-  >
-    <option  value='all'>Select Month</option>
-    {['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
-      .map((month, index) => (
-        <option key={index + 1} value={index + 1}>{month}</option>
-      ))}
-  </select>
-
-  <select
+<select
   className="select2"
-  value={selectedYear}
-  onChange={(e) => setSelectedYear(e.target.value)}
+  value={sortMonth}
+  onChange={(e) => changeTab2(e.target.value)}
 >
-  <option value="">Select Year</option>
+  <option value="all">Select Month</option>
   {[
-    ...new Set(
-      myclients
-        ?.flatMap(client => client.pageService || []) // Flatten data
-        ?.map(item => new Date(item.date).getFullYear()) // Extract years
-    ),
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
   ]
-    .sort((a, b) => a - b) // Sort years in ascending order
-    .map(year => (
-      <option key={year} value={year}>
-        {year}
-      </option>
-    ))}
+    .map((month, index) => {
+      // Get the unique months from the myclients data
+      const monthsInData = [
+        ...new Set(
+          myclients
+            ?.flatMap(client => client.pageService || []) // Flatten pageService array
+            ?.map(item => new Date(item.date).getMonth() + 1) // Extract months (1-based index)
+        ),
+      ];
+
+      // Check if the month is in the data
+      if (monthsInData.includes(index + 1)) {
+        return (
+          <option key={index} value={index + 1}>
+            {month}
+          </option>
+        );
+      }
+      return null;
+    })
+    .filter(option => option !== null)} {/* Filter out null values */}
 </select>
+
+
+      {/* Year Filter Dropdown */}
+      <select
+        className="select2"
+        value={selectedYear}
+        onChange={(e) => setSelectedYear(e.target.value)}
+      >
+        <option value="">Select Year</option>
+        {[
+          ...new Set(
+            myclients
+              ?.flatMap(client => client.pageService || []) // Flatten data
+              ?.map(item => new Date(item.date).getFullYear()) // Extract years
+          ),
+        ]
+          .sort((a, b) => a - b) // Sort years in ascending order
+          .map((year) => (
+            <option key={year} value={year}>
+              {year}
+            </option>
+          ))}
+      </select>
 
 
   <select

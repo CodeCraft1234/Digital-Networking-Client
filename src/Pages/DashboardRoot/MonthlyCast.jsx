@@ -3,17 +3,17 @@ import { Helmet } from 'react-helmet-async';
 import useMyClientsByEmail from '../../Hook/useMyClientsByEmail';
 import useAllEmployee from '../../Hook/useAllEmployee';
 import useMyEmployeePayments from '../../Hook/useMyemployeePayments';
-import useUsers from '../../Hook/useUsers';
 import { AuthContext } from '../../Security/AuthProvider';
 import useUserr from '../../Hook/useUser';
 import useMyUser from '../../Hook/useMyUser';
 import SummaryCard from '../Home/SummeryCard';
+import useMySalaryPayments from '../../Hook/useMySalaryPayment';
 
 const months = [
   'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'
 ];
 
-const MarketerSummery = () => {
+const MonthlyCast = () => {
   const {user}=useContext(AuthContext)
   const [allEmployees]=useAllEmployee()
   const {userr}=useUserr(user?.email)
@@ -27,6 +27,7 @@ const MarketerSummery = () => {
   const [myclients]=useMyClientsByEmail(selectedEmployee)
   const [myUser]=useMyUser(selectedEmployee)
   const [MyEmployeePayment]=useMyEmployeePayments(selectedEmployee)
+  const [MySalaryPayment]=useMySalaryPayments(selectedEmployee)
 
   const changeTab = (tab) => {
     setSelectedEmployee(tab);
@@ -52,12 +53,13 @@ const MarketerSummery = () => {
 
     return relevantUsers.flatMap(user => {
 
-      const paymentByMonth = MyEmployeePayment.filter(m=>m.status === 'Approved')
+      const paymentSalaryByMonth = MySalaryPayment
       .reduce((acc, payment) => {
         const month = new Date(payment.date).toLocaleString('default', { month: 'long' });
         acc[month] = (acc[month] || 0) + parseFloat(payment.payAmount);
         return acc;
       }, {});
+
       const paymentByMonthCharge = MyEmployeePayment.filter(m=>m.status === 'Approved')
       .reduce((acc, payment) => {
         const month = new Date(payment.date).toLocaleString('default', { month: 'long' });
@@ -100,29 +102,30 @@ const MarketerSummery = () => {
         }, []);
       
       const totalSpent = monthlySpentData.reduce((acc, spent) => acc + spent.totalSpentt, 0);
-      const totalSpentMeta = monthlySpentData?.filter(f=>f.role === 'metaSpend').reduce((acc, spent) => acc + spent.totalSpentt, 0);
-      const totalSpentGoogle = monthlySpentData?.filter(f=>f.role === 'googleSpend').reduce((acc, spent) => acc + spent.totalSpentt, 0);
+
+      const totalSpentMeta = monthlySpentData?.filter(f=>f.role === 'pageSpend').reduce((acc, spent) => acc + spent.totalSpentt, 0);
+
+      const totalMetaData = monthlySpentData?.filter(f=>f.role === 'metaSpend' && 'googleSpend').reduce((acc, spent) => acc + spent.totalSpentt, 0);
 
         const selleryData = (user?.sellery || []).filter(sell => sell.month === month);
         const totalSellery = selleryData.reduce((acc, sell) => acc + sell.amount, 0);
         const totalBonus = selleryData.reduce((acc, sell) => acc + sell.bonus, 0);
-        const totalAdminPay = parseFloat(paymentByMonth[month] || 0) + parseFloat(paymentByMonthCharge[month] || 0);
-        const totalClientPay = paymentByMonth2[month] || 0;
+        const totalAdminPay = parseFloat(paymentByMonthCharge[month] || 0);
+        const totalSalaryPay = parseFloat(paymentSalaryByMonth[month] || 0);
 
         return {
           month,
           totalSpentMeta,
-          totalSpentGoogle,
           totalSpent,
           totalSellery,
           totalBonus,
-          totalBill: totalSpent * 142,
-          totalMeta: totalSpentMeta * 142,
-          totalGoogle: totalSpentGoogle * 150,
+          totalMetaData,
+          totalBill: totalMetaData * 7,
+          totalMeta: totalSpentMeta * 130,
           totalDue: totalSpent * 142 - totalAdminPay,
           totalSelleryPaid: totalSpent * 7 - totalSellery,
           totalAdminPay,
-          totalClientPay 
+          totalSalaryPay,
         };
       }).sort((a, b) => months.indexOf(a.month) - months.indexOf(b.month)); // Sort by month
     });
@@ -131,67 +134,19 @@ const MarketerSummery = () => {
   return (
     <div className=''>
       <Helmet>
-        <title>Summery | Digital Network </title>
+        <title>Monthly Cast | Digital Network </title>
         <link rel="canonical" href="https://www.example.com/" />
       </Helmet>
 
       
-<div  className="grid grid-cols-2  rounded-lg md:grid-cols-2 lg:grid-cols-6 text-black sm:grid-cols-2 gap-5 justify-around">
+<div  className="grid grid-cols-2  rounded-lg md:grid-cols-2 lg:grid-cols-5 text-black sm:grid-cols-2 gap-5 justify-around">
 
-<SummaryCard title="Total Spent" value={new Intl.NumberFormat('en-IN').format(employeeData.reduce((acc, data) => acc + data.totalSpent, 0).toFixed(2))} />
+<SummaryCard title="Total Spend" value={new Intl.NumberFormat('en-IN').format(employeeData.reduce((acc, data) => acc + data.totalSpent, 0).toFixed(2))} />
 <SummaryCard title="Total BDT" value={new Intl.NumberFormat('en-IN').format(employeeData.reduce((acc, data) => acc + data.totalBill, 0).toFixed(0))} />
-<SummaryCard title="Employee Pay" value={new Intl.NumberFormat('en-IN').format(employeeData.reduce((acc, data) => acc + data.totalAdminPay, 0).toFixed(0))} />
-<SummaryCard title="Client Pay" value={new Intl.NumberFormat('en-IN').format(
-  myclients
-  ?.flatMap(client => client.payments || [])?.reduce((acc, payment) => acc + parseFloat(payment?.amount || 0), 0)
-)} />
+<SummaryCard title="Charge" value={new Intl.NumberFormat('en-IN').format(employeeData.reduce((acc, data) => acc + data.totalAdminPay, 0).toFixed(0))} />
+<SummaryCard title="Salary Pay" value={new Intl.NumberFormat('en-IN').format(employeeData.reduce((acc, data) => acc + data.totalSalaryPay, 0).toFixed(0))} />
 
-<SummaryCard
-  title={(() => {
-    const result =
-      employeeData.reduce((acc, data) => acc + data.totalBill, 0) -
-      employeeData.reduce((acc, data) => acc + data.totalAdminPay, 0);
-    if (result < 0) {
-      return "Employee Advance"; // Show this when the result is negative
-    } else if (result > 0) {
-      return "Employee Due"; // Show this when the result is positive
-    } else {
-      return "Employee Clear"; // Show this when the result is 0
-    }
-  })()}
-  value={new Intl.NumberFormat("en-IN").format(
-    Math.abs(
-      employeeData.reduce((acc, data) => acc + data.totalBill, 0) -
-      employeeData.reduce((acc, data) => acc + data.totalAdminPay, 0)
-    ).toFixed(0)
-  )}
-/>
-
-<SummaryCard
-  title={(() => {
-    const result =
-      employeeData.reduce((acc, data) => acc + data.totalBill, 0) -
-      myclients
-        ?.flatMap((client) => client.payments || [])
-        ?.reduce((acc, payment) => acc + parseFloat(payment?.amount || 0), 0);
-
-    if (result < 0) {
-      return "Client Advance"; // Show this when the result is negative
-    } else if (result > 0) {
-      return "Client Due"; // Show this when the result is positive
-    } else {
-      return "Client Clear"; // Show this when the result is 0
-    }
-  })()}
-  value={new Intl.NumberFormat("en-IN").format(
-    Math.abs(
-      employeeData.reduce((acc, data) => acc + data.totalBill, 0) -
-      myclients
-        ?.flatMap((client) => client.payments || [])
-        ?.reduce((acc, payment) => acc + parseFloat(payment?.amount || 0), 0)
-    ).toFixed(0)
-  )}
-/>
+<SummaryCard title="Total Cast" value={new Intl.NumberFormat('en-IN').format(employeeData.reduce((acc, data) => acc + data.totalMeta + data.totalAdminPay +  data.totalSalaryPay, 0).toFixed(0))} />
 
 
 </div>
@@ -209,6 +164,7 @@ const MarketerSummery = () => {
         value={selectedEmployee}
         onChange={(e) => changeTab(e.target.value)}
       >
+        <option value="all">Select Digital Marketer</option>
         {allEmployees
           .filter((u) => u.role === "employee")
           .map((employee) => (
@@ -228,14 +184,11 @@ const MarketerSummery = () => {
             <thead className=" ">
               <tr className="tr1">
               <th>Month</th>
-              <th>Meta Spend</th>
-              <th>Meta BDT</th>
-              <th>Google Spend</th>
-              <th>Google BDT</th>
+              <th>Page Spend</th>
+              <th>Page BDT</th>
+              <th>Charge</th>
+              <th>Salary</th>
               <th>Total BDT</th>
-              <th>Admin Pay</th>
-              <th>Client Pay</th>
-              <th>Due</th>
             </tr>
           </thead>
           <tbody>
@@ -254,23 +207,17 @@ const MarketerSummery = () => {
   ৳{new Intl.NumberFormat('en-IN', { maximumFractionDigits: 0 }).format(data.totalMeta)}
 </td>
 <td>
-  ${new Intl.NumberFormat('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(data.totalSpentGoogle)}
-</td>
-<td>
-  ৳{new Intl.NumberFormat('en-IN', { maximumFractionDigits: 0 }).format(data.totalGoogle)}
-</td>
-<td>
-  ৳{new Intl.NumberFormat('en-IN', { maximumFractionDigits: 0 }).format(data.totalGoogle + data.totalMeta)}
-</td>
-<td>
   ৳{new Intl.NumberFormat('en-IN', { maximumFractionDigits: 0 }).format(data.totalAdminPay)}
 </td>
+
+
 <td>
-  ৳{new Intl.NumberFormat('en-IN', { maximumFractionDigits: 0 }).format(data.totalClientPay)}
+  ৳{new Intl.NumberFormat('en-IN', { maximumFractionDigits: 0 }).format(data.totalBill)}
 </td>
 <td>
-  ৳{new Intl.NumberFormat('en-IN', { maximumFractionDigits: 0 }).format((data.totalGoogle + data.totalMeta) - data.totalAdminPay)}
-</td> 
+  ৳{new Intl.NumberFormat('en-IN', { maximumFractionDigits: 0 }).format(data.totalSalaryPay + data.totalMeta + data.totalAdminPay)}
+</td>
+
     </tr>
   ))}
 
@@ -288,22 +235,7 @@ const MarketerSummery = () => {
     employeeData.reduce((acc, data) => acc + data.totalMeta, 0)
   )}
 </td>
-    <td>
-  $ {new Intl.NumberFormat('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(
-    employeeData.reduce((acc, data) => acc + data.totalSpentGoogle, 0)
-  )}
-</td>
-    <td>
-    ৳ {new Intl.NumberFormat('en-IN', { minimumFractionDigits: 0, maximumFractionDigits: 2 }).format(
-    employeeData.reduce((acc, data) => acc + data.totalGoogle, 0)
-  )}
-</td>
-<td>
-  ৳ {new Intl.NumberFormat('en-IN', { maximumFractionDigits: 0 }).format(
-    employeeData.reduce((acc, data) => acc + data.totalGoogle , 0) + 
-    employeeData.reduce((acc, data) => acc + data.totalMeta , 0)
-  )}
-</td>
+    
 <td>
   ৳ {new Intl.NumberFormat('en-IN', { maximumFractionDigits: 0 }).format(
     employeeData.reduce((acc, data) => acc + data.totalAdminPay, 0)
@@ -311,17 +243,16 @@ const MarketerSummery = () => {
 </td>
 <td>
   ৳ {new Intl.NumberFormat('en-IN', { maximumFractionDigits: 0 }).format(
-    myclients
-    ?.flatMap(client => client.payments || [])?.reduce((acc, payment) => acc + parseFloat(payment?.amount || 0), 0)
+    employeeData.reduce((acc, data) => acc + data.totalSalaryPay, 0)
   )}
 </td>
 <td>
   ৳ {new Intl.NumberFormat('en-IN', { maximumFractionDigits: 0 }).format(
-    myclients
-    ?.flatMap(client => client.payments || [])?.reduce((acc, payment) => acc + parseFloat(payment?.amount || 0), 0) -
-    employeeData.reduce((acc, data) => acc + data.totalAdminPay, 0)
+    employeeData.reduce((acc, data) => acc + data.totalMeta + data.totalAdminPay +  data.totalSalaryPay, 0)
   )}
 </td>
+
+
   </tr>
 </tfoot>
 
@@ -333,4 +264,6 @@ const MarketerSummery = () => {
   );
 };
 
-export default MarketerSummery;
+export default MonthlyCast;
+
+

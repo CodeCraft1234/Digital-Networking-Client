@@ -8,7 +8,6 @@ import { FaEdit, FaMinusSquare } from "react-icons/fa";
 import useUserr from "../../Hook/useUser";
 import useUsers from "../../Hook/useUsers";
 import useMySalaryPayments from "../../Hook/useMySalaryPayment";
-import useUserr2 from "../../Hook/useUser2";
 import useAllEmployee from "../../Hook/useAllEmployee";
 import BalanceCard from "../DashboardRoot/BalanceCard";
 
@@ -29,7 +28,6 @@ const SalaryPayments = () => {
     localStorage.setItem("a99", tab);
   };
 
-  
   const initialTab3 =
   userr?.role === "admin"
   ? localStorage.getItem(`ac${user?.email}`) || "all" 
@@ -57,19 +55,10 @@ const SalaryPayments = () => {
     localStorage.setItem("activeTaballClientspayss", tab); 
   };
 
-  const initialStatus = localStorage.getItem("activeTabSelectedStatuss") || 'All';
-  const [selectedStatus2, setSelectedStatus2] = useState(initialStatus);
-
-  const changeTab3 = (tab) => {
-    setSelectedStatus2(tab);
-    localStorage.setItem("activeTabSelectedStatuss", tab);
-  };
-
   useEffect(() => {
     const filtered = MySalaryPayment.filter((payment) => {
       const paymentDate = new Date(payment.date);
       return (
-        (selectedStatus2 === 'All' || payment.status === selectedStatus2) &&
         (!sortMonth || paymentDate.getMonth() + 1 === parseInt(sortMonth)) &&
 
         (selectedCategory === 'All' || selectedCategory === '' || payment.paymentMethod === selectedCategory) &&
@@ -83,7 +72,6 @@ const SalaryPayments = () => {
     sortMonth,
     selectedCategory, 
     MySalaryPayment,
-    selectedStatus2,
     selectedYear,
   ]);
 
@@ -91,7 +79,6 @@ const SalaryPayments = () => {
     const filtered = MySalaryPayment.filter((payment) => {
       const paymentDate = new Date(payment.date);
       return (
-        (selectedStatus2 === 'All' || payment.status === selectedStatus2) &&
         (!sortMonth || paymentDate.getMonth() + 1 === parseInt(sortMonth)) &&
         (!selectedYear || paymentDate.getFullYear() === parseInt(selectedYear))
       );
@@ -102,7 +89,6 @@ const SalaryPayments = () => {
     sortMonth,
     selectedCategory, 
     MySalaryPayment,
-    selectedStatus2,
     selectedYear,
   ]);
   
@@ -214,7 +200,7 @@ const SalaryPayments = () => {
     const date = e.target.date.value;
     const note = e.target.note.value;
     const paymentMethod = e.target.paymentMethod.value;
-    const updatedPaymentData = { status, note, payAmount, date, paymentMethod };
+    const updatedPaymentData = { note, payAmount, date, paymentMethod };
 
     const previousAmount = payment.payAmount; 
 
@@ -318,13 +304,6 @@ const SalaryPayments = () => {
     });
   };
 
-  const options = [
-    "January", "February", "March", "April", "May", "June",
-    "July", "August", "September", "October", "November", "December"
-  ];
-
-  
-  const years = Array.from({ length: 31 }, (_, i) => 2020 + i);
   return (
     <div className="">
       <ToastContainer />
@@ -338,7 +317,7 @@ const SalaryPayments = () => {
 <BalanceCard  img={`https://i.ibb.co.com/nnN8KW0/DBBL.png`} amount={DBBLBankTotal}></BalanceCard>
 </div>
 <div onClick={() => setSelectedCategory('IBBLBank')}>
-<BalanceCard  img={`https://i.ibb.co.com/yfMSDcd/IBBL.png`} amount={IBBLBankTotal}></BalanceCard>
+<BalanceCard  img={`https://i.ibb.co.com/pnS6nt4/IBBLBank.png`} amount={IBBLBankTotal}></BalanceCard>
 </div>
 <div onClick={() => setSelectedCategory('bkashPersonal')}>
 <BalanceCard  img={`https://i.ibb.co/520Py6s/bkash-1.png`} amount={bkashPersonal}></BalanceCard>
@@ -541,16 +520,46 @@ const SalaryPayments = () => {
   }
     </div>
 
-      <select
-        className="select2"
-        value={sortMonth}
-        onChange={(e) => changeTab(e.target.value)}
-      >
-        <option value="">Select Month</option>
-        {options.map((month, i) => (
-          <option key={i + 1} value={i + 1}>{month}</option>
-        ))}
-      </select>
+    <select
+  className="select2"
+  value={sortMonth}
+  onChange={(e) => changeTab(e.target.value)}
+>
+  <option value="">Select Month</option>
+  {[
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+  ]
+    .map((month, index) => {
+      // Get the unique months from the data
+      const monthsInData = [
+        ...new Set(
+          displayedItems?.map(item => new Date(item.date).getMonth() + 1) // Get months from the displayedItems data
+        ),
+      ];
+
+      // Check if the month is in the data
+      if (monthsInData.includes(index + 1)) {
+        return (
+          <option key={index} value={index + 1}>
+            {month}
+          </option>
+        );
+      }
+      return null;
+    })
+    .filter(option => option !== null)}
+</select>
 
       <select
   className="select2"
@@ -567,15 +576,8 @@ const SalaryPayments = () => {
     ))}
 </select>
 
-      <select
-        className="select2"
-        value={selectedStatus2}
-        onChange={(e) => changeTab3(e.target.value)}
-      >
-        <option value="All">All Status</option>
-        <option value="pending">Pending</option>
-        <option value="Approved">Approved</option>
-      </select>
+
+
     </div>
      </div>
 
@@ -706,7 +708,7 @@ const SalaryPayments = () => {
     { method: "rocketPersonal", src: "https://i.ibb.co/QkTM4M3/rocket.png", size: "h-10 w-24" },
     { method: "nagadPersonal", src: "https://i.ibb.co/JQBQBcF/nagad-marchant.png", size: "h-10 w-24" },
     { method: "DBBLBank", src: "https://i.ibb.co.com/nnN8KW0/DBBL.png", size: "h-10 w-32" },
-    { method: "IBBLBank", src: "https://i.ibb.co.com/yfMSDcd/IBBL.png", size: "h-10 w-32" },
+    { method: "IBBLBank", src: "https://i.ibb.co.com/pnS6nt4/IBBLBank.png", size: "h-10 w-32" },
     { method: "bank", src: "https://i.ibb.co/PZc0P4w/brac-bank-seeklogo.png", size: "h-12 w-13" },
   ].map(
     (item) =>

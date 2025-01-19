@@ -51,6 +51,12 @@ const PayoneerEmail = () => {
                 
                 {
                   userr?.role === "admin" ? <div className="f-start ">
+                      <button
+                  className="add"
+                  onClick={() => document.getElementById("my_modal_3").showModal()}
+                >
+                  My Emails
+                </button>
                    <button
                   className="add"
                   onClick={() => document.getElementById("my_modal_2").showModal()}
@@ -58,12 +64,7 @@ const PayoneerEmail = () => {
                   Add Email
                 </button>
             
-                   <button
-                  className="add"
-                  onClick={() => document.getElementById("my_modal_3").showModal()}
-                >
-                  My Emails
-                </button>
+                 
                   </div> : <></>
                 }
               

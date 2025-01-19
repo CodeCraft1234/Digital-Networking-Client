@@ -30,7 +30,7 @@ const PaymentHistory = () => {
     return (
         <div>
             <Helmet>
-                <title>{activeTab} | Digital Network</title>
+                <title>{activeTab}ment | Digital Network</title>
                 <link rel="canonical" href="https://www.example.com/" />
             </Helmet>
 

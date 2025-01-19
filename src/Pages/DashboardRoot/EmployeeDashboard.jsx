@@ -78,23 +78,13 @@ const EmployeeDashboard = () => {
                   <FaPeopleGroup className="w-6 h-6 mr-2" />
                  My Client
                 </NavLink>
-          <NavLink
-            to="/metaAds"
-            className="text-white hover:bg-[#f89320] hover:text-black py-2 px-4 rounded-lg flex items-center"
+                <NavLink
+            to="/campaigns"
+            className="text-white hover:bg-[#f89320] hover:text-black py-2 px-4 rounded-lg flex items-center text-lg"
             style={({ isActive }) => getActiveStyle(isActive)}
-            onClick={() => changeTab('metaAds')}
           >
-            <SiMeta className="w-6 h-6 mr-2" />
-            Meta Ads
-          </NavLink>
-          <NavLink
-            to="/googleAds"
-            className="text-white hover:bg-[#f89320] hover:text-black py-2 px-4 rounded-lg flex items-center"
-            style={({ isActive }) => getActiveStyle(isActive)}
-            onClick={() => changeTab('googleAds')}
-          >
-            <SiGoogleads className="w-6 h-6 mr-2" />
-            Google Ads
+            <MdCampaign className="w-6 h-6 mr-2" />
+            Campaigns
           </NavLink>
           <NavLink
             to="/pageSetup"

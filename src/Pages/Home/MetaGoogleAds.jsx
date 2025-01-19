@@ -1,4 +1,3 @@
-
 import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../../Security/AuthProvider";
 import UseAxiosPublic from "../../Axios/UseAxiosPublic";
@@ -15,7 +14,7 @@ const MetaGoogleAds = () => {
   const { user } = useContext(AuthContext);
   const {userr}=useUserr(user?.email)
 
-  const data2 = localStorage.getItem("activeTabClientProfile") || "clientCampaign";
+  const data2 = localStorage.getItem(("activeTabClientProfile") || "metaAds")
 
   const initialTab3 =
   userr?.role === "admin"
@@ -225,14 +224,13 @@ const MetaGoogleAds = () => {
   onChange={(e) => setSelectedYear(e.target.value)}
 >
   <option value="">Select Year</option> {/* Default option */}
-  {[...new Set(filteredCampaigns.map((campaign) => new Date(campaign.date).getFullYear()))]
-    .sort((a, b) => a - b) // Ensure the years are sorted in ascending order
-    .map((year) => (
-      <option key={year} value={year}>
-        {year}
-      </option>
-    ))}
+  {Array.from({ length: 2035 - 2024 + 1 }, (_, i) => 2024 + i).map((year) => (
+    <option key={year} value={year}>
+      {year}
+    </option>
+  ))}
 </select>
+
 
 
 

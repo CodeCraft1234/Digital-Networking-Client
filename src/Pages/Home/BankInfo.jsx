@@ -16,26 +16,21 @@ const BankInfo = () => {
   const [showModal, setShowModal] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [selectedBankId, setSelectedBankId] = useState(null);
-  const [bankInfo, refetch] = useBankInfo();
-  const { register, handleSubmit, formState: { errors }, reset, setValue } = useForm();
-  console.log(bankInfo);
-  const [formData, setFormData] = useState({
-    bankName: '',
-    name: '',
-    account: '',
-    branch: '',
-    district: '',
-    swiftCode: '',
-    routingNumber: '',
-    card: ''
-  });
+  const [bankInfo, refetch] = useBankInfo(); // Assuming `useBankInfo` fetches the bank info
 
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    });
-  };
+  const { register, handleSubmit, setValue, reset } = useForm({
+    defaultValues: {
+      bankName: "",
+      name: "",
+      bankingType: "",
+      account: "",
+      branch: "",
+      district: "",
+      swiftCode: "",
+      routingNumber: "",
+      card: "",
+    },
+  });
 
   const handleBankInfoSubmit = async (data) => {
     const { image, ...otherFormData } = data;
@@ -45,12 +40,11 @@ const BankInfo = () => {
       // Check if an image is uploaded
       if (image && image.length > 0) {
         const formData = new FormData();
-        formData.append("image", image[0]); // Add the image file to FormData
+        formData.append("image", image[0]);
   
         // Upload image to ImgBB
         const imgResponse = await Axios.post(image_hosting_api, formData);
   
-        // Check if the upload was successful
         if (imgResponse.data && imgResponse.data.data) {
           imageUrl = imgResponse.data.data.url;
         } else {
@@ -62,7 +56,7 @@ const BankInfo = () => {
       // Create payload with image URL
       const payload = {
         ...otherFormData,
-        imageUrl, // Add the image URL to the payload
+        imageUrl, // Add imageUrl to the payload
       };
   
       // Decide the API URL and method based on editing state
@@ -72,53 +66,39 @@ const BankInfo = () => {
       const method = isEditing ? "patch" : "post";
   
       // Post data to the server
-      const response = await Axios[method](url, payload);
+      const response = await Axios({
+        method,
+        url,
+        data: payload,
+      });
+  
+      console.log("Response data:", response.data);
   
       // Handle success
-      console.log("Response data:", response.data);
       setShowModal(false);
       refetch();
       resetForm();
     } catch (error) {
-      // Log and handle errors
       console.error("Error in submitting bank info:", error);
     }
   };
   
-  
-  // Inside your component
-
 
   const resetForm = () => {
-    setFormData({
-      bankName: '',
-      name: '',
-      account: '',
-      branch: '',
-      district: '',
-      swiftCode: '',
-      routingNumber: '',
-      card: ''
-    });
+    reset(); // Clear form fields
     setSelectedBankId(null);
     setIsEditing(false);
   };
 
   const handleEdit = (info) => {
-    setFormData({
-      bankName: info.bankName || '',
-      name: info.name || '',
-      account: info.account || '',
-      branch: info.branch || '',
-      district: info.district || '',
-      swiftCode: info.swiftCode || '',
-      routingNumber: info.routingNumber || '',
-      card: info.card || ''
+    Object.entries(info).forEach(([key, value]) => {
+      setValue(key, value || ""); // Dynamically set default values
     });
     setSelectedBankId(info._id);
     setIsEditing(true);
     setShowModal(true);
   };
+
 
   const AxiosPublic = UseAxiosPublic();
   const handleDelete = (id) => {
@@ -137,43 +117,13 @@ const BankInfo = () => {
   const { user } = useContext(AuthContext);
   const {userr}=useUserr(user?.email)
 
-const generatePDFForBank = (bankId) => {
-  const input = document.getElementById(`bank-info-${bankId}`);
-  const buttons = input.querySelector('.bank-buttons'); // Select the button container
-
-  buttons.style.display = 'none';
-
-  html2canvas(input).then((canvas) => {
-    const imgData = canvas.toDataURL('image/png');
-    const pdf = new jsPDF();
-    const imgWidth = 190;
-    const pageHeight = 295;
-    const imgHeight = (canvas.height * imgWidth) / canvas.width;
-    let heightLeft = imgHeight;
-    let position = 0;
-
-    pdf.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
-    heightLeft -= pageHeight;
-
-    while (heightLeft >= 0) {
-      position = heightLeft - imgHeight;
-      pdf.addPage();
-      pdf.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
-      heightLeft -= pageHeight;
-    }
-    pdf.save(`bank_info_${bankId}.pdf`);
-    buttons.style.display = '';
-  }).catch((err) => {
-    console.error('Error generating PDF:', err);
-    buttons.style.display = '';
-  });
-};
 
   const [copiedBankId, setCopiedBankId] = useState(null); 
 
   const copyBankInfoToClipboard = (info) => {
     const bankDetails = `
       Bank Name: ${info.bankName || 'N/A'}
+      Banking Type: ${info.bankingType || 'N/A'}
       Holder Name: ${info.name || 'N/A'}
       Account: ${info.account || 'N/A'}
       Branch: ${info.branch || 'N/A'}
@@ -207,56 +157,90 @@ const generatePDFForBank = (bankId) => {
         <div className="p-5">
           
 
-          {showModal && (
-            <div className="fixed inset-0 flex text-black items-center justify-center bg-gray-800 bg-opacity-50">
-              <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-lg">
-                <h2 className="text-2xl font-semibold mb-6 text-center">
-                  {isEditing ? 'Edit Bank Details' : 'Enter Bank Details'}
-                </h2>
-                <form onSubmit={handleSubmit(handleBankInfoSubmit)}>
-    <div>
-      <label className="block text-gray-700 font-semibold mb-1">Logo (800x1200)</label>
-      <input
-        type="file"
-        {...register("image", { required: true })} // Register image input
-        className="w-full px-4 bg-white py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-      />
-    </div>
-
-    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-      {["bankName", "name", "account", "branch", "district", "swiftCode", "routingNumber", "card"].map((label, idx) => (
-        <div key={idx} className="col-span-1">
-          <label className="block text-black bg-white font-medium mb-2">
-            {label.replace(/([A-Z])/g, " $1")}:
-          </label>
-          <input
-            type="text"
-            {...register(label)} // Register other inputs
-            className="w-full p-2 border border-gray-300 rounded bg-white"
-          />
-        </div>
-      ))}
-    </div>
-
-    <div className="flex justify-end mt-6 space-x-4">
-      <button
-        type="button"
-        className="bg-gray-300 text-gray-700 py-2 px-4 rounded hover:bg-gray-400"
-        onClick={() => setShowModal(false)}
-      >
-        Close
-      </button>
-      <button
-        type="submit"
-        className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600"
-      >
-        {isEditing ? "Update" : "Submit"}
-      </button>
-    </div>
-             </form>
+        {showModal && (
+        <div className="fixed inset-0 flex text-black items-center justify-center bg-gray-800 bg-opacity-50">
+          <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-lg">
+            <h2 className="text-2xl font-semibold mb-6 text-center">
+              {isEditing ? "Edit Bank Details" : "Enter Bank Details"}
+            </h2>
+            <form onSubmit={handleSubmit(handleBankInfoSubmit)}>
+              <div>
+                <label className="block text-gray-700 font-semibold mb-1">
+                  Logo (800x1200)
+                </label>
+                <input
+                  type="file"
+                  {...register("image")}
+                  className="w-full px-4 bg-white py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
               </div>
-            </div>
-          )}
+
+              <div className="my-7">
+                <div className="flex space-x-4">
+                  <label className="inline-flex items-center">
+                    <input
+                      type="radio"
+                      value="Mobile Banking"
+                      {...register("bankingType", { required: true })}
+                      className="radio radio-primary"
+                    />
+                    <span className="ml-2">Mobile Banking</span>
+                  </label>
+                  <label className="inline-flex items-center">
+                    <input
+                      type="radio"
+                      value="Bank"
+                      {...register("bankingType", { required: true })}
+                      className="radio radio-primary"
+                    />
+                    <span className="ml-2">Bank</span>
+                  </label>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                {[
+                  "bankName",
+                  "name",
+                  "account",
+                  "branch",
+                  "district",
+                  "swiftCode",
+                  "routingNumber",
+                  "card",
+                ].map((label, idx) => (
+                  <div key={idx} className="col-span-1">
+                    <label className="block text-black bg-white font-medium mb-2">
+                      {label.replace(/([A-Z])/g, " $1")}:
+                    </label>
+                    <input
+                      type="text"
+                      {...register(label)}
+                      className="w-full p-2 border border-gray-300 rounded bg-white"
+                    />
+                  </div>
+                ))}
+              </div>
+
+              <div className="grid mt-7 lg:grid-cols-2 gap-3">
+                <button
+                  type="button"
+                  className="close"
+                  onClick={() => {
+                    resetForm();
+                    setShowModal(false);
+                  }}
+                >
+                  Close
+                </button>
+                <button type="submit" className="add">
+                  {isEditing ? "Update" : "Submit"}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
 
 {userr?.role === 'admin' && (
             <button
@@ -341,10 +325,9 @@ const generatePDFForBank = (bankId) => {
  }
 </span>
                   </td>
+
                   <td>
-  {work?.account
-    ? work.account.replace(/(\d{4})(\d{4})(\d+)/, "$1-$2-$3")
-    : ""}
+  {work?.account}
 </td>
 
                   <td >

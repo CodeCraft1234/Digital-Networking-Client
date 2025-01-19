@@ -66,9 +66,9 @@ const MarketerSalary = () => {
           return acc;
         }, []);
   
-        const totalSpent = uniqueMonthlySpent.reduce((acc, spent) => acc + (spent.totalSpentt || 0), 0);
-  
-        // Filter salary data by month
+       
+        const totalSpent = uniqueMonthlySpent?.filter(f=>f.role === 'metaSpend' && 'googleSpend').reduce((acc, spent) => acc + spent.totalSpentt, 0);
+
         const selleryData = MySalaryPayment.filter(
           (sell) => 
             new Date(sell.date).toLocaleString("default", { month: "long" }) === month

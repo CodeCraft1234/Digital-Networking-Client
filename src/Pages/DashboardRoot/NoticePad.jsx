@@ -63,11 +63,14 @@ const NoticePad = () => {
   };
 
   return (
-    <div className="grid text-black lg:grid-cols-2 gap-5 p-4">
+    <div className="min-w-full w-full  p-5 lg:w-auto">
+        <div className="grid text-black w-full lg:grid-cols-2 gap-5 p-4">
+
         <Helmet>
              <title>{`Notice Pad`} | Digital Network</title>
               <link rel="canonical" href="https://www.example.com/" />
-            </Helmet>
+        </Helmet>
+
         <div className="w-full bg-white p-5 border border-gray-500 rounded-lg  space-y-6">
         <form >
         <div>
@@ -100,10 +103,10 @@ const NoticePad = () => {
         </button>
         </div>
 
-      <div className="">
+      <div className="w-full overflow-hidden lg:w-auto">
         <div
           ref={printRef}
-          className="relative h-[1000px] rounded-lg bg-white w-[750px]  border border-gray-500"
+          className="relative lg:h-[1000px]  lg:w-[750px]  rounded-lg bg-white border border-gray-500"
         >
           <img
             className="absolute rounded-lg h-full w-full"
@@ -134,6 +137,7 @@ const NoticePad = () => {
         </div>
        
       </div>
+    </div>
     </div>
   );
 };

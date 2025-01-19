@@ -334,23 +334,9 @@ const Payoneer = () => {
         
         <div className="f-center ">
        
-        <div className=" lg:f-center ">
-        <select
-  className="select2"
-  value={selectedYear}
-  onChange={(e) => setSelectedYear(e.target.value)}
->
-  <option value="">Select Year</option> {/* Default option */}
-  {[...new Set(displayedItems?.map((campaign) => new Date(campaign.date).getFullYear()))]
-    .sort((a, b) => a - b) // Ensure the years are sorted in ascending order
-    .map((year) => (
-      <option key={year} value={year}>
-        {year}
-      </option>
-    ))}
-</select>
-      </div>
-       <div className="f-center ">
+        
+
+        <div className="f-center ">
 
 <select
 
@@ -366,36 +352,67 @@ const Payoneer = () => {
                   }
  
 </select>
-</div>
+   </div>
        
           <div className="f-center">
-            <select
-           
-              className=" select2 "
-              value={sortMonth}
-              onChange={(e) => changeTab(e.target.value)}
-            >
-              <option value="">Select Month</option>
-              {[
-                "January",
-                "February",
-                "March",
-                "April",
-                "May",
-                "June",
-                "July",
-                "August",
-                "September",
-                "October",
-                "November",
-                "December",
-              ].map((month, index) => (
-                <option key={index + 1} value={index + 1}>
-                  {month}
-                </option>
-              ))}
-            </select>
+          <select
+  className="select2"
+  value={sortMonth}
+  onChange={(e) => changeTab(e.target.value)}
+>
+  <option value="">Select Month</option>
+  {[
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+  ]
+    .map((month, index) => {
+      // Get the unique months from the data
+      const monthsInData = [
+        ...new Set(
+          displayedItems?.map(item => new Date(item.date).getMonth() + 1) // Get months from the displayedItems data
+        ),
+      ];
+
+      // Check if the month is in the data
+      if (monthsInData.includes(index + 1)) {
+        return (
+          <option key={index} value={index + 1}>
+            {month}
+          </option>
+        );
+      }
+      return null;
+    })
+    .filter(option => option !== null)}
+</select>
           </div>
+
+          <div className=" lg:f-center ">
+        <select
+  className="select2"
+  value={selectedYear}
+  onChange={(e) => setSelectedYear(e.target.value)}
+>
+  <option value="">Select Year</option> {/* Default option */}
+  {[...new Set(displayedItems?.map((campaign) => new Date(campaign.date).getFullYear()))]
+    .sort((a, b) => a - b) // Ensure the years are sorted in ascending order
+    .map((year) => (
+      <option key={year} value={year}>
+        {year}
+      </option>
+    ))}
+</select>
+      </div>
          
       <div className="f-center ">
 
@@ -410,6 +427,8 @@ const Payoneer = () => {
  
 </select>
      </div>
+
+   
         </div>
       
       </div>

@@ -422,6 +422,7 @@ const totalAdvanced = calculate(client => {
                         <circle cx="12" cy="12" r="6" />
                       </svg>
                     )}
+                    
                   </Link>
                 </td>
                 <td>{campaign.clientPhone}</td>

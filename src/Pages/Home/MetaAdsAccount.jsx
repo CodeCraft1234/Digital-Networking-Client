@@ -95,10 +95,12 @@ const MetaAdsAccount = ({data1}) => {
       return Math.floor(Math.random() * 1e13); 
     };
 
+
     const handleUpdateTotalSpent = (e, id,  accountName, employeeEmail, employeeName) => {
       e.preventDefault();
       const totalSpent = e.target.totalSpent.value;
       const date = e.target.date.value;
+      const role = e.target.role.value;
       const ids=generateRandomId()
    
 
@@ -110,7 +112,7 @@ const MetaAdsAccount = ({data1}) => {
         totalSpentt,
         accountName,
         date,
-        role:`${data1}Spend`,
+        role:`${role}Spend`,
         employeeName
       };
 
@@ -119,12 +121,12 @@ const MetaAdsAccount = ({data1}) => {
         totalSpentt,
         accountName,
         date,
-        role:`${data1}Spend`,
+        role:`${role}Spend`,
         employeeName
       };
 
      
-      if(data1 === 'contributor'){
+      if(role === 'contributor'){
         AxiosPublic.post('/users/update2', { email: employeeEmail, monthlySpent2 })
         .then(res => {
           console.log(res.data);
@@ -623,38 +625,105 @@ const MetaAdsAccount = ({data1}) => {
         </h1>
 
   
-     <form
-      onSubmit={(e) =>
-        handleUpdateTotalSpent(e, modalData2._id, modalData2.accountName, modalData2.employeeEmail, modalData2.employeerName)
-      }
-    >
-     <h1 className="text-black font-bold text-center">{modalData2.accountName}</h1>
+        <form
+  onSubmit={(e) =>
+    handleUpdateTotalSpent(
+      e,
+      modalData2._id,
+      modalData2.accountName,
+      modalData2.employeeEmail,
+      modalData2.employeerName
+    )
+  }
+  className="p-6 bg-white shadow-lg rounded-lg max-w-xl mx-auto border border-gray-300"
+>
+  {/* Form Header */}
+  <h1 className="text-xl font-bold text-center text-gray-800 mb-6">
+    {modalData2.accountName}
+  </h1>
 
-      <h1 className="text-black font-bold text-start">Date</h1>
+  {/* Form Grid */}
+  <div className="grid lg:grid-cols-2 gap-3 mb-6">
+    {/* Date Input */}
+    <div>
+      <label className="block text-sm font-semibold text-gray-700 mb-2">
+        Date
+      </label>
       <input
-        className="text-black inline-block w-full mb-5 p-3 border border-black bg-red-200"
         type="date"
         name="date"
         required
         defaultValue={formattedDate}
-        id=""
+        className="input2"
       />
-      <h1 className="text-black font-bold text-start">Total Spent</h1>
+    </div>
+
+    {/* Total Spent Input */}
+    <div>
+      <label className="block text-sm font-semibold text-gray-700 mb-2">
+        Total Spent
+      </label>
       <input
         type="number"
         name="totalSpent"
         step="0.01"
         placeholder="0"
-        className="w-full rounded p-2 mt-3 bg-white text-black border border-gray-700"
+        className="input2"
       />
+    </div>
+  </div>
 
-      <button
-        type="submit"
-        className="mt-4 font-avenir px-3 mx-auto py-1 rounded-lg text-white bg-[#05a0db]"
-      >
-        Update
-      </button>
-    </form>
+  {/* Role Select Option */}
+  <div className="mb-6">
+    <label className="block text-sm font-semibold text-gray-700 mb-2">
+      Role
+    </label>
+
+    <div className="flex space-x-4">
+                  <label className="inline-flex items-center">
+                    <input
+                      type="radio"
+                      value="Mobile Banking"
+                      {...register("bankingType", { required: true })}
+                      className="radio radio-primary"
+                    />
+                    <span className="ml-2">Mobile Banking</span>
+                  </label>
+                  <label className="inline-flex items-center">
+                    <input
+                      type="radio"
+                       name="role"
+                      className="radio radio-primary"
+                    />
+                    <span className="ml-2">Bank</span>
+                  </label>
+                </div>
+
+    <select
+      name="role"
+      required
+      className="select2 w-full"
+    >
+      <option value="" disabled>
+        Select Role
+      </option>
+      <option value="meta">Meta</option>
+      <option value="page">Page</option>
+    </select>
+  </div>
+
+  {/* Submit Button */}
+  <div className="text-center">
+    <button
+      type="submit"
+      className="w-full lg:w-auto px-6 py-2 text-white bg-blue-600 rounded-md font-semibold hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+    >
+      Update
+    </button>
+  </div>
+</form>
+
+
   </div>
 </dialog>
     )}

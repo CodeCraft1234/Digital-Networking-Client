@@ -51,6 +51,12 @@ const MonthlySpend = () => {
                         >
                             <FaDraftingCompass  /> Contributor Spend
                         </button>
+                        <button
+                            className={getButtonClass('pageSpend') }
+                            onClick={() => changeTab('pageSpend')}
+                        >
+                            <FaDraftingCompass  /> Page Spend
+                        </button>
                     </>
                 )}
 
@@ -84,7 +90,7 @@ const MonthlySpend = () => {
 
         {/* Conditional Rendering for Components */}
         {activeTab === 'contributorSpend' && <ContributorMonthlySpend data={activeTab} />}
-        {(activeTab === 'metaSpend' || activeTab === 'googleSpend') && (
+        {(activeTab === 'metaSpend' || activeTab === 'googleSpend' || activeTab === 'pageSpend') && (
             <MetaMonthlySpend data={activeTab} />
         )}
     </div>

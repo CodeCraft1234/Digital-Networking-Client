@@ -264,7 +264,7 @@ const DashboardRoot = () => {
  ) : (
    <div className="px-4 py-3 text-gray-600 text-center">No notifications</div>
  )}
-                 <Link to={'/dashboard/notification'}>
+                 <Link to={'/notification'}>
                    <p className="text-white bg-[#394148] hover:bg-blue-500 text-sm border border-gray-500 rounded-lg py-1.5 mt-2 px-3">
                      See All
                    </p>
@@ -312,7 +312,6 @@ const DashboardRoot = () => {
             </svg>
           </label>
 
-          {/* Dropdown Menu */}
           {isOpen && (
             <ul
               tabIndex={0}
@@ -341,34 +340,18 @@ const DashboardRoot = () => {
                       </p>
                     </Link>
 
-                    
-                    
-                    <Link to={'/allUsers'}>
-                      <p className="text-white text-sm hover:bg-blue-500 bg-[#394148] border border-gray-500 rounded-lg py-1.5 px-3">
-                        All Users
-                      </p>
-                    </Link>
-                    <Link to={'/history'}>
+                    <Link to={'/monthlySpend'}>
                       <p className="text-white bg-[#394148] hover:bg-blue-500 text-sm border border-gray-500 rounded-lg py-1.5 px-3 mt-2">
-                       All History
+                       Monthly Spend
                       </p>
                     </Link>
+
                     <Link to={'/summery'}>
                       <p className="text-white bg-[#394148] hover:bg-blue-500 text-sm border border-gray-500 rounded-lg py-1.5 px-3 mt-2">
                         All Summery
                       </p>
                     </Link>
-                    <Link  to="/settings">
-                      <p className="text-white bg-[#394148] hover:bg-blue-500 text-sm border border-gray-500 rounded-lg py-1.5 px-3 mt-2">
-                        Settings
-                      </p>
-                    </Link>
-                     
-                    
-                    
-                    
 
-                  
                   </div>
                 </div>
                 <hr className="my-2" />
@@ -432,74 +415,64 @@ const DashboardRoot = () => {
           <FaHome />
         </p>
       </Link>
+      <Link to={'/clients'}>
+          <p className={` ${isActive('/clients') ? 'text-red-500 border-b-2 border-white' : 'text-white'}`}>
+            <FaUsersViewfinder />
+          </p>
+        </Link>
+        <Link to={'campaigns'}>
+          <p className={` ${isActive('/campaigns') ? 'text-red-500 border-b-2 border-white' : 'text-white'}`}>
+            <MdCampaign />
+          </p>
+        </Link>
+        <Link to={'/adsAccount'}>
+          <p className={` ${isActive('/adsAccount') ? 'text-red-500 border-b-2 border-white' : 'text-white'}`}>
+            <RiAccountPinBoxLine />
+          </p>
+        </Link>
+        <Link to={'/allPayments'}>
+          <p className={` ${isActive('/paymentHistory') ? 'text-red-500 border-b-2 border-white' : 'text-white'}`}>
+            <MdOutlinePayments />
+          </p>
+        </Link>
+        <Link to={'/salary'}>
+          <p className={` ${isActive('/salary') ? 'text-red-500 border-b-2 border-white' : 'text-white'}`}>
+            < BsCashCoin />
+          </p>
+        </Link>
 
     {
       user? <> {
-        ddd?.role === 'admin' && <>
-         <Link to={'/dashboard/allClients'}>
-          <p className={` ${isActive('/dashboard/allClients') ? 'text-red-500 border-b-2 border-white' : 'text-white'}`}>
+        ddd?.role === 'admin' || 'employee' && <>
+         <Link to={'/clients'}>
+          <p className={` ${isActive('/clients') ? 'text-red-500 border-b-2 border-white' : 'text-white'}`}>
             <FaUsersViewfinder />
           </p>
         </Link>
-        <Link to={'/dashboard/allCampaign'}>
-          <p className={` ${isActive('/dashboard/allCampaign') ? 'text-red-500 border-b-2 border-white' : 'text-white'}`}>
+        <Link to={'campaigns'}>
+          <p className={` ${isActive('/campaigns') ? 'text-red-500 border-b-2 border-white' : 'text-white'}`}>
             <MdCampaign />
           </p>
         </Link>
-        <Link to={'/dashboard/allAdsAccount'}>
-          <p className={` ${isActive('/dashboard/allAdsAccount') ? 'text-red-500 border-b-2 border-white' : 'text-white'}`}>
+        <Link to={'/adsAccount'}>
+          <p className={` ${isActive('/adsAccount') ? 'text-red-500 border-b-2 border-white' : 'text-white'}`}>
             <RiAccountPinBoxLine />
           </p>
         </Link>
-        <Link to={'/dashboard/allPayments'}>
-          <p className={` ${isActive('/dashboard/paymentHistory') ? 'text-red-500 border-b-2 border-white' : 'text-white'}`}>
+        <Link to={'/allPayments'}>
+          <p className={` ${isActive('/paymentHistory') ? 'text-red-500 border-b-2 border-white' : 'text-white'}`}>
             <MdOutlinePayments />
           </p>
         </Link>
-        <Link to={'/dashboard/sellery'}>
-          <p className={` ${isActive('/dashboard/sellery') ? 'text-red-500 border-b-2 border-white' : 'text-white'}`}>
+        <Link to={'/salary'}>
+          <p className={` ${isActive('/salary') ? 'text-red-500 border-b-2 border-white' : 'text-white'}`}>
             < BsCashCoin />
           </p>
         </Link>
         </>
        }
   
-       {
-        ddd?.role === 'employee' && <>
-         <Link to={'/dashboard/myClients'}>
-          <p className={` ${isActive('/dashboard/myClients') ? 'text-red-500 border-b-2 border-white' : 'text-white'}`}>
-            <FaUsersViewfinder />
-          </p>
-        </Link>
-        <Link to={'/dashboard/myCampaigns'}>
-          <p className={` ${isActive('/dashboard/myCampaigns') ? 'text-red-500 border-b-2 border-white' : 'text-white'}`}>
-            <MdCampaign />
-          </p>
-        </Link>
-        <Link to={'/dashboard/myAdsAccount'}>
-          <p className={` ${isActive('/dashboard/myAdsAccount') ? 'text-red-500 border-b-2 border-white' : 'text-white'}`}>
-            <RiAccountPinBoxLine />
-          </p>
-        </Link>
-        <Link to={'/dashboard/myPayments'}>
-          <p className={` ${isActive('/dashboard/myPayments') ? 'text-red-500 border-b-2 border-white' : 'text-white'}`}>
-            <MdOutlinePayments />
-          </p>
-        </Link>
-        <Link to={'/dashboard/mySellery'}>
-          <p className={` ${isActive('/dashboard/mySellery') ? 'text-red-500 border-b-2 border-white' : 'text-white'}`}>
-            < BsCashCoin />
-          </p>
-        </Link>
-  
-        </>
-       }
-  
-       {
-        ddd?.role === 'contributor' && <>
-        
-        </>
-       }</> :   <>
+       </> :   <>
               <Link  to={`/client/metaAds/${clientUser}`}>
           <p className={` ${isActive('/dashboard/clientCampaigns') ? 'text-red-500 border-b-2 border-white' : 'text-white'}`}>
             <SiMeta />
@@ -577,58 +550,30 @@ const DashboardRoot = () => {
                 />
                 <Link
                   className="text-white font-bold"
-                  to={"/dashboard/updateProfile"}
+                  to={"/updateProfile"}
                 >
                   <h1 className="my-2">{user?.displayName?.split(" ")[0]}</h1>
                 </Link>
 
                 <div className="text-start">
                   <div className="text-center">
-                    {ddd.role === "admin" && (
+                    {ddd.role === "admin" || 'employee' && (
                       <>
-                        <Link to={"/dashboard/allUsers"}>
-                          <p className="text-white text-sm hover:bg-blue-500 bg-[#394148] border border-gray-500 rounded-lg py-1.5 px-3">
-                            All Users
-                          </p>
-                        </Link>
-                        <Link to={"/dashboard/history"}>
+                        <Link to={"/monthlySpend"}>
                           <p className="text-white bg-[#394148] hover:bg-blue-500 text-sm border border-gray-500 rounded-lg py-1.5 px-3 mt-2">
                             All History
                           </p>
                         </Link>
-                        <Link to={"/dashboard/AllSummery"}>
+                        <Link to={"/summery"}>
                           <p className="text-white bg-[#394148] hover:bg-blue-500 text-sm border border-gray-500 rounded-lg py-1.5 px-3 mt-2">
                             All Summary
                           </p>
                         </Link>
                       </>
                     )}
-                    {ddd.role === "employee" && (
-                      <>
-                        <Link to={"/dashboard/mySellery"}>
-                          <p className="text-white text-sm hover:bg-blue-500 bg-[#394148] border border-gray-500 rounded-lg py-1.5 px-3">
-                            My Activity
-                          </p>
-                        </Link>
-                        <Link to={"/dashboard/myhistory"}>
-                          <p className="text-white bg-[#394148] hover:bg-blue-500 text-sm border border-gray-500 rounded-lg py-1.5 px-3 mt-2">
-                            My History
-                          </p>
-                        </Link>
-                      </>
-                    )}
-                    {ddd.role === "contributor" && (
-                      <>
-                        {/* Contributor-specific options */}
-                      </>
-                    )}
-                    {ddd.role === "client" && (
-                      <>
-                        {/* Client-specific options */}
-                      </>
-                    )}
 
-                    <Link to={"/dashboard/updateProfile"}>
+
+                    <Link to={"/updateProfile"}>
                       <p className="text-white bg-[#394148] hover:bg-blue-500 text-sm border border-gray-500 rounded-lg py-1.5 mt-2 px-3">
                         Update Profile
                       </p>

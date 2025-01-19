@@ -64,6 +64,8 @@ import GraphicDesign from "./Pages/Home/GraphicDesign";
 import SalaryPayments from "./Pages/Home/SalaryPayment";
 import DevGraphicSalary from "./Pages/DashboardRoot/DevGraphicsSalary";
 import NoticePad from "./Pages/DashboardRoot/NoticePad";
+import AllAds from "./Pages/Home/AllAds";
+import MonthlyCast from "./Pages/DashboardRoot/MonthlyCast";
 
 const router = createBrowserRouter([
   {
@@ -100,8 +102,12 @@ const router = createBrowserRouter([
         element:<CampaignTable2></CampaignTable2>
        },
       {
-        path:'/metaAds',
-        element:<MetaAds></MetaAds>
+        path:'/campaigns',
+        element:<AllAds></AllAds>
+       },
+      {
+        path:'/monthly-cast',
+        element:<MonthlyCast></MonthlyCast>
        },
       {
         path:'/googleAds',

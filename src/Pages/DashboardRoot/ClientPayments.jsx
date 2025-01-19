@@ -217,32 +217,48 @@ const [selectedClient, setSelectedClient] = useState(initialTab4);
          ))}
      </select>
 
-    <select
-    
-      className="select2"
-      value={sortMonth}
-      onChange={(e) => changeTab(e.target.value)}
-    >
-      <option value="all">Select Month</option>
-      {[
-        "January",
-        "February",
-        "March",
-        "April",
-        "May",
-        "June",
-        "July",
-        "August",
-        "September",
-        "October",
-        "November",
-        "December",
-      ].map((month, index) => (
+     <select
+  className="select2"
+  value={sortMonth}
+  onChange={(e) => changeTab(e.target.value)}
+>
+  <option value="all">Select Month</option>
+  {[
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+  ].map((month, index) => {
+    // Get the months present in the displayedItems or selectedClient
+    const monthsInData = [
+      ...new Set(
+        (selectedClient === "All"
+          ? displayedItems?.flatMap(client => client.payments || []) // If "All" clients, get payments from all clients
+          : displayedItems?.find(f => f.clientName === selectedClient)?.payments || [] // If specific client, get payments for that client
+        )
+          .map(payment => new Date(payment?.date).getMonth() + 1) // Extract month from the date
+      ),
+    ];
+
+    // Check if the current month (index + 1) exists in the monthsInData
+    if (monthsInData.includes(index + 1)) {
+      return (
         <option key={index + 1} value={index + 1}>
           {month}
         </option>
-      ))}
-    </select>
+      );
+    }
+    return null;
+  }).filter(option => option !== null)} {/* Filter out null values */}
+</select>
 
     <select
   className="select2"
@@ -359,7 +375,7 @@ onClick={() => setModalData(payment)}
     },
     { 
       method: "IBBLBank", 
-      src: "https://i.ibb.co/yfMSDcd/IBBL.png", 
+      src: "https://i.ibb.co.com/pnS6nt4/IBBLBank.png", 
       width: "w-32", 
       height: "h-10" 
     },

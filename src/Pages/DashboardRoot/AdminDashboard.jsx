@@ -69,23 +69,14 @@ const AdminDashboard = () => {
                  My Client
                 </NavLink>
           <NavLink
-            to="/metaAds"
+            to="/campaigns"
             className="text-white hover:bg-[#f89320] hover:text-black py-2 px-4 rounded-lg flex items-center text-lg"
             style={({ isActive }) => getActiveStyle(isActive)}
-            onClick={() => changeTab('metaAds')}
           >
-            <SiMeta className="w-6 h-6 mr-2" />
-            Meta Ads
+            <MdCampaign className="w-6 h-6 mr-2" />
+            Campaigns
           </NavLink>
-          <NavLink
-            to="/googleAds"
-            className="text-white hover:bg-[#f89320] hover:text-black py-2 px-4 rounded-lg flex items-center text-lg"
-            style={({ isActive }) => getActiveStyle(isActive)}
-            onClick={() => changeTab('googleAds')}
-          >
-            <SiGoogleads className="w-6 h-6 mr-2" />
-            Google Ads
-          </NavLink>
+         
           <NavLink
             to="/pageSetup"
             className="text-white hover:bg-[#f89320] hover:text-black py-2 px-4 rounded-lg flex items-center text-lg"
@@ -164,6 +155,15 @@ const AdminDashboard = () => {
             <FaPaypal className="w-6 h-6 mr-2" /> Payoneer
           </NavLink>
 
+          <NavLink
+            to={`/monthly-cast`}
+            className="text-white hover:bg-[#f89320] hover:text-black py-2 px-4 rounded-lg flex items-center text-lg"
+            style={({ isActive }) => getActiveStyle(isActive)}
+          >
+           <CiBank   className="w-6 h-6 mr-2" />
+           Monthly Cast
+          </NavLink>
+
            <NavLink
             to={`/bankInfo`}
             className="text-white hover:bg-[#f89320] hover:text-black py-2 px-4 rounded-lg flex items-center text-lg"
@@ -172,6 +172,7 @@ const AdminDashboard = () => {
            <CiBank   className="w-6 h-6 mr-2" />
            Bank Info
           </NavLink>
+         
 
            <NavLink
             to={`/noticePad`}
