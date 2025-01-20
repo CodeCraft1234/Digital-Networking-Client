@@ -675,41 +675,37 @@ const MetaAdsAccount = ({data1}) => {
 
   {/* Role Select Option */}
   <div className="mb-6">
-    <label className="block text-sm font-semibold text-gray-700 mb-2">
-      Role
+
+
+    <div className="mb-6 text-black">
+
+  <div className="flex space-x-4">
+    <label className="inline-flex items-center">
+      <input
+        type="radio"
+        name="role"
+        value="meta" // Value for "Meta" role
+        required
+        className="radio radio-primary"
+      />
+      <span className="ml-2">Meta</span>
     </label>
 
-    <div className="flex space-x-4">
-                  <label className="inline-flex items-center">
-                    <input
-                      type="radio"
-                      value="Mobile Banking"
-                      {...register("bankingType", { required: true })}
-                      className="radio radio-primary"
-                    />
-                    <span className="ml-2">Mobile Banking</span>
-                  </label>
-                  <label className="inline-flex items-center">
-                    <input
-                      type="radio"
-                       name="role"
-                      className="radio radio-primary"
-                    />
-                    <span className="ml-2">Bank</span>
-                  </label>
-                </div>
+    {/* Page Radio Button */}
+    <label className="inline-flex items-center">
+      <input
+        type="radio"
+        name="role"
+        value="page" // Value for "Page" role
+        className="radio radio-primary"
+      />
+      <span className="ml-2">Page</span>
+    </label>
+  </div>
+</div>
 
-    <select
-      name="role"
-      required
-      className="select2 w-full"
-    >
-      <option value="" disabled>
-        Select Role
-      </option>
-      <option value="meta">Meta</option>
-      <option value="page">Page</option>
-    </select>
+
+
   </div>
 
   {/* Submit Button */}

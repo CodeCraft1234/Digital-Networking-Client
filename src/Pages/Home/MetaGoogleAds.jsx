@@ -9,6 +9,7 @@ import { FaEdit, FaMinusSquare } from "react-icons/fa";
 
 import useUserr from "../../Hook/useUser";
 import useUsers from "../../Hook/useUsers";
+import { Link } from "react-router-dom";
 
 const MetaGoogleAds = () => {
   const { user } = useContext(AuthContext);
@@ -344,7 +345,7 @@ const MetaGoogleAds = () => {
     </dialog>
   </td>
 
-  <td>{truncateText(work.pageName, 4)}</td>
+  <td><Link to={`/client/${work.id}`}>{truncateText(work.clientName, 4)}</Link></td>
   <td>{work.adsAccount}</td>
   <td>$ {work.tBudged}</td>
   <td>$ {work.tSpent}</td>

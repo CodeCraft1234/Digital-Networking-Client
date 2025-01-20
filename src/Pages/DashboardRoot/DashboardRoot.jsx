@@ -5,7 +5,7 @@ import { useContext, useEffect, useRef, useState } from "react";
 import Login from "../../Security/Login";
 import { AuthContext } from "../../Security/AuthProvider";
 import Register from "../../Security/Register";
-import {  MdAccountCircle, MdCampaign, MdOutlinePayments, MdOutlineSummarize } from "react-icons/md";
+import { MdCampaign, MdOutlinePayments, MdOutlineSummarize } from "react-icons/md";
 import { RiAccountPinBoxLine, RiPagesFill } from "react-icons/ri";
 import { FaUsersViewfinder } from "react-icons/fa6";
 import { BsCashCoin } from "react-icons/bs";
@@ -24,7 +24,7 @@ const DashboardRoot = () => {
   const {userr3}=useUserr3(user?.email)
   const [showSidebar, setShowSidebar] = useState(false);
   const location = useLocation();
-  const [clientUser, setClientUser] = useState(null); // State for clientUser from localStorage
+  const [clientUser, setClientUser] = useState(null); 
 
   useEffect(() => {
     const storedClientUser = localStorage.getItem("clientUser");
@@ -62,7 +62,6 @@ const DashboardRoot = () => {
       setIsOpen(false);
     }
   };
-
 
   useEffect(() => {
     if (isOpen) {
@@ -208,8 +207,7 @@ const DashboardRoot = () => {
 
     <div className="flex justify-end ml-16 gap-2">
 
-    {
-    ddd.role === 'admin' && <div className=" gap-2">
+<div className=" gap-2">
     <div className="items-center">
      <div className="" ref={dropdownRef}>
        <label
@@ -279,7 +277,6 @@ const DashboardRoot = () => {
  </div>
  </div>
 
-    }
     <div className="items-center">
       
       {user?.displayName ? (

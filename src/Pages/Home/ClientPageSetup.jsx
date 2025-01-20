@@ -109,8 +109,10 @@ const ClientPageSetup = () => {
         email,
         role,
         date,
-        clientName
+        clientName:findClients?.clientName
       };
+
+      console.log(clientName);
     
       const datas2 = {
         title: `Added ${itemName} in Client campaign`,
@@ -194,12 +196,7 @@ const ClientPageSetup = () => {
         <div>
             <div className="mt-5">
 
-            {/* <div   className="grid grid-cols-2 mb-5 rounded-lg md:grid-cols-2 lg:grid-cols-2 text-black sm:grid-cols-2 gap-3 lg:gap-5 justify-around ">
-
-        <SummaryCard title="Total Bill" value={findClients?.pageService?.reduce((acc, payment) => acc + parseFloat(payment?.totalBill || 0), 0).toFixed(2) || 0} />
-        <SummaryCard title="Total Paid" value={findClients?.pageService?.reduce((acc, payment) => acc + parseFloat(payment?.totalPaid || 0), 0).toFixed(2) || 0} />
-
-          </div> */}
+          
 
       <div  className="  side-space ">
         

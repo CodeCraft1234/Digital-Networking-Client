@@ -7,7 +7,6 @@ import { AuthContext } from '../../Security/AuthProvider';
 import useMyUser from '../../Hook/useMyUser';
 import useUserr from '../../Hook/useUser';
 import { Helmet } from 'react-helmet-async';
-import AllEmployee from '../AllEmployee/AllEmployee';
 import useAllEmployee from '../../Hook/useAllEmployee';
 
 const MetaMonthlySpend = ({data}) => {
@@ -15,11 +14,8 @@ const MetaMonthlySpend = ({data}) => {
   const {userr}=useUserr(user?.email)
   const [users]=useUsers()
   const [allEmployees] = useAllEmployee([]);
- 
   const currentDate = new Date();
-
   const [modalData2, setModalData2] = useState(null);
-
   const closeModal = () => {
     setModalData2(null);
   };
@@ -35,7 +31,6 @@ const MetaMonthlySpend = ({data}) => {
 
   const [sortEmployee, setSortEmployee] = useState(initialTab);
   const [myUser,refetch]=useMyUser(sortEmployee)
-  console.log(myUser);
   
   const changeTab = (tab) => {
     setSortEmployee(tab);
@@ -90,7 +85,6 @@ const MetaMonthlySpend = ({data}) => {
   }, [])
   .sort((a, b) => a.accountName.localeCompare(b.accountName, undefined, { sensitivity: 'base' }));
 
-console.log(sortedAccounts);
 
   const AxiosPublic = UseAxiosPublic();
 
@@ -137,7 +131,6 @@ console.log(sortedAccounts);
     });
   };
 
-  console.log(data);
   return (
     <div>
 
@@ -292,10 +285,15 @@ console.log(sortedAccounts);
     minimumFractionDigits: 2,
   }).format(account.totalSpentt)}
                 </td>
-                <td>
+                {
+                  data === 'pageSpend' ? <td>
+                  <span className="font-extrabold">৳</span>{" "}
+                  {new Intl.NumberFormat('en-IN').format(Math.round(account.totalSpentt * 130))}
+                               </td> : <td>
   <span className="font-extrabold">৳</span>{" "}
-  {new Intl.NumberFormat('en-IN').format(Math.round(account.totalSpentt * 140))}
+  {new Intl.NumberFormat('en-IN').format(Math.round(account.totalSpentt * 142))}
                </td>
+                }
               </tr>
             ))}
           </tbody>
@@ -309,12 +307,21 @@ console.log(sortedAccounts);
     maximumFractionDigits: 2,
   }).format(sortedAccounts?.filter(f=>f.role === data).reduce((sum, acc) => sum + acc.totalSpentt, 0))}
      </td>
-     <td>
+     {
+                  data === 'pageSpend' ?    <td>
+                  <span className="font-extrabold">৳</span>{" "}
+                  {new Intl.NumberFormat('en-IN').format(
+                    Math.round(sortedAccounts?.filter(f=>f.role === data).reduce((sum, acc) => sum + acc.totalSpentt, 0) * 130)
+                  )}
+                    </td> :    <td>
   <span className="font-extrabold">৳</span>{" "}
   {new Intl.NumberFormat('en-IN').format(
-    Math.round(sortedAccounts?.filter(f=>f.role === data).reduce((sum, acc) => sum + acc.totalSpentt, 0) * 140)
+    Math.round(sortedAccounts?.filter(f=>f.role === data).reduce((sum, acc) => sum + acc.totalSpentt, 0) * 142)
   )}
     </td>
+
+     }
+  
             </tr>
          </tfoot>
 

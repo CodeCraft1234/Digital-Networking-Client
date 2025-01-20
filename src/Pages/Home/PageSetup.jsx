@@ -297,6 +297,7 @@ localStorage.setItem("activeTabalu", tab);
               <tr className="tr1" >  
                 <th className="text-center">{campaignss?.length}</th>
                 <th >Date</th>
+                <th >Client Name</th>
                 <th >Item Name</th>
                 <th >Page Name</th>
                 <th >Total Bill</th>
@@ -432,6 +433,7 @@ localStorage.setItem("activeTabalu", tab);
                   <td>
                   {new Date(work?.date).toLocaleDateString("en-GB")}
                   </td>
+                  <td><Link to={`/client/${work.id}`}>{work.clientName}</Link></td>
                   
                   <td>
 
@@ -486,7 +488,7 @@ localStorage.setItem("activeTabalu", tab);
               ))}
               <tr className="font-bold tr1">
                 <td></td>
-                <td className="text-right" colSpan="3">
+                <td className="text-right" colSpan="4">
                   Total:
                 </td>
                 <td   >

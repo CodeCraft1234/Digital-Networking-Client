@@ -46,17 +46,18 @@ const MonthlySpend = () => {
                             <SiGoogleads /> Google Spend
                         </button>
                         <button
-                            className={getButtonClass('contributorSpend') }
-                            onClick={() => changeTab('contributorSpend')}
-                        >
-                            <FaDraftingCompass  /> Contributor Spend
-                        </button>
-                        <button
                             className={getButtonClass('pageSpend') }
                             onClick={() => changeTab('pageSpend')}
                         >
                             <FaDraftingCompass  /> Page Spend
                         </button>
+                        <button
+                            className={getButtonClass('contributorSpend') }
+                            onClick={() => changeTab('contributorSpend')}
+                        >
+                            <FaDraftingCompass  /> Contributor Spend
+                        </button>
+                     
                     </>
                 )}
 
@@ -73,6 +74,12 @@ const MonthlySpend = () => {
                             onClick={() => changeTab('googleSpend')}
                         >
                             <SiGoogleads /> Google Spend
+                        </button>
+                        <button
+                            className={getButtonClass('pageSpend') }
+                            onClick={() => changeTab('pageSpend')}
+                        >
+                            <FaDraftingCompass  /> Page Spend
                         </button>
                     </>
                 )}

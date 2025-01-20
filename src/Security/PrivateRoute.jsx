@@ -20,15 +20,7 @@ const PrivateRoute = ({children}) => {
     }
   }, []);
 
-  if (loading) {
-    return (
-      <div className="flex items-center min-h-screen justify-center ">
-        <Lottie animationData={loadingAnimation} loop={true} />
-      </div>
-    );
-  }
-
-      if (!userr) {
+      if (!userr && !clientUser) {
         return (
           <div className="flex items-center min-h-screen justify-center ">
             <Lottie animationData={loadingAnimation} loop={true} />

@@ -8,14 +8,11 @@ import useUserr from "../../Hook/useUser";
 import AdminHome from "./AdminHome";
 import DeveloperHome from "./DeveloperHome";
 import DesignerHome from "./DesignerHome";
-import Lottie from "lottie-react";
-import loadingAnimation from '../../../public/Animation - 1716909160617.json';
 
 const Home = () => {
     const { user } = useContext(AuthContext);
     const {userr}=useUserr(user?.email)
     const [clientUser, setClientUser] = useState(null);
-    console.log(user,userr,clientUser);
 
     useEffect(() => {
       const storedClientUser = localStorage.getItem("clientUser");
@@ -24,8 +21,6 @@ const Home = () => {
       }
     }, []);
 
-
-    
     return (
         <div>
             <Helmet>

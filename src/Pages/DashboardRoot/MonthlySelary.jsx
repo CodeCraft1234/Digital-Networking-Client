@@ -101,10 +101,8 @@ const MonthlySalary = () => {
       employeeEmail,
       payAmount,
       note,
-      charge,
       paymentMethod,
       date,
-      status:'pending'
     };
 
     const datas = {
@@ -151,27 +149,23 @@ const MonthlySalary = () => {
             className="font-avenir  px-6 hover:bg-indigo-700 py-2 bg-[#05a0db] rounded-lg text-white"
             onClick={() => document.getElementById("my_modal_1").showModal()}
           >
-            Pay Admin
+            Pay Salary
           </button>
           <dialog id="my_modal_1" className="modal">
-            <div className="modal-box bg-white text-black font-bold">
-              <form onSubmit={(e) => handlePayment(e)}>
-      
-                <div className="grid lg:grid-cols-2">
-      
-                </div>
-                <div className="">
-                  <h1
-                    className="text-black flex hover:text-red-500 justify-end text-end cursor-pointer"
-                    onClick={() => document.getElementById("my_modal_1").close()}
-                  >
-                    <ImCross />
-                  </h1>
-      
-                  
-      
-      <div className="mb-4">
-                  <label className="block text-gray-250">Date</label>
+          <div className="modal-box bg-white text-black font-bold">
+            <form onSubmit={handlePayment}>
+    
+              <div className="flex justify-end">
+                <ImCross
+                  className="cursor-pointer hover:text-red-500"
+                  onClick={() => document.getElementById("my_modal_1").close()}
+                />
+              </div>
+    
+              
+    <div className="grid lg:grid-cols-2 gap-3">
+    <div>
+                  <label>Date</label>
                   <input
                     type="date"
                     name="date"
@@ -180,54 +174,41 @@ const MonthlySalary = () => {
                     className="input2"
                   />
                 </div>
-      
-          
-      
-      <div>
-            {userr?.role === "admin" && (
-              <div className="mb-4">
-                <label className="block text-black">Select Digital Marketer</label>
-                <select className="select2 w-full" name="employeeEmail">
-                  {allEmployees
-                    ?.filter((f) => f.role === "employee")
-                    .map(({ _id, email, name }) => (
-                      <option key={_id} value={email}>
-                        {name}
-                      </option>
-                    ))}
-                </select>
-              </div>
-            )}
-            </div>
-      
-                    <div className="grid lg:grid-cols-2 gap-3">
-                    <div className="mb-4 ">
-                  <label className="block text-gray-250">Amount</label>
+    
+    
+    
+    
+                {userr?.role === "admin" && (
+                <div >
+                  <label className="block text-black" >Select Employee</label>
+                  <select name="employeeEmail" className="select2 w-full">
+                    {allEmployees?.filter(f=>f.role !== 'admin' && f.role !== 'contributor' && f.role === 'employee')
+                      .map((employee) => (
+                        <option key={employee._id} value={employee.email}>
+                          {employee.name}
+                        </option>
+                      ))}
+                  </select>
+                </div>
+              )}
+    
+    </div>
+    
+    
+             
+              <div>
+                  <label>Amount</label>
                   <input
-                    required
                     type="number"
                     name="payAmount"
-                    placeholder="0"
-                    className="input2"
-                  />
-                </div>
-                <div className="mb-4">
-                  <label className="block text-gray-250">Charge</label>
-                  <input
                     required
-                    type="number"
-                    name="charge"
                     placeholder="0"
-                    defaultValue={0}
                     className="input2"
                   />
                 </div>
-                    </div>
-      
-                   
-                  
-                </div>
-      
+             
+               
+    
                 <div className="mb-4">
         <div className="mt-2 grid lg:grid-cols-3">
           {[
@@ -251,36 +232,36 @@ const MonthlySalary = () => {
           ))}
         </div>
       </div>
-      
-      
-      
-      
-      
-                <div className="mb-4">
-                  <label className="block text-gray-250">Note (Optional)</label>
-                  <input
-                    type="text"
-                    name="note"
-                    placeholder="type note..."
-                    className="w-full border bg-white border-black rounded p-2 mt-1"
-                  />
-                </div>
-                <div className="grid mt-8 lg:grid-cols-2 gap-3">
-                  <form method="dialog">
-                    <button className="p-2 w-full hover:bg-red-700 rounded-lg bg-red-600 text-white text-center">
-                      Close
-                    </button>
-                  </form>
-                  <button
-                    type="submit"
-                    className="font-avenir w-full hover:bg-indigo-700 px-3 pt-2 rounded-lg flex justify-center text-white bg-[#05a0db]"
-                  >
-                    Submit
-                  </button>
-                </div>
-              </form>
-            </div>
-          </dialog>
+    
+             
+  
+              <div className="mt-4">
+                <label>Note (Optional)</label>
+                <input
+                  type="text"
+                  name="note"
+                  placeholder="Type note..."
+                  className="input2"
+                />
+              </div>
+              <div className="grid lg:grid-cols-2 gap-3 mt-5">
+                <button
+                  type="button"
+                  onClick={() => document.getElementById("my_modal_1").close()}
+                  className="close"
+                >
+                  Close
+                </button>
+                <button
+                  type="submit"
+                  className="add"
+                >
+                  Submit
+                </button>
+              </div>
+            </form>
+          </div>
+        </dialog>
         </div>
      <div className='f-end'>
      <div> 

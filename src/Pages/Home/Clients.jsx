@@ -22,10 +22,8 @@ const Clients = () => {
     ? localStorage.getItem(`activeTabag${user?.email}`) || "all" 
     : localStorage.getItem(`activeTabag${user?.email}`) || user?.email; 
 
-
   const [selectedEmployee3, setSelectedEmployee3] = useState(initialTab3);
   const [myclients, refetch] = useMyClientsByEmail(selectedEmployee3);
-  console.log(selectedEmployee3,user?.email);
   
   const changeTab3 = (tab) => {
     setSelectedEmployee3(tab);
@@ -36,7 +34,6 @@ const Clients = () => {
   const AxiosPublic = UseAxiosPublic();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedStatus, setSelectedStatus] = useState('all'); 
-
 
     const generateRandomId = () => {
       let randomId = '';
@@ -83,7 +80,6 @@ const Clients = () => {
         });
     };
     
-  
   const handledelete = (id, clientName) => {
     const datas = {
       title: `Deleted ${clientName} from My Clients`,
@@ -145,56 +141,47 @@ const Clients = () => {
       });
   };
   
-
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 20;
 
-  // Determine the items to display based on the current page
   const displayedItems = myclients?.slice(0, currentPage * itemsPerPage);
   const isMoreItems = currentPage * itemsPerPage < myclients.length;
   console.log(myclients,displayedItems);
 
   useEffect(() => {
-    // Automatically load more items every second
     const interval = setInterval(() => {
       if (isMoreItems) {
         setCurrentPage((prevPage) => prevPage + 1);
       } else {
-        clearInterval(interval); // Clear interval when all items are loaded
+        clearInterval(interval); 
       }
-    }, 1000); // Load 20 more items every second
+    }, 1000); 
 
     return () => {
-      clearInterval(interval); // Clean up interval on component unmount
+      clearInterval(interval);
     };
-  }, [isMoreItems]); // Re-run effect if `isMoreItems` changes
+  }, [isMoreItems]); 
 
-// Function to calculate total values based on a callback
 const calculate = (callback) =>
   displayedItems.reduce((acc, client) => acc + callback(client), 0);
 
-// Format numbers to a specified decimal precision
 const formatValue = (value, decimals = 2) =>
   new Intl.NumberFormat('en-IN', {
     minimumFractionDigits: decimals,
     maximumFractionDigits: decimals,
   }).format(value);
 
-// Total spent on campaigns
 const totalSpent = calculate(client =>
   (client.campaings || []).reduce((sum, c) => sum + parseFloat(c?.tSpent || 0), 0)
 );
 
-// Total bill combining campaigns and page services
 const totalBill = calculate(client => {
-  // Campaigns total
   const campaignTotal = (client.campaings || []).reduce((sum, c) => {
     const tSpent = parseFloat(c?.tSpent || 0);
     const dollerRate = parseFloat(c?.dollerRate || 0);
     return sum + tSpent * dollerRate;
   }, 0);
 
-  // Page services total
   const pageServiceTotal = (client.pageService || []).reduce((sum, service) => {
     const totalBill = parseFloat(service?.totalBill || 0);
     return sum + totalBill;
@@ -203,12 +190,10 @@ const totalBill = calculate(client => {
   return campaignTotal + pageServiceTotal;
 });
 
-// Total paid by clients
 const totalPaid = calculate(client =>
   (client.payments || []).reduce((sum, p) => sum + parseFloat(p?.amount || 0), 0)
 );
 
-// Total advance payment (when total paid exceeds total bill)
 const totalAdvanced = calculate(client => {
   const clientTotalBill = (client.campaings || []).reduce((sum, c) => {
     const tSpent = parseFloat(c?.tSpent || 0);
@@ -227,7 +212,7 @@ const totalAdvanced = calculate(client => {
 
   return clientTotalPaid > clientTotalBill
     ? clientTotalPaid - clientTotalBill
-    : 0; // Only include advance payments
+    : 0; 
 });
 
     return (
@@ -320,6 +305,7 @@ const totalAdvanced = calculate(client => {
         ))}
     </select>
   )}
+
   <select
     name="status"
     className="select2"
@@ -331,6 +317,7 @@ const totalAdvanced = calculate(client => {
     <option value="negative">Advanced</option>
     <option value="equal">Clear</option>
   </select>
+
   <input
     type="text"
     placeholder="Search ...."

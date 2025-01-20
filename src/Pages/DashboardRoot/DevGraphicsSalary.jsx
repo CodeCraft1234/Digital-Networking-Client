@@ -59,7 +59,6 @@ const DevGraphicSalary = () => {
       note,
       paymentMethod,
       date,
-      status:'pending'
     };
 
     const datas = {
@@ -210,7 +209,7 @@ const DevGraphicSalary = () => {
           className="font-avenir px-6 hover:bg-indigo-700 py-2 bg-[#05a0db] rounded-lg text-white"
           onClick={() => document.getElementById("my_modal_1").showModal()}
         >
-          Pay Admin
+          Pay Salary
         </button>
         <button
           className="font-avenir px-6 hover:bg-indigo-700 py-2 bg-[#05a0db] rounded-lg text-white"

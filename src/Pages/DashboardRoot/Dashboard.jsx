@@ -3,7 +3,7 @@ import { AuthContext } from "../../Security/AuthProvider";
 import AdminDashboard from "./AdminDashboard";
 import EmployeeDashboard from "./EmployeeDashboard";
 import AdsDashboard from "./AdsDashboard";
-import ClientDashboard from "./ClientDashboard"; // Make sure this is imported
+import ClientDashboard from "./ClientDashboard"; 
 import DeveloperDashboard from "./DeveloperDashboard";
 import useUserr from "../../Hook/useUser";
 import DesignerDashboard from "./DesignerDashboard";
@@ -11,11 +11,9 @@ import { FaArrowDown, FaArrowUp, FaFacebook, FaFacebookMessenger, FaWhatsapp } f
 import useUserr3 from "../../Hook/useUserr3";
 
 const Dashboard = ({ showSidebar }) => {
-  const { user } = useContext(AuthContext); // Get the authenticated user from the context
+  const { user } = useContext(AuthContext); 
   const {userr}=useUserr(user?.email) 
-
   const {userr3}=useUserr3(user?.email)
-
 
   const [showScrollButton, setShowScrollButton] = useState(false);
   const [scrollDirection, setScrollDirection] = useState("up");

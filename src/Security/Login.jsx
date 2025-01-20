@@ -71,7 +71,7 @@ const Login = () => {
         </h2>
         {error && <p className="text-red-500 text-center mb-4">{error}</p>}
         <form onSubmit={handleLogin}>
-          <div className="mb-5">
+          <div className="mb-5 ">
             <label htmlFor="email" className="block text-gray-600 font-medium">
               Email
             </label>
@@ -80,7 +80,7 @@ const Login = () => {
               name="email"
               ref={emailRef}
               placeholder="Enter your email"
-              className="input2"
+              className="bg-white border border-gray-300 text-black w-full p-3 rounded-lg"
               required
             />
           </div>
@@ -95,7 +95,7 @@ const Login = () => {
               type={show ? "text" : "password"}
               name="password"
               placeholder="Enter your password"
-              className="input2"
+              className="bg-white border border-gray-300 text-black w-full p-3 rounded-lg"
               required
             />
             <span
