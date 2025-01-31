@@ -24,6 +24,7 @@ const Clients = () => {
 
   const [selectedEmployee3, setSelectedEmployee3] = useState(initialTab3);
   const [myclients, refetch] = useMyClientsByEmail(selectedEmployee3);
+  console.log(myclients);
   
   const changeTab3 = (tab) => {
     setSelectedEmployee3(tab);
@@ -146,7 +147,6 @@ const Clients = () => {
 
   const displayedItems = myclients?.slice(0, currentPage * itemsPerPage);
   const isMoreItems = currentPage * itemsPerPage < myclients.length;
-  console.log(myclients,displayedItems);
 
   useEffect(() => {
     const interval = setInterval(() => {

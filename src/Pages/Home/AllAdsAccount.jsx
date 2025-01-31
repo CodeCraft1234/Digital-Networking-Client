@@ -124,7 +124,7 @@ const AllAdsAccount = () => {
     const body = { totalSpent: parseFloat(totalSpent)  };
     const ids=generateRandomId()
  
-    axios.put(`https://hishab-2025.vercel.app/adsAccount/totalSpent/${id}`, body)
+    axios.put(`https://hishab-2025-five.vercel.app/adsAccount/totalSpent/${id}`, body)
       .then((res) => {
         console.log(res.data);
         refetch();

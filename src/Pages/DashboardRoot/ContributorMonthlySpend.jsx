@@ -140,7 +140,7 @@ const ContributorMonthlySpend = ({data}) => {
 
 <Helmet>
   <title>
-    {`${data?.charAt(0).toUpperCase()}${data?.slice(1).toLowerCase()} Ads Account | Digital Network`}
+    {`Contributor Monthly Spend | Digital Network`}
   </title>
   <link rel="canonical" href="https://www.example.com/" />
 </Helmet>

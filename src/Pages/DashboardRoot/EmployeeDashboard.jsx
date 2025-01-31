@@ -86,25 +86,7 @@ const EmployeeDashboard = () => {
             <MdCampaign className="w-6 h-6 mr-2" />
             Campaigns
           </NavLink>
-          <NavLink
-            to="/pageSetup"
-            className="text-white hover:bg-[#f89320] hover:text-black py-2 px-4 rounded-lg flex items-center"
-            style={({ isActive }) => getActiveStyle(isActive)}
-          >
-            <RiPagesFill className="w-6 h-6 mr-2" />
-            Page Setup
-          </NavLink>
-          <NavLink
-            to="/monitization"
-            className="text-white hover:bg-[#f89320] hover:text-black py-2 px-4 rounded-lg flex items-center"
-            style={({ isActive }) => getActiveStyle(isActive)}
-          >
-            <TbHeartRateMonitor className="w-6 h-6 mr-2" />
-            Monitization
-          </NavLink>
-         
-         
-         
+       
           <NavLink
             to={`/allPayments`}
             className="text-white hover:bg-[#f89320] hover:text-black py-2 px-4 rounded-lg flex items-center"

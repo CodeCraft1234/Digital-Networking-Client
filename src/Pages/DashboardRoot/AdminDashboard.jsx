@@ -7,7 +7,7 @@ import {
 } from "react-icons/fa";
 import { IoMdCash,  } from 'react-icons/io';
 import { RxDashboard } from "react-icons/rx";
-import { MdAccountCircle, MdCampaign,  MdOutlinePayments, MdOutlineSummarize,  } from "react-icons/md";
+import { MdAccountCircle, MdCampaign,  MdHomeRepairService,  MdOutlinePayments, MdOutlineSummarize,  } from "react-icons/md";
 import {  IoPeopleSharp } from "react-icons/io5";
 import { FaNoteSticky, FaPeopleGroup } from "react-icons/fa6";
 import { CiBank } from "react-icons/ci";
@@ -76,25 +76,15 @@ const AdminDashboard = () => {
             <MdCampaign className="w-6 h-6 mr-2" />
             Campaigns
           </NavLink>
-         
+
           <NavLink
-            to="/pageSetup"
+            to="/services"
             className="text-white hover:bg-[#f89320] hover:text-black py-2 px-4 rounded-lg flex items-center text-lg"
             style={({ isActive }) => getActiveStyle(isActive)}
           >
-            <RiPagesFill className="w-6 h-6 mr-2" />
-            Page Setup
+            <MdHomeRepairService className="w-6 h-6 mr-2" />
+            Services
           </NavLink>
-          <NavLink
-            to="/monitization"
-            className="text-white hover:bg-[#f89320] hover:text-black py-2 px-4 rounded-lg flex items-center text-lg"
-            style={({ isActive }) => getActiveStyle(isActive)}
-          >
-            <TbHeartRateMonitor className="w-6 h-6 mr-2" />
-            Monitization
-          </NavLink>
-         
-         
          
           <NavLink
             to={`/allPayments`}
@@ -155,14 +145,7 @@ const AdminDashboard = () => {
             <FaPaypal className="w-6 h-6 mr-2" /> Payoneer
           </NavLink>
 
-          <NavLink
-            to={`/monthly-cast`}
-            className="text-white hover:bg-[#f89320] hover:text-black py-2 px-4 rounded-lg flex items-center text-lg"
-            style={({ isActive }) => getActiveStyle(isActive)}
-          >
-           <CiBank   className="w-6 h-6 mr-2" />
-           Monthly Cast
-          </NavLink>
+         
 
            <NavLink
             to={`/bankInfo`}

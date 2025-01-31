@@ -1,5 +1,3 @@
-import { Link } from "react-router-dom";
-import useAdsAccount from "../../Hook/useAdAccount";
 import { FaEdit, FaMinusSquare } from "react-icons/fa";
 import useUsers from "../../Hook/useUsers";
 import { useContext, useState } from "react";
@@ -46,7 +44,6 @@ const MetaAdsAccount = ({data1}) => {
       localStorage.setItem("activeTabAlladsAccountStatus", tab); 
     };
     
-
       const handleUpdate = (e, id) => {
         e.preventDefault();
         const accountName = e.target.accountName.value;
@@ -95,15 +92,12 @@ const MetaAdsAccount = ({data1}) => {
       return Math.floor(Math.random() * 1e13); 
     };
 
-
     const handleUpdateTotalSpent = (e, id,  accountName, employeeEmail, employeeName) => {
       e.preventDefault();
       const totalSpent = e.target.totalSpent.value;
       const date = e.target.date.value;
-      const role = e.target.role.value;
       const ids=generateRandomId()
    
-
       const totalSpentt = parseFloat(totalSpent);
       const data5 = { totalSpent:totalSpentt }
 
@@ -112,21 +106,23 @@ const MetaAdsAccount = ({data1}) => {
         totalSpentt,
         accountName,
         date,
-        role:`${role}Spend`,
+        role: data1 === 'meta' ? `${e.target.role.value}Spend` : `${data1}Spend`,
         employeeName
       };
+
+ 
 
       const monthlySpent2 = {
         ids,
         totalSpentt,
         accountName,
         date,
-        role:`${role}Spend`,
+        role:data1 === 'meta' ? `${e.target.role.value}Spend` : `${data1}Spend`,
         employeeName
       };
 
      
-      if(role === 'contributor'){
+      if(data1 === 'contributor'){
         AxiosPublic.post('/users/update2', { email: employeeEmail, monthlySpent2 })
         .then(res => {
           console.log(res.data);
@@ -198,8 +194,6 @@ const MetaAdsAccount = ({data1}) => {
         employeerName,
       };
     
-      console.log(data);
-    
       AxiosPublic.post("/adsAccount", data)
         .then((res) => {
           toast.success("Post created successfully!");
@@ -208,12 +202,16 @@ const MetaAdsAccount = ({data1}) => {
           document.getElementById("my_modal_3").close();
         })
         .catch((err) => {
-          console.error("Error posting data:", err);
-          toast.error("Failed to create post. Please try again.");
+          // Check for duplicate accountName error
+          if (err.response?.status === 400 && err.response?.data?.message) {
+            alert(err.response.data.message); // Display the alert message
+          } else {
+            console.error("Error posting data:", err);
+            toast.error("Failed to create post. Please try again.");
+          }
         });
     };
     
-
     const today = new Date();
     const formattedDate = today.toISOString().split('T')[0]; 
 
@@ -236,29 +234,31 @@ const MetaAdsAccount = ({data1}) => {
 
             <div className="flex justify-between lg:justify-between  ml-5  my-5  mx-auto   items-center gap-3 ">
             <div>
+  {userr?.role !== "contributor" && (
+    <button
+      className="add f-center"
+      onClick={() => document.getElementById("my_modal_3").showModal()}
+    >
+      <span className="font-bold text-lg">
+        <IoIosAddCircleOutline />
+      </span>
+      <span className="inline">Add {data1} Account</span>
+    </button>
+  )}
 
-              {
-                userr?.role !== 'contributor' &&  <button 
-                className="add f-center"
-                 onClick={() => document.getElementById("my_modal_3").showModal()}
-                   >
-                <span className="font-bold text-lg"><IoIosAddCircleOutline /></span> <span className="inline">Add {data1} Account</span>
-                 </button>
-              }
-                    
-    
-                      <dialog id="my_modal_3" className="modal">
-      <div className="modal-box bg-white">
-        <form onSubmit={(e) => handleAddAdsAcount(e)}>
-          <div className="mb-4">
-            <h1
-              className="text-black hover:text-red-500 f-end"
-              onClick={() => document.getElementById("my_modal_3").close()}
-            >
-              <ImCross />
-            </h1>
-             
-            <div className="col-span-1">
+  <dialog id="my_modal_3" className="modal">
+    <div className="modal-box bg-white">
+      <form onSubmit={handleAddAdsAcount}>
+        <div className="mb-4">
+          <h1
+            className="text-black hover:text-red-500 f-end"
+            onClick={() => document.getElementById("my_modal_3").close()}
+          >
+            <ImCross />
+          </h1>
+
+          {/* Date Input */}
+          <div className="col-span-1">
             <label className="block text-black">Date</label>
             <input
               required
@@ -267,81 +267,79 @@ const MetaAdsAccount = ({data1}) => {
               defaultValue={formattedDate}
               className="input2"
             />
-           </div>
+          </div>
 
-          {
-            userr?.role === 'admin' && <div className="col-span-1 mt-4 w-full">
-            <label className="block text-black">Select {(data1 !== 'contributor' ? 'employee' : data1)}</label>
-           <select
+          {/* Employee Selector */}
+          {userr?.role === "admin" && (
+            <div className="col-span-1 mt-4 w-full">
+              <label className="block text-black">
+                Select {data1 !== "contributor" ? "employee" : data1}
+              </label>
+              <select required className="select2 w-full" name="employeeEmail">
+                <option disabled selected value="">
+                  Select {data1 !== "contributor" ? "employee" : data1}
+                </option>
+                {allEmployees
+                  ?.filter(
+                    (f) => f.role === (data1 !== "contributor" ? "employee" : data1)
+                  )
+                  .map((employee) => (
+                    <option key={employee._id} value={employee.email}>
+                      {employee.name}
+                    </option>
+                  ))}
+              </select>
+            </div>
+          )}
+        </div>
+
+        {/* Account Name Input */}
+        <div className="mb-4">
+          <label className="block text-black">Account Name</label>
+          <input
+            type="text"
             required
-             className="select2 w-full"
-             name="employeeEmail"
-           >
-             <option disabled selected value=''>
-                Select {(data1 !== 'contributor' ? 'employee' : data1)}
-               </option>
-               {allEmployees
-?.filter((f) => f.role === (data1 !== 'contributor' ? 'employee' : data1))
-  .map((employee) => (
-    <option key={employee._id} value={employee.email}>
-      {employee.name}
-    </option>
-  ))}
+            name="accountName"
+            placeholder="type here..."
+            className="input2"
+          />
+        </div>
 
-           </select>
-         </div>
-          }
+        {/* Modal Actions */}
+        <div className="modal-action grid grid-cols-2 gap-2">
+          <button
+            type="button"
+            className="close"
+            onClick={() => document.getElementById("my_modal_3").close()}
+          >
+            Close
+          </button>
+          <button type="submit" className="add">
+            Submit
+          </button>
+        </div>
+      </form>
+    </div>
+  </dialog>
+</div>
 
-           
-          </div>
-          
-          <div className="mb-4">
-            <label className="block text-black">Account Name</label>
-            <input
-              type="text"
-              required
-              name="accountName"
-              placeholder="type here..."
-              className="input2"
-            />
-          </div>
-          
-          <div className="modal-action grid grid-cols-2 gap-4">
-            <button
-              type="button"
-              className="close"
-              onClick={() => document.getElementById("my_modal_3").close()}
-            >
-              Close
-            </button>
-            <button
-              type="submit"
-              className="add"
-            >
-              Send
-            </button>
-          </div>
-        </form>
-      </div>
-               </dialog>
-          </div>
 
-            <div className="f-center">
-            <div className="w-full lg:w-auto f-start ">
-  {userr?.role === "admin" ? (
-    <div className="flex  justify-center">
+<div className="f-center flex-wrap gap-4">
+  {/* Employee Selector for Admin */}
+  {userr?.role === "admin" && (
+    <div className="w-full lg:w-auto flex justify-center">
       <select
-        
-        className="select2"
+        className="select2 w-full lg:w-auto"
         value={selectedEmployee3}
         onChange={(e) => changeTab3(e.target.value)}
       >
-      <option value="all">
-  {data1 === "contributor" ? "Select Contributor" : "Select Digital Marketer"}
-</option>
-
+        <option value="all">
+          {data1 === "contributor" ? "Select Contributor" : "Select Digital Marketer"}
+        </option>
         {users
-         ?.filter((u) =>u.role === (data1 === "contributor" ? "contributor" : "employee"))
+          ?.filter((u) =>
+            u.role === (data1 === "contributor" ? "contributor" : "employee")
+          )
           .map((employee) => (
             <option key={employee._id} value={employee.email}>
               {employee.name}
@@ -349,40 +347,36 @@ const MetaAdsAccount = ({data1}) => {
           ))}
       </select>
     </div>
-  ) : (
-   <></>
   )}
-</div>
-            <div className="flex text-sm lg:mb-0  justify-center">
-                <select
-                 
-                  name="status"
-                  value={selectedStatus}
-                  onChange={(e) => changeTab(e.target.value)}
-                  className="select2 "
-                >
-                  <option value="">Select Status</option>
-                  <option value="Active">Active</option>
-                  <option value="Disable">Disable</option>
-                </select>
-              </div>
 
-              <div className=" f-center">
-   <input
-   
-     type="text"
-     placeholder="Search by campaign name"
-     className="input2"
-     value={searchQuery}
-     onChange={(e) => setSearchQuery(e.target.value)}
+  {/* Status Selector */}
+  <div className="w-full lg:w-auto flex justify-center">
+    <select
+      name="status"
+      value={selectedStatus}
+      onChange={(e) => changeTab(e.target.value)}
+      className="select2 w-full lg:w-auto"
+    >
+      <option value="">Select Status</option>
+      <option value="Active">Active</option>
+      <option value="Disable">Disable</option>
+    </select>
+  </div>
+
+  {/* Search Input */}
+  <div className="w-full lg:w-auto flex justify-center">
+    <input
+      type="text"
+      placeholder="Search by campaign name"
+      className="input2 w-full lg:w-auto"
+      value={searchQuery}
+      onChange={(e) => setSearchQuery(e.target.value)}
     />
   </div>
-          
-            </div>
-            </div>
-          
+</div>
 
-
+            </div>
+          
             </div>
          
             <div  className="table-div m-4" >
@@ -404,7 +398,7 @@ const MetaAdsAccount = ({data1}) => {
   ?.length} Items 
                 </th> : <th className="text-center">SL</th> }
                 <th>Employeer Name</th>
-                <th>{data1.charAt(0).toUpperCase() + data1.slice(1)} Account Name</th>
+                <th>{data1?.charAt(0).toUpperCase() + data1?.slice(1)} Account Name</th>
                 <th>Threshold</th>
                 <th>Current Balance</th>
                 <th className="text-center">Spend</th>
@@ -559,7 +553,7 @@ const MetaAdsAccount = ({data1}) => {
                required
                name="date"
                defaultValue={modalData.paymentDate}
-               className="w-full border-2 border-gray-400 rounded p-2 mt-1 bg-green-300 text-black"
+               className="input2"
              />
            </div>
          <div className="mb-4">
@@ -569,7 +563,7 @@ const MetaAdsAccount = ({data1}) => {
              name="accountName"
              required
              defaultValue={modalData.accountName}
-             className="w-full border-2 border-black rounded p-2 mt-1 bg-white text-black"
+             className="input2"
            />
          </div>
             <div className="grid lg:grid-cols-2 gap-3">
@@ -580,7 +574,7 @@ const MetaAdsAccount = ({data1}) => {
              name="currentBallence"
              step="0.01"
              defaultValue={modalData.currentBallence}
-             className="w-full border rounded p-2 mt-1 text-black bg-white border-gray-500"
+             className="input2"
            />
          </div>
          <div className="mb-4">
@@ -590,21 +584,21 @@ const MetaAdsAccount = ({data1}) => {
              name="threshold"
              step="0.01"
              defaultValue={modalData.threshold}
-             className="w-full border rounded p-2 mt-1 text-black bg-white border-gray-500"
+             className="input2"
            />
          </div>
             </div>
 
          <div className="grid grid-cols-2 gap-3">
          <button
-             className="p-2 hover:bg-red-700 rounded-lg bg-red-600 text-white text-center"
+             className="close"
              onClick={() => setModalData(null)}
            >
              Close
            </button>
            <button
              type="submit"
-             className="font-avenir hover:bg-indigo-700 px-3 py-1 rounded-lg text-white bg-[#05a0db]"
+             className="add"
            >
              Update
            </button>
@@ -635,7 +629,7 @@ const MetaAdsAccount = ({data1}) => {
       modalData2.employeerName
     )
   }
-  className="p-6 bg-white shadow-lg rounded-lg max-w-xl mx-auto border border-gray-300"
+  className=" bg-white  rounded-lg max-w-xl mx-auto "
 >
   {/* Form Header */}
   <h1 className="text-xl font-bold text-center text-gray-800 mb-6">
@@ -673,46 +667,56 @@ const MetaAdsAccount = ({data1}) => {
     </div>
   </div>
 
-  {/* Role Select Option */}
-  <div className="mb-6">
+    {
+      data1 === 'meta' ? 
 
+  <div className="mb-6">
 
     <div className="mb-6 text-black">
 
-  <div className="flex space-x-4">
-    <label className="inline-flex items-center">
-      <input
-        type="radio"
-        name="role"
-        value="meta" // Value for "Meta" role
-        required
-        className="radio radio-primary"
-      />
-      <span className="ml-2">Meta</span>
-    </label>
+    <div className="flex space-x-4">
+  <label className="inline-flex items-center">
+    <input
+      type="radio"
+      name="role"
+      value="meta" // Value for "Meta" role
+      required
+      defaultChecked // Ensures "Meta" is selected by default
+      className="radio radio-primary"
+    />
+    <span className="ml-2">Meta</span>
+  </label>
 
-    {/* Page Radio Button */}
-    <label className="inline-flex items-center">
-      <input
-        type="radio"
-        name="role"
-        value="page" // Value for "Page" role
-        className="radio radio-primary"
-      />
-      <span className="ml-2">Page</span>
-    </label>
-  </div>
+  {/* Page Radio Button */}
+  <label className="inline-flex items-center">
+    <input
+      type="radio"
+      name="role"
+      value="page" // Value for "Page" role
+      className="radio radio-primary"
+    />
+    <span className="ml-2">Page</span>
+  </label>
 </div>
 
+</div>
+
+  </div> : <></> }
 
 
-  </div>
+  <div className="grid lg:grid-cols-2 gap-3 items-center">
+    <button
+     
+      className="close"
+      onClick={() => setModalData2(null)}
+     >
 
-  {/* Submit Button */}
-  <div className="text-center">
+      Close
+    </button>
+
     <button
       type="submit"
-      className="w-full lg:w-auto px-6 py-2 text-white bg-blue-600 rounded-md font-semibold hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+      className="add"
     >
       Update
     </button>

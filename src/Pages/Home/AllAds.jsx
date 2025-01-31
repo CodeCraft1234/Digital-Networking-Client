@@ -1,17 +1,17 @@
 import { useState} from 'react';
 import { Helmet } from 'react-helmet-async';
 import MetaGoogleAds from './MetaGoogleAds';
-import { SiGoogle, SiGoogleads, SiMeta } from 'react-icons/si';
+import { SiGoogleads, SiMeta } from 'react-icons/si';
 
 const AllAds = () => {
 
-    const initialTab = localStorage.getItem("activeTabClientProfile") || "metaAds";
+    const initialTab = localStorage.getItem("activeTabClientProfile7") || "metaAds";
     const [activeTab, setActiveTab] = useState(initialTab);
 
     // Update the activeTab in state and localStorage
     const changeTab2 = (tab) => {
         setActiveTab(tab);
-        localStorage.setItem("activeTabClientProfile", tab); 
+        localStorage.setItem("activeTabClientProfile7", tab); 
     };
 
     // Button styles based on activeTab
@@ -24,10 +24,7 @@ const AllAds = () => {
 
     return (
         <div>
-            <Helmet>
-                <title>{activeTab} | Digital Network</title>
-                <link rel="canonical" href="https://www.example.com/" />
-            </Helmet>
+           
 
             <div className="px-2 mx-5 rounded-lg">
                 <div className="flex justify-center items-center gap-5 mb-5">

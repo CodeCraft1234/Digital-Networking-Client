@@ -3,9 +3,7 @@ import Axios from 'axios';
 import useBankInfo from '../../Hook/useBankInfo';
 import { AuthContext } from '../../Security/AuthProvider';
 import UseAxiosPublic from '../../Axios/UseAxiosPublic';
-import jsPDF from 'jspdf';
-import html2canvas from 'html2canvas';
-import { FaEdit, FaFileDownload, FaMinusSquare, FaRegCopy } from 'react-icons/fa';
+import { FaEdit, FaMinusSquare, FaRegCopy } from 'react-icons/fa';
 import { Helmet } from 'react-helmet-async';
 import useUserr from '../../Hook/useUser';
 import { useForm } from 'react-hook-form';
@@ -16,7 +14,8 @@ const BankInfo = () => {
   const [showModal, setShowModal] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [selectedBankId, setSelectedBankId] = useState(null);
-  const [bankInfo, refetch] = useBankInfo(); // Assuming `useBankInfo` fetches the bank info
+  const [bankInfo, refetch] = useBankInfo(); 
+  console.log(bankInfo);
 
   const { register, handleSubmit, setValue, reset } = useForm({
     defaultValues: {
@@ -36,54 +35,52 @@ const BankInfo = () => {
     const { image, ...otherFormData } = data;
   
     try {
-      let imageUrl = "";
-      // Check if an image is uploaded
+      let imageUrl = '';
+  
       if (image && image.length > 0) {
         const formData = new FormData();
-        formData.append("image", image[0]);
+        formData.append('image', image[0]);
   
-        // Upload image to ImgBB
         const imgResponse = await Axios.post(image_hosting_api, formData);
   
         if (imgResponse.data && imgResponse.data.data) {
           imageUrl = imgResponse.data.data.url;
         } else {
-          console.error("ImgBB response is invalid:", imgResponse.data);
+          console.error('ImgBB response is invalid:', imgResponse.data);
           return;
         }
       }
   
-      // Create payload with image URL
       const payload = {
         ...otherFormData,
-        imageUrl, // Add imageUrl to the payload
+        ...(imageUrl && { imageUrl }),
       };
-  
-      // Decide the API URL and method based on editing state
+
       const url = isEditing
-        ? `https://hishab-2025.vercel.app/bankInfo/${selectedBankId}`
-        : "https://hishab-2025.vercel.app/bankInfo";
-      const method = isEditing ? "patch" : "post";
+        ? `https://hishab-2025-five.vercel.app/bankInfo/${selectedBankId}`
+        : 'https://hishab-2025-five.vercel.app/bankInfo';
+      const method = isEditing ? 'patch' : 'post';
   
-      // Post data to the server
       const response = await Axios({
         method,
         url,
-        data: payload,
+        data: payload, // Ensure the updated fields are included here
+        headers: {
+          'Content-Type': 'application/json',
+        },
       });
   
-      console.log("Response data:", response.data);
+      console.log('Response data:', response.data);
   
-      // Handle success
       setShowModal(false);
-      refetch();
-      resetForm();
+      refetch(); // Fetch updated data
+      resetForm(); // Reset the form
     } catch (error) {
-      console.error("Error in submitting bank info:", error);
+      console.error('Error in submitting bank info:', error);
     }
   };
   
-
+  
   const resetForm = () => {
     reset(); // Clear form fields
     setSelectedBankId(null);
@@ -94,11 +91,11 @@ const BankInfo = () => {
     Object.entries(info).forEach(([key, value]) => {
       setValue(key, value || ""); // Dynamically set default values
     });
-    setSelectedBankId(info._id);
+    setSelectedBankId(info._id); // Ensure correct ID is set
     setIsEditing(true);
     setShowModal(true);
   };
-
+  
 
   const AxiosPublic = UseAxiosPublic();
   const handleDelete = (id) => {
@@ -116,7 +113,6 @@ const BankInfo = () => {
 
   const { user } = useContext(AuthContext);
   const {userr}=useUserr(user?.email)
-
 
   const [copiedBankId, setCopiedBankId] = useState(null); 
 
@@ -144,7 +140,6 @@ const BankInfo = () => {
         console.error('Error copying to clipboard:', err);
       });
   };
-
 
   return (
     <div className=''>
@@ -254,9 +249,6 @@ const BankInfo = () => {
             </button>
           )}
           {bankInfo && bankInfo.length > 0 ? (
-            <div>
-            
-
 
  <div className="table-div ">
           <table className="min-w-full text-center ">
@@ -358,7 +350,7 @@ const BankInfo = () => {
             </tbody>
           </table>
         </div>
-            </div>
+          
           ) : (
             <div>No bank information found.</div>
           )}

@@ -172,7 +172,7 @@ const Campaigns = () => {
 
   const handleUpdate2 = (id, newStatus) => {
     const body = { status: newStatus };
-    AxiosPublic.patch(`https://hishab-2025.vercel.app/campaings/status/${id}`, body)
+    AxiosPublic.patch(`https://hishab-2025-five.vercel.app/campaings/status/${id}`, body)
       .then((res) => {
         console.log(res.data);
         refetch();

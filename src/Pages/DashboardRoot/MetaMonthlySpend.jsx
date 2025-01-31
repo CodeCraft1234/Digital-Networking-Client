@@ -1,3 +1,4 @@
+
 import  { useContext, useState,  } from 'react';
 import useUsers from '../../Hook/useUsers';  // Custom hook to fetch users
 import UseAxiosPublic from '../../Axios/UseAxiosPublic';
@@ -16,6 +17,7 @@ const MetaMonthlySpend = ({data}) => {
   const [allEmployees] = useAllEmployee([]);
   const currentDate = new Date();
   const [modalData2, setModalData2] = useState(null);
+
   const closeModal = () => {
     setModalData2(null);
   };
@@ -43,6 +45,15 @@ const MetaMonthlySpend = ({data}) => {
   const changeTab2 = (tab) => {
     setSortMonth(tab);
     localStorage.setItem("activeTaballhistoryMonth", tab); 
+  };
+
+  
+  const initialStatus = localStorage.getItem("activeTabSe") || 'All';
+  const [selectedStatus2, setSelectedStatus2] = useState(initialStatus);
+
+  const changeTab3 = (tab) => {
+    setSelectedStatus2(tab);
+    localStorage.setItem("activeTabSe", tab);
   };
 
   const flattenedData = myUser.filter(u=>u.role === 'employee').reduce((acc, user) => {
@@ -131,12 +142,20 @@ const MetaMonthlySpend = ({data}) => {
     });
   };
 
+
+  const filteredAccounts = sortedAccounts?.filter((account) => {
+    if (selectedStatus2 === 'All') {
+      return account.role === 'pageSpend' || account.role === 'metaSpend';
+    }
+    return account.role === (selectedStatus2 || 'contributorSpend');
+  });
+  
   return (
     <div>
 
 <Helmet>
   <title>
-    {`${data?.charAt(0).toUpperCase()}${data?.slice(1).toLowerCase()} Ads Account | Digital Network`}
+    {`Meta & Page Monthly Spend | Digital Network`}
   </title>
   <link rel="canonical" href="https://www.example.com/" />
 </Helmet>
@@ -211,6 +230,18 @@ const MetaMonthlySpend = ({data}) => {
       ))}
   </select>
          </div>
+        <div>
+        <select
+  className="select2 "
+  value={selectedStatus2}
+  onChange={(e) => changeTab3(e.target.value)}
+>
+  <option value="All">All Status</option>
+  <option value="metaSpend">Meta Spend</option>
+  <option value="pageSpend">Page Spend</option>
+ 
+         </select>
+         </div>
 
       </div>
 
@@ -228,8 +259,8 @@ const MetaMonthlySpend = ({data}) => {
             </tr>
           </thead>
           <tbody >
-            {sortedAccounts?.filter(f => f.role === `${data || 'contributorSpend'}`)
-.map((account, index) => (
+            {filteredAccounts
+            ?.map((account, index) => (
               <tr 
               key={account._id}
               className={`tr2`}

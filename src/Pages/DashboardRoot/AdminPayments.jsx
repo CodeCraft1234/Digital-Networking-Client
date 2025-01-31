@@ -5,18 +5,15 @@ import { toast, ToastContainer } from "react-toastify";
 import { ImCross } from "react-icons/im";
 import Swal from "sweetalert2";
 import useMyEmployeePayments from "../../Hook/useMyemployeePayments";
-import { FaCalendarAlt, FaEdit, FaMinusSquare } from "react-icons/fa";
+import { FaEdit, FaMinusSquare } from "react-icons/fa";
 import useUserr from "../../Hook/useUser";
-import useUsers from "../../Hook/useUsers";
 import useAllEmployee from "../../Hook/useAllEmployee";
 import BalanceCard from "./BalanceCard";
-import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
 const AdminPayments = () => {
   const { user } = useContext(AuthContext);
   const {userr}=useUserr(user?.email)
-  const [users]=useUsers()
   const [allEmployees] = useAllEmployee([]);
   
   const initialTab3 =
@@ -27,14 +24,14 @@ const AdminPayments = () => {
   const [selectedEmployee3, setSelectedEmployee3] = useState(initialTab3);
 
   const changeTab2 = (tab) => {
-    setSelectedEmployee3(tab); // Update the state
+    setSelectedEmployee3(tab); 
     localStorage.setItem(`acti35${user?.email}`, tab); // Update localStorage
   };
 
-  const [MyEmployeePayment,refetch]=useMyEmployeePayments(selectedEmployee3)
+
+
   const [selectedCategory, setSelectedCategory] = useState("");
   const [filteredData, setFilteredData] = useState([]);
-  const [filteredData2, setFilteredData2] = useState([]);
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   const AxiosPublic=UseAxiosPublic()
 
@@ -55,9 +52,15 @@ const AdminPayments = () => {
   };
 
 
-  
-  const [selectedDate, setSelectedDate] = useState(null);
-  const [showCalendar, setShowCalendar] = useState(false);
+  const filters = {
+    status: selectedStatus2,
+    month: sortMonth,
+    year: selectedYear,
+    category: selectedCategory,
+};
+
+const [MyEmployeePayment, refetch] = useMyEmployeePayments(selectedEmployee3, filters);
+console.log(MyEmployeePayment);
 
   useEffect(() => {
     const filtered = MyEmployeePayment.filter((payment) => {
@@ -77,11 +80,7 @@ const AdminPayments = () => {
       const matchesYear =
         !selectedYear || paymentDate.getFullYear() === parseInt(selectedYear);
   
-      const matchesDate =
-        !selectedDate || paymentDate.toDateString() === new Date(selectedDate).toDateString();
-  
-      // Combine all conditions
-      return matchesStatus && matchesMonth && matchesCategory && matchesYear && matchesDate;
+      return matchesStatus && matchesMonth && matchesCategory && matchesYear 
     });
   
     setFilteredData(filtered);
@@ -91,52 +90,29 @@ const AdminPayments = () => {
     MyEmployeePayment,
     selectedStatus2,
     selectedYear,
-    selectedDate,
   ]);
   
-
-  useEffect(() => {
-    const filtered = MyEmployeePayment.filter((payment) => {
-      const paymentDate = new Date(payment.date);
-      return (
-        (selectedStatus2 === 'All' || payment.status === selectedStatus2) &&
-        (!sortMonth || paymentDate.getMonth() + 1 === parseInt(sortMonth)) &&
-        (!selectedYear || paymentDate.getFullYear() === parseInt(selectedYear))
-      );
-    });
   
-    setFilteredData2(filtered);
-  }, [
-    sortMonth,
-    selectedCategory, 
-    MyEmployeePayment,
-    selectedStatus2,
-    selectedYear,
-  ]);
-  
-
   
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 20;
 
-  const displayedItems = filteredData.sort((a, b) => new Date(b.date) - new Date(a.date)).slice(0, currentPage * itemsPerPage);
+  const displayedItems = MyEmployeePayment?.sort((a, b) => new Date(b.date) - new Date(a.date))?.slice(0, currentPage * itemsPerPage);
   const isMoreItems = currentPage * itemsPerPage < filteredData.length;
 
   useEffect(() => {
-    const handleScroll = () => {
-      if (
-        window.innerHeight + document.documentElement.scrollTop + 100 >=
-        document.documentElement.scrollHeight
-      ) {
+    const interval = setInterval(() => {
+      if (isMoreItems) {
         setCurrentPage((prevPage) => prevPage + 1);
+      } else {
+        clearInterval(interval); 
       }
-    };
+    }, 1000); 
 
-    window.addEventListener("scroll", handleScroll);
     return () => {
-      window.removeEventListener("scroll", handleScroll);
+      clearInterval(interval);
     };
-  }, []);
+  }, [isMoreItems]); 
 
   const today = new Date();
   const formattedDate = today.toISOString().split('T')[0];  
@@ -324,13 +300,13 @@ const AdminPayments = () => {
   useEffect(() => {
     const paymentMethods = ['nagadPersonal', 'bkashPersonal', 'bank', 'IBBLBank', 'DBBLBank'];
     const updatedTotals = paymentMethods.reduce((acc, method) => {
-      acc[method] = filteredData2
+      acc[method] = displayedItems
         .filter(d => d.paymentMethod === method)
         .reduce((sum, d) => sum + parseFloat(d.payAmount || 0), 0);
       return acc;
     }, {});
     setTotals(updatedTotals);
-  }, [filteredData2]);
+  }, [displayedItems]);
   
   const cards = [
     { category: 'bank', img: 'https://i.ibb.co/PZc0P4w/brac-bank-seeklogo.png', bgColor: '#f2f2f2' },
@@ -340,7 +316,6 @@ const AdminPayments = () => {
     { category: 'nagadPersonal', img: 'https://i.ibb.co/JQBQBcF/nagad-marchant.png', bgColor: '#fff2cc' },
   ];
 
-
   return (
     <div className="mt-5">
       <ToastContainer />
@@ -348,7 +323,7 @@ const AdminPayments = () => {
 
 
 <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 lg:gap-5 rounded-lg">
-  {cards.map(({ category, img, bgColor }) => (
+  {cards.map(({ category, img }) => (
 
 <div onClick={() => setSelectedCategory(category)} key={category}>
   <BalanceCard 
@@ -512,40 +487,6 @@ const AdminPayments = () => {
         
         <div className="flex mt-2  lg:mt-0 justify-center text-center gap-2 lg:gap-3 items-center">
 
-       
-         {/* <div style={{ position: "relative", display: "inline-block" }}>
-        <button
-          onClick={() => setShowCalendar(!showCalendar)}
-          className="calendar-icon-button"
-          style={{
-            background: "none",
-            border: "none",
-            cursor: "pointer",
-            fontSize: "24px",
-            color: "#333",
-          }}
-        >
-          <FaCalendarAlt />
-        </button>
-
-        {showCalendar && (
-          <div style={{ position: "absolute", zIndex: 10 }}>
-            <DatePicker
-              selected={selectedDate}
-              onChange={(date) => {
-                setSelectedDate(date);
-                setShowCalendar(false); 
-              }}
-              inline
-            />
-          </div>
-        )}
-      </div> */}
-
-      {/* <h1 style={{ backgroundColor: '#f7e8e8', border: 'var(--border)' }}  className="rounded-lg p-2 text-black">
-        {selectedDate ? selectedDate.toLocaleDateString() : "No Date Selected"}
-      </h1> */}
-
 {userr?.role === "admin" ? (
       <select
         
@@ -554,7 +495,7 @@ const AdminPayments = () => {
         onChange={(e) => changeTab2(e.target.value)}
       >
         <option value="all">Select Digital Marketer</option>
-        {users
+        {allEmployees
           .filter((u) => u.role === "employee")
           .map((employee) => (
             <option key={employee._id} value={employee.email}>
@@ -587,14 +528,12 @@ const AdminPayments = () => {
     "December",
   ]
     .map((month, index) => {
-      // Get the unique months from the data
       const monthsInData = [
         ...new Set(
-          displayedItems?.map(item => new Date(item.date).getMonth() + 1) // Get months from the displayedItems data
+          displayedItems?.map(item => new Date(item.date).getMonth() + 1) 
         ),
       ];
 
-      // Check if the month is in the data
       if (monthsInData.includes(index + 1)) {
         return (
           <option key={index} value={index + 1}>
@@ -613,9 +552,9 @@ const AdminPayments = () => {
   value={selectedYear}
   onChange={(e) => setSelectedYear(e.target.value)}
 >
-  <option value="">Select Year</option> {/* Default option */}
+  <option value="">Select Year</option> 
   {[...new Set(displayedItems?.map((campaign) => new Date(campaign.date).getFullYear()))]
-    .sort((a, b) => a - b) // Ensure the years are sorted in ascending order
+    .sort((a, b) => a - b) 
     .map((year) => (
       <option key={year} value={year}>
         {year}
@@ -656,7 +595,7 @@ const AdminPayments = () => {
             </tr>
           </thead>
           <tbody>
-            {displayedItems?.map((payment, index) => (
+            {displayedItems?.filter(f=>selectedStatus2 === 'All' || f.status === selectedStatus2)?.map((payment, index) => (
                <tr style={{ backgroundColor: 'var(--bg-table)', color: 'var(--text-color2)'}}
                key={payment._id}
                className={`${
@@ -847,10 +786,10 @@ const AdminPayments = () => {
   )}
                </td>
 
-                <td>
-                  {" "}
-                  {payment.note}
-                </td>
+               <td>
+                 {payment.note?.split(" ").slice(0, 4).join(" ") + (payment.note?.split(" ").length > 4 ? "..." : "")}
+            </td>
+
             
                 {userr?.role === 'admin' &&
                 <td className="text-center">

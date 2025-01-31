@@ -4,6 +4,7 @@ import { AuthContext } from '../../Security/AuthProvider';
 import useUserr from '../../Hook/useUser';
 import MarketerSummery from './MarketerSummery';
 import ContributorSummery from './ContributorSummery';
+import MonthlyCast from './MonthlyCast';
 
 const Summery = () => {
 
@@ -44,10 +45,13 @@ const Summery = () => {
                         Marketer Summery
                     </button>
 
-                    {/* Clients Pay Button */}
+                    <button
+                        className={getButtonClass('monthlyCost')}
+                        onClick={() => changeTab('monthlyCost')}
+                    >
+                        Monthly Cost
+                    </button>
 
-
-                    {/* Contributor Pay Button */}
                     {
                         userr?.role === 'admin' &&  <button
                         className={getButtonClass('contributorPay')}
@@ -60,6 +64,7 @@ const Summery = () => {
 
                 </div>
                 {activeTab === 'contributorPay' && <ContributorSummery></ContributorSummery>}
+                {activeTab === 'monthlyCost' && <MonthlyCast></MonthlyCast>}
                 {activeTab === 'employeerPay' && <MarketerSummery></MarketerSummery>}
             </div>
             }

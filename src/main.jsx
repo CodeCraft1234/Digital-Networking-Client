@@ -66,6 +66,7 @@ import DevGraphicSalary from "./Pages/DashboardRoot/DevGraphicsSalary";
 import NoticePad from "./Pages/DashboardRoot/NoticePad";
 import AllAds from "./Pages/Home/AllAds";
 import MonthlyCast from "./Pages/DashboardRoot/MonthlyCast";
+import Services from "./Pages/Home/Services";
 
 const router = createBrowserRouter([
   {
@@ -104,6 +105,10 @@ const router = createBrowserRouter([
       {
         path:'/campaigns',
         element:<AllAds></AllAds>
+       },
+      {
+        path:'/services',
+        element:<Services></Services>
        },
       {
         path:'/monthly-cast',

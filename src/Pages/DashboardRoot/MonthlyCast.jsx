@@ -1,4 +1,4 @@
-import  { useState, useMemo, useContext } from 'react';
+import  { useState, useMemo, useContext, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 import useAllEmployee from '../../Hook/useAllEmployee';
 import useMyEmployeePayments from '../../Hook/useMyemployeePayments';
@@ -29,6 +29,28 @@ const MonthlyCast = () => {
   const [myUser]=useMyUser(selectedEmployee)
   const [MyEmployeePaymentCharge]=useMyEmployeePaymentsCharge(selectedEmployee)
   const [MySalaryPayment]=useMySalaryPayments(selectedEmployee)
+
+
+
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 20;
+  
+    const displayedItems = MyEmployeePaymentCharge?.slice(0, currentPage * itemsPerPage);
+    const isMoreItems = currentPage * itemsPerPage < MyEmployeePaymentCharge.length;
+  
+    useEffect(() => {
+      const interval = setInterval(() => {
+        if (isMoreItems) {
+          setCurrentPage((prevPage) => prevPage + 1);
+        } else {
+          clearInterval(interval); 
+        }
+      }, 1000); 
+  
+      return () => {
+        clearInterval(interval);
+      };
+    }, [isMoreItems]); 
 
   const changeTab = (tab) => {
     setSelectedEmployee(tab);
@@ -146,19 +168,52 @@ const MonthlyCast = () => {
       </Helmet>
 
       
-<div  className="grid grid-cols-2  rounded-lg md:grid-cols-2 lg:grid-cols-7 text-black sm:grid-cols-2 gap-5 justify-around">
-
-<SummaryCard title="Total Spend" value={new Intl.NumberFormat('en-IN').format(employeeData.reduce((acc, data) => acc + data.totalSpentMeta, 0).toFixed(2))} />
-<SummaryCard title="Total BDT" value={new Intl.NumberFormat('en-IN').format(employeeData.reduce((acc, data) => acc + data.totalMeta, 0).toFixed(0))} />
-<SummaryCard title="Admin Pay" value={new Intl.NumberFormat('en-IN').format(employeeData.reduce((acc, data) => acc + data.totalAdminPay, 0).toFixed(0))} />
-<SummaryCard title="Charge" value={new Intl.NumberFormat('en-IN').format(employeeData.reduce((acc, data) => acc + data.totalAdminPay, 0).toFixed(0))} />
-<SummaryCard title="Salary Pay" value={new Intl.NumberFormat('en-IN').format(employeeData.reduce((acc, data) => acc + data.totalSalaryPay, 0).toFixed(0))} />
-
-<SummaryCard title="Total Cast" value={new Intl.NumberFormat('en-IN').format(employeeData.reduce((acc, data) => acc + data.totalMeta + data.totalAdminPay +  data.totalSalaryPay, 0).toFixed(0))} />
-<SummaryCard title="Loss" value={new Intl.NumberFormat('en-IN').format(employeeData.reduce((acc, data) => acc + data.totalMeta + data.totalAdminPay +  data.totalSalaryPay, 0).toFixed(0))} />
-
-
+      <div className="grid grid-cols-2 rounded-lg md:grid-cols-2 lg:grid-cols-6 text-black sm:grid-cols-2 gap-5 justify-around">
+  <SummaryCard
+    title="Total Spend"
+    value={new Intl.NumberFormat('en-IN', { maximumFractionDigits: 2 }).format(
+      employeeData.reduce((acc, data) => acc + data.totalMetaData + data.totalSpentMeta, 0)
+    )}
+  />
+  <SummaryCard
+    title="Total BDT"
+    value={new Intl.NumberFormat('en-IN', { maximumFractionDigits: 0 }).format(
+      employeeData.reduce((acc, data) => acc + data.totalMetaData + data.totalSpentMeta, 0) * 130
+    )}
+  />
+  <SummaryCard
+    title="Admin Pay"
+    value={new Intl.NumberFormat('en-IN', { maximumFractionDigits: 0 }).format(
+      employeeData.reduce((acc, data) => acc + data.totalPayAdmin, 0)
+    )}
+  />
+  <SummaryCard
+    title="Salary Pay"
+    value={new Intl.NumberFormat('en-IN', { maximumFractionDigits: 0 }).format(
+      employeeData.reduce((acc, data) => acc + data.totalBill, 0)
+    )}
+  />
+  <SummaryCard
+    title="Total Cast"
+    value={new Intl.NumberFormat('en-IN', { maximumFractionDigits: 0 }).format(
+      employeeData.reduce(
+        (acc, data) => acc + (data.totalMetaData * 130) + data.totalBill + data.totalMeta + data.totalAdminPay,
+        0
+      )
+    )}
+  />
+  <SummaryCard
+    title="Loss"
+    value={new Intl.NumberFormat('en-IN', { maximumFractionDigits: 0 }).format(
+      employeeData.reduce(
+        (acc, data) =>
+          acc + ((data.totalMetaData * 130) + data.totalBill + data.totalMeta + data.totalAdminPay) - data.totalPayAdmin,
+        0
+      )
+    )}
+  />
 </div>
+
 
 
 
@@ -289,6 +344,7 @@ const MonthlyCast = () => {
             employeeData.reduce((acc, data) => acc + data.totalPayAdmin, 0)
           )}
         </td>
+
         <td>
   ৳{new Intl.NumberFormat('en-IN', { maximumFractionDigits: 0 }).format(
     employeeData.reduce((acc, data) => {

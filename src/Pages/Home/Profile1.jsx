@@ -32,7 +32,7 @@ const [data,setData]=useState([])
 console.log(data)
 
     useEffect(()=>{
-      AxiosPublic.get(`https://hishab-2025.vercel.app/users/${userr.email}`)
+      AxiosPublic.get(`https://hishab-2025-five.vercel.app/users/${userr.email}`)
       .then(res=>{
         console.log(res.data)
         setData(res.data)

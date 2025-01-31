@@ -12,7 +12,7 @@ import useMyClientsByEmail from "../../Hook/useMyClientsByEmail";
 import useUserr from "../../Hook/useUser";
 import { Helmet } from "react-helmet-async";
 
-const Monitization = () => {
+const Monitization = ({data}) => {
     const { user } = useContext(AuthContext);
     const {userr}=useUserr(user?.email)
     const param = useParams()
@@ -296,7 +296,7 @@ localStorage.setItem("activeTabalu", tab);
                 (!selectedYear || new Date(item.date).getFullYear() === parseInt(selectedYear)) &&
                 item?.itemName?.toLowerCase().includes(searchQuery.toLowerCase()) &&
                 (sortMonth === 'all' || new Date(item.date).getMonth() + 1 === parseInt(sortMonth, 10))
-              )?.filter(item=>item.role === 'pageMonitization')
+              )?.filter(item=>item.role === data )
               .map((work, index) => (
                  <tr 
                  key={work._id}
@@ -419,7 +419,7 @@ localStorage.setItem("activeTabalu", tab);
                   {new Date(work?.date).toLocaleDateString("en-GB")}
                   </td>
 
-                  <td><Link to={`/client/${work.id}`}>{work.clientName}</Link></td>
+                  <td><Link className="hover:font-bold" to={`/client/${work.id}`}>{work.clientName}</Link></td>
                   
                   <td>
 
@@ -485,7 +485,7 @@ localStorage.setItem("activeTabalu", tab);
                 (!selectedYear || new Date(item.date).getFullYear() === parseInt(selectedYear)) &&
                 item?.itemName?.toLowerCase().includes(searchQuery.toLowerCase()) &&
                 (sortMonth === 'all' || new Date(item.date).getMonth() + 1 === parseInt(sortMonth, 10))
-              )?.filter(item=>item.role === 'pageMonitization').reduce((acc, payment) => acc + parseFloat(payment?.totalBill || 0), 0).toFixed(0) || 0}
+              )?.filter(item=>item.role === data).reduce((acc, payment) => acc + parseFloat(payment?.totalBill || 0), 0).toFixed(0) || 0}
                 </td>
                 
               

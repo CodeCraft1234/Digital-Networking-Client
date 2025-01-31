@@ -63,7 +63,7 @@ const Selary = ({ email }) => {
 
 
   useEffect(()=>{
-      AxiosPublic.get(`https://hishab-2025.vercel.app/Mpayment`)
+      AxiosPublic.get(`https://hishab-2025-five.vercel.app/Mpayment`)
       .then(res => {
           console.log('sdjkhagjijkhgjkhdsajljkhgdsjkajkjkfjldfgjkgjkgd',res.data);
           const da=res.data

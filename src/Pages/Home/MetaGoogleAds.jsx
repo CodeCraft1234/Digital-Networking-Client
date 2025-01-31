@@ -15,7 +15,7 @@ const MetaGoogleAds = () => {
   const { user } = useContext(AuthContext);
   const {userr}=useUserr(user?.email)
 
-  const data2 = localStorage.getItem(("activeTabClientProfile") || "metaAds")
+  const data2 = localStorage.getItem(("activeTabClientProfile7") || "metaAds")
 
   const initialTab3 =
   userr?.role === "admin"
@@ -53,27 +53,24 @@ const MetaGoogleAds = () => {
   };
 
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 50;
+  const itemsPerPage = 20;
 
-  const displayedItems = myclients.sort((a, b) => new Date(b.date) - new Date(a.date))?.slice(0, currentPage * itemsPerPage);
+  const displayedItems = myclients?.slice(0, currentPage * itemsPerPage);
   const isMoreItems = currentPage * itemsPerPage < myclients.length;
 
-
   useEffect(() => {
-    const handleScroll = () => {
-      if (
-        window.innerHeight + document.documentElement.scrollTop + 100 >=
-        document.documentElement.scrollHeight
-      ) {
+    const interval = setInterval(() => {
+      if (isMoreItems) {
         setCurrentPage((prevPage) => prevPage + 1);
+      } else {
+        clearInterval(interval); 
       }
-    };
+    }, 1000); 
 
-    window.addEventListener("scroll", handleScroll);
     return () => {
-      window.removeEventListener("scroll", handleScroll);
+      clearInterval(interval);
     };
-  }, []);
+  }, [isMoreItems]); 
 
   const filteredCampaigns = displayedItems
   ?.flatMap(client => client.campaings || []) // Flatten the campaigns array
@@ -196,10 +193,11 @@ const MetaGoogleAds = () => {
   
   return (
     <div>
-      <Helmet>
-        <title>{data2} | Digital Network </title>
-        <link rel="canonical" href="https://www.example.com/" />
-      </Helmet>
+       <Helmet>
+          <title>{data2 ? `${data2.charAt(0).toUpperCase()}${data2.slice(1)} ` : 'Default Title'} | Digital Network</title>
+          <link rel="canonical" href="https://www.example.com/" />
+        </Helmet>
+
       <div className='side-space'>
 
       <div className="flex flex-col mb-5 sm:flex-row justify-end items-center gap-3">
@@ -406,7 +404,6 @@ const MetaGoogleAds = () => {
 
 </tbody>
           </table>  
-          {isMoreItems && <p className="text-center mt-5">Loading more clients...</p>}
 
         </div>
         </div>

@@ -6,6 +6,7 @@ import { FaDraftingCompass } from 'react-icons/fa';
 import useUserr from '../../Hook/useUser';
 import { AuthContext } from '../../Security/AuthProvider';
 import ContributorMonthlySpend from './ContributorMonthlySpend';
+import GoogleMonthlySpend from './GoogleMonthlySpend';
 
 const MonthlySpend = () => {
 
@@ -45,12 +46,7 @@ const MonthlySpend = () => {
                         >
                             <SiGoogleads /> Google Spend
                         </button>
-                        <button
-                            className={getButtonClass('pageSpend') }
-                            onClick={() => changeTab('pageSpend')}
-                        >
-                            <FaDraftingCompass  /> Page Spend
-                        </button>
+                       
                         <button
                             className={getButtonClass('contributorSpend') }
                             onClick={() => changeTab('contributorSpend')}
@@ -75,12 +71,7 @@ const MonthlySpend = () => {
                         >
                             <SiGoogleads /> Google Spend
                         </button>
-                        <button
-                            className={getButtonClass('pageSpend') }
-                            onClick={() => changeTab('pageSpend')}
-                        >
-                            <FaDraftingCompass  /> Page Spend
-                        </button>
+                       
                     </>
                 )}
 
@@ -95,11 +86,9 @@ const MonthlySpend = () => {
             </div>
         </div>
 
-        {/* Conditional Rendering for Components */}
         {activeTab === 'contributorSpend' && <ContributorMonthlySpend data={activeTab} />}
-        {(activeTab === 'metaSpend' || activeTab === 'googleSpend' || activeTab === 'pageSpend') && (
-            <MetaMonthlySpend data={activeTab} />
-        )}
+        {activeTab === 'metaSpend' && <MetaMonthlySpend  />}
+        {activeTab === 'googleSpend' && <GoogleMonthlySpend data={activeTab} />}
     </div>
     );
 };

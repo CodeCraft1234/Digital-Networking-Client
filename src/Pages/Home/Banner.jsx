@@ -76,7 +76,7 @@ const Banner = () => {
     const tBudged = e.target.tBudged.value;
     const body = { payoneer: tBudged };
 
-    axios.put(`https://hishab-2025.vercel.app/users/payoneer/${id}`, body)
+    axios.put(`https://hishab-2025-five.vercel.app/users/payoneer/${id}`, body)
       .then((res) => {
         refetch();
         const modalElement = document.getElementById(modalId);

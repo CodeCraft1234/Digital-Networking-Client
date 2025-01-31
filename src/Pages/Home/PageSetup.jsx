@@ -158,6 +158,8 @@ localStorage.setItem("activeTabalu", tab);
         });
 };
 
+
+console.log(myclients);
     return (
         <div>
             <Helmet>
@@ -433,7 +435,7 @@ localStorage.setItem("activeTabalu", tab);
                   <td>
                   {new Date(work?.date).toLocaleDateString("en-GB")}
                   </td>
-                  <td><Link to={`/client/${work.id}`}>{work.clientName}</Link></td>
+                  <td><Link className="hover:font-bold" to={`/client/${work.id}`}>{work.clientName}</Link></td>
                   
                   <td>
 
