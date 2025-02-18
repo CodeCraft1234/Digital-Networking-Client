@@ -19,7 +19,7 @@ const RadarChart = ({ data3, options3 }) => {
       style={{
         backgroundColor: "var(--bg-color3)",
         color: "var(--text-color2)",
-        border: "var(--border)",
+       
       }}
       className="bg-gray-800 rounded-lg p-5"
     >

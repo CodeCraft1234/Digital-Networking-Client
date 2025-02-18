@@ -1,7 +1,7 @@
 import { Link, NavLink } from "react-router-dom";
 import { FaHistory, FaPaypal} from "react-icons/fa";
 import { RxDashboard } from "react-icons/rx";
-import { MdAccountCircle, MdCampaign, MdOutlinePayments, MdOutlineSummarize } from "react-icons/md";
+import { MdAccountCircle, MdCampaign, MdHomeRepairService, MdOutlinePayments, MdOutlineSummarize } from "react-icons/md";
 import { useContext } from "react";
 import { FaPeopleGroup } from "react-icons/fa6";
 import { AuthContext } from "../../Security/AuthProvider";
@@ -86,6 +86,15 @@ const EmployeeDashboard = () => {
             <MdCampaign className="w-6 h-6 mr-2" />
             Campaigns
           </NavLink>
+
+             <NavLink
+                      to="/services"
+                      className="text-white hover:bg-[#f89320] hover:text-black py-2 px-4 rounded-lg flex items-center text-lg"
+                      style={({ isActive }) => getActiveStyle(isActive)}
+                    >
+                      <MdHomeRepairService className="w-6 h-6 mr-2" />
+                      Services
+                    </NavLink>
        
           <NavLink
             to={`/allPayments`}
@@ -121,17 +130,6 @@ const EmployeeDashboard = () => {
             My Salary
           </NavLink>
 
-         
-
-          
-         
-          <NavLink
-            to="/payoneer"
-            className="text-white hover:bg-[#f89320] hover:text-black py-2 px-3 rounded-lg flex items-center"
-            style={({ isActive }) => getActiveStyle(isActive)}
-          >
-            <FaPaypal className="w-6 h-6 mr-2" /> Payoneer
-          </NavLink>
           <NavLink
             to={`/bankInfo`}
             className="text-white hover:bg-[#f89320] hover:text-black py-2 px-4 rounded-lg flex items-center"

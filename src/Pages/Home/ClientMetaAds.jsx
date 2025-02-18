@@ -7,7 +7,6 @@ import "react-toastify/dist/ReactToastify.css";
 import Swal from "sweetalert2";
 import { FaEdit, FaMinusSquare } from "react-icons/fa";
 import useFindClient from "./useFindClient";
-import SummaryCard from "./SummeryCard";
 import useMyAdsAccountByEmail from "../../Hook/useMyAdsAccountNyEmail";
 import useUserr from "../../Hook/useUser";
 
@@ -99,6 +98,7 @@ const ClientMetaAds = ({data1}) => {
       const datas = {
         title: `Updated ${campaignName} in My Clients`,
         date: new Date(),
+        photo:userr?.photo,
         user: user?.displayName,
       };
   
@@ -120,6 +120,12 @@ const ClientMetaAds = ({data1}) => {
 
 
     const handledelete = (ids, id) => {
+      const datas = {
+        title: `deleted ids in My Clients`,
+        date: new Date(),
+        photo:userr?.photo,
+        user: user?.displayName,
+      };
       Swal.fire({
           title: 'Are you sure?',
           text: "You won't be able to revert this!",
@@ -133,12 +139,15 @@ const ClientMetaAds = ({data1}) => {
               AxiosPublic.delete(`/clientCampaings/delete/${id}/${ids}`)
                   .then((res) => {
                       toast.success("Campaign deleted successfully!");
-                      refetch(); // Refresh data after deletion
+                      refetch(); 
+                      AxiosPublic.post("/activity", datas).then(() => {
+                        document.getElementById(`modal_${ids}`).close();
+                      });
                   })
                   .catch((error) => {
                       console.error("Error deleting campaign:", error);
                       toast.error("Failed to delete the campaign. Please try again.");
-                  });
+              });
           }
       });
   };
@@ -148,6 +157,7 @@ const ClientMetaAds = ({data1}) => {
           title: `Updated ${status} in Client campaigns`,
           date: new Date(),
           user: user?.displayName,
+          photo:userr?.photo,
       };
       
       AxiosPublic.put(`/clientCampaings/${id}/${ids}`, { status })
@@ -181,46 +191,6 @@ const ClientMetaAds = ({data1}) => {
     return (
         <div>
             <div>
-
-            <div  className="grid grid-cols-2 mt-5  rounded-lg md:grid-cols-2 lg:grid-cols-4 text-black sm:grid-cols-2 gap-3 lg:gap-3 justify-around ">
-        <SummaryCard title="Total Spend" value={findClients?.campaings?.reduce((acc, payment) => acc + parseFloat(payment?.tSpent || 0), 0).toFixed(2) || 0} />
-        <SummaryCard title="Total Bill" value={findClients?.campaings?.reduce(
-    (acc, campaign) =>
-      acc + parseFloat(campaign?.tSpent || 0) * parseFloat(campaign?.dollerRate || 0),
-    0
-  ).toFixed(0) || 0} />
-
-        <SummaryCard title="Total Paid" value={findClients?.payments?.reduce((acc, payment) => acc + parseFloat(payment?.amount || 0), 0).toFixed(0)} />
-        <SummaryCard
-  title={`Total ${
-    (findClients?.campaings?.reduce(
-      (acc, campaign) =>
-        acc + parseFloat(campaign?.tSpent || 0) * parseFloat(campaign?.dollerRate || 0),
-      0
-    ) || 0) -
-      (findClients?.payments?.reduce(
-        (acc, payment) => acc + parseFloat(payment?.amount || 0),
-        0
-      ) || 0) >= 0
-      ? "Due"
-      : "Advance"
-  }`}
-  value={(
-    Math.abs(
-      (findClients?.campaings?.reduce(
-        (acc, campaign) =>
-          acc + parseFloat(campaign?.tSpent || 0) * parseFloat(campaign?.dollerRate || 0),
-        0
-      ) || 0) -
-        (findClients?.payments?.reduce(
-          (acc, payment) => acc + parseFloat(payment?.amount || 0),
-          0
-        ) || 0)
-    ) || 0
-  ).toFixed(0)}
-/>
-
-      </div>
 
       <div style={{ backgroundColor: 'var(--bg-color3)', color: 'var(--text-color)',border: 'var(--border)'}} className="  rounded-lg p-5 mx-1 my-5 ">
         

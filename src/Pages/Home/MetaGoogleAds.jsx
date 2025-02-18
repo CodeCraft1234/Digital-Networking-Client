@@ -1,21 +1,21 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useState } from "react";
 import { AuthContext } from "../../Security/AuthProvider";
 import UseAxiosPublic from "../../Axios/UseAxiosPublic";
 import Swal from "sweetalert2";
 import { Helmet } from "react-helmet-async";
 import { toast } from "react-toastify";
-import useMyClientsByEmail from "../../Hook/useMyClientsByEmail";
 import { FaEdit, FaMinusSquare } from "react-icons/fa";
-
 import useUserr from "../../Hook/useUser";
-import useUsers from "../../Hook/useUsers";
 import { Link } from "react-router-dom";
+import useClientsCampaignsPage from "../../Hook/useClientCampaignsPage";
+import useAllEmployee from "../../Hook/useAllEmployee";
 
 const MetaGoogleAds = () => {
   const { user } = useContext(AuthContext);
   const {userr}=useUserr(user?.email)
+  const [allEmployees]=useAllEmployee()
 
-  const data2 = localStorage.getItem(("activeTabClientProfile7") || "metaAds")
+  const role = localStorage.getItem(("activeTabClientProfile7") || "metaAds")
 
   const initialTab3 =
   userr?.role === "admin"
@@ -29,19 +29,15 @@ const MetaGoogleAds = () => {
     localStorage.setItem(`activeTabag3${user?.email}`, tab); // Update localStorage
   };
 
-  const [myclients, refetch] = useMyClientsByEmail(selectedEmployee3);
+  
+  // const [client, totalItems, totalPages, , refetch] = useClientsPage(selectedEmployee3, currentPage);
+  
+
+
   const AxiosPublic=UseAxiosPublic()
   const [searchQuery, setSearchQuery] = useState("");
 
-  const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
 
-  const initialTab = localStorage.getItem("activeTabsummeryEmployeess") || "All";
-  const [selectedEmployee, setSelectedEmployee] = useState(initialTab);
-
-  const changeTab = (tab) => {
-    setSelectedEmployee(tab);
-    localStorage.setItem("activeTabsummeryEmployeess", tab);
-  };
 
   const initialTab2 = localStorage.getItem("activeTaballcampaignmonthsss");
   
@@ -53,34 +49,46 @@ const MetaGoogleAds = () => {
   };
 
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 20;
-
-  const displayedItems = myclients?.slice(0, currentPage * itemsPerPage);
-  const isMoreItems = currentPage * itemsPerPage < myclients.length;
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      if (isMoreItems) {
-        setCurrentPage((prevPage) => prevPage + 1);
-      } else {
-        clearInterval(interval); 
-      }
-    }, 1000); 
-
-    return () => {
-      clearInterval(interval);
+  
+    const handlePageChange = (page) => {
+      setCurrentPage(page);
+      refetch();
     };
-  }, [isMoreItems]); 
 
-  const filteredCampaigns = displayedItems
-  ?.flatMap(client => client.campaings || []) // Flatten the campaigns array
-  ?.filter(item =>
-    item.role === data2 && // Filter based on role
-    (selectedEmployee === 'all' || item.status === selectedEmployee) && // Filter based on employee status
-    (!selectedYear || new Date(item.date).getFullYear() === parseInt(selectedYear)) && // Filter based on year
-    item.campaignName?.toLowerCase().includes(searchQuery.toLowerCase()) && // Filter based on campaign name search
-    (sortMonth === 'all' || new Date(item.date).getMonth() + 1 === parseInt(sortMonth, 10)) // Filter based on selected month
+    const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
+
+    const initialTab = localStorage.getItem("activeTabsummeryEmployeess") || "All";
+    const [selectedStatus, setSelectedEmployee] = useState(initialTab);
+  
+    const changeTab = (tab) => {
+      setSelectedEmployee(tab);
+      localStorage.setItem("activeTabsummeryEmployeess", tab);
+    };
+
+    const { clientCampaigns, totalItems, totalPages, refetch } = useClientsCampaignsPage(
+      selectedEmployee3,
+      currentPage,
+      sortMonth,
+      selectedStatus,
+      selectedYear,
+      role
   );
+  
+    
+
+const itemsPerPage = 100;
+
+
+console.log(role);
+
+
+const displayedItems = clientCampaigns?.slice(0, currentPage * itemsPerPage);
+
+const filteredCampaigns = displayedItems?.filter((item) => {
+  return (
+      item.campaignName?.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+});
 
   const handleUpdate = (e, ids, id) => {
     e.preventDefault();
@@ -137,38 +145,19 @@ const MetaGoogleAds = () => {
     });
 };
 
-  const handleUpdate2 = (ids, id, status) => {
-    const activityData = {
-        title: `Updated ${status} in Client campaigns`,
-        date: new Date(),
-        user: user?.displayName,
-    };
-    
-    AxiosPublic.put(`/clientCampaings/${id}/${ids}`, { status })
-        .then((res) => {
-            console.log("Update Response:", res.data);
-            refetch(); // Refresh data after update
+const handleUpdate2 = (ids, id, status) => {
 
-            // Log the activity
-            AxiosPublic.post("/activity", activityData)
-                .then(() => {
-                    document.getElementById(`modal_${id}`).close();
-                    toast.success(`${status} has been successfully updated`);
-                })
-                .catch((activityError) => {
-                    console.error("Activity log error:", activityError);
-                    toast.error("Activity logging failed");
-                });
+  AxiosPublic.put(`/clientCampaings/${id}/${ids}`, { status })
+      .then((res) => {
+          console.log("Update Response:", res.data);
+          refetch(); 
 
-            toast.success("Campaign updated successfully");
-        })
-        .catch((error) => {
-            console.error("Error updating campaign:", error);
-            toast.error("Failed to update campaign");
-        });
+      })
+      .catch((error) => {
+          console.error("Error updating campaign:", error);
+          toast.error("Failed to update campaign");
+      });
 };
-
-   const [users]=useUsers()
 
    const truncateText = (text, wordLimit) => {
     const words = text.split(" ");
@@ -194,7 +183,7 @@ const MetaGoogleAds = () => {
   return (
     <div>
        <Helmet>
-          <title>{data2 ? `${data2.charAt(0).toUpperCase()}${data2.slice(1)} ` : 'Default Title'} | Digital Network</title>
+          <title>{role ? `${role.charAt(0).toUpperCase()}${role.slice(1)} ` : 'Default Title'} | Digital Network</title>
           <link rel="canonical" href="https://www.example.com/" />
         </Helmet>
 
@@ -205,7 +194,7 @@ const MetaGoogleAds = () => {
   {userr?.role === "admin" && (
     <select className="select2" value={selectedEmployee3} onChange={(e) => changeTab3(e.target.value)}>
       <option value="all">Select Digital Marketer</option>
-      {users.filter((u) => u.role === "employee").map((e) => (
+      {allEmployees?.filter((u) => u.role === "employee").map((e) => (
         <option key={e._id} value={e.email}>{e.name}</option>
       ))}
     </select>
@@ -233,7 +222,7 @@ const MetaGoogleAds = () => {
 
 
 
-  <select className="select2" value={selectedEmployee} onChange={(e) => changeTab(e.target.value)}>
+  <select className="select2" value={selectedStatus} onChange={(e) => changeTab(e.target.value)}>
     <option value="all">Select Status</option>
     <option value="Active">Active</option>
     <option value="Complete">Complete</option>
@@ -251,8 +240,8 @@ const MetaGoogleAds = () => {
               <tr className="tr1" >
                 <th className=" text-center">{filteredCampaigns.length}</th>
                 <th >Date</th>
-                <th >Campaign Name</th>
                 <th >Client Name</th>
+                <th >Campaign Name</th>
                 <th >Page Name</th>
                 <th >Budged</th>
                 <th >Spend</th>
@@ -263,7 +252,7 @@ const MetaGoogleAds = () => {
             <tbody>
             {filteredCampaigns
   ?.map((work, index) => (
-<tr key={work._id} className="tr2">
+<tr key={index} className="tr2">
   <td className="text-center">
       <button
         className="delete"
@@ -274,7 +263,7 @@ const MetaGoogleAds = () => {
   </td>
 
   <td>{new Date(work?.date).toLocaleDateString("en-GB")}</td>
-
+  <td><Link to={`/client/${work.id}`}>{truncateText(work.clientName, 4)}</Link></td>
   <td>
     <button
       className=" edit flex justify-center items-center gap-1 px-2 py-1 rounded"
@@ -343,7 +332,7 @@ const MetaGoogleAds = () => {
     </dialog>
   </td>
 
-  <td><Link to={`/client/${work.id}`}>{truncateText(work.clientName, 4)}</Link></td>
+ 
   <td>{work.adsAccount}</td>
   <td>$ {work.tBudged}</td>
   <td>$ {work.tSpent}</td>
@@ -352,22 +341,22 @@ const MetaGoogleAds = () => {
     {parseInt(work.tSpent * work.dollerRate)}
   </td>
 
-  <td className="text-center">
-  <label className="status-label">
-  <input
-    type="checkbox"
-    checked={work.status === "Active"}
-    onChange={() => {
-      const newStatus = work.status === "Active" ? "Complete" : "Active";
-      handleUpdate2(work.ids, work.id, newStatus);
-    }}
-  />
-  <div className={work.status === "Active" ? "active" : "inactive"}>
-    <span className={work.status === "Active" ? "active" : ""}></span>
-  </div>
-</label>
-
-  </td>
+          <td className="text-center">
+                      <label className="status-label">
+                      <input
+                        type="checkbox"
+                        checked={work.status === "Active"}
+                        onChange={() => {
+                          const newStatus = work.status === "Active" ? "Complete" : "Active";
+                          handleUpdate2(work.ids, work.id, newStatus);
+                        }}
+                      />
+                      <div className={work.status === "Active" ? "active" : "inactive"}>
+                        <span className={work.status === "Active" ? "active" : ""}></span>
+                      </div>
+                    </label>
+                    
+                      </td>
 </tr>
 
 
@@ -404,6 +393,77 @@ const MetaGoogleAds = () => {
 
 </tbody>
           </table>  
+
+          <div className="flex items-center justify-center my-5 space-x-2">
+  {/* Previous Button */}
+  <button
+    onClick={() => handlePageChange(currentPage - 1)}
+    disabled={currentPage === 1}
+    className={`px-4 py-2 rounded-md ${
+      currentPage === 1
+        ? "bg-gray-300 text-gray-600 cursor-not-allowed"
+        : "bg-blue-600 text-white hover:bg-blue-800"
+    }`}
+  >
+    Previous
+  </button>
+
+  {/* Page Numbers */}
+  {(() => {
+    const buttons = [];
+    let startPage, endPage;
+
+    // Always show 5 buttons, with the current page in the middle
+    if (totalPages <= 5) {
+      // If total pages are less than or equal to 5, show all pages
+      startPage = 1;
+      endPage = totalPages;
+    } else {
+      // Calculate start and end pages to keep the current page in the middle
+      startPage = Math.max(currentPage - 2, 1);
+      endPage = Math.min(currentPage + 2, totalPages);
+
+      // Adjust if the current page is near the start or end
+      if (currentPage <= 3) {
+        endPage = 5;
+      } else if (currentPage >= totalPages - 2) {
+        startPage = totalPages - 4;
+      }
+    }
+
+    // Generate buttons for the calculated range
+    for (let i = startPage; i <= endPage; i++) {
+      buttons.push(
+        <button
+          key={i}
+          onClick={() => handlePageChange(i)}
+          className={`px-4 py-2 rounded-md ${
+            currentPage === i
+              ? "bg-red-600 text-white"
+              : "bg-gray-200 text-gray-800 hover:bg-red-600 hover:text-white"
+          }`}
+        >
+          {i}
+        </button>
+      );
+    }
+
+    return buttons;
+  })()}
+
+  {/* Next Button */}
+  <button
+    onClick={() => handlePageChange(currentPage + 1)}
+    disabled={currentPage === totalPages}
+    className={`px-4 py-2 rounded-md ${
+      currentPage === totalPages
+        ? "bg-gray-300 text-gray-600 cursor-not-allowed"
+        : "bg-blue-600 text-white hover:bg-blue-800"
+    }`}
+  >
+    Next
+  </button>
+</div>
 
         </div>
         </div>

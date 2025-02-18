@@ -1,13 +1,12 @@
-import  { useState, useMemo, useContext, useEffect } from 'react';
+import  { useState, useMemo, useContext } from 'react';
 import { Helmet } from 'react-helmet-async';
 import useAllEmployee from '../../Hook/useAllEmployee';
-import useMyEmployeePayments from '../../Hook/useMyemployeePayments';
 import { AuthContext } from '../../Security/AuthProvider';
 import useUserr from '../../Hook/useUser';
 import useMyUser from '../../Hook/useMyUser';
 import SummaryCard from '../Home/SummeryCard';
 import useMySalaryPayments from '../../Hook/useMySalaryPayment';
-import useMyEmployeePaymentsCharge from '../../Hook/UseMyEmployeePaymentCharge';
+import useAdminPayTotalMonthly from '../../Hook/useAdminPayTotalMonthly';
 
 const months = [
   'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'
@@ -24,33 +23,9 @@ const MonthlyCast = () => {
   : localStorage.getItem(`ac2${user?.email}`) || user?.email; 
 
   const [selectedEmployee, setSelectedEmployee] = useState(initialTab3);
-  const [MyEmployeePayment]=useMyEmployeePayments(selectedEmployee)
-
   const [myUser]=useMyUser(selectedEmployee)
-  const [MyEmployeePaymentCharge]=useMyEmployeePaymentsCharge(selectedEmployee)
   const [MySalaryPayment]=useMySalaryPayments(selectedEmployee)
-
-
-
-    const [currentPage, setCurrentPage] = useState(1);
-    const itemsPerPage = 20;
-  
-    const displayedItems = MyEmployeePaymentCharge?.slice(0, currentPage * itemsPerPage);
-    const isMoreItems = currentPage * itemsPerPage < MyEmployeePaymentCharge.length;
-  
-    useEffect(() => {
-      const interval = setInterval(() => {
-        if (isMoreItems) {
-          setCurrentPage((prevPage) => prevPage + 1);
-        } else {
-          clearInterval(interval); 
-        }
-      }, 1000); 
-  
-      return () => {
-        clearInterval(interval);
-      };
-    }, [isMoreItems]); 
+  const [adminPayTotalMonthly] = useAdminPayTotalMonthly(selectedEmployee);
 
   const changeTab = (tab) => {
     setSelectedEmployee(tab);
@@ -72,39 +47,18 @@ const MonthlyCast = () => {
   const employeeData = useMemo(() => {
     if (!myUser || !recentMonths) return [];
   
-    const relevantUsers = selectedEmployee === "all" 
-      ? myUser.filter(u => u.role === 'employee')
-      : myUser.filter(u => u.email === selectedEmployee && u.role === 'employee');
-  
     return recentMonths.map(month => {
-      const aggregatedData = relevantUsers.reduce((acc, user) => {
-        // Monthly Spent Data
-        const monthlySpentData = (user?.monthlySpent || [])
-          .filter(spent => new Date(spent.date).toLocaleString('default', { month: 'long' }) === month)
-          .reduce((spentAcc, current) => {
-            const existingAccount = spentAcc.find(item => item.accountName === current.accountName);
-            if (existingAccount) {
-              if (new Date(current.date) > new Date(existingAccount.date)) {
-                spentAcc = spentAcc.filter(item => item.accountName !== existingAccount.accountName);
-                spentAcc.push(current);
-              }
-            } else {
-              spentAcc.push(current);
-            }
-            return spentAcc;
-          }, []);
-  
+      const aggregatedData = allEmployees.reduce((acc, user) => {
 
-        const totalSpent = monthlySpentData.reduce((sum, spent) => sum + spent.totalSpentt, 0);
-        const totalSpentMeta = monthlySpentData.filter(f => f.role === 'pageSpend').reduce((sum, spent) => sum + spent.totalSpentt, 0);
-        const totalMetaData = monthlySpentData.filter(f => f.role === 'metaSpend' || f.role === 'googleSpend').reduce((sum, spent) => sum + spent.totalSpentt, 0);
+          const totalSpentMetas = parseFloat(myUser.totalSpentMeta?.[month] || 0);
+          const totalSpentGoogle = parseFloat(myUser.totalSpentGoogle?.[month] || 0);
+          const totalSpentMeta = parseFloat(myUser.totalSpentPage?.[month] || 0);
+          const totalMetaData =  totalSpentGoogle + totalSpentMetas;
   
-
         const selleryData = (user?.sellery || []).filter(sell => sell.month === month);
         const totalSellery = selleryData.reduce((sum, sell) => sum + sell.amount, 0);
         const totalBonus = selleryData.reduce((sum, sell) => sum + sell.bonus, 0);
   
-        // Payments
         const paymentSalaryByMonth = MySalaryPayment.reduce((payAcc, payment) => {
           const paymentMonth = new Date(payment.date).toLocaleString('default', { month: 'long' });
           if (paymentMonth === month) {
@@ -113,36 +67,18 @@ const MonthlyCast = () => {
           return payAcc;
         }, 0);
   
-        const paymentByMonthCharge = MyEmployeePaymentCharge?.reduce((payAcc, payment) => {
-          const paymentMonth = new Date(payment.date).toLocaleString('default', { month: 'long' });
-          if (paymentMonth === month) {
-            payAcc += parseFloat(payment.charge || 0); 
-          }
-          return payAcc;
-        }, 0);
-
-        const paymentByMonthAdminpay = MyEmployeePaymentCharge?.reduce((payAcc, payment) => {
-          const paymentMonth = new Date(payment.date).toLocaleString('default', { month: 'long' });
-          if (paymentMonth === month) {
-            payAcc += parseFloat(payment.payAmount || 0); 
-          }
-          return payAcc;
-        }, 0);
-  
-        acc.totalSpentMeta += totalSpentMeta;
-        acc.totalSpent += totalSpent;
-        acc.totalMetaData += totalMetaData;
-        acc.totalSellery += totalSellery;
-        acc.totalBonus += totalBonus;
-        acc.totalAdminPay = paymentByMonthCharge;
-        acc.totalPayAdmin = paymentByMonthAdminpay ;
-        acc.totalSalaryPay += paymentSalaryByMonth;
+        acc.totalSpentMeta = totalSpentMeta;
+        acc.totalMetaData = totalMetaData;
+        acc.totalSellery = totalSellery;
+        acc.totalBonus = totalBonus;
+        acc.totalAdminPay = parseFloat(adminPayTotalMonthly?.paymentByMonthCharge?.[month] || 0);
+        acc.totalPayAdmin = parseFloat(adminPayTotalMonthly?.paymentByMonth?.[month] || 0)
+        acc.totalSalaryPay = paymentSalaryByMonth;
   
         return acc;
       }, {
         month,
         totalSpentMeta: 0,
-        totalSpent: 0,
         totalMetaData: 0,
         totalSellery: 0,
         totalBonus: 0,
@@ -152,13 +88,11 @@ const MonthlyCast = () => {
       });
   
       aggregatedData.totalBill = aggregatedData.totalMetaData * 7;
-      aggregatedData.totalMeta = aggregatedData.totalSpentMeta * 130;
-      aggregatedData.totalDue = aggregatedData.totalSpent * 142 - aggregatedData.totalAdminPay;
-      aggregatedData.totalSelleryPaid = aggregatedData.totalSpent * 7 - aggregatedData.totalSellery;
+      aggregatedData.totalMeta = aggregatedData.totalSpentMeta * 129;
   
       return aggregatedData;
     }).sort((a, b) => months.indexOf(a.month) - months.indexOf(b.month));
-  }, [myUser, selectedEmployee, MyEmployeePaymentCharge, recentMonths]);
+  }, [myUser, selectedEmployee, adminPayTotalMonthly, recentMonths]);
   
   return (
     <div className=''>
@@ -178,15 +112,10 @@ const MonthlyCast = () => {
   <SummaryCard
     title="Total BDT"
     value={new Intl.NumberFormat('en-IN', { maximumFractionDigits: 0 }).format(
-      employeeData.reduce((acc, data) => acc + data.totalMetaData + data.totalSpentMeta, 0) * 130
+      employeeData.reduce((acc, data) => acc + data.totalMetaData + data.totalSpentMeta, 0) * 129
     )}
   />
-  <SummaryCard
-    title="Admin Pay"
-    value={new Intl.NumberFormat('en-IN', { maximumFractionDigits: 0 }).format(
-      employeeData.reduce((acc, data) => acc + data.totalPayAdmin, 0)
-    )}
-  />
+
   <SummaryCard
     title="Salary Pay"
     value={new Intl.NumberFormat('en-IN', { maximumFractionDigits: 0 }).format(
@@ -197,9 +126,16 @@ const MonthlyCast = () => {
     title="Total Cast"
     value={new Intl.NumberFormat('en-IN', { maximumFractionDigits: 0 }).format(
       employeeData.reduce(
-        (acc, data) => acc + (data.totalMetaData * 130) + data.totalBill + data.totalMeta + data.totalAdminPay,
+        (acc, data) => acc + (data.totalMetaData * 129) + data.totalBill + data.totalMeta + data.totalAdminPay,
         0
       )
+    )}
+  />
+
+<SummaryCard
+    title="Income"
+    value={new Intl.NumberFormat('en-IN', { maximumFractionDigits: 0 }).format(
+      employeeData.reduce((acc, data) => acc + data.totalPayAdmin, 0)
     )}
   />
   <SummaryCard
@@ -207,7 +143,7 @@ const MonthlyCast = () => {
     value={new Intl.NumberFormat('en-IN', { maximumFractionDigits: 0 }).format(
       employeeData.reduce(
         (acc, data) =>
-          acc + ((data.totalMetaData * 130) + data.totalBill + data.totalMeta + data.totalAdminPay) - data.totalPayAdmin,
+          acc + ((data.totalMetaData * 129) + data.totalBill + data.totalMeta + data.totalAdminPay) - data.totalPayAdmin,
         0
       )
     )}
@@ -248,14 +184,14 @@ const MonthlyCast = () => {
             <thead className=" ">
               <tr className="tr1">
               <th>Month</th>
-              <th>Monthly Spend</th>
+              <th>Spend</th>
               <th>Page Spend</th>
               <th>Spend BDT</th>
-              <th>Charge</th>
               <th>Salary</th>
+              <th>Charge</th>
               <th>Total Cost</th>
-              <th>Admin Pay</th>
-              <th>Loss</th>
+              <th>Income</th>
+              <th>Loss/Profit</th>
             </tr>
           </thead>
           <tbody>
@@ -275,26 +211,39 @@ const MonthlyCast = () => {
   ${new Intl.NumberFormat('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(data.totalSpentMeta)}
 </td>
 <td>
-  ৳{new Intl.NumberFormat('en-IN', { maximumFractionDigits: 0 }).format((data.totalMetaData  + data.totalSpentMeta) * 130)}
+  ৳{new Intl.NumberFormat('en-IN', { maximumFractionDigits: 0 }).format((data.totalMetaData  + data.totalSpentMeta) * 129)}
 </td>
-<td>
-  ৳{new Intl.NumberFormat('en-IN', { maximumFractionDigits: 0 }).format(data.totalAdminPay)}
-</td>
-
 
 <td>
   ৳{new Intl.NumberFormat('en-IN', { maximumFractionDigits: 0 }).format(data.totalBill)}
 </td>
 
 <td>
-  ৳{new Intl.NumberFormat('en-IN', { maximumFractionDigits: 0 }).format( (data.totalMetaData * 130) + data.totalBill + data.totalMeta + data.totalAdminPay)}
+  ৳{new Intl.NumberFormat('en-IN', { maximumFractionDigits: 0 }).format(data.totalAdminPay)}
+</td>
+
+<td>
+  ৳{new Intl.NumberFormat('en-IN', { maximumFractionDigits: 0 }).format(
+    (data.totalMetaData * 129) + data.totalBill + data.totalMeta + data.totalAdminPay
+  )}
 </td>
 
 <td>
   ৳{new Intl.NumberFormat('en-IN', { maximumFractionDigits: 0 }).format(data.totalPayAdmin)}
 </td>
-<td>
-  ৳{new Intl.NumberFormat('en-IN', { maximumFractionDigits: 0 }).format(((data.totalMetaData * 130) + data.totalBill + data.totalMeta + data.totalAdminPay) - data.totalPayAdmin )}
+
+<td className='text-center'>
+  <span className={
+    (data.totalPayAdmin - ((data.totalMetaData * 129) + data.totalBill + data.totalMeta + data.totalAdminPay))   > 0
+      ? 'bg-green-700 px-4 rounded-lg py-2 font-bold text-white'
+      : (data.totalPayAdmin - ((data.totalMetaData * 129) + data.totalBill + data.totalMeta + data.totalAdminPay))  < 0
+      ? 'bg-red-800 px-4 rounded-lg py-2 font-bold text-white'
+      : 'bg-yellow-300 px-4 rounded-lg py-2 font-bold text-black'
+  }>
+    ৳{new Intl.NumberFormat('en-IN', { maximumFractionDigits: 0 }).format(
+      (data.totalPayAdmin - ((data.totalMetaData * 129) + data.totalBill + data.totalMeta + data.totalAdminPay)) 
+    )}
+  </span>
 </td>
 
     </tr>
@@ -306,19 +255,26 @@ const MonthlyCast = () => {
     <tfoot className="font-bold">
       <tr className="tr1">
         <td className="text-right" colSpan="1">Total</td>
-        <td>
-          ${new Intl.NumberFormat('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(
-            employeeData.reduce((acc, data) => acc + data.totalSpentMeta, 0)
-          )}
-        </td>
+        
         <td>
           ${new Intl.NumberFormat('en-IN', { maximumFractionDigits: 2 }).format(
             employeeData.reduce((acc, data) => acc + data.totalMetaData, 0)
           )}
         </td>
         <td>
+          ${new Intl.NumberFormat('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(
+            employeeData.reduce((acc, data) => acc + data.totalSpentMeta, 0)
+          )}
+        </td>
+        <td>
           ৳{new Intl.NumberFormat('en-IN', { maximumFractionDigits: 0 }).format(
-            employeeData.reduce((acc, data) => acc + (data.totalMetaData + data.totalSpentMeta) * 130, 0)
+            employeeData.reduce((acc, data) => acc + (data.totalMetaData + data.totalSpentMeta) * 129, 0)
+          )}
+        </td>
+        
+        <td>
+          ৳{new Intl.NumberFormat('en-IN', { maximumFractionDigits: 0 }).format(
+            employeeData.reduce((acc, data) => acc + data.totalBill, 0)
           )}
         </td>
         <td>
@@ -327,14 +283,9 @@ const MonthlyCast = () => {
           )}
         </td>
         <td>
-          ৳{new Intl.NumberFormat('en-IN', { maximumFractionDigits: 0 }).format(
-            employeeData.reduce((acc, data) => acc + data.totalBill, 0)
-          )}
-        </td>
-        <td>
   ৳{new Intl.NumberFormat('en-IN', { maximumFractionDigits: 0 }).format(
     employeeData.reduce((acc, data) => {
-      return acc + (data.totalMetaData * 130) + data.totalBill + data.totalMeta + data.totalAdminPay;
+      return acc + (data.totalMetaData * 129) + data.totalBill + data.totalMeta + data.totalAdminPay;
     }, 0)
   )}
 </td>
@@ -348,10 +299,12 @@ const MonthlyCast = () => {
         <td>
   ৳{new Intl.NumberFormat('en-IN', { maximumFractionDigits: 0 }).format(
     employeeData.reduce((acc, data) => {
-      return acc + ((data.totalMetaData * 130) + data.totalBill + data.totalMeta + data.totalAdminPay) - data.totalPayAdmin;
+      return acc + ((data.totalMetaData * 129) + data.totalBill + data.totalMeta + data.totalAdminPay) - data.totalPayAdmin;
     }, 0)
   )}
 </td>
+
+
 
       </tr>
     </tfoot>

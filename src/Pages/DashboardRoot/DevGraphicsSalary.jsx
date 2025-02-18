@@ -202,7 +202,7 @@ const DevGraphicSalary = () => {
 
 
 
-<div className='f-start mb-4'>
+<div className='f-between mb-4'>
     {
         userr?.role === 'admin'  && <div className="f-start">
         <button

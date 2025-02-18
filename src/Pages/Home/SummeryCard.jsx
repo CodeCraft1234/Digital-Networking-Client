@@ -1,5 +1,6 @@
 const SummaryCard = ({ title, value }) => {
-  const currencySymbol = title === "Total Spend" ? "$" : "৳";
+  const currencySymbol = ["Total Spend", "Daily Spend", "Monthly Target", "Yearly Target"].includes(title) ? "$" : "৳";
+
 
   return (
     <div
@@ -8,7 +9,7 @@ const SummaryCard = ({ title, value }) => {
         color: "var(--text-color)",
         border: "var(--border)",
       }}
-      className="px-5 py-10 rounded-2xl text-white shadow-lg text-center"
+      className="px-5 py-10 shadow-2xl rounded-2xl text-white  text-center"
     >
       <h2 className="color-card-title">{title}</h2>
       <p className="color-card-subtitle">

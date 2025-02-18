@@ -45,11 +45,8 @@ const ContributorSummery = () => {
   const recentMonths = getRecentMonths();
 
   const employeeData = useMemo(() => {
-    const relevantUsers = selectedEmployee
-      ? myUser.filter(u => u.role === 'contributor')
-      : myUser.filter(u => u.role === 'contributor')
 
-    return relevantUsers.flatMap(user => {
+    return allEmployees.flatMap(user => {
 
       const paymentByMonth = MyContributorPayment.filter(m=>m.status === 'Approved')
       .reduce((acc, payment) => {
@@ -112,7 +109,7 @@ const ContributorSummery = () => {
       
 <div  className="grid grid-cols-2  rounded-lg md:grid-cols-2 lg:grid-cols-4 text-black sm:grid-cols-2 gap-5 justify-around">
 
-<SummaryCard title="Total Spent" value={new Intl.NumberFormat('en-IN').format(employeeData.reduce((acc, data) => acc + data.totalSpent, 0).toFixed(2))} />
+<SummaryCard title="Total Spend" value={new Intl.NumberFormat('en-IN').format(employeeData.reduce((acc, data) => acc + data.totalSpent, 0).toFixed(2))} />
 <SummaryCard title="Total BDT" value={new Intl.NumberFormat('en-IN').format(employeeData.reduce((acc, data) => acc + data.totalBill, 0).toFixed(0))} />
 <SummaryCard title="Contributor Pay" value={new Intl.NumberFormat('en-IN').format(employeeData.reduce((acc, data) => acc + data.totalAdminPay, 0).toFixed(0))} />
 

@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useState } from 'react';
 import { AuthContext } from '../../Security/AuthProvider';
 import UseAxiosPublic from '../../Axios/UseAxiosPublic';
 import { Link, } from 'react-router-dom';
@@ -6,25 +6,41 @@ import { toast, ToastContainer } from 'react-toastify';
 import { Helmet } from 'react-helmet-async';
 import { ImCross } from 'react-icons/im';
 import Swal from 'sweetalert2';
-import useMyClientsByEmail from '../../Hook/useMyClientsByEmail';
 import { FaEdit, FaMinusSquare } from "react-icons/fa";
 import useUserr from '../../Hook/useUser';
-import useUsers from '../../Hook/useUsers';
 import SummaryCard from './SummeryCard';
+import useClientsPage from '../../Hook/useClientsPage';
+import useMyClientsTotal from '../../Hook/useMyClientsTotal';
+import useAllEmployee from '../../Hook/useAllEmployee';
 
 const Clients = () => {
   const { user } = useContext(AuthContext);
   const { userr } = useUserr(user?.email); 
-  const [users] = useUsers(); 
-  
+
   const initialTab3 =
   userr?.role === "admin"
     ? localStorage.getItem(`activeTabag${user?.email}`) || "all" 
     : localStorage.getItem(`activeTabag${user?.email}`) || user?.email; 
 
   const [selectedEmployee3, setSelectedEmployee3] = useState(initialTab3);
-  const [myclients, refetch] = useMyClientsByEmail(selectedEmployee3);
-  console.log(myclients);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [myClientsTotal] = useMyClientsTotal(selectedEmployee3);
+  const [client, totalItems, totalPages, , refetch] = useClientsPage(selectedEmployee3, currentPage);
+  const AxiosPublic = UseAxiosPublic();
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedStatus, setSelectedStatus] = useState('all');
+  const [allEmployees] = useAllEmployee();
+
+  const formatValue = (value, decimals = 2) =>
+    new Intl.NumberFormat("en-IN", {
+      minimumFractionDigits: decimals,
+      maximumFractionDigits: decimals,
+    }).format(value);
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+    refetch();
+  };
   
   const changeTab3 = (tab) => {
     setSelectedEmployee3(tab);
@@ -32,10 +48,6 @@ const Clients = () => {
     refetch(); 
   };
   
-  const AxiosPublic = UseAxiosPublic();
-  const [searchQuery, setSearchQuery] = useState("");
-  const [selectedStatus, setSelectedStatus] = useState('all'); 
-
     const generateRandomId = () => {
       let randomId = '';
       for (let i = 0; i < 20; i++) {
@@ -63,6 +75,7 @@ const Clients = () => {
         title: `Added ${clientName} as a client`,
         date: new Date(),
         user: user?.displayName,
+        photo: user?.photoURL,
         email: user?.email,
       };
     
@@ -81,7 +94,7 @@ const Clients = () => {
         });
     };
     
-  const handledelete = (id, clientName) => {
+    const handledelete = (id, clientName) => {
     const datas = {
       title: `Deleted ${clientName} from My Clients`,
       date: new Date(),
@@ -112,9 +125,9 @@ const Clients = () => {
           });
       }
     });
-  };
+    };
   
-  const handleUpdate2 = (e, id) => {
+    const handleUpdate2 = (e, id) => {
     e.preventDefault();
     const clientName = e.target.clientName.value;
     const clientPhone = e.target.clientPhone.value;
@@ -124,6 +137,7 @@ const Clients = () => {
       title: `Updated ${clientName} in My Clients`,
       date: new Date(),
       user: user?.displayName,
+      photo: user?.photoURL,
       email:user?.email
     };
   
@@ -140,81 +154,8 @@ const Clients = () => {
         toast.error("Failed to update client");
         console.error(error);
       });
-  };
-  
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 20;
-
-  const displayedItems = myclients?.slice(0, currentPage * itemsPerPage);
-  const isMoreItems = currentPage * itemsPerPage < myclients.length;
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      if (isMoreItems) {
-        setCurrentPage((prevPage) => prevPage + 1);
-      } else {
-        clearInterval(interval); 
-      }
-    }, 1000); 
-
-    return () => {
-      clearInterval(interval);
     };
-  }, [isMoreItems]); 
-
-const calculate = (callback) =>
-  displayedItems.reduce((acc, client) => acc + callback(client), 0);
-
-const formatValue = (value, decimals = 2) =>
-  new Intl.NumberFormat('en-IN', {
-    minimumFractionDigits: decimals,
-    maximumFractionDigits: decimals,
-  }).format(value);
-
-const totalSpent = calculate(client =>
-  (client.campaings || []).reduce((sum, c) => sum + parseFloat(c?.tSpent || 0), 0)
-);
-
-const totalBill = calculate(client => {
-  const campaignTotal = (client.campaings || []).reduce((sum, c) => {
-    const tSpent = parseFloat(c?.tSpent || 0);
-    const dollerRate = parseFloat(c?.dollerRate || 0);
-    return sum + tSpent * dollerRate;
-  }, 0);
-
-  const pageServiceTotal = (client.pageService || []).reduce((sum, service) => {
-    const totalBill = parseFloat(service?.totalBill || 0);
-    return sum + totalBill;
-  }, 0);
-
-  return campaignTotal + pageServiceTotal;
-});
-
-const totalPaid = calculate(client =>
-  (client.payments || []).reduce((sum, p) => sum + parseFloat(p?.amount || 0), 0)
-);
-
-const totalAdvanced = calculate(client => {
-  const clientTotalBill = (client.campaings || []).reduce((sum, c) => {
-    const tSpent = parseFloat(c?.tSpent || 0);
-    const dollerRate = parseFloat(c?.dollerRate || 0);
-    return sum + tSpent * dollerRate;
-  }, 0) + 
-  (client.pageService || []).reduce((sum, service) => {
-    const totalBill = parseFloat(service?.totalBill || 0);
-    return sum + totalBill;
-  }, 0);
-
-  const clientTotalPaid = (client.payments || []).reduce(
-    (sum, p) => sum + parseFloat(p?.amount || 0),
-    0
-  );
-
-  return clientTotalPaid > clientTotalBill
-    ? clientTotalPaid - clientTotalBill
-    : 0; 
-});
-
+  
     return (
         <div >
            <ToastContainer />
@@ -224,13 +165,22 @@ const totalAdvanced = calculate(client => {
                  <link rel="canonical" href="https://www.tacobell.com/" />
                </Helmet>
 
-               <div className="grid mb-2 rounded-md lg:grid-cols-5 grid-cols-2 sm:grid-cols-2 gap-3     lg:gap-5 justify-around pb-3">
-                  <SummaryCard title="Total Spent" value={formatValue(totalSpent)} />
-                  <SummaryCard title="Total Bill" value={formatValue(totalBill, 0)} />
-                  <SummaryCard title="Total Paid" value={formatValue(totalPaid,0)} />
-                  <SummaryCard title="Total Advanced" value={formatValue(totalAdvanced, 0)} />
-                  <SummaryCard title="Total Due" value={formatValue(totalBill - totalPaid , 0)} />
-                </div>
+               <div className="grid mb-2 rounded-md lg:grid-cols-4 grid-cols-2 gap-3 lg:gap-5 justify-around pb-3">
+      <SummaryCard title="Total Spend" value={formatValue(myClientsTotal?.spendTotal || 0)} />
+      <SummaryCard title="Total Bill" value={formatValue(myClientsTotal?.spendBill || 0, 0)} />
+      <SummaryCard title="Total Paid" value={formatValue(myClientsTotal?.total || 0, 0)} />
+      <SummaryCard 
+  title={
+    myClientsTotal?.spendBill - myClientsTotal?.total > 0
+      ? "Total Due"
+      : myClientsTotal?.spendBill - myClientsTotal?.total < 0
+      ? "Total Advanced"
+      : "Clear"
+  } 
+  value={formatValue(Math.abs(myClientsTotal?.spendBill - myClientsTotal?.total || 0), 0)} 
+/>
+
+    </div>
     
 
           <div className='px-4 pt-4 pb-5 rounded-md' style={{ backgroundColor: 'var(--bg-color3)', color: 'var(--text-color)',border: 'var(--border)'}}>
@@ -296,7 +246,7 @@ const totalAdvanced = calculate(client => {
       onChange={(e) => changeTab3(e.target.value)}
     >
       <option value="all">Select Digital Marketer</option>
-      {users
+      {allEmployees
         .filter((u) => u.role === "employee")
         .map(({ _id, email, name }) => (
           <option key={_id} value={email}>
@@ -329,270 +279,254 @@ const totalAdvanced = calculate(client => {
               </div>
 
               <div className="overflow-x-auto rounded-xl text-center">
-      <table className="min-w-full text-center">
-        <thead>
-          <tr className="tr1">
-            <th className='text-center'>{myclients?.length} Items</th>
-            <th>Client Name</th>
-            <th>Contact Number</th>
-            <th>Total Budget</th>
-            <th>Total Spent</th>
-            <th>Total Bill</th>
-            <th>Payment RCV</th>
-            <th className='text-center'>Total</th>
-          </tr>
-        </thead>
-        <tbody>
-          {displayedItems
-            .filter(item =>
-              item.clientPhone?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-              item.clientName?.toLowerCase().includes(searchQuery.toLowerCase())
-            )
-            .sort((a, b) => a.clientName.localeCompare(b.clientName))
-            .map(campaign => (
-              <tr key={campaign._id} className="tr2">
-                <td className='text-center'>
-                  <button
-                    className="hover:bg-blue-700 text-[#f86c6b] text-xl px-2 py-1 rounded"
-                    onClick={() => handledelete(campaign._id, campaign.clientName)}
-                  >
-                    <FaMinusSquare />
-                  </button>
-                  <button
-                    className="px-2 py-1 rounded"
-                    onClick={() => document.getElementById(`modal_${campaign._id}`).showModal()}
-                  >
-                    <FaEdit />
-                  </button>
-                  <dialog id={`modal_${campaign._id}`} className="modal">
-                    <form
-                      className="modal-box bg-white text-black"
-                      onSubmit={e => handleUpdate2(e, campaign._id, campaign)}
-                    >
-                      <h1 className="text-md mb-5">
-                        Client Name: <span className="text-blue-600 text-xl font-bold">{campaign.clientName}</span>
-                      </h1>
-                      {['clientName', 'clientPhone'].map(field => (
-                        <div className="mb-4" key={field}>
-                          <label className="block text-gray-700 text-start capitalize">{field.replace('client', '')}</label>
-                          <input
-                            type={field === 'email' || 'text'}
-                            name={field}
-                            defaultValue={campaign[field]}
-                            className="input2"
-                          />
-                        </div>
-                      ))}
-                      <div className="grid grid-cols-2 gap-3">
-                        <button
-                          type="button"
-                          className="close"
-                          onClick={() => document.getElementById(`modal_${campaign._id}`).close()}
-                        >
-                          Close
-                        </button>
-                        <button
-                          type="submit"
-                          className="add"
-                        >
-                          Update
-                        </button>
-                      </div>
-                    </form>
-                  </dialog>
-                </td>
-                <td>
-                  <Link to={`/client/${campaign.id}`} className="flex gap-2 items-center hover:font-bold">
-                    {campaign.clientName}
-                    {campaign.campaings?.some(({ status }) => status === 'Active') && (
-                      <svg width="20" height="20" fill="green" viewBox="0 0 24 24">
-                        <circle cx="12" cy="12" r="6" />
-                      </svg>
-                    )}
-                    
-                  </Link>
-                </td>
-                <td>{campaign.clientPhone}</td>
-                {['tBudged', 'tSpent'].map(key => (
-                  <td key={key}>
-                    $ {campaign.campaings?.reduce((acc, item) => acc + parseFloat(item[key] || 0), 0).toFixed(2) || 0}
-                  </td>
+ <table className="min-w-full text-center">
+  <thead>
+    <tr className="tr1">
+      <th className="text-center">{client?.length} Items</th>
+    
+
+      {
+        userr?.role === 'admin' && 
+      <th>Employee Name</th>
+       }
+      <th>Client Name</th>
+      <th>Mob Number</th>
+      <th>Total Budget</th>
+      <th>Total Spend</th>
+      <th>Total Bill</th>
+      <th>Payment RCV</th>
+      <th className="text-center">Total</th>
+    </tr>
+  </thead>
+  <tbody>
+    {client
+      .filter(
+        (item) =>
+          item.clientPhone?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          item.clientName?.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+      .map((campaign) => (
+       
+        <tr  key={campaign._id} className="tr2">
+
+          <td className="text-center">
+            <button
+              className="hover:bg-blue-700 text-[#f86c6b] text-xl px-2 py-1 rounded"
+              onClick={() => handledelete(campaign._id, campaign.clientName)}
+            >
+              <FaMinusSquare />
+            </button>
+            <button
+              className="px-2 py-1 rounded"
+              onClick={() => document.getElementById(`modal_${campaign._id}`).showModal()}
+            >
+              <FaEdit />
+            </button>
+            <dialog id={`modal_${campaign._id}`} className="modal">
+              <form
+                className="modal-box bg-white text-black"
+                onSubmit={(e) => handleUpdate2(e, campaign._id, campaign)}
+              >
+                <h1 className="text-md mb-5">
+                  Client Name:{" "}
+                  <span className="text-blue-600 text-xl font-bold">{campaign.clientName}</span>
+                </h1>
+                {["clientName", "clientPhone"].map((field) => (
+                  <div className="mb-4" key={field}>
+                    <label className="block text-gray-700 text-start capitalize">
+                      {field.replace("client", "")}
+                    </label>
+                    <input
+                      type={field === "email" || "text"}
+                      name={field}
+                      defaultValue={campaign[field]}
+                      className="input2"
+                    />
+                  </div>
                 ))}
-              <td>
-  ৳ {(
-    (campaign.campaings?.reduce(
-      (acc, { tSpent = 0, dollerRate = 0 }) => acc + parseFloat(tSpent) * parseFloat(dollerRate),
-      0
-    ) || 0) +
-    (campaign?.pageService?.reduce((acc, payment) => {
-      const amount = payment?.totalBill ? parseFloat(payment.totalBill) : 0;
-      return acc + amount;
-    }, 0) || 0)
-  ).toFixed(2)}
-</td>
+                <div className="grid grid-cols-2 gap-3">
+                  <button
+                    type="button"
+                    className="close"
+                    onClick={() => document.getElementById(`modal_${campaign._id}`).close()}
+                  >
+                    Close
+                  </button>
+                  <button type="submit" className="add">
+                    Update
+                  </button>
+                </div>
+              </form>
+            </dialog>
+          </td>
 
-                
-                <td>
-                  ৳ {campaign?.payments?.reduce((acc, payment) => {
-                    const amount = payment?.amount ? parseFloat(payment.amount) : 0;
-                    return acc + amount;
-                  }, 0).toFixed(2) || '0.00'}
-                </td>
+          {
+            userr?.role === 'admin' &&    <td>  <Link
+       
+            to={`/client/${campaign.id}`}
+          >
+              <div className='flex justify-start items-center gap-2'>
+              <img className='h-10 w-10 rounded-full object-cover' src={allEmployees.find(f => f.email === campaign.employeeEmail)?.photo} alt="" />
+              <h1> {allEmployees.find(f => f.email === campaign.employeeEmail)?.name || 'N/A'}</h1>
+              </div>
+              </Link>
+          </td>
+          }
 
-                <td className="text-center">
-  <span
-    className={`w-20 px-2 py-0.5 rounded text-center inline-block ${(() => {
-      // Calculate total payments
-      const totalPayments = campaign?.payments?.reduce((acc, payment) => {
-        const amount = payment?.amount ? parseFloat(payment.amount) : 0; // Safely parse amount
-        return acc + amount;
-      }, 0) || 0;
+          <td>
+            <Link
+              to={`/client/${campaign.id}`}
+              className="flex gap-2 items-center hover:font-bold"
+            >
+              {campaign.clientName}
+              {campaign.campaings?.some(({ status }) => status === "Active") && (
+                <svg width="20" height="20" fill="green" viewBox="0 0 24 24">
+                  <circle cx="12" cy="12" r="6" />
+                </svg>
+              )}
+            </Link>
+          </td>
 
-      // Calculate total expenses (campaings + pageService)
-      const totalCampaignExpenses = campaign?.campaings?.reduce((acc, { tSpent = 0, dollerRate = 0 }) => {
-        return acc + (parseFloat(tSpent) || 0) * (parseFloat(dollerRate) || 0);
-      }, 0) || 0;
+          
+          <td> <Link
+       
+       to={`/client/${campaign.id}`}
+     >{campaign.clientPhone}
+      </Link>
+     </td>
+          <td><Link
+       
+       to={`/client/${campaign.id}`}
+     >$ {campaign.totalBudget.toFixed(2)} </Link></td>
+          <td><Link
+       
+       to={`/client/${campaign.id}`}
+     >$ {campaign.totalSpent.toFixed(2)} </Link></td>
+          <td><Link
+       
+       to={`/client/${campaign.id}`}
+     >৳ {campaign.totalBill.toFixed(0)} </Link></td>
+          <td><Link
+       
+       to={`/client/${campaign.id}`}
+     >৳ {campaign.paymentReceived.toFixed(0)} </Link></td>
+          <td className="text-center">
+          <Link
+       
+       to={`/client/${campaign.id}`}
+     >
+            <span
+              className={`w-20 px-2 py-0.5 rounded text-center inline-block ${
+                campaign.total > 0
+                  ? "bg-red-800 font-bold text-white"
+                  : campaign.total < 0
+                  ? "bg-green-800 font-bold text-white"
+                  : "bg-yellow-300 font-bold text-black"
+              }`}
+            >
+              <div className="flex justify-center items-center gap-1">
+                <span className="font-bold text-lg">৳</span>
+                <span>{Math.abs(campaign.total).toFixed(0)}</span>
+              </div>
+            </span>
+           </Link></td>
+       
+        </tr>
+      ))}
+    <tr className="tr1 font-bold">
+      <td></td>
+      <td></td>
 
-      const totalPageServiceExpenses = campaign?.pageService?.reduce((acc, service) => {
-        const bill = service?.totalBill ? parseFloat(service.totalBill) : 0; // Safely parse totalBill
-        return acc + bill;
-      }, 0) || 0;
+      {
+            userr?.role === 'admin' && <td></td>  
 
-      const totalExpenses = totalCampaignExpenses + totalPageServiceExpenses;
+      }
+      <td className="text-right">Total:</td>
+      <td>$ {client.reduce((acc, client) => acc + client.totalBudget, 0).toFixed(2)}</td>
+      <td>$ {client.reduce((acc, client) => acc + client.totalSpent, 0).toFixed(2)}</td>
+      <td>৳ {client.reduce((acc, client) => acc + client.totalBill, 0).toFixed(2)}</td>
+      <td>৳ {client.reduce((acc, client) => acc + client.paymentReceived, 0).toFixed(2)}</td>
+      <td className="text-center">
+        ৳ {client.reduce((acc, client) => acc + client.total, 0).toFixed(2)}
+      </td>
+    </tr>
+  </tbody>
+</table>
 
-      // Calculate the difference
-      const difference = totalPayments - totalExpenses;
 
-      // Return the appropriate class based on the difference
-      return difference > 0
-        ? 'bg-green-500 font-bold text-white'
-        : difference < 0
-        ? 'bg-red-800 font-bold text-white'
-        : 'bg-yellow-300 font-bold text-black';
-    })()}`}
+<div className="flex items-center justify-center my-5 space-x-2">
+  {/* Previous Button */}
+  <button
+    onClick={() => handlePageChange(currentPage - 1)}
+    disabled={currentPage === 1}
+    className={`px-4 py-2 rounded-md ${
+      currentPage === 1
+        ? "bg-gray-300 text-gray-600 cursor-not-allowed"
+        : "bg-blue-600 text-white hover:bg-blue-800"
+    }`}
   >
-    <div className="flex justify-center items-center gap-1">
-      <span className="font-bold text-lg">৳</span>
-      <span>
-        {(
-          Math.abs(
-            (
-              (campaign.payments && Array.isArray(campaign.payments))
-                ? campaign.payments.reduce((acc, payment) => {
-                    const amount = payment?.amount ? parseFloat(payment.amount) : 0;
-                    return acc + amount;
-                  }, 0)
-                : 0
-            ) -
-            (
-              (campaign.campaings && Array.isArray(campaign.campaings))
-                ? campaign.campaings.reduce((acc, { tSpent = 0, dollerRate = 0 }) => {
-                    return acc + (parseFloat(tSpent) || 0) * (parseFloat(dollerRate) || 0);
-                  }, 0)
-                : 0
-            ) -
-            (
-              (campaign.pageService && Array.isArray(campaign.pageService))
-                ? campaign.pageService.reduce((acc, service) => {
-                    const bill = service?.totalBill ? parseFloat(service.totalBill) : 0;
-                    return acc + bill;
-                  }, 0)
-                : 0
-            )
-          ) || 0
-        ).toFixed(0)}
-      </span>
-    </div>
-  </span>
-</td>
+    Previous
+  </button>
 
-              </tr>
-            ))}
-          <tr className="tr1 font-bold">
-            <td></td>
-            <td></td>
-            <td className='text-right'>Total:</td>
-            {['tBudged', 'tSpent'].map(key => (
-              <td key={key}>
-                $ {displayedItems.reduce((acc, client) => acc + (client.campaings || []).reduce((sum, item) => sum + parseFloat(item[key] || 0), 0), 0).toFixed(2)}
-              </td>
-            ))}
-<td>
-  ৳ {displayedItems.reduce(
-    (acc, client) => {
-      // Calculate the total from campaigns
-      const campaignTotal = (client.campaings || []).reduce((sum, { tSpent = 0, dollerRate = 0 }) => {
-        return sum + tSpent * dollerRate;
-      }, 0);
+  {/* Page Numbers */}
+  {(() => {
+    const buttons = [];
+    let startPage, endPage;
 
-      // Calculate the total from pageService
-      const pageServiceTotal = (client.pageService || []).reduce((sum, { totalBill = 0 }) => {
-        return sum + parseFloat(totalBill || 0);
-      }, 0);
+    // Always show 5 buttons, with the current page in the middle
+    if (totalPages <= 5) {
+      // If total pages are less than or equal to 5, show all pages
+      startPage = 1;
+      endPage = totalPages;
+    } else {
+      // Calculate start and end pages to keep the current page in the middle
+      startPage = Math.max(currentPage - 2, 1);
+      endPage = Math.min(currentPage + 2, totalPages);
 
-      // Add both totals to the accumulator
-      return acc + campaignTotal + pageServiceTotal;
-    },
-    0
-  ).toFixed(2)}
-</td>
+      // Adjust if the current page is near the start or end
+      if (currentPage <= 3) {
+        endPage = 5;
+      } else if (currentPage >= totalPages - 2) {
+        startPage = totalPages - 4;
+      }
+    }
 
-            <td>
-  ৳ {displayedItems.reduce(
-    (acc, client) => {
-      // Check if client.payments is an array and handle null values safely
-      const totalPayments = (client.payments && Array.isArray(client.payments))
-        ? client.payments.reduce((sum, payment) => {
-            const { amount = 0 } = payment || {}; // Safe destructuring
-            return sum + (parseFloat(amount) || 0); // Safely parse amount
-          }, 0)
-        : 0;
-        
-      return acc + totalPayments;
-    },
-    0
-  ).toFixed(2)}
-</td>
+    // Generate buttons for the calculated range
+    for (let i = startPage; i <= endPage; i++) {
+      buttons.push(
+        <button
+          key={i}
+          onClick={() => handlePageChange(i)}
+          className={`px-4 py-2 rounded-md ${
+            currentPage === i
+              ? "bg-red-600 text-white"
+              : "bg-gray-200 text-gray-800 hover:bg-red-600 hover:text-white"
+          }`}
+        >
+          {i}
+        </button>
+      );
+    }
 
-<td className="text-center">
-  ৳ {(
-    displayedItems.reduce(
-      (acc, client) =>
-        acc +
-        // Calculate total from campaigns
-        (client.campaings && Array.isArray(client.campaings)
-          ? client.campaings.reduce(
-              (sum, { tSpent = 0, dollerRate = 0 }) => sum + (parseFloat(tSpent) || 0) * (parseFloat(dollerRate) || 0),
-              0
-            )
-          : 0) +
-        // Calculate total from pageService
-        (client.pageService && Array.isArray(client.pageService)
-          ? client.pageService.reduce(
-              (sum, { totalBill = 0 }) => sum + parseFloat(totalBill) || 0,
-              0
-            )
-          : 0),
-      0
-    ) -
-    // Calculate total from payments
-    displayedItems.reduce(
-      (acc, client) =>
-        acc +
-        (client.payments && Array.isArray(client.payments)
-          ? client.payments.reduce((sum, payment) => {
-              const { amount = 0 } = payment || {}; // Safe destructuring
-              return sum + (parseFloat(amount) || 0); // Safely parse amount
-            }, 0)
-          : 0),
-      0
-    )
-  ).toFixed(2)}
-</td>
+    return buttons;
+  })()}
 
-          </tr>
-        </tbody>
-      </table>
+  {/* Next Button */}
+  <button
+    onClick={() => handlePageChange(currentPage + 1)}
+    disabled={currentPage === totalPages}
+    className={`px-4 py-2 rounded-md ${
+      currentPage === totalPages
+        ? "bg-gray-300 text-gray-600 cursor-not-allowed"
+        : "bg-blue-600 text-white hover:bg-blue-800"
+    }`}
+  >
+    Next
+  </button>
+</div>
+
+
+
          </div>
        </div>
      </div>

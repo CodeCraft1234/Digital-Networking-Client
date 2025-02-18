@@ -142,112 +142,7 @@ const ClientHistory = () => {
     <div className=" mt-5">
 
 
-<div className="rounded-lg" >
-<div  className="grid grid-cols-2  rounded-lg md:grid-cols-2 lg:grid-cols-4 text-black sm:grid-cols-2 gap-3 lg:gap-5 justify-around ">
-
-
-<SummaryCard title="Total Spend" value={findClients?.campaings?.reduce((acc, payment) => acc + parseFloat(payment?.tSpent || 0), 0).toFixed(2) || 0} />
-
-
-<SummaryCard 
-  title="Total Bill" 
-  value={
-    parseFloat(
-      (
-        findClients?.campaings?.reduce(
-          (acc, campaign) =>
-            acc + parseFloat(campaign?.tSpent || 0) * parseFloat(campaign?.dollerRate || 0),
-          0
-        ) || 0
-      ) +
-      (
-        Array.isArray(findClients?.pageService)
-          ? findClients?.pageService?.reduce(
-              (acc, payment) => acc + parseFloat(payment?.totalBill || 0),
-              0
-            )
-          : parseFloat(findClients?.pageService?.totalBill || 0)
-      )
-    ).toFixed(2)
-  }
-/>
-
-
-
-
-
-        <SummaryCard title="Total Paid" value={findClients?.payments?.reduce((acc, payment) => acc + parseFloat(payment?.amount || 0), 0).toFixed(0) || 0} />
-        <SummaryCard
-  title={`Total ${
-    (
-      parseFloat(
-        findClients?.campaings?.reduce(
-          (acc, campaign) =>
-            acc + parseFloat(campaign?.tSpent || 0) * parseFloat(campaign?.dollerRate || 0),
-          0
-        ) || 0
-      ) +
-      parseFloat(
-        Array.isArray(findClients?.pageService)
-          ? findClients?.pageService.reduce(
-              (acc, payment) => acc + parseFloat(payment?.totalBill || 0),
-              0
-            )
-          : parseFloat(findClients?.pageService?.totalBill || 0) || 0
-      ) -
-      parseFloat(
-        findClients?.payments?.reduce(
-          (acc, payment) => acc + parseFloat(payment?.amount || 0),
-          0
-        ) || 0
-      )
-    ) >= 0
-      ? 'Due'
-      : 'Advance'
-  }`}
-  value={Math.abs(
-    parseFloat(
-      (
-        parseFloat(
-          findClients?.campaings?.reduce(
-            (acc, campaign) =>
-              acc + parseFloat(campaign?.tSpent || 0) * parseFloat(campaign?.dollerRate || 0),
-            0
-          ) || 0
-        ) +
-        parseFloat(
-          Array.isArray(findClients?.pageService)
-            ? findClients?.pageService.reduce(
-                (acc, payment) => acc + parseFloat(payment?.totalBill || 0),
-                0
-              )
-            : parseFloat(findClients?.pageService?.totalBill || 0) || 0
-        ) -
-        parseFloat(
-          findClients?.payments?.reduce(
-            (acc, payment) => acc + parseFloat(payment?.amount || 0),
-            0
-          ) || 0
-        )
-      ) || 0
-    ).toFixed(2)
-  )}
-/>
-
-
-
-      </div>
-
-</div>
-
    <div style={{ backgroundColor: 'var(--bg-color3)', color: 'var(--text-color)', border: 'var(--border)' }} className="lg:mt-5 mt-3  rounded-lg ">
-
-     <button
-        onClick={handleDownloadPDF}
-        className="  ml-5 mt-5 bg-blue-500 text-white py-1 px-5 rounded"
-      >
-        Download PDF
-      </button>
 
        <div className="table-div m-5" >
         <table className="min-w-full text-center">
@@ -257,7 +152,7 @@ const ClientHistory = () => {
               <th>Meta Ads</th>
               <th>Google Ads</th>
               <th>Total BDT</th>
-              <th>Page Setup</th>
+              <th>Services</th>
               <th>Payment</th>
               <th>Due/Advance</th>
             </tr>

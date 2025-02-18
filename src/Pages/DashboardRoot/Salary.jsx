@@ -10,22 +10,15 @@ import MonthlySalary from './MonthlySelary';
 const Salary = () => {
 
     const { user } = useContext(AuthContext);
-    const {userr}=useUserr(user?.email)
+    const { userr } = useUserr(user?.email);
 
-    const initialTab = localStorage.getItem("activeTabP66") || "employeerPay";
+    const initialTab = localStorage.getItem("activeTabP66") || "Digital Marketer";
     const [activeTab, setActiveTab] = useState(initialTab);
 
     const changeTab = (tab) => {
         setActiveTab(tab);
-        localStorage.setItem("activeTabP66", tab); 
+        localStorage.setItem("activeTabP66", tab); // Store the active tab in local storage
     };
-
-    const getButtonClass = (tab) => 
-        `px-3 py-1 lg:px-4 lg:py-2 text-md lg:text-lg rounded-lg transition duration-300 ease-in-out ${
-            activeTab === tab 
-                ? 'bg-blue-600 text-white shadow-lg transform scale-105'  // Active tab styles
-                : 'bg-red-400 text-white hover:bg-gray-300 hover:shadow-md' // Inactive tab styles
-        }`;
 
     return (
         <div>
@@ -34,40 +27,36 @@ const Salary = () => {
                 <link rel="canonical" href="https://www.example.com/" />
             </Helmet>
 
+            <div className="flex justify-center items-center gap-5 mb-5">
+                {/* Tab Buttons */}
+                <button
+                    className={`tab-button ${activeTab === 'Digital Marketer' ? 'active' : ''}`}
+                    onClick={() => changeTab('Digital Marketer')}
+                >
+                    Digital Marketer
+                </button>
+                <button
+                    className={`tab-button ${activeTab === 'Monthly Salary' ? 'active' : ''}`}
+                    onClick={() => changeTab('Monthly Salary')}
+                >
+                    Monthly Salary
+                </button>
 
-                <div className="flex justify-center items-center gap-5 mb-5">
-                    {/* Employeer Pay Button */}
+                {/* Admin-only tab for Graphic & Web Designer */}
+                {userr?.role === 'admin' && (
                     <button
-                        className={getButtonClass('Digital Marketer')}
-                        onClick={() => changeTab('Digital Marketer')}
-                    >
-                        Digital Marketer 
-                    </button>
-                    <button
-                        className={getButtonClass('Monthly Salary')}
-                        onClick={() => changeTab('Monthly Salary')}
-                    >
-                       Monthly Salary
-                    </button>
-
-
-
-                    {
-                        userr?.role === 'admin' &&  <button
-                        className={getButtonClass('Graphic & Web Designer')}
+                        className={`tab-button ${activeTab === 'Graphic & Web Designer' ? 'active' : ''}`}
                         onClick={() => changeTab('Graphic & Web Designer')}
                     >
                         Graphic & Web Designer
                     </button>
-                    }
-                   
+                )}
+            </div>
 
-                </div>
-                {activeTab === 'Graphic & Web Designer' && <DevGraphicSalary></DevGraphicSalary>}
-                {activeTab === 'Monthly Salary' && <MonthlySalary></MonthlySalary>}
-                {activeTab === 'Digital Marketer' && <MarketerSalary></MarketerSalary>}
-         
-
+            {/* Render content based on the selected tab */}
+            {activeTab === 'Graphic & Web Designer' && <DevGraphicSalary />}
+            {activeTab === 'Monthly Salary' && <MonthlySalary />}
+            {activeTab === 'Digital Marketer' && <MarketerSalary />}
         </div>
     );
 };

@@ -6,7 +6,6 @@ import { ImCross } from "react-icons/im";
 import Swal from "sweetalert2";
 import { FaEdit, FaMinusSquare } from "react-icons/fa";
 import useUserr from "../../Hook/useUser";
-import useUsers from "../../Hook/useUsers";
 import useMySalaryPayments from "../../Hook/useMySalaryPayment";
 import useAllEmployee from "../../Hook/useAllEmployee";
 import BalanceCard from "../DashboardRoot/BalanceCard";
@@ -14,7 +13,6 @@ import BalanceCard from "../DashboardRoot/BalanceCard";
 const SalaryPayments = () => {
   const { user } = useContext(AuthContext);
   const {userr}=useUserr(user?.email)
-  const [users]=useUsers()
   const [allEmployees] = useAllEmployee([]);
 
   const initialTab5 =
@@ -58,19 +56,24 @@ const SalaryPayments = () => {
   useEffect(() => {
     const filtered = MySalaryPayment.filter((payment) => {
       const paymentDate = new Date(payment.date);
-      return (
-        (!sortMonth || paymentDate.getMonth() + 1 === parseInt(sortMonth)) &&
-
-        (selectedCategory === 'All' || selectedCategory === '' || payment.paymentMethod === selectedCategory) &&
-        
-        (!selectedYear || paymentDate.getFullYear() === parseInt(selectedYear))
-      );
+  
+      // Check if the payment matches the selected month (if any)
+      const matchesMonth = !sortMonth || sortMonth === 'all' || paymentDate.getMonth() + 1 === parseInt(sortMonth);
+  
+      // Check if the payment matches the selected category (if any)
+      const matchesCategory = !selectedCategory || selectedCategory === 'all' || payment.paymentMethod === selectedCategory;
+  
+      // Check if the payment matches the selected year (if any)
+      const matchesYear = !selectedYear || paymentDate.getFullYear() === parseInt(selectedYear);
+  
+      // Return true only if all conditions are met
+      return matchesMonth && matchesCategory && matchesYear;
     });
   
     setFilteredData(filtered);
   }, [
     sortMonth,
-    selectedCategory, 
+    selectedCategory,
     MySalaryPayment,
     selectedYear,
   ]);
@@ -202,8 +205,6 @@ const SalaryPayments = () => {
     const paymentMethod = e.target.paymentMethod.value;
     const updatedPaymentData = { note, payAmount, date, paymentMethod };
 
-    const previousAmount = payment.payAmount; 
-
     const datas = {
       title: `added ${payAmount} in in ${paymentMethod}`,
       date: new Date(),
@@ -222,30 +223,6 @@ const SalaryPayments = () => {
       AxiosPublic.post("/activity", datas).then(() => {
       });
   
-      AxiosPublic.post('/editNotification', {
-          ppayAmount: previousAmount,
-          pdate: payment.date,
-          pnote: payment.note,
-          ppaymentMethod: payment.paymentMethod,
-          pstatus: payment.status,
-    
-          editDate:new Date(),
-          name:user?.displayName,
-          photo:user?.photoURL,
-          email:user?.email,
-          message : `The payment of ৳${previousAmount} via ${payment.paymentMethod} has been updated to ৳${payAmount} using ${paymentMethod}.`,
-
-    
-          note,
-          payAmount,
-          date,
-          paymentMethod
-        
-      })
-      .then(() => {
-        console.log("Edit notification sent successfully!");
-      })
-      .catch(err => console.error("Error sending edit notification:", err));
     })
     .catch(err => console.error("Error updating payment:", err));
   };
@@ -509,7 +486,7 @@ const SalaryPayments = () => {
     : "Users"}
 </option>
 
-    {users
+    {allEmployees
         .filter((u) => [selectedRole].includes(u.role))
         .map((employee) => (
             <option key={employee._id} value={employee.email}>
@@ -520,60 +497,24 @@ const SalaryPayments = () => {
   }
     </div>
 
-    <select
-  className="select2"
-  value={sortMonth}
-  onChange={(e) => changeTab(e.target.value)}
->
-  <option value="">Select Month</option>
-  {[
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-    "August",
-    "September",
-    "October",
-    "November",
-    "December",
-  ]
-    .map((month, index) => {
-      // Get the unique months from the data
-      const monthsInData = [
-        ...new Set(
-          displayedItems?.map(item => new Date(item.date).getMonth() + 1) // Get months from the displayedItems data
-        ),
-      ];
 
-      // Check if the month is in the data
-      if (monthsInData.includes(index + 1)) {
-        return (
-          <option key={index} value={index + 1}>
-            {month}
-          </option>
-        );
-      }
-      return null;
-    })
-    .filter(option => option !== null)}
+<select className="select2" value={sortMonth} onChange={(e) => changeTab(e.target.value)}>
+<option  value='all'>Select Month</option>
+  {["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
+    .map((month, i) => <option key={i} value={i + 1}>{month}</option>)}
 </select>
 
-      <select
-  className="select2"
-  value={selectedYear}
-  onChange={(e) => setSelectedYear(e.target.value)}
+<select
+className="select2"
+value={selectedYear}
+onChange={(e) => setSelectedYear(e.target.value)}
 >
-  <option value="">Select Year</option> {/* Default option */}
-  {[...new Set(displayedItems?.map((campaign) => new Date(campaign.date).getFullYear()))]
-    .sort((a, b) => a - b) // Ensure the years are sorted in ascending order
-    .map((year) => (
-      <option key={year} value={year}>
-        {year}
-      </option>
-    ))}
+<option value="">Select Year</option> {/* Default option */}
+{Array.from({ length: 2035 - 2024 + 1 }, (_, i) => 2024 + i).map((year) => (
+  <option key={year} value={year}>
+    {year}
+  </option>
+))}
 </select>
 
 

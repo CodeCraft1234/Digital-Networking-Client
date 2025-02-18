@@ -8,6 +8,7 @@ import useMyUser from '../../Hook/useMyUser';
 import useUserr from '../../Hook/useUser';
 import { Helmet } from 'react-helmet-async';
 import useAllEmployee from '../../Hook/useAllEmployee';
+import useMyUserSpend from '../../Hook/useMyUserSpend';
 
 const ContributorMonthlySpend = ({data}) => {
   const { user } = useContext(AuthContext);
@@ -33,7 +34,9 @@ const ContributorMonthlySpend = ({data}) => {
   : localStorage.getItem("a4") || user?.email; 
 
   const [sortEmployee, setSortEmployee] = useState(initialTab);
-  const [myUser,refetch]=useMyUser(sortEmployee)
+  const [myUserSpend,refetch]=useMyUserSpend(sortEmployee)
+
+  console.log(myUserSpend);
   
   const changeTab = (tab) => {
     setSortEmployee(tab);
@@ -48,7 +51,7 @@ const ContributorMonthlySpend = ({data}) => {
     localStorage.setItem("activeTaballhistoryMonth", tab); 
   };
 
-  const flattenedData = myUser.filter(u=>u.role === 'contributor').reduce((acc, user) => {
+  const flattenedData = myUserSpend.filter(u=>u.role === 'contributor').reduce((acc, user) => {
     if (user.monthlySpent2) {
       const userSpentData = user.monthlySpent2.map(spent => ({
         ...spent,
@@ -221,7 +224,7 @@ const ContributorMonthlySpend = ({data}) => {
               <th>Employee Name</th>
               <th>Ad Account Name</th>
               <th>Month</th>
-              <th>Total Spent</th>
+              <th>Total Spend</th>
               <th>Total Bill</th>
             </tr>
           </thead>

@@ -313,21 +313,12 @@ const MonthlySalary = () => {
                  <td >$ {user.totalSpent.toFixed(2)}</td>
                 <td >৳ {(user.totalSpent * 7).toFixed(2)}</td>
                 <td >
-  ৳ {users
-    ?.filter(e => e.email === user?.email)
-    .map(user => user.adminPayments?.reduce((acc, curr) => acc + (parseFloat(curr.payAmount) || 0), 0) || 0)[0]
-    ?.toFixed(2)}
+  ৳ {0}
 </td>
 
 
 <td >
-  ৳ {(
-    (user.totalSpent * 7) - 
-    (users
-      ?.filter(e => e.email === user?.email)
-      .map(user => user.adminPayments?.reduce((acc, curr) => acc + (parseFloat(curr?.payAmount) || 0), 0) || 0)[0]
-    )
-  ).toFixed(2)}
+  ৳ {0}
 </td>
 
               </tr>

@@ -4,7 +4,6 @@ import UseAxiosPublic from "../../Axios/UseAxiosPublic";
 import { toast, ToastContainer } from "react-toastify";
 import { ImCross } from "react-icons/im";
 import Swal from "sweetalert2";
-import useMyEmployeePayments from "../../Hook/useMyemployeePayments";
 import { FaEdit, FaMinusSquare } from "react-icons/fa";
 import useUserr from "../../Hook/useUser";
 import useUsers from "../../Hook/useUsers";
@@ -208,7 +207,6 @@ const ContributorPayments = () => {
     const status = 'pending';
     const updatedPaymentData = { status, note, payAmount,charge, date, paymentMethod };
 
-    const previousAmount = payment.payAmount; 
 
     const datas = {
       title: `added ${payAmount} in in ${paymentMethod}`,
@@ -228,30 +226,6 @@ const ContributorPayments = () => {
       AxiosPublic.post("/activity", datas).then(() => {
       });
   
-      AxiosPublic.post('/editNotification', {
-          ppayAmount: previousAmount,
-          pdate: payment.date,
-          pnote: payment.note,
-          ppaymentMethod: payment.paymentMethod,
-          pstatus: payment.status,
-    
-          editDate:new Date(),
-          name:user?.displayName,
-          photo:user?.photoURL,
-          email:user?.email,
-          message : `The payment of ৳${previousAmount} via ${payment.paymentMethod} has been updated to ৳${payAmount} using ${paymentMethod}.`,
-
-    
-          note,
-          payAmount,
-          date,
-          paymentMethod
-        
-      })
-      .then(() => {
-        console.log("Edit notification sent successfully!");
-      })
-      .catch(err => console.error("Error sending edit notification:", err));
     })
     .catch(err => console.error("Error updating payment:", err));
   };
@@ -281,26 +255,6 @@ const ContributorPayments = () => {
             toast.success("Delete successful!");
             refetch();
             AxiosPublic.post("/activity", datas).then(() => {
-            });
-            AxiosPublic.post('/notification', {
-              type: 'delete',
-              paymentId: id,
-              note,
-              paymentMethod,
-              charge,
-              payAmount,
-              date,
-              deleteDate:new Date(),
-              name:user.displayName,
-              photo:user?.photoURL,
-              email:user?.email,
-              message: `Payment of ৳${payAmount} by ${paymentMethod} was deleted.`
-            })
-            .then(() => {
-           
-            })
-            .catch((error) => {
-              toast.error("Failed to create notification.");
             });
           })
           .catch((error) => {
@@ -520,7 +474,7 @@ const ContributorPayments = () => {
         onChange={(e) => changeTab2(e.target.value)}
       >
         <option value="all">All Contributor</option>
-        {users
+        {allEmployees
           .filter((u) => u.role === "contributor")
           .map((employee) => (
             <option key={employee._id} value={employee.email}>

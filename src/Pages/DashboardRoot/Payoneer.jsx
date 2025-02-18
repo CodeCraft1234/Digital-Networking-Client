@@ -13,8 +13,11 @@ import PayoneerEmail from "./PayoneerEmail";
 
 const Payoneer = () => {
   const [payoneerData,refetch]=usePayoneerData()
+
+  console.log(payoneerData);
   const [payoneerEmail]=usePayoneerEmail()
   const [filteredData, setFilteredData] = useState([]);
+  console.log(filteredData);
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   const AxiosPublic=UseAxiosPublic()
   const { user } = useContext(AuthContext);
@@ -37,7 +40,7 @@ const Payoneer = () => {
   };
 
   const initialStatus4 = localStorage.getItem("activeTabSelectedStatusse") || 'All';
-  const [selectedStatus4, setSelectedStatus4] = useState(initialStatus4);
+  const [selectedStatus4, setSelectedStatus4] = useState(initialStatus4 || 'All');
 
   const changeTab4 = (tab) => {
     setSelectedStatus4(tab);
@@ -379,7 +382,7 @@ const Payoneer = () => {
       // Get the unique months from the data
       const monthsInData = [
         ...new Set(
-          displayedItems?.map(item => new Date(item.date).getMonth() + 1) // Get months from the displayedItems data
+          payoneerData?.map(item => new Date(item.date).getMonth() + 1) // Get months from the displayedItems data
         ),
       ];
 
@@ -404,7 +407,7 @@ const Payoneer = () => {
   onChange={(e) => setSelectedYear(e.target.value)}
 >
   <option value="">Select Year</option> {/* Default option */}
-  {[...new Set(displayedItems?.map((campaign) => new Date(campaign.date).getFullYear()))]
+  {[...new Set(payoneerData?.map((campaign) => new Date(campaign.date).getFullYear()))]
     .sort((a, b) => a - b) // Ensure the years are sorted in ascending order
     .map((year) => (
       <option key={year} value={year}>
@@ -445,13 +448,13 @@ const Payoneer = () => {
                   userr?.role === "admin" &&  <th s className="p-3 text-center">Items {displayedItems.length}</th>
                 }
              
+              <th >Date</th>
               <th >Email</th>
-              <th >Amount</th>
-              <th >Doller Rate</th>
+              <th >USD</th>
+              <th >Rate</th>
          
               <th > Total BDT</th>
               <th > Note</th>
-              <th >Date</th>
                <th  className="p-3 text-center">Status</th>
               
               
@@ -596,6 +599,10 @@ const Payoneer = () => {
                 </td>
               }
                
+
+               <td>
+                  {new Date(payment.date).toLocaleDateString("en-GB")}
+                </td>
                
                 <td>
                   
@@ -631,9 +638,7 @@ const Payoneer = () => {
 
                 
 
-                <td>
-                  {new Date(payment.date).toLocaleDateString("en-GB")}
-                </td>
+              
 
                 <td className="text-center">
   <label className="status-label">
@@ -660,12 +665,10 @@ const Payoneer = () => {
               </tr>
             ))}
             <tr className="tr1 font-bold">
-              {
-                userr?.role === "admin" && <td></td>
-              }
-              
+ 
+        
 
-              <td  className="text-right" >
+              <td colSpan={4} className="text-right" >
                 Total :
               </td>
 
@@ -674,11 +677,26 @@ const Payoneer = () => {
     maximumFractionDigits: 2,
   }).format(displayedItems.reduce((acc, datas) => acc + parseFloat(datas.amount || 0), 0))}
               </td>
-               <td >
-               ৳ {new Intl.NumberFormat('en-IN', {
-    maximumFractionDigits: 2,
-  }).format(displayedItems.reduce((acc, datas) => acc + parseFloat(datas.dollerRate || 0), 0)) / displayedItems?.length}
-              </td>
+              <td>
+  ৳ 
+  {
+    (displayedItems.length > 0 
+      ? new Intl.NumberFormat('en-IN', {
+          maximumFractionDigits: 2,
+        }).format(
+          displayedItems.reduce((acc, datas) => {
+            const dollerRate = parseFloat(datas.dollerRate);
+            // Check if dollerRate is a valid number
+            if (!isNaN(dollerRate)) {
+              return acc + dollerRate;
+            }
+            return acc; // If dollerRate is not valid, don't add to the total
+          }, 0) / displayedItems.length
+        )
+      : 0)
+  }
+</td>
+
 
 
               <td >  ৳ {new Intl.NumberFormat('en-IN', {
@@ -689,8 +707,8 @@ const Payoneer = () => {
       (parseFloat(campaign?.amount || 0) * parseFloat(campaign?.dollerRate || 0)),
     0))}</td>
               <td ></td>
-              <td ></td>
-              <td ></td>
+             
+            
           
             </tr>
           </tbody>

@@ -1,53 +1,33 @@
 import { useContext, useEffect, useState } from "react";
-import useUsers from "../../Hook/useUsers";
 import "tailwindcss/tailwind.css";
 import { AuthContext } from "../../Security/AuthProvider";
 import UseAxiosPublic from "../../Axios/UseAxiosPublic";
 import Swal from "sweetalert2";
 import { Helmet } from "react-helmet-async";
 import EmployeeClientPay from "../DashboardRoot/EmployeeClientPay";
-import useClients from "../../Hook/useClient";
-import { Link } from "react-router-dom";
 import useAdsPayment from "../../Hook/useAdsPayment";
 import useAdsAccountCenter from "../../Hook/useAdsAccountCenter";
 import { FaEdit, FaMinusSquare } from "react-icons/fa";
 import AllClients from "./AllClients";
 import useOnlyClientEmail from "../../Hook/useOnlyClientEmail";
+import useAllEmployee from "../../Hook/useAllEmployee";
 
 const AllUsers = () => {
-  const [users,refetch]=useUsers()
   const { user } = useContext(AuthContext);
   const [employees, setEmployees] = useState([]);
-  const [employees2, setEmployees2] = useState([]);
-  const [employees3, setEmployees3] = useState([]);
-  const [employees4, setEmployees4] = useState([]);
-  const [employees5, setEmployees5] = useState([]);
-  const [employees6, setEmployees6] = useState([]);
-  const [employees7, setEmployees7] = useState([]);
+  const [allEmployees,refetch]=useAllEmployee()
   
   const initialTab = localStorage.getItem("activeTabs") || "all";
   const [activeTab, setActiveTab] = useState(initialTab);
 
   useEffect(() => {
-    if (users && activeTab !== 'all') {
-      const employeeList = users.filter((u) => u.role === activeTab);
+    if (allEmployees && activeTab !== 'all') {
+      const employeeList = allEmployees.filter((u) => u.role === activeTab);
       setEmployees(employeeList);
-      const employeeList2 = users.filter((u) => u.role === 'graphicDesigner');
-      setEmployees2(employeeList2);
-      const employeeList3 = users.filter((u) => u.role === 'admin');
-      setEmployees3(employeeList3);
-      const employeeList4 = users.filter((u) => u.role === 'employee');
-      setEmployees4(employeeList4);
-      const employeeList5 = users.filter((u) => u.role === 'webDeveloper');
-      setEmployees5(employeeList5);
-      const employeeList6 = users.filter((u) => u.role === 'contributor');
-      setEmployees6(employeeList6);
-      const employeeList7 = users.filter((u) => u.role === 'client');
-      setEmployees7(employeeList7);
     } else {
-      setEmployees(users); 
+      setEmployees(allEmployees); 
     }
-  }, [users, activeTab]);
+  }, [allEmployees, activeTab]);
 
   const AxiosPublic = UseAxiosPublic();
 
@@ -98,13 +78,6 @@ const AllUsers = () => {
     localStorage.setItem("activeTabs", tab);
   };
 
-  const getButtonClass = (tab) => 
-    `px-3 py-1 lg:px-4 lg:py-2 rounded-lg text-md lg:text-lg  transition duration-300 ease-in-out  ${
-        activeTab === tab 
-            ? 'bg-blue-600 font-bold text-white transform scale-105'
-            : 'hover:bg-blue-300 hover:shadow-md'
-    }`;
-
   const [onlyClientEmail]=useOnlyClientEmail()
   const [adsPayment] = useAdsPayment();
   const [adsAccountCenter] = useAdsAccountCenter();
@@ -114,8 +87,6 @@ const AllUsers = () => {
         total + onlyClientEmail.filter(client => client.employeeEmail === employee.email).length
       , 0)
     : 0;
-
-
 
     const totalDueForContributors = activeTab === 'contributor'
     ? employees.reduce((total, employee) => 
@@ -147,7 +118,6 @@ const AllUsers = () => {
         })
     };
 
-    console.log(users);
   return (
     <div className=" ">
       <Helmet>
@@ -155,59 +125,57 @@ const AllUsers = () => {
         <link rel="canonical" href="https://www.example.com/" />
       </Helmet>
 
-    
-
-
+  
 
       {activeTab === 'clientPay' && <EmployeeClientPay email={user?.email} />}
 
       <div   className="side-space">
       <div  className="f-start  ">
-  <div  style={{ color: 'var(--text-color2)'}} className="f-start cursor-pointer  mb-5 ">
-    <a 
-      className={getButtonClass('all')}
-      onClick={() => changeTab('all')}
-    >
-      All Users 
-    </a>
-    <a
-      className={getButtonClass('admin')}
-      onClick={() => changeTab('admin')}
-    >
-      Administrator 
-    </a>
-    <a 
-      className={getButtonClass('employee')}
-      onClick={() => changeTab('employee')}
-    >
-      Digital Marketer 
-    </a>
-   
-    <a
-      className={getButtonClass('graphicDesigner')}
-      onClick={() => changeTab('graphicDesigner')}
-    >
-      Graphic Designer 
-    </a>
-    <a
-      className={getButtonClass('webDeveloper')}
-      onClick={() => changeTab('webDeveloper')}
-    >
-      Web Developer 
-    </a>
-    <a
-      className={getButtonClass('contributor')}
-      onClick={() => changeTab('contributor')}
-    >
-      Contributor
-    </a>
-    <a
-      className={getButtonClass('client')}
-      onClick={() => changeTab('client')}
-    >
-      Users 
-    </a>
-  </div>
+      <div style={{ color: 'var(--text-color2)' }} className="f-start cursor-pointer gap-3 mb-5">
+  <a
+    className={`tab-button ${activeTab === 'all' ? 'active' : ''}`}
+    onClick={() => changeTab('all')}
+  >
+    All Users
+  </a>
+  <a
+    className={`tab-button ${activeTab === 'admin' ? 'active' : ''}`}
+    onClick={() => changeTab('admin')}
+  >
+    Administrator
+  </a>
+  <a
+    className={`tab-button ${activeTab === 'employee' ? 'active' : ''}`}
+    onClick={() => changeTab('employee')}
+  >
+    Digital Marketer
+  </a>
+  <a
+    className={`tab-button ${activeTab === 'graphicDesigner' ? 'active' : ''}`}
+    onClick={() => changeTab('graphicDesigner')}
+  >
+    Graphic Designer
+  </a>
+  <a
+    className={`tab-button ${activeTab === 'webDeveloper' ? 'active' : ''}`}
+    onClick={() => changeTab('webDeveloper')}
+  >
+    Web Developer
+  </a>
+  <a
+    className={`tab-button ${activeTab === 'contributor' ? 'active' : ''}`}
+    onClick={() => changeTab('contributor')}
+  >
+    Contributor
+  </a>
+  <a
+    className={`tab-button ${activeTab === 'client' ? 'active' : ''}`}
+    onClick={() => changeTab('client')}
+  >
+    Users
+  </a>
+</div>
+
 </div>
         {
           activeTab === 'allClient' ? <AllClients></AllClients> :  <div  className="table-div">
@@ -215,7 +183,6 @@ const AllUsers = () => {
             <thead className=" ">
               <tr className="tr1">
                   <th className=" text-center">{employees.length} Users</th>
-                <th >Profile</th>
                 <th >Name</th>
                 <th >Mobile</th>
                 <th >Email</th>
@@ -297,16 +264,17 @@ const AllUsers = () => {
                   </td>
 
                   <td>
-                    <img
-                      className="h-16 w-16 flex justify-center items-center mx-auto rounded-full"
+                   <div className="f-start">
+                   <img
+                      className="h-14 w-14  rounded-full"
                       src={user.photo}
                       alt=""
                     />
+                     {user.name}
+                   </div>
                   </td>
 
-                  <td>
-                      {user.name}
-                  </td>
+                
 
                   <td>
                     {user.contactNumber}
@@ -361,7 +329,7 @@ const AllUsers = () => {
   <tfoot>
     <tr className="font-bold tr1">
       <td
-        colSpan={5}
+        colSpan={4}
         className="text-right "
       >
         Total :
@@ -387,7 +355,7 @@ const AllUsers = () => {
         Total: 
       </td>
       <td >{totalDueForContributors.toFixed(2)}</td>
-      <td></td>
+      
    
     </tr>
   </tfoot>
@@ -402,11 +370,7 @@ const AllUsers = () => {
       >
         -
       </td>
-      <td
-        colSpan={1}
-      >
-        -
-      </td>
+    
  
     </tr>
   </tfoot>

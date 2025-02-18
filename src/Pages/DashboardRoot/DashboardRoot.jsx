@@ -157,7 +157,7 @@ const DashboardRoot = () => {
   return (
     <div className=" ">
       <div className="flex relative">
-      <div className={`${showSidebar ? 'fixed' : 'absolute'} md:static lg:w-auto grid top-0 gap-8 lg:gap-8 z-10 transition-transform duration-800 ease-in-out`}>
+      <div className={`${showSidebar ? 'fixed' : 'absolute'}  lg:w-auto grid top-0 gap-8 lg:gap-8 z-20  transition-transform duration-800 ease-in-out`}>
           <Dashboard showSidebar={showSidebar} />
           <div
             className="absolute right-0 top-0 text-right lg:hidden"
@@ -170,7 +170,7 @@ const DashboardRoot = () => {
         </div>
         
         <div className="lg:ml-56  min-h-screen min-w-min  rounded-lg w-full lg:col-span-2">
-        <div style={{ backgroundColor: 'var(--bg-colorNav)', color: 'var(--text-color)'}}  className="  font-bold mx-auto   fixed z-50 w-full mr-1 p-3 hidden md:block">
+        <div style={{ backgroundColor: 'var(--bg-colorNav)', color: 'var(--text-color)'}}  className="  font-bold mx-auto   fixed z-10 w-full mr-1 p-3 hidden md:block">
   <div className="left-0  items-center grid lg:grid-cols-3 gap-5">
 
     <div className="flex justify-start items-center ml-3 gap-5">
@@ -428,7 +428,7 @@ const DashboardRoot = () => {
           </p>
         </Link>
         <Link to={'/allPayments'}>
-          <p className={` ${isActive('/paymentHistory') ? 'text-red-500 border-b-2 border-white' : 'text-white'}`}>
+          <p className={` ${isActive('/allPayments') ? 'text-red-500 border-b-2 border-white' : 'text-white'}`}>
             <MdOutlinePayments />
           </p>
         </Link>
@@ -446,7 +446,7 @@ const DashboardRoot = () => {
             <FaUsersViewfinder />
           </p>
         </Link>
-        <Link to={'campaigns'}>
+        <Link to={'/campaigns'}>
           <p className={` ${isActive('/campaigns') ? 'text-red-500 border-b-2 border-white' : 'text-white'}`}>
             <MdCampaign />
           </p>
@@ -457,7 +457,7 @@ const DashboardRoot = () => {
           </p>
         </Link>
         <Link to={'/allPayments'}>
-          <p className={` ${isActive('/paymentHistory') ? 'text-red-500 border-b-2 border-white' : 'text-white'}`}>
+          <p className={` ${isActive('/allPayments') ? 'text-red-500 border-b-2 border-white' : 'text-white'}`}>
             <MdOutlinePayments />
           </p>
         </Link>

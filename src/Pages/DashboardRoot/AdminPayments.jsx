@@ -4,12 +4,13 @@ import UseAxiosPublic from "../../Axios/UseAxiosPublic";
 import { toast, ToastContainer } from "react-toastify";
 import { ImCross } from "react-icons/im";
 import Swal from "sweetalert2";
-import useMyEmployeePayments from "../../Hook/useMyemployeePayments";
 import { FaEdit, FaMinusSquare } from "react-icons/fa";
 import useUserr from "../../Hook/useUser";
 import useAllEmployee from "../../Hook/useAllEmployee";
 import BalanceCard from "./BalanceCard";
 import "react-datepicker/dist/react-datepicker.css";
+import useAdminPaymentsPage from "../../Hook/useAdminPaymentsPage";
+import useAdminPayPageTotal from "../../Hook/useAdminPayPageTotal";
 
 const AdminPayments = () => {
   const { user } = useContext(AuthContext);
@@ -32,18 +33,12 @@ const AdminPayments = () => {
 
   const [selectedCategory, setSelectedCategory] = useState("");
   const [filteredData, setFilteredData] = useState([]);
-  const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
+
   const AxiosPublic=UseAxiosPublic()
 
-  const initialTab = localStorage.getItem("activeTaballClientspayss") ;
-  const [sortMonth, setSortMonth] = useState(initialTab); 
-  
-  const changeTab = (tab) => {
-    setSortMonth(tab);
-    localStorage.setItem("activeTaballClientspayss", tab); 
-  };
 
-  const initialStatus = localStorage.getItem("activeTabSelectedStatuss") || 'All';
+
+  const initialStatus = localStorage.getItem("activeTabSelectedStatuss") || 'all';
   const [selectedStatus2, setSelectedStatus2] = useState(initialStatus);
 
   const changeTab3 = (tab) => {
@@ -51,19 +46,42 @@ const AdminPayments = () => {
     localStorage.setItem("activeTabSelectedStatuss", tab);
   };
 
+const [currentPage, setCurrentPage] = useState(1);
 
-  const filters = {
-    status: selectedStatus2,
-    month: sortMonth,
-    year: selectedYear,
-    category: selectedCategory,
+const initialTab = localStorage.getItem("activeTaballClientspayss") ;
+const [sortMonth, setSortMonth] = useState(initialTab,'all'); 
+
+const changeTab = (tab) => {
+  setSortMonth(tab);
+  localStorage.setItem("activeTaballClientspayss", tab); 
 };
 
-const [MyEmployeePayment, refetch] = useMyEmployeePayments(selectedEmployee3, filters);
-console.log(MyEmployeePayment);
+const [selectedYear, setSelectedYear] = useState(2025);
+const { adminPay, totalItems, totalPages, refetch } = useAdminPaymentsPage(
+  selectedEmployee3, 
+  selectedCategory || 'all', 
+  selectedStatus2 || 'all',
+  sortMonth,
+  currentPage,
+  selectedYear
+);
+
+
+const handlePageChange = (page) => {
+  setCurrentPage(page);
+  refetch();
+};
+  
+const [totals] = useAdminPayPageTotal( selectedEmployee3, 
+  selectedCategory || 'all', 
+  selectedStatus2 || 'all',
+  sortMonth,
+  currentPage,
+  selectedYear)
+
 
   useEffect(() => {
-    const filtered = MyEmployeePayment.filter((payment) => {
+    const filtered = adminPay.filter((payment) => {
       const paymentDate = new Date(payment.date);
   
       const matchesStatus =
@@ -87,32 +105,18 @@ console.log(MyEmployeePayment);
   }, [
     sortMonth,
     selectedCategory,
-    MyEmployeePayment,
+    adminPay,
     selectedStatus2,
     selectedYear,
   ]);
   
-  
-  
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 20;
+  const itemsPerPage = 100;
 
-  const displayedItems = MyEmployeePayment?.sort((a, b) => new Date(b.date) - new Date(a.date))?.slice(0, currentPage * itemsPerPage);
+const displayedItems = adminPay?.sort((a, b) => new Date(b.date) - new Date(a.date))?.filter(f => {
+  const itemMonth = new Date(f.date).getMonth() + 1;
+  return (sortMonth == itemMonth || sortMonth === 'all') 
+}).slice(0, currentPage * itemsPerPage);
   const isMoreItems = currentPage * itemsPerPage < filteredData.length;
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      if (isMoreItems) {
-        setCurrentPage((prevPage) => prevPage + 1);
-      } else {
-        clearInterval(interval); 
-      }
-    }, 1000); 
-
-    return () => {
-      clearInterval(interval);
-    };
-  }, [isMoreItems]); 
 
   const today = new Date();
   const formattedDate = today.toISOString().split('T')[0];  
@@ -282,31 +286,12 @@ console.log(MyEmployeePayment);
         refetch();
       })
       .catch((error) => {
-        console.error("Error updating campaign:", error);
-        toast.error("Failed to update campaign");
+        console.error("Error updating Payment:", error);
+        toast.error("Failed to update Payment");
       });
   };
 
 
-  const [totals, setTotals] = useState({
-    nagadPersonal: 0,
-    bkashPersonal: 0,
-    rocketPersonal: 0,
-    bank: 0,
-    IBBLBank: 0,
-    DBBLBank: 0,
-  });
-  
-  useEffect(() => {
-    const paymentMethods = ['nagadPersonal', 'bkashPersonal', 'bank', 'IBBLBank', 'DBBLBank'];
-    const updatedTotals = paymentMethods.reduce((acc, method) => {
-      acc[method] = displayedItems
-        .filter(d => d.paymentMethod === method)
-        .reduce((sum, d) => sum + parseFloat(d.payAmount || 0), 0);
-      return acc;
-    }, {});
-    setTotals(updatedTotals);
-  }, [displayedItems]);
   
   const cards = [
     { category: 'bank', img: 'https://i.ibb.co/PZc0P4w/brac-bank-seeklogo.png', bgColor: '#f2f2f2' },
@@ -336,7 +321,7 @@ console.log(MyEmployeePayment);
 
  
          <div 
-                 onClick={() => setSelectedCategory('All')}
+                 onClick={() => setSelectedCategory('all')}
                  style={{ backgroundColor: '#f7e8e8', border: 'var(--border)' }} 
                    className="balance-card rounded-2xl  text-center shadow-xl transition-transform transform hover:scale-105"
                  >
@@ -507,43 +492,10 @@ console.log(MyEmployeePayment);
              <></>
                )}
 
-<select
-  className="select2"
-  value={sortMonth}
-  onChange={(e) => changeTab(e.target.value)}
->
-  <option value="">Select Month</option>
-  {[
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-    "August",
-    "September",
-    "October",
-    "November",
-    "December",
-  ]
-    .map((month, index) => {
-      const monthsInData = [
-        ...new Set(
-          displayedItems?.map(item => new Date(item.date).getMonth() + 1) 
-        ),
-      ];
-
-      if (monthsInData.includes(index + 1)) {
-        return (
-          <option key={index} value={index + 1}>
-            {month}
-          </option>
-        );
-      }
-      return null;
-    })
-    .filter(option => option !== null)}
+<select className="select2" value={sortMonth} onChange={(e) => changeTab(e.target.value)}>
+<option  value='all'>Select Month</option>
+  {["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
+    .map((month, i) => <option key={i} value={i + 1}>{month}</option>)}
 </select>
 
 
@@ -553,7 +505,7 @@ console.log(MyEmployeePayment);
   onChange={(e) => setSelectedYear(e.target.value)}
 >
   <option value="">Select Year</option> 
-  {[...new Set(displayedItems?.map((campaign) => new Date(campaign.date).getFullYear()))]
+  {[...new Set(adminPay?.map((campaign) => new Date(campaign.date).getFullYear()))]
     .sort((a, b) => a - b) 
     .map((year) => (
       <option key={year} value={year}>
@@ -567,7 +519,7 @@ console.log(MyEmployeePayment);
   value={selectedStatus2}
   onChange={(e) => changeTab3(e.target.value)}
 >
-  <option value="All">All Status</option>
+  <option value="all">All Status</option>
   <option value="pending">Pending</option>
   <option value="Approved">Approved</option>
  
@@ -595,7 +547,7 @@ console.log(MyEmployeePayment);
             </tr>
           </thead>
           <tbody>
-            {displayedItems?.filter(f=>selectedStatus2 === 'All' || f.status === selectedStatus2)?.map((payment, index) => (
+            {displayedItems?.map((payment, index) => (
                <tr style={{ backgroundColor: 'var(--bg-table)', color: 'var(--text-color2)'}}
                key={payment._id}
                className={`${
@@ -731,7 +683,11 @@ console.log(MyEmployeePayment);
                   {new Date(payment.date).toLocaleDateString("en-GB")}
                 </td>
                 <td>
-                  {payment.employeeName}
+                <div className='flex justify-start items-center gap-2'>
+              <img className='h-10 w-10 rounded-full object-cover' src={allEmployees.find(f => f.email === payment.employeeEmail)?.photo} alt="" />
+              <h1>  {payment.employeeName}</h1>
+              </div>
+                 
                 </td>
                 <td>
                   ৳ {payment.payAmount}
@@ -857,6 +813,78 @@ console.log(MyEmployeePayment);
             </tr>
           </tbody>
         </table>
+
+        <div className="flex items-center justify-center my-5 space-x-2">
+  {/* Previous Button */}
+  <button
+    onClick={() => handlePageChange(currentPage - 1)}
+    disabled={currentPage === 1}
+    className={`px-4 py-2 rounded-md ${
+      currentPage === 1
+        ? "bg-gray-300 text-gray-600 cursor-not-allowed"
+        : "bg-blue-600 text-white hover:bg-blue-800"
+    }`}
+  >
+    Previous
+  </button>
+
+  {/* Page Numbers */}
+  {(() => {
+    const buttons = [];
+    let startPage, endPage;
+
+    // Always show 5 buttons, with the current page in the middle
+    if (totalPages <= 5) {
+      // If total pages are less than or equal to 5, show all pages
+      startPage = 1;
+      endPage = totalPages;
+    } else {
+      // Calculate start and end pages to keep the current page in the middle
+      startPage = Math.max(currentPage - 2, 1);
+      endPage = Math.min(currentPage + 2, totalPages);
+
+      // Adjust if the current page is near the start or end
+      if (currentPage <= 3) {
+        endPage = 5;
+      } else if (currentPage >= totalPages - 2) {
+        startPage = totalPages - 4;
+      }
+    }
+
+    // Generate buttons for the calculated range
+    for (let i = startPage; i <= endPage; i++) {
+      buttons.push(
+        <button
+          key={i}
+          onClick={() => handlePageChange(i)}
+          className={`px-4 py-2 rounded-md ${
+            currentPage === i
+              ? "bg-red-600 text-white"
+              : "bg-gray-200 text-gray-800 hover:bg-red-600 hover:text-white"
+          }`}
+        >
+          {i}
+        </button>
+      );
+    }
+
+    return buttons;
+  })()}
+
+  {/* Next Button */}
+  <button
+    onClick={() => handlePageChange(currentPage + 1)}
+    disabled={currentPage === totalPages}
+    className={`px-4 py-2 rounded-md ${
+      currentPage === totalPages
+        ? "bg-gray-300 text-gray-600 cursor-not-allowed"
+        : "bg-blue-600 text-white hover:bg-blue-800"
+    }`}
+  >
+    Next
+  </button>
+</div>
+
       </div>
       </div>
       {isMoreItems && <p className="text-center mt-5">Loading more clients...</p>}

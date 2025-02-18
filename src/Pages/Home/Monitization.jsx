@@ -11,6 +11,7 @@ import { FaEdit, FaMinusSquare } from "react-icons/fa";
 import useMyClientsByEmail from "../../Hook/useMyClientsByEmail";
 import useUserr from "../../Hook/useUser";
 import { Helmet } from "react-helmet-async";
+import useAllEmployee from "../../Hook/useAllEmployee";
 
 const Monitization = ({data}) => {
     const { user } = useContext(AuthContext);
@@ -144,11 +145,11 @@ localStorage.setItem("activeTabalu", tab);
             toast.error("Failed to update campaign");
         });
 };
-
+const [allEmployees]=useAllEmployee()
     return (
         <div>
             <Helmet>
-        <title>Monitization | Digital Network </title>
+        <title>{data} | Digital Network </title>
         <link rel="canonical" href="https://www.example.com/" />
       </Helmet>
             <div >
@@ -177,7 +178,7 @@ localStorage.setItem("activeTabalu", tab);
   onChange={(e) => changeTab3(e.target.value)}
 >
   <option value="all">Select Digital Marketer</option>
-  {users.filter(u => u.role === "employee").map(employee => (
+  {allEmployees?.filter(u => u.role === "employee").map(employee => (
     <option key={employee._id} value={employee.email}>{employee.name}</option>
   ))}
 </select>

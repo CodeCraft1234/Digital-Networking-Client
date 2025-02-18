@@ -9,10 +9,8 @@ import useUsers from "../../Hook/useUsers";
 import useAdsAccount from "../../Hook/useAdAccount";
 import Swal from "sweetalert2";
 import useCampaingsByEmail from "../../Hook/useCampaignsByEmail";
-import useMpymentsByEmail from "../../Hook/useMpaymentByEmail";
 import { FaEdit, FaMinusSquare } from "react-icons/fa";
 import useFindClient from "./useFindClient";
-import SummaryCard from "./SummeryCard";
 
 const ClientPageSetup = () => {
     const { user } = useContext(AuthContext);
@@ -20,21 +18,16 @@ const ClientPageSetup = () => {
     const {findClients , refetch}=useFindClient(param?.email)
     const [campaignss]=useCampaingsByEmail(param?.email)
     const [clients]=useClients()
-    const [datas,setdatas]=useState()
     const AxiosPublic = UseAxiosPublic();
     const [users] = useUsers();
     const [ddd, setDdd] = useState(null);
     const [adsAccount] = useAdsAccount();
 
     useEffect(() => {
-        const realdata = clients.find((m) => m.clientEmail === param?.email);
-        setdatas(realdata)
-
         const fff = users.find((u) => u.email === user?.email);
         setDdd(fff || {}); 
 
     }, [clients, users, user, param?.email, campaignss, adsAccount]);
-
 
     const handleUpdate = (e, ids, id) => {
       e.preventDefault();
@@ -45,12 +38,11 @@ const ClientPageSetup = () => {
       const role = e.target.role.value;
 
       const body = { itemName, pageUrl, totalBill, role, pageName };
-      console.log(body);
 
       const datas = {
         title: `Updated ${itemName} in My Clients`,
         date: new Date(),
-        user: user?.displayName,
+        user: user?.photoURL,
       };
     
       AxiosPublic.patch(`/clientPageService/updates/${id}/${ids}`, body)
@@ -78,7 +70,6 @@ const ClientPageSetup = () => {
       const itemName = e.target.itemName.value;
       const clientEmail = param?.email;
       const pageName = e.target.pageName.value;
-      const clientName = datas?.clientName
       const totalBill = e.target.totalBill.value;
       const pageUrl = e.target.pageUrl.value;
       const role = e.target.role.value;
@@ -112,12 +103,11 @@ const ClientPageSetup = () => {
         clientName:findClients?.clientName
       };
 
-      console.log(clientName);
-    
       const datas2 = {
         title: `Added ${itemName} in Client campaign`,
         date: new Date(),
         user: user?.displayName,
+        photo: user?.photoURL,
       };
   
       AxiosPublic.post("/clients/pageService", { // Correct endpoint
@@ -135,6 +125,12 @@ const ClientPageSetup = () => {
     };
 
     const handledelete = (ids, id) => {
+      const datas2 = {
+        title: `delete ids in Client campaign`,
+        date: new Date(),
+        user: user?.displayName,
+        photo: user?.photoURL,
+      };
       Swal.fire({
           title: 'Are you sure?',
           text: "You won't be able to revert this!",
@@ -149,6 +145,9 @@ const ClientPageSetup = () => {
                   .then((res) => {
                       toast.success("Campaign deleted successfully!");
                       refetch(); // Refresh data after deletion
+                      AxiosPublic.post("/activity", datas2).then(() => {
+                        toast.success(`ids has been successfully Deleted`);
+                      });
                   })
                   .catch((error) => {
                       console.error("Error deleting campaign:", error);
@@ -163,6 +162,7 @@ const ClientPageSetup = () => {
         title: `Updated ${status} in Client campaigns`,
         date: new Date(),
         user: user?.displayName,
+        photo: user?.photoURL,
     };
     
     AxiosPublic.put(`/clientPageService/${id}/${ids}`, { status })
@@ -170,7 +170,6 @@ const ClientPageSetup = () => {
             console.log("Update Response:", res.data);
             refetch(); // Refresh data after update
 
-            // Log the activity
             AxiosPublic.post("/activity", activityData)
                 .then(() => {
                     document.getElementById(`modal_${id}`).close();
@@ -496,21 +495,20 @@ const ClientPageSetup = () => {
                   </td>
                   <td style={{  border: 'var(--border)'}} className="p-3 hover:text-blue-700 hover:font-bold border-r-2 border-gray-200 text-left">
                   
-                   <Link to={work.pageUrl}>
-                   {work.pageName
-    .split(' ') 
-    .slice(0, 4) 
-    .join(' ') 
-    + (work.pageName.split(' ').length > 4 ? '...' : '') // Add "..." if there are more than 6 words
-  } 
-                   </Link>
+                  <Link to={work?.pageUrl || '#'}>
+  {work?.pageName
+    ? work.pageName.split(' ').slice(0, 4).join(' ') +
+      (work.pageName.split(' ').length > 4 ? '...' : '')
+    : '-'}
+</Link>
+
                   
                   </td>
                   
                 
 
                   <td >
-                  ৳ {work.totalBill || 0}
+                  ৳ {work.totalBill|| 0}
                   </td>
                   <td >
                    {work?.role}
@@ -561,7 +559,7 @@ const ClientPageSetup = () => {
                
                 {ddd?.role === "admin" ? (
                   <>
-                    <td ></td>
+                   
                   
                   </>
                 ) : (

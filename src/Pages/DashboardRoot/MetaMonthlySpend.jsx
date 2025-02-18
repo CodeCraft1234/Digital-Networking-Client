@@ -1,19 +1,16 @@
-
 import  { useContext, useState,  } from 'react';
-import useUsers from '../../Hook/useUsers';  // Custom hook to fetch users
 import UseAxiosPublic from '../../Axios/UseAxiosPublic';
 import Swal from 'sweetalert2';
 import { FaEdit, FaMinusSquare } from 'react-icons/fa';
 import { AuthContext } from '../../Security/AuthProvider';
-import useMyUser from '../../Hook/useMyUser';
 import useUserr from '../../Hook/useUser';
 import { Helmet } from 'react-helmet-async';
 import useAllEmployee from '../../Hook/useAllEmployee';
+import useMyUserSpend from '../../Hook/useMyUserSpend';
 
 const MetaMonthlySpend = ({data}) => {
   const { user } = useContext(AuthContext);
   const {userr}=useUserr(user?.email)
-  const [users]=useUsers()
   const [allEmployees] = useAllEmployee([]);
   const currentDate = new Date();
   const [modalData2, setModalData2] = useState(null);
@@ -32,8 +29,8 @@ const MetaMonthlySpend = ({data}) => {
   : localStorage.getItem(`ac8${user?.email}`) || user?.email; 
 
   const [sortEmployee, setSortEmployee] = useState(initialTab);
-  const [myUser,refetch]=useMyUser(sortEmployee)
-  
+  const [myUserSpend,refetch]=useMyUserSpend(sortEmployee)
+
   const changeTab = (tab) => {
     setSortEmployee(tab);
     localStorage.setItem(`ac8${user?.email}`, tab); 
@@ -47,7 +44,6 @@ const MetaMonthlySpend = ({data}) => {
     localStorage.setItem("activeTaballhistoryMonth", tab); 
   };
 
-  
   const initialStatus = localStorage.getItem("activeTabSe") || 'All';
   const [selectedStatus2, setSelectedStatus2] = useState(initialStatus);
 
@@ -56,7 +52,7 @@ const MetaMonthlySpend = ({data}) => {
     localStorage.setItem("activeTabSe", tab);
   };
 
-  const flattenedData = myUser.filter(u=>u.role === 'employee').reduce((acc, user) => {
+  const flattenedData = myUserSpend?.reduce((acc, user) => {
     if (user.monthlySpent) {
       const userSpentData = user.monthlySpent.map(spent => ({
         ...spent,
@@ -81,21 +77,7 @@ const MetaMonthlySpend = ({data}) => {
       : true;
 
     return  matchMonth && matchYear;
-  })
-  .reduce((acc, currentAccount) => {
-    const existingAccount = acc.find(account => account.accountName === currentAccount.accountName);
-    if (existingAccount) {
-      if (new Date(currentAccount.date) > new Date(existingAccount.date)) {
-        acc = acc.filter(account => account.accountName !== existingAccount.accountName); 
-        acc.push(currentAccount); 
-      }
-    } else {
-      acc.push(currentAccount); 
-    }
-    return acc;
-  }, [])
-  .sort((a, b) => a.accountName.localeCompare(b.accountName, undefined, { sensitivity: 'base' }));
-
+  });
 
   const AxiosPublic = UseAxiosPublic();
 
@@ -254,12 +236,13 @@ const MetaMonthlySpend = ({data}) => {
               <th>Employee Name</th>
               <th>Ad Account Name</th>
               <th>Month</th>
-              <th>Total Spent</th>
+              <th>Total Spend</th>
               <th>Total Bill</th>
             </tr>
           </thead>
           <tbody >
             {filteredAccounts
+            ?.sort((a, b) => a.accountName.localeCompare(b.accountName))
             ?.map((account, index) => (
               <tr 
               key={account._id}
@@ -281,10 +264,10 @@ const MetaMonthlySpend = ({data}) => {
                 <td>
   <div className="flex items-center">
     {
-      users?.find(u => u.email === account.employeeEmail)?.photo && (
+      allEmployees?.find(u => u.email === account.employeeEmail)?.photo && (
         <img 
           className='h-10 w-10 rounded-full mr-3' 
-          src={users.find(u => u.email === account.employeeEmail).photo} 
+          src={allEmployees.find(u => u.email === account.employeeEmail).photo} 
           alt={`${account.employeeName}'s profile`} 
         />
       )
@@ -336,23 +319,22 @@ const MetaMonthlySpend = ({data}) => {
   $ {new Intl.NumberFormat('en-IN', {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
-  }).format(sortedAccounts?.filter(f=>f.role === data).reduce((sum, acc) => sum + acc.totalSpentt, 0))}
+  }).format(filteredAccounts?.reduce((sum, acc) => sum + acc.totalSpentt, 0))}
      </td>
      {
                   data === 'pageSpend' ?    <td>
                   <span className="font-extrabold">৳</span>{" "}
                   {new Intl.NumberFormat('en-IN').format(
-                    Math.round(sortedAccounts?.filter(f=>f.role === data).reduce((sum, acc) => sum + acc.totalSpentt, 0) * 130)
+                    Math.round(filteredAccounts.reduce((sum, acc) => sum + acc.totalSpentt, 0) * 130)
                   )}
                     </td> :    <td>
   <span className="font-extrabold">৳</span>{" "}
   {new Intl.NumberFormat('en-IN').format(
-    Math.round(sortedAccounts?.filter(f=>f.role === data).reduce((sum, acc) => sum + acc.totalSpentt, 0) * 142)
+    Math.round(filteredAccounts?.reduce((sum, acc) => sum + acc.totalSpentt, 0) * 142)
   )}
     </td>
 
      }
-  
             </tr>
          </tfoot>
 

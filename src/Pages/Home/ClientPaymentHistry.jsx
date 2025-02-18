@@ -9,6 +9,7 @@ import { FaEdit, FaMinusSquare } from "react-icons/fa";
 import BalanceCard from "../DashboardRoot/BalanceCard";
 import useFindClient from "./useFindClient";
 import useAllEmployee from "../../Hook/useAllEmployee";
+import useUserr from "../../Hook/useUser";
 
 const ClientPaymentHistry = () => {
   const { user } = useContext(AuthContext);
@@ -29,6 +30,8 @@ const ClientPaymentHistry = () => {
   const generateRandomId = () => {
     return Math.floor(Math.random() * 1e13); 
   };
+
+  const {userr}=useUserr(user?.email)
 
   const [allEmployees] = useAllEmployee([]);
   
@@ -69,8 +72,8 @@ const ClientPaymentHistry = () => {
     const datas = {
       description: `Payment of ${amount} via ${paymentMethod}`,
       date,
-      employeeEmail,
-      status: "completed",
+      user: user?.displayName,
+      photo: user?.photoURL,
     };
   
     try {
@@ -108,6 +111,12 @@ const ClientPaymentHistry = () => {
 
   
   const handledelete = (ids, id) => {
+    const datas = {
+      description: `Payment of ids via Deleted`,
+      date:new Date(),
+      user: user?.displayName,
+      photo: user?.photoURL,
+    };
     Swal.fire({
       title: 'Are you sure?',
       text: "You won't be able to revert this!",
@@ -122,6 +131,8 @@ const ClientPaymentHistry = () => {
           .then((res) => {
             toast.success("Payment deleted successfully!");
             refetch(); // Refresh data after deletion
+             AxiosPublic.post("/activity", datas);
+          console.log("Activity log delete successfully.");
           })
           .catch((error) => {
             console.error("Error deleting payment:", error);
@@ -141,7 +152,8 @@ const ClientPaymentHistry = () => {
     const note = e.target.note.value;
     const paymentMethod = e.target.paymentMethod.value;
     const body = { note, amount, date, paymentMethod };
-    const datas = { title: `Update Payment ${amount} from in ${paymentMethod}`, date: new Date(), user: user?.displayName };
+    const datas = { title: `Update Payment ${amount} from in ${paymentMethod}`, date: new Date(),  user: user?.displayName,
+    photo: user?.photoURL, };
   
     AxiosPublic.patch(`/clientPaymentsUp/updates/${id}/${ids}`, body)
       .then((res) => {
@@ -179,7 +191,7 @@ const ClientPaymentHistry = () => {
     <div>
 
             <div className=" my-5">
-               <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-3 lg:gap-5 mt-3 mb-3">
+               <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-3 lg:gap-5 mt-3 mb-3">
     
                  <BalanceCard img={`https://i.ibb.co/bHMLyvM/b-Kash-Merchant.png`} amount={filteredPayments?.filter(h => h?.paymentMethod === 'bkashMarchent')?.reduce((acc, payment) => acc + payment?.amount, 0)}></BalanceCard>
                  <BalanceCard img={`https://i.ibb.co/520Py6s/bkash-1.png`} amount={filteredPayments?.filter(h => h?.paymentMethod === 'bkashPersonal')?.reduce((acc, payment) => acc + payment?.amount, 0)}></BalanceCard>
@@ -189,31 +201,7 @@ const ClientPaymentHistry = () => {
                  <BalanceCard img={`https://i.ibb.co.com/vH2fPBm/DBBLBank.png`} amount={filteredPayments?.filter(h => h?.paymentMethod === 'DBBLBank')?.reduce((acc, payment) => acc + payment?.amount, 0)}></BalanceCard>
                  <BalanceCard img={`https://i.ibb.co.com/pnS6nt4/IBBLBank.png`} amount={filteredPayments?.filter(h => h?.paymentMethod === 'IBBLBank')?.reduce((acc, payment) => acc + payment?.amount, 0)}></BalanceCard>
              
-                 <div 
-  style={{ backgroundColor: '#d9f8d9', border: 'var(--border)' }} 
-  className="balance-card rounded-2xl p-5 text-center shadow-xl transition-transform transform hover:scale-105"
->
-  <h1 className="px-3 text-black text-xl font-bold text-center">TOTAL</h1>
-  <p className="balance-card-text text-lg mt-2 lg:text-xl font-bold text-gray-700">
-    <span className="text-lg lg:text-xl font-extrabold">৳ </span>
-    {new Intl.NumberFormat("en-IN", {
-      maximumFractionDigits: 0,
-    }).format(
-      isNaN(
-        filteredPayments?.reduce(
-          (acc, payment) => acc + parseFloat(payment?.amount || 0),
-          0
-        )
-      )
-        ? 0
-        : filteredPayments?.reduce(
-            (acc, payment) => acc + parseFloat(payment?.amount || 0),
-            0
-          )
-    )}
-  </p>
-</div>
-
+                
                </div>
               </div>
 

@@ -1,5 +1,4 @@
 import { FaEdit, FaMinusSquare } from "react-icons/fa";
-import useUsers from "../../Hook/useUsers";
 import { useContext, useState } from "react";
 import { toast } from "react-toastify";
 import UseAxiosPublic from "../../Axios/UseAxiosPublic";
@@ -14,7 +13,6 @@ import Swal from "sweetalert2";
 
 const MetaAdsAccount = ({data1}) => {
   const { user } = useContext(AuthContext);
-  const [users]=useUsers()
   const {userr}=useUserr(user?.email)
   
   const initialTab3 =
@@ -37,7 +35,7 @@ const MetaAdsAccount = ({data1}) => {
     const initialTab = localStorage.getItem("activeTabAlladsAccountStatus") || "Active";
 
     const [selectedStatus, setSelectedStatus] = useState(initialTab);
-    const [allEmployees] = useAllEmployee([]);
+    const [allEmployees] = useAllEmployee();
 
     const changeTab = (tab) => {
       setSelectedStatus(tab);
@@ -148,8 +146,6 @@ const MetaAdsAccount = ({data1}) => {
           console.error("Error posting user data:", error);
         });
       }
-  
-      
     };
   
     const handleUpdate2 = (id, newStatus) => {
@@ -171,11 +167,8 @@ const MetaAdsAccount = ({data1}) => {
     
       const accountName = e.target.accountName.value;
       const paymentDate = e.target.paymentDate.value;
-    
       const employeeEmail = e.target.employeeEmail?.value || userr?.email;
-    
-      const employeerName =
-        allEmployees.find((e) => e.email === employeeEmail)?.name || userr?.name;
+      const employeerName = allEmployees.find((e) => e.email === employeeEmail)?.name || userr?.name;
     
       const currentBallence = 0;
       const threshold = 0;
@@ -242,7 +235,10 @@ const MetaAdsAccount = ({data1}) => {
       <span className="font-bold text-lg">
         <IoIosAddCircleOutline />
       </span>
-      <span className="inline">Add {data1} Account</span>
+      <span className="inline">
+  Add {data1.charAt(0).toUpperCase() + data1.slice(1)} Ads Account
+</span>
+
     </button>
   )}
 
@@ -324,19 +320,19 @@ const MetaAdsAccount = ({data1}) => {
 </div>
 
 
-<div className="f-center flex-wrap gap-4">
+<div className="f-center flex flex-col lg:flex-row flex-wrap gap-4 mr-5  items-center justify-center">
   {/* Employee Selector for Admin */}
   {userr?.role === "admin" && (
     <div className="w-full lg:w-auto flex justify-center">
       <select
-        className="select2 w-full lg:w-auto"
+        className="select2 w-full lg:w-auto px-4 py-2 border rounded-md text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400"
         value={selectedEmployee3}
         onChange={(e) => changeTab3(e.target.value)}
       >
         <option value="all">
           {data1 === "contributor" ? "Select Contributor" : "Select Digital Marketer"}
         </option>
-        {users
+        {allEmployees
           ?.filter((u) =>
             u.role === (data1 === "contributor" ? "contributor" : "employee")
           )
@@ -355,7 +351,7 @@ const MetaAdsAccount = ({data1}) => {
       name="status"
       value={selectedStatus}
       onChange={(e) => changeTab(e.target.value)}
-      className="select2 w-full lg:w-auto"
+      className="select2 w-full lg:w-auto px-4 py-2 border rounded-md text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400"
     >
       <option value="">Select Status</option>
       <option value="Active">Active</option>
@@ -368,12 +364,13 @@ const MetaAdsAccount = ({data1}) => {
     <input
       type="text"
       placeholder="Search by campaign name"
-      className="input2 w-full lg:w-auto"
+      className="input2 w-full lg:w-auto px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
       value={searchQuery}
       onChange={(e) => setSearchQuery(e.target.value)}
     />
   </div>
 </div>
+
 
             </div>
           
@@ -397,8 +394,8 @@ const MetaAdsAccount = ({data1}) => {
   )
   ?.length} Items 
                 </th> : <th className="text-center">SL</th> }
-                <th>Employeer Name</th>
-                <th>{data1?.charAt(0).toUpperCase() + data1?.slice(1)} Account Name</th>
+                <th>Employee</th>
+                <th>Ads Account Name</th>
                 <th>Threshold</th>
                 <th>Current Balance</th>
                 <th className="text-center">Spend</th>
@@ -445,12 +442,17 @@ const MetaAdsAccount = ({data1}) => {
                         </button>
                         </div>
                    </td> : <td className="text-center">{index + 1}</td> }
-                   <td>
-                  
-                  {account.employeerName}
-                
-              
-                </td>
+
+                   {
+            userr?.role === 'admin' &&    <td><div className="f-start items-center ">
+               
+                <img className="h-10 w-10 rounded-full"  src={allEmployees?.find(f => f.email === account.employeeEmail)?.photo || 'N/A'} alt="" />
+                <span> {account.employeerName}</span>
+            </div>
+            
+          </td>
+          }
+                 
                   <td>
                   <h1> {account.accountName}</h1>
                   

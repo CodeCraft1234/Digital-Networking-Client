@@ -1,107 +1,47 @@
-import { Line } from "react-chartjs-2";
-import "chart.js/auto"; // Ensures Chart.js works correctly with React
 
-const LineChart = ({ MyEmployeePayment = [], tPay = [] }) => {
-  const today = new Date();
+import { LineChart as RechartsLineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
-  // Helper function to check if a date is in the given month and year
-  const isInThisMonth = (date, month, year) => {
-    if (!date) return false; // Guard against invalid dates
-    const paymentDate = new Date(date);
-    return paymentDate.getMonth() === month && paymentDate.getFullYear() === year;
-  };
+const LineChart = ({ data }) => {
 
-  // Prepare data for the chart
-  const employeePaymentTotals = [];
-  const transactionTotals = [];
-
-  for (let month = 0; month < 12; month++) {
-    // Employee Payment Totals
-    const monthlyEmployeePayments = MyEmployeePayment.filter(
-      (payment) =>
-        isInThisMonth(payment.date, month, today.getFullYear()) &&
-        payment.status === "Approved"
-    );
-    const monthlyEmployeeTotal = monthlyEmployeePayments.reduce(
-      (acc, payment) => acc + parseFloat(payment.payAmount || 0),
-      0
-    );
-
-    // Transaction Totals
-    const monthlyTransactions = tPay.flatMap((entry) =>
-      entry.payments?.filter((payment) =>
-        isInThisMonth(payment?.date, month, today.getFullYear())
-      )
-    );
-    const monthlyTransactionTotal = monthlyTransactions.reduce(
-      (sum, payment) => sum + parseFloat(payment?.amount || 0),
-      0
-    );
-
-    // Push totals to arrays
-    employeePaymentTotals.push(monthlyEmployeeTotal);
-    transactionTotals.push(monthlyTransactionTotal);
-  }
-
-  // Chart Data
-  const data = {
-    labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
-    datasets: [
-      {
-        label: "Admin Payment",
-        data: employeePaymentTotals,
-        borderColor: "rgba(75, 192, 192, 1)", // Line color
-        backgroundColor: "rgba(75, 192, 192, 0.2)", // Area fill color
-        fill: true,
-        tension: 0.4, // Smooth curves
-      },
-      {
-        label: "Income",
-        data: transactionTotals,
-        borderColor: "rgba(153, 102, 255, 1)", // Line color
-        backgroundColor: "rgba(153, 102, 255, 0.2)", // Area fill color
-        fill: true,
-        tension: 0.4, // Smooth curves
-      },
-    ],
-  };
-
-  // Chart Options
-  const options = {
-    responsive: true,
-    plugins: {
-      legend: {
-        position: "top",
-        labels: {
-          color: "var(--text-color)", // Legend text color
-        },
-      },
-      tooltip: {
-        callbacks: {
-          label: (context) => `${context.dataset.label}: $${context.raw.toFixed(2)}`,
-        },
-      },
+  const chartData = [
+    {
+      name: 'Today',
+      income: data.today,
+      adminPay: data.todayAdminPay,
     },
-    scales: {
-      x: {
-        ticks: {
-          color: "var(--text-color)", // X-axis text color
-        },
-      },
-      y: {
-        beginAtZero: true,
-        ticks: {
-          color: "var(--text-color)", // Y-axis text color
-          callback: (value) => `$${value.toFixed(2)}`, // Format Y-axis ticks
-        },
-      },
+    {
+      name: 'This Week',
+      income: data.thisWeek,
+      adminPay: data.thisWeekAdminPay,
     },
-  };
+    {
+      name: 'This Month',
+      income: data.thisMonth,
+      adminPay: data.thisMonthAdminPay,
+    },
+  ];
 
   return (
-    <div>
-      <Line data={data} options={options} />
-    </div>
+    <ResponsiveContainer width="100%" height={300}>
+      <RechartsLineChart data={chartData}>
+        <CartesianGrid strokeDasharray="3 3" />
+        <XAxis dataKey="name" />
+        <YAxis />
+        <Tooltip />
+        <Legend />
+        <Line
+          type="monotone"
+          dataKey="income"
+          stroke="#8884d8"
+          activeDot={{ r: 8 }}
+        />
+        <Line
+          type="monotone"
+          dataKey="adminPay"
+          stroke="#82ca9d"
+        />
+      </RechartsLineChart>
+    </ResponsiveContainer>
   );
 };
 

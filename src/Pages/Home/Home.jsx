@@ -4,15 +4,16 @@ import Login from "../../Security/Login";
 import { Helmet } from "react-helmet-async";
 import AdsDashboardHome from "../DashboardRoot/AdsHome";
 import ClientHome from "./ClientHome";
-import useUserr from "../../Hook/useUser";
 import AdminHome from "./AdminHome";
 import DeveloperHome from "./DeveloperHome";
 import DesignerHome from "./DesignerHome";
+import useUserr3 from "../../Hook/useUserr3";
 
 const Home = () => {
     const { user } = useContext(AuthContext);
-    const {userr}=useUserr(user?.email)
+    const {userr3}=useUserr3(user?.email)
     const [clientUser, setClientUser] = useState(null);
+    console.log(userr3);
 
     useEffect(() => {
       const storedClientUser = localStorage.getItem("clientUser");
@@ -21,31 +22,30 @@ const Home = () => {
       }
     }, []);
 
+
+
     return (
         <div>
-            <Helmet>
-                <title>Digital Network | Home</title>
-                <link rel="canonical" href="https://www.tacobell.com/" />
-            </Helmet>
-            <div>
-      <Helmet>
+          <Helmet>
         <title>Digital Network | Home</title>
         <link rel="canonical" href="https://www.tacobell.com/" />
       </Helmet>
 
+            <div>
+      
       {clientUser || user ? (
         <div>
           {user ? (
             <div>
-             {userr?.role === "admin" ? (
+             {userr3?.role === "admin" ? (
                         <AdminHome></AdminHome>
-                    ) : userr?.role === "contributor" ? (
+                    ) : userr3?.role === "contributor" ? (
                         <AdsDashboardHome />
-                    ) : userr?.role === "webDeveloper" ? (
+                    ) : userr3?.role === "webDeveloper" ? (
                         <DeveloperHome />
-                    ) : userr?.role === "graphicDesigner" ? (
+                    ) : userr3?.role === "graphicDesigner" ? (
                         <DesignerHome />
-                    ) : userr?.role === "employee" ? (
+                    ) : userr3?.role === "employee" ? (
                         <AdminHome></AdminHome>
                     ) : (
                         <ClientHome />

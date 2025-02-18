@@ -14,17 +14,12 @@ const Dashboard = ({ showSidebar }) => {
   const { user } = useContext(AuthContext); 
   const {userr}=useUserr(user?.email) 
   const {userr3}=useUserr3(user?.email)
-
-  const [showScrollButton, setShowScrollButton] = useState(false);
   const [scrollDirection, setScrollDirection] = useState("up");
 
   useEffect(() => {
     const handleScroll = () => {
       if (window.scrollY > 100) {
-        setShowScrollButton(true);
         setScrollDirection("up");
-      } else {
-        setShowScrollButton(false);
       }
     };
 
@@ -37,72 +32,68 @@ const Dashboard = ({ showSidebar }) => {
     window.scrollTo({ top: target, behavior: "smooth" });
   };
 
+  
+
   return (
     <div
-      className={`bg-gray-900 w-52 min-h-screen lg:fixed text-white ${
+      className={`bg-gray-900 w-52 min-h-screen md:fixed  lg:fixed text-white ${
         showSidebar ? "block" : "hidden"
       } md:block`}
     >
       <ul className="menu text-center text-lg md:text-xl">
         {  (
-          userr?.role === "admin" ? (
+          userr3?.role === "admin" ? (
             <AdminDashboard />
-          ) : userr?.role === "contributor" ? (
+          ) : userr3?.role === "contributor" ? (
             <AdsDashboard />
-          ) : userr?.role === "webDeveloper" ? (
+          ) : userr3?.role === "webDeveloper" ? (
             <DeveloperDashboard />
-          ) : userr?.role === "graphicDesigner" ? (
+          ) : userr3?.role === "graphicDesigner" ? (
             <DesignerDashboard />
-          ) : userr?.role === "employee" ? (
+          ) : userr3?.role === "employee" ? (
             <EmployeeDashboard />
           ) : (
             <ClientDashboard />
-           
           )
         )}
       </ul>
 
-      <div className=" flex flex-col  items-center space-y-4 ">
-        {/* WhatsApp Button */}
+     <div className=" flex flex-col  items-center space-y-4 ">
+        {
+        userr3?.role !== 'admin' && 
       <div>
           <a
           href={`https://wa.me/+88${userr3?.contactNumber}`} // Replace with your WhatsApp link
           target="_blank"
           rel="noopener noreferrer"
-          className="fixed bottom-[400px] right-8 z-50 bg-green-500 p-3  rounded-full shadow-lg hover:bg-blue-700 transition duration-300"
+          className="fixed bottom-[160px] right-8 z-50 bg-green-500 p-3  rounded-full shadow-lg hover:bg-blue-700 transition duration-300"
           title="Chat on WhatsApp"
         >
           <FaWhatsapp className="text-white text-xl" />
         </a>
-
-             {/* Messenger Button */}
-             <a
+        <a
           href={`https://m.me/${userr3?.facebookID}`} // Replace with your Messenger link
           target="_blank"
           rel="noopener noreferrer"
-          className="fixed bottom-[340px] right-8 z-50 bg-blue-600 p-3  rounded-full shadow-lg hover:bg-blue-700 transition duration-300"
+          className="fixed bottom-[100px] right-8 z-50 bg-blue-600 p-3  rounded-full shadow-lg hover:bg-blue-700 transition duration-300"
           title="Chat on Messenger"
         >
           <FaFacebook className="text-white text-xl" />
         </a>
-
-             {/* Messenger Button */}
              <a
-          href={`https://m.me/${userr3?.facebookID}`} // Replace with your Messenger link
+          href={`https://m.me/${userr3?.messengerID}`} // Replace with your Messenger link
           target="_blank"
           rel="noopener noreferrer"
-          className="fixed bottom-[280px] right-8 z-50 bg-[#0078FF] p-3  rounded-full shadow-lg hover:bg-blue-700 transition duration-300"
+          className="fixed bottom-[220px] right-8 z-50 bg-[#0078FF] p-3  rounded-full shadow-lg hover:bg-blue-700 transition duration-300"
           title="Chat on Messenger"
         >
           <FaFacebookMessenger className="text-white text-xl" />
         </a>
       </div>
-
-        {/* Scroll Button */}
-        {showScrollButton && (
+         }
           <button
             onClick={() => scrollTo(scrollDirection)}
-            className="fixed bottom-56 right-8 z-50 bg-gray-700 p-3 rounded-full shadow-lg hover:bg-gray-800 transition duration-300"
+            className="fixed bottom-10 right-8 z-50 bg-gray-700 p-3 rounded-full shadow-lg hover:bg-gray-800 transition duration-300"
             title={`Scroll to ${scrollDirection === "up" ? "Top" : "Bottom"}`}
           >
             {scrollDirection === "up" ? (
@@ -111,7 +102,6 @@ const Dashboard = ({ showSidebar }) => {
               <FaArrowDown className="text-white text-xl" />
             )}
           </button>
-        )}
       </div>
     </div>
   );

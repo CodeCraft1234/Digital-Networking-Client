@@ -485,6 +485,125 @@ td {
 
 
 
+/* active tab css */
+/* Container for tabs */
+
+.tab-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+}
+
+/* Button Base Styles */
+.tab-button {
+  padding: 0.5rem 1rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1rem;
+  border-radius: 0.5rem;
+  transition: all 0.3s ease-in-out;
+  background-color: green;
+  color: white;
+  cursor: pointer;
+}
+
+.tab-button:hover {
+  background-color: gray;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Active Button Styles */
+.tab-button.active {
+  background-color: red;
+  color: white;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+  transform: scale(1.05);
+  font-weight: 700;
+}
+
+.icon {
+  width: 1.5rem;
+  height: 1.5rem;
+  margin-right: 0.5rem;
+}
+
+
+
+
+
+/* /////////////////////home page/////////////////// */
+
+.income-card-home,
+.payment-card-home {
+  background-color: var(--bg-color3);
+  color: var(--text-color2);
+  border: var(--border);
+  border-radius: 12px;
+  margin-bottom: 1.25rem;
+}
+
+.card-body-home {
+  display: flex;
+  padding: 1rem;
+  align-items: center;
+  gap: 1rem;
+  border: var(--border);
+  border-radius: 8px;
+}
+
+.icon-home {
+  font-size: 5rem;
+  color: var(--text-color2);
+}
+
+.info-home p {
+  margin: 0.25rem 0;
+  font-size: 1rem;
+}
+
+.amount-home {
+  font-weight: bold;
+  color: var(--text-color2);
+}
+
+
+
+.admin-payment-overview {
+  background-color: var(--bg-color3);
+  color: var(--text-color2);
+  border: var(--border);
+  border-radius: 12px;
+  padding: 1.25rem;
+  margin-bottom: 1.25rem;
+}
+
+.chart-card-home {
+  background-color: var(--bg-color3);
+  color: var(--text-color2);
+  border: var(--border);
+  border-radius: 12px;
+  padding: 1.25rem;
+}
+
+/* scrollbar  */
+/* Hide scrollbar but keep scroll */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+
+
+
+
+
+
 
 
 

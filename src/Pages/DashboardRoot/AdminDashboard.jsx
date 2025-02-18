@@ -1,19 +1,10 @@
 import { Link, NavLink, } from "react-router-dom";
-import {
-
-  FaHistory,
-  FaPaypal,
-
-} from "react-icons/fa";
+import { FaHistory,FaPaypal} from "react-icons/fa";
 import { IoMdCash,  } from 'react-icons/io';
 import { RxDashboard } from "react-icons/rx";
-import { MdAccountCircle, MdCampaign,  MdHomeRepairService,  MdOutlinePayments, MdOutlineSummarize,  } from "react-icons/md";
-import {  IoPeopleSharp } from "react-icons/io5";
+import { MdAccountCircle, MdCampaign,  MdHomeRepairService,  MdOutlinePayments,MdOutlineSummarize,  }from "react-icons/md";
 import { FaNoteSticky, FaPeopleGroup } from "react-icons/fa6";
 import { CiBank } from "react-icons/ci";
-import { RiHistoryFill, RiPagesFill } from "react-icons/ri";
-import { SiGoogleads, SiMeta } from "react-icons/si";
-import { TbHeartRateMonitor } from "react-icons/tb";
 
 const AdminDashboard = () => {
 
@@ -23,10 +14,6 @@ const AdminDashboard = () => {
       : {}
   );
 
-  const changeTab = (tab) => {
-    localStorage.setItem("activeTabClientProfile", tab); 
-  };
-  
   return (
     <div  className="w-[225px]  text-white bg-gray-900 -mt-3 -ml-2 pr-2 min-h-screen">
       <div className="">
@@ -66,7 +53,7 @@ const AdminDashboard = () => {
                   style={({ isActive }) => getActiveStyle(isActive)}
                 >
                   <FaPeopleGroup className="w-6 h-6 mr-2" />
-                 My Client
+                 All Client
                 </NavLink>
           <NavLink
             to="/campaigns"
@@ -120,14 +107,6 @@ const AdminDashboard = () => {
             <IoMdCash  className="w-6 h-6 mr-2" />All Salary
           </NavLink>
 
-
-         
-         
-
-       
-
-         
-
           <NavLink
                   to="/allUsers"
                   className="text-white hover:bg-[#f89320] hover:text-black py-2 px-3 rounded-lg flex items-center text-lg"
@@ -136,16 +115,6 @@ const AdminDashboard = () => {
                   <FaPeopleGroup className="w-6 h-6 mr-2" />
                   All Users
                 </NavLink>
-
-          <NavLink
-            to="/payoneer"
-            className="text-white hover:bg-[#f89320] hover:text-black py-2 px-3 rounded-lg flex items-center text-lg"
-            style={({ isActive }) => getActiveStyle(isActive)}
-          >
-            <FaPaypal className="w-6 h-6 mr-2" /> Payoneer
-          </NavLink>
-
-         
 
            <NavLink
             to={`/bankInfo`}

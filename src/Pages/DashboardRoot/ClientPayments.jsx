@@ -3,16 +3,16 @@ import UseAxiosPublic from "../../Axios/UseAxiosPublic";
 import Swal from "sweetalert2";
 import { Link } from "react-router-dom";
 import { FaEdit, FaMinusSquare } from "react-icons/fa";
-import useMyClientsByEmail from "../../Hook/useMyClientsByEmail";
 import toast from "react-hot-toast";
 import { AuthContext } from "../../Security/AuthProvider";
 import BalanceCard from "./BalanceCard";
 import useUserr from "../../Hook/useUser";
-import useUsers from "../../Hook/useUsers";
+import useClientsPage from "../../Hook/useClientsPage";
+import useClientsPaymentsPage from "../../Hook/useClientPaymentsPage";
+import useAllEmployee from "../../Hook/useAllEmployee";
 
 const ClientPayments = () => {
   const { user } = useContext(AuthContext);
-  const [users]=useUsers()
   const {userr}=useUserr(user?.email)
   const [payment, setModalData] = useState(null);
   
@@ -27,48 +27,46 @@ const [selectedEmployee3, setSelectedEmployee3] = useState(initialTab3);
     setSelectedEmployee3(tab); // Update the state
     localStorage.setItem(`acti${user?.email}`, tab); // Update localStorage
   };
-  const initialTab4 = localStorage.getItem("actt3") || "All";
-const [selectedClient, setSelectedClient] = useState(initialTab4);
 
-  const changeTab4 = (tab) => {
-    setSelectedClient(tab); // Update the state
-    localStorage.setItem("actt3", tab); // Update localStorage
-  };
-
-  const [myclients, refetch] = useMyClientsByEmail(selectedEmployee3);
   const AxiosPublic = UseAxiosPublic();
-  const [selectedCategory, setSelectedCategory] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("all");
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
 
-  const initialTab = localStorage.getItem("activeTabclientpayMont") || "All";
-  const [sortMonth, setSortMonth] = useState(initialTab || new Date().getMonth() + 1)
-
+  const initialTab = localStorage.getItem("activeTabclientpayMont") || new Date().getMonth() + 1;
+  const [sortMonth, setSortMonth] = useState(initialTab);
+  
   const changeTab = (tab) => {
     setSortMonth(tab);
-    localStorage.setItem("activeTabclientpayMont", tab); 
+    localStorage.setItem("activeTabclientpayMont", tab);
   };
+  
 
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 50;
 
-  const displayedItems = myclients.sort((a, b) => new Date(b.date) - new Date(a.date))?.slice(0, currentPage * itemsPerPage);
-  const isMoreItems = currentPage * itemsPerPage < myclients.length;
-
+  const { clientPayments, totalItems, totalPages, refetch } = useClientsPaymentsPage(
+    selectedEmployee3,
+    currentPage,
+    sortMonth,
+    selectedYear
+  );
+  
   useEffect(() => {
-    const handleScroll = () => {
-      if (
-        window.innerHeight + document.documentElement.scrollTop + 100 >=
-        document.documentElement.scrollHeight
-      ) {
-        setCurrentPage((prevPage) => prevPage + 1);
-      }
-    };
+    console.log(clientPayments); 
+  }, [clientPayments]);
+  
+const [client] = useClientsPage(selectedEmployee3, currentPage);
 
-    window.addEventListener("scroll", handleScroll);
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
-  }, []);
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+    refetch();
+  };
+  
+  const itemsPerPage = 40;
+
+  const displayedItems = clientPayments.sort((a, b) => new Date(b.date) - new Date(a.date))?.slice(0, currentPage * itemsPerPage);
+  const isMoreItems = currentPage * itemsPerPage < client.length;
+
 
   const handledelete = (ids, id) => {
     Swal.fire({
@@ -102,7 +100,8 @@ const [selectedClient, setSelectedClient] = useState(initialTab4);
      const note = e.target.note.value;
      const paymentMethod = e.target.paymentMethod.value;
      const body = { note, amount, date, paymentMethod };
-     const datas = { title: `Update Payment ${amount} from in ${paymentMethod}`, date: new Date(), user: user?.displayName };
+     const datas = { title: `Update Payment ${amount} from in ${paymentMethod}`, date: new Date(), user: user?.displayName,
+     photo: user?.photoURL, };
    
      AxiosPublic.patch(`/clientPaymentsUp/updates/${id}/${ids}`, body)
        .then((res) => {
@@ -117,60 +116,53 @@ const [selectedClient, setSelectedClient] = useState(initialTab4);
        });
    };
 
+   const paymentMethods = [
+     { key: "bkashMarchent", label: "Bkash Merchant", img: "https://i.ibb.co/bHMLyvM/b-Kash-Merchant.png" },
+     { key: "bkashPersonal", label: "Bkash Personal", img: "https://i.ibb.co/520Py6s/bkash-1.png" },
+     { key: "nagadPersonal", label: "Nagad Personal", img: "https://i.ibb.co/JQBQBcF/nagad-marchant.png" },
+     { key: "rocketPersonal", label: "Rocket Personal", img: "https://i.ibb.co/QkTM4M3/rocket.png" },
+     { key: "IBBLBank", label: "IBBL Bank", img: "https://i.ibb.co/pnS6nt4/IBBLBank.png" },
+     { key: "bank", label: "Bank", img: "https://i.ibb.co/kG9cBXJ/BBBLBank.png" },
+     { key: "DBBLBank", label: "DBBL Bank", img: "https://i.ibb.co/vH2fPBm/DBBLBank.png" },
+   ];
+
+
+   const [allEmployees] = useAllEmployee([]);
+   
+
   return (
-    <div className="">
+    <div className="mb-5">
 
 
-      <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-5 my-5 ">
+<div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-5 my-5">
+{paymentMethods.map(({ key, label, img }) => {
+  const filteredItems = displayedItems.filter(f => f.paymentMethod === key);
+  const totalAmount = filteredItems.reduce((acc, item) => acc + parseFloat(item.amount || 0), 0);
+  
+  return (
+    <div key={key} onClick={() => setSelectedCategory(key)}>
+      <BalanceCard img={img} amount={totalAmount || 0} />
+    </div>
+  );
+})}
 
-        <div onClick={() => setSelectedCategory('bkashMarchent')}>
-        <BalanceCard  img={`https://i.ibb.co/bHMLyvM/b-Kash-Merchant.png`} amount={myclients
-  ?.flatMap(client => client.payments || []).filter(h => h?.paymentMethod === 'bkashMarchent')?.reduce((acc, payment) => acc + payment?.amount, 0)}></BalanceCard>
-          </div>
-        <div onClick={() => setSelectedCategory('bkashPersonal')}>
-        <BalanceCard onClick={() => setSelectedCategory(category)} img={`https://i.ibb.co/520Py6s/bkash-1.png`} amount={myclients
-  ?.flatMap(client => client.payments || [])?.filter(h => h?.paymentMethod === 'bkashPersonal')?.reduce((acc, payment) => acc + payment?.amount, 0)}></BalanceCard>
-        </div>
-        <div onClick={() => setSelectedCategory('nagadPersonal')}>
-        <BalanceCard onClick={() => setSelectedCategory(category)} img={`https://i.ibb.co/JQBQBcF/nagad-marchant.png`} amount={myclients
-  ?.flatMap(client => client.payments || [])?.filter(h => h?.paymentMethod === 'nagadPersonal')?.reduce((acc, payment) => acc + payment?.amount, 0)}></BalanceCard>
-        </div>
-        <div onClick={() => setSelectedCategory('rocketPersonal')}>
-        <BalanceCard img={`https://i.ibb.co/QkTM4M3/rocket.png`} amount={myclients
-  ?.flatMap(client => client.payments || [])?.filter(h => h?.paymentMethod === 'rocketPersonal')?.reduce((acc, payment) => acc + payment?.amount, 0)}></BalanceCard>
-        </div>
-        <div onClick={() => setSelectedCategory('IBBLBank')}>
-        <BalanceCard img={`https://i.ibb.co.com/pnS6nt4/IBBLBank.png`} amount={myclients
-  ?.flatMap(client => client.payments || [])?.filter(h => h?.paymentMethod === 'IBBLBank')?.reduce((acc, payment) => acc + payment?.amount, 0)}></BalanceCard>
-        </div>
-        <div onClick={() => setSelectedCategory('bank')}>
-        <BalanceCard img={`https://i.ibb.co.com/kG9cBXJ/BBBLBank.png`} amount={myclients
-  ?.flatMap(client => client.payments || [])?.filter(h => h?.paymentMethod === 'bank')?.reduce((acc, payment) => acc + payment?.amount, 0)}></BalanceCard>
-        </div>
-        <div onClick={() => setSelectedCategory('DBBLBank')}>
-        <BalanceCard img={`https://i.ibb.co.com/vH2fPBm/DBBLBank.png`} amount={myclients
-  ?.flatMap(client => client.payments || [])?.filter(h => h?.paymentMethod === 'DBBLBank')?.reduce((acc, payment) => acc + payment?.amount, 0)}></BalanceCard>
-        </div>
-    
-        <div 
-                 onClick={() => setSelectedCategory('All')}
-                 style={{ backgroundColor: '#f7e8e8', border: 'var(--border)' }} 
-                   className="balance-card rounded-2xl  text-center shadow-xl transition-transform transform hover:scale-105"
-                 >
-                   <h1 className="px-3 text-black text-xl font-bold text-center">TOTAL</h1>
-                   <p className="card-title pb-5">
-  <span>৳ </span>
-  {new Intl.NumberFormat("en-IN", {
-    maximumFractionDigits: 0,
-  }).format(
-    myclients
-      ?.flatMap((client) => client.payments || [])
-      ?.reduce((acc, payment) => acc + parseFloat(payment?.amount || 0), 0)
-  )}
-</p>
 
-         </div>
-         </div>
+      {/* Total Balance Card */}
+      <div
+        onClick={() => setSelectedCategory('all')}
+        style={{ backgroundColor: '#f7e8e8', border: 'var(--border)' }}
+        className="balance-card rounded-2xl text-center shadow-xl transition-transform transform hover:scale-105"
+      >
+        <h1 className="px-3 text-black text-xl font-bold text-center">TOTAL</h1>
+        <p className="card-title pb-5">
+          <span>৳ </span>  ৳ {new Intl.NumberFormat('en-IN').format(displayedItems?.reduce(
+      (acc, payment) => acc + parseFloat(payment?.amount || 0),
+      0
+    ).toFixed(0))}
+          {}
+        </p>
+      </div>
+    </div>
 
 <div className='side-space' >
 <div className="f-between text-black  mb-5 ">
@@ -182,114 +174,46 @@ const [selectedClient, setSelectedClient] = useState(initialTab4);
      >
         Pay Now
 </button> : <div></div>}
-  <div className="flex flex-wrap lg:flex-nowrap gap-3 justify-center items-center">
+<div className="flex flex-col  sm:flex-row justify-end items-center gap-3">
 
-    {userr?.role === "admin" && (
-      <select
-       
-        className="select2"
-        value={selectedEmployee3}
-        onChange={(e) => changeTab3(e.target.value)}
-      >
-        <option value="all">Select Digital Marketer</option>
-        {users
-          .filter((u) => u.role === "employee")
-          .map((employee) => (
-            <option key={employee._id} value={employee.email}>
-              {employee.name}
-            </option>
-          ))}
-      </select>
-    )}
+{userr?.role === "admin" && (
+  <select className="select2" value={selectedEmployee3} onChange={(e) => changeTab3(e.target.value)}>
+    <option value="all">Select Digital Marketer</option>
+    {allEmployees?.filter((u) => u.role === "employee").map((e) => (
+      <option key={e._id} value={e.email}>{e.name}</option>
+    ))}
+  </select>
+)}
 
-
-<select 
-       className="select2"
-       value={selectedClient}
-       onChange={(e) => changeTab4(e.target.value)}
-     >
-       <option value="All">All Clients</option>
-       {myclients
-         .map((employee) => (
-           <option key={employee._id} value={employee.clientName}>
-             {employee.clientName}
-           </option>
-         ))}
-     </select>
-
-     <select
-  className="select2"
-  value={sortMonth}
-  onChange={(e) => changeTab(e.target.value)}
->
-  <option value="all">Select Month</option>
-  {[
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-    "August",
-    "September",
-    "October",
-    "November",
-    "December",
-  ].map((month, index) => {
-    // Get the months present in the displayedItems or selectedClient
-    const monthsInData = [
-      ...new Set(
-        (selectedClient === "All"
-          ? displayedItems?.flatMap(client => client.payments || []) // If "All" clients, get payments from all clients
-          : displayedItems?.find(f => f.clientName === selectedClient)?.payments || [] // If specific client, get payments for that client
-        )
-          .map(payment => new Date(payment?.date).getMonth() + 1) // Extract month from the date
-      ),
-    ];
-
-    // Check if the current month (index + 1) exists in the monthsInData
-    if (monthsInData.includes(index + 1)) {
-      return (
-        <option key={index + 1} value={index + 1}>
-          {month}
-        </option>
-      );
-    }
-    return null;
-  }).filter(option => option !== null)} {/* Filter out null values */}
+<select className="select2" value={sortMonth} onChange={(e) => changeTab(e.target.value)}>
+<option  value='all'>Select Month</option>
+  {["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
+    .map((month, i) => <option key={i} value={i + 1}>{month}</option>)}
 </select>
 
-    <select
-  className="select2"
-  value={selectedYear}
-  onChange={(e) => setSelectedYear(e.target.value)}
+<select
+className="select2"
+value={selectedYear}
+onChange={(e) => setSelectedYear(e.target.value)}
 >
-  <option value="" >Select Year</option>
-  {[...new Set(
-    (selectedClient === "All"
-      ? displayedItems?.flatMap(client => client.payments || [])
-      : displayedItems?.find(f => f.clientName === selectedClient)?.payments || []
-    ).map(payment => new Date(payment?.date).getFullYear())
-  )].sort((a, b) => a - b).map((year) => (
-    <option key={year} value={year}>
-      {year}
-    </option>
-  ))}
+<option value="">Select Year</option> {/* Default option */}
+{Array.from({ length: 2035 - 2024 + 1 }, (_, i) => 2024 + i).map((year) => (
+  <option key={year} value={year}>
+    {year}
+  </option>
+))}
 </select>
 
-
-
-
-  </div>
+</div>
 </div>
 
-       <div className="table-div " >
-          <table className="min-w-full text-center ">
+       <div className="table-div rounded-lg " >
+          <table className="min-w-full text-center  rounded-lg">
             <thead className=" ">
               <tr className="tr1">
-              <th className="text-center">Items {myclients?.flatMap(client => client.payments || [])?.length}</th>
+              <th className="text-center">Items {displayedItems?.length}</th>
               <th>Date</th>
+              <th>Employee Name</th>
               <th>Client Name</th>
               <th> Amount</th>
               <th className="text-center">Payment Method</th>
@@ -298,16 +222,7 @@ const [selectedClient, setSelectedClient] = useState(initialTab4);
             </tr>
           </thead>
           <tbody>
-          {(selectedClient === "All" 
-  ? displayedItems?.flatMap(client => client.payments || []) 
-  : displayedItems?.find(f => f.clientName === selectedClient)?.payments || []
-)?.filter(payment => {
-  const paymentYear = new Date(payment?.date).getFullYear();
-  const paymentMonth = new Date(payment?.date).getMonth() + 1;
-  return (!selectedCategory || selectedCategory === "All" || payment?.paymentMethod === selectedCategory) &&
-         (!selectedYear || paymentYear === parseInt(selectedYear, 10)) &&
-         (sortMonth === "all" || paymentMonth === parseInt(sortMonth, 10));
-})?.map((payment, index) => (
+          {displayedItems?.map((payment, index) => (
               <tr
               key={payment?._id}
               className={`tr2`}
@@ -335,6 +250,13 @@ onClick={() => setModalData(payment)}
         </td>
                 <td >
                   {new Date(payment?.date).toLocaleDateString("en-GB")}
+                </td>
+                <td>
+                <div className='flex justify-start items-center gap-2'>
+              <img className='h-10 w-10 rounded-full object-cover' src={allEmployees.find(f => f.email === payment.employeeEmail)?.photo} alt="" />
+              <h1>  {allEmployees.find(f => f.email === payment.employeeEmail)?.name}</h1>
+              </div>
+                 
                 </td>
                 <td className="hover:font-bold">
                 <Link  to={`/client/${payment?.clientEmail}`}>
@@ -398,27 +320,18 @@ onClick={() => setModalData(payment)}
   )}
 </td>
 
-                <td>
-                  {payment?.note}
-                </td>
+          <td>
+                 {payment.note?.split(" ").slice(0, 4).join(" ") + (payment.note?.split(" ").length > 4 ? "..." : "")}
+            </td>
               </tr>
             ))}
           </tbody>
-          <tr  className="font-bold tr1">
-            <td className="p-3 text-right" colSpan="3">
+          <tr  className="font-bold  tr1">
+            <td className="p-3 text-right" colSpan="4">
                 Total :
             </td>
             <td>
-  ৳ {new Intl.NumberFormat('en-IN').format((selectedClient === "All" 
-  ? displayedItems?.flatMap(client => client.payments || []) 
-  : displayedItems?.find(f => f.clientName === selectedClient)?.payments || []
-)?.filter(payment => {
-  const paymentYear = new Date(payment?.date).getFullYear();
-  const paymentMonth = new Date(payment?.date).getMonth() + 1;
-  return (!selectedCategory || selectedCategory === "All" || payment?.paymentMethod === selectedCategory) &&
-         (!selectedYear || paymentYear === parseInt(selectedYear, 10)) &&
-         (sortMonth === "all" || paymentMonth === parseInt(sortMonth, 10));
-})?.reduce(
+  ৳ {new Intl.NumberFormat('en-IN').format(displayedItems?.reduce(
       (acc, payment) => acc + parseFloat(payment?.amount || 0),
       0
     ).toFixed(0))}
@@ -427,6 +340,78 @@ onClick={() => setModalData(payment)}
             <td ></td>
           </tr>
         </table>
+
+        <div className="flex items-center justify-center my-5 space-x-2">
+  {/* Previous Button */}
+  <button
+    onClick={() => handlePageChange(currentPage - 1)}
+    disabled={currentPage === 1}
+    className={`px-4 py-2 rounded-md ${
+      currentPage === 1
+        ? "bg-gray-300 text-gray-600 cursor-not-allowed"
+        : "bg-blue-600 text-white hover:bg-blue-800"
+    }`}
+  >
+    Previous
+  </button>
+
+  {/* Page Numbers */}
+  {(() => {
+    const buttons = [];
+    let startPage, endPage;
+
+    // Always show 5 buttons, with the current page in the middle
+    if (totalPages <= 5) {
+      // If total pages are less than or equal to 5, show all pages
+      startPage = 1;
+      endPage = totalPages;
+    } else {
+      // Calculate start and end pages to keep the current page in the middle
+      startPage = Math.max(currentPage - 2, 1);
+      endPage = Math.min(currentPage + 2, totalPages);
+
+      // Adjust if the current page is near the start or end
+      if (currentPage <= 3) {
+        endPage = 5;
+      } else if (currentPage >= totalPages - 2) {
+        startPage = totalPages - 4;
+      }
+    }
+
+    // Generate buttons for the calculated range
+    for (let i = startPage; i <= endPage; i++) {
+      buttons.push(
+        <button
+          key={i}
+          onClick={() => handlePageChange(i)}
+          className={`px-4 py-2 rounded-md ${
+            currentPage === i
+              ? "bg-red-600 text-white"
+              : "bg-gray-200 text-gray-800 hover:bg-red-600 hover:text-white"
+          }`}
+        >
+          {i}
+        </button>
+      );
+    }
+
+    return buttons;
+  })()}
+
+  {/* Next Button */}
+  <button
+    onClick={() => handlePageChange(currentPage + 1)}
+    disabled={currentPage === totalPages}
+    className={`px-4 py-2 rounded-md ${
+      currentPage === totalPages
+        ? "bg-gray-300 text-gray-600 cursor-not-allowed"
+        : "bg-blue-600 text-white hover:bg-blue-800"
+    }`}
+  >
+    Next
+  </button>
+</div>
+
       </div>
       </div>
       {payment && (

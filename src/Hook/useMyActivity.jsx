@@ -11,7 +11,7 @@ const useMyActivity = (email) => {
       const res = await AxiosPublic.get(`/myActivity/${email}`);
       return res.data;
     },
-    enabled: !!email, // Ensures query only runs when email is provided
+    enabled: !!email, 
   });
 
   if (isError) {
