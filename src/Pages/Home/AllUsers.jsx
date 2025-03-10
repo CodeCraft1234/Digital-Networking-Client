@@ -16,6 +16,7 @@ const AllUsers = () => {
   const { user } = useContext(AuthContext);
   const [employees, setEmployees] = useState([]);
   const [allEmployees,refetch]=useAllEmployee()
+
   
   const initialTab = localStorage.getItem("activeTabs") || "all";
   const [activeTab, setActiveTab] = useState(initialTab);
@@ -78,15 +79,9 @@ const AllUsers = () => {
     localStorage.setItem("activeTabs", tab);
   };
 
-  const [onlyClientEmail]=useOnlyClientEmail()
   const [adsPayment] = useAdsPayment();
   const [adsAccountCenter] = useAdsAccountCenter();
 
-  const totalClientsForEmployees = activeTab === 'employee'
-    ? employees.reduce((total, employee) => 
-        total + onlyClientEmail.filter(client => client.employeeEmail === employee.email).length
-      , 0)
-    : 0;
 
     const totalDueForContributors = activeTab === 'contributor'
     ? employees.reduce((total, employee) => 
@@ -126,7 +121,6 @@ const AllUsers = () => {
       </Helmet>
 
   
-
       {activeTab === 'clientPay' && <EmployeeClientPay email={user?.email} />}
 
       <div   className="side-space">
@@ -155,6 +149,12 @@ const AllUsers = () => {
     onClick={() => changeTab('graphicDesigner')}
   >
     Graphic Designer
+  </a>
+  <a
+    className={`tab-button ${activeTab === 'UI/UXDesigner' ? 'active' : ''}`}
+    onClick={() => changeTab('UI/UXDesigner')}
+  >
+    UI/UX Designer
   </a>
   <a
     className={`tab-button ${activeTab === 'webDeveloper' ? 'active' : ''}`}
@@ -304,7 +304,7 @@ const AllUsers = () => {
 
                   {activeTab === 'employee' && (
                        <td>  
-                       {onlyClientEmail.filter(c => c.employeeEmail === user?.email).length}
+                       {user.clients}
                       </td>
                      )}
 
@@ -318,6 +318,7 @@ const AllUsers = () => {
                       <option value="employee">Digital Marketer</option>
                       <option value="webDeveloper">Web Developer</option>
                       <option value="graphicDesigner">Graphic Designer</option>
+                      <option value="UI/UXDesigner">UI/UX Designer</option>
                       <option value="contributor">Contributor</option>
                       <option value="client">Client</option>
                     </select>
@@ -334,11 +335,11 @@ const AllUsers = () => {
       >
         Total :
       </td>
-      <td
-        colSpan={1}
-      >
-        {totalClientsForEmployees}
-      </td>
+      <td colSpan={1}>
+  {employees.reduce((acc, employee) => acc + parseFloat(employee.clients || 0), 0)}
+</td>
+
+
       <td></td>
     </tr>
   </tfoot>

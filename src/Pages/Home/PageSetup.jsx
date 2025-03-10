@@ -158,8 +158,6 @@ localStorage.setItem("activeTabalu", tab);
         });
 };
 
-
-console.log(myclients);
     return (
         <div>
             <Helmet>
@@ -298,12 +296,12 @@ console.log(myclients);
             <thead className=" ">
               <tr className="tr1" >  
                 <th className="text-center">{campaignss?.length}</th>
-                <th >Date</th>
                 <th >Client Name</th>
                 <th >Item Name</th>
                 <th >Page Name</th>
-                <th >Total Bill</th>
-                <th className="text-center">Status</th>
+                <th >Bill</th>
+                <th >Date</th>
+                <th className="text-center">Action</th>
               </tr>
             </thead>
             <tbody>
@@ -319,7 +317,65 @@ console.log(myclients);
                  key={work._id}
                  className={`tr2`}
                >
-                   {
+                  
+                  <td className="text-center">
+
+<label className="status-label">
+<input
+type="checkbox"
+checked={work.status === "Active"}
+onChange={() => {
+const newStatus = work.status === "Active" ? "Complete" : "Active";
+handleUpdate2(work.ids ,work.id, newStatus);
+}}
+/>
+<div className={work.status === "Active" ? "active" : "inactive"}>
+<span className={work.status === "Active" ? "active" : ""}></span>
+</div>
+</label>
+                 </td>
+
+                  <td>
+                  {new Date(work?.date).toLocaleDateString("en-GB")}
+                  </td>
+                  <td><Link className="hover:font-bold" to={`/client/${work.id}`}>{work.clientName}</Link></td>
+                  
+                  <td>
+
+                     
+                    <span>
+  {work.itemName
+    ?.split(' ') 
+    .slice(0, 4) 
+    .join(' ') 
+    + (work.itemName?.split(' ').length > 4 ? '...' : '') 
+  }
+</span>
+                  </td>
+
+                  <td>
+                  
+                   <Link to={work.pageUrl}>
+                   {work.pageName
+    .split(' ') 
+    .slice(0, 4) 
+    .join(' ') 
+    + (work.pageName.split(' ').length > 4 ? '...' : '') // Add "..." if there are more than 6 words
+  } 
+                   </Link>
+                  
+                  </td>
+                  
+                  <td >
+                  ৳ {work.totalBill || 0}
+                  </td>
+
+                  
+
+                
+                 
+
+                {
                       user &&
                 <td  className="text-center">
                   <div className="f-center">
@@ -431,61 +487,6 @@ console.log(myclients);
                </div>
                                     </dialog>  </td>
                }
-                      
-                  <td>
-                  {new Date(work?.date).toLocaleDateString("en-GB")}
-                  </td>
-                  <td><Link className="hover:font-bold" to={`/client/${work.id}`}>{work.clientName}</Link></td>
-                  
-                  <td>
-
-                     
-                    <span>
-  {work.itemName
-    ?.split(' ') 
-    .slice(0, 4) 
-    .join(' ') 
-    + (work.itemName?.split(' ').length > 4 ? '...' : '') 
-  }
-</span>
-                  </td>
-
-                  <td>
-                  
-                   <Link to={work.pageUrl}>
-                   {work.pageName
-    .split(' ') 
-    .slice(0, 4) 
-    .join(' ') 
-    + (work.pageName.split(' ').length > 4 ? '...' : '') // Add "..." if there are more than 6 words
-  } 
-                   </Link>
-                  
-                  </td>
-                  
-                  <td >
-                  ৳ {work.totalBill || 0}
-                  </td>
-
-                  
-
-                
-                  <td className="text-center">
-
-                  <label className="status-label">
-  <input
-    type="checkbox"
-    checked={work.status === "Active"}
-    onChange={() => {
-      const newStatus = work.status === "Active" ? "Complete" : "Active";
-      handleUpdate2(work.ids ,work.id, newStatus);
-    }}
-  />
-  <div className={work.status === "Active" ? "active" : "inactive"}>
-    <span className={work.status === "Active" ? "active" : ""}></span>
-  </div>
-                 </label>
-                </td>
                 </tr>
               ))}
               <tr className="font-bold tr1">

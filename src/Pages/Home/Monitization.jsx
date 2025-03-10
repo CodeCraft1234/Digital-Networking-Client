@@ -146,6 +146,14 @@ localStorage.setItem("activeTabalu", tab);
         });
 };
 const [allEmployees]=useAllEmployee()
+
+const datas=myclients?.flatMap(client => client.pageService || [])
+?.filter(item =>  
+  (selectedEmployee === 'all' || item.status === selectedEmployee) &&
+  (!selectedYear || new Date(item.date).getFullYear() === parseInt(selectedYear)) &&
+  item?.itemName?.toLowerCase().includes(searchQuery.toLowerCase()) &&
+  (sortMonth === 'all' || new Date(item.date).getMonth() + 1 === parseInt(sortMonth, 10))
+)?.filter(item=>item.role === data )
     return (
         <div>
             <Helmet>
@@ -279,31 +287,97 @@ const [allEmployees]=useAllEmployee()
        <div className="table-div ">
           <table className="min-w-full text-center ">
             <thead className=" ">
-              <tr className="tr1" >  
-                <th className="text-center">{campaignss?.length}</th>
-                <th >Date</th>
+            <tr className="tr1" >  
+                <th className="text-center">{datas?.length}</th>
+                {
+                  userr?.role === 'admin' &&  
+                  <th > Employee Name</th>
+                }
                 <th >Client Name</th>
                 <th >Item Name</th>
                 <th >Page Name</th>
-                <th >Total Bill</th>
-              
-                <th className="text-center">Status</th>
+                <th >Bill</th>
+                <th >Date</th>
+                <th className="text-center">Action</th>
               </tr>
             </thead>
             <tbody>
-              {myclients?.flatMap(client => client.pageService || [])
-              ?.filter(item =>  
-                (selectedEmployee === 'all' || item.status === selectedEmployee) &&
-                (!selectedYear || new Date(item.date).getFullYear() === parseInt(selectedYear)) &&
-                item?.itemName?.toLowerCase().includes(searchQuery.toLowerCase()) &&
-                (sortMonth === 'all' || new Date(item.date).getMonth() + 1 === parseInt(sortMonth, 10))
-              )?.filter(item=>item.role === data )
-              .map((work, index) => (
+              {datas
+              ?.map((work, index) => (
                  <tr 
                  key={work._id}
                  className={`tr2`}
                >
+                     <td className="text-center">
+
+<label className="status-label">
+<input
+type="checkbox"
+checked={work.status === "Active"}
+onChange={() => {
+const newStatus = work.status === "Active" ? "Complete" : "Active";
+handleUpdate2(work.ids ,work.id, newStatus);
+}}
+/>
+<div className={work.status === "Active" ? "active" : "inactive"}>
+<span className={work.status === "Active" ? "active" : ""}></span>
+</div>
+</label>
+                   </td>
+
                    {
+            userr?.role === 'admin' &&    <td>  <Link
+       
+            to={`/client/${work.id}`}
+          >
+            <div className='flex justify-start items-center gap-2'>
+              <img className='h-10 w-10 rounded-full object-cover' src={allEmployees.find(f => f.email === work.email)?.photo} alt="" />
+              <h1> {allEmployees?.find(f => f.email === work.email)?.name || 'N/A'}</h1>
+              </div>
+              </Link>
+          </td>
+          }
+
+                  <td><Link className="hover:font-bold" to={`/client/${work.id}`}>{work.clientName}</Link></td>
+                  
+                  <td>
+
+                     
+                    <span>
+  {work.itemName
+    ?.split(' ') 
+    .slice(0, 4) 
+    .join(' ') 
+    + (work.itemName?.split(' ').length > 4 ? '...' : '') 
+  }
+</span>
+                  </td>
+
+                  <td>
+                  
+                   <Link to={work.pageUrl}>
+                   {work.pageName
+    .split(' ') 
+    .slice(0, 4) 
+    .join(' ') 
+    + (work.pageName.split(' ').length > 4 ? '...' : '') // Add "..." if there are more than 6 words
+  } 
+                   </Link>
+                  
+                  </td>
+                  
+                  <td >
+                  <span className="amount-taka">৳</span> {work.totalBill || 0}
+                  </td>
+
+               
+
+                
+                  <td>
+                  {new Date(work?.date).toLocaleDateString("en-GB")}
+                  </td>
+
+                {
                       user &&
                 <td  className="text-center">
                   <div className="f-center">
@@ -416,86 +490,33 @@ const [allEmployees]=useAllEmployee()
                                     </dialog>  </td>
                }
                       
-                  <td>
-                  {new Date(work?.date).toLocaleDateString("en-GB")}
-                  </td>
-
-                  <td><Link className="hover:font-bold" to={`/client/${work.id}`}>{work.clientName}</Link></td>
-                  
-                  <td>
-
-                     
-                    <span>
-  {work.itemName
-    ?.split(' ') 
-    .slice(0, 4) 
-    .join(' ') 
-    + (work.itemName?.split(' ').length > 4 ? '...' : '') 
-  }
-</span>
-                  </td>
-
-                  <td>
-                  
-                   <Link to={work.pageUrl}>
-                   {work.pageName
-    .split(' ') 
-    .slice(0, 4) 
-    .join(' ') 
-    + (work.pageName.split(' ').length > 4 ? '...' : '') // Add "..." if there are more than 6 words
-  } 
-                   </Link>
-                  
-                  </td>
-                  
-                  <td >
-                  ৳ {work.totalBill || 0}
-                  </td>
-
-               
-
-                
-                  <td className="text-center">
-
-                  <label className="status-label">
-  <input
-    type="checkbox"
-    checked={work.status === "Active"}
-    onChange={() => {
-      const newStatus = work.status === "Active" ? "Complete" : "Active";
-      handleUpdate2(work.ids ,work.id, newStatus);
-    }}
-  />
-  <div className={work.status === "Active" ? "active" : "inactive"}>
-    <span className={work.status === "Active" ? "active" : ""}></span>
-  </div>
-                 </label>
-                </td>
+                 
                 </tr>
               ))}
               <tr className="font-bold tr1">
                 <td></td>
-                <td className="text-right" colSpan="4">
+                {
+            userr?.role === 'admin' ? 
+            <td className="text-right" colSpan="4">
+                  Total:
+                </td> : <td className="text-right" colSpan="3">
                   Total:
                 </td>
+               }
                 <td   >
-                  <span className="text-sm mr-1 font-extrabold">$</span>{" "}
-                  {myclients?.flatMap(client => client.pageService || [])
-              ?.filter(item =>  
-                (selectedEmployee === 'all' || item.status === selectedEmployee) &&
-                (!selectedYear || new Date(item.date).getFullYear() === parseInt(selectedYear)) &&
-                item?.itemName?.toLowerCase().includes(searchQuery.toLowerCase()) &&
-                (sortMonth === 'all' || new Date(item.date).getMonth() + 1 === parseInt(sortMonth, 10))
-              )?.filter(item=>item.role === data).reduce((acc, payment) => acc + parseFloat(payment?.totalBill || 0), 0).toFixed(0) || 0}
+                <span className="amount-taka">৳ </span>
+                  {datas?.reduce((acc, payment) => acc + parseFloat(payment?.totalBill || 0), 0).toFixed(0) || 0}
                 </td>
                 
               
                 {userr?.role === "admin" ? (
                   <>
                     <td ></td>
+                    <td ></td>
                   </>
                 ) : (
                   <>
+                   <td ></td>
                    <td ></td>
                   </>
                 )}

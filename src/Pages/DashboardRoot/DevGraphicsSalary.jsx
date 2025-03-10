@@ -490,11 +490,11 @@ const DevGraphicSalary = () => {
         <tr key={month} className="tr2">
           <td>{month}</td>
           {/* Basic Salary or Default */}
-          <td>৳ {monthData?.payAmount || 0}</td>
+          <td><span className="amount-taka">৳ </span> {monthData?.payAmount || 0}</td>
           {/* Unpaid Salary */}
-          <td>৳ {unpaidSalary > 0 ? unpaidSalary : 0}</td>
+          <td><span className="amount-taka">৳ </span> {unpaidSalary > 0 ? unpaidSalary : 0}</td>
           {/* Total Salary Paid */}
-          <td>৳ {totalSalaryPaid}</td>
+          <td><span className="amount-taka">৳ </span> {totalSalaryPaid}</td>
         </tr>
       );
     })}
@@ -507,7 +507,7 @@ const DevGraphicSalary = () => {
 
     {/* Total Basic Salary */}
     <td>
-      ৳{" "}
+    <span className="amount-taka">৳ </span>
       {months.reduce(
         (total, month) =>
           total +
@@ -524,7 +524,7 @@ const DevGraphicSalary = () => {
 
     {/* Total Unpaid Salary */}
     <td>
-      ৳{" "}
+    <span className="amount-taka">৳ </span>
       {months.reduce(
         (total, month) =>
           total +
@@ -554,7 +554,7 @@ const DevGraphicSalary = () => {
 
     {/* Total Paid Salary */}
     <td>
-      ৳{" "}
+    <span className="amount-taka">৳ </span>
       {months.reduce((total, month) => {
         const salaryPayments = MySalaryPayment.filter(
           (sell) =>

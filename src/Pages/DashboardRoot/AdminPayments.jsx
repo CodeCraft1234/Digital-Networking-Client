@@ -57,9 +57,10 @@ const changeTab = (tab) => {
 };
 
 const [selectedYear, setSelectedYear] = useState(2025);
+
 const { adminPay, totalItems, totalPages, refetch } = useAdminPaymentsPage(
   selectedEmployee3, 
-  selectedCategory || 'all', 
+  selectedCategory || 'all',
   selectedStatus2 || 'all',
   sortMonth,
   currentPage,
@@ -73,7 +74,7 @@ const handlePageChange = (page) => {
 };
   
 const [totals] = useAdminPayPageTotal( selectedEmployee3, 
-  selectedCategory || 'all', 
+  selectedCategory || 'all',
   selectedStatus2 || 'all',
   sortMonth,
   currentPage,
@@ -307,7 +308,7 @@ const displayedItems = adminPay?.sort((a, b) => new Date(b.date) - new Date(a.da
 
 
 
-<div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 lg:gap-5 rounded-lg">
+<div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 lg:gap-4 rounded-lg">
   {cards.map(({ category, img }) => (
 
 <div onClick={() => setSelectedCategory(category)} key={category}>
@@ -432,6 +433,7 @@ const displayedItems = adminPay?.sort((a, b) => new Date(b.date) - new Date(a.da
                   type="radio"
                   name="paymentMethod"
                   value={value}
+                  required
                   className="radio radio-primary"
                 />
                 <span className="label-text text-black">{label}</span>
@@ -536,14 +538,24 @@ const displayedItems = adminPay?.sort((a, b) => new Date(b.date) - new Date(a.da
           <table className="min-w-full  text-center ">
             <thead>
               <tr className="tr1">
-              <th className="text-center ">{displayedItems.length} Items</th>
+              <th className="text-center ">{displayedItems.length}</th>
+            
               <th>Date</th>
-              <th>Marketer Name</th>
+              {
+                  userr?.role === 'admin' &&  
+                  <th > Employee Name</th>
+                }
+
               <th>Amount</th>
               <th>Charge</th>
               <th className="text-center ">Payment Method</th>
               <th> Note</th>
-              <th className="text-center ">Status</th>
+           
+              {
+                  userr?.role !== 'admin' &&  
+                  <th className="text-center "> Status</th>
+                }
+              <th className="text-center ">Action</th>
             </tr>
           </thead>
           <tbody>
@@ -556,7 +568,114 @@ const displayedItems = adminPay?.sort((a, b) => new Date(b.date) - new Date(a.da
                    : "bg-gray-200  text-left text-black border-b border-opacity-20"
                }`}
              >
+
+{userr?.role === 'admin' ? 
+  <td className="text-center">
+  <label className="status-label">
+    <input
+      type="checkbox"
+      className="sr-only"
+      checked={payment.status !== "pending"}
+      onChange={() => {
+        const newStatus = payment.status !== "pending" ? "pending" : "Approved";
+        handleUpdate2(payment._id, newStatus);
+      }}
+    />
+    <div
+      className={`status-switch ${payment.status !== "pending" ? "active" : "inactive"}`}
+    >
+      <span
+        className={`status-switch-thumb ${payment.status !== "pending" ? "active" : ""}`}
+      ></span>
+    </div>
+  </label>
+</td> :  <td className="text-center">{index + 1} </td>
+
+}
+             
+
+              <td>
+                  {new Date(payment.date).toLocaleDateString("en-GB")}
+                </td>
+
+                            
+ {userr?.role === 'admin' &&
+               
                 <td>
+                <div className='flex justify-start items-center gap-2'>
+              <img className='h-10 w-10 rounded-full object-cover' src={allEmployees.find(f => f.email === payment.employeeEmail)?.photo} alt="" />
+              <h1>  {payment.employeeName}</h1>
+              </div>
+                 
+                </td>
+}
+                <td>
+                <span className="amount-taka">৳ </span> {payment.payAmount}
+                </td>
+                <td>
+                <span className="amount-taka">৳ </span> {payment.charge || 0}
+                </td>
+
+                <td>
+  {[
+    { 
+      method: "bkashPersonal", 
+      src: "https://i.ibb.co.com/f8LcKV0/bKash.png", 
+      width: "w-24" 
+    },
+    { 
+      method: "rocketPersonal", 
+      src: "https://i.ibb.co/QkTM4M3/rocket.png", 
+      width: "w-24" 
+    },
+    { 
+      method: "nagadPersonal", 
+      src: "https://i.ibb.co/JQBQBcF/nagad-marchant.png", 
+      width: "w-24" 
+    },
+    { 
+      method: "DBBLBank", 
+      src: "https://i.ibb.co.com/nnN8KW0/DBBL.png", 
+      width: "w-32" 
+    },
+    { 
+      method: "IBBLBank", 
+      src: "https://i.ibb.co.com/pnS6nt4/IBBLBank.png", 
+      width: "w-32" 
+    },
+    { 
+      method: "bank", 
+      src: "https://i.ibb.co/PZc0P4w/brac-bank-seeklogo.png", 
+      width: "w-13", 
+      height: "h-12" 
+    },
+  ].map(
+    ({ method, src, width, height = "h-10" }) =>
+      payment.paymentMethod === method && (
+        <img
+          key={method}
+          className={`${height} ${width} flex my-auto items-center mx-auto justify-center`}
+          src={src}
+          alt={method}
+        />
+      )
+  )}
+               </td>
+
+               <td>
+                 {payment.note?.split(" ").slice(0, 4).join(" ") + (payment.note?.split(" ").length > 4 ? "..." : "")}
+            </td>
+          
+         
+ 
+
+                {userr?.role === 'employee' &&
+                <td className="text-center">
+                  <h1 className={`${payment.status !== "pending" ? "text-blue-700 font-bold" : ""}`}> {payment?.status}</h1>
+               
+              </td>
+                }
+                 <td>
                 <div className="f-center ">
                 <button
                     className="delete"
@@ -678,115 +797,20 @@ const displayedItems = adminPay?.sort((a, b) => new Date(b.date) - new Date(a.da
                  </dialog>
                  </div>
                 </td>
-
-                <td>
-                  {new Date(payment.date).toLocaleDateString("en-GB")}
-                </td>
-                <td>
-                <div className='flex justify-start items-center gap-2'>
-              <img className='h-10 w-10 rounded-full object-cover' src={allEmployees.find(f => f.email === payment.employeeEmail)?.photo} alt="" />
-              <h1>  {payment.employeeName}</h1>
-              </div>
-                 
-                </td>
-                <td>
-                  ৳ {payment.payAmount}
-                </td>
-                <td>
-                  ৳ {payment.charge || 0}
-                </td>
-
-                <td>
-  {[
-    { 
-      method: "bkashPersonal", 
-      src: "https://i.ibb.co.com/f8LcKV0/bKash.png", 
-      width: "w-24" 
-    },
-    { 
-      method: "rocketPersonal", 
-      src: "https://i.ibb.co/QkTM4M3/rocket.png", 
-      width: "w-24" 
-    },
-    { 
-      method: "nagadPersonal", 
-      src: "https://i.ibb.co/JQBQBcF/nagad-marchant.png", 
-      width: "w-24" 
-    },
-    { 
-      method: "DBBLBank", 
-      src: "https://i.ibb.co.com/nnN8KW0/DBBL.png", 
-      width: "w-32" 
-    },
-    { 
-      method: "IBBLBank", 
-      src: "https://i.ibb.co.com/pnS6nt4/IBBLBank.png", 
-      width: "w-32" 
-    },
-    { 
-      method: "bank", 
-      src: "https://i.ibb.co/PZc0P4w/brac-bank-seeklogo.png", 
-      width: "w-13", 
-      height: "h-12" 
-    },
-  ].map(
-    ({ method, src, width, height = "h-10" }) =>
-      payment.paymentMethod === method && (
-        <img
-          key={method}
-          className={`${height} ${width} flex my-auto items-center mx-auto justify-center`}
-          src={src}
-          alt={method}
-        />
-      )
-  )}
-               </td>
-
-               <td>
-                 {payment.note?.split(" ").slice(0, 4).join(" ") + (payment.note?.split(" ").length > 4 ? "..." : "")}
-            </td>
-
-            
-                {userr?.role === 'admin' &&
-                <td className="text-center">
-                <label className="status-label">
-                  <input
-                    type="checkbox"
-                    className="sr-only"
-                    checked={payment.status !== "pending"}
-                    onChange={() => {
-                      const newStatus = payment.status !== "pending" ? "pending" : "Approved";
-                      handleUpdate2(payment._id, newStatus);
-                    }}
-                  />
-                  <div
-                    className={`status-switch ${payment.status !== "pending" ? "active" : "inactive"}`}
-                  >
-                    <span
-                      className={`status-switch-thumb ${payment.status !== "pending" ? "active" : ""}`}
-                    ></span>
-                  </div>
-                </label>
-              </td>
-                }
-
-                {userr?.role === 'employee' &&
-                <td className="text-center">
-                  <h1 className={`${payment.status !== "pending" ? "text-blue-700 font-bold" : ""}`}> {payment?.status}</h1>
-               
-              </td>
-                }
-
               </tr>
             ))}
             <tr className="font-bold tr1">
-              <td></td>
-              <td></td>
-              <td className="p-3 text-right" >
-                Total :
-              </td>
+         
+            {
+            userr?.role === 'admin' ? 
+            <td className="text-right" colSpan="3">
+                  Total:
+                </td> : <td className="text-right" colSpan="2">
+                  Total:
+                </td>
+               }
               <td>
-  ৳ {new Intl.NumberFormat('en-IN', {
+              <span className="amount-taka">৳ </span> {new Intl.NumberFormat('en-IN', {
     maximumFractionDigits: 2, // To ensure two decimal places if required
   }).format(
     displayedItems
@@ -798,7 +822,7 @@ const displayedItems = adminPay?.sort((a, b) => new Date(b.date) - new Date(a.da
 </td>
 
                <td>
-  ৳ {new Intl.NumberFormat('en-IN', {
+               <span className="amount-taka">৳ </span> {new Intl.NumberFormat('en-IN', {
     maximumFractionDigits: 2, // Ensure consistency in decimals
   }).format(
     displayedItems
@@ -807,9 +831,14 @@ const displayedItems = adminPay?.sort((a, b) => new Date(b.date) - new Date(a.da
       ).reduce((acc, item) => acc + (isNaN(parseFloat(item?.charge)) ? 0 : parseFloat(item?.charge)), 0)
   )}
               </td>
+              <td></td> 
+               <td></td>
               <td></td>
-              <td></td>
-              <td></td>
+              {
+            userr?.role !== 'admin' && 
+            <td></td>
+          }
+             
             </tr>
           </tbody>
         </table>

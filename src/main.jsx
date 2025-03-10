@@ -20,7 +20,6 @@ import EmployeePayments from "./Pages/Home/EmployeePayments";
 import DashboardRoot from "./Pages/DashboardRoot/DashboardRoot";
 import Banner from "./Pages/Home/Banner";
 import AllUsers from "./Pages/Home/AllUsers";
-import CampaignTable2 from "./Pages/Home/EmployeeHome";
 import Users from "./Pages/DashboardRoot/Users";
 import Summery from "./Pages/DashboardRoot/Summery";
 import AdsDashboardHome from "./Pages/DashboardRoot/AdsHome";
@@ -35,7 +34,6 @@ import MyPayments from "./Pages/Home/MyPayments";
 import Notification from "./Pages/DashboardRoot/Notification";
 import BankInfo from "./Pages/Home/BankInfo";
 import ClientHome from "./Pages/Home/ClientHome";
-import ClientCampaign2 from "./Pages/Home/ClientCampaign2";
 import ClientPaymentHistry2 from "./Pages/Home/ClientPaymentHistry2";
 import Payoneer from "./Pages/DashboardRoot/Payoneer";
 import ContriHistory from "./Pages/DashboardRoot/ContriHistory";
@@ -67,6 +65,7 @@ import NoticePad from "./Pages/DashboardRoot/NoticePad";
 import AllAds from "./Pages/Home/AllAds";
 import MonthlyCast from "./Pages/DashboardRoot/MonthlyCast";
 import Services from "./Pages/Home/Services";
+import Settings from "./Pages/DashboardRoot/Routes/Settings";
 
 const router = createBrowserRouter([
   {
@@ -99,12 +98,12 @@ const router = createBrowserRouter([
         element:<AdsDashboardHome></AdsDashboardHome>
        },
       {
-        path:'/employee/home',
-        element:<CampaignTable2></CampaignTable2>
-       },
-      {
         path:'/campaigns',
         element:<AllAds></AllAds>
+       },
+      {
+        path:'/settings',
+        element:<Settings></Settings>
        },
       {
         path:'/services',
@@ -275,10 +274,6 @@ const router = createBrowserRouter([
       {
         path:'dashboard',
         element:<ClientHome></ClientHome>
-      },
-      {
-        path:'/clientCampaigns',
-        element:<ClientCampaign2></ClientCampaign2>
       },
       {
         path:'/paymentsClient',

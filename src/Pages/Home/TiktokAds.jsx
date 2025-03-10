@@ -12,6 +12,7 @@ import useMyClientsByEmail from "../../Hook/useMyClientsByEmail";
 import useUserr from "../../Hook/useUser";
 import { Helmet } from "react-helmet-async";
 import useAllEmployee from "../../Hook/useAllEmployee";
+import { ImCross } from "react-icons/im";
 
 const TiktokAds = ({data}) => {
     const { user } = useContext(AuthContext);
@@ -112,37 +113,32 @@ localStorage.setItem("activeTabalu", tab);
       });
   };
 
-  const handleUpdate2 = (ids, id, status) => {
-    const activityData = {
-        title: `Updated ${status} in Client campaigns`,
-        date: new Date(),
-        user: user?.displayName,
-    };
-    
-    AxiosPublic.put(`/clientPageService/${id}/${ids}`, { status })
-        .then((res) => {
-            console.log("Update Response:", res.data);
-            refetch(); // Refresh data after update
-
-            // Log the activity
-            AxiosPublic.post("/activity", activityData)
-                .then(() => {
-                    document.getElementById(`modal_${id}`).close();
-                    toast.success(`${status} has been successfully updated`);
-                })
-                .catch((activityError) => {
-                    console.error("Activity log error:", activityError);
-                    toast.error("Activity logging failed");
-                });
-
-            toast.success("Campaign updated successfully");
-        })
-        .catch((error) => {
-            console.error("Error updating campaign:", error);
-            toast.error("Failed to update campaign");
-        });
-};
 const [allEmployees]=useAllEmployee()
+
+
+
+const datas=myclients?.flatMap(client => client.pageService || [])
+?.filter(item =>  
+  (selectedEmployee === 'all' || item.status === selectedEmployee) &&
+  (!selectedYear || new Date(item.date).getFullYear() === parseInt(selectedYear)) &&
+  item?.itemName?.toLowerCase().includes(searchQuery.toLowerCase()) &&
+  (sortMonth === 'all' || new Date(item.date).getMonth() + 1 === parseInt(sortMonth, 10))
+)?.filter(item=>item.role === data )
+
+
+const [coin, setCoin] = useState();
+const [totalBills, setTotalBill] = useState();
+
+const handleCoinChange = (e) => {
+  const coinValue = parseFloat(e.target.value) || 0;
+  setCoin(coinValue);
+  setTotalBill((coinValue * 1.9).toFixed(0)); // Update total bill automatically
+};
+
+const handleTotalBillChange = (e) => {
+  setTotalBill(e.target.value); // Allow manual editing of totalBill
+};
+
     return (
         <div>
             <Helmet>
@@ -157,14 +153,7 @@ const [allEmployees]=useAllEmployee()
       <div className="f-between  mb-4 ">
 
      <div>
-     {
-                userr?.role === 'employee' ?
-        <button
-      className="add"
-       onClick={() => document.getElementById("my_modal_8").showModal()}
-     >
-        Pay Now
-</button> : <div></div>}
+
      </div>
 <div className="f-end   ">
 {userr?.role === "admin" && (
@@ -277,30 +266,76 @@ const [allEmployees]=useAllEmployee()
           <table className="min-w-full text-center ">
             <thead className=" ">
               <tr className="tr1" >  
-                <th className="text-center">{campaignss?.length}</th>
-                <th >Date</th>
+                <th className="text-center">{datas?.length}</th>
+                {
+                  userr?.role === 'admin' &&  
+                  <th > Employee Name</th>
+                }
                 <th >Client Name</th>
                 <th >Item Name</th>
                 <th >Coins</th>
                 <th >Total Bill</th>
-              
-                <th className="text-center">Status</th>
+                <th >Date</th>
+                <th className="text-center">Action</th>
               </tr>
             </thead>
             <tbody>
-              {myclients?.flatMap(client => client.pageService || [])
-              ?.filter(item =>  
-                (selectedEmployee === 'all' || item.status === selectedEmployee) &&
-                (!selectedYear || new Date(item.date).getFullYear() === parseInt(selectedYear)) &&
-                item?.itemName?.toLowerCase().includes(searchQuery.toLowerCase()) &&
-                (sortMonth === 'all' || new Date(item.date).getMonth() + 1 === parseInt(sortMonth, 10))
-              )?.filter(item=>item.role === data )
-              .map((work, index) => (
+              {datas
+              ?.map((work, index) => (
                  <tr 
                  key={work._id}
                  className={`tr2`}
                >
-                   {
+
+                 
+
+                  <td className="text-center">{index + 1}</td>
+                  
+                  
+                
+
+                  {
+            userr?.role === 'admin' &&    <td>  <Link
+       
+            to={`/client/${work.id}`}
+          >
+              <div className='flex justify-start items-center gap-2'>
+              <img className='h-10 w-10 rounded-full object-cover' src={allEmployees.find(f => f.email === work.employeeEmail)?.photo} alt="" />
+              <h1> {allEmployees.find(f => f.email === work.employeeEmail)?.name || 'N/A'}</h1>
+              </div>
+              </Link>
+          </td>
+          }
+
+
+                  <td><Link className="hover:font-bold" to={`/client/${work.id}`}>{work.clientName}</Link></td>
+                  
+                  <td>
+
+                     
+                    <span>
+  {work.itemName
+    ?.split(' ') 
+    .slice(0, 4) 
+    .join(' ') 
+    + (work.itemName?.split(' ').length > 4 ? '...' : '') 
+  }
+</span>
+                  </td>
+
+                
+                  
+                  <td >
+                   {work.coin || 0}
+                  </td>
+                  <td >
+                  <span className="amount-taka">৳</span> {work.totalBill || 0}
+                  </td>
+
+                  <td>
+                  {new Date(work?.date).toLocaleDateString("en-GB")}
+                  </td>
+                  {
                       user &&
                 <td  className="text-center">
                   <div className="f-center">
@@ -324,9 +359,24 @@ const [allEmployees]=useAllEmployee()
                       </button>
                       </div>
               
-               <dialog id={`modal_${work.ids}`} className="modal">
+                      <dialog id={`modal_${work.ids}`} className="modal">
                <div className="modal-box bg-white text-black">
                <form onSubmit={(e) => handleUpdate(e, work.ids, work.id)}>
+
+               <div className="mb-4">
+                <label htmlFor="date" className="block mb-1">
+                  Date
+                </label>
+                <input
+                  id="date"
+                  name="date"
+                  type="date"
+                  placeholder="type...."
+                  required
+                  defaultValue={work.date}
+                  className="input2"
+                />
+              </div>
 
     <div className="mb-4">
       <label className="block text-left text-gray-700">Item Name</label>
@@ -342,19 +392,43 @@ const [allEmployees]=useAllEmployee()
 
 
 
-    <div className="mb-4">
-      <label className="block text-left text-gray-700">Coins</label>
-      <input
-        type="number"
-        name="coin"
-        defaultValue={work.coin}
-        step="0.01"
-        className="input2"
-      />
-    </div>
+    <div className="grid lg:grid-cols-2 gap-3">
+          <div className="">
+            <label htmlFor="coin" className="block text-start mb-1 ml-1">
+              Coin 
+            </label>
+            <input
+  step="0.01"
+  id="coin"
+  name="coin"
+  type="number"
+  placeholder="type...."
+  className="input2"
+  min="350" 
+  defaultValue={coin || work.coin}
+  onChange={handleCoinChange}
+/>
+
+          </div>
+          <div className="">
+            <label htmlFor="totalBill" className="block text-start mb-1 ml-1">
+              Total Bill
+            </label>
+            <input
+              step="0.01"
+              id="totalBill"
+              name="totalBill"
+              type="number"
+              placeholder="type...."
+              className="input2"
+              defaultValue={totalBills || work.totalBill}
+              onChange={handleTotalBillChange} // Allow manual editing
+            />
+          </div>
+        </div>
 
 
-  <div className="grid grid-cols-2 gap-3 mt-4">
+  <div className="grid grid-cols-2 gap-3 mt-6">
     <button
       type="button"
       className="close"
@@ -373,93 +447,32 @@ const [allEmployees]=useAllEmployee()
                </div>
                                     </dialog>  </td>
                }
-                      
-                  <td>
-                  {new Date(work?.date).toLocaleDateString("en-GB")}
-                  </td>
-
-                  <td><Link className="hover:font-bold" to={`/client/${work.id}`}>{work.clientName}</Link></td>
-                  
-                  <td>
-
-                     
-                    <span>
-  {work.itemName
-    ?.split(' ') 
-    .slice(0, 4) 
-    .join(' ') 
-    + (work.itemName?.split(' ').length > 4 ? '...' : '') 
-  }
-</span>
-                  </td>
-
-                
-                  
-                  <td >
-                   {work.coin || 0}
-                  </td>
-                  <td >
-                  ৳ {work.totalBill.toFixed(0) || 0}
-                  </td>
-
-               
-
-                
-                  <td className="text-center">
-
-                  <label className="status-label">
-  <input
-    type="checkbox"
-    checked={work.status === "Active"}
-    onChange={() => {
-      const newStatus = work.status === "Active" ? "Complete" : "Active";
-      handleUpdate2(work.ids ,work.id, newStatus);
-    }}
-  />
-  <div className={work.status === "Active" ? "active" : "inactive"}>
-    <span className={work.status === "Active" ? "active" : ""}></span>
-  </div>
-                 </label>
-                </td>
                 </tr>
               ))}
               <tr className="font-bold tr1">
                 <td></td>
-                <td className="text-right" colSpan="3">
+                {
+            userr?.role === 'admin' ? 
+            <td className="text-right" colSpan="3">
+                  Total:
+                </td> : <td className="text-right" colSpan="2">
                   Total:
                 </td>
+            }
+                
                 <td   >
                   <span className="text-sm mr-1 font-extrabold"></span>{" "}
-                  {myclients?.flatMap(client => client.pageService || [])
-              ?.filter(item =>  
-                (selectedEmployee === 'all' || item.status === selectedEmployee) &&
-                (!selectedYear || new Date(item.date).getFullYear() === parseInt(selectedYear)) &&
-                item?.itemName?.toLowerCase().includes(searchQuery.toLowerCase()) &&
-                (sortMonth === 'all' || new Date(item.date).getMonth() + 1 === parseInt(sortMonth, 10))
-              )?.filter(item=>item.role === data).reduce((acc, payment) => acc + parseFloat(payment?.coin || 0), 0).toFixed(0) || 0}
+                  {datas?.reduce((acc, payment) => acc + parseFloat(payment?.coin || 0), 0).toFixed(0) || 0}
                 </td>
                 <td   >
-                  <span className="text-sm mr-1 font-extrabold">৳</span>{" "}
-                  {myclients?.flatMap(client => client.pageService || [])
-              ?.filter(item =>  
-                (selectedEmployee === 'all' || item.status === selectedEmployee) &&
-                (!selectedYear || new Date(item.date).getFullYear() === parseInt(selectedYear)) &&
-                item?.itemName?.toLowerCase().includes(searchQuery.toLowerCase()) &&
-                (sortMonth === 'all' || new Date(item.date).getMonth() + 1 === parseInt(sortMonth, 10))
-              )?.filter(item=>item.role === data).reduce((acc, payment) => acc + parseFloat(payment?.totalBill || 0), 0).toFixed(0) || 0}
+                <span className="amount-taka">৳ </span>
+                  {datas?.reduce((acc, payment) => acc + parseFloat(payment?.totalBill || 0), 0).toFixed(0) || 0}
                 </td>
-
+                <td></td>
+                <td></td>
                 
               
-                {userr?.role === "admin" ? (
-                  <>
-                    <td ></td>
-                  </>
-                ) : (
-                  <>
-                   <td ></td>
-                  </>
-                )}
+ 
               </tr>
             </tbody>
           </table>

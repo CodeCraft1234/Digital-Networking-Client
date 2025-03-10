@@ -280,14 +280,14 @@ const ContributorMonthlySpend = ({data}) => {
                   {new Date(account.date).toLocaleString('default', { month: 'long'})}
                 </td>
                 <td>
-  <span className="font-extrabold">$</span>{" "}
+                <span className="amount-doller">$ </span>
   {new Intl.NumberFormat('en-IN', {
     maximumFractionDigits: 2,
     minimumFractionDigits: 2,
   }).format(account.totalSpentt)}
                 </td>
                 <td>
-  <span className="font-extrabold">৳</span>{" "}
+                <span className="amount-taka">৳ </span>
   {new Intl.NumberFormat('en-IN').format(Math.round(account.totalSpentt * 140))}
                </td>
               </tr>
@@ -298,13 +298,13 @@ const ContributorMonthlySpend = ({data}) => {
             <tr className='tr1 font-bold'>
      <td colSpan="4" className="text-right">Total</td>
      <td>
-  $ {new Intl.NumberFormat('en-IN', {
+     <span className="amount-taka">$ </span> {new Intl.NumberFormat('en-IN', {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
   }).format(sortedAccounts?.filter(f=>f.role === 'contributorSpend').reduce((sum, acc) => sum + acc.totalSpentt, 0))}
      </td>
      <td>
-  <span className="font-extrabold">৳</span>{" "}
+     <span className="amount-taka">৳ </span>
   {new Intl.NumberFormat('en-IN').format(
     Math.round(sortedAccounts?.filter(f=>f.role === 'contributorSpend').reduce((sum, acc) => sum + acc.totalSpentt, 0) * 140)
   )}

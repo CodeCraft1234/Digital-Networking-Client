@@ -62,7 +62,7 @@ const [client] = useClientsPage(selectedEmployee3, currentPage);
     refetch();
   };
   
-  const itemsPerPage = 40;
+  const itemsPerPage = 100;
 
   const displayedItems = clientPayments.sort((a, b) => new Date(b.date) - new Date(a.date))?.slice(0, currentPage * itemsPerPage);
   const isMoreItems = currentPage * itemsPerPage < client.length;
@@ -134,7 +134,7 @@ const [client] = useClientsPage(selectedEmployee3, currentPage);
     <div className="mb-5">
 
 
-<div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-5 my-5">
+<div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-4 my-5">
 {paymentMethods.map(({ key, label, img }) => {
   const filteredItems = displayedItems.filter(f => f.paymentMethod === key);
   const totalAmount = filteredItems.reduce((acc, item) => acc + parseFloat(item.amount || 0), 0);
@@ -155,7 +155,7 @@ const [client] = useClientsPage(selectedEmployee3, currentPage);
       >
         <h1 className="px-3 text-black text-xl font-bold text-center">TOTAL</h1>
         <p className="card-title pb-5">
-          <span>৳ </span>  ৳ {new Intl.NumberFormat('en-IN').format(displayedItems?.reduce(
+          <span>৳ </span>  {new Intl.NumberFormat('en-IN').format(displayedItems?.reduce(
       (acc, payment) => acc + parseFloat(payment?.amount || 0),
       0
     ).toFixed(0))}
@@ -211,13 +211,17 @@ onChange={(e) => setSelectedYear(e.target.value)}
           <table className="min-w-full text-center  rounded-lg">
             <thead className=" ">
               <tr className="tr1">
-              <th className="text-center">Items {displayedItems?.length}</th>
-              <th>Date</th>
-              <th>Employee Name</th>
+              <th className="text-center">{displayedItems?.length}</th>
+              {
+                  userr?.role === 'admin' &&  
+                  <th > Employee Name</th>
+                }
               <th>Client Name</th>
               <th> Amount</th>
               <th className="text-center">Payment Method</th>
               <th>Note</th>
+              <th>Date</th>
+              <th className="text-center">Action</th>
              
             </tr>
           </thead>
@@ -227,30 +231,10 @@ onChange={(e) => setSelectedYear(e.target.value)}
               key={payment?._id}
               className={`tr2`}
             >
-                <td className=" text-center">
-                
-                <div className="f-center">
-                <button
-className=" delete"
-onClick={() => handledelete(payment.ids ,payment.id)}
->
-<FaMinusSquare  />
-</button>
-<button
-className=" edit"
-onClick={() => setModalData(payment)}
->
-<FaEdit  />
-</button>
-                </div>
-
-                      
-
+              <td className="text-center"> {index + 1}</td>
                
-        </td>
-                <td >
-                  {new Date(payment?.date).toLocaleDateString("en-GB")}
-                </td>
+              {
+                  userr?.role === 'admin' && 
                 <td>
                 <div className='flex justify-start items-center gap-2'>
               <img className='h-10 w-10 rounded-full object-cover' src={allEmployees.find(f => f.email === payment.employeeEmail)?.photo} alt="" />
@@ -258,6 +242,9 @@ onClick={() => setModalData(payment)}
               </div>
                  
                 </td>
+
+              }
+
                 <td className="hover:font-bold">
                 <Link  to={`/client/${payment?.clientEmail}`}>
                 {payment?.clientName}
@@ -265,7 +252,7 @@ onClick={() => setModalData(payment)}
                 </td>
                 <td
 >
-  ৳ {payment?.amount || 0}
+<span className="amount-taka">৳ </span> {payment?.amount || 0}
                </td>
                <td>
   {[
@@ -323,19 +310,52 @@ onClick={() => setModalData(payment)}
           <td>
                  {payment.note?.split(" ").slice(0, 4).join(" ") + (payment.note?.split(" ").length > 4 ? "..." : "")}
             </td>
+
+            <td >
+                  {new Date(payment?.date).toLocaleDateString("en-GB")}
+                </td>
+
+                <td className=" text-center">
+                
+                <div className="f-center">
+                <button
+className=" delete"
+onClick={() => handledelete(payment.ids ,payment.id)}
+>
+<FaMinusSquare  />
+</button>
+<button
+className=" edit"
+onClick={() => setModalData(payment)}
+>
+<FaEdit  />
+</button>
+                </div>
+
+                      
+
+               
+        </td>
               </tr>
             ))}
           </tbody>
           <tr  className="font-bold  tr1">
-            <td className="p-3 text-right" colSpan="4">
-                Total :
-            </td>
+          {
+            userr?.role === 'admin' ? 
+            <td className="text-right" colSpan="3">
+                  Total:
+                </td> : <td className="text-right" colSpan="2">
+                  Total:
+                </td>
+               }
             <td>
-  ৳ {new Intl.NumberFormat('en-IN').format(displayedItems?.reduce(
+            <span className="amount-taka">৳ </span> {new Intl.NumberFormat('en-IN').format(displayedItems?.reduce(
       (acc, payment) => acc + parseFloat(payment?.amount || 0),
       0
     ).toFixed(0))}
             </td>
+            <td ></td>
+            <td ></td>
             <td ></td>
             <td ></td>
           </tr>

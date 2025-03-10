@@ -1,153 +1,100 @@
-import { Helmet } from "react-helmet-async";
-import Swal from "sweetalert2";
-
-import { useState } from "react";
-import { FaFacebook, FaInstagram, FaLinkedin, FaTwitter, FaWhatsapp, FaYoutube } from "react-icons/fa";
-import UseAxiosPublic from "../../../Axios/UseAxiosPublic";
-
+import useRates from '../../../Hook/useRates';
+import UseAxiosPublic from '../../../Axios/UseAxiosPublic';
+import { toast } from 'react-toastify';
+import { useEffect, useState } from 'react';
 
 const Settings = () => {
-    const [facebookID, setFacebookID] = useState("");
-    const [instagramID, setInstagramID] = useState("");
-    const [linkedinID, setLinkedinID] = useState("");
-    const [twitterID, setTwitterID] = useState("");
-    const [youtubeID, setYoutubeID] = useState("");
-    const [whatsappID, setWhatsappID] = useState("");
-  
 
-  
-    const handleSubmit = async (e) => {
+    const { rates, refetch } = useRates();
+    const AxiosPublic = UseAxiosPublic();
+    
+    const handleAddClient = async (e) => {
       e.preventDefault();
-  
-      const date = new Date();
-      const usersInfoo = {
-        facebookID,
-        instagramID,
-        linkedinID,
-        twitterID,
-        youtubeID,
-        whatsappID,
-        date,
-      };
-  
-      AxiosPublic.post("/links", usersInfoo).then((res) => {
-        console.log(res.data);
-        Swal.fire({
-          position: "top-end",
-          icon: "success",
-          title: "Link has been saved",
-          showConfirmButton: false,
-          timer: 1500,
-        });
-      });
-  
-      // Reset IDs after submission
-      setFacebookID("");
-      setInstagramID("");
-      setLinkedinID("");
-      setTwitterID("");
-      setYoutubeID("");
-      setWhatsappID("");
-    };
-
-    const [image, setImage] = useState(null);
-  const image_hosting_key = "6fbc3358bbb1a92b78e2dee0f5ca1b94";
-  const image_hosting_api = `https://api.imgbb.com/1/upload?key=${image_hosting_key}`;
-  const AxiosPublic = UseAxiosPublic();
-  //    const AxiosSecure = UseAxiosSecure();
-
-  const handleSubmit2 = async (e) => {
-    e.preventDefault();
-
-    console.log("Image:", image);
-
-    // Upload image
-    const images = { image: image };
-    const res = await AxiosPublic.post(image_hosting_api, images, {
-      headers: {
-        "content-type": "multipart/form-data",
-      },
-    });
-    const photo = res.data.data.display_url;
-    console.log(photo);
-
-    const date = new Date();
-    const logoInfoo = {
-      photo,
-      date,
-    };
-    console.log(logoInfoo);
-
-
-    // Post logo to the server
-    AxiosPublic.post("/logos", logoInfoo).then((res) => {
-      console.log(res.data);
-      Swal.fire({
-        position: "top-end",
-        icon: "success",
-        title: "Logo has been saved",
-        showConfirmButton: false,
-        timer: 1500,
-      });
-    });
-
-    // Reset the form
-    setImage(null);
-  };
-
-  const handleImageChange = (e) => {
-    const selectedImage = e.target.files[0];
-    setImage(selectedImage);
-  };
-    return (
-        <div>
-           <div className="text-white min-h-screen  flex items-center justify-center p-10 overflow-x-hidden">
-      <Helmet>
-        <title>Settings | Digital Network </title>
-        <link rel="canonical" href="https://www.example.com/" />
-      </Helmet>
-     
-      <div className="text-white  flex items-center justify-center  overflow-x-hidden">
-      {/* <Helmet>
-              <title> বিশ্বস্ত-বাজার | AddLogo</title>
-              <link rel="canonical" href="https://www.tacobell.com/" />
-               </Helmet> */}
-      <div className="bg-white text-black p-8 rounded-lg shadow-xl w-full ">
-        <h2 className="text-2xl font-bold mb-4">Add your Logos</h2>
-        <form onSubmit={handleSubmit} action="#" method="post">
-          <label htmlFor="image" className="block font-bold mb-1">
-            Image Upload:
-          </label>
-          <input
-            type="file"
-            id="image"
-            name="image"
-            onChange={handleImageChange}
-            className="w-full p-2 mb-4 border rounded"
-            accept="image/*"
-            required
-          />
-
-          <button
-            type="submit"
-            className="b bg-green-900 text-white rounded-lg p-2"
-          >
-            Submit
-          </button>
-        </form>
-      </div>
-    </div>
-
-  
-      </div>
-     
-    </div>
-
-
-   
       
-        
-    );
+      const costRate = e.target.costRate.value;
+      const coinRate = e.target.coinRate.value;
+      const salaryRate = e.target.salaryRate.value;
+      const metaRate = e.target.metaRate.value;
+      const googleRate = e.target.googleRate.value;
+      const tiktokRate = e.target.tiktokRate.value;
+    
+      const data = { salaryRate,coinRate, costRate, metaRate, googleRate, tiktokRate };
+    
+      try {
+        await AxiosPublic.post("/rates", data);
+        refetch();
+        toast.success("Rates updated successfully!");
+        document.getElementById("my_modal_2").close()
+      } catch (error) {
+        toast.error("Failed to update rates");
+        console.error(error);
+      }
+    };
+    
+    // State to display the fetched rates
+    const [salaryRate, setSalaryRate] = useState(rates?.salaryRate || ""); 
+    const [coinRate, setCoinRate] = useState(rates?.coinRate || ""); 
+    const [costRate, setCostRate] = useState(rates?.costRate || ""); 
+    const [metaRate, setMetaRate] = useState(rates?.metaRate || ""); 
+    const [googleRate, setGoogleRate] = useState(rates?.googleRate || ""); 
+    const [tiktokRate, setTiktokRate] = useState(rates?.tiktokRate || ""); 
+    
+    // Update state when `rates` change
+    useEffect(() => {
+      setSalaryRate(rates?.salaryRate || "");
+      setCoinRate(rates?.coinRate || "");
+      setCostRate(rates?.costRate || "");
+      setMetaRate(rates?.metaRate || "");
+      setGoogleRate(rates?.googleRate || "");
+      setTiktokRate(rates?.tiktokRate || "");
+    }, [rates]);
+  return (
+    <div>
+       <div className=" p-5 rounded-lg w-[500px] mx-auto bg-white text-black font-bold">
+                      <form onSubmit={handleAddClient}>
+                      
+                        <div className="grid gap-3 lg:grid-cols-2">
+        {[
+          { label: "Salary Rate", name: "salaryRate", type: "number", value: salaryRate, },
+          { label: "Cost Rate", name: "costRate", type: "number", value: costRate },
+          { label: "Meta Rate", name: "metaRate", type: "number", value: metaRate },
+          { label: "Google Rate", name: "googleRate", type: "number", value: googleRate },
+          { label: "Tiktok Rate", name: "tiktokRate", type: "number", value: tiktokRate },
+          { label: "Coin Rate", name: "coinRate", type: "number", value: coinRate, },
+        ].map((field, i) => (
+          <div key={i} className={` ${field.fullWidth ? "lg:col-span-2" : ""}`}>
+            <label className="block">{field.label}</label>
+            <input
+              type={field.type}
+              name={field.name}
+              required
+              step="0.01"
+              defaultValue={field.value}
+              className="w-full bg-white border-2 border-black rounded p-2 mt-1"
+            />
+          </div>
+        ))}
+      </div>
+      
+                        <div className="grid mt-8 grid-cols-2 gap-3">
+                          <button
+                            type="button"
+                            className="p-2 bg-red-600 hover:bg-red-700 rounded-lg text-white"
+                            onClick={() => document.getElementById("my_modal_2").close()}
+                          >
+                            Close
+                          </button>
+                          <button
+                            type="submit"
+                            className="px-3 py-1 bg-[#05a0db] hover:bg-indigo-700 rounded text-white"
+                          >
+                            Submit
+                          </button>
+                        </div>
+                      </form>
+                    </div>
+    </div>
+  );
 };
 
 export default Settings;

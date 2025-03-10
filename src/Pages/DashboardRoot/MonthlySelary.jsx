@@ -1,4 +1,4 @@
-import  { useState, useEffect, useContext } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import useUsers from '../../Hook/useUsers';
 import { Helmet } from 'react-helmet-async';
 import useMySalaryPayments from '../../Hook/useMySalaryPayment';
@@ -18,80 +18,100 @@ const years = Array.from({ length: 6 }, (_, index) => 2024 + index); // Creates 
 
 const MonthlySalary = () => {
   const [users] = useUsers();
-  const [employeeData, setEmployeeData] = useState([]);
   const currentMonth = new Date().toLocaleString('default', { month: 'long' })
-  const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   const [usersSellery] = useUsersSellery('all');
-  const [MySalaryPayment,refetch] = useMySalaryPayments('all');
-
+  const [MySalaryPayment, refetch] = useMySalaryPayments('all');
+  console.log(usersSellery);
+  
   const { user } = useContext(AuthContext);
   const { userr } = useUserr(user?.email);
   const [allEmployees] = useAllEmployee([]);
-
-  const initialTab2 = localStorage.getItem("activeTaballselleryMonth") ;
+  
+  const initialTab2 = localStorage.getItem("activeTaballselleryMonth");
   const [sortMonth, setSortMonth] = useState(initialTab2 || currentMonth);
   
   const changeTab2 = (tab) => {
     setSortMonth(tab);
-    localStorage.setItem("activeTaballselleryMonth", tab); 
+    localStorage.setItem("activeTaballselleryMonth", tab);
   };
 
-  useEffect(() => {
 
-    const aggregatedData = usersSellery?.map(user => {
-        
-      const monthlySpentData = (user.monthlySpent || []).filter(spent => {
-        const spentDate = new Date(spent.date);
-        return spentDate.toLocaleString('default', { month: 'long' }) === sortMonth && spentDate.getFullYear() === selectedYear;
-      });
-
-      const selleryData = MySalaryPayment.filter(sell => sell.month === sortMonth);
-      const adminPayData = MySalaryPayment.filter(pay => {
-        const payDate = new Date(pay.date);
-        return payDate.toLocaleString('default', { month: 'long' }) === sortMonth && payDate.getFullYear() === selectedYear;
-      });
-
-      const totalSpent = monthlySpentData?.filter(f=>f.role === 'metaSpend' && 'googleSpend').reduce((acc, spent) => acc + spent.totalSpentt, 0);
-      const totalSellery = selleryData.reduce((acc, sell) => acc + sell.amount, 0);
-      const totalBonus = selleryData.reduce((acc, sell) => acc + sell.bonus, 0);
-      const totalAdminPay = adminPayData.reduce((acc, pay) => acc + pay.adminPayAmount, 0);
   
+  const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
+const [employeeData, setEmployeeData] = useState([]);
+const [availableYears, setAvailableYears] = useState([]);
 
-      return {
-        ...user,
-        totalSpent,
-        totalSellery,
-        totalBonus,
-        totalAdminPay,
-      };
+useEffect(() => {
+  const aggregatedData = usersSellery?.map((user) => {
+    const monthlySpentData = (user.monthlySpent || []).filter((spent) => {
+      const spentDate = new Date(spent.date);
+      const monthMatch =
+        sortMonth === "all" ||
+        spentDate.toLocaleString("default", { month: "long" }) === sortMonth;
+      return monthMatch && spentDate.getFullYear() === selectedYear;
     });
 
-    const sortedData = aggregatedData.sort((a, b) => b.totalSpent - a.totalSpent);
+    const selleryData = MySalaryPayment.filter((sell) => {
+      const sellDate = new Date(sell.date);
+      const monthMatch =
+        sortMonth === "all" ||
+        sellDate.toLocaleString("default", { month: "long" }) === sortMonth;
+      return (
+        monthMatch &&
+        sellDate.getFullYear() === selectedYear &&
+        sell.employeeEmail === user.email
+      );
+    });
 
-    setEmployeeData(sortedData);
+    const totalSpent = monthlySpentData
+      ?.filter((f) => f.role === "metaSpend" || f.role === "googleSpend")
+      .reduce((acc, spent) => acc + spent.totalSpentt, 0);
 
-  }, [users,usersSellery,MySalaryPayment,  sortMonth, selectedYear]);
+    const totalSellery = selleryData.reduce(
+      (acc, sell) => acc + parseFloat(sell.payAmount),
+      0
+    );
 
+    return {
+      ...user,
+      totalSpent,
+      totalSellery,
+    };
+  });
 
+  const sortedData = aggregatedData.sort((a, b) => b.totalSpent - a.totalSpent);
+  setEmployeeData(sortedData);
 
-  const handleYearChange = (event) => {
-    setSelectedYear(parseInt(event.target.value, 10));
-  };
+  // Extract available years dynamically
+  const uniqueYears = [
+    ...new Set([
+      ...usersSellery.flatMap((user) =>
+        user.monthlySpent?.map((spent) => new Date(spent.date).getFullYear()) || []
+      ),
+      ...MySalaryPayment.map((sell) => new Date(sell.date).getFullYear()),
+    ]),
+  ].sort((a, b) => b - a); // Sort years in descending order
+
+  setAvailableYears(uniqueYears);
+}, [users, usersSellery, MySalaryPayment, sortMonth, selectedYear]);
+
+const handleYearChange = (event) => {
+  setSelectedYear(parseInt(event.target.value, 10));
+};
+
 
   const totalSpent = employeeData.reduce((acc, user) => acc + user.totalSpent, 0);
-  const totalSellery = employeeData.reduce((acc, user) => acc + user.totalSellery, 0);
+  const totalSellery = employeeData.reduce((acc, user) => acc + parseFloat(user.totalSellery), 0);
 
-
-  const AxiosPublic=UseAxiosPublic()
+  const AxiosPublic = UseAxiosPublic()
   const today = new Date();
-  const formattedDate = today.toISOString().split('T')[0];  
+  const formattedDate = today.toISOString().split('T')[0];
 
   const handlePayment = async (e) => {
     e.preventDefault();
-    const employeeName = userr?.name;
-    const employeeEmail = userr?.email;
+    const employeeEmail = e.target.employeeEmail?.value || user?.email;
+    const employeeName = allEmployees?.find(e => e.email === employeeEmail)?.name || user?.displayName;
     const payAmount = e.target.payAmount.value;
-    const charge = e.target.charge.value;
     const paymentMethod = e.target.paymentMethod.value;
     const note = e.target.note.value;
     const date = e.target.date.value;
@@ -108,7 +128,7 @@ const MonthlySalary = () => {
     const datas = {
       title: `added ${payAmount} in in ${paymentMethod}`,
       date: new Date(),
-      user: userr?.displayName,
+      user: user?.displayName,
       email:user?.email
     };
 
@@ -126,32 +146,30 @@ const MonthlySalary = () => {
       })
 
   };
-  
 
   return (
     <div className=' text-black'>
-     
+      <div className="grid mb-5 rounded-lg grid-cols-2 md:grid-cols-2 lg:grid-cols-4 text-black sm:grid-cols-2 gap-5 justify-around ">
+        <SummaryCard title="Total Spend" value={totalSpent.toFixed(0)} />
+        <SummaryCard title="Total Salary" value={(totalSpent * 7).toFixed(0)} />
+        <SummaryCard title="Total Paid" value={totalSellery} />
+        <SummaryCard title="Total Unpaid" value={(totalSpent * 7 - totalSellery).toFixed(0)} />
+      </div>
 
-      <div  className="grid mb-5  rounded-lg grid-cols-2 md:grid-cols-2 lg:grid-cols-4 text-black sm:grid-cols-2 gap-5 justify-around ">
+      <div className='px-5 py-5 rounded-md' style={{ backgroundColor: 'var(--bg-color3)', color: 'var(--text-color)', border: 'var(--border)' }}>
+        <div className="flex mb-4 justify-center lg:justify-between gap-5 items-center">
+        <div>
+{
+        userr?.role === 'admin' &&      <div className="f-start">
 
-<SummaryCard title="Total Spent" value={totalSpent.toFixed(0)} />
-<SummaryCard title="Total Salery" value={(totalSpent * 7).toFixed(0)} />
-<SummaryCard title="Total Paid" value={totalSellery.toFixed(0)} />
-<SummaryCard title="Total Unpaid" value={(totalSpent * 7 - totalSellery).toFixed(0)} />
-</div>
-
-
-      <div className='px-5 py-5 rounded-md' style={{ backgroundColor: 'var(--bg-color3)', color: 'var(--text-color)',border: 'var(--border)'}}>
-
-      <div className=" flex mb-4 justify-center lg:justify-between gap-5 items-center">
-      <div className="f-start">
-          <button
-            className="font-avenir  px-6 hover:bg-indigo-700 py-2 bg-[#05a0db] rounded-lg text-white"
-            onClick={() => document.getElementById("my_modal_1").showModal()}
-          >
-            Pay Salary
-          </button>
-          <dialog id="my_modal_1" className="modal">
+        <button
+          className="add"
+          onClick={() => document.getElementById("my_modal_1").showModal()}
+        >
+          Pay Salary
+        </button>
+    
+        <dialog id="my_modal_1" className="modal">
           <div className="modal-box bg-white text-black font-bold">
             <form onSubmit={handlePayment}>
     
@@ -182,7 +200,7 @@ const MonthlySalary = () => {
                 <div >
                   <label className="block text-black" >Select Employee</label>
                   <select name="employeeEmail" className="select2 w-full">
-                    {allEmployees?.filter(f=>f.role !== 'admin' && f.role !== 'contributor' && f.role === 'employee')
+                    {allEmployees?.filter(f=>f.role === 'employee')
                       .map((employee) => (
                         <option key={employee._id} value={employee.email}>
                           {employee.name}
@@ -196,7 +214,7 @@ const MonthlySalary = () => {
     
     
              
-              <div>
+              <div className='mt-3'>
                   <label>Amount</label>
                   <input
                     type="number"
@@ -262,82 +280,85 @@ const MonthlySalary = () => {
             </form>
           </div>
         </dialog>
+         </div>
+      }
+</div>
+          <div className='f-end '>
+            <div className='mr-3'>
+              <select id="monthSelect" value={sortMonth} onChange={(e) => changeTab2(e.target.value)}
+                className="select2">
+                   <option value='all'>Select Month</option>
+                {months.map((month) => (
+                  <option key={month} value={month}>{month}</option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+  <select
+    id="yearSelect"
+    value={selectedYear}
+    onChange={handleYearChange}
+    className="select2"
+  >
+    {availableYears.length > 0 ? (
+      availableYears.map((year) => (
+        <option key={year} value={year}>
+          {year}
+        </option>
+      ))
+    ) : (
+      <option value={selectedYear}>{selectedYear}</option>
+    )}
+  </select>
+</div>
+
+
+          </div>
         </div>
-     <div className='f-end'>
-     <div> 
-          <select id="monthSelect" value={sortMonth}  onChange={(e) => changeTab2(e.target.value)} 
-       className="select2">
-            {months.map((month) => (
-              <option key={month} value={month}>{month}</option>
-            ))}
-          </select>
-        </div>
-
-        <div>
-        
-          <select  id="yearSelect" value={selectedYear} onChange={handleYearChange} className="select2">
-            
-            {years.map((year) => (
-              <option key={year} value={year}>{year}</option>
-            ))}
-          </select>
-        </div>
-     </div>
-      </div>
-
-    
-
-      <div  className="table-div " style={{ backgroundColor: 'var(--bg-color)', color: 'var(--text-color)'}}>
-          <table className="min-w-full text-center ">
-            <thead className=" ">
-              <tr className="tr1" >
-              <th className='text-center'>SL</th>
-              <th>Employee Name</th>
-              <th>Spent</th>
-              <th>T. Sellery</th>
-              <th>Paid</th>
-              <th>Unpaid</th>
-            </tr>
-          </thead>
-          <tbody className='text-black'>
-            {employeeData.map((user, index) => (
-              <tr  key={user?._id}
-              className={`tr2`}
-            >
-                 <td className='text-center'>{index + 1}</td>
-                <td >
-               <div className='flex justify-start items-center gap-1'>
-               <img className='h-10 w-10 rounded-full flex justify-center' src={user.photo} alt="" /><span>{user.name}</span>
-               </div>
-                </td>
-                 <td >$ {user.totalSpent.toFixed(2)}</td>
-                <td >৳ {(user.totalSpent * 7).toFixed(2)}</td>
-                <td >
-  ৳ {0}
-</td>
-
-
-<td >
-  ৳ {0}
-</td>
-
+        <div className="table-div" style={{ backgroundColor: 'var(--bg-color)', color: 'var(--text-color)' }}>
+          <table className="min-w-full text-center">
+            <thead className="">
+              <tr className="tr1">
+                <th className='text-center'>SL</th>
+                <th>Employee Name</th>
+                <th>Spent</th>
+                <th>T. Salary</th>
+                <th>Paid</th>
+                <th>Unpaid</th>
+                <th>Due</th>
               </tr>
-            ))}
-          </tbody>
-          <tfoot className=" font-bold ">
-            <tr className='tr1'>
-              <td className='text-right' colSpan="2">Total:</td>
-              <td >$ {totalSpent.toFixed(2)}</td> 
-              <td >৳ {(totalSpent * 7).toFixed(2)}</td>
-              <td >৳ {totalSellery.toFixed(2)}</td>
-              <td >৳ {(totalSpent * 7 - totalSellery).toFixed(2)}</td>
-             
-            </tr>
-          </tfoot>
-        </table>
+            </thead>
+            <tbody className='text-black'>
+              {employeeData.map((user, index) => (
+                <tr key={user?._id} className={`tr2`}>
+                  <td className='text-center'>{index + 1}</td>
+                  <td>
+                    <div className='flex justify-start items-center gap-1'>
+                      <img className='h-10 w-10 rounded-full flex justify-center' src={user.photo} alt="" /><span>{user.name}</span>
+                    </div>
+                  </td>
+                  <td><span className="amount-doller">$ </span> {user.totalSpent.toFixed(2)}</td>
+                  <td><span className="amount-taka">৳ </span> {(user.totalSpent * 7).toFixed(2)}</td>
+                  <td><span className="amount-taka">৳ </span> {user.totalSellery}</td>
+                  <td><span className="amount-taka">৳ </span> {(user.totalSpent * 7 - user.totalSellery).toFixed(2)}</td>
+                  <td><span className="amount-taka">৳ </span> {(user.totalSpent * 7 - user.totalSellery).toFixed(2)}</td>
+                </tr>
+              ))}
+            </tbody>
+            <tfoot className="font-bold">
+              <tr className='tr1'>
+                <td className='text-right' colSpan="2">Total:</td>
+                <td><span className="amount-doller">$ </span> {totalSpent.toFixed(2)}</td>
+                <td><span className="amount-taka">৳ </span> {(totalSpent * 7).toFixed(2)}</td>
+                <td><span className="amount-taka">৳ </span> {totalSellery}</td>
+                <td><span className="amount-taka">৳ </span> {(totalSpent * 7 - totalSellery).toFixed(2)}</td>
+                <td><span className="amount-taka">৳ </span> {(totalSpent * 7 - totalSellery).toFixed(2)}</td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
       </div>
-      </div>
-
     </div>
   );
 };

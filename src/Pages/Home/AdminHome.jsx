@@ -223,30 +223,30 @@ const AdminHome = () => {
 
                         <div className="">
 
-                       <div className="grid lg:grid-cols-2 lg:gap-5">
-                       <div className="income-card-home">
-  <div className="card-body-home">
-    <BsCashStack className="icon-home" />
-    <div className="info-home">
-      <p>Today Income: <span className="amount-home">৳ {todayTotal}</span></p>
-      <p>Last 7 days Income: <span className="amount-home">৳ {weeklyTotal}</span></p>
-      <p>Last 30 days Income: <span className="amount-home">৳ {monthlyTotal}</span></p>
+                        <div className="grid lg:grid-cols-2 lg:gap-5">
+  <div className="payment-card-home">
+    <div className="card-body-home">
+      <BsCashCoin className="icon-home" />
+      <div className="info-home">
+        <p>Today Income: <span className="amount-home"><span className="amount-taka">৳ </span> {new Intl.NumberFormat('en-IN').format(todayTotal || 0)}</span></p>
+        <p>Last 7 days Income: <span className="amount-home"><span className="amount-taka">৳ </span> {new Intl.NumberFormat('en-IN').format(weeklyTotal || 0)}</span></p>
+        <p>Last 30 days Income: <span className="amount-home"><span className="amount-taka">৳ </span> {new Intl.NumberFormat('en-IN').format(monthlyTotal || 0)}</span></p>
+      </div>
+    </div>
+  </div>
+
+  <div className="payment-card-home">
+    <div className="card-body-home">
+      <BsCashCoin className="icon-home" />
+      <div className="info-home">
+        <p>Today Payments: <span className="amount-home"><span className="amount-taka">৳ </span> {new Intl.NumberFormat('en-IN').format(todayAdminPay || 0)}</span></p>
+        <p>Last 7 days Payment: <span className="amount-home"><span className="amount-taka">৳ </span> {new Intl.NumberFormat('en-IN').format(thisWeekAdminPay || 0)}</span></p>
+        <p>Last 30 days Payment: <span className="amount-home"><span className="amount-taka">৳ </span> {new Intl.NumberFormat('en-IN').format(thisMonthAdminPay || 0)}</span></p>
+      </div>
     </div>
   </div>
 </div>
 
-<div className="payment-card-home">
-  <div className="card-body-home">
-    <BsCashCoin className="icon-home" />
-    <div className="info-home">
-      <p>Today Payments: <span className="amount-home">৳ {todayAdminPay}</span></p>
-      <p>Last 7 days Payment: <span className="amount-home">৳ {thisWeekAdminPay}</span></p>
-      <p>Last 30 days Payment: <span className="amount-home">৳ {thisMonthAdminPay}</span></p>
-    </div>
-  </div>
-</div>
-
-                       </div>
 
                          {/* //////////////////bar chart///////////////////////// */}
 
@@ -303,35 +303,37 @@ const AdminHome = () => {
                  
                     <div className="income-card-home">
   <div className="card-body-home">
-  <TbReorder className="icon-home" />
+    <TbReorder className="icon-home" />
     <div className="info-home">
-    <p>Today Orders: <span className="amount-home">{todayCampaigns}</span></p>
-      <p>Last 7 days Order: <span className="amount-home">{thisWeekCampaigns}</span></p>
-      <p>Last 30 days Order: <span className="amount-home">{thisMonthCampaigns}</span></p>
+      <p>Today Orders: <span className="amount-home">{new Intl.NumberFormat('en-IN').format(todayCampaigns || 0)}</span></p>
+      <p>Last 7 days Orders: <span className="amount-home">{new Intl.NumberFormat('en-IN').format(thisWeekCampaigns || 0)}</span></p>
+      <p>Last 30 days Orders: <span className="amount-home">{new Intl.NumberFormat('en-IN').format(thisMonthCampaigns || 0)}</span></p>
     </div>
   </div>
-                   </div>
-                    
-                    <div className="income-card-home">
+</div>
+
+<div className="income-card-home">
   <div className="card-body-home">
     <MdCampaign className="icon-home" />
     <div className="info-home">
-      <p>Today Spend: <span className="amount-home">{todaySpend}</span></p>
-      <p>Last 7 days Spend: <span className="amount-home">{thisWeekSpend}</span></p>
-      <p>Last 30 days Spend: <span className="amount-home">{thisMonthSpend}</span></p>
+      <p>Today Spend: <span className="amount-home"><span className="amount-doller">$ </span> {new Intl.NumberFormat('en-IN', { maximumFractionDigits: 2 }).format(todaySpend || 0)}</span></p>
+      <p>Last 7 days Spend: <span className="amount-home"><span className="amount-doller">$ </span> {new Intl.NumberFormat('en-IN', { maximumFractionDigits: 2 }).format(thisWeekSpend || 0)}</span></p>
+      <p>Last 30 days Spend: <span className="amount-home"><span className="amount-doller">$ </span> {new Intl.NumberFormat('en-IN', { maximumFractionDigits: 2 }).format(thisMonthSpend || 0)}</span></p>
     </div>
   </div>
-                    </div>
-                    <div className="income-card-home">
+</div>
+
+<div className="income-card-home">
   <div className="card-body-home">
-    <RiMoneyDollarCircleLine  className="icon-home" />
+    <RiMoneyDollarCircleLine className="icon-home" />
     <div className="info-home">
-      <p>Today Clients: <span className="amount-home">{todayClients}</span></p>
-      <p>Last 7 days Clients: <span className="amount-home">{thisWeekClients}</span></p>
-      <p>Last 30 days Clients: <span className="amount-home">{thisMonthClients}</span></p>
+      <p>Today Clients: <span className="amount-home">{new Intl.NumberFormat('en-IN').format(todayClients || 0)}</span></p>
+      <p>Last 7 days Clients: <span className="amount-home">{new Intl.NumberFormat('en-IN').format(thisWeekClients || 0)}</span></p>
+      <p>Last 30 days Clients: <span className="amount-home">{new Intl.NumberFormat('en-IN').format(thisMonthClients || 0)}</span></p>
     </div>
   </div>
-                    </div>
+</div>
+
 
                     <h1
     style={{

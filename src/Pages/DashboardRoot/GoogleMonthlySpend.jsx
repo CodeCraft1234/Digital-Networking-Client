@@ -283,7 +283,7 @@ const GoogleMonthlySpend = ({data}) => {
                   {new Date(account.date).toLocaleString('default', { month: 'long'})}
                 </td>
                 <td>
-  <span className="font-extrabold">$</span>{" "}
+                <span className="amount-doller">$ </span>
   {new Intl.NumberFormat('en-IN', {
     maximumFractionDigits: 2,
     minimumFractionDigits: 2,
@@ -291,10 +291,10 @@ const GoogleMonthlySpend = ({data}) => {
                 </td>
                 {
                   data === 'pageSpend' ? <td>
-                  <span className="font-extrabold">৳</span>{" "}
+                <span className="amount-taka">৳ </span>
                   {new Intl.NumberFormat('en-IN').format(Math.round(account.totalSpentt * 130))}
                                </td> : <td>
-  <span className="font-extrabold">৳</span>{" "}
+                               <span className="amount-taka">৳ </span>
   {new Intl.NumberFormat('en-IN').format(Math.round(account.totalSpentt * 142))}
                </td>
                 }
@@ -306,19 +306,19 @@ const GoogleMonthlySpend = ({data}) => {
             <tr className='tr1 font-bold'>
      <td colSpan="4" className="text-right">Total</td>
      <td>
-  $ {new Intl.NumberFormat('en-IN', {
+     <span className="amount-doller">$ </span> {new Intl.NumberFormat('en-IN', {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
   }).format(sortedAccounts?.filter(f=>f.role === data).reduce((sum, acc) => sum + acc.totalSpentt, 0))}
      </td>
      {
                   data === 'pageSpend' ?    <td>
-                  <span className="font-extrabold">৳</span>{" "}
+               <span className="amount-taka">৳ </span>
                   {new Intl.NumberFormat('en-IN').format(
                     Math.round(sortedAccounts?.filter(f=>f.role === data).reduce((sum, acc) => sum + acc.totalSpentt, 0) * 130)
                   )}
                     </td> :    <td>
-  <span className="font-extrabold">৳</span>{" "}
+                    <span className="amount-taka">৳ </span>
   {new Intl.NumberFormat('en-IN').format(
     Math.round(sortedAccounts?.filter(f=>f.role === data).reduce((sum, acc) => sum + acc.totalSpentt, 0) * 142)
   )}

@@ -153,7 +153,7 @@ const AdsUserPayments = () => {
     };
 
     AxiosPublic.post(
-      "https://hishab-2025-five.vercel.app/adsPayment",
+      "https://hishab-2025-pi.vercel.app/adsPayment",
       data
     )
       .then((res) => {
@@ -177,7 +177,7 @@ const AdsUserPayments = () => {
       const body2 = { [paymentMethod]: fields[paymentMethod] };
     
       try {
-        const res = await axios.put(`https://hishab-2025-five.vercel.app/users/${paymentMethod}/${userdata._id}`, body2);
+        const res = await axios.put(`https://hishab-2025-pi.vercel.app/users/${paymentMethod}/${userdata._id}`, body2);
         console.log(res.data);
         refetch();  // Make sure this function correctly refetches the updated data
       } catch (error) {
@@ -194,7 +194,7 @@ const AdsUserPayments = () => {
     const body = { note, payAmount, date, paymentMethod };
 
     AxiosPublic.patch(
-      `https://hishab-2025-five.vercel.app/adsPayment/${id}`,
+      `https://hishab-2025-pi.vercel.app/adsPayment/${id}`,
       body
     )
       .then((res) => {
@@ -251,7 +251,7 @@ const AdsUserPayments = () => {
   console.log(data)
 
     useEffect(()=>{
-      AxiosPublic.get(`https://hishab-2025-five.vercel.app/users/${userr.email}`)
+      AxiosPublic.get(`https://hishab-2025-pi.vercel.app/users/${userr.email}`)
       .then(res=>{
         console.log(res.data)
         setData(res.data)

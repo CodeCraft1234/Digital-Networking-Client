@@ -68,7 +68,7 @@ const ClientProfile = () => {
     { id: 'metaAds', label: 'Meta Ads', component: <ClientMetaAds data1={activeTab} email={userr?.email} /> },
     { id: 'tiktokAds', label: 'Tiktok Ads', component: <ClientTiktokAds data1={activeTab} email={userr?.email} /> },
     { id: 'googleAds', label: 'Google Ads', component: <ClientMetaAds data1={activeTab} email={userr?.email} /> },
-    { id: 'clientPageSetup', label: 'Other Service', component: <ClientPageSetup email={userr?.email} /> },
+    { id: 'clientPageSetup', label: 'Service', component: <ClientPageSetup email={userr?.email} /> },
     { id: 'clientHistory', label: 'Summary', component: <ClientHistory email={userr?.email} /> },
   ];
 
@@ -101,7 +101,13 @@ const ClientProfile = () => {
                 <SummaryCard title="Total Spend" value={totalSpent} />
                 <SummaryCard title="Total Bill" value={totalBill.toFixed(0)} />
                 <SummaryCard title="Total Paid" value={totalPaid} />
-                <SummaryCard title={`Total ${totalBill || 0 - totalPaid || 0 >= 0 ? "Due" : "Advance"}`} value={(totalBill  - totalPaid ).toFixed(0)} />
+                
+                <SummaryCard 
+  title={`Total ${(totalBill || 0) - (totalPaid || 0) >= 0 ? "Due" : "Advance"}`} 
+  value={Math.abs((totalBill || 0) - (totalPaid || 0)).toFixed(0)} 
+/>
+
+
               </div>
               <div className="flex lg:justify-start mt-5 rounded-md gap-3 p-2 justify-start items-center">
                 {tabs.map(tab => (

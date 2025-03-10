@@ -12,13 +12,13 @@ const MetaMonthlySpend = ({data}) => {
   const { user } = useContext(AuthContext);
   const {userr}=useUserr(user?.email)
   const [allEmployees] = useAllEmployee([]);
-  const currentDate = new Date();
   const [modalData2, setModalData2] = useState(null);
-
+  
   const closeModal = () => {
     setModalData2(null);
   };
-
+  
+  const currentDate = new Date();
   const currentMonth = currentDate.toLocaleString('default', { month: 'long' });
   const currentYear = currentDate.getFullYear().toString();
   const [sortYear, setSortYear] = useState(currentYear);
@@ -195,23 +195,24 @@ const MetaMonthlySpend = ({data}) => {
           </select>
         </div>
 
-        <div>
-        <select
+       <div>
+  <select
     style={{ backgroundColor: 'var(--bg-color2)', border: 'var(--border)', color: 'var(--text-color2)' }}
     className="px-4 py-2 border rounded bg-white text-black border-black"
     onChange={(e) => setSortYear(e.target.value)}
     value={sortYear || ""}
   >
     <option value="">Select Year</option>
-    {Array.from(new Set(sortedAccounts?.map(account => new Date(account.date).getFullYear())))
-      .sort((a, b) => b - a) // Sorting in descending order, adjust as needed
+    {Array.from(new Set(flattenedData?.map(account => new Date(account.date).getFullYear())))
+      .sort((a, b) => a - b) // Sorting in ascending order (2024, 2025, 2026...)
       .map(year => (
         <option key={year} value={year}>
           {year}
         </option>
       ))}
   </select>
-         </div>
+</div>
+
         <div>
         <select
   className="select2 "
@@ -293,7 +294,7 @@ const MetaMonthlySpend = ({data}) => {
                   {new Date(account.date).toLocaleString('default', { month: 'long'})}
                 </td>
                 <td>
-  <span className="font-extrabold">$</span>{" "}
+                <span className="amount-doller">$ </span>
   {new Intl.NumberFormat('en-IN', {
     maximumFractionDigits: 2,
     minimumFractionDigits: 2,
@@ -301,10 +302,10 @@ const MetaMonthlySpend = ({data}) => {
                 </td>
                 {
                   data === 'pageSpend' ? <td>
-                  <span className="font-extrabold">৳</span>{" "}
+                 <span className="amount-taka">৳ </span>
                   {new Intl.NumberFormat('en-IN').format(Math.round(account.totalSpentt * 130))}
                                </td> : <td>
-  <span className="font-extrabold">৳</span>{" "}
+                               <span className="amount-taka">৳ </span>
   {new Intl.NumberFormat('en-IN').format(Math.round(account.totalSpentt * 142))}
                </td>
                 }
@@ -316,19 +317,19 @@ const MetaMonthlySpend = ({data}) => {
             <tr className='tr1 font-bold'>
      <td colSpan="4" className="text-right">Total</td>
      <td>
-  $ {new Intl.NumberFormat('en-IN', {
+     <span className="amount-doller">$ </span> {new Intl.NumberFormat('en-IN', {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
   }).format(filteredAccounts?.reduce((sum, acc) => sum + acc.totalSpentt, 0))}
      </td>
      {
                   data === 'pageSpend' ?    <td>
-                  <span className="font-extrabold">৳</span>{" "}
+                    <span className="amount-taka">৳ </span>
                   {new Intl.NumberFormat('en-IN').format(
                     Math.round(filteredAccounts.reduce((sum, acc) => sum + acc.totalSpentt, 0) * 130)
                   )}
                     </td> :    <td>
-  <span className="font-extrabold">৳</span>{" "}
+  <span className="amount-taka">৳ </span>
   {new Intl.NumberFormat('en-IN').format(
     Math.round(filteredAccounts?.reduce((sum, acc) => sum + acc.totalSpentt, 0) * 142)
   )}

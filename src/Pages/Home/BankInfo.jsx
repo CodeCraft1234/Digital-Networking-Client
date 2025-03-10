@@ -7,6 +7,7 @@ import { FaEdit, FaMinusSquare, FaRegCopy } from 'react-icons/fa';
 import { Helmet } from 'react-helmet-async';
 import useUserr from '../../Hook/useUser';
 import { useForm } from 'react-hook-form';
+import SummaryCard from './SummeryCard';
 const image_hosting_key = "6fbc3358bbb1a92b78e2dee0f5ca1b94";
 const image_hosting_api = `https://api.imgbb.com/1/upload?key=${image_hosting_key}`;
 
@@ -57,8 +58,8 @@ const BankInfo = () => {
       };
 
       const url = isEditing
-        ? `https://hishab-2025-five.vercel.app/bankInfo/${selectedBankId}`
-        : 'https://hishab-2025-five.vercel.app/bankInfo';
+        ? `https://hishab-2025-pi.vercel.app/bankInfo/${selectedBankId}`
+        : 'https://hishab-2025-pi.vercel.app/bankInfo';
       const method = isEditing ? 'patch' : 'post';
   
       const response = await Axios({
@@ -114,6 +115,49 @@ const BankInfo = () => {
   const { user } = useContext(AuthContext);
   const {userr}=useUserr(user?.email)
 
+  const banks = [
+    {
+      id: 1,
+      name: "Islami Bank Bangladesh PLC",
+      holder: "MD Anowarul Islam",
+      account: "20503360202781706",
+      branch: "SHYAMNAGAR",
+      district: "SATKHIRA",
+      card: "4170336042185201",
+      color: "green",
+    },
+    {
+      id: 2,
+      name: "Agrani Bank PLC",
+      holder: "MD Anowarul Islam",
+      account: "0200009112344",
+      branch: "Noor Nagar",
+      district: "SATKHIRA",
+      card: "012 777 80307",
+      color: "blue",
+    },
+    {
+      id: 3,
+      name: "Dutch Bangla Bank PLC",
+      holder: "MD Anowarul Islam",
+      account: "1801510129698",
+      branch: "SATKHIRA",
+      district: "SATKHIRA",
+      card: "4777920004008043",
+      color: "orange",
+    },
+    {
+      id: 4,
+      name: "Brac Bank PLC",
+      holder: "MD Anowarul Islam",
+      account: "2062085950001",
+      branch: "SATKHIRA",
+      district: "SATKHIRA",
+      card: "4777920004008043",
+      color: "purple",
+    },
+  ];
+
   const [copiedBankId, setCopiedBankId] = useState(null); 
 
   const copyBankInfoToClipboard = (info) => {
@@ -148,7 +192,30 @@ const BankInfo = () => {
         <link rel="canonical" href="https://www.example.com/" />
       </Helmet>
 
-      <div className="rounded-lg" style={{ backgroundColor: 'var(--bg-color3)', color: 'var(--text-color)', border: 'var(--border)' }}>
+      <div className="grid mb-5 rounded-lg grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 justify-around">
+      {banks.map((bank) => (
+        <div
+          key={bank.id}
+          className="shadow-lg rounded-2xl p-6 text-center border border-gray-200"
+          style={{ backgroundColor: "var(--bg-colorCard)", color: "var(--text-color)", border: "var(--border)" }}
+        >
+          <h2 className="text-xl font-bold mb-4">{bank.name}</h2>
+          <div className="p-4 rounded-lg">
+            <p className="text-sm"><span className="font-semibold">Name:</span> {bank.holder}</p>
+            <p className="text-sm"><span className="font-semibold">A/C:</span> {bank.account}</p>
+            <p className="text-sm"><span className="font-semibold">Branch:</span> {bank.branch}</p>
+            <p className="text-sm"><span className="font-semibold">District:</span> {bank.district}</p>
+          </div>
+          <div className="border-t border-gray-300 my-4"></div>
+          <p  onClick={() => copyBankInfoToClipboard(bank)} className={`text-lg cursor-pointer font-semibold text-white bg-gradient-to-r from-${bank.color}-500 to-${bank.color}-700 py-3 px-6 rounded-lg inline-block tracking-wide shadow-md`}>
+            {bank.card}
+          </p>
+       
+        </div>
+      ))}
+    </div>
+
+      {/* <div className="rounded-lg" style={{ backgroundColor: 'var(--bg-color3)', color: 'var(--text-color)', border: 'var(--border)' }}>
         <div className="p-5">
           
 
@@ -235,11 +302,11 @@ const BankInfo = () => {
             </form>
           </div>
         </div>
-      )}
+      )} */}
 
-{userr?.role === 'admin' && (
+{/* {userr?.role === 'admin' && (
             <button
-              className="bg-blue-500 mr-5 text-white py-2 px-4 mb-5 rounded hover:bg-blue-600"
+              className="add mb-5"
               onClick={() => {
                 resetForm();
                 setShowModal(true);
@@ -247,8 +314,8 @@ const BankInfo = () => {
             >
               Add Bank Details
             </button>
-          )}
-          {bankInfo && bankInfo.length > 0 ? (
+          )} */}
+          {/* {bankInfo && bankInfo.length > 0 ? (
 
  <div className="table-div ">
           <table className="min-w-full text-center ">
@@ -260,7 +327,6 @@ const BankInfo = () => {
                 <th >Account</th>
                 <th >Branch</th>
                 <th >District</th>
-                {/* <th >Routing</th> */}
                 <th >Card</th>
                 <th className="text-center">Status</th>
               </tr>
@@ -328,9 +394,7 @@ const BankInfo = () => {
                   <td>
                   {work?.district}
                   </td>
-                  {/* <td>
-                  {work?.routingNumber}
-                  </td> */}
+            
                   <td>
                   {work?.card}
                   </td>
@@ -353,9 +417,9 @@ const BankInfo = () => {
           
           ) : (
             <div>No bank information found.</div>
-          )}
-        </div>
-      </div>
+          )} */}
+        {/* </div>
+      </div> */}
     </div>
   );
 };

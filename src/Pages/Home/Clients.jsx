@@ -6,27 +6,34 @@ import { toast, ToastContainer } from 'react-toastify';
 import { Helmet } from 'react-helmet-async';
 import { ImCross } from 'react-icons/im';
 import Swal from 'sweetalert2';
-import { FaEdit, FaMinusSquare } from "react-icons/fa";
+import { FaEdit, FaMinusSquare, FaPhone } from "react-icons/fa";
 import useUserr from '../../Hook/useUser';
 import SummaryCard from './SummeryCard';
 import useClientsPage from '../../Hook/useClientsPage';
 import useMyClientsTotal from '../../Hook/useMyClientsTotal';
 import useAllEmployee from '../../Hook/useAllEmployee';
+import useClientsDueAvance from '../../Hook/useClientDueAvance';
+import { FaPhoneFlip } from "react-icons/fa6";
 
 const Clients = () => {
   const { user } = useContext(AuthContext);
   const { userr } = useUserr(user?.email); 
 
+  
   const initialTab3 =
   userr?.role === "admin"
-    ? localStorage.getItem(`activeTabag${user?.email}`) || "all" 
-    : localStorage.getItem(`activeTabag${user?.email}`) || user?.email; 
-
+  ? localStorage.getItem(`activeTabag${user?.email}`) || "all" 
+  : localStorage.getItem(`activeTabag${user?.email}`) || user?.email; 
+  
   const [selectedEmployee3, setSelectedEmployee3] = useState(initialTab3);
   const [currentPage, setCurrentPage] = useState(1);
   const [myClientsTotal] = useMyClientsTotal(selectedEmployee3);
+
   const [client, totalItems, totalPages, , refetch] = useClientsPage(selectedEmployee3, currentPage);
+  
+  const { clientsDueAdvance } = useClientsDueAvance(selectedEmployee3);
   const AxiosPublic = UseAxiosPublic();
+  console.log(client);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedStatus, setSelectedStatus] = useState('all');
   const [allEmployees] = useAllEmployee();
@@ -58,9 +65,17 @@ const Clients = () => {
     
     const handleAddClient = (e) => {
       e.preventDefault();
+      
       const clientName = e.target.clientName.value;
       const clientPhone = e.target.clientPhone.value;
-      const employeeEmail = user?.email;
+    
+      let employeeEmail = user?.email; // Default to the user's email
+    
+      // Only get employeeEmail if the role is admin
+      if (userr?.role === 'admin') {
+        employeeEmail = e.target.employeeEmail.value;
+      }
+    
       const date = new Date();
     
       const data = {
@@ -83,16 +98,22 @@ const Clients = () => {
         .then((res) => {
           refetch();
           console.log(res.data);
-          AxiosPublic.post("/activity", datas).then(() => {
-            document.getElementById("my_modal_2").close();
-            toast.success(`Successfully added ${clientName}`);
-          });
+          AxiosPublic.post("/activity", datas)
+            .then(() => {
+              document.getElementById("my_modal_2").close();
+              toast.success(`Successfully added ${clientName}`);
+            })
+            .catch((error) => {
+              toast.error("Failed to add activity");
+              console.error(error);
+            });
         })
         .catch((error) => {
           toast.error("Failed to add client");
           console.error(error);
         });
     };
+    
     
     const handledelete = (id, clientName) => {
     const datas = {
@@ -165,20 +186,13 @@ const Clients = () => {
                  <link rel="canonical" href="https://www.tacobell.com/" />
                </Helmet>
 
-               <div className="grid mb-2 rounded-md lg:grid-cols-4 grid-cols-2 gap-3 lg:gap-5 justify-around pb-3">
+               <div className="grid mb-2 rounded-md lg:grid-cols-5 grid-cols-2 gap-3 lg:gap-5 justify-around pb-3">
       <SummaryCard title="Total Spend" value={formatValue(myClientsTotal?.spendTotal || 0)} />
       <SummaryCard title="Total Bill" value={formatValue(myClientsTotal?.spendBill || 0, 0)} />
       <SummaryCard title="Total Paid" value={formatValue(myClientsTotal?.total || 0, 0)} />
-      <SummaryCard 
-  title={
-    myClientsTotal?.spendBill - myClientsTotal?.total > 0
-      ? "Total Due"
-      : myClientsTotal?.spendBill - myClientsTotal?.total < 0
-      ? "Total Advanced"
-      : "Clear"
-  } 
-  value={formatValue(Math.abs(myClientsTotal?.spendBill - myClientsTotal?.total || 0), 0)} 
-/>
+      <SummaryCard title="Total Advance" value={formatValue(clientsDueAdvance?.totalAdvance || 0, 0)} />
+      <SummaryCard title="Total Due" value={formatValue(clientsDueAdvance?.totalDue || 0, 0)} />
+
 
     </div>
     
@@ -203,11 +217,24 @@ const Clients = () => {
           >
             <ImCross />
           </h1>
+          {userr?.role === "admin" && (
+                <div >
+                  <label className="block text-black" >Select Employee</label>
+                  <select name="employeeEmail" className="select2 w-full">
+                    {allEmployees?.filter(f=>f.role === 'employee')
+                      .map((employee) => (
+                        <option key={employee._id} value={employee.email}>
+                          {employee.name}
+                        </option>
+                      ))}
+                  </select>
+                </div>
+              )}
           {[
             { label: "Client Name", name: "clientName", type: "text" },
             { label: "Client Phone", name: "clientPhone", type: "number" },
           ].map((field, i) => (
-            <div className="mb-4" key={i}>
+            <div className="my-4" key={i}>
               <label className="block">{field.label}</label>
               <input
                 type={field.type}
@@ -290,11 +317,10 @@ const Clients = () => {
       <th>Employee Name</th>
        }
       <th>Client Name</th>
-      <th>Mob Number</th>
-      <th>Total Budget</th>
-      <th>Total Spend</th>
-      <th>Total Bill</th>
-      <th>Payment RCV</th>
+      <th>Budget</th>
+      <th>Spend</th>
+      <th>Bill</th>
+      <th>Payment</th>
       <th className="text-center">Total</th>
     </tr>
   </thead>
@@ -373,43 +399,46 @@ const Clients = () => {
           </td>
           }
 
-          <td>
-            <Link
-              to={`/client/${campaign.id}`}
-              className="flex gap-2 items-center hover:font-bold"
-            >
-              {campaign.clientName}
-              {campaign.campaings?.some(({ status }) => status === "Active") && (
-                <svg width="20" height="20" fill="green" viewBox="0 0 24 24">
-                  <circle cx="12" cy="12" r="6" />
-                </svg>
-              )}
-            </Link>
-          </td>
+<td>
+  <Link
+    to={`/client/${campaign.id}`}
+    className="flex gap-2 items-center hover:font-bold"
+  >
+<div className="flex items-center justify-between w-full ">
+  {/* Left Side: Name & Phone (Stacked) */}
+  <div className="flex flex-col space-y-1">
+    <p className="text-lg flex justify-start items-center gap-1 ">{campaign.clientName}   {campaign.status && (
+    <svg width="20" height="20" fill="green" viewBox="0 0 24 24">
+      <circle cx="12" cy="12" r="6" />
+    </svg>
+  )}</p>
+    <p className="text-sm text-gray-600 ">{campaign.clientPhone}</p>
+  </div>
+
+
+</div>
+
+  </Link>
+</td>
 
           
-          <td> <Link
-       
-       to={`/client/${campaign.id}`}
-     >{campaign.clientPhone}
-      </Link>
-     </td>
           <td><Link
        
        to={`/client/${campaign.id}`}
-     >$ {campaign.totalBudget.toFixed(2)} </Link></td>
+     ><span className="amount-doller">$</span> {campaign.totalBudget.toFixed(2)} </Link></td>
+
           <td><Link
        
        to={`/client/${campaign.id}`}
-     >$ {campaign.totalSpent.toFixed(2)} </Link></td>
+     ><span className="amount-doller">$</span> {campaign.totalSpent.toFixed(2)} </Link></td>
           <td><Link
        
        to={`/client/${campaign.id}`}
-     >৳ {campaign.totalBill.toFixed(0)} </Link></td>
+     ><span className="amount-taka">৳</span> {campaign.totalBill.toFixed(0)} </Link></td>
           <td><Link
        
        to={`/client/${campaign.id}`}
-     >৳ {campaign.paymentReceived.toFixed(0)} </Link></td>
+     ><span className="amount-taka">৳</span> {campaign.paymentReceived.toFixed(0)} </Link></td>
           <td className="text-center">
           <Link
        
@@ -425,7 +454,7 @@ const Clients = () => {
               }`}
             >
               <div className="flex justify-center items-center gap-1">
-                <span className="font-bold text-lg">৳</span>
+                <span className="amount-taka">৳</span>
                 <span>{Math.abs(campaign.total).toFixed(0)}</span>
               </div>
             </span>
@@ -434,7 +463,7 @@ const Clients = () => {
         </tr>
       ))}
     <tr className="tr1 font-bold">
-      <td></td>
+   
       <td></td>
 
       {
@@ -442,12 +471,12 @@ const Clients = () => {
 
       }
       <td className="text-right">Total:</td>
-      <td>$ {client.reduce((acc, client) => acc + client.totalBudget, 0).toFixed(2)}</td>
-      <td>$ {client.reduce((acc, client) => acc + client.totalSpent, 0).toFixed(2)}</td>
-      <td>৳ {client.reduce((acc, client) => acc + client.totalBill, 0).toFixed(2)}</td>
-      <td>৳ {client.reduce((acc, client) => acc + client.paymentReceived, 0).toFixed(2)}</td>
+      <td><span className="amount-doller">$</span> {client.reduce((acc, client) => acc + client.totalBudget, 0).toFixed(2)}</td>
+      <td><span className="amount-doller">$</span> {client.reduce((acc, client) => acc + client.totalSpent, 0).toFixed(2)}</td>
+      <td><span className="amount-taka">৳</span> {client.reduce((acc, client) => acc + client.totalBill, 0).toFixed(2)}</td>
+      <td><span className="amount-taka">৳</span> {client.reduce((acc, client) => acc + client.paymentReceived, 0).toFixed(2)}</td>
       <td className="text-center">
-        ৳ {client.reduce((acc, client) => acc + client.total, 0).toFixed(2)}
+        <span className="amount-taka">৳</span> {client.reduce((acc, client) => acc + client.total, 0).toFixed(2)}
       </td>
     </tr>
   </tbody>

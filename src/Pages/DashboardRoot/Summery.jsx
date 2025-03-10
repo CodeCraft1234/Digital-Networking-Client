@@ -8,6 +8,7 @@ import MonthlyCast from './MonthlyCast';
 import MonthlyTarget from './MonthlyTarget';
 import TotalSummery from './TotalSummery';
 import YearlySummery from './YearlySummery';
+import ClientSummery from './ClientSummery';
 
 const Summery = () => {
   const { user } = useContext(AuthContext);
@@ -30,37 +31,32 @@ const Summery = () => {
 
       <div className="rounded-lg">
         <div className="flex justify-center items-center gap-5 mb-5">
-          <button
-            className={`tab-button ${activeTab === 'employeerPay' ? 'active' : ''}`}
-            onClick={() => changeTab('employeerPay')}
-          >
-            Monthly Summery
-          </button>
-
-          <button
-            className={`tab-button ${activeTab === 'monthlyCost' ? 'active' : ''}`}
-            onClick={() => changeTab('monthlyCost')}
-          >
-            Monthly Cost
-          </button>
-          <button
-            className={`tab-button ${activeTab === 'monthlyTarget' ? 'active' : ''}`}
-            onClick={() => changeTab('monthlyTarget')}
-          >
-            Monthly Target
-          </button>
-          <button
+      
+          
+          {userr?.role === 'admin' && ( <>
+            <button
             className={`tab-button ${activeTab === 'totalSummery' ? 'active' : ''}`}
             onClick={() => changeTab('totalSummery')}
-          >
-            EM. Summery
-          </button>
-          <button
-            className={`tab-button ${activeTab === 'yearlySummery' ? 'active' : ''}`}
-            onClick={() => changeTab('yearlySummery')}
-          >
-            Yearly Summery
-          </button>
+            >
+              Summery
+            </button>
+            <button
+              className={`tab-button ${activeTab === 'employeerPay' ? 'active' : ''}`}
+              onClick={() => changeTab('employeerPay')}
+            >
+              Monthly Summery
+            </button>
+
+            <button
+              className={`tab-button ${activeTab === 'clientSummery' ? 'active' : ''}`}
+              onClick={() => changeTab('clientSummery')}
+            >
+              Client Summery
+            </button>
+          </>
+             
+          )}
+ 
 
           {userr?.role === 'admin' && (
             <button
@@ -72,13 +68,21 @@ const Summery = () => {
           )}
         </div>
 
-        {/* Component rendering based on active tab */}
-        {activeTab === 'contributorPay' && <ContributorSummery />}
-        {activeTab === 'monthlyCost' && <MonthlyCast />}
-        {activeTab === 'monthlyTarget' && <MonthlyTarget />}
-        {activeTab === 'totalSummery' && <TotalSummery />}
-        {activeTab === 'yearlySummery' && <YearlySummery />}
-        {activeTab === 'employeerPay' && <MarketerSummery />}
+        {userr?.role === 'admin' ? (
+  <>
+    {activeTab === 'contributorPay' && <ContributorSummery />}
+    {activeTab === 'monthlyTarget' && <MonthlyTarget />}
+    {activeTab === 'totalSummery' && <TotalSummery />}
+    {activeTab === 'clientSummery' && <ClientSummery />}
+    {activeTab === 'yearlySummery' && <YearlySummery />}
+    {activeTab === 'employeerPay' && <MarketerSummery />}
+  </>
+) : (
+  <MarketerSummery />
+)}
+
+       
+      
       </div>
     </div>
   );

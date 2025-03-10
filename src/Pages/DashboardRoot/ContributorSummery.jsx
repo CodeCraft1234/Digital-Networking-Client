@@ -181,18 +181,18 @@ const ContributorSummery = () => {
       <td >{data.month}</td>
 
 <td >
-  ${new Intl.NumberFormat('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(data.totalSpent)}
+<span className="amount-doller">$ </span>{new Intl.NumberFormat('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(data.totalSpent)}
 </td>
 
 <td>
-  ৳{new Intl.NumberFormat('en-IN', { maximumFractionDigits: 0 }).format(data.totalBill)}
+<span className="amount-taka">৳ </span>{new Intl.NumberFormat('en-IN', { maximumFractionDigits: 0 }).format(data.totalBill)}
 </td>
 <td>
-  ৳{new Intl.NumberFormat('en-IN', { maximumFractionDigits: 0 }).format(data.totalAdminPay)}
+<span className="amount-taka">৳ </span>{new Intl.NumberFormat('en-IN', { maximumFractionDigits: 0 }).format(data.totalAdminPay)}
 </td>
 
 <td>
-  ৳{new Intl.NumberFormat('en-IN', { maximumFractionDigits: 0 }).format(data.totalBill - data.totalAdminPay)}
+<span className="amount-taka">৳ </span>{new Intl.NumberFormat('en-IN', { maximumFractionDigits: 0 }).format(data.totalBill - data.totalAdminPay)}
 </td> 
     </tr>
   ))}
@@ -203,24 +203,24 @@ const ContributorSummery = () => {
   <tr className='tr1'>
     <td className="text-right " colSpan="1">Total</td>
     <td>
-  $ {new Intl.NumberFormat('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(
+    <span className="amount-doller">$ </span> {new Intl.NumberFormat('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(
     employeeData.reduce((acc, data) => acc + data.totalSpent, 0)
   )}
 </td>
     <td>
-    ৳ {new Intl.NumberFormat('en-IN', { minimumFractionDigits: 0, maximumFractionDigits: 2 }).format(
+    <span className="amount-taka">৳ </span> {new Intl.NumberFormat('en-IN', { minimumFractionDigits: 0, maximumFractionDigits: 2 }).format(
     employeeData.reduce((acc, data) => acc + data.totalBill, 0)
   )}
 </td>
 
 <td>
-  ৳ {new Intl.NumberFormat('en-IN', { maximumFractionDigits: 0 }).format(
+<span className="amount-taka">৳ </span> {new Intl.NumberFormat('en-IN', { maximumFractionDigits: 0 }).format(
     employeeData.reduce((acc, data) => acc + data.totalAdminPay, 0)
   )}
 </td>
 
 <td>
-  ৳ {new Intl.NumberFormat('en-IN', { maximumFractionDigits: 0 }).format( employeeData.reduce((acc, data) => acc + data.totalBill, 0) -  employeeData.reduce((acc, data) => acc + data.totalAdminPay, 0)
+<span className="amount-taka">৳ </span> {new Intl.NumberFormat('en-IN', { maximumFractionDigits: 0 }).format( employeeData.reduce((acc, data) => acc + data.totalBill, 0) -  employeeData.reduce((acc, data) => acc + data.totalAdminPay, 0)
    )}
 </td>
   </tr>

@@ -1,22 +1,13 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useState } from "react";
 import { AuthContext } from "./AuthProvider";
 import { Navigate, useLocation } from "react-router-dom";
 import useUserr3 from "../Hook/useUserr3";
-import useUserr from "../Hook/useUser";
 
 const PrivateRoute = ({ children }) => {
   const { user, loading } = useContext(AuthContext);
   const location = useLocation();
   const {userr3}=useUserr3(user?.email)
-  const {userr}=useUserr(user?.email)
-  const [clientUser, setClientUser] = useState(null);
-
-  useEffect(() => {
-    const storedClientUser = localStorage.getItem("clientUser");
-    if (storedClientUser) {
-      setClientUser(JSON.parse(storedClientUser)); // Parse JSON if stored as object
-    }
-  }, []);
+  const [clientUser] = useState(localStorage.getItem("clientUser")); 
 
   if (loading) {
     return (
@@ -42,7 +33,7 @@ const PrivateRoute = ({ children }) => {
     );
   }
 
-  if (!user) {
+  if (!user && !clientUser) {
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 

@@ -10,6 +10,7 @@ import BalanceCard from "../DashboardRoot/BalanceCard";
 import useFindClient from "./useFindClient";
 import useAllEmployee from "../../Hook/useAllEmployee";
 import useUserr from "../../Hook/useUser";
+import { ImCross } from "react-icons/im";
 
 const ClientPaymentHistry = () => {
   const { user } = useContext(AuthContext);
@@ -241,9 +242,15 @@ const ClientPaymentHistry = () => {
   <dialog id="my_modal_8" className="modal">
     <div className="modal-box text-black bg-white font-bold">
       <form onSubmit={(e) => handlePayment(e)}>
-
-      <div className="mb-4">
-            <label className="block text-gray-250">Date</label>
+  <h1
+        className="text-black flex hover:text-red-500 justify-end cursor-pointer"
+        onClick={() => document.getElementById("my_modal_8").close()}
+      >
+        <ImCross />
+      </h1>
+    <div className="grid lg:grid-cols-2 gap-4 items-center">
+    <div className="mb-4">
+            <label className="block text-gray-700">Date</label>
             <input
               type="date"
               name="date"
@@ -262,6 +269,7 @@ const ClientPaymentHistry = () => {
               className="input2"
             />
           </div>
+    </div>
           
           <div className="mb-4">
 
@@ -330,12 +338,13 @@ const ClientPaymentHistry = () => {
               <tr className="tr1" >
               {
                 user &&
-                <th  className="text-center">{findClients?.payments?.length} Items</th>}
-                <th>Date</th>
+                <th  className="text-center">{findClients?.payments?.length}</th>}
                 <th>Client Name</th>
                 <th>Amount</th>
                 <th className="text-center">Payment Method</th>
                 <th> Note</th>
+                <th>Date</th>
+                <th className="text-center">Action</th>
               </tr>
             </thead>
             <tbody>
@@ -345,30 +354,11 @@ const ClientPaymentHistry = () => {
                 key={payment.id}
                 className={`tr2`}
               >
-                  <td className=" text-center">
-                
-                <div className="f-center">
-                <button
-className=" delete"
-onClick={() => handledelete(payment.ids ,payment.id)}
->
-<FaMinusSquare  />
-</button>
-<button
-className=" edit"
-onClick={() => setModalData(payment)}
->
-<FaEdit  />
-</button>
-                </div>
-
-                      
-
-               
-        </td>
-                  <td >
-                  {new Date(payment.date).toLocaleDateString("en-GB")}
+                 
+                  <td className="text-center">
+                  {index + 1}
                   </td>
+               
                 
                   <td>
                     {payment.clientName}
@@ -434,10 +424,42 @@ onClick={() => setModalData(payment)}
                     {" "}
                     {payment.note}
                   </td>
+                  <td >
+                  {new Date(payment.date).toLocaleDateString("en-GB")}
+                  </td>
+                 
+
+                  <td className=" text-center">
+                
+                <div className="f-center">
+                <button
+className=" delete"
+onClick={() => handledelete(payment.ids ,payment.id)}
+>
+<FaMinusSquare  />
+</button>
+<button
+className=" edit"
+onClick={() => setModalData(payment)}
+>
+<FaEdit  />
+</button>
+                </div>
+
+                      
+
+               
+        </td>
 
                       <dialog id={`modal_${payment?.id}`} className="modal">
       <div className="modal-box text-black bg-white font-bold">
         <form onSubmit={(e) => handleUpdatePayment(e, payment.ids ,payment.id)}>
+        <h1
+        className="text-black flex hover:text-red-500 justify-end cursor-pointer"
+        onClick={() => document.getElementById(`modal_${payment.id}`).close()}
+      >
+        <ImCross />
+      </h1>
         <div className="mb-4">
             <label className="block text-left text-gray-700">Date</label>
             <input
@@ -517,13 +539,11 @@ onClick={() => setModalData(payment)}
                 </tr>
               ))}
               <tr  className=" tr1 font-bold">
-              {
-                user ? 
-                <td  className="text-right" colSpan="3">
-                  Total Amount :
-                </td> :  <td  className="text-right" colSpan="2">
-                  Total Amount :
-                </td>}
+              
+             
+                 <td  className="text-right" colSpan="2">
+                  Total:
+                </td>
                 <td >
                   <span className="text-md mr-1 font-extrabold">৳</span>{""}
                   {findClients?.payments?.reduce(

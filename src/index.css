@@ -360,13 +360,13 @@ td {
 
 
 .color-card-title {
-  font-size: 1.25rem; /* Equivalent to text-2xl for large screens */
+  font-size: 1.0rem; /* Equivalent to text-2xl for large screens */
   font-weight: bold;
 }
 
 @media (max-width: 1024px) {
   .color-card-title {
-    font-size: 1.25rem; /* Equivalent to text-xl for smaller screens */
+    font-size: 1.0rem; /* Equivalent to text-xl for smaller screens */
   }
 }
 
@@ -550,7 +550,6 @@ td {
   padding: 1rem;
   align-items: center;
   gap: 1rem;
-  border: var(--border);
   border-radius: 8px;
 }
 
@@ -598,8 +597,18 @@ td {
   scrollbar-width: none;
 }
 
+/* ////////////////currenchy symbol//////////////////////// */
 
 
+.amount-doller {
+  font-size: 0.75rem; /* Equivalent to text-md */
+  font-weight: bold; /* Equivalent to font-bold */
+}
+
+.amount-taka {
+  font-size: 0.75rem; /* Equivalent to text-md */
+  font-weight: 800; /* Equivalent to font-extrabold */
+}
 
 
 

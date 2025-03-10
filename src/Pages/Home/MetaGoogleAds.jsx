@@ -9,6 +9,7 @@ import useUserr from "../../Hook/useUser";
 import { Link } from "react-router-dom";
 import useClientsCampaignsPage from "../../Hook/useClientCampaignsPage";
 import useAllEmployee from "../../Hook/useAllEmployee";
+import { ImCross } from "react-icons/im";
 
 const MetaGoogleAds = () => {
   const { user } = useContext(AuthContext);
@@ -73,6 +74,7 @@ const MetaGoogleAds = () => {
       selectedYear,
       role
   );
+
   
     
 
@@ -239,47 +241,111 @@ const handleUpdate2 = (ids, id, status) => {
             <thead className=" ">
               <tr className="tr1" >
                 <th className=" text-center">{filteredCampaigns.length}</th>
-                <th >Date</th>
+                {
+                  userr?.role === 'admin' &&  
+                  <th > Employee Name</th>
+                }
                 <th >Client Name</th>
                 <th >Campaign Name</th>
-                <th >Page Name</th>
+                <th >Ads Account</th>
                 <th >Budged</th>
                 <th >Spend</th>
-                <th >Total Bill</th>
-                <th className="text-center">Status</th>
+                <th >Bill</th>
+                <th >Date</th>
+                <th className="text-center">Action</th>
               </tr>
             </thead>
             <tbody>
             {filteredCampaigns
   ?.map((work, index) => (
 <tr key={index} className="tr2">
+
+<td className="text-center">
+                      <label className="status-label">
+                      <input
+                        type="checkbox"
+                        checked={work.status === "Active"}
+                        onChange={() => {
+                          const newStatus = work.status === "Active" ? "Complete" : "Active";
+                          handleUpdate2(work.ids, work.id, newStatus);
+                        }}
+                      />
+                      <div className={work.status === "Active" ? "active" : "inactive"}>
+                        <span className={work.status === "Active" ? "active" : ""}></span>
+                      </div>
+                    </label>
+                    
+                      </td>
+
+
+              {
+            userr?.role === 'admin' &&    <td>  <Link
+       
+            to={`/client/${work.id}`}
+          >
+            <div className='flex justify-start items-center gap-2'>
+              <img className='h-10 w-10 rounded-full object-cover' src={allEmployees.find(f => f.email === work.email)?.photo} alt="" />
+              <h1> {allEmployees?.find(f => f.email === work.email)?.name || 'N/A'}</h1>
+              </div>
+              </Link>
+          </td>
+          }
+
+
+              <td><Link to={`/client/${work.id}`}>{truncateText(work.clientName, 4)}</Link></td>
+             <td>
+
+     
+      <span>
+        {truncateText(work.campaignName, 4)}
+      </span>
+
+
+  </td>
+
+ 
+  <td>{work.adsAccount}</td>
+  <td> <span className="amount-doller">$</span> {work.tBudged}</td>
+  <td> <span className="amount-doller">$</span> {work.tSpent}</td>
+  <td>
+  <span className="amount-taka">৳ </span>
+    {parseInt(work.tSpent * work.dollerRate)}
+  </td>
+  <td>{new Date(work?.date).toLocaleDateString("en-GB")}</td>
+
   <td className="text-center">
+      <div className="flex justify-center items-center gap-1">
       <button
         className="delete"
         onClick={() => handledelete(work.ids, work.id)}
       >
         <FaMinusSquare />
       </button>
-  </td>
 
-  <td>{new Date(work?.date).toLocaleDateString("en-GB")}</td>
-  <td><Link to={`/client/${work.id}`}>{truncateText(work.clientName, 4)}</Link></td>
-  <td>
-    <button
+      <button
       className=" edit flex justify-center items-center gap-1 px-2 py-1 rounded"
       onClick={() =>
         document.getElementById(`modal_${work.ids}`).showModal()
       }
     >
       <FaEdit />
-      <span>
-        {truncateText(work.campaignName, 4)}
-      </span>
+     
     </button>
+      </div>
 
     <dialog id={`modal_${work.ids}`} className="modal">
       <div className="modal-box bg-white text-black">
         <form onSubmit={(e) => handleUpdate(e, work.ids, work.id)}>
+
+                <h1
+                      className="text-black hover:text-red-500 f-end"
+                      onClick={() =>
+                        document.getElementById(`modal_${work.ids}`).close()
+                      }
+                    >
+                      <ImCross />
+                    </h1>
+
           <InputField
             label="Campaign Name"
             name="campaignName"
@@ -291,7 +357,8 @@ const handleUpdate2 = (ids, id, status) => {
             defaultValue={work.adsAccount}
             disabled
           />
-          <InputField
+        <div className="grid lg:grid-cols-3 gap-3">
+        <InputField
             label="Total Budget"
             name="tBudged"
             defaultValue={work.tBudged}
@@ -309,6 +376,7 @@ const handleUpdate2 = (ids, id, status) => {
             defaultValue={work.dollerRate}
             type="number"
           />
+        </div>
 
           <div className="grid grid-cols-2 gap-3 mt-4">
             <button
@@ -330,64 +398,44 @@ const handleUpdate2 = (ids, id, status) => {
         </form>
       </div>
     </dialog>
-  </td>
-
- 
-  <td>{work.adsAccount}</td>
-  <td>$ {work.tBudged}</td>
-  <td>$ {work.tSpent}</td>
-  <td>
-    <span className="text-md mr-1 font-extrabold">৳</span>
-    {parseInt(work.tSpent * work.dollerRate)}
-  </td>
-
-          <td className="text-center">
-                      <label className="status-label">
-                      <input
-                        type="checkbox"
-                        checked={work.status === "Active"}
-                        onChange={() => {
-                          const newStatus = work.status === "Active" ? "Complete" : "Active";
-                          handleUpdate2(work.ids, work.id, newStatus);
-                        }}
-                      />
-                      <div className={work.status === "Active" ? "active" : "inactive"}>
-                        <span className={work.status === "Active" ? "active" : ""}></span>
-                      </div>
-                    </label>
-                    
-                      </td>
+  </td> 
 </tr>
 
 
   ))}
   <tr className="tr1 font-bold">
-  <td className="text-right" colSpan="5">
-    Total:
-  </td>
+  {
+            userr?.role === 'admin' ? 
+            <td className="text-right" colSpan="5">
+                  Total:
+                </td> : <td className="text-right" colSpan="4">
+                  Total:
+                </td>
+            }
   
   <td>
-    $ {new Intl.NumberFormat('en-IN', { maximumFractionDigits: 2 }).format(
+  <span className="amount-taka">$</span> {new Intl.NumberFormat('en-IN', { maximumFractionDigits: 2 }).format(
      filteredCampaigns
         ?.reduce((acc, work) => acc + (isNaN(parseFloat(work?.tBudged)) ? 0 : parseFloat(work?.tBudged)), 0)
     )}
   </td>
   
   <td>
-    $ {new Intl.NumberFormat('en-IN', { maximumFractionDigits: 2 }).format(
+  <span className="amount-taka">$</span> {new Intl.NumberFormat('en-IN', { maximumFractionDigits: 2 }).format(
       filteredCampaigns
         .reduce((acc, work) => acc + (isNaN(parseFloat(work?.tSpent)) ? 0 : parseFloat(work?.tSpent)), 0)
     )}
   </td>
 
   <td>
-    <span className="text-md mr-1 font-extrabold">৳</span>
+    <span className="amount-taka">৳ </span>
     {new Intl.NumberFormat('en-IN').format(
       filteredCampaigns
         .reduce((acc, work) => acc + (isNaN(parseFloat(work?.tSpent)) ? 0 : parseFloat(work?.tSpent * work.dollerRate)), 0)
     )}
   </td>
 
+  <td className=""></td>
   <td className=""></td>
 </tr>
 

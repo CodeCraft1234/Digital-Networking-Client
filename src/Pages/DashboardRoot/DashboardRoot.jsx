@@ -207,75 +207,6 @@ const DashboardRoot = () => {
 
     <div className="flex justify-end ml-16 gap-2">
 
-<div className=" gap-2">
-    <div className="items-center">
-     <div className="" ref={dropdownRef}>
-       <label
-         tabIndex={0}
-         className="relative cursor-pointer"
-         onClick={toggleDropdown3}
-       >
-         <h1 className="text-5xl font-bold"><p className=""><IoNotificationsCircleSharp /></p> </h1>
-       </label>
-       {isOpen3 && (
-         <ul
-           tabIndex={0}
-           className="absolute mt-7 text-white left-1  z-[1] p-1 rounded-box shadow-lg bg-white"
-         >
-           <div className="p-4 text-center">
-             <div className="text-start ">
-               <div className="text-center ">
-               {(sortedNotifications.length > 0 || sortedNotifications2.length > 0) ? (
-[...sortedNotifications, ...sortedNotifications2]
- .sort((a, b) => {
-   const dateA = a.deleteDate || a.editDate;
-   const dateB = b.deleteDate || b.editDate;
-   return new Date(b.date || dateB) - new Date(a.date || dateA);
- })
- .slice(0, 5) 
- .map((item) => (
-       <div
-         key={item._id}
-         className={`flex items-start  justify-start gap-2  px-6 py-4 mb-1 rounded-xl cursor-pointer shadow-lg transition-colors ${
-           item.status === "read" ? "bg-white" : "bg-yellow-100"
-         } hover:bg-blue-100 border-l-4 ${item.status === "read" ? "border-gray-200" : "border-yellow-500"}`}
-         onClick={() => handleUpdate(item)}
-       >
-         <div >
-          <div className="text-blue-700 flex justify-start items-start gap-2 font-semibold">
-          <div>
-          <img className="h-12 w-12 rounded-full" src={item.photo} alt="" />
-          </div>
-        <div>
-        <p className="flex justify-start items-center gap-1"> <p className="text-black font-bold">{item.name}</p> <p className="text-gray-600">{item.message}</p>
-        </p>
-        <p className="text-blue-700 text-start">
-           {isNaN(new Date(item.deleteDate || item.editDate)) 
-             ? 'Invalid date' 
-             : formatDistanceToNow(new Date(item.deleteDate || item.editDate), { addSuffix: true })}
-           </p>
-        </div>
-          </div>
-           </div>
-       </div>
-     ))
- ) : (
-   <div className="px-4 py-3 text-gray-600 text-center">No notifications</div>
- )}
-                 <Link to={'/notification'}>
-                   <p className="text-white bg-[#394148] hover:bg-blue-500 text-sm border border-gray-500 rounded-lg py-1.5 mt-2 px-3">
-                     See All
-                   </p>
-                 </Link>
-               </div>
-             </div>
-             <hr className="my-2" />
-           </div>
-         </ul>
-       )}
-     </div>
- </div>
- </div>
 
     <div className="items-center">
       
@@ -349,6 +280,16 @@ const DashboardRoot = () => {
                       </p>
                     </Link>
 
+                    {
+                      ddd.role === "admin" &&  <Link to={'/settings'}>
+                      <p className="text-white bg-[#394148] hover:bg-blue-500 text-sm border border-gray-500 rounded-lg py-1.5 px-3 mt-2">
+                        Settings
+                      </p>
+                    </Link>
+
+                    }
+
+                   
                   </div>
                 </div>
                 <hr className="my-2" />
@@ -439,63 +380,11 @@ const DashboardRoot = () => {
         </Link>
 
     {
-      user? <> {
-        ddd?.role === 'admin' || 'employee' && <>
-         <Link to={'/clients'}>
-          <p className={` ${isActive('/clients') ? 'text-red-500 border-b-2 border-white' : 'text-white'}`}>
-            <FaUsersViewfinder />
-          </p>
-        </Link>
-        <Link to={'/campaigns'}>
-          <p className={` ${isActive('/campaigns') ? 'text-red-500 border-b-2 border-white' : 'text-white'}`}>
-            <MdCampaign />
-          </p>
-        </Link>
-        <Link to={'/adsAccount'}>
-          <p className={` ${isActive('/adsAccount') ? 'text-red-500 border-b-2 border-white' : 'text-white'}`}>
-            <RiAccountPinBoxLine />
-          </p>
-        </Link>
-        <Link to={'/allPayments'}>
-          <p className={` ${isActive('/allPayments') ? 'text-red-500 border-b-2 border-white' : 'text-white'}`}>
-            <MdOutlinePayments />
-          </p>
-        </Link>
-        <Link to={'/salary'}>
-          <p className={` ${isActive('/salary') ? 'text-red-500 border-b-2 border-white' : 'text-white'}`}>
-            < BsCashCoin />
-          </p>
-        </Link>
-        </>
-       }
+      user? <> 
   
        </> :   <>
-              <Link  to={`/client/metaAds/${clientUser}`}>
-          <p className={` ${isActive('/dashboard/clientCampaigns') ? 'text-red-500 border-b-2 border-white' : 'text-white'}`}>
-            <SiMeta />
-          </p>
-        </Link>
-              <Link   to={`/client/googleAds/${clientUser}`}>
-          <p className={` ${isActive('/dashboard/clientCampaigns') ? 'text-red-500 border-b-2 border-white' : 'text-white'}`}>
-          <SiGoogleads />
-          </p>
-        </Link>
-        <Link to={`/client/pageSetup/${clientUser}`}>
-          <p className={` ${isActive('/dashboard/clientPayments') ? 'text-red-500 border-b-2 border-white' : 'text-white'}`}>
-            <RiPagesFill />
-          </p>
-        </Link>
-        <Link to={`/client/payments/${clientUser}`}>
-          <p className={` ${isActive('/dashboard/clientPayments') ? 'text-red-500 border-b-2 border-white' : 'text-white'}`}>
-            <MdOutlinePayments />
-          </p>
-        </Link>
-        <Link to={`/client/summery/${clientUser}`}>
-          <p className={` ${isActive('/dashboard/clientPayments') ? 'text-red-500 border-b-2 border-white' : 'text-white'}`}>
-            <MdOutlineSummarize />
-          </p>
-        </Link>
-        </>
+       </>
+           
     }
     
 

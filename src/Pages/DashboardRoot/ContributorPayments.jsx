@@ -565,12 +565,12 @@ const ContributorPayments = () => {
           <table className="min-w-full  text-center ">
             <thead>
               <tr className="tr1">
-              <th className="text-center ">{displayedItems.length} Items</th>
-              <th>Date</th>
+              <th className="text-center ">{displayedItems.length}</th>
               <th>Employee Name</th>
               <th>Amount</th>
               <th className="text-center ">Payment Method</th>
               <th> Note</th>
+              <th>Date</th>
               <th className="text-center ">Status</th>
             </tr>
           </thead>
@@ -675,14 +675,12 @@ const ContributorPayments = () => {
                  </div>
                 </td>
 
-                <td>
-                  {new Date(payment.date).toLocaleDateString("en-GB")}
-                </td>
+               
                 <td>
                   {payment.employeeName}
                 </td>
                 <td>
-                  ৳ {payment.payAmount}
+                <span className="amount-taka">৳ </span> {payment.payAmount}
                 </td>
                
 
@@ -736,6 +734,10 @@ const ContributorPayments = () => {
                   {" "}
                   {payment.note}
                 </td>
+
+                <td>
+                  {new Date(payment.date).toLocaleDateString("en-GB")}
+                </td>
             
                 <td className="text-center">
   <label className="status-label">
@@ -767,7 +769,7 @@ const ContributorPayments = () => {
                 Total :
               </td>
               <td>
-  ৳ {new Intl.NumberFormat('en-IN', {
+              <span className="amount-taka">৳ </span> {new Intl.NumberFormat('en-IN', {
     maximumFractionDigits: 2, // To ensure two decimal places if required
   }).format(
     bkashPersonal + nagadPersonal + bankTotal + DBBLBankTotal + IBBLBankTotal + rocketPersonal

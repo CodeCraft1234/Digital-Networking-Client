@@ -208,6 +208,17 @@ const MetaAdsAccount = ({data1}) => {
     const today = new Date();
     const formattedDate = today.toISOString().split('T')[0]; 
 
+
+    const data=myAdsAccount
+    ?.filter(f => f.role === `${data1 || 'contributor'}AdsAccount`)
+       ?.filter((account) =>
+        (selectedStatus ? account.status === selectedStatus : true) &&
+        (searchQuery ? account.accountName.toLowerCase().includes(searchQuery.toLowerCase()) : true)
+      )
+?.sort((a, b) =>
+a.accountName.localeCompare(b.accountName, undefined, { sensitivity: 'base' })
+)
+
     return (
         <div style={{ backgroundColor: 'var(--bg-color3)', color: 'var(--text-color)',border: 'var(--border)'}} className=" rounded-lg ">
  
@@ -383,45 +394,89 @@ const MetaAdsAccount = ({data1}) => {
               {
                   userr?.role !== 'contributor' ? 
                 <th className="text-center" >
-                 {myAdsAccount
-          ?.filter(f => f.role === `${data1 || 'contributor'}AdsAccount`)
-             ?.filter((account) =>
-              (selectedStatus ? account.status === selectedStatus : true) &&
-              (searchQuery ? account.accountName.toLowerCase().includes(searchQuery.toLowerCase()) : true)
-            )
-  ?.sort((a, b) =>
-    a.accountName.localeCompare(b.accountName, undefined, { sensitivity: 'base' })
-  )
-  ?.length} Items 
+                 {data?.length}  
                 </th> : <th className="text-center">SL</th> }
+
+                {
+            userr?.role === 'admin' && 
                 <th>Employee</th>
-                <th>Ads Account Name</th>
+}
+                <th>Ads Account</th>
                 <th>Threshold</th>
                 <th>Current Balance</th>
                 <th className="text-center">Spend</th>
                 <th>Payment Date</th>
                 {
-                  userr?.role !== 'contributor' &&    <th className="text-center">Status</th>
+                  userr?.role !== 'contributor' &&    <th className="text-center">Action</th>
                 }
               
               </tr>
             </thead>
             <tbody>
-            {myAdsAccount
-          ?.filter(f => f.role === `${data1 || 'contributor'}AdsAccount`)
-             ?.filter((account) =>
-              (selectedStatus ? account.status === selectedStatus : true) &&
-              (searchQuery ? account.accountName.toLowerCase().includes(searchQuery.toLowerCase()) : true)
-            )
-  ?.sort((a, b) =>
-    a.accountName.localeCompare(b.accountName, undefined, { sensitivity: 'base' })
-  )
-  ?.map((account, index) => (
+            {data?.map((account, index) => (
                      <tr
                      key={account._id}
                     className={`tr2`}
                    >
-                     {
+                       {
+                  userr?.role !== 'contributor' && 
+                  <td  className="text-center"> 
+
+                  <label className="status-label">
+  <input
+    type="checkbox"
+    checked={account.status === "Active"}
+    onChange={() => {
+      const newStatus = account.status === "Active" ? "Disable" : "Active";
+      handleUpdate2(account._id, newStatus);
+    }}
+  />
+  <div className={account.status === "Active" ? "active" : "inactive"}>
+    <span className={account.status === "Active" ? "active" : ""}></span>
+  </div>
+</label>
+
+                 </td>}
+
+                   {
+            userr?.role === 'admin' &&    <td><div className="f-start items-center ">
+               
+                <img className="h-10 w-10 rounded-full"  src={allEmployees?.find(f => f.email === account.employeeEmail)?.photo || 'N/A'} alt="" />
+                <span> {account.employeerName}</span>
+            </div>
+            
+          </td>
+          }
+                 
+                  <td>
+                  <h1> {account.accountName}</h1>
+                  
+                  </td>
+                 
+                  <td><span className="amount-doller">$</span> {account.threshold}</td>
+                  <td><span className="amount-doller">$</span> {account.currentBallence} </td>
+                  <td className="text-center">
+  <div className="relative group flex items-center justify-center">
+    <h1>
+    <span className="amount-doller">$</span> {account.totalSpent}
+    </h1>
+    {userr?.role === 'admin' &&  <button
+      className="edit opacity-0 group-hover:opacity-100 transition-opacity duration-300 ml-2"
+      onClick={() => setModalData2(account)}
+    >
+      <FaEdit />
+    </button>}
+   
+  </div>
+</td>
+
+                  <td>
+                    {new Date(account.paymentDate).toLocaleDateString("en-GB")}
+                  </td>
+                
+
+
+                 {
                   userr?.role !== 'contributor' ?
                   <td
                     className={`text-center  `}>
@@ -442,86 +497,33 @@ const MetaAdsAccount = ({data1}) => {
                         </button>
                         </div>
                    </td> : <td className="text-center">{index + 1}</td> }
-
-                   {
-            userr?.role === 'admin' &&    <td><div className="f-start items-center ">
-               
-                <img className="h-10 w-10 rounded-full"  src={allEmployees?.find(f => f.email === account.employeeEmail)?.photo || 'N/A'} alt="" />
-                <span> {account.employeerName}</span>
-            </div>
-            
-          </td>
-          }
-                 
-                  <td>
-                  <h1> {account.accountName}</h1>
-                  
-                  </td>
-                 
-                  <td>$ {account.threshold}</td>
-                  <td>$ {account.currentBallence} </td>
-                  <td className="text-center">
-  <div className="relative group flex items-center justify-center">
-    <h1>
-      <span className="text-xm font-extrabold">$</span> {account.totalSpent}
-    </h1>
-    {userr?.role === 'admin' &&  <button
-      className="edit opacity-0 group-hover:opacity-100 transition-opacity duration-300 ml-2"
-      onClick={() => setModalData2(account)}
-    >
-      <FaEdit />
-    </button>}
-   
-  </div>
-</td>
-
-                  <td>
-                    {new Date(account.paymentDate).toLocaleDateString("en-GB")}
-                  </td>
-                  {
-                  userr?.role !== 'contributor' && 
-                  <td  className="text-center"> 
-
-                  <label className="status-label">
-  <input
-    type="checkbox"
-    checked={account.status === "Active"}
-    onChange={() => {
-      const newStatus = account.status === "Active" ? "Disable" : "Active";
-      handleUpdate2(account._id, newStatus);
-    }}
-  />
-  <div className={account.status === "Active" ? "active" : "inactive"}>
-    <span className={account.status === "Active" ? "active" : ""}></span>
-  </div>
-</label>
-
-                 </td>}
                 </tr>
               ))}
 
                 <tr  className="font-bold tr1">
-                <td className="  text-right" colSpan="3">
+               
+                {
+            userr?.role === 'admin' ?  <td className="  text-right" colSpan="3">
+            Total  </td> :  <td className="  text-right" colSpan="2">
                   Total :
                 </td>
+           }
+
                 <td >
-                $ {myAdsAccount
-            ?.filter(f=>f.role === `${data1}AdsAccount`).reduce(
+                <span className="amount-doller">$</span> {data?.reduce(
         (acc, account) => acc + parseFloat(account.currentBallence || 0),
         0
       ).toFixed(2)}
                 </td>
 
                 <td>
-               $ {myAdsAccount
-            ?.filter(f=>f.role === `${data1}AdsAccount`).reduce(
+                <span className="amount-doller">$</span> {data?.reduce(
         (acc, account) => acc + parseFloat(account.threshold || 0),
         0
       ).toFixed(2)}
                 </td>
                 <td className="text-center">
-               $ {myAdsAccount
-            ?.filter(f=>f.role === `${data1}AdsAccount`).reduce(
+                <span className="amount-doller">$</span> {data?.reduce(
         (acc, account) => acc + parseFloat(account.totalSpent || 0),
         0
       ).toFixed(2)}

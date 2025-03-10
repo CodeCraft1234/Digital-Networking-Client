@@ -347,15 +347,15 @@ const ClientPageSetup = () => {
               <tr className="tr1" > 
               {
                       user && 
-                <th  className="text-center">Items {campaignss?.length}</th> }
-                <th >Date</th>
+                <th  className="text-center">{findClients.pageService?.length}</th> }
                 <th >Item Name</th>
                 <th >Page Name</th>
                 <th >Total Bill</th>
                 <th >Service</th>
+                <th >Date</th>
                 {
                       user &&
-                <th  className="text-center">Status</th>}
+                <th  className="text-center">Action</th>}
               </tr>
             </thead>
             <tbody>
@@ -364,7 +364,66 @@ const ClientPageSetup = () => {
                  key={work._id}
                  className={`tr2`}
                >
-                {
+               
+               {
+                user &&
+              
+                  <td className="text-center">
+  <label className="status-label">
+  <input
+    type="checkbox"
+    checked={work.status === "Active"}
+    onChange={() => {
+      const newStatus = work.status === "Active" ? "Complete" : "Active";
+      handleUpdate2(work.ids ,work.id, newStatus);
+    }}
+  />
+  <div className={work.status === "Active" ? "active" : "inactive"}>
+    <span className={work.status === "Active" ? "active" : ""}></span>
+  </div>
+</label>
+
+  </td>}
+                 
+                  
+                  <td >
+ <span>
+  {work.itemName
+    ?.split(' ') // Split the campaign name into words
+    .slice(0, 4) // Take only the first 6 words
+    .join(' ') // Join the words back into a string
+    + (work.itemName?.split(' ').length > 4 ? '...' : '') // Add "..." if there are more than 6 words
+  }
+</span>
+                      
+                  
+                  </td>
+                  <td style={{  border: 'var(--border)'}} className="p-3 hover:text-blue-700 hover:font-bold border-r-2 border-gray-200 text-left">
+                  
+                  <Link to={work?.pageUrl || '#'}>
+  {work?.pageName
+    ? work.pageName.split(' ').slice(0, 4).join(' ') +
+      (work.pageName.split(' ').length > 4 ? '...' : '')
+    : '-'}
+</Link>
+
+                  
+                  </td>
+                  
+                
+
+                  <td >
+                  ৳ {work.totalBill|| 0}
+                  </td>
+                  <td >
+                   {work?.role}
+                  </td>
+
+                  <td>
+                  {new Date(work?.date).toLocaleDateString("en-GB")}
+                  </td>
+                 
+  {
                       user &&
                 <td  className="text-center">
                   <div className="f-center">
@@ -476,64 +535,6 @@ const ClientPageSetup = () => {
                </div>
                                     </dialog>  </td>
                }
-                      
-                  <td>
-                  {new Date(work?.date).toLocaleDateString("en-GB")}
-                  </td>
-                  
-                  <td >
- <span>
-  {work.itemName
-    ?.split(' ') // Split the campaign name into words
-    .slice(0, 4) // Take only the first 6 words
-    .join(' ') // Join the words back into a string
-    + (work.itemName?.split(' ').length > 4 ? '...' : '') // Add "..." if there are more than 6 words
-  }
-</span>
-                      
-                  
-                  </td>
-                  <td style={{  border: 'var(--border)'}} className="p-3 hover:text-blue-700 hover:font-bold border-r-2 border-gray-200 text-left">
-                  
-                  <Link to={work?.pageUrl || '#'}>
-  {work?.pageName
-    ? work.pageName.split(' ').slice(0, 4).join(' ') +
-      (work.pageName.split(' ').length > 4 ? '...' : '')
-    : '-'}
-</Link>
-
-                  
-                  </td>
-                  
-                
-
-                  <td >
-                  ৳ {work.totalBill|| 0}
-                  </td>
-                  <td >
-                   {work?.role}
-                  </td>
-
-              {
-                user &&
-              
-                  <td className="text-center">
-  <label className="status-label">
-  <input
-    type="checkbox"
-    checked={work.status === "Active"}
-    onChange={() => {
-      const newStatus = work.status === "Active" ? "Complete" : "Active";
-      handleUpdate2(work.ids ,work.id, newStatus);
-    }}
-  />
-  <div className={work.status === "Active" ? "active" : "inactive"}>
-    <span className={work.status === "Active" ? "active" : ""}></span>
-  </div>
-</label>
-
-  </td>}
-                 
 
                 </tr>
               ))}
@@ -541,7 +542,7 @@ const ClientPageSetup = () => {
               {
                 user &&
                 <td  ></td>}
-                <td   className="p-3 text-right" colSpan="3">
+                <td   className="p-3 text-right" colSpan="2">
                   Total:
                 </td>
                 <td  >
@@ -551,6 +552,11 @@ const ClientPageSetup = () => {
                 <td >
                
                 </td>
+                {
+                  user &&  <td >
+                 
+                  </td>
+                }
                 {
                   user &&  <td >
                  

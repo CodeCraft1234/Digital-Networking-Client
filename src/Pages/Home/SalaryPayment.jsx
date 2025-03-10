@@ -409,6 +409,7 @@ const SalaryPayments = () => {
                   type="radio"
                   name="paymentMethod"
                   value={value}
+                  required
                   className="radio radio-primary"
                 />
                 <span className="label-text text-black">{label}</span>
@@ -530,12 +531,16 @@ onChange={(e) => setSelectedYear(e.target.value)}
           <table className="min-w-full  text-center ">
             <thead className=" ">
               <tr className="tr1">
-              <th className="text-center ">Items {displayedItems.length}</th>
+              <th className="text-center ">{displayedItems.length}</th>
               <th>Date</th>
-              <th>Employee Name</th>
+              {
+                  userr?.role === 'admin' &&  
+                  <th > Employee Name</th>
+                }
               <th>Amount</th>
               <th className="text-center">Payment Method</th>
               <th> Note</th>
+              <th className="text-center">Action</th>
              
             </tr>
           </thead>
@@ -545,6 +550,55 @@ onChange={(e) => setSelectedYear(e.target.value)}
                key={payment._id}
                className={`tr2`}
              >
+                <td className="text-center">{index+1 }</td>
+
+                <td>
+                  {new Date(payment.date).toLocaleDateString("en-GB")}
+                </td>
+
+                {
+                  userr?.role === 'admin' && 
+                <td>
+                <div className='flex justify-start items-center gap-2'>
+              <img className='h-10 w-10 rounded-full object-cover' src={allEmployees.find(f => f.email === payment.employeeEmail)?.photo} alt="" />
+              <h1>  {allEmployees.find(f => f.email === payment.employeeEmail)?.name}</h1>
+              </div>
+                 
+                </td>
+
+              }
+                <td>
+                <span className="amount-taka">৳ </span> {payment.payAmount}
+                </td>
+
+                <td>
+  {[
+    { method: "bkashPersonal", src: "https://i.ibb.co.com/f8LcKV0/bKash.png", size: "h-10 w-24" },
+    { method: "rocketPersonal", src: "https://i.ibb.co/QkTM4M3/rocket.png", size: "h-10 w-24" },
+    { method: "nagadPersonal", src: "https://i.ibb.co/JQBQBcF/nagad-marchant.png", size: "h-10 w-24" },
+    { method: "DBBLBank", src: "https://i.ibb.co.com/nnN8KW0/DBBL.png", size: "h-10 w-32" },
+    { method: "IBBLBank", src: "https://i.ibb.co.com/pnS6nt4/IBBLBank.png", size: "h-10 w-32" },
+    { method: "bank", src: "https://i.ibb.co/PZc0P4w/brac-bank-seeklogo.png", size: "h-12 w-13" },
+  ].map(
+    (item) =>
+      payment.paymentMethod === item.method && (
+        <img
+          key={item.method}
+          className={`${item.size} flex my-auto items-center mx-auto justify-center`}
+          src={item.src}
+          alt=""
+        />
+      )
+  )}
+               </td>
+
+                <td>
+                  {" "}
+                  {payment.note}
+                </td>
+            
+             
+
                 <td className="text-center">
                 <div className="f-center">
                 <button
@@ -630,61 +684,26 @@ onChange={(e) => setSelectedYear(e.target.value)}
                   
                  </div>
                 </td>
-
-                <td>
-                  {new Date(payment.date).toLocaleDateString("en-GB")}
-                </td>
-
-                <td>
-                  {payment.employeeName}
-                </td>
-
-                <td>
-                  ৳ {payment.payAmount}
-                </td>
-
-                <td>
-  {[
-    { method: "bkashPersonal", src: "https://i.ibb.co.com/f8LcKV0/bKash.png", size: "h-10 w-24" },
-    { method: "rocketPersonal", src: "https://i.ibb.co/QkTM4M3/rocket.png", size: "h-10 w-24" },
-    { method: "nagadPersonal", src: "https://i.ibb.co/JQBQBcF/nagad-marchant.png", size: "h-10 w-24" },
-    { method: "DBBLBank", src: "https://i.ibb.co.com/nnN8KW0/DBBL.png", size: "h-10 w-32" },
-    { method: "IBBLBank", src: "https://i.ibb.co.com/pnS6nt4/IBBLBank.png", size: "h-10 w-32" },
-    { method: "bank", src: "https://i.ibb.co/PZc0P4w/brac-bank-seeklogo.png", size: "h-12 w-13" },
-  ].map(
-    (item) =>
-      payment.paymentMethod === item.method && (
-        <img
-          key={item.method}
-          className={`${item.size} flex my-auto items-center mx-auto justify-center`}
-          src={item.src}
-          alt=""
-        />
-      )
-  )}
-               </td>
-
-                <td>
-                  {" "}
-                  {payment.note}
-                </td>
-            
-
               </tr>
             ))}
             <tr className="font-bold tr1">
               <td></td>
-              <td></td>
-              <td className="text-right" >
-                Total :
-              </td>
+           
+              {
+            userr?.role === 'admin' ? 
+            <td className="text-right" colSpan="2">
+                  Total:
+                </td> : <td className="text-right" colSpan="1">
+                  Total:
+                </td>
+               }
               <td>
-  ৳ {new Intl.NumberFormat('en-IN', {
-    maximumFractionDigits: 2, 
-  }).format(
-    bkashPersonal + nagadPersonal + bankTotal + DBBLBankTotal + IBBLBankTotal + rocketPersonal
-  )}
+              <span className="amount-taka">৳ </span> {new Intl.NumberFormat('en-IN').format(displayedItems?.reduce(
+      (acc, payment) => acc + parseFloat(payment?.payAmount || 0),
+      0
+    ).toFixed(0))}
               </td>
+              <td></td>
               <td></td>
               <td></td>
 

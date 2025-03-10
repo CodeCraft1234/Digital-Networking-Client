@@ -356,18 +356,18 @@ const ClientMetaAds = ({data1}) => {
             <thead className=" ">
               <tr className="tr1" >  
               {
-                    user && <th  className="p-3 text-center">{findClients?.metaAds?.filter(f=>f.role === 'metaAds')?.length}</th>}
+                    user && <th  className="p-3 text-center">{findClients?.campaings?.filter(f=>f.role === data2)?.length}</th>}
                 
-                <th >Date</th>
                 <th >Campaign Name</th>
                 <th >Page Name</th>
                 <th >Ads Account</th>
-                <th >T. Budget</th>
-                <th >T. Spent</th>
-                <th >Total Bill</th>
+                <th >Budget</th>
+                <th >Spent</th>
+                <th >Bill</th>
+                <th >Date</th>
                 
                    {
-                    user &&  <th >Status</th>
+                    user &&  <th className="text-center">Action</th>
                 }
                 
               </tr>
@@ -379,8 +379,87 @@ const ClientMetaAds = ({data1}) => {
                  className={`tr2`}
                >
                 
-
                 {
+                      user &&                   <td className="text-center">
+                      <label className="status-label">
+                      <input
+                        type="checkbox"
+                        checked={work.status === "Active"}
+                        onChange={() => {
+                          const newStatus = work.status === "Active" ? "Complete" : "Active";
+                          handleUpdate2(work.ids, work.id, newStatus);
+                        }}
+                      />
+                      <div className={work.status === "Active" ? "active" : "inactive"}>
+                        <span className={work.status === "Active" ? "active" : ""}></span>
+                      </div>
+                    </label>
+                    
+                      </td>
+                  }
+              
+
+    
+                      
+                
+                  
+                  <td >
+                 <div  onClick={() =>
+          document.getElementById(`modal_${work.ids}`).showModal()
+          } className="flex justify-start cursor-pointer items-center gap-2">
+                 <button
+        className="f-start edit"
+       
+      >
+       <span >
+       <FaEdit /> 
+        </span>
+      </button>
+                  <span>
+{work.campaignName
+.split(' ') // Split the campaign name into words
+.slice(0, 4) // Take only the first 6 words
+.join(' ') // Join the words back into a string
++ (work.campaignName.split(' ').length > 4 ? '...' : '') // Add "..." if there are more than 6 words
+}
+</span>
+                 </div>
+                  
+                  </td>
+                  <td >
+                  
+                   {work.pageName
+    .split(' ') 
+    .slice(0, 4) 
+    .join(' ') 
+    + (work.pageName.split(' ').length > 4 ? '...' : '') // Add "..." if there are more than 6 words
+  } 
+                  
+                  </td>
+                  
+                  <td  >
+                    {work.adsAccount}
+                  </td>
+
+                  <td >
+  $ {Number(work?.tBudged || 0).toFixed(2)}
+</td>
+
+<td >
+  $ {Number(work?.tSpent || 0).toFixed(2)}
+</td>
+
+
+                  <td >
+                    <span className="text-md mr-1 font-extrabold">৳</span>
+                    {parseInt(work.tSpent * work.dollerRate)}
+                  </td>
+
+                  <td >
+                  {new Date(work?.date).toLocaleDateString("en-GB")}
+                  </td>
+     
+                  {
       user && <td  className="text-center">
       <div className="f-center">
                 
@@ -392,41 +471,17 @@ const ClientMetaAds = ({data1}) => {
         <FaMinusSquare  />
         </span>
       </button>
-    </div>  </td>
-      }
+      <button
+        className="f-start edit"
+        onClick={() =>
+          document.getElementById(`modal_${work.ids}`).showModal()
+          }
+      >
+       <span >
+       <FaEdit /> 
+        </span>
+      </button>
 
-    
-                      
-                  <td >
-                  {new Date(work?.date).toLocaleDateString("en-GB")}
-                  </td>
-                  
-                  <td >
-                  {
-      user ? <button
-      className="f-start edit"
-      onClick={() =>
-        document.getElementById(`modal_${work.ids}`).showModal()
-        }
-    >
-     <FaEdit /> 
-     <span>
-{work.campaignName
-.split(' ') // Split the campaign name into words
-.slice(0, 4) // Take only the first 6 words
-.join(' ') // Join the words back into a string
-+ (work.campaignName.split(' ').length > 4 ? '...' : '') // Add "..." if there are more than 6 words
-}
-</span>
-    </button> : <span>
-{work.campaignName
-.split(' ') // Split the campaign name into words
-.slice(0, 4) // Take only the first 6 words
-.join(' ') // Join the words back into a string
-+ (work.campaignName.split(' ').length > 4 ? '...' : '') // Add "..." if there are more than 6 words
-}
-</span>
-      }
                   
                       <dialog id={`modal_${work.ids}`} className="modal">
 <div className="modal-box bg-white text-black">
@@ -515,57 +570,8 @@ Update
 </form>
 </div>
                 </dialog>
-                  
-                  </td>
-                  <td >
-                  
-                   {work.pageName
-    .split(' ') 
-    .slice(0, 4) 
-    .join(' ') 
-    + (work.pageName.split(' ').length > 4 ? '...' : '') // Add "..." if there are more than 6 words
-  } 
-                  
-                  </td>
-                  
-                  <td  >
-                    {work.adsAccount}
-                  </td>
-
-                  <td >
-  $ {Number(work?.tBudged || 0).toFixed(2)}
-</td>
-
-<td >
-  $ {Number(work?.tSpent || 0).toFixed(2)}
-</td>
-
-
-                  <td >
-                    <span className="text-md mr-1 font-extrabold">৳</span>
-                    {parseInt(work.tSpent * work.dollerRate)}
-                  </td>
-
-                  
-                     {
-                      user &&                   <td className="text-center">
-                      <label className="status-label">
-                      <input
-                        type="checkbox"
-                        checked={work.status === "Active"}
-                        onChange={() => {
-                          const newStatus = work.status === "Active" ? "Complete" : "Active";
-                          handleUpdate2(work.ids, work.id, newStatus);
-                        }}
-                      />
-                      <div className={work.status === "Active" ? "active" : "inactive"}>
-                        <span className={work.status === "Active" ? "active" : ""}></span>
-                      </div>
-                    </label>
-                    
-                      </td>
-                  }
-
+    </div>  </td>
+      }
                  
                 </tr>
               ))}
@@ -573,7 +579,7 @@ Update
               {
                       user && 
                 <td ></td> }
-                <td className=" text-right" colSpan="4">
+                <td className=" text-right" colSpan="3">
                   Total:
                 </td>
                 <td  >
@@ -595,10 +601,15 @@ Update
                 {userr?.role === "admin" ? (
                   <>
                     <td ></td>
+                    <td ></td>
                   
                   </>
                 ) : (
                   <>
+                   {
+                      user && 
+                   <td ></td>
+                   }
                    {
                       user && 
                    <td ></td>

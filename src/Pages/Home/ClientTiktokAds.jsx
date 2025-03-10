@@ -74,7 +74,6 @@ const ClientTiktokAds = () => {
           toast.error("Failed to update campaign");
         });
     };
-    
   
     const handleaddblog = (e) => {
       e.preventDefault();
@@ -104,6 +103,7 @@ const ClientTiktokAds = () => {
         ids: parseFloat(idu),
         clientEmail,
         status,
+        employeeEmail:findClients?.employeeEmail,
         coin,
         totalBill,
         email,
@@ -166,36 +166,6 @@ const ClientTiktokAds = () => {
       });
   };
 
-  const handleUpdate2 = (ids, id, status) => {
-    const activityData = {
-        title: `Updated ${status} in Client campaigns`,
-        date: new Date(),
-        user: user?.displayName,
-        photo: user?.photoURL,
-    };
-    
-    AxiosPublic.put(`/clientPageService/${id}/${ids}`, { status })
-        .then((res) => {
-            console.log("Update Response:", res.data);
-            refetch(); // Refresh data after update
-
-            AxiosPublic.post("/activity", activityData)
-                .then(() => {
-                    document.getElementById(`modal_${id}`).close();
-                    toast.success(`${status} has been successfully updated`);
-                })
-                .catch((activityError) => {
-                    console.error("Activity log error:", activityError);
-                    toast.error("Activity logging failed");
-                });
-
-            toast.success("Campaign updated successfully");
-        })
-        .catch((error) => {
-            console.error("Error updating campaign:", error);
-            toast.error("Failed to update campaign");
-        });
-};
 
        const today = new Date();
        const formattedDate = today.toISOString()?.split('T')[0];  
@@ -330,11 +300,12 @@ const ClientTiktokAds = () => {
               {
                       user && 
                 <th  className="text-center">Items {campaignss?.length}</th> }
-                <th >Date</th>
                 <th >Item Name</th>
                 <th >Cost</th>
                 <th >Coins</th>
                 <th >Total Bill</th>
+                <th >Date</th>
+                <th className="text-center">Action</th>
               </tr>
             </thead>
             <tbody>
@@ -343,7 +314,41 @@ const ClientTiktokAds = () => {
                  key={work._id}
                  className={`tr2`}
                >
-                {
+               
+               <td className="text-center">
+                  {index + 1 }
+                  </td>
+               
+                  
+                  <td >
+ <span>
+  {work.itemName
+    ?.split(' ') // Split the campaign name into words
+    .slice(0, 4) // Take only the first 6 words
+    .join(' ') // Join the words back into a string
+    + (work.itemName?.split(' ').length > 4 ? '...' : '') // Add "..." if there are more than 6 words
+  }
+</span>
+                      
+                  
+                  </td>
+                
+
+                  <td >
+                  $ {(work.coin * 0.012).toFixed(2) || 0}
+                  </td>
+                  <td >
+                  {work.coin || 0}
+                  </td>
+                  <td >
+                  ৳ {work?.totalBill || 0}
+                  </td>
+
+                  <td>
+                  {new Date(work?.date).toLocaleDateString("en-GB")}
+                  </td>
+
+                  {
                       user &&
                 <td  className="text-center">
                   <div className="f-center">
@@ -454,42 +459,15 @@ const ClientTiktokAds = () => {
 
                </div>
                                     </dialog>  </td>
-               }
-                      
-                  <td>
-                  {new Date(work?.date).toLocaleDateString("en-GB")}
-                  </td>
-                  
-                  <td >
- <span>
-  {work.itemName
-    ?.split(' ') // Split the campaign name into words
-    .slice(0, 4) // Take only the first 6 words
-    .join(' ') // Join the words back into a string
-    + (work.itemName?.split(' ').length > 4 ? '...' : '') // Add "..." if there are more than 6 words
-  }
-</span>
-                      
-                  
-                  </td>
-                
+                    }
 
-                  <td >
-                  $ {(work.coin * 0.012).toFixed(2) || 0}
-                  </td>
-                  <td >
-                  {work.coin || 0}
-                  </td>
-                  <td >
-                  ৳ {work?.totalBill || 0}
-                  </td>
                 </tr>
               ))}
               <tr  className="tr1 font-bold">
               {
                 user &&
                 <td  ></td>}
-                <td   className="p-3 text-right" colSpan="2">
+                <td   className="p-3 text-right" colSpan="1">
                   Total:
                 </td>
                 <td  >
@@ -505,7 +483,8 @@ const ClientTiktokAds = () => {
                   <span className="text-sm mr-1 font-extrabold">৳</span>{""}
                   {findClients?.pageService?.filter(f=>f.role === 'tiktokAds')?.reduce((acc, payment) => acc + parseFloat(payment?.totalBill || 0), 0).toFixed(0) || 0}
                 </td>
-
+                <td></td>
+                <td></td>
               </tr>
             </tbody>
           </table>
