@@ -154,6 +154,15 @@ const datas=myclients?.flatMap(client => client.pageService || [])
   item?.itemName?.toLowerCase().includes(searchQuery.toLowerCase()) &&
   (sortMonth === 'all' || new Date(item.date).getMonth() + 1 === parseInt(sortMonth, 10))
 )?.filter(item=>item.role === data )
+
+const truncateText = (text, wordLimit) => {
+  const words = text.split(" ");
+  return words.length > wordLimit
+    ? words.slice(0, wordLimit).join(" ") + "..."
+    : text;
+};
+
+console.log(datas);
     return (
         <div>
             <Helmet>
@@ -163,7 +172,7 @@ const datas=myclients?.flatMap(client => client.pageService || [])
             <div >
 
 
-      <div className="side-space">
+      <div className="my-5 lg:block hidden">
         
       <div className="f-between  mb-4 ">
 
@@ -191,9 +200,6 @@ const datas=myclients?.flatMap(client => client.pageService || [])
   ))}
 </select>
 )}
-
-
-
 
 <select
   className="select2"
@@ -239,24 +245,19 @@ const datas=myclients?.flatMap(client => client.pageService || [])
 </select>
 
 
-  <select
+<select
   className="select2"
   value={selectedYear}
   onChange={(e) => setSelectedYear(e.target.value)}
 >
-  <option value="">Select Year</option> {/* Default option */}
-  {[...new Set(
-    myclients
-      ?.flatMap((client) => client.pageService || [])
-      ?.map((item) => new Date(item.date).getFullYear())
-  )]
-    .sort((a, b) => a - b) // Sort years in ascending order
-    .map((year) => (
-      <option key={year} value={year}>
-        {year}
-      </option>
-    ))}
+  <option value="all">Select Year</option> {/* Default option */}
+  {Array.from({ length: new Date().getFullYear() - 2024 + 1 }, (_, i) => 2024 + i).map((year) => (
+    <option key={year} value={year}>
+      {year}
+    </option>
+  ))}
 </select>
+
 
 
   <select
@@ -275,7 +276,7 @@ const datas=myclients?.flatMap(client => client.pageService || [])
     <input
       type="text"
       placeholder="Search by campaign name"
-      className="input2"
+      className="select2"
       value={searchQuery}
       onChange={(e) => setSearchQuery(e.target.value)}
     />
@@ -291,23 +292,26 @@ const datas=myclients?.flatMap(client => client.pageService || [])
                 <th className="text-center">{datas?.length}</th>
                 {
                   userr?.role === 'admin' &&  
-                  <th > Employee Name</th>
+                  <th className="text-start flex justify-start"> Employee Name</th>
                 }
-                <th >Client Name</th>
+                <th >Phone</th>
                 <th >Item Name</th>
                 <th >Page Name</th>
                 <th >Bill</th>
-                <th >Date</th>
                 <th className="text-center">Action</th>
               </tr>
             </thead>
             <tbody>
               {datas
               ?.map((work, index) => (
-                 <tr 
-                 key={work._id}
-                 className={`tr2`}
-               >
+                <tr 
+                key={work.id}
+                className={`${
+                  index % 2 === 0
+                    ? "bg-white text-left text-black border-b border-opacity-20"
+                    : "bg-gray-100  text-left text-black border-b border-opacity-20"
+                }`}
+              >
                      <td className="text-center">
 
 <label className="status-label">
@@ -332,25 +336,42 @@ handleUpdate2(work.ids ,work.id, newStatus);
           >
             <div className='flex justify-start items-center gap-2'>
               <img className='h-10 w-10 rounded-full object-cover' src={allEmployees.find(f => f.email === work.email)?.photo} alt="" />
-              <h1> {allEmployees?.find(f => f.email === work.email)?.name || 'N/A'}</h1>
+             <p className="text-start ">
+             <p className="text-lg flex justify-start items-center gap-1 ">{truncateText(work.clientName, 4)}</p>
+             <h1> {allEmployees?.find(f => f.email === work.email)?.name || 'N/A'}</h1>
+             </p>
               </div>
               </Link>
           </td>
           }
 
-                  <td><Link className="hover:font-bold" to={`/client/${work.id}`}>{work.clientName}</Link></td>
+               
+          <td>
+         {work.clientPhone}
+          </td>
                   
-                  <td>
+                  <td className="text-start">
 
                      
-                    <span>
-  {work.itemName
+                    <p className="flex justify-start items-center gap-1">    <button
+                        className=" edit "
+                        onClick={() =>
+                          document.getElementById(`modal_${work.ids}`).showModal()
+                          }
+                      >
+                       <FaEdit /> 
+                       
+                      </button>
+<p>  {work.itemName
     ?.split(' ') 
     .slice(0, 4) 
     .join(' ') 
     + (work.itemName?.split(' ').length > 4 ? '...' : '') 
-  }
-</span>
+  }</p>
+</p>
+<p>
+                  {new Date(work?.date).toLocaleDateString("en-GB")}
+                  </p>
                   </td>
 
                   <td>
@@ -373,9 +394,7 @@ handleUpdate2(work.ids ,work.id, newStatus);
                
 
                 
-                  <td>
-                  {new Date(work?.date).toLocaleDateString("en-GB")}
-                  </td>
+                  
 
                 {
                       user &&
@@ -390,15 +409,7 @@ handleUpdate2(work.ids ,work.id, newStatus);
                           </span>
                           
                         </button>
-                        <button
-                        className=" edit"
-                        onClick={() =>
-                          document.getElementById(`modal_${work.ids}`).showModal()
-                          }
-                      >
-                       <FaEdit /> 
-                       
-                      </button>
+                     
                       </div>
               
                <dialog id={`modal_${work.ids}`} className="modal">
@@ -512,12 +523,12 @@ handleUpdate2(work.ids ,work.id, newStatus);
                 {userr?.role === "admin" ? (
                   <>
                     <td ></td>
-                    <td ></td>
+                  
                   </>
                 ) : (
                   <>
                    <td ></td>
-                   <td ></td>
+                   
                   </>
                 )}
               </tr>
@@ -525,6 +536,91 @@ handleUpdate2(work.ids ,work.id, newStatus);
           </table>
         </div>
         </div>
+
+  <div className="bg-white pt-40 pb-16  font-sans  lg:max-w-2xl lg:hidden mx-auto text-sm">
+
+      {datas
+      ?.map((payment) => (
+        <div
+        key={payment._id}
+        className="px-4 py-3 sm:px-6 sm:py-4 border-b hover:bg-gray-100 transition-colors duration-200"
+      >
+        <div className="flex items-end justify-between gap-4">
+          {/* Left Content */}
+          <div className="flex items-start gap-3 flex-1">
+            {/* Image */}
+            <img
+              className="h-10 w-10 rounded-full object-cover border border-gray-300"
+              src={allEmployees.find(f => f.email === payment.email)?.photo}
+              alt="Employee"
+            />
+      
+            {/* Info */}
+            <div className="flex flex-col gap-1 text-sm">
+              {/* Client Name */}
+              <Link className="hover:font-bold" to={`/client/${payment.id}`}>{payment.clientName}</Link>
+      
+              {/* Employee Name */}
+              {/* <Link
+                to={`/client/${payment?.clientEmail}`}
+                className="text-gray-600 hover:text-blue-600 text-xs"
+              >
+                {allEmployees.find(f => f.email === payment.employeeEmail)?.name}
+              </Link> */}
+              <Link
+                to={`/client/${payment?.clientEmail}`}
+                className="text-gray-600 hover:text-blue-600 text-xs"
+              >
+               {payment.pageName
+    .split(' ') 
+    .slice(0, 3) 
+    .join(' ') 
+    + (payment.pageName.split(' ').length > 4 ? '...' : '')}
+              </Link>
+      
+   
+
+              <p className="text-gray-500 text-xs">
+                {payment.itemName
+    .split(' ') 
+    .slice(0, 3) 
+    .join(' ') 
+    + (payment.itemName.split(' ').length > 4 ? '...' : '')}
+              </p>
+              
+            </div>
+          </div>
+      
+          {/* Right Content */}
+          <div className="text-right space-y-1 text-sm sm:text-base">
+          <p className="text-gray-800">
+              <span className="font-medium text-gray-600">Bill:</span>{" "}
+              <span className="text-red-600 font-bold">৳ {payment?.totalBill?.toLocaleString()}</span>
+            </p>
+
+            <p className="text-gray-500 text-xs">
+                {new Date(payment.date).toLocaleString("en-GB", {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                  hour12: true,
+                  day: "2-digit",
+                  month: "2-digit",
+                  year: "2-digit",
+                })}
+              </p>
+           
+
+          </div>
+        </div>
+      </div>
+      
+      ))}
+
+      {/* Modal */}
+
+
+    </div>
+
       </div>
         </div>
     );

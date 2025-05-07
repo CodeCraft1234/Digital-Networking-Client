@@ -187,7 +187,7 @@ const AllClients = () => {
                  <title> All Client | Digital Network</title>
                  <link rel="canonical" href="https://www.tacobell.com/" />
                </Helmet>
-      <div  style={{ backgroundColor: 'var(--bg-color3)', color: 'var(--text-color)',border: 'var(--border)'}} className="grid px-4 pt-4 rounded-md lg:grid-cols-5 grid-cols-2 text-black sm:grid-cols-2 gap-3 lg:gap-5 justify-around lg:py-5 mb-4 pb-5">
+      <div className="grid px-4 pt-4 rounded-md lg:grid-cols-5 grid-cols-2 text-black sm:grid-cols-2 gap-3 lg:gap-5 justify-around lg:py-5 mb-4 pb-5">
     
         <div className="px-5 py-10 rounded-2xl bg-[#90a427] text-white shadow-lg text-center">
           <h2 className="lg:text-2xl text-xl font-bold">Total Spent</h2>
@@ -274,7 +274,7 @@ const AllClients = () => {
 
 
      
-      <div className='px-4 pt-4 pb-5 rounded-md' style={{ backgroundColor: 'var(--bg-color3)', color: 'var(--text-color)',border: 'var(--border)'}}>
+      <div className='px-4 pt-4 pb-5 rounded-md' >
             <div className="flex flex-col lg:flex-row justify-between items-center">
             <div className="flex justify-between lg:mb-5 items-center w-full lg:w-auto  ">
     <div className="flex lg:justify-center justify-center mb-4 lg:mb-0 text-gray-500 lg:mx-2 pb-1 items-center gap-5">
@@ -309,6 +309,7 @@ const AllClients = () => {
           <option value="equal">Clear</option>
         </select>
       </div>
+      
 <div className="w-full lg:w-auto">
     <input
       type="text"
@@ -324,10 +325,10 @@ const AllClients = () => {
           </div>
       </div>
 
-          <div  className="overflow-x-auto rounded-xl mx-2 text-center " style={{ }}>
+          <div  className="overflow-x-auto rounded-xl mx-2 text-center ">
           <table className="min-w-full text-center ">
             <thead className=" ">
-              <tr className="" style={{backgroundColor: 'var(--bg-color)' ,border: 'var(--border)',borderLeft: 'var(--border)', borderRight: 'var(--border)', color: 'var(--text-color)'}}>
+              <tr className="tr1" >
                  <th className="p-3 text-center">{filteredCampaigns.length}</th>
                  <th className="p-3 text-left">Client Name</th>
                  <th className="p-3 text-left">Contact Number</th>

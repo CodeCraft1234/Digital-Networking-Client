@@ -180,7 +180,7 @@ const handleUpdate2 = (ids, id, status) => {
       />
     </div>
   );
-  
+  console.log(filteredCampaigns);
   
   return (
     <div>
@@ -189,7 +189,9 @@ const handleUpdate2 = (ids, id, status) => {
           <link rel="canonical" href="https://www.example.com/" />
         </Helmet>
 
-      <div className='side-space'>
+       
+
+         <div className='lg:block hidden'>
 
       <div className="flex flex-col mb-5 sm:flex-row justify-end items-center gap-3">
 
@@ -213,13 +215,14 @@ const handleUpdate2 = (ids, id, status) => {
   value={selectedYear}
   onChange={(e) => setSelectedYear(e.target.value)}
 >
-  <option value="">Select Year</option> {/* Default option */}
-  {Array.from({ length: 2035 - 2024 + 1 }, (_, i) => 2024 + i).map((year) => (
+  <option value="all">Select Year</option> {/* Default option */}
+  {Array.from({ length: new Date().getFullYear() - 2024 + 1 }, (_, i) => 2024 + i).map((year) => (
     <option key={year} value={year}>
       {year}
     </option>
   ))}
 </select>
+
 
 
 
@@ -241,26 +244,87 @@ const handleUpdate2 = (ids, id, status) => {
             <thead className=" ">
               <tr className="tr1" >
                 <th className=" text-center">{filteredCampaigns.length}</th>
-                {
-                  userr?.role === 'admin' &&  
-                  <th > Employee Name</th>
-                }
-                <th >Client Name</th>
-                <th >Campaign Name</th>
-                <th >Ads Account</th>
+                <th className="flex justify-start items-center">Client Name</th>
+                <th >Phone</th>
+                <th >Campaign</th>
+                <th >Ads</th>
                 <th >Budged</th>
                 <th >Spend</th>
                 <th >Bill</th>
-                <th >Date</th>
-                <th className="text-center">Action</th>
+                <th >Status</th>
               </tr>
             </thead>
             <tbody>
             {filteredCampaigns
   ?.map((work, index) => (
-<tr key={index} className="tr2">
+    <tr 
+    key={work.id}
+    className={`${
+      index % 2 === 0
+        ? "bg-white text-left text-black border-b border-opacity-20"
+        : "bg-gray-100  text-left text-black border-b border-opacity-20"
+    }`}
+  >
 
-<td className="text-center">
+      <td>
+        {index + 1}
+      </td>
+
+              {
+            userr?.role === 'admin' &&    <td>  <Link
+       
+            to={`/client/${work.id}`}
+          >
+            <div className='flex justify-start items-center gap-2'>
+              <img className='h-10 w-10 rounded-full object-cover' src={allEmployees.find(f => f.email === work.email)?.photo} alt="" />
+             <p className="text-start ">
+             <p className="text-lg flex justify-start items-center gap-1 ">{truncateText(work.clientName, 4)}</p>
+             <h1> {allEmployees?.find(f => f.email === work.email)?.name || 'N/A'}</h1>
+             </p>
+              </div>
+              </Link>
+          </td>
+          }
+
+
+          <td>
+         {work.clientPhone}
+          </td>
+
+          <td>
+            <Link
+              to={`/client/${work.id}`}
+              className="flex gap-2 items-center hover:font-bold"
+            >
+          <div className="flex items-center justify-between w-full ">
+            {/* Left Side: Name & Phone (Stacked) */}
+            <div className="flex flex-col space-y-1">
+              <p className="text-sm flex justify-start items-center gap-1 ">{truncateText(work.campaignName, 4)}</p>
+              <p className="text-start">{new Date(work?.date).toLocaleDateString("en-GB")}</p>
+            </div>
+          
+          
+          </div>
+          
+            </Link>
+          </td>
+          <td>
+         {work.adsAccount}
+          </td>
+          <td>
+          <span><span className="amount-doller">$</span><span className="ml-1">{work.tBudged}</span></span>
+          </td>
+          <td>
+          <span><span className="amount-doller">$</span><span className="ml-1">{work.tSpent}</span></span>
+          </td>
+          <td>
+          <span> <span className="amount-taka">৳ </span><span className="ml-1">{parseInt(work.tSpent * work.dollerRate)}</span></span>
+          </td>
+
+
+
+
+  <td className="text-center">
                       <label className="status-label">
                       <input
                         type="checkbox"
@@ -276,129 +340,6 @@ const handleUpdate2 = (ids, id, status) => {
                     </label>
                     
                       </td>
-
-
-              {
-            userr?.role === 'admin' &&    <td>  <Link
-       
-            to={`/client/${work.id}`}
-          >
-            <div className='flex justify-start items-center gap-2'>
-              <img className='h-10 w-10 rounded-full object-cover' src={allEmployees.find(f => f.email === work.email)?.photo} alt="" />
-              <h1> {allEmployees?.find(f => f.email === work.email)?.name || 'N/A'}</h1>
-              </div>
-              </Link>
-          </td>
-          }
-
-
-              <td><Link to={`/client/${work.id}`}>{truncateText(work.clientName, 4)}</Link></td>
-             <td>
-
-     
-      <span>
-        {truncateText(work.campaignName, 4)}
-      </span>
-
-
-  </td>
-
- 
-  <td>{work.adsAccount}</td>
-  <td> <span className="amount-doller">$</span> {work.tBudged}</td>
-  <td> <span className="amount-doller">$</span> {work.tSpent}</td>
-  <td>
-  <span className="amount-taka">৳ </span>
-    {parseInt(work.tSpent * work.dollerRate)}
-  </td>
-  <td>{new Date(work?.date).toLocaleDateString("en-GB")}</td>
-
-  <td className="text-center">
-      <div className="flex justify-center items-center gap-1">
-      <button
-        className="delete"
-        onClick={() => handledelete(work.ids, work.id)}
-      >
-        <FaMinusSquare />
-      </button>
-
-      <button
-      className=" edit flex justify-center items-center gap-1 px-2 py-1 rounded"
-      onClick={() =>
-        document.getElementById(`modal_${work.ids}`).showModal()
-      }
-    >
-      <FaEdit />
-     
-    </button>
-      </div>
-
-    <dialog id={`modal_${work.ids}`} className="modal">
-      <div className="modal-box bg-white text-black">
-        <form onSubmit={(e) => handleUpdate(e, work.ids, work.id)}>
-
-                <h1
-                      className="text-black hover:text-red-500 f-end"
-                      onClick={() =>
-                        document.getElementById(`modal_${work.ids}`).close()
-                      }
-                    >
-                      <ImCross />
-                    </h1>
-
-          <InputField
-            label="Campaign Name"
-            name="campaignName"
-            defaultValue={work.campaignName}
-          />
-          <InputField
-            label="Account Name"
-            name="adsAccount"
-            defaultValue={work.adsAccount}
-            disabled
-          />
-        <div className="grid lg:grid-cols-3 gap-3">
-        <InputField
-            label="Total Budget"
-            name="tBudged"
-            defaultValue={work.tBudged}
-            type="number"
-          />
-          <InputField
-            label="Total Spent"
-            name="totalSpent"
-            defaultValue={work.tSpent}
-            type="number"
-          />
-          <InputField
-            label="Dollar Rate"
-            name="dollerRate"
-            defaultValue={work.dollerRate}
-            type="number"
-          />
-        </div>
-
-          <div className="grid grid-cols-2 gap-3 mt-4">
-            <button
-              type="button"
-              className="close"
-              onClick={() =>
-                document.getElementById(`modal_${work.ids}`).close()
-              }
-            >
-              Close
-            </button>
-            <button
-              type="submit"
-              className="add"
-            >
-              Update
-            </button>
-          </div>
-        </form>
-      </div>
-    </dialog>
-  </td> 
 </tr>
 
 
@@ -412,20 +353,20 @@ const handleUpdate2 = (ids, id, status) => {
                   Total:
                 </td>
             }
-  
-  <td>
-  <span className="amount-taka">$</span> {new Intl.NumberFormat('en-IN', { maximumFractionDigits: 2 }).format(
+
+            <td>
+            <span><span className="amount-doller">$</span><span className="ml-1">{new Intl.NumberFormat('en-IN', { maximumFractionDigits: 2 }).format(
      filteredCampaigns
         ?.reduce((acc, work) => acc + (isNaN(parseFloat(work?.tBudged)) ? 0 : parseFloat(work?.tBudged)), 0)
-    )}
-  </td>
-  
-  <td>
-  <span className="amount-taka">$</span> {new Intl.NumberFormat('en-IN', { maximumFractionDigits: 2 }).format(
+    )}</span></span>
+            </td>
+            <td>
+            <span><span className="amount-doller">$</span><span className="ml-1">{new Intl.NumberFormat('en-IN', { maximumFractionDigits: 2 }).format(
       filteredCampaigns
         .reduce((acc, work) => acc + (isNaN(parseFloat(work?.tSpent)) ? 0 : parseFloat(work?.tSpent)), 0)
-    )}
-  </td>
+    )}</span></span>
+            </td>
+
 
   <td>
     <span className="amount-taka">৳ </span>
@@ -435,6 +376,7 @@ const handleUpdate2 = (ids, id, status) => {
     )}
   </td>
 
+  <td className=""></td>
   <td className=""></td>
   <td className=""></td>
 </tr>
@@ -514,7 +456,116 @@ const handleUpdate2 = (ids, id, status) => {
 </div>
 
         </div>
+
         </div>
+
+       <div className="bg-white font-sans pt-20 pb-20  mt-8 lg:max-w-2xl lg:hidden mx-auto text-sm">
+       
+       
+       
+       
+       
+             {filteredCampaigns.map((payment) => (
+               <div key={payment._id} className="px-3 py-2 sm:px-4 sm:py-3 border-b hover:bg-gray-50 transition-colors">
+                 <div className="flex items-start justify-between gap-2 sm:gap-3">
+                   {/* Left Content */}
+                   <div className="flex-1">
+                     <div className="flex items-start justify-start text-start gap-2 sm:gap-3">
+                       {/* Image */}
+                       <div className="flex-shrink-0">
+                         <img
+                           className="h-7 w-7 sm:h-8 sm:w-8 rounded-full object-cover"
+                           src={allEmployees.find(f => f.email === payment.email)?.photo}
+                           alt=""
+                         />
+       
+       <label className="status-label mt-3">
+                         <input
+                           type="checkbox"
+                           className="sr-only"
+                           checked={(payment?.status || "Approved") !== "pending"}
+                           onChange={() => {
+                             const currentStatus = payment?.status || "Approved";
+                             const newStatus = currentStatus !== "pending" ? "pending" : "Approved";
+                             handleUpdate2(payment.ids, payment.id, newStatus);
+                           }}
+                         />
+                         <div className={`status-switch ${(payment?.status || "Approved") !== "pending" ? "active" : "inactive"}`}>
+                           <span className={`status-switch-thumb ${(payment?.status || "Approved") !== "pending" ? "active" : ""}`}></span>
+                         </div>
+                       </label>
+                       </div>
+       
+                       {/* Names */}
+                       <div className="flex flex-col text-start justify-start items-start">
+                       <div className="flex justify-start text-start items-center gap-1">
+                           <Link
+                             to={`/client/${payment?.clientEmail}`}
+                             className="text-black text-sm sm:text-base hover:text-blue-800 transition-colors"
+                           >
+                             
+                             {truncateText(payment.campaignName, 4)}
+                           </Link>
+                         </div>
+                         {/* <div className="flex justify-start text-start items-center gap-1">
+                           <Link
+                             to={`/client/${payment?.clientEmail}`}
+                             className="text-[14px] sm:text-xs text-gray-500"
+                           >
+                             {payment?.clientName}
+                           </Link>
+                         </div> */}
+                         <div className="flex justify-start text-start items-center gap-1">
+                           <p
+                            
+                             className="text-[14px] sm:text-xs text-gray-500"
+                           >
+                             {payment?.clientName}
+                           </p>
+                         </div>
+                         
+                         <p className="text-[10px] sm:text-xs text-gray-500">
+                         {new Date(payment.date)?.toLocaleString("en-GB", {
+                           hour: "2-digit",
+                           minute: "2-digit",
+                           hour12: true,
+                           day: "2-digit",
+                           month: "2-digit",
+                           year: "2-digit",
+                         })}
+                       </p>
+                       </div>
+                     </div>
+       
+                   </div>
+       
+                   {/* Right Content */}
+                   <div className="text-right">
+              
+                     <p className="text-gray-800">
+              <span className="font-medium text-gray-600">Budget:</span>{" "}
+              <span className="text-red-600 font-bold">৳ {payment?.tBudged?.toLocaleString()}</span>
+            </p>
+                     <p className="text-gray-800">
+              <span className="font-medium text-gray-600">Spend:</span>{" "}
+              <span className="text-red-600 font-bold">৳ {payment?.tSpent?.toLocaleString()}</span>
+            </p>
+                     <p className="text-gray-800">
+              <span className="font-medium text-gray-600">Bill:</span>{" "}
+              <span className="text-red-600 font-bold">৳ {parseInt(payment.tSpent * payment.dollerRate)?.toLocaleString()}</span>
+            </p>
+                     <div>
+                     
+                       
+                     </div>
+       
+                   </div>
+                 </div>
+               </div>
+             ))}
+       
+
+           </div>
    
     </div>
   );

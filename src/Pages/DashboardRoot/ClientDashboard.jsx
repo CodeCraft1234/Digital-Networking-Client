@@ -1,16 +1,16 @@
-import { Link, NavLink } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import { RxDashboard } from "react-icons/rx";
 import { MdAccountCircle, MdOutlinePayments } from "react-icons/md";
-import { useContext, useEffect, useState } from "react";
-import { AuthContext } from "../../Security/AuthProvider";
+import { useEffect, useState } from "react";
 import { SiGoogleads, SiMeta } from "react-icons/si";
 import { RiPagesFill } from "react-icons/ri";
+import { hover } from "framer-motion";
 
 const ClientDashboard = () => {
-  const { user } = useContext(AuthContext);
+
   const getActiveStyle = (isActive) => (
     isActive
-      ? { backgroundColor: '#05a0db', color: 'white' }
+      ? { backgroundColor: '#0B3A84', color: 'white' }
       : {}
   );
 
@@ -27,31 +27,23 @@ const ClientDashboard = () => {
   };
 
   return (
-    <div className="w-[225px]  text-white bg-gray-900 -mt-3 -ml-2 pr-2 min-h-screen">
-      <div >
-        <div className="flex  items-center justify-center py-4">
-          <Link to={"/"}>
-            <img
-              className="w-24"
-              src="https://i.ibb.co/rvH9Bz0/Logo-01.png"
-              alt="Logo"
-            />
-          </Link>
-        </div>
-        <ul className="space-y-1">
-        
-          <NavLink
-            to="/"
-            className="text-white hover:bg-[#f89320] hover:text-black py-2 px-4 rounded-lg flex items-center"
-            style={({ isActive }) => getActiveStyle(isActive)}
-          >
-            <RxDashboard className="w-6 h-6 mr-2" />
-            Dashboard
-          </NavLink>
+    <div  className="w-[205px]  text-white bg-gray-800 pt-10 -ml-2 pr-2 min-h-screen">
+    <div className="">
+
+      <ul className=" ">
+
+        <NavLink
+          to="/"
+          className="text-white hover:bg-[#0B3A84]  py-2 px-3 rounded-lg flex items-center text-lg"
+          style={({ isActive }) => getActiveStyle(isActive)}
+        >
+          <RxDashboard className="w-6 h-6 mr-2" />
+          Dashboard
+        </NavLink>
       
           <NavLink
             to={`/client/metaAds/${clientUser}`}
-            className="text-white hover:bg-[#f89320] hover:text-black py-2 px-4 rounded-lg flex items-center"
+            className="text-white hover:bg-[#0B3A84] py-2 px-4 rounded-lg flex items-center"
             style={({ isActive }) => getActiveStyle(isActive)}
             onClick={() => changeTab('metaAds')}
           >
@@ -61,7 +53,7 @@ const ClientDashboard = () => {
 
           <NavLink
             to={`/client/googleAds/${clientUser}`}
-            className="text-white hover:bg-[#f89320] hover:text-black py-2 px-4 rounded-lg flex items-center"
+            className="text-white hover:bg-[#0B3A84] py-2 px-4 rounded-lg flex items-center"
             style={({ isActive }) => getActiveStyle(isActive)}
             onClick={() => changeTab('googleAds')}
           >
@@ -70,7 +62,7 @@ const ClientDashboard = () => {
           </NavLink>
           <NavLink
             to={`/client/pageSetup/${clientUser}`}
-            className="text-white hover:bg-[#f89320] hover:text-black py-2 px-4 rounded-lg flex items-center"
+            className="text-white hover:bg-[#0B3A84] py-2 px-4 rounded-lg flex items-center"
             style={({ isActive }) => getActiveStyle(isActive)}
             onClick={() => changeTab('metaAds')}
           >
@@ -80,7 +72,7 @@ const ClientDashboard = () => {
          
           <NavLink
             to={`/client/payments/${clientUser}`}
-            className="text-white hover:bg-[#f89320] hover:text-black py-2 px-4 rounded-lg flex items-center"
+            className="text-white hover:bg-[#0B3A84] py-2 px-4 rounded-lg flex items-center"
             style={({ isActive }) => getActiveStyle(isActive)}
             onClick={() => changeTab('metaAds')}
           >
@@ -89,7 +81,7 @@ const ClientDashboard = () => {
           </NavLink>
           <NavLink
             to={`/client/summery/${clientUser}`}
-            className="text-white hover:bg-[#f89320] hover:text-black py-2 px-4 rounded-lg flex items-center"
+            className="text-white hover:bg-[#0B3A84] py-2 px-4 rounded-lg flex items-center"
             style={({ isActive }) => getActiveStyle(isActive)}
             onClick={() => changeTab('metaAds')}
           >
@@ -98,12 +90,22 @@ const ClientDashboard = () => {
           </NavLink>
           <NavLink
             to={`/bankInfo`}
-            className="text-white hover:bg-[#f89320] hover:text-black py-2 px-4 rounded-lg flex items-center"
+            className="text-white hover:bg-[#0B3A84] py-2 px-4 rounded-lg flex items-center"
             style={({ isActive }) => getActiveStyle(isActive)}
             onClick={() => changeTab('metaAds')}
           >
             <MdAccountCircle className="w-6 h-6 mr-2" />
             Bank Info
+          </NavLink>
+
+          <NavLink
+            to={`/client-profile-update/${clientUser}`}
+            className="text-white hover:bg-[#0B3A84] py-2 px-4 rounded-lg flex items-center"
+            style={({ isActive }) => getActiveStyle(isActive)}
+            onClick={() => changeTab('metaAds')}
+          >
+            <MdAccountCircle className="w-6 h-6 mr-2" />
+            Update Profile
           </NavLink>
 
         </ul>

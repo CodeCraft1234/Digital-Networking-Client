@@ -11,13 +11,14 @@ const AdsDashboard = () => {
 
   const getActiveStyle = (isActive) => (
     isActive
-      ? { backgroundColor: 'var(--bg-color)', color: 'var(--text-color)' }
+      ? { backgroundColor: '#0B3A84', color: 'white' }
       : {}
   );
 
   return (
-    <div className="w-[225px]  text-white bg-gray-900 -mt-3 -ml-2 pr-2 min-h-screen">
-      <div className="">
+    <div  className="w-[205px]  text-white bg-gray-800 pt-10 -ml-2 pr-2 min-h-screen">
+    <div className="">
+
         <div className="flex  items-center justify-center py-4">
           <Link to={"/"}>
             <img
@@ -67,7 +68,7 @@ const AdsDashboard = () => {
             className="text-white hover:bg-[#f89320] hover:text-black py-2 px-4 rounded-lg flex items-center"
             style={({ isActive }) => getActiveStyle(isActive)}>
             <FaHistory className="w-6 h-6 mr-2" />
-            Monthly Spend
+            Spend
           </NavLink>
 
           <NavLink

@@ -1,17 +1,36 @@
 import { useQuery } from "@tanstack/react-query";
 import UseAxiosPublic from "../Axios/UseAxiosPublic";
 
-const useClientsPaymentsPage = (email, page = 1, sortMonth, selectedYear) => {
+const useClientsPaymentsPage = (
+  email,
+  selectedPaymentMethod = 'all',  // ✅ new parameter
+  page = 1,
+  sortMonth,
+  selectedYear,
+  userr,
+  selectedStatus2
+) => {
   const AxiosPublic = UseAxiosPublic();
+  const status = selectedStatus2;
 
   const { refetch, data = {} } = useQuery({
-    queryKey: ["clientPayments", email, page, sortMonth, selectedYear],
+    queryKey: [
+      "clientPayments",
+      email,
+      selectedPaymentMethod,
+      page,
+      sortMonth,
+      selectedYear,
+      status,
+    ],
     queryFn: async () => {
       const queryParams = new URLSearchParams({
         page: page.toString(),
         limit: "100",
         month: sortMonth || "",
         year: selectedYear || "",
+        status: status || "all",
+        paymentMethod: selectedPaymentMethod || "all", // ✅ include in query
       });
 
       const res = await AxiosPublic.get(`/client/payments/${email}?${queryParams.toString()}`);

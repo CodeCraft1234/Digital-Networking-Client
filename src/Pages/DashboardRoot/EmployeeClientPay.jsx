@@ -98,7 +98,7 @@ const EmployeeClientPay = ({email}) => {
     };
 
     AxiosPublic.patch(
-      `https://hishab-2025-pi.vercel.app/Mpayment/${selectedPayment._id}`,
+      `https://hishab-202555.vercel.app/Mpayment/${selectedPayment._id}`,
       updatedPayment
     ).then((res) => {
       handleCancel();

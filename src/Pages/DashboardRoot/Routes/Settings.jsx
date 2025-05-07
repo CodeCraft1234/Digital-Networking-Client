@@ -13,12 +13,13 @@ const Settings = () => {
       
       const costRate = e.target.costRate.value;
       const coinRate = e.target.coinRate.value;
+      const contributorRate = e.target.contributorRate.value;
       const salaryRate = e.target.salaryRate.value;
       const metaRate = e.target.metaRate.value;
       const googleRate = e.target.googleRate.value;
       const tiktokRate = e.target.tiktokRate.value;
     
-      const data = { salaryRate,coinRate, costRate, metaRate, googleRate, tiktokRate };
+      const data = { salaryRate,coinRate,contributorRate, costRate, metaRate, googleRate, tiktokRate };
     
       try {
         await AxiosPublic.post("/rates", data);
@@ -34,6 +35,7 @@ const Settings = () => {
     // State to display the fetched rates
     const [salaryRate, setSalaryRate] = useState(rates?.salaryRate || ""); 
     const [coinRate, setCoinRate] = useState(rates?.coinRate || ""); 
+    const [contributorRate, setContributorRate] = useState(rates?.contributorRate || ""); 
     const [costRate, setCostRate] = useState(rates?.costRate || ""); 
     const [metaRate, setMetaRate] = useState(rates?.metaRate || ""); 
     const [googleRate, setGoogleRate] = useState(rates?.googleRate || ""); 
@@ -43,6 +45,7 @@ const Settings = () => {
     useEffect(() => {
       setSalaryRate(rates?.salaryRate || "");
       setCoinRate(rates?.coinRate || "");
+      setContributorRate(rates?.contributorRate || "");
       setCostRate(rates?.costRate || "");
       setMetaRate(rates?.metaRate || "");
       setGoogleRate(rates?.googleRate || "");
@@ -61,6 +64,7 @@ const Settings = () => {
           { label: "Google Rate", name: "googleRate", type: "number", value: googleRate },
           { label: "Tiktok Rate", name: "tiktokRate", type: "number", value: tiktokRate },
           { label: "Coin Rate", name: "coinRate", type: "number", value: coinRate, },
+          { label: "Contributor Rate", name: "contributorRate", type: "number", value: contributorRate, },
         ].map((field, i) => (
           <div key={i} className={` ${field.fullWidth ? "lg:col-span-2" : ""}`}>
             <label className="block">{field.label}</label>

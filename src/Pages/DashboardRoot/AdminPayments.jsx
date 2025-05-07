@@ -11,6 +11,7 @@ import BalanceCard from "./BalanceCard";
 import "react-datepicker/dist/react-datepicker.css";
 import useAdminPaymentsPage from "../../Hook/useAdminPaymentsPage";
 import useAdminPayPageTotal from "../../Hook/useAdminPayPageTotal";
+import { IoIosAddCircleOutline } from "react-icons/io";
 
 const AdminPayments = () => {
   const { user } = useContext(AuthContext);
@@ -67,6 +68,8 @@ const { adminPay, totalItems, totalPages, refetch } = useAdminPaymentsPage(
   selectedYear
 );
 
+console.log(adminPay);
+
 
 const handlePageChange = (page) => {
   setCurrentPage(page);
@@ -79,7 +82,6 @@ const [totals] = useAdminPayPageTotal( selectedEmployee3,
   sortMonth,
   currentPage,
   selectedYear)
-
 
   useEffect(() => {
     const filtered = adminPay.filter((payment) => {
@@ -299,7 +301,9 @@ const displayedItems = adminPay?.sort((a, b) => new Date(b.date) - new Date(a.da
     { category: 'DBBLBank', img: 'https://i.ibb.co/nnN8KW0/DBBL.png', bgColor: '#f2f2f2' },
     { category: 'IBBLBank', img: 'https://i.ibb.co.com/pnS6nt4/IBBLBank.png', bgColor: '#f2f2f2' },
     { category: 'bkashPersonal', img: 'https://i.ibb.co/520Py6s/bkash-1.png', bgColor: '#ffe6f7' },
+    { category: 'bkashMarchent', img: 'https://i.ibb.co/bHMLyvM/b-Kash-Merchant.png', bgColor: '#ffe6f7' },
     { category: 'nagadPersonal', img: 'https://i.ibb.co/JQBQBcF/nagad-marchant.png', bgColor: '#fff2cc' },
+    { category: 'nagadMarchent', img: 'https://i.ibb.co/WsDkLzc/Nagad-Marchant.png.png', bgColor: '#fff2cc' },
   ];
 
   return (
@@ -308,7 +312,7 @@ const displayedItems = adminPay?.sort((a, b) => new Date(b.date) - new Date(a.da
 
 
 
-<div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 lg:gap-4 rounded-lg">
+<div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-8 gap-3 lg:gap-4 rounded-lg">
   {cards.map(({ category, img }) => (
 
 <div onClick={() => setSelectedCategory(category)} key={category}>
@@ -323,11 +327,11 @@ const displayedItems = adminPay?.sort((a, b) => new Date(b.date) - new Date(a.da
  
          <div 
                  onClick={() => setSelectedCategory('all')}
-                 style={{ backgroundColor: '#f7e8e8', border: 'var(--border)' }} 
-                   className="balance-card rounded-2xl  text-center shadow-xl transition-transform transform hover:scale-105"
+                 
+                   className="card-div bg-[#ffffff] border border-gray-500 rounded-2xl p-5 text-center shadow-xl transition-transform transform hover:scale-105"
                  >
-                   <h1 className="px-3 text-black text-xl font-bold text-center">TOTAL</h1>
-                   <p className="card-title pb-5">
+                   <h1 className=" text-black text-lg font-bold text-center">TOTAL BDT</h1>
+                   <p className="text-black text-md mt-3 font-bold text-center ">
   <span>৳ </span>
   {new Intl.NumberFormat('en-IN').format(
         Object.values(totals).reduce((sum, val) => sum + val, 0)
@@ -342,25 +346,36 @@ const displayedItems = adminPay?.sort((a, b) => new Date(b.date) - new Date(a.da
 
 
 
-     <div className="side-space mt-5">
+     <div className=" my-5">
 
      <div className="flex flex-col md:flex-row justify-start lg:justify-between items-center gap-5 ">
     <div className="flex justify-start">
-      {
+      {/* {
         userr?.role === 'admin' ? <button
-        className="font-avenir px-6 hover:bg-indigo-700 py-2 bg-[#05a0db] rounded-lg text-white"
+        className="add"
         onClick={() => document.getElementById("my_modal_1").showModal()}
       >
-        Pay Now
+        <span className="font-bold text-lg">
+                           <IoIosAddCircleOutline />
+                         </span>
+                         <span className="inline ml-1">
+                         Pay Now
+              </span> 
+       
       </button> :  <button
-      className="font-avenir px-6 hover:bg-indigo-700 py-2 bg-[#05a0db] rounded-lg text-white"
+      className="add"
       onClick={() => document.getElementById("my_modal_1").showModal()}
     >
-      Pay Admin
+      <span className="font-bold text-lg">
+                         <IoIosAddCircleOutline />
+                       </span>
+                       <span className="inline ml-1">
+                       Pay Admin
+            </span> 
     </button>
-      }
+      } */}
    
-    <dialog id="my_modal_1" className="modal">
+    {/* <dialog id="my_modal_1" className="modal">
   <div className="modal-box bg-white text-black font-bold">
     <form onSubmit={(e) => handlePayment(e)}>
       <h1
@@ -426,6 +441,8 @@ const displayedItems = adminPay?.sort((a, b) => new Date(b.date) - new Date(a.da
             { value: "IBBLBank", label: "Islami Bank" },
             { value: "bkashPersonal", label: "bKash" },
             { value: "nagadPersonal", label: "Nagad" },
+            { value: "bkashMarchent", label: "bKash Marchent" },
+            { value: "nagadMarchent", label: "Nagad Marchent" },
           ].map(({ value, label }) => (
             <div className="form-control" key={value}>
               <label className="label flex justify-start items-center gap-2 cursor-pointer">
@@ -465,7 +482,7 @@ const displayedItems = adminPay?.sort((a, b) => new Date(b.date) - new Date(a.da
       </div>
     </form>
   </div>
-</dialog>
+</dialog> */}
 
 
   </div>
@@ -501,20 +518,19 @@ const displayedItems = adminPay?.sort((a, b) => new Date(b.date) - new Date(a.da
 </select>
 
 
-          <select
+<select
   className="select2"
   value={selectedYear}
   onChange={(e) => setSelectedYear(e.target.value)}
 >
-  <option value="">Select Year</option> 
-  {[...new Set(adminPay?.map((campaign) => new Date(campaign.date).getFullYear()))]
-    .sort((a, b) => a - b) 
-    .map((year) => (
-      <option key={year} value={year}>
-        {year}
-      </option>
-    ))}
+  <option value="all">Select Year</option> {/* Default option */}
+  {Array.from({ length: new Date().getFullYear() - 2024 + 1 }, (_, i) => 2024 + i).map((year) => (
+    <option key={year} value={year}>
+      {year}
+    </option>
+  ))}
 </select>
+
    
           <select
   className="select2 "
@@ -534,7 +550,7 @@ const displayedItems = adminPay?.sort((a, b) => new Date(b.date) - new Date(a.da
 
         </div>
 
-       <div className="table-div mt-4">
+       <div className="table-div mt-5">
           <table className="min-w-full  text-center ">
             <thead>
               <tr className="tr1">
@@ -555,7 +571,7 @@ const displayedItems = adminPay?.sort((a, b) => new Date(b.date) - new Date(a.da
                   userr?.role !== 'admin' &&  
                   <th className="text-center "> Status</th>
                 }
-              <th className="text-center ">Action</th>
+           
             </tr>
           </thead>
           <tbody>
@@ -604,79 +620,9 @@ const displayedItems = adminPay?.sort((a, b) => new Date(b.date) - new Date(a.da
                 <td>
                 <div className='flex justify-start items-center gap-2'>
               <img className='h-10 w-10 rounded-full object-cover' src={allEmployees.find(f => f.email === payment.employeeEmail)?.photo} alt="" />
-              <h1>  {payment.employeeName}</h1>
-              </div>
-                 
-                </td>
-}
-                <td>
-                <span className="amount-taka">৳ </span> {payment.payAmount}
-                </td>
-                <td>
-                <span className="amount-taka">৳ </span> {payment.charge || 0}
-                </td>
+              <h1>  {payment.employeeName}
 
-                <td>
-  {[
-    { 
-      method: "bkashPersonal", 
-      src: "https://i.ibb.co.com/f8LcKV0/bKash.png", 
-      width: "w-24" 
-    },
-    { 
-      method: "rocketPersonal", 
-      src: "https://i.ibb.co/QkTM4M3/rocket.png", 
-      width: "w-24" 
-    },
-    { 
-      method: "nagadPersonal", 
-      src: "https://i.ibb.co/JQBQBcF/nagad-marchant.png", 
-      width: "w-24" 
-    },
-    { 
-      method: "DBBLBank", 
-      src: "https://i.ibb.co.com/nnN8KW0/DBBL.png", 
-      width: "w-32" 
-    },
-    { 
-      method: "IBBLBank", 
-      src: "https://i.ibb.co.com/pnS6nt4/IBBLBank.png", 
-      width: "w-32" 
-    },
-    { 
-      method: "bank", 
-      src: "https://i.ibb.co/PZc0P4w/brac-bank-seeklogo.png", 
-      width: "w-13", 
-      height: "h-12" 
-    },
-  ].map(
-    ({ method, src, width, height = "h-10" }) =>
-      payment.paymentMethod === method && (
-        <img
-          key={method}
-          className={`${height} ${width} flex my-auto items-center mx-auto justify-center`}
-          src={src}
-          alt={method}
-        />
-      )
-  )}
-               </td>
-
-               <td>
-                 {payment.note?.split(" ").slice(0, 4).join(" ") + (payment.note?.split(" ").length > 4 ? "..." : "")}
-            </td>
-          
-         
- 
-
-                {userr?.role === 'employee' &&
-                <td className="text-center">
-                  <h1 className={`${payment.status !== "pending" ? "text-blue-700 font-bold" : ""}`}> {payment?.status}</h1>
-               
-              </td>
-                }
-                 <td>
-                <div className="f-center ">
+              <div className="f-start ">
                 <button
                     className="delete"
                     onClick={() => handleDelete(payment._id,payment?.note,payment.paymentMethod,payment?.charge,payment?.payAmount,payment.date)}
@@ -745,6 +691,8 @@ const displayedItems = adminPay?.sort((a, b) => new Date(b.date) - new Date(a.da
     { value: "IBBLBank", label: "Islami Bank" },
     { value: "bkashPersonal", label: "bKash" },
     { value: "nagadPersonal", label: "Nagad" },
+    { value: "bkashMarchent", label: "bKash Marchent" },
+    { value: "nagadMarchent", label: "Nagad Marchent" },
   ].map(({ value, label }) => (
     <div className="form-control" key={value}>
       
@@ -796,7 +744,88 @@ const displayedItems = adminPay?.sort((a, b) => new Date(b.date) - new Date(a.da
   </div>
                  </dialog>
                  </div>
+              </h1>
+              </div>
+                 
                 </td>
+}
+                <td>
+                <span className="amount-taka">৳ </span> {payment.payAmount}
+                </td>
+                <td>
+                <span className="amount-taka">৳ </span> {payment.charge || 0}
+                </td>
+
+                <td>
+  {[
+    { 
+      method: "bkashPersonal", 
+      src: "https://i.ibb.co.com/f8LcKV0/bKash.png", 
+      width: "w-24" 
+    },
+    { 
+      method: "bkashMarchent", 
+      src: "https://i.ibb.co/bHMLyvM/b-Kash-Merchant.png", 
+      width: "w-24" 
+    },
+    { 
+      method: "rocketPersonal", 
+      src: "https://i.ibb.co/QkTM4M3/rocket.png", 
+      width: "w-24" 
+    },
+    { 
+      method: "nagadPersonal", 
+      src: "https://i.ibb.co/JQBQBcF/nagad-marchant.png", 
+      width: "w-24" 
+    },
+    { 
+      method: "nagadMarchent", 
+      src: "https://i.ibb.co/WsDkLzc/Nagad-Marchant.png", 
+      width: "w-24" 
+    },
+    { 
+      method: "DBBLBank", 
+      src: "https://i.ibb.co.com/nnN8KW0/DBBL.png", 
+      width: "w-32" 
+    },
+    { 
+      method: "IBBLBank", 
+      src: "https://i.ibb.co.com/pnS6nt4/IBBLBank.png", 
+      width: "w-32" 
+    },
+    { 
+      method: "bank", 
+      src: "https://i.ibb.co/PZc0P4w/brac-bank-seeklogo.png", 
+      width: "w-13", 
+      height: "h-12" 
+    },
+  ].map(
+    ({ method, src, width, height = "h-10" }) =>
+      payment.paymentMethod === method && (
+        <img
+          key={method}
+          className={`${height} ${width} flex my-auto items-center mx-auto justify-center`}
+          src={src}
+          alt={method}
+        />
+      )
+  )}
+               </td>
+
+               <td>
+                 {payment.note?.split(" ").slice(0, 4).join(" ") + (payment.note?.split(" ").length > 4 ? "..." : "")}
+            </td>
+          
+         
+ 
+
+                {userr?.role === 'employee' &&
+                <td className="text-center">
+                  <h1 className={`${payment.status !== "pending" ? "text-blue-700 font-bold" : ""}`}> {payment?.status}</h1>
+               
+              </td>
+                }
+              
               </tr>
             ))}
             <tr className="font-bold tr1">
@@ -815,7 +844,7 @@ const displayedItems = adminPay?.sort((a, b) => new Date(b.date) - new Date(a.da
   }).format(
     displayedItems
       ?.filter(f =>
-        ['nagadPersonal', 'bkashPersonal', 'bank', 'IBBLBank', 'DBBLBank'].includes(f.paymentMethod)
+        ['nagadPersonal', 'bkashPersonal','bkashMarchent', 'bank', 'IBBLBank', 'DBBLBank'].includes(f.paymentMethod)
       )
       .reduce((acc, item) => acc + (isNaN(parseFloat(item?.payAmount)) ? 0 : parseFloat(item?.payAmount)), 0)
   )}
@@ -827,17 +856,14 @@ const displayedItems = adminPay?.sort((a, b) => new Date(b.date) - new Date(a.da
   }).format(
     displayedItems
       ?.filter(f =>
-        ['nagadPersonal', 'bkashPersonal', 'bank', 'IBBLBank', 'DBBLBank'].includes(f.paymentMethod)
+        ['nagadPersonal', 'bkashPersonal','bkashPersonal','bkashMarchent', 'bank', 'IBBLBank', 'DBBLBank'].includes(f.paymentMethod)
       ).reduce((acc, item) => acc + (isNaN(parseFloat(item?.charge)) ? 0 : parseFloat(item?.charge)), 0)
   )}
               </td>
               <td></td> 
                <td></td>
-              <td></td>
-              {
-            userr?.role !== 'admin' && 
-            <td></td>
-          }
+            
+             
              
             </tr>
           </tbody>

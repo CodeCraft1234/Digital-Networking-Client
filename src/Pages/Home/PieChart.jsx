@@ -11,7 +11,7 @@ const PieChart = ({ data27, options27 }) => {
         color: "var(--text-color2)",
         
       }}
-      className="bg-gray-800 rounded-lg p-5"
+      className="bg-gray-800 rounded-lg "
     >
       <h1 className="font-bold text-xl rounded-t-lg border-gray-300 pb-3">
         Income Overview

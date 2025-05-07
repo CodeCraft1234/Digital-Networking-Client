@@ -1,4 +1,4 @@
-import { FaEdit, FaMinusSquare } from "react-icons/fa";
+import { FaEdit, FaMinusSquare, FaMoneyBillWave, FaPlusCircle } from "react-icons/fa";
 import { useContext, useState } from "react";
 import { toast } from "react-toastify";
 import UseAxiosPublic from "../../Axios/UseAxiosPublic";
@@ -10,6 +10,8 @@ import { AuthContext } from "../../Security/AuthProvider";
 import useUserr from "../../Hook/useUser";
 import { Helmet } from "react-helmet-async";
 import Swal from "sweetalert2";
+import { Link } from "react-router-dom";
+import useRates from "../../Hook/useRates";
 
 const MetaAdsAccount = ({data1}) => {
   const { user } = useContext(AuthContext);
@@ -97,7 +99,7 @@ const MetaAdsAccount = ({data1}) => {
       const ids=generateRandomId()
    
       const totalSpentt = parseFloat(totalSpent);
-      const data5 = { totalSpent:totalSpentt }
+      const data5 = { totalSpent:totalSpentt,date }
 
       const monthlySpent = {
         ids,
@@ -218,9 +220,9 @@ const MetaAdsAccount = ({data1}) => {
 ?.sort((a, b) =>
 a.accountName.localeCompare(b.accountName, undefined, { sensitivity: 'base' })
 )
-
+const { rates } = useRates();
     return (
-        <div style={{ backgroundColor: 'var(--bg-color3)', color: 'var(--text-color)',border: 'var(--border)'}} className=" rounded-lg ">
+        <div  className=" ">
  
            <Helmet>
             <title>
@@ -231,12 +233,12 @@ a.accountName.localeCompare(b.accountName, undefined, { sensitivity: 'base' })
 
 
 
-          <div>
+          <div className="hidden lg:block">
 
-           <div style={{ backgroundColor: 'var(--bg-color3)', color: 'var(--text-color)'}} className=" rounded-lg ">
+           <div  className=" rounded-lg ">
 
 
-            <div className="flex justify-between lg:justify-between  ml-5  my-5  mx-auto   items-center gap-3 ">
+            <div className="flex justify-between lg:justify-between    my-5  mx-auto   items-center gap-3 ">
             <div>
   {userr?.role !== "contributor" && (
     <button
@@ -253,90 +255,16 @@ a.accountName.localeCompare(b.accountName, undefined, { sensitivity: 'base' })
     </button>
   )}
 
-  <dialog id="my_modal_3" className="modal">
-    <div className="modal-box bg-white">
-      <form onSubmit={handleAddAdsAcount}>
-        <div className="mb-4">
-          <h1
-            className="text-black hover:text-red-500 f-end"
-            onClick={() => document.getElementById("my_modal_3").close()}
-          >
-            <ImCross />
-          </h1>
 
-          {/* Date Input */}
-          <div className="col-span-1">
-            <label className="block text-black">Date</label>
-            <input
-              required
-              type="date"
-              name="paymentDate"
-              defaultValue={formattedDate}
-              className="input2"
-            />
-          </div>
-
-          {/* Employee Selector */}
-          {userr?.role === "admin" && (
-            <div className="col-span-1 mt-4 w-full">
-              <label className="block text-black">
-                Select {data1 !== "contributor" ? "employee" : data1}
-              </label>
-              <select required className="select2 w-full" name="employeeEmail">
-                <option disabled selected value="">
-                  Select {data1 !== "contributor" ? "employee" : data1}
-                </option>
-                {allEmployees
-                  ?.filter(
-                    (f) => f.role === (data1 !== "contributor" ? "employee" : data1)
-                  )
-                  .map((employee) => (
-                    <option key={employee._id} value={employee.email}>
-                      {employee.name}
-                    </option>
-                  ))}
-              </select>
-            </div>
-          )}
-        </div>
-
-        {/* Account Name Input */}
-        <div className="mb-4">
-          <label className="block text-black">Account Name</label>
-          <input
-            type="text"
-            required
-            name="accountName"
-            placeholder="type here..."
-            className="input2"
-          />
-        </div>
-
-        {/* Modal Actions */}
-        <div className="modal-action grid grid-cols-2 gap-2">
-          <button
-            type="button"
-            className="close"
-            onClick={() => document.getElementById("my_modal_3").close()}
-          >
-            Close
-          </button>
-          <button type="submit" className="add">
-            Submit
-          </button>
-        </div>
-      </form>
-    </div>
-  </dialog>
 </div>
 
 
-<div className="f-center flex flex-col lg:flex-row flex-wrap gap-4 mr-5  items-center justify-center">
+<div className="f-center flex flex-col lg:flex-row flex-wrap gap-3 mr-5  items-center justify-center">
   {/* Employee Selector for Admin */}
   {userr?.role === "admin" && (
     <div className="w-full lg:w-auto flex justify-center">
       <select
-        className="select2 w-full lg:w-auto px-4 py-2 border rounded-md text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400"
+        className="select2 "
         value={selectedEmployee3}
         onChange={(e) => changeTab3(e.target.value)}
       >
@@ -362,7 +290,7 @@ a.accountName.localeCompare(b.accountName, undefined, { sensitivity: 'base' })
       name="status"
       value={selectedStatus}
       onChange={(e) => changeTab(e.target.value)}
-      className="select2 w-full lg:w-auto px-4 py-2 border rounded-md text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400"
+      className="select2 "
     >
       <option value="">Select Status</option>
       <option value="Active">Active</option>
@@ -375,7 +303,7 @@ a.accountName.localeCompare(b.accountName, undefined, { sensitivity: 'base' })
     <input
       type="text"
       placeholder="Search by campaign name"
-      className="input2 w-full lg:w-auto px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+      className="input2 "
       value={searchQuery}
       onChange={(e) => setSearchQuery(e.target.value)}
     />
@@ -387,7 +315,7 @@ a.accountName.localeCompare(b.accountName, undefined, { sensitivity: 'base' })
           
             </div>
          
-            <div  className="table-div m-4" >
+            <div  className="table-div " >
           <table className="min-w-full rounded-lg text-center ">
             <thead>
               <tr className="tr1">
@@ -399,26 +327,97 @@ a.accountName.localeCompare(b.accountName, undefined, { sensitivity: 'base' })
 
                 {
             userr?.role === 'admin' && 
-                <th>Employee</th>
+                <th className="flex justify-start items-center">Employee</th>
 }
                 <th>Ads Account</th>
                 <th>Threshold</th>
                 <th>Current Balance</th>
                 <th className="text-center">Spend</th>
                 <th>Payment Date</th>
-                {
-                  userr?.role !== 'contributor' &&    <th className="text-center">Action</th>
-                }
+                <th>Status</th>
+                
               
               </tr>
             </thead>
             <tbody>
             {data?.map((account, index) => (
-                     <tr
-                     key={account._id}
-                    className={`tr2`}
-                   >
-                       {
+                    <tr 
+                    key={account.id}
+                    className={`${
+                      index % 2 === 0
+                        ? "bg-white text-left text-black border-b border-opacity-20"
+                        : "bg-gray-100  text-left text-black border-b border-opacity-20"
+                    }`}
+                  >
+                      
+                  <td>{index + 1}</td>
+                   {
+            userr?.role === 'admin' &&   <td>
+            <div className="flex items-center gap-3">
+              <img
+                className="h-10 w-10 rounded-full object-cover"
+                src={allEmployees?.find(f => f.email === account.employeeEmail)?.photo || 'https://via.placeholder.com/40'}
+                alt={account.employeerName}
+              />
+              <div>
+                <h4 className="font-semibold text-gray-800">{account.employeerName}</h4>
+                <div className="flex items-center gap-2 mt-1">
+                
+                  {/* <button
+                    className="text-red-500 hover:text-red-700 text-lg"
+                    onClick={() => handleDelete(account._id)}
+                  >
+                    <FaMinusSquare />
+                  </button> */}
+                 
+                </div>
+              </div>
+            </div>
+          </td>
+          
+          }
+                 
+                 <td>
+                 <button   onClick={() => setModalData(account)} className="flex justify-start items-center gap-2">
+                 <button
+                    className="text-blue-500 hover:text-blue-700 text-lg"
+                  
+                  >
+                    <FaEdit />
+                  </button>
+  <h1>{account.accountName}</h1>
+                 </button>
+  
+</td>
+
+
+                 
+                  <td>  <h1 className=""><span className="amount-doller">$</span> {account.threshold} </h1></td>
+                  <td > <h1 className=""><span className="amount-doller">$</span> {account.currentBallence} </h1> </td>
+                  <td className="">
+                  <div className="relative group flex items-center justify-between">
+  <h1 className="flex items-center gap-2">
+   
+    <span className="amount-doller">$</span> {account.totalSpent}
+  </h1>
+
+  {userr?.role === 'admin' && (
+    <button
+      className="text-black opacity-0 group-hover:opacity-100 transition duration-300 ml-2 text-lg"
+      onClick={() => setModalData2(account)}
+    >
+      <FaPlusCircle />
+    </button>
+  )}
+</div>
+</td>
+
+                  <td>
+                    {new Date(account.paymentDate).toLocaleDateString("en-GB")}
+                  </td>
+                
+
+                  {
                   userr?.role !== 'contributor' && 
                   <td  className="text-center"> 
 
@@ -437,66 +436,7 @@ a.accountName.localeCompare(b.accountName, undefined, { sensitivity: 'base' })
 </label>
 
                  </td>}
-
-                   {
-            userr?.role === 'admin' &&    <td><div className="f-start items-center ">
-               
-                <img className="h-10 w-10 rounded-full"  src={allEmployees?.find(f => f.email === account.employeeEmail)?.photo || 'N/A'} alt="" />
-                <span> {account.employeerName}</span>
-            </div>
-            
-          </td>
-          }
                  
-                  <td>
-                  <h1> {account.accountName}</h1>
-                  
-                  </td>
-                 
-                  <td><span className="amount-doller">$</span> {account.threshold}</td>
-                  <td><span className="amount-doller">$</span> {account.currentBallence} </td>
-                  <td className="text-center">
-  <div className="relative group flex items-center justify-center">
-    <h1>
-    <span className="amount-doller">$</span> {account.totalSpent}
-    </h1>
-    {userr?.role === 'admin' &&  <button
-      className="edit opacity-0 group-hover:opacity-100 transition-opacity duration-300 ml-2"
-      onClick={() => setModalData2(account)}
-    >
-      <FaEdit />
-    </button>}
-   
-  </div>
-</td>
-
-                  <td>
-                    {new Date(account.paymentDate).toLocaleDateString("en-GB")}
-                  </td>
-                
-
-
-                 {
-                  userr?.role !== 'contributor' ?
-                  <td
-                    className={`text-center  `}>
-                        <div className="f-center ">
-                        <button
-                          className="delete"
-                          onClick={() => handleDelete(account._id)}
-                        >
-                          <FaMinusSquare  />
-                        </button>
-
-                        <button
-                         className="f-start edit"
-                          onClick={() => setModalData(account)}
-                        >
-                          <FaEdit />
-                          
-                        </button>
-                        </div>
-                   </td> : <td className="text-center">{index + 1}</td> }
                 </tr>
               ))}
 
@@ -529,14 +469,86 @@ a.accountName.localeCompare(b.accountName, undefined, { sensitivity: 'base' })
       ).toFixed(2)}
                 </td>
                 <td></td>
-                {
-                  userr?.role !== 'contributor' && 
-                <td></td> }
+                <td></td>
+                
               </tr>
             </tbody>
           </table>
           </div>
           </div>
+
+            <div className="bg-white font-sans py-20   lg:hidden mx-auto text-sm">
+          
+                {data?.map((payment) => (
+                  <div key={payment._id} className="px-3 py-2 sm:px-4 sm:py-3 border-b hover:bg-gray-50 transition-colors">
+                    <div className="flex items-start justify-between gap-2 sm:gap-3">
+                      {/* Left Content */}
+                      <div className="flex-1">
+                        <div className="flex items-start justify-start text-start gap-2 sm:gap-3">
+                          {/* Image */}
+                          <div className="flex-shrink-0 mt-1.5">
+                            <img
+                              className="h-7 w-7 sm:h-8 sm:w-8 rounded-full object-cover"
+                              src={allEmployees?.find(u => u.email === payment?.employeeEmail)?.photo}
+                              alt=""
+                            />
+                          </div>
+          
+                          {/* Names */}
+                          <div className="flex flex-col text-start justify-start items-start">
+                            <div className="flex justify-start text-start items-center gap-1">
+                              <Link
+                                to={`/client/${payment?.clientEmail}`}
+                                className="text-black  text-sm sm:text-base hover:text-blue-800 transition-colors"
+                              >
+                                {allEmployees.find(f => f.email === payment.employeeEmail)?.name}
+                              </Link>
+                             
+                            </div>
+                            <p
+                             
+                                className="text-black text-xs sm:text-base hover:text-blue-800 transition-colors"
+                              >
+                                {payment.accountName}
+                              </p>
+                            <div className="flex justify-start text-start items-center gap-1">
+                              <p className="text-[10px] sm:text-xs text-gray-500">
+                              {new Date(payment.date).toLocaleString('default', { month: 'long', year: 'numeric' })}
+                              </p>
+                            </div>
+                            
+                          </div>
+                        </div>
+          
+                     
+                      </div>
+          
+                      {/* Right Content */}
+                      <div className="text-right">
+                        {/* Amount and Date */}
+                        <div>
+                          <h3 className="font-semibold text-red-800 text-sm sm:text-base">
+                            Spend : <span className="amount-doller">$ </span>
+            {payment.totalSpent}
+                          </h3>
+          
+                          <h3 className="font-medium text-emerald-600 text-sm sm:text-base">
+                            Balance : <span className="amount-taka">৳ </span>
+            {payment.currentBallence}
+                          </h3>
+                          
+                        </div>
+          
+                       
+          
+                      </div>
+                    </div>
+                  </div>
+                ))}
+          
+          
+          
+              </div>
 
         {modalData && (
      <dialog className="modal" open>
@@ -612,6 +624,82 @@ a.accountName.localeCompare(b.accountName, undefined, { sensitivity: 'base' })
      </div>
    </dialog>
       )}
+
+<dialog id="my_modal_3" className="modal">
+    <div className="modal-box bg-white">
+      <form onSubmit={handleAddAdsAcount}>
+        <div className="mb-4">
+          <h1
+            className="text-black hover:text-red-500 f-end"
+            onClick={() => document.getElementById("my_modal_3").close()}
+          >
+            <ImCross />
+          </h1>
+
+          {/* Date Input */}
+          <div className="col-span-1">
+            <label className="block text-black">Date</label>
+            <input
+              required
+              type="date"
+              name="paymentDate"
+              defaultValue={formattedDate}
+              className="input2"
+            />
+          </div>
+
+          {/* Employee Selector */}
+          {userr?.role === "admin" && (
+            <div className="col-span-1 mt-4 w-full">
+              <label className="block text-black">
+                Select {data1 !== "contributor" ? "employee" : data1}
+              </label>
+              <select required className="select2 w-full" name="employeeEmail">
+                <option disabled selected value="">
+                  Select {data1 !== "contributor" ? "employee" : data1}
+                </option>
+                {allEmployees
+                  ?.filter(
+                    (f) => f.role === (data1 !== "contributor" ? "employee" : data1)
+                  )
+                  .map((employee) => (
+                    <option key={employee._id} value={employee.email}>
+                      {employee.name}
+                    </option>
+                  ))}
+              </select>
+            </div>
+          )}
+        </div>
+
+        {/* Account Name Input */}
+        <div className="mb-4">
+          <label className="block text-black">Account Name</label>
+          <input
+            type="text"
+            required
+            name="accountName"
+            placeholder="type here..."
+            className="input2"
+          />
+        </div>
+
+        {/* Modal Actions */}
+        <div className="modal-action grid grid-cols-2 gap-2">
+          <button
+            type="button"
+            className="close"
+            onClick={() => document.getElementById("my_modal_3").close()}
+          >
+            Close
+          </button>
+          <button type="submit" className="add">
+            Submit
+          </button>
+        </div>
+      </form>
+    </div>
+  </dialog>
 
    {modalData2 && ( 
            <dialog className="modal" open>

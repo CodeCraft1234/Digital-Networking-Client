@@ -12,7 +12,6 @@ const useAdsAccountCenter = () => {
             return res.data
         }
     })
-        console.log(adsAccountCenter)
         return [adsAccountCenter,refetch]
 };
 

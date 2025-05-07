@@ -9,6 +9,8 @@ import useUserr from '../../Hook/useUser';
 import { Helmet } from 'react-helmet-async';
 import useAllEmployee from '../../Hook/useAllEmployee';
 import useMyUserSpend from '../../Hook/useMyUserSpend';
+import { Link } from 'react-router-dom';
+import useRates from '../../Hook/useRates';
 
 const ContributorMonthlySpend = ({data}) => {
   const { user } = useContext(AuthContext);
@@ -34,6 +36,8 @@ const ContributorMonthlySpend = ({data}) => {
   : localStorage.getItem("a4") || user?.email; 
 
   const [sortEmployee, setSortEmployee] = useState(initialTab);
+
+
   const [myUserSpend,refetch]=useMyUserSpend(sortEmployee)
 
   console.log(myUserSpend);
@@ -100,7 +104,7 @@ const ContributorMonthlySpend = ({data}) => {
     const totalSpentt = parseFloat(totalSpent);
     console.log(totalSpentt);
     
-   AxiosPublic.put(`/updateSpent/${userId}/${spentId}`, {
+   AxiosPublic.put(`/updateSpent2/${userId}/${spentId}`, {
         totalSpentt,
       })
       .then(res=>{
@@ -122,7 +126,7 @@ const ContributorMonthlySpend = ({data}) => {
       confirmButtonText: "Yes, delete",
     }).then((result) => {
       if (result.isConfirmed) {
-        AxiosPublic.delete(`/users/historyDelete/${userId}/${spentId}`).then((res) => {
+        AxiosPublic.delete(`/users/historyDelete2/${userId}/${spentId}`).then((res) => {
           refetch();
           console.log(res.data);
           if (res.data.deletedCount > 0) {
@@ -137,7 +141,9 @@ const ContributorMonthlySpend = ({data}) => {
     });
   };
 
-  console.log(data);
+  const { rates } = useRates();
+
+
   return (
     <div>
 
@@ -148,7 +154,7 @@ const ContributorMonthlySpend = ({data}) => {
   <link rel="canonical" href="https://www.example.com/" />
 </Helmet>
       
-      <div className='px-5 py-5 rounded-md' style={{ backgroundColor: 'var(--bg-color3)', color: 'var(--text-color)',border: 'var(--border)'}}>
+      <div className='hidden lg:block'>
       <div className="lg:flex lg:justify-end items-center gap-3 mb-5">
 
       <div className="w-full lg:w-auto flex justify-start gap-3">
@@ -196,26 +202,25 @@ const ContributorMonthlySpend = ({data}) => {
         </div>
 
         <div>
-        <select
-    style={{ backgroundColor: 'var(--bg-color2)', border: 'var(--border)', color: 'var(--text-color2)' }}
-    className="px-4 py-2 border rounded bg-white text-black border-black"
-    onChange={(e) => setSortYear(e.target.value)}
-    value={sortYear || ""}
-  >
-    <option value="">Select Year</option>
-    {Array.from(new Set(sortedAccounts?.map(account => new Date(account.date).getFullYear())))
-      .sort((a, b) => b - a) // Sorting in descending order, adjust as needed
-      .map(year => (
-        <option key={year} value={year}>
-          {year}
-        </option>
-      ))}
-  </select>
+
+  <select
+   style={{ backgroundColor: 'var(--bg-color2)', border: 'var(--border)', color: 'var(--text-color2)' }}
+   className="px-4 py-2 border rounded bg-white text-black border-black"
+   onChange={(e) => setSortYear(e.target.value)}
+   value={sortYear || ""}
+>
+  <option value="all">Select Year</option> {/* Default option */}
+  {Array.from({ length: new Date().getFullYear() - 2024 + 1 }, (_, i) => 2024 + i).map((year) => (
+    <option key={year} value={year}>
+      {year}
+    </option>
+  ))}
+</select>
          </div>
 
       </div>
 
-      <div  className="table-div ">
+      <div  className="table-div mb-5">
           <table className="min-w-full text-center ">
             <thead className=" ">
               <tr className="tr1">
@@ -231,10 +236,14 @@ const ContributorMonthlySpend = ({data}) => {
           <tbody >
             {sortedAccounts?.filter(f => f.role === `contributorSpend`)
          .map((account, index) => (
-              <tr 
-              key={account._id}
-              className={`tr2`}
-            >
+          <tr 
+          key={account.id}
+          className={`${
+            index % 2 === 0
+              ? "bg-white text-left text-black border-b border-opacity-20"
+              : "bg-gray-100  text-left text-black border-b border-opacity-20"
+          }`}
+        >
               <td  className="text-center">
               {
                 userr?.role === 'admin' ? 
@@ -248,20 +257,20 @@ const ContributorMonthlySpend = ({data}) => {
             </td>
              
 
-                <td>
+            <td>
   <div className="flex items-center">
     {
-      users?.find(u => u.email === account.employeeEmail)?.photo && (
+      allEmployees?.find(u => u.email === account.employeeEmail)?.photo && (
         <img 
           className='h-10 w-10 rounded-full mr-3' 
-          src={users.find(u => u.email === account.employeeEmail).photo} 
+          src={allEmployees.find(u => u.email === account.employeeEmail).photo} 
           alt={`${account.employeeName}'s profile`} 
         />
       )
     }
     <span>{account.employeeName}</span>
   </div>
-                </td>        
+                </td>             
                 <td>
                 <div onClick={() => setModalData2(account)} className="f-left ">
 
@@ -315,6 +324,86 @@ const ContributorMonthlySpend = ({data}) => {
         </table>
       </div>
       </div>
+
+
+  <div className="bg-white font-sans py-40 h-full  lg:max-w-2xl lg:hidden mx-auto text-sm">
+      
+            {sortedAccounts?.filter(f => f.role === `contributorSpend`)
+                  ?.map((payment) => (
+              <div key={payment._id} className="px-3 py-2 sm:px-4 sm:py-3 border-b hover:bg-gray-50 transition-colors">
+                <div className="flex items-start justify-between gap-2 sm:gap-3">
+                  {/* Left Content */}
+                  <div className="flex-1">
+                    <div className="flex items-start justify-start text-start gap-2 sm:gap-3">
+                      {/* Image */}
+                      <div className="flex-shrink-0 mt-1.5">
+                        <img
+                          className="h-7 w-7 sm:h-8 sm:w-8 rounded-full object-cover"
+                          src={allEmployees.find(u => u.email === payment.employeeEmail).photo}
+                          alt=""
+                        />
+                      </div>
+      
+                      {/* Names */}
+                      <div className="flex flex-col text-start justify-start items-start">
+                        <div className="flex justify-start text-start items-center gap-1">
+                          <Link
+
+                            to={`/client/${payment?.clientEmail}`}
+                           className="text-black  text-sm sm:text-base hover:text-blue-800 transition-colors"
+                          >
+                            {allEmployees.find(f => f.email === payment.employeeEmail)?.name}
+                          </Link>
+                         
+                        </div>
+                        <p
+                         
+                            className="text-black text-xs sm:text-base hover:text-blue-800 transition-colors"
+                          >
+                            {payment.accountName}
+                          </p>
+                        <div className="flex justify-start text-start items-center gap-1">
+                          <p className="text-[10px] sm:text-xs text-gray-500">
+                          {new Date(payment.date).toLocaleString('default', { month: 'long', year: 'numeric' })}
+                          </p>
+                        </div>
+                        
+                      </div>
+                    </div>
+      
+                 
+                  </div>
+      
+                  {/* Right Content */}
+                  <div className="text-right">
+                    {/* Amount and Date */}
+                    <div>
+                    <h3 className="font-semibold text-red-800 text-sm sm:text-base">
+                        Spend : <span className="amount-doller">$ </span>
+        {new Intl.NumberFormat('en-IN', {
+          maximumFractionDigits: 2,
+          minimumFractionDigits: 2,
+        }).format(payment.totalSpentt)}
+                      </h3>
+
+                      <h3 className=" text-black text-sm sm:text-base">
+                        Bill : <span className="amount-doller">$ </span>
+        {new Intl.NumberFormat('en-IN').format(Math.round(payment.totalSpentt * rates.contributorRate))}
+                      </h3>
+                      
+                    </div>
+      
+                     
+                      
+                  </div>
+                </div>
+              </div>
+            ))}
+      
+      
+      
+          </div>
+
 
        {modalData2 && (
       <dialog className="modal" open>

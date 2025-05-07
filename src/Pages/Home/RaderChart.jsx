@@ -21,7 +21,7 @@ const RadarChart = ({ data3, options3 }) => {
         color: "var(--text-color2)",
        
       }}
-      className="bg-gray-800 rounded-lg p-5"
+      className="bg-gray-800 rounded-lg"
     >
       <h1 className="font-bold text-xl rounded-t-lg border-gray-300 pb-3">
         Orders Overview

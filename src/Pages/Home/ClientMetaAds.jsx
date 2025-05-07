@@ -1,6 +1,6 @@
 import { useContext } from "react";
 import { AuthContext } from "../../Security/AuthProvider";
-import { Form, useParams } from "react-router-dom";
+import { Form, Link, useParams } from "react-router-dom";
 import UseAxiosPublic from "../../Axios/UseAxiosPublic";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -192,7 +192,7 @@ const ClientMetaAds = ({data1}) => {
         <div>
             <div>
 
-      <div style={{ backgroundColor: 'var(--bg-color3)', color: 'var(--text-color)',border: 'var(--border)'}} className="  rounded-lg p-5 mx-1 my-5 ">
+      <div  className=" my-5 lg:block hidden ">
         
   <div>
 
@@ -206,7 +206,423 @@ const ClientMetaAds = ({data1}) => {
     </button>
     }
    
-    <dialog id="my_modal_2" className="modal overflow-hidden">
+   
+  </div>
+
+  <div  className="table-div " >
+          <table className="min-w-full text-center ">
+            <thead className=" ">
+              <tr className="tr1" >  
+              {
+                    user && <th  className="p-3 text-center">{findClients?.campaings?.filter(f=>f.role === data2)?.length}</th>}
+                
+                <th >Campaign Name</th>
+                <th >Page Name</th>
+                <th >Ads Account</th>
+                <th >Budged</th>
+                <th >Spend</th>
+                <th >Bill</th>
+                <th >Date</th>
+                
+                   {
+                    user &&  <th className="text-center">Action</th>
+                }
+                
+              </tr>
+            </thead>
+            <tbody>
+              {findClients?.campaings?.filter(f=>f.role === data2)?.map((work, index) => (
+                 <tr 
+                 key={work._id}
+                 className={`tr2`}
+               >
+                
+                {
+                      user &&                   <td className="text-center">
+                      <label className="status-label">
+                      <input
+                        type="checkbox"
+                        checked={work.status === "Active"}
+                        onChange={() => {
+                          const newStatus = work.status === "Active" ? "Complete" : "Active";
+                          handleUpdate2(work.ids, work.id, newStatus);
+                        }}
+                      />
+                      <div className={work.status === "Active" ? "active" : "inactive"}>
+                        <span className={work.status === "Active" ? "active" : ""}></span>
+                      </div>
+                    </label>
+                    
+                      </td>
+                  }
+              
+
+    
+                      
+                
+                  
+                  <td >
+                 <div  onClick={() =>
+          document.getElementById(`modal_${work.ids}`).showModal()
+          } className="flex justify-center cursor-pointer items-center gap-2">
+                 <button
+        className="f-start edit"
+       
+      >
+       <span >
+       <FaEdit /> 
+        </span>
+      </button>
+                  <span>
+{work.campaignName
+.split(' ') // Split the campaign name into words
+.slice(0, 4) // Take only the first 6 words
+.join(' ') // Join the words back into a string
++ (work.campaignName.split(' ').length > 4 ? '...' : '') // Add "..." if there are more than 6 words
+}
+</span>
+                 </div>
+                  
+                  </td>
+                  <td >
+                  
+                   {work.pageName
+    .split(' ') 
+    .slice(0, 4) 
+    .join(' ') 
+    + (work.pageName.split(' ').length > 4 ? '...' : '') // Add "..." if there are more than 6 words
+  } 
+                  
+                  </td>
+                  
+                  <td  >
+                    {work.adsAccount}
+                  </td>
+                  <td  >
+                  <span><span className="amount-doller">$</span><span className="ml-1">{work.tBudged}</span></span>
+                  </td>
+                  <td  >
+                  <span><span className="amount-doller">$</span><span className="ml-1">{work.tSpent}</span></span>
+                  </td>
+
+                
+                  <td >
+                    <span className="text-md mr-1 font-extrabold">৳</span>
+                    {parseInt(work.tSpent * work.dollerRate)}
+                  </td>
+
+                  <td >
+                  {new Date(work?.date).toLocaleDateString("en-GB")}
+                  </td>
+     
+                  {
+      user && <td  className="text-center">
+      <div className="f-center">
+                
+      <button
+         className=" delete"
+        onClick={() => handledelete(work.ids ,work.id,)}
+      >
+       <span >
+        <FaMinusSquare  />
+        </span>
+      </button>
+      <button
+        className="f-start edit"
+        onClick={() =>
+          document.getElementById(`modal_${work.ids}`).showModal()
+          }
+      >
+       <span >
+       <FaEdit /> 
+        </span>
+      </button>
+
+                  
+                      <dialog id={`modal_${work.ids}`} className="modal">
+<div className="modal-box bg-white text-black">
+<form onSubmit={(e) => handleUpdate(e, work.ids ,work.id)}>
+<div className="mb-4">
+<label className="block text-left text-gray-700">
+Campaign Name
+</label>
+<input
+type="text"
+name="campaignName"
+defaultValue={work.campaignName}
+
+className="input2"
+/>
+</div>
+<div className="mb-4">
+<label className="block text-left text-gray-700">
+Account Name
+</label>
+<input
+type="text"
+name="adsAccount"
+defaultValue={work.adsAccount}
+disabled
+className="input2"
+/>
+</div>
+
+<div className="mb-4">
+<label className="block text-left text-gray-700">
+Total Budged
+</label>
+<input
+type="number"
+name="tBudged"
+defaultValue={work.tBudged}
+step="0.01"
+className="input2"
+/>
+</div>
+<div className="mb-4">
+<label className="block text-left text-gray-700">
+Total Spent
+</label>
+<input
+type="number"
+name="totalSpent"
+defaultValue={work.tSpent}
+step="0.01"
+className="input2"
+/>
+</div>
+
+<div className="mb-4">
+<label className="block text-left text-gray-700">
+Dollers Rate
+</label>
+<input
+step="0.01"
+type="number"
+name="dollerRate"
+defaultValue={work.dollerRate}
+className="input2"
+/>
+</div>
+
+<div className="grid grid-cols-2 gap-3 mt-4">
+<button
+type="button"
+className="close"
+onClick={() =>
+document.getElementById(`modal_${work.ids}`).close()
+}
+>
+Close
+</button>
+<button
+type="submit"
+className="add"
+>
+Update
+</button>
+
+</div>
+</form>
+</div>
+                </dialog>
+    </div>  </td>
+      }
+                 
+                </tr>
+              ))}
+              <tr  className="tr1 font-bold">
+              {
+                      user && 
+                <td ></td> }
+                <td className=" text-right" colSpan="3">
+                  Total:
+                </td>
+
+                  <td>
+                  <span><span className="amount-doller">$</span><span className="ml-1">{findClients?.campaings?.filter(f=>f.role === data2)?.reduce((acc, payment) => acc + parseFloat(payment?.tBudged || 0), 0).toFixed(2)}</span></span>
+                  </td>
+                  <td>
+                  <span><span className="amount-doller">$</span><span className="ml-1">{findClients?.campaings?.filter(f=>f.role === data2)?.reduce((acc, payment) => acc + parseFloat(payment?.tSpent || 0), 0).toFixed(2)}</span></span>
+                  </td>
+
+               
+                <td >
+                  <span className="text-sm mr-1 font-extrabold">৳</span>{""}
+                  {findClients?.campaings?.filter(f=>f.role === data2)?.reduce(
+    (acc, campaign) =>
+      acc + parseFloat(campaign?.tSpent || 0) * parseFloat(campaign?.dollerRate || 0),
+    0
+  ).toFixed(0)}
+                </td>
+                {userr?.role === "admin" ? (
+                  <>
+                    <td ></td>
+                    <td ></td>
+                  
+                  </>
+                ) : (
+                  <>
+                   {
+                      user && 
+                   <td ></td>
+                   }
+                   {
+                      user && 
+                   <td ></td>
+                   }
+                   {
+                      !user && 
+                   <td ></td>
+                   }
+                 
+                  </>
+                )}
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        </div>
+
+
+      <div className="bg-white font-sans pt-40 mb-16  lg:mt-0 lg:max-w-2xl lg:hidden mx-auto text-sm">
+     
+      <button
+        className="py-1 px-3 mx-2 mb-2 bg-green-600 text-white"
+      onClick={() => document.getElementById("my_modal_2").showModal()}
+    >
+      Add Campaign
+    </button>
+
+           {findClients?.campaings?.filter(f=>f.role === data2)?.map((payment) => (
+             <div key={payment._id} className="px-3 py-2 sm:px-4 sm:py-3 border-b hover:bg-gray-50 transition-colors">
+               <div className="flex items-start justify-between gap-2 sm:gap-3">
+                 {/* Left Content */}
+                 <div className="flex-1">
+                   <div className="flex items-start justify-start text-start gap-2 sm:gap-3">
+                     {/* Image */}
+                     <div className="flex-shrink-0">
+                  
+     
+                  
+                     </div>
+     
+                     {/* Names */}
+                     <div className="flex flex-col text-start justify-start items-start">
+                     <div className="flex justify-start text-start items-center gap-1">
+                       
+                       </div>
+                       <div className="flex justify-start text-start items-center gap-1">
+                         <Link
+                           to={`/client/${payment?.clientEmail}`}
+                           className="text-[14px] sm:text-xs text-gray-500"
+                         >
+                           {payment?.clientName}
+                         </Link>
+                       </div>
+                      
+                       <div className="flex justify-start text-start items-center gap-1">
+                         <Link
+                           to={`/client/${payment?.clientEmail}`}
+                           className="text-[14px] sm:text-xs text-gray-500"
+                         >
+                            {payment.adsAccount}
+                         </Link>
+                       </div>
+                       <p>
+                       <label className="status-label">
+                       <input
+                         type="checkbox"
+                         className="sr-only"
+                         checked={(payment?.status || "Approved") !== "pending"}
+                         onChange={() => {
+                           const currentStatus = payment?.status || "Approved";
+                           const newStatus = currentStatus !== "pending" ? "pending" : "Approved";
+                           handleUpdate2(payment.ids, payment.id, newStatus);
+                         }}
+                       />
+                       <div className={`status-switch ${(payment?.status || "Approved") !== "pending" ? "active" : "inactive"}`}>
+                         <span className={`status-switch-thumb ${(payment?.status || "Approved") !== "pending" ? "active" : ""}`}></span>
+                       </div>
+                     </label>
+</p>
+                      
+                  
+                     </div>
+                   </div>
+                 </div>
+     
+                 {/* Right Content */}
+
+                 <div className="text-right">
+                   <div>
+                   
+                   <p>
+  <span className="font-medium">Spend:</span>{" "}
+  <span className="amount-taka">$</span>{" "}
+  {payment.tSpent}
+</p>
+                   <p>
+  <span className="font-medium">Bill:</span>{" "}
+  <span className="amount-taka">৳</span>{" "}
+  {parseInt(payment.tSpent * payment.dollerRate)}
+</p>
+
+                     <p className="text-[10px] sm:text-xs text-gray-500">
+                       {new Date(payment.date).toLocaleString("en-GB", {
+                         hour: "2-digit",
+                         minute: "2-digit",
+                         hour12: true,
+                         day: "2-digit",
+                         month: "2-digit",
+                         year: "2-digit",
+                       })}
+                     </p>
+                   </div>
+     
+                   <div className="flex items-center justify-end space-x-2 mt-2">
+                     {(() => {
+                       const logo = [
+                         { method: "bkashMarchent", src: "https://i.ibb.co/520Py6s/bkash-1.png" },
+                         { method: "bkashPersonal", src: "https://i.ibb.co/520Py6s/bkash-1.png" },
+                         { method: "rocketPersonal", src: "https://i.ibb.co/QkTM4M3/rocket.png" },
+                         { method: "nagadPersonal", src: "https://i.ibb.co/JQBQBcF/nagad-marchant.png" },
+                         { method: "nagadMarchent", src: "https://i.ibb.co/JQBQBcF/nagad-marchant.png" },
+                         { method: "DBBLBank", src: "https://i.ibb.co/nnN8KW0/DBBL.png", width: "w-24 sm:w-28", height: "h-7 sm:h-8" },
+                         { method: "IBBLBank", src: "https://i.ibb.co/pnS6nt4/IBBLBank.png", width: "w-24 sm:w-28", height: "h-7 sm:h-8" },
+                         { method: "bank", src: "https://i.ibb.co/PZc0P4w/brac-bank-seeklogo.png", width: "w-10 sm:w-12", height: "h-8 sm:h-10" },
+                       ].find((item) => item.method === payment?.paymentMethod);
+     
+                       if (!logo) return null;
+     
+                       return (
+                         <>
+                           <img
+                             src={logo.src}
+                             alt={payment?.paymentMethod}
+                             className={`${logo.width || "w-12"} ${logo.height || "h-6"} object-contain`}
+                           />
+                           <button
+                             onClick={() => setModalData2(payment)}
+                             className="text-emerald-600 hover:text-emerald-800 transition"
+                             title="বিস্তারিত দেখুন"
+                           >
+                             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 bg-gray-100 text-black p-1 rounded-full" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                               <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                             </svg>
+                           </button>
+                         </>
+                       );
+                     })()}
+                   </div>
+                 </div>
+               </div>
+             </div>
+           ))}
+     
+         </div>
+
+         <dialog id="my_modal_2" className="modal overflow-hidden">
       <div className="modal-box bg-white">
         <section className="dark:text-gray-100">
           <Form
@@ -349,279 +765,6 @@ const ClientMetaAds = ({data1}) => {
         </section>
       </div>
     </dialog>
-  </div>
-
-  <div  className="table-div " >
-          <table className="min-w-full text-center ">
-            <thead className=" ">
-              <tr className="tr1" >  
-              {
-                    user && <th  className="p-3 text-center">{findClients?.campaings?.filter(f=>f.role === data2)?.length}</th>}
-                
-                <th >Campaign Name</th>
-                <th >Page Name</th>
-                <th >Ads Account</th>
-                <th >Budget</th>
-                <th >Spent</th>
-                <th >Bill</th>
-                <th >Date</th>
-                
-                   {
-                    user &&  <th className="text-center">Action</th>
-                }
-                
-              </tr>
-            </thead>
-            <tbody>
-              {findClients?.campaings?.filter(f=>f.role === data2)?.map((work, index) => (
-                 <tr 
-                 key={work._id}
-                 className={`tr2`}
-               >
-                
-                {
-                      user &&                   <td className="text-center">
-                      <label className="status-label">
-                      <input
-                        type="checkbox"
-                        checked={work.status === "Active"}
-                        onChange={() => {
-                          const newStatus = work.status === "Active" ? "Complete" : "Active";
-                          handleUpdate2(work.ids, work.id, newStatus);
-                        }}
-                      />
-                      <div className={work.status === "Active" ? "active" : "inactive"}>
-                        <span className={work.status === "Active" ? "active" : ""}></span>
-                      </div>
-                    </label>
-                    
-                      </td>
-                  }
-              
-
-    
-                      
-                
-                  
-                  <td >
-                 <div  onClick={() =>
-          document.getElementById(`modal_${work.ids}`).showModal()
-          } className="flex justify-start cursor-pointer items-center gap-2">
-                 <button
-        className="f-start edit"
-       
-      >
-       <span >
-       <FaEdit /> 
-        </span>
-      </button>
-                  <span>
-{work.campaignName
-.split(' ') // Split the campaign name into words
-.slice(0, 4) // Take only the first 6 words
-.join(' ') // Join the words back into a string
-+ (work.campaignName.split(' ').length > 4 ? '...' : '') // Add "..." if there are more than 6 words
-}
-</span>
-                 </div>
-                  
-                  </td>
-                  <td >
-                  
-                   {work.pageName
-    .split(' ') 
-    .slice(0, 4) 
-    .join(' ') 
-    + (work.pageName.split(' ').length > 4 ? '...' : '') // Add "..." if there are more than 6 words
-  } 
-                  
-                  </td>
-                  
-                  <td  >
-                    {work.adsAccount}
-                  </td>
-
-                  <td >
-  $ {Number(work?.tBudged || 0).toFixed(2)}
-</td>
-
-<td >
-  $ {Number(work?.tSpent || 0).toFixed(2)}
-</td>
-
-
-                  <td >
-                    <span className="text-md mr-1 font-extrabold">৳</span>
-                    {parseInt(work.tSpent * work.dollerRate)}
-                  </td>
-
-                  <td >
-                  {new Date(work?.date).toLocaleDateString("en-GB")}
-                  </td>
-     
-                  {
-      user && <td  className="text-center">
-      <div className="f-center">
-                
-      <button
-         className=" delete"
-        onClick={() => handledelete(work.ids ,work.id,)}
-      >
-       <span >
-        <FaMinusSquare  />
-        </span>
-      </button>
-      <button
-        className="f-start edit"
-        onClick={() =>
-          document.getElementById(`modal_${work.ids}`).showModal()
-          }
-      >
-       <span >
-       <FaEdit /> 
-        </span>
-      </button>
-
-                  
-                      <dialog id={`modal_${work.ids}`} className="modal">
-<div className="modal-box bg-white text-black">
-<form onSubmit={(e) => handleUpdate(e, work.ids ,work.id)}>
-<div className="mb-4">
-<label className="block text-left text-gray-700">
-Campaign Name
-</label>
-<input
-type="text"
-name="campaignName"
-defaultValue={work.campaignName}
-
-className="input2"
-/>
-</div>
-<div className="mb-4">
-<label className="block text-left text-gray-700">
-Account Name
-</label>
-<input
-type="text"
-name="adsAccount"
-defaultValue={work.adsAccount}
-disabled
-className="input2"
-/>
-</div>
-
-<div className="mb-4">
-<label className="block text-left text-gray-700">
-Total Budged
-</label>
-<input
-type="number"
-name="tBudged"
-defaultValue={work.tBudged}
-step="0.01"
-className="input2"
-/>
-</div>
-<div className="mb-4">
-<label className="block text-left text-gray-700">
-Total Spent
-</label>
-<input
-type="number"
-name="totalSpent"
-defaultValue={work.tSpent}
-step="0.01"
-className="input2"
-/>
-</div>
-
-<div className="mb-4">
-<label className="block text-left text-gray-700">
-Dollers Rate
-</label>
-<input
-step="0.01"
-type="number"
-name="dollerRate"
-defaultValue={work.dollerRate}
-className="input2"
-/>
-</div>
-
-<div className="grid grid-cols-2 gap-3 mt-4">
-<button
-type="button"
-className="close"
-onClick={() =>
-document.getElementById(`modal_${work.ids}`).close()
-}
->
-Close
-</button>
-<button
-type="submit"
-className="add"
->
-Update
-</button>
-
-</div>
-</form>
-</div>
-                </dialog>
-    </div>  </td>
-      }
-                 
-                </tr>
-              ))}
-              <tr  className="tr1 font-bold">
-              {
-                      user && 
-                <td ></td> }
-                <td className=" text-right" colSpan="3">
-                  Total:
-                </td>
-                <td  >
-                  <span className="text-sm mr-1 font-extrabold">$</span>{""}
-                  {findClients?.campaings?.filter(f=>f.role === data2)?.reduce((acc, payment) => acc + parseFloat(payment?.tBudged || 0), 0).toFixed(2)}
-                </td>
-                <td  >
-                  <span className="text-sm mr-1 font-extrabold">$</span>{""}
-                  {findClients?.campaings?.filter(f=>f.role === data2)?.reduce((acc, payment) => acc + parseFloat(payment?.tSpent || 0), 0).toFixed(2)}
-                </td>
-                <td >
-                  <span className="text-sm mr-1 font-extrabold">৳</span>{""}
-                  {findClients?.campaings?.filter(f=>f.role === data2)?.reduce(
-    (acc, campaign) =>
-      acc + parseFloat(campaign?.tSpent || 0) * parseFloat(campaign?.dollerRate || 0),
-    0
-  ).toFixed(0)}
-                </td>
-                {userr?.role === "admin" ? (
-                  <>
-                    <td ></td>
-                    <td ></td>
-                  
-                  </>
-                ) : (
-                  <>
-                   {
-                      user && 
-                   <td ></td>
-                   }
-                   {
-                      user && 
-                   <td ></td>
-                   }
-                 
-                  </>
-                )}
-              </tr>
-            </tbody>
-          </table>
-        </div>
-        </div>
 
       </div>
         </div>

@@ -27,7 +27,7 @@ const AddAdsAccount = () => {
   // Fetch default values (example: from an API)
   useEffect(() => {
     // Example API call to fetch default values
-    AxiosPublic.get('https://hishab-2025-pi.vercel.appadAds')
+    AxiosPublic.get('https://hishab-202555.vercel.appadAds')
       .then(response => {
         const defaultValues = response.data;
         setFormData({
@@ -61,7 +61,7 @@ const AddAdsAccount = () => {
   // Handle form submission
   const handleAddBlog = (e) => {
     e.preventDefault();
-    AxiosPublic.post('https://hishab-2025-pi.vercel.appadAds', formData)
+    AxiosPublic.post('https://hishab-202555.vercel.appadAds', formData)
       .then(res => {
         console.log(res.data);
       })

@@ -1,23 +1,14 @@
 import { Link, NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
 import Dashboard from "./Dashboard";
-import { FaArrowLeft,  FaHome } from "react-icons/fa";
+import { FaArrowLeft,    FaHome, } from "react-icons/fa";
 import { useContext, useEffect, useRef, useState } from "react";
 import Login from "../../Security/Login";
 import { AuthContext } from "../../Security/AuthProvider";
 import Register from "../../Security/Register";
-import { MdCampaign, MdOutlinePayments, MdOutlineSummarize } from "react-icons/md";
-import { RiAccountPinBoxLine, RiPagesFill } from "react-icons/ri";
-import { FaUsersViewfinder } from "react-icons/fa6";
-import { BsCashCoin } from "react-icons/bs";
-import useNotification from "../../Hook/useNotification";
-import useEditNotification from "../../Hook/useEditNotificaation";
-import UseAxiosPublic from "../../Axios/UseAxiosPublic";
-import { formatDistanceToNow } from "date-fns";
-import { IoNotificationsCircleSharp } from "react-icons/io5";
 import useAllEmployee from "../../Hook/useAllEmployee";
-import { SiGoogleads, SiMeta } from "react-icons/si";
 import useFindClient from "../Home/useFindClient";
 import useUserr3 from "../../Hook/useUserr3";
+import {  ClipboardList, CreditCard, Users, BarChart3 } from "lucide-react"; 
 
 const DashboardRoot = () => {
   const { user,logOut } = useContext(AuthContext);
@@ -33,14 +24,12 @@ const DashboardRoot = () => {
     }
   }, []);
 
- 
+
   const navigate = useNavigate();
   const handleLogOut = () => {
     logOut().then().catch();
     navigate("/login");
   };
-
-  const isActive = (path) => location.pathname === path;
   
   const [isOpen, setIsOpen] = useState(false);
   const [isOpen2, setIsOpen2] = useState(false);
@@ -75,8 +64,6 @@ const DashboardRoot = () => {
   }, [isOpen]);
 
     const toggleDropdown = () => setIsOpen(!isOpen);
-    const toggleDropdown2 = () => setIsOpen2(!isOpen2);
-    const toggleDropdown3 = () => setIsOpen3(!isOpen3);
 
     useEffect(() => {
       const handleClickOutside = (event) => {
@@ -108,9 +95,6 @@ const DashboardRoot = () => {
       document.querySelector('html').setAttribute('data-theme', theme);
     }, [theme]);
   
-    const handleThemeChange = (e) => {
-      setTheme(e.target.value);
-    };
 
     const handleLogout = () => {
       localStorage.removeItem("clientUser"); 
@@ -119,31 +103,6 @@ const DashboardRoot = () => {
       navigate("/"); 
     };
   
-    const [notification, refetch] = useNotification();
-    const [editNotification] = useEditNotification();
-  
-    const sortedNotifications = notification.sort((a, b) => {
-      if (a.status === "unread" && b.status === "read") return -1;
-      if (a.status === "read" && b.status === "unread") return 1;
-      return new Date(b.date) - new Date(a.date);
-    });
-    const sortedNotifications2 = editNotification.sort((a, b) => {
-      if (a.status === "unread" && b.status === "read") return -1;
-      if (a.status === "read" && b.status === "unread") return 1;
-      return new Date(b.date) - new Date(a.date);
-    });
-  
-  
-  
-    const AxiosPublic=UseAxiosPublic()
-    const handleUpdate = (notification) => {
-      const data = { status: "read" };
-      AxiosPublic.patch(`/notification/${notification._id}`, data)
-        .then(() => {
-          refetch();
-        })
-        .catch((err) => console.error("Error updating notification:", err));
-    };
     const {findClients}=useFindClient(clientUser)
 
     if (!user &&  !clientUser) {
@@ -157,7 +116,7 @@ const DashboardRoot = () => {
   return (
     <div className=" ">
       <div className="flex relative">
-      <div className={`${showSidebar ? 'fixed' : 'absolute'}  lg:w-auto grid top-0 gap-8 lg:gap-8 z-20  transition-transform duration-800 ease-in-out`}>
+      <div className={`${showSidebar ? 'fixed' : 'absolute'}  lg:w-auto grid top-16 gap-8 lg:gap-8 z-10  transition-transform duration-800 ease-in-out`}>
           <Dashboard showSidebar={showSidebar} />
           <div
             className="absolute right-0 top-0 text-right lg:hidden"
@@ -168,29 +127,25 @@ const DashboardRoot = () => {
             </button>
           </div>
         </div>
-        
-        <div className="lg:ml-56  min-h-screen min-w-min  rounded-lg w-full lg:col-span-2">
-        <div style={{ backgroundColor: 'var(--bg-colorNav)', color: 'var(--text-color)'}}  className="  font-bold mx-auto   fixed z-10 w-full mr-1 p-3 hidden md:block">
-  <div className="left-0  items-center grid lg:grid-cols-3 gap-5">
+
+        <div   className=" bg-gray-800 text-white shadow-2xl font-bold mx-auto   fixed z-30 min-w-full mr-1 p-2 hidden md:block">
+  <div className="left-0  items-center grid grid-cols-2 gap-5">
 
     <div className="flex justify-start items-center ml-3 gap-5">
      
-       <div className="navbar-end ">
-      <select
-        value={theme}
-        onChange={handleThemeChange}
-        className="select-theme-dropdown bg-white px-4 py-2 rounded-md text-black mr-5"
-      >
-        <option value="light">Light</option>
-        <option value="dark">Dark</option>
-        <option value="blue">Blue</option>
-        <option value="green">Green</option>
-        <option value="pink">Pink</option>
-      </select>
-    </div>
+    <div className="">
+          <Link to={"/"}>
+            <img
+              className="w-32 h-14"
+              src="https://i.ibb.co.com/0VsQSnQC/DIGITAL-NETWORK-VERTICAL-LOGO-WHITE.png"
+              alt="Logo"
+            />
+          </Link>
+        </div>
 
  {clientUser && (
-  <div style={{ color: 'var(--text-color)' }} className="flex justify-center lg:gap-44 gap-5 items-center">
+  <div  className="flex justify-center ml-44 gap-5 items-center">
+   
     <h1>{findClients?.clientName}</h1>
   <h1 className="font-bold text-xl">{clientUser}</h1>
   <h1
@@ -205,13 +160,13 @@ const DashboardRoot = () => {
       
     </div>
 
-    <div className="flex justify-end ml-16 gap-2">
+    <div className="flex justify-end pr-10 ml-16 gap-2">
 
 
-    <div className="items-center">
+    <div className="items-center ">
       
       {user?.displayName ? (
-        <div className="relative" ref={dropdownRef}>
+        <div className="relative " ref={dropdownRef}>
           
           <label
             tabIndex={0}
@@ -268,18 +223,6 @@ const DashboardRoot = () => {
                       </p>
                     </Link>
 
-                    <Link to={'/monthlySpend'}>
-                      <p className="text-white bg-[#394148] hover:bg-blue-500 text-sm border border-gray-500 rounded-lg py-1.5 px-3 mt-2">
-                       Monthly Spend
-                      </p>
-                    </Link>
-
-                    <Link to={'/summery'}>
-                      <p className="text-white bg-[#394148] hover:bg-blue-500 text-sm border border-gray-500 rounded-lg py-1.5 px-3 mt-2">
-                        All Summery
-                      </p>
-                    </Link>
-
                     {
                       ddd.role === "admin" &&  <Link to={'/settings'}>
                       <p className="text-white bg-[#394148] hover:bg-blue-500 text-sm border border-gray-500 rounded-lg py-1.5 px-3 mt-2">
@@ -289,7 +232,6 @@ const DashboardRoot = () => {
 
                     }
 
-                   
                   </div>
                 </div>
                 <hr className="my-2" />
@@ -332,11 +274,18 @@ const DashboardRoot = () => {
      
     </div>
 
-  </div>
-</div>
 
-<div style={{ backgroundColor: 'var(--bg-color2)'}} className="lg:pt-20 mt-2 pt-12 px-5    min-h-screen h-full  " >
-  <Outlet />
+
+  </div>
+    </div>
+        
+        <div className="lg:ml-52  min-h-screen min-w-min  rounded-lg w-full lg:col-span-2">
+       
+
+<div>
+  <div className="lg:pt-24 pb-5   lg:px-5    min-h-screen h-full  " >
+    <Outlet />
+  </div>
 </div>
 
 
@@ -344,154 +293,114 @@ const DashboardRoot = () => {
         </div>
       </div>
 
-      <div
-  className="fixed left-0 top-0 w-full text-left lg:hidden bg-gray-900 p-2 z-5">
-  <div className="flex shadow-blue-700 shadow-2xl  justify-between items-center">
-  <div className="flex justify-center items-center mx-4 text-2xl gap-7">
-      <Link to={'/'}>
-        <p className={` ${isActive('/') ? 'text-red-500 border-b-2 border-white' : 'text-white'}`}>
-          <FaHome />
-        </p>
-      </Link>
-      <Link to={'/clients'}>
-          <p className={` ${isActive('/clients') ? 'text-red-500 border-b-2 border-white' : 'text-white'}`}>
-            <FaUsersViewfinder />
-          </p>
-        </Link>
-        <Link to={'campaigns'}>
-          <p className={` ${isActive('/campaigns') ? 'text-red-500 border-b-2 border-white' : 'text-white'}`}>
-            <MdCampaign />
-          </p>
-        </Link>
-        <Link to={'/adsAccount'}>
-          <p className={` ${isActive('/adsAccount') ? 'text-red-500 border-b-2 border-white' : 'text-white'}`}>
-            <RiAccountPinBoxLine />
-          </p>
-        </Link>
-        <Link to={'/allPayments'}>
-          <p className={` ${isActive('/allPayments') ? 'text-red-500 border-b-2 border-white' : 'text-white'}`}>
-            <MdOutlinePayments />
-          </p>
-        </Link>
-        <Link to={'/salary'}>
-          <p className={` ${isActive('/salary') ? 'text-red-500 border-b-2 border-white' : 'text-white'}`}>
-            < BsCashCoin />
-          </p>
-        </Link>
-
-    {
-      user? <> 
+      <div className="fixed  bottom-0 left-0 right-0 z-50 bg-blue-600 text-white flex justify-between items-center px-6 py-3 shadow-lg md:hidden transition-all duration-300">
   
-       </> :   <>
-       </>
-           
-    }
+
+
+
+
+      <div className="fixed bottom-0 left-0 right-0 z-50 bg-[#0B3A84] backdrop-blur-md shadow-2xl md:hidden px-4 py-2 ">
+  <div className="grid grid-cols-5 items-center text-center text-[10px] font-semibold text-white">
     
-
-
-    </div>
-
-    <div className="items-center">
-      {user?.displayName ? (
-        <div className="relative" >
-          {/* Profile Image and Dropdown Toggle */}
-          <label
-            tabIndex={0}
-            className="relative cursor-pointer"
-            onClick={toggleDropdown2}
-          >
-            <img
-              className="h-8 w-8 rounded-full"
-              src={user.photoURL}
-              alt="Profile"
-            />
-            {/* Dropdown Icon */}
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth={2}
-              stroke="currentColor"
-              className="absolute right-0 bottom-0 h-4 w-4 bg-white rounded-full"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d={isOpen ? "M19 15l-7-7-7 7" : "M19 9l-7 7-7-7"}
-              />
-            </svg>
-          </label>
-
-          {/* Dropdown Menu */}
-          {isOpen2 && (
-            <ul
-              tabIndex={0}
-              className="absolute mt-3 text-white right-1 z-[1] p-1 rounded-box w-52 shadow-lg bg-[#2e353a]"
-            >
-              <div className="p-4 text-center">
-                <img
-                  className="h-16 w-16 rounded-full mx-auto"
-                  src={user?.photoURL}
-                  alt="Profile"
-                />
-                <Link
-                  className="text-white font-bold"
-                  to={"/updateProfile"}
-                >
-                  <h1 className="my-2">{user?.displayName?.split(" ")[0]}</h1>
-                </Link>
-
-                <div className="text-start">
-                  <div className="text-center">
-                    {ddd.role === "admin" || 'employee' && (
-                      <>
-                        <Link to={"/monthlySpend"}>
-                          <p className="text-white bg-[#394148] hover:bg-blue-500 text-sm border border-gray-500 rounded-lg py-1.5 px-3 mt-2">
-                            All History
-                          </p>
-                        </Link>
-                        <Link to={"/summery"}>
-                          <p className="text-white bg-[#394148] hover:bg-blue-500 text-sm border border-gray-500 rounded-lg py-1.5 px-3 mt-2">
-                            All Summary
-                          </p>
-                        </Link>
-                      </>
-                    )}
-
-
-                    <Link to={"/updateProfile"}>
-                      <p className="text-white bg-[#394148] hover:bg-blue-500 text-sm border border-gray-500 rounded-lg py-1.5 mt-2 px-3">
-                        Update Profile
-                      </p>
-                    </Link>
-                  </div>
-                </div>
-                <hr className="my-2" />
-                {/* Logout Button */}
-                <NavLink
-                  onClick={handleLogOut}
-                  className={({ isActive }) =>
-                    isActive ? "underline text-blue-700" : "hover:text-gray-600"
-                  }
-                >
-                  <button className="py-1 px-3 rounded-lg bg-red-500 text-white font-bold">
-                    Log Out
-                  </button>
-                </NavLink>
-              </div>
-            </ul>
-          )}
-        </div>
-      ) : (
-        <Link to="/login">
-          <button className="font-avenir px-3 py-1 bg-neutral rounded text-white">
-            Login
-          </button>
-        </Link>
+    <NavLink
+      to="/summery"
+      className={({ isActive }) =>
+        `flex flex-col items-center gap-1 transition-all ${
+          isActive
+          ? 'text-white font-extrabold scale-110'
+          : 'text-white  hover:scale-110'
+      }`
+      }
+    >
+      {({ isActive }) => (
+        <>
+          <BarChart3 className={`w-6 h-6 ${isActive ? 'w-8 h-8' : ''}`} />
+          <span>Summary</span>
+        </>
       )}
-    </div>
+    </NavLink>
+
+    <NavLink
+      to="/monthlySpend"
+      className={({ isActive }) =>
+        `flex flex-col items-center gap-1 transition-all ${
+          isActive
+          ? 'text-white font-extrabold scale-110'
+          : 'text-white  hover:scale-110'
+      }`
+      }
+    >
+      {({ isActive }) => (
+        <>
+          <ClipboardList className={`w-6 h-6 ${isActive ? 'w-8 h-8' : ''}`} />
+          <span>Spend</span>
+        </>
+      )}
+    </NavLink>
+
+    <NavLink
+      to="/"
+      className={({ isActive }) =>
+        `flex flex-col items-center gap-1 transition-all ${
+          isActive
+            ? 'text-blue-400 scale-110'
+            : 'text-white hover:text-blue-600 hover:scale-110'
+        }`
+      }
+    >
+      {({ isActive }) => (
+        <>
+          <div className="nav-button">
+            <FaHome className={`w-8 h-8`} />
+          </div>
+          <span>Home</span>
+        </>
+      )}
+    </NavLink>
+
+    <NavLink
+      to="/allPayments"
+      className={({ isActive }) =>
+        `flex flex-col items-center gap-1 transition-all ${
+          isActive
+          ? 'text-white font-extrabold scale-110'
+          : 'text-white  hover:scale-110'
+      }`
+      }
+    >
+      {({ isActive }) => (
+        <>
+          <CreditCard className={`w-6 h-6 ${isActive ? 'w-8 h-8' : ''}`} />
+          <span>Payment</span>
+        </>
+      )}
+    </NavLink>
+
+    <NavLink
+      to="/clients"
+      className={({ isActive }) =>
+        `flex flex-col items-center gap-1 transition-all ${
+          isActive
+          ? 'text-white font-extrabold scale-110'
+          : 'text-white  hover:scale-110'
+      }`
+      }
+    >
+      {({ isActive }) => (
+        <>
+          <Users className={`w-6 h-6 ${isActive ? 'w-8 h-8' : ''}`} />
+          <span>Client</span>
+        </>
+      )}
+    </NavLink>
 
   </div>
+</div>
+
+
+
+
+
 </div>
 
 

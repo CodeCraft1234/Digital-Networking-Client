@@ -66,6 +66,16 @@ import AllAds from "./Pages/Home/AllAds";
 import MonthlyCast from "./Pages/DashboardRoot/MonthlyCast";
 import Services from "./Pages/Home/Services";
 import Settings from "./Pages/DashboardRoot/Routes/Settings";
+import WebDesignAdmin from "./Pages/Home/WebDesignAdmin";
+import GraphicDesignAdmin from "./Pages/Home/GraphicDesignAdmin";
+import Invoice from "./Pages/DashboardRoot/Invoice";
+
+import PaymentSuccessed from "./Pages/Home/PaymentStatus";
+import PaymentSuccess from "./Pages/Home/PaymentSuccess";
+import PaymentCancel from "./Pages/Home/PaymentCancel";
+import PaymentFailed from "./Pages/Home/PaymentFailed";
+import PaymentStatus from "./Pages/Home/PaymentStatus";
+import ClientUpdateProfile from "./Pages/Home/ClientUpdateProfile";
 
 const router = createBrowserRouter([
   {
@@ -206,6 +216,39 @@ const router = createBrowserRouter([
         path:'/AdsAccount',
         element:<AdsAccount></AdsAccount>
       },
+       {
+        path:'/web-design',
+        element:<WebDesignAdmin></WebDesignAdmin>
+      },
+       {
+        path:'/graphic-design',
+        element:<GraphicDesignAdmin></GraphicDesignAdmin>
+      },
+
+       {
+        path:'/payment-success',
+        element:<PaymentSuccess></PaymentSuccess>
+      },
+       {
+        path:'/payment-status',
+        element:<PaymentStatus></PaymentStatus>
+      },
+       {
+        path:'/payment-cancel',
+        element:<PaymentCancel></PaymentCancel>
+      },
+       {
+        path:'/payment-failed',
+        element:<PaymentFailed></PaymentFailed>
+      },
+       {
+        path:'/graphic-design',
+        element:<GraphicDesignAdmin></GraphicDesignAdmin>
+      },
+       {
+        path:'/invoice',
+        element:<Invoice></Invoice>
+      },
       {
         path:'/allUsers',
         element:<AllUsers></AllUsers>
@@ -221,6 +264,10 @@ const router = createBrowserRouter([
        {
         path:'/allPayments',
         element:<PaymentHistory></PaymentHistory>
+       },
+       {
+        path:'/client-profile-update/:id',
+        element:<ClientUpdateProfile></ClientUpdateProfile>
        },
 
        {

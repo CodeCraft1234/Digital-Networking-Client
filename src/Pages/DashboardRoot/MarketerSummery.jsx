@@ -3,16 +3,15 @@ import { Helmet } from 'react-helmet-async';
 import { AuthContext } from '../../Security/AuthProvider';
 import useAllEmployee from '../../Hook/useAllEmployee';
 import useUserr from '../../Hook/useUser';
-import useMyUser from '../../Hook/useMyUser';
 import useMyClientsTotal from '../../Hook/useMyClientsTotal';
 import useMyClientsTotalMonth from '../../Hook/useMyClientTotalMonth';
-import useAdminPayTotalMonthly from '../../Hook/useAdminPayTotalMonthly';
 import SummaryCard from '../Home/SummeryCard';
 import useMyClientsTotalTiktokCostMonth from '../../Hook/useMyClientTiktokCostTotalMonth';
-import { SiGoogleads, SiMeta } from 'react-icons/si';
-import { FaTiktok } from 'react-icons/fa';
 import useRates from '../../Hook/useRates';
 import useClientsDueAvance from '../../Hook/useClientDueAvance';
+import useMyUser2 from '../../Hook/useMyUser2';
+import useMyClientsTotalServiceMonth from '../../Hook/useMyClientsTotalServiceMonth';
+import useUsersSellery2 from '../../Hook/useUsersSellery2';
 
 const months = [
   'January', 'February', 'March', 'April', 'May', 'June',
@@ -29,12 +28,15 @@ const MarketerSummery = () => {
     : localStorage.getItem(`ac25${user?.email}`) || user?.email;
 
   const [selectedEmployee, setSelectedEmployee] = useState(initialTab3);
-  const [myUser] = useMyUser(selectedEmployee);
+  const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
+  const [myUser] = useMyUser2(selectedEmployee, selectedYear);
 
-  const [myClientsTotalMonth] = useMyClientsTotalMonth(selectedEmployee);
-  const [myClientsTotalTiktokCostMonth] = useMyClientsTotalTiktokCostMonth(selectedEmployee);
-  const [adminPayTotalMonthly] = useAdminPayTotalMonthly(selectedEmployee);
+  const [myClientsTotalTiktokCostMonth] = useMyClientsTotalTiktokCostMonth(selectedEmployee,selectedYear);
+  const [myClientsTotalMonth] = useMyClientsTotalMonth(selectedEmployee,selectedYear);
+  const [myClientsTotalServiceMonth] = useMyClientsTotalServiceMonth(selectedEmployee,selectedYear);
+
   const [myClientsTotal] = useMyClientsTotal(selectedEmployee);
+  console.log(myClientsTotalServiceMonth);
 
   const changeTab = (tab) => {
     setSelectedEmployee(tab);
@@ -50,19 +52,13 @@ const MarketerSummery = () => {
   };
 
   const { rates } = useRates();
-
-      const [salaryRate, setSalaryRate] = useState(rates?.salaryRate || ""); 
+  const [usersSellery2] = useUsersSellery2('all',selectedYear,'all');
       const [costRate, setCostRate] = useState(rates?.costRate || ""); 
       const [metaRate, setMetaRate] = useState(rates?.metaRate || ""); 
       const [googleRate, setGoogleRate] = useState(rates?.googleRate || ""); 
-      const [tiktokRate, setTiktokRate] = useState(rates?.tiktokRate || ""); 
-
-
-      const currentDate = new Date();
-      const currentMonth = currentDate.toLocaleString('default', { month: 'long' });
-      const currentYear = currentDate.getFullYear().toString();
-      const [sortYear, setSortYear] = useState(currentYear);
-      
+      const [selleryRate, setSalaryRate] = useState(rates?.googleRate || ""); 
+      const [tiktokRate, setTiktokRate] = useState(rates?.googleRate || ""); 
+  
       useEffect(() => {
         setSalaryRate(rates?.salaryRate || "");
         setCostRate(rates?.costRate || "");
@@ -85,30 +81,24 @@ const MarketerSummery = () => {
         const totalSpent = totalSpentMeta + totalSpentGoogle;
 
         const selleryData = (user?.sellery || []).filter(sell => sell.month === month);
-        const totalSellery = selleryData.reduce((acc, sell) => acc + sell.amount, 0);
+        const totalSellery = selleryData.reduce((acc, sell) => acc + sell.payAmount, 0);
         const totalBonus = selleryData.reduce((acc, sell) => acc + sell.bonus, 0);
 
-        const totalAdminPay = (
-          parseFloat(adminPayTotalMonthly?.paymentByMonth?.[month] || 0) 
-        );
+        console.log(totalSellery);
 
-        const totalAdminPayCharge = (
-          parseFloat(adminPayTotalMonthly?.paymentByMonthCharge?.[month] || 0)) 
-        
         const totalClientPay = myClientsTotalMonth?.[month] || 0;
+        const totalService = myClientsTotalServiceMonth?.[month] || 0;
         const totalClientTiktokCost = myClientsTotalTiktokCostMonth?.[month] || 0;
 
         acc.totalSpentMeta = totalSpentMeta;
         acc.totalSpentPage = totalSpentPage;
         acc.totalSpent = totalSpent;
-        acc.totalSellery += totalSellery;
+        acc.totalSellery = totalSellery;
         acc.totalSellerys = totalSpentMeta * 7;
         acc.totalBonus += totalBonus;
-        acc.totalAdminPay = totalAdminPay;
-
-        acc.totalAdminPayCharge = totalAdminPayCharge;
 
         acc.totalClientPay = totalClientPay;
+        acc.totalService = totalService;
         acc.tiktokCost = totalClientTiktokCost;
 
         return acc;
@@ -121,8 +111,6 @@ const MarketerSummery = () => {
         totalSellery: 0,
         totalSellerys: 0,
         totalBonus: 0,
-        totalAdminPay: 0,
-        totalAdminPayCharge: 0,
         totalClientPay: 0,
         tiktokCost: 0,
       });
@@ -130,23 +118,21 @@ const MarketerSummery = () => {
       aggregatedData.totalBill = aggregatedData.totalMetaData * metaRate;
       aggregatedData.totalMeta = aggregatedData.totalSpentMeta * metaRate;
       aggregatedData.totalGoogle = aggregatedData.totalSpentGoogle * googleRate;
-      aggregatedData.totalDue = aggregatedData.totalSpent * metaRate - aggregatedData.totalAdminPay;
+      aggregatedData.totalDue = aggregatedData.totalSpent * metaRate - aggregatedData.totalClientPay;
       aggregatedData.totalSelleryPaid = aggregatedData.totalSpent * 7 - aggregatedData.totalSellery;
 
       return aggregatedData;
     }).sort((a, b) => months.indexOf(a.month) - months.indexOf(b.month));
-  }, [myUser, selectedEmployee, adminPayTotalMonthly, myClientsTotalMonth,myClientsTotalTiktokCostMonth, recentMonths]);
+  }, [myUser, selectedEmployee,  myClientsTotalMonth,myClientsTotalTiktokCostMonth, recentMonths]);
 
-  const totalAdminPay = employeeData.reduce((acc, data) => acc + data.totalAdminPay, 0);
   const totalClientPay = myClientsTotal.total || 0;
 
-  const employeeDue =  totalAdminPay -(employeeData
+  const employeeDue =  totalClientPay -(employeeData
     .reduce((acc, data) => acc + (data.totalGoogle + data.totalMeta), 0)
     .toFixed(0))
 
-  const lossProfit =  employeeData.reduce((acc, data) => acc + (data.totalAdminPay - ((data.totalSpentMeta + data.totalSpentGoogle + data.tiktokCost + data.totalSpentPage) * costRate + data.totalAdminPayCharge + data.totalSellerys)), 0) 
+  const lossProfit =  employeeData.reduce((acc, data) => acc + (data.totalClientPay - ((data.totalSpentMeta + data.totalSpentGoogle + data.tiktokCost + data.totalSpentPage) * costRate + data.totalSellerys)), 0) 
 
-  const clientDue = totalClientPay - totalAdminPay ;
 
   const formatValue = (value, decimals = 2) =>
     new Intl.NumberFormat("en-IN", {
@@ -156,9 +142,6 @@ const MarketerSummery = () => {
 
   const { clientsDueAdvance } = useClientsDueAvance(selectedEmployee);
 
-
-  console.log( adminPayTotalMonthly);
-
   return (
     <div>
       <Helmet>
@@ -166,15 +149,16 @@ const MarketerSummery = () => {
         <link rel="canonical" href="https://www.example.com/" />
       </Helmet>
 
-      <div className="grid grid-cols-3 rounded-lg md:grid-cols-3 lg:grid-cols-7 text-black sm:grid-cols-2 gap-5 justify-around">
+      <div className='hidden lg:block'>
+
+      <div className="grid grid-cols-3 rounded-lg md:grid-cols-3 lg:grid-cols-6 text-black sm:grid-cols-2 gap-5 justify-around">
         <SummaryCard title="Total Spend" value={new Intl.NumberFormat('en-IN').format(employeeData.reduce((sum, user) => sum + parseFloat(user?.totalSpent || 0), 0))} />
         <SummaryCard title="Total BDT" value={new Intl.NumberFormat('en-IN', { maximumFractionDigits: 0 }).format(
       employeeData.reduce((acc, data) => acc + (data.totalGoogle + data.totalMeta), 0)
     )} />
 
-        <SummaryCard title={userr?.role === 'admin' ? "Income" : 'Admin Pay'} value={new Intl.NumberFormat('en-IN').format(employeeData.reduce((acc, data) => acc + data.totalAdminPay, 0))} />
 
-        <SummaryCard title="Client Pay" value={new Intl.NumberFormat('en-IN').format(totalClientPay)} />
+        <SummaryCard title="Payment" value={new Intl.NumberFormat('en-IN').format(totalClientPay)} />
 
         <SummaryCard title="Client Due" value={formatValue(clientsDueAdvance?.totalDue || 0, 0)} />
 
@@ -192,11 +176,11 @@ const MarketerSummery = () => {
 
       </div>
 
-      <div className="side-space mt-5">
-      <div className='flex justify-between items-center mb-5 gap-3'>
+      <div className="my-5">
+      <div className='flex justify-end items-center my-5 gap-3'>
       <div className="">
           {userr?.role === "admin" && (
-            <div className="flex mt-1.5 justify-center">
+            <div className="flex  justify-center">
               <select
                 className="select2"
                 value={selectedEmployee}
@@ -212,232 +196,319 @@ const MarketerSummery = () => {
                   ))}
               </select>
             </div>
-
-            
           )}
-          <div>
-  <select
-    style={{ backgroundColor: 'var(--bg-color2)', border: 'var(--border)', color: 'var(--text-color2)' }}
-    className="px-4 py-2 border rounded bg-white text-black border-black"
-    onChange={(e) => setSortYear(e.target.value)}
-    value={sortYear || ""}
-  >
-    <option value="">Select Year</option>
-    {Array.from(new Set(employeeData?.map(account => new Date(account.date).getFullYear())))
-      .sort((a, b) => a - b) // Sorting in ascending order (2024, 2025, 2026...)
-      .map(year => (
-        <option key={year} value={year}>
-          {year}
-        </option>
-      ))}
-  </select>
+        </div>
+
+        <select
+  className="select2"
+  value={selectedYear}
+  onChange={(e) => setSelectedYear(e.target.value)}
+>
+  {Array.from({ length: new Date().getFullYear() - 2024 + 1 }, (_, i) => 2024 + i).map((year) => (
+    <option key={year} value={year}>
+      {year}
+    </option>
+  ))}
+</select>
+
+      </div>
+
+      <div className="table-div">
+      <table className="min-w-full text-center">
+  <thead>
+    <tr className="tr1">
+      <th className="text-start flex justify-start items-center ml-5">Month</th>
+      {/* <th className="text-center">Salary</th> */}
+      <th className="text-center">Service</th>
+      <th className="text-center">Total Spend</th>
+      <th className="text-center">Total BDT</th>
+      <th className="text-center">Total Cost</th>
+      <th className="text-center">Payment</th>
+      <th className="text-center">Loss/Profit</th>
+      <th className="text-center">Due/Advance</th>
+    </tr>
+  </thead>
+
+  <tbody className="divide-y divide-gray-200 bg-white">
+    {employeeData.map((data, index) => {
+      const metaPageTotal = data.totalSpentMeta + data.totalSpentPage;
+      const googleTikTokTotal = data.totalSpentGoogle + data.tiktokCost;
+      const totalCost = (metaPageTotal + googleTikTokTotal) * costRate + data.totalSellerys;
+      const emProfitLoss = data.totalClientPay - totalCost;
+      const totalSalary = data.totalSellery
+
+      return (
+        <tr 
+        key={data.id}
+        className={`${
+          index % 2 === 0
+            ? "bg-white text-left text-black border-b border-opacity-20"
+            : "bg-gray-100  text-left text-black border-b border-opacity-20"
+        }`}
+      >
+          <td className='text-start pl-8'>{data.month}</td>
+
+          {/* <td>
+            <span>
+              <span className="amount-taka">৳</span>
+              <span className="ml-1">{totalSalary?.toLocaleString('en-IN') || '0'}</span>
+            </span>
+          </td> */}
+          <td>
+            <span>
+              <span className="amount-taka">৳</span>
+              <span className="ml-1">{data.totalService?.toLocaleString('en-IN') || '0'}</span>
+            </span>
+          </td>
+
+          <td>
+            <span>
+              <span className="amount-doller">$</span>
+              <span className="ml-1">{metaPageTotal.toLocaleString('en-IN')}</span>
+            </span>
+          </td>
+
+          <td>
+            <span>
+              <span className="amount-taka">৳</span>
+              <span className="ml-1">{(data.totalGoogle + data.totalMeta).toLocaleString('en-IN')}</span>
+            </span>
+          </td>
+
+          <td>
+            <span>
+              <span className="amount-taka">৳</span>
+              <span className="ml-1">{totalCost.toLocaleString('en-IN')}</span>
+            </span>
+          </td>
+
+          <td>
+            <span>
+              <span className="amount-taka">৳</span>
+              <span className="ml-1">{data.totalClientPay?.toLocaleString('en-IN') || '0'}</span>
+            </span>
+          </td>
+
+          <td>
+  {emProfitLoss === 0 ? (
+    <span className="font-semibold text-gray-700">
+      <span className="amount-taka">৳</span>
+      <span className="ml-1">0</span>
+    </span>
+  ) : (
+    <span
+      className={`px-2 py-1 rounded font-semibold text-white ${
+        emProfitLoss > 0 ? 'bg-green-500' : 'bg-red-700'
+      }`}
+    >
+      <span className="amount-taka">৳</span>
+      <span className="ml-1">
+        {Number(Math.abs(emProfitLoss).toFixed(0)).toLocaleString('en-IN')}
+      </span>
+    </span>
+  )}
+</td>
+
+<td>
+  {data.totalGoogle + data.totalMeta - (data.totalClientPay || 0) === 0 ? (
+    <span className="font-semibold text-gray-700">
+      <span className="amount-taka">৳</span>
+      <span className="ml-1">0</span>
+    </span>
+  ) : (
+    <span
+      className={`px-2 py-1 rounded font-semibold text-white ${
+        data.totalGoogle + data.totalMeta - (data.totalClientPay || 0) > 0
+          ? 'bg-red-700'
+          : 'bg-green-500'
+      }`}
+    >
+      <span className="amount-taka">৳</span>
+      <span className="ml-1">
+        {Number(
+          Math.abs(
+            data.totalGoogle + data.totalMeta - (data.totalClientPay || 0)
+          ).toFixed(0)
+        ).toLocaleString('en-IN')}
+      </span>
+    </span>
+  )}
+</td>
+
+
+
+
+        </tr>
+      );
+    })}
+  </tbody>
+
+  <tfoot className="font-bold">
+    <tr className="tr1">
+      <td className="px-2 py-2 sm:px-4 text-right" colSpan="1">Total :</td>
+      <td>
+        <span className="inline-flex items-center justify-center">
+          <span className="amount-taka text-xs sm:text-sm">৳</span>
+          <span className="ml-1 text-xs sm:text-sm">
+            {employeeData.reduce((acc, data) => acc + data.totalService, 0).toLocaleString('en-IN')}
+          </span>
+        </span>
+      </td>
+      <td>
+        <span className="inline-flex items-center justify-center">
+          <span className="amount-doller text-xs sm:text-sm">$</span>
+          <span className="ml-1 text-xs sm:text-sm">
+            {employeeData.reduce((acc, data) => acc + data.totalSpentMeta, 0).toLocaleString('en-IN')}
+          </span>
+        </span>
+      </td>
+
+      <td>
+        <span className="inline-flex items-center justify-center">
+          <span className="amount-taka text-xs sm:text-sm">৳</span>
+          <span className="ml-1 text-xs sm:text-sm">
+            {employeeData.reduce((acc, data) => acc + (data.totalGoogle + data.totalMeta), 0).toLocaleString('en-IN')}
+          </span>
+        </span>
+      </td>
+
+      <td>
+        <span className="inline-flex items-center justify-center">
+          <span className="amount-taka text-xs sm:text-sm">৳</span>
+          <span className="ml-1 text-xs sm:text-sm">
+            {employeeData.reduce((acc, data) => {
+              const metaPageTotal = data.totalSpentMeta + data.totalSpentPage;
+              const googleTikTokTotal = data.totalSpentGoogle + data.tiktokCost;
+              return acc + (metaPageTotal + googleTikTokTotal) * costRate + data.totalSellerys;
+            }, 0).toLocaleString('en-IN')}
+          </span>
+        </span>
+      </td>
+
+      <td>
+        <span className="inline-flex items-center justify-center">
+          <span className="amount-taka text-xs sm:text-sm">৳</span>
+          <span className="ml-1 text-xs sm:text-sm">
+            {employeeData.reduce((acc, data) => acc + data.totalClientPay, 0).toLocaleString('en-IN')}
+          </span>
+        </span>
+      </td>
+
+      <td>
+        <span className="inline-flex items-center justify-center">
+          <span className="amount-taka text-xs sm:text-sm">৳</span>
+          <span className="ml-1 text-xs sm:text-sm">
+            {employeeData.reduce((acc, data) => {
+              const metaPageTotal = data.totalSpentMeta + data.totalSpentPage;
+              const googleTikTokTotal = data.totalSpentGoogle + data.tiktokCost;
+              const totalCost = (metaPageTotal + googleTikTokTotal) * costRate + data.totalSellerys;
+              return acc + (data.totalClientPay - totalCost);
+            }, 0).toLocaleString('en-IN')}
+          </span>
+        </span>
+      </td>
+
+      <td>
+      <span className="inline-flex items-center justify-center">
+        <span className="amount-taka text-xs sm:text-sm">৳</span>
+        <span className="ml-1 text-xs sm:text-sm">
+          {employeeData.reduce((acc, data) => {
+            const dueAdvance = (data.totalGoogle + data.totalMeta) - (data.totalClientPay || 0);
+            return acc + dueAdvance;
+          }, 0).toLocaleString('en-IN')}
+        </span>
+      </span>
+    </td>
+    </tr>
+  </tfoot>
+</table>
+
+</div>
+      </div>
+
+      </div>
+
+
+
+      <div className="bg-white pt-40 pb-12 lg:pt-8 font-sans lg:max-w-2xl lg:hidden mx-auto text-sm">
+  {employeeData.map((data) => {
+    const metaPageTotal = data.totalSpentMeta + data.totalSpentPage;
+    const googleTikTokTotal = data.totalSpentGoogle + data.tiktokCost;
+    const totalCost = (metaPageTotal + googleTikTokTotal) * costRate + data.totalSellerys;
+    const emProfitLoss = data.totalClientPay - totalCost;
+
+    return (
+      <div
+        key={data._id}
+        className="bg-gray-50 rounded-xl shadow-md px-5 py-4 mb-4 hover:shadow-lg transition duration-300"
+      >
+        <div className="flex justify-between items-end gap-4">
+          {/* Left */}
+          <div className="space-y-2 flex-1">
+            <h2 className="text-lg font-semibold text-green-500 uppercase tracking-wide">{data.month}</h2>
+
+            <p>
+  <span className="font-medium">Spend:</span>{" "}
+  <span className="amount-doller">$</span>{" "}
+  {metaPageTotal.toLocaleString("en-IN")}
+</p>
+
+<p>
+  <span className="font-medium">Bill:</span>{" "}
+  <span className="amount-taka">৳</span>{" "}
+  {(data.totalGoogle + data.totalMeta).toLocaleString("en-IN")}
+</p>
+
+
+          </div>
+
+          {/* Right */}
+          <div className="text-right space-y-2 text-xs">
+
+          <p>
+                <span className="font-medium">Payment:</span>{" "}
+                <span className="amount-taka">৳</span>{" "}
+                {data.totalClientPay?.toLocaleString("en-IN") || "0"}
+              </p>
+
+             
+           
+              <p className="font-semibold">
+  {(() => {
+    const totalGoogle = data.totalGoogle || 0;
+    const totalMeta = data.totalMeta || 0;
+    const totalClientPay = data.totalClientPay || 0;
+
+    const result = totalGoogle + totalMeta - totalClientPay;
+
+    if (result === 0) {
+      return (
+        <span className="text-black">
+           <span> <span className="amount-taka">৳</span>{" "}0</span>
+        </span>
+      );
+    }
+
+    return (
+      <span className={result < 0 ? "text-green-600" : "text-red-600"}>
+        {result < 0 ? "Advance" : "Due"}:{" "}
+        <span> <span className="amount-taka">৳</span>{" "}{Math.abs(result).toLocaleString("en-IN")}</span>
+      </span>
+    );
+  })()}
+</p>
+
+
+          </div>
+        </div>
+      </div>
+    );
+  })}
 </div>
 
-        </div>
 
-      </div>
-
-        <div className="table-div">
-          <table className="min-w-full text-center">
-          <thead>
-  <tr className="tr1">
-    <th>Month</th>
-
-    <th>
-      <div className="flex justify-start items-center gap-1">
-        <SiMeta  /> Spend
-      </div>
-    </th>
-
-    <th>
-      <div className="flex justify-start items-center gap-1">
-        <SiGoogleads /> Spend
-      </div>
-    </th>
-
-    <th>
-      <div className="flex justify-start items-center gap-1">
-        <FaTiktok /> Spend
-      </div>
-    </th>
-
-    <th>Page $</th>
-    <th>Total BDT</th>
-    <th>{userr?.role === 'admin' ? "Income" : 'Admin Pay'}</th>
-    <th>Client Pay</th>
-    <th>Total Cost</th>
-    <th className="text-center">{clientDue > 0 ? "Client Adv." : clientDue < 0 ? "Client Due" : "Client Clear"}</th>
-    <th className="text-center"> {lossProfit < 0 ? "Loss" : lossProfit > 0 ? "Profit" : "Clear"} </th>
-    <th className="text-center">{employeeDue > 0 ? "EM. Adv." : employeeDue < 0 ? "EM. Due" : "EM. Clear"}</th>
-   
-  </tr>
-</thead>
-
-            <tbody>
-              {employeeData.map((data, index) => (
-                <tr key={index} className="tr2">
-                  <td>{data.month}</td>
-
-
-                  <td><span className="amount-doller">$ </span>{new Intl.NumberFormat('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(data.totalSpentMeta)}</td>
-
-                  <td><span className="amount-doller">$ </span>{new Intl.NumberFormat('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(data.totalSpentGoogle)}</td>
-
-                  <td><span className="amount-doller">$ </span>{new Intl.NumberFormat('en-IN', { maximumFractionDigits: 0 }).format(data.tiktokCost.toFixed(2))}</td>
-
-                  <td><span className="amount-doller">$ </span>{new Intl.NumberFormat('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(data.totalSpentPage)}</td>
-
-
-                
-                  <td><span className="amount-taka">৳ </span>{new Intl.NumberFormat('en-IN', { maximumFractionDigits: 0 }).format(data.totalGoogle + data.totalMeta)}</td>
-
-                  <td><span className="amount-taka">৳ </span>{new Intl.NumberFormat('en-IN', { maximumFractionDigits: 0 }).format(data.totalAdminPay)}</td>
-
-                  <td><span className="amount-taka">৳ </span>{new Intl.NumberFormat('en-IN', { maximumFractionDigits: 0 }).format(data.totalClientPay)}</td>
-
-
-
-
-                  <td><span className="amount-taka">৳ </span>{new Intl.NumberFormat('en-IN', { maximumFractionDigits: 0 }).format(((data.totalSpentMeta + data.totalSpentGoogle + data.tiktokCost + data.totalSpentPage) * costRate) +  data.totalAdminPayCharge + data.totalSellerys)}</td>
-
-
-
-                  <td className='text-center'>
-  <span className={(() => {
-
-    const difference = data.totalClientPay -  data.totalAdminPay ;
-
-    return difference > 0
-      ? 'bg-green-700 px-3 rounded-lg py-1.5  text-white'
-      : difference < 0
-      ? 'bg-red-800 px-3 rounded-lg py-1.5  text-white'
-      : 'bg-yellow-300 px-3 rounded-lg py-1.5  text-black';
-  })()}>
-
-<span className="amount-taka">৳ </span>{new Intl.NumberFormat('en-IN', { maximumFractionDigits: 0 }).format(
-      data.totalClientPay - data.totalAdminPay 
-    )}
     
-  </span>
-                 </td>
 
-
-                 
-
-                 
-                  <td className='text-center'>
-  <span className={(() => {
-    const totalSpent =
-      (data.totalSpentMeta + data.totalSpentGoogle + data.tiktokCost + data.totalSpentPage) * costRate +
-      data.totalAdminPayCharge +
-      data.totalSellerys;
-
-    const difference = data.totalAdminPay - totalSpent;
-
-    return difference > 0
-      ? 'bg-green-700 px-3 rounded-lg py-1.5  text-white'
-      : difference < 0
-      ? 'bg-red-800 px-3 rounded-lg py-1.5  text-white'
-      : 'bg-yellow-300 px-3 rounded-lg py-1.5  text-black';
-  })()}>
-
-<span className="amount-taka">৳ </span>{new Intl.NumberFormat('en-IN', { maximumFractionDigits: 0 }).format(
-      data.totalAdminPay - 
-      ((data.totalSpentMeta + data.totalSpentGoogle + data.tiktokCost + data.totalSpentPage) * costRate + 
-       data.totalAdminPayCharge + 
-       data.totalSellerys)
-    )}
-    
-  </span>
-                 </td>
-
-                 <td className='text-center'>
-                    <span className={
-                        data.totalAdminPay - (data.totalGoogle + data.totalMeta)  > 0
-                        ? 'bg-green-700 px-3 rounded-lg py-1.5  text-white'
-                        : data.totalAdminPay - (data.totalGoogle + data.totalMeta) < 0
-                        ? 'bg-red-800 px-3 rounded-lg py-1.5  text-white'
-                        : 'bg-yellow-300 px-3 rounded-lg py-1.5  text-black'
-                    }>
-                      ৳{new Intl.NumberFormat('en-IN', { maximumFractionDigits: 0 }).format(
-                        data.totalAdminPay - (data.totalGoogle + data.totalMeta)
-                      )}
-                    </span>
-                  </td>
-
-                </tr>
-              ))}
-            </tbody>
-            <tfoot className="font-bold">
-  <tr className="tr1">
-    <td className="text-right" colSpan="1">Total</td>
-
-    <td><span className="amount-doller">$ </span>{new Intl.NumberFormat('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(
-      employeeData.reduce((acc, data) => acc + data.totalSpentMeta, 0)
-    )}</td>
-
-    <td><span className="amount-doller">$ </span>{new Intl.NumberFormat('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(
-      employeeData.reduce((acc, data) => acc + data.totalSpentGoogle, 0)
-    )}</td>
-
-    <td><span className="amount-doller">$ </span>{new Intl.NumberFormat('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(
-      employeeData.reduce((acc, data) => acc + data.tiktokCost, 0)
-    )}</td>
-
-    <td><span className="amount-doller">$ </span>{new Intl.NumberFormat('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(
-      employeeData.reduce((acc, data) => acc + data.totalSpentPage, 0)
-    )}</td>
-
-    <td><span className="amount-taka">৳ </span>{new Intl.NumberFormat('en-IN', { maximumFractionDigits: 0 }).format(
-      employeeData.reduce((acc, data) => acc + (data.totalGoogle + data.totalMeta), 0)
-    )}</td>
-
-    <td><span className="amount-taka">৳ </span>{new Intl.NumberFormat('en-IN', { maximumFractionDigits: 0 }).format(
-      employeeData.reduce((acc, data) => acc + data.totalAdminPay, 0)
-    )}</td>
-
-    <td><span className="amount-taka">৳ </span>{new Intl.NumberFormat('en-IN', { maximumFractionDigits: 0 }).format(
-      employeeData.reduce((acc, data) => acc + data.totalClientPay, 0)
-    )}</td>
-
-    <td><span className="amount-taka">৳ </span>{new Intl.NumberFormat('en-IN', { maximumFractionDigits: 0 }).format(
-      employeeData.reduce((acc, data) => acc + ((data.totalSpentMeta + data.totalSpentGoogle + data.tiktokCost + data.totalSpentPage) * costRate + data.totalAdminPayCharge + data.totalSellerys), 0)
-    )}</td>
-
-    <td className='text-center'><span className="amount-taka">৳ </span>{new Intl.NumberFormat('en-IN', { maximumFractionDigits: 0 }).format(
-      employeeData.reduce((acc, data) => acc + (data.totalClientPay - data.totalAdminPay ), 0)
-    )}</td>
-
-
-<td className='text-center'>
-<span className="amount-taka">৳ </span>{new Intl.NumberFormat('en-IN', { maximumFractionDigits: 0 }).format(
-    ( // Ensure positive value
-      employeeData.reduce((acc, data) => 
-        acc + (data.totalAdminPay - ((data.totalSpentMeta + data.totalSpentGoogle + data.tiktokCost + data.totalSpentPage) * costRate + data.totalAdminPayCharge + data.totalSellerys)), 0
-      )
-    )
-  )}
-</td>
-
-<td className='text-center'>
-<span className="amount-taka">৳ </span>{new Intl.NumberFormat('en-IN', { maximumFractionDigits: 0 }).format(
-    ( // Ensure positive value
-      employeeData.reduce((acc, data) => 
-        acc + (data.totalAdminPay - (data.totalGoogle + data.totalMeta)), 0
-      )
-    )
-  )}
-</td>
-
-
-
-  </tr>
-          </tfoot>
-
-
-          </table>
-        </div>
-      </div>
     </div>
   );
 };

@@ -131,12 +131,15 @@ const DevGraphicSalary = () => {
 
   return (
     <div className=''>
+
+    <div className='lg:block hidden'>
      
      <div className="grid rounded-lg grid-cols-2 md:grid-cols-2 lg:grid-cols-3 text-black sm:grid-cols-2 gap-5 justify-around">
-  {/* Basic Salary */}
-  <SummaryCard 
-    title="Basic Salary" 
-    value={months.reduce(
+{/* Basic Salary */}
+<SummaryCard 
+  title="Basic Salary" 
+  value={new Intl.NumberFormat('en-IN').format(
+    months.reduce(
       (total, month) =>
         total +
         (Number(
@@ -147,37 +150,38 @@ const DevGraphicSalary = () => {
           )?.payAmount
         ) || 0),
       0
-    )} 
-  />
+    )
+  )} 
+/>
 
+{/* Total Unpaid */}
+<SummaryCard 
+  title="Total Unpaid" 
+  value={new Intl.NumberFormat('en-IN').format(
+    months.reduce(
+      (total, month) =>
+        total +
+        (Number(
+          basicSalary?.find(
+            (data) =>
+              data.employeeEmail === selectedEmployee &&
+              data.month === month
+          )?.payAmount
+        ) || 0),
+      0
+    ) - 
+    MySalaryPayment.reduce(
+      (total, payment) => total + (parseFloat(payment.payAmount) || 0),
+      0
+    )
+  )} 
+/>
 
-  {/* Total Unpaid */}
-  <SummaryCard 
-    title="Total Unpaid" 
-    value={
-      months.reduce(
-        (total, month) =>
-          total +
-          (Number(
-            basicSalary?.find(
-              (data) =>
-                data.employeeEmail === selectedEmployee &&
-                data.month === month
-            )?.payAmount
-          ) || 0),
-        0
-      ) -
-      MySalaryPayment.reduce(
-        (total, payment) => total + (parseFloat(payment.payAmount) || 0),
-        0
-      )
-    } 
-  />
-
-  {/* Total Paid */}
-  <SummaryCard 
-    title="Total Paid" 
-    value={months.reduce((total, month) => {
+{/* Total Paid */}
+<SummaryCard 
+  title="Total Paid" 
+  value={new Intl.NumberFormat('en-IN').format(
+    months.reduce((total, month) => {
       const salaryPayments = MySalaryPayment.filter(
         (sell) =>
           new Date(sell.date).toLocaleString("default", { month: "long" }) ===
@@ -190,14 +194,16 @@ const DevGraphicSalary = () => {
           0
         )
       );
-    }, 0)} 
-  />
+    }, 0)
+  )} 
+/>
+
 
 
 </div>
 
 
-      <div className='side-space mt-5'>
+      <div className='my-5'>
    
 
 
@@ -206,13 +212,13 @@ const DevGraphicSalary = () => {
     {
         userr?.role === 'admin'  && <div className="f-start">
         <button
-          className="font-avenir px-6 hover:bg-indigo-700 py-2 bg-[#05a0db] rounded-lg text-white"
+          className="add"
           onClick={() => document.getElementById("my_modal_1").showModal()}
         >
           Pay Salary
         </button>
         <button
-          className="font-avenir px-6 hover:bg-indigo-700 py-2 bg-[#05a0db] rounded-lg text-white"
+          className="add"
           onClick={() => document.getElementById("my_modal_11").showModal()}
         >
           Basic Salary
@@ -252,7 +258,7 @@ const DevGraphicSalary = () => {
                className="select2 w-full"
                name="employeeEmail"
              >
-               {allEmployees?.filter(f=> f.role === 'webDeveloper' || f.role === 'graphicDesigner').map((employee) => (
+               {allEmployees?.filter(f=>f.role === 'graphicDesigner').map((employee) => (
                  <option key={employee._id} value={employee.email}>
                    {employee.name}
                  </option>
@@ -441,7 +447,7 @@ const DevGraphicSalary = () => {
 
 
     {allEmployees
-        .filter((u) => ['webDeveloper', 'graphicDesigner'].includes(u.role))
+        .filter((u) => ['graphicDesigner'].includes(u.role))
         .map((employee) => (
             <option key={employee._id} value={employee.email}>
                 {employee.name}
@@ -579,13 +585,76 @@ const DevGraphicSalary = () => {
 
       </div>
     </div>
+
+    <div className="bg-white pt-40 pb-20 px-2 font-sans lg:max-w-2xl lg:hidden mx-auto text-sm">
+  {months.map((month,index) => {
+      // Find the basic salary data for the selected employee and month
+      const monthData = basicSalary?.find(
+        (data) => data.employeeEmail === selectedEmployee && data.month === month
+      );
+
+      // Filter salary payments for the selected month
+      const salaryPayments = MySalaryPayment.filter(
+        (sell) =>
+          new Date(sell.date).toLocaleString("default", { month: "long" }) ===
+          month
+      );
+
+      // Calculate the total salary paid for the month
+      const totalSalaryPaid = salaryPayments.reduce(
+        (total, payment) => total + (parseFloat(payment.payAmount) || 0),
+        0
+      );
+
+      // Calculate the unpaid salary as basic salary - total paid
+      const unpaidSalary = (monthData?.payAmount || 0) - totalSalaryPaid;
+
+    return (
+      <div
+      key={month._id}
+      className="bg-gray-50 rounded-xl shadow-md px-5 py-4 mb-4 hover:shadow-lg transition duration-300"
+    >
+        <div className="flex justify-between items-end gap-4">
+          {/* Left */}
+          <div className="space-y-2 flex-1">
+            <h2 className="text-lg font-semibold text-green-500 uppercase tracking-wide">{month}</h2>
+
+            <p>
+  <span className="font-medium">Salary:</span>{" "}
+  <span className="amount-doller">$</span>{" "}
+  {monthData?.payAmount || 0}
+</p>
+
+          </div>
+
+          {/* Right */}
+          <div className="text-right space-y-2 text-xs">
+
+          <p>
+                <span className="font-medium">Paid:</span>{" "}
+                <span className="amount-taka">৳</span>{" "}
+                {totalSalaryPaid}
+              </p>
+          <p>
+                <span className="font-medium">UnPaid:</span>{" "}
+                <span className="amount-taka">৳</span>{" "}
+                {unpaidSalary > 0 ? unpaidSalary : 0}
+              </p>
+
+             
+           
+              
+
+
+          </div>
+        </div>
+      </div>
+    );
+  })}
+</div>
+
+    </div>
   );
 };
 
 export default DevGraphicSalary;
-
-
-
-
-
-

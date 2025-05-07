@@ -10,7 +10,6 @@ const useBankInfo = () => {
             return res.data
         }
     })
-        console.log(bankInfo)
         return [bankInfo,refetch]
 };
 export default useBankInfo;

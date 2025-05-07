@@ -1,427 +1,248 @@
-import { useContext, useState } from 'react';
-import Axios from 'axios';
-import useBankInfo from '../../Hook/useBankInfo';
-import { AuthContext } from '../../Security/AuthProvider';
-import UseAxiosPublic from '../../Axios/UseAxiosPublic';
-import { FaEdit, FaMinusSquare, FaRegCopy } from 'react-icons/fa';
+import { useState } from 'react';
 import { Helmet } from 'react-helmet-async';
-import useUserr from '../../Hook/useUser';
-import { useForm } from 'react-hook-form';
-import SummaryCard from './SummeryCard';
-const image_hosting_key = "6fbc3358bbb1a92b78e2dee0f5ca1b94";
-const image_hosting_api = `https://api.imgbb.com/1/upload?key=${image_hosting_key}`;
+import { FiCopy, FiShare2, FiX, FiCheckCircle, FiMessageSquare } from 'react-icons/fi';
 
 const BankInfo = () => {
-  const [showModal, setShowModal] = useState(false);
-  const [isEditing, setIsEditing] = useState(false);
-  const [selectedBankId, setSelectedBankId] = useState(null);
-  const [bankInfo, refetch] = useBankInfo(); 
-  console.log(bankInfo);
-
-  const { register, handleSubmit, setValue, reset } = useForm({
-    defaultValues: {
-      bankName: "",
-      name: "",
-      bankingType: "",
-      account: "",
-      branch: "",
-      district: "",
-      swiftCode: "",
-      routingNumber: "",
-      card: "",
-    },
-  });
-
-  const handleBankInfoSubmit = async (data) => {
-    const { image, ...otherFormData } = data;
-  
-    try {
-      let imageUrl = '';
-  
-      if (image && image.length > 0) {
-        const formData = new FormData();
-        formData.append('image', image[0]);
-  
-        const imgResponse = await Axios.post(image_hosting_api, formData);
-  
-        if (imgResponse.data && imgResponse.data.data) {
-          imageUrl = imgResponse.data.data.url;
-        } else {
-          console.error('ImgBB response is invalid:', imgResponse.data);
-          return;
-        }
-      }
-  
-      const payload = {
-        ...otherFormData,
-        ...(imageUrl && { imageUrl }),
-      };
-
-      const url = isEditing
-        ? `https://hishab-2025-pi.vercel.app/bankInfo/${selectedBankId}`
-        : 'https://hishab-2025-pi.vercel.app/bankInfo';
-      const method = isEditing ? 'patch' : 'post';
-  
-      const response = await Axios({
-        method,
-        url,
-        data: payload, // Ensure the updated fields are included here
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-  
-      console.log('Response data:', response.data);
-  
-      setShowModal(false);
-      refetch(); // Fetch updated data
-      resetForm(); // Reset the form
-    } catch (error) {
-      console.error('Error in submitting bank info:', error);
-    }
-  };
-  
-  
-  const resetForm = () => {
-    reset(); // Clear form fields
-    setSelectedBankId(null);
-    setIsEditing(false);
-  };
-
-  const handleEdit = (info) => {
-    Object.entries(info).forEach(([key, value]) => {
-      setValue(key, value || ""); // Dynamically set default values
-    });
-    setSelectedBankId(info._id); // Ensure correct ID is set
-    setIsEditing(true);
-    setShowModal(true);
-  };
-  
-
-  const AxiosPublic = UseAxiosPublic();
-  const handleDelete = (id) => {
-    if (window.confirm('Are you sure you want to delete this bank info?')) {
-      AxiosPublic.delete(`/bankInfo/${id}`)
-        .then((res) => {
-          console.log('Deleted successfully:', res.data);
-          refetch();
-        })
-        .catch((err) => {
-          console.error('Error deleting data:', err);
-        });
-    }
-  };
-
-  const { user } = useContext(AuthContext);
-  const {userr}=useUserr(user?.email)
-
+  // ... (banks array remains the same)
   const banks = [
     {
-      id: 1,
-      name: "Islami Bank Bangladesh PLC",
-      holder: "MD Anowarul Islam",
-      account: "20503360202781706",
-      branch: "SHYAMNAGAR",
-      district: "SATKHIRA",
-      card: "4170336042185201",
-      color: "green",
+        id: 1,
+        name: "BRAC Bank PLC",
+        holder: "DIGITAL NETWORK",
+        account: "2071478740001",
+        branch: "AGENT BANKING",
+        district: "DHAKA-SOUTH",
+        routing: "060270609",
+        swift: "BRAKBDDH",
+        cardNumber: "N/A",
+        color: "#004c9b", // BRAC Bank Blue
     },
     {
-      id: 2,
-      name: "Agrani Bank PLC",
-      holder: "MD Anowarul Islam",
-      account: "0200009112344",
-      branch: "Noor Nagar",
-      district: "SATKHIRA",
-      card: "012 777 80307",
-      color: "blue",
+        id: 2,
+        name: "BRAC Bank PLC",
+        holder: "MD ANOWARUL ISLAM",
+        account: "2071478740001",
+        branch: "SATKHIRA",
+        district: "SATKHIRA",
+        routing: "060871095",
+        swift: "BRAKBDDH",
+        cardNumber: "4777920004008043",
+        color: "#004c9b", // BRAC Bank Blue
     },
     {
-      id: 3,
-      name: "Dutch Bangla Bank PLC",
-      holder: "MD Anowarul Islam",
-      account: "1801510129698",
-      branch: "SATKHIRA",
-      district: "SATKHIRA",
-      card: "4777920004008043",
-      color: "orange",
+        id: 3,
+        name: "The City Bank PLC",
+        holder: "MD ANOWARUL ISLAM",
+        account: "N/A",
+        branch: "SATKHIRA",
+        district: "SATKHIRA",
+        routing: "225871098",
+        swift: "CIBLBDDH",
+        cardNumber: "N/A",
+        color: "#d71921", // City Bank Red
     },
     {
-      id: 4,
-      name: "Brac Bank PLC",
-      holder: "MD Anowarul Islam",
-      account: "2062085950001",
-      branch: "SATKHIRA",
-      district: "SATKHIRA",
-      card: "4777920004008043",
-      color: "purple",
+        id: 4,
+        name: "Dutch Bangla Bank PLC",
+        holder: "MD ANOWARUL ISLAM",
+        account: "1801510129698",
+        branch: "SATKHIRA",
+        district: "SATKHIRA",
+        routing: "090871094",
+        swift: "DBBLBDDH180",
+        cardNumber: "012 777 80307",
+        color: "#0996b3", // Dutch Bangla Bank Blue
     },
-  ];
+    {
+        id: 5,
+        name: "Islami Bank Bangladesh PLC",
+        holder: "MD ANOWARUL ISLAM",
+        account: "20503360202781706",
+        branch: "SHYAMNAGAR",
+        district: "SATKHIRA",
+        routing: "125871219",
+        swift: "IBBLBDDH",
+        cardNumber: "4170336042185201",
+        color: "#006a4d", // Islami Bank Green
+    },
+    {
+        id: 6,
+        name: "Agrani Bank PLC",
+        holder: "MD ANOWARUL ISLAM",
+        account: "0200009112344",
+        branch: "NURNAGAR",
+        district: "SATKHIRA",
+        routing: "010872031",
+        swift: "AGBKBDDH",
+        cardNumber: "N/A",
+        color: "#008000", // Agrani Bank Green
+    }
+];
 
-  const [copiedBankId, setCopiedBankId] = useState(null); 
 
-  const copyBankInfoToClipboard = (info) => {
-    const bankDetails = `
-      Bank Name: ${info.bankName || 'N/A'}
-      Banking Type: ${info.bankingType || 'N/A'}
-      Holder Name: ${info.name || 'N/A'}
-      Account: ${info.account || 'N/A'}
-      Branch: ${info.branch || 'N/A'}
-      District: ${info.district || 'N/A'}
-      Swift Code: ${info.swiftCode || 'N/A'}
-      Routing Number: ${info.routingNumber || 'N/A'}
-      Card: ${info.card || 'N/A'}
-    `;
+
+  const [copiedBankId, setCopiedBankId] = useState(null);
+  const [sharingBank, setSharingBank] = useState(null);
+  const [showToast, setShowToast] = useState(false);
+
+  const copyBankInfoToClipboard = (bank) => {
+    const bankDetails = `Account Number: ${bank.account}
+Account Name: ${bank.holder}
+Bank Name: ${bank.name}
+Branch Name: ${bank.branch}
+Routing Number: ${bank.routing}
+SWIFT Code: ${bank.swift}`;
 
     navigator.clipboard.writeText(bankDetails)
       .then(() => {
-        setCopiedBankId(info._id); 
-        setTimeout(() => {
-          setCopiedBankId(null); 
-        }, 2000);
+        setCopiedBankId(bank.id);
+        setShowToast(true);
+        setTimeout(() => setShowToast(false), 3000);
       })
-      .catch((err) => {
-        console.error('Error copying to clipboard:', err);
+      .catch(console.error);
+  };
+
+  const handleShare = (bank) => {
+    const shareText = `Account Number: ${bank.account}
+Account Name: ${bank.holder}
+Bank Name: ${bank.name}
+Branch Name: ${bank.branch}
+Routing Number: ${bank.routing}
+SWIFT Code: ${bank.swift}`;
+
+    if (navigator.share) {
+      navigator.share({
+        title: 'Bank Account Details',
+        text: shareText
       });
+    } else {
+      setSharingBank(bank);
+    }
   };
 
   return (
-    <div className=''>
-       <Helmet>
-        <title>Bank Info | Digital Network</title>
-        <link rel="canonical" href="https://www.example.com/" />
+    <div className="min-h-screen bg-gray-50 pb-20 lg:pb-0 px-5">
+      <Helmet>
+        <title>Bank Information | Digital Network</title>
+        <meta name="description" content="Professional banking information for Digital Network" />
+        <link rel="canonical" href="https://www.example.com/bank-info" />
       </Helmet>
 
-      <div className="grid mb-5 rounded-lg grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 justify-around">
-      {banks.map((bank) => (
-        <div
-          key={bank.id}
-          className="shadow-lg rounded-2xl p-6 text-center border border-gray-200"
-          style={{ backgroundColor: "var(--bg-colorCard)", color: "var(--text-color)", border: "var(--border)" }}
-        >
-          <h2 className="text-xl font-bold mb-4">{bank.name}</h2>
-          <div className="p-4 rounded-lg">
-            <p className="text-sm"><span className="font-semibold">Name:</span> {bank.holder}</p>
-            <p className="text-sm"><span className="font-semibold">A/C:</span> {bank.account}</p>
-            <p className="text-sm"><span className="font-semibold">Branch:</span> {bank.branch}</p>
-            <p className="text-sm"><span className="font-semibold">District:</span> {bank.district}</p>
-          </div>
-          <div className="border-t border-gray-300 my-4"></div>
-          <p  onClick={() => copyBankInfoToClipboard(bank)} className={`text-lg cursor-pointer font-semibold text-white bg-gradient-to-r from-${bank.color}-500 to-${bank.color}-700 py-3 px-6 rounded-lg inline-block tracking-wide shadow-md`}>
-            {bank.card}
-          </p>
-       
-        </div>
-      ))}
-    </div>
+      <div className="mx-auto ">
+        <h1 className="mb-8 text-3xl font-bold text-gray-900">Bank Accounts</h1>
+        
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {banks.map((bank) => (
+            <div 
+              key={bank.id}
+              className="relative overflow-hidden rounded-2xl bg-white shadow-lg transition-all duration-300 hover:shadow-xl"
+            >
+             <div className="absolute top-0 h-2 w-full" style={{ backgroundColor: bank.color }} />
 
-      {/* <div className="rounded-lg" style={{ backgroundColor: 'var(--bg-color3)', color: 'var(--text-color)', border: 'var(--border)' }}>
-        <div className="p-5">
-          
+              
+              <div className="p-6">
+                <div className="mb-4 flex items-center justify-between">
+                  <h2 className="text-xl font-semibold text-gray-800">{bank.name}</h2>
+                  <span className="rounded-full bg-blue-100 px-3 py-1 text-sm font-medium text-blue-800">
+                    {bank.district}
+                  </span>
+                </div>
 
-        {showModal && (
-        <div className="fixed inset-0 flex text-black items-center justify-center bg-gray-800 bg-opacity-50">
-          <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-lg">
-            <h2 className="text-2xl font-semibold mb-6 text-center">
-              {isEditing ? "Edit Bank Details" : "Enter Bank Details"}
-            </h2>
-            <form onSubmit={handleSubmit(handleBankInfoSubmit)}>
-              <div>
-                <label className="block text-gray-700 font-semibold mb-1">
-                  Logo (800x1200)
-                </label>
-                <input
-                  type="file"
-                  {...register("image")}
-                  className="w-full px-4 bg-white py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-              </div>
+                <div className="space-y-3 border-t border-gray-200 pt-4">
+                  <InfoRow label="Account Number" value={bank.account} />
+                  <InfoRow label="Account Holder" value={bank.holder} />
+                  <InfoRow label="Branch" value={`${bank.branch}, ${bank.district}`} />
+                  <InfoRow label="Routing No" value={bank.routing} />
+                  <InfoRow label="SWIFT Code" value={bank.swift} />
+                  <InfoRow label="Card Number" value={bank.cardNumber} />
+                </div>
 
-              <div className="my-7">
-                <div className="flex space-x-4">
-                  <label className="inline-flex items-center">
-                    <input
-                      type="radio"
-                      value="Mobile Banking"
-                      {...register("bankingType", { required: true })}
-                      className="radio radio-primary"
-                    />
-                    <span className="ml-2">Mobile Banking</span>
-                  </label>
-                  <label className="inline-flex items-center">
-                    <input
-                      type="radio"
-                      value="Bank"
-                      {...register("bankingType", { required: true })}
-                      className="radio radio-primary"
-                    />
-                    <span className="ml-2">Bank</span>
-                  </label>
+                <div className="mt-6 flex gap-3 border-t border-gray-200 pt-4">
+                  <button
+                    onClick={() => copyBankInfoToClipboard(bank)}
+                    className="flex flex-1 items-center justify-center gap-2 rounded-lg bg-gray-100 py-2 px-4 font-medium text-gray-700 transition-colors hover:bg-gray-200"
+                  >
+                    <FiCopy className="h-5 w-5" />
+                    {copiedBankId === bank.id ? 'Copied' : 'Copy'}
+                  </button>
+                  <button
+                    onClick={() => handleShare(bank)}
+                    className="flex flex-1 items-center justify-center gap-2 rounded-lg bg-blue-600 py-2 px-4 font-medium text-white transition-colors hover:bg-blue-700"
+                  >
+                    <FiShare2 className="h-5 w-5" />
+                    Share
+                  </button>
                 </div>
               </div>
+            </div>
+          ))}
+        </div>
+      </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                {[
-                  "bankName",
-                  "name",
-                  "account",
-                  "branch",
-                  "district",
-                  "swiftCode",
-                  "routingNumber",
-                  "card",
-                ].map((label, idx) => (
-                  <div key={idx} className="col-span-1">
-                    <label className="block text-black bg-white font-medium mb-2">
-                      {label.replace(/([A-Z])/g, " $1")}:
-                    </label>
-                    <input
-                      type="text"
-                      {...register(label)}
-                      className="w-full p-2 border border-gray-300 rounded bg-white"
-                    />
-                  </div>
-                ))}
-              </div>
+      {/* Share Modal */}
+      {sharingBank && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+          <div className="m-4 w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl">
+            <div className="mb-4 flex items-center justify-between">
+              <h3 className="text-xl font-semibold text-gray-900">Share Bank Details</h3>
+              <button
+                onClick={() => setSharingBank(null)}
+                className="rounded-lg p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-900"
+              >
+                <FiX className="h-6 w-6" />
+              </button>
+            </div>
 
-              <div className="grid mt-7 lg:grid-cols-2 gap-3">
-                <button
-                  type="button"
-                  className="close"
-                  onClick={() => {
-                    resetForm();
-                    setShowModal(false);
-                  }}
-                >
-                  Close
-                </button>
-                <button type="submit" className="add">
-                  {isEditing ? "Update" : "Submit"}
-                </button>
-              </div>
-            </form>
+            <div className="space-y-3">
+              <ShareButton
+                icon={<FiMessageSquare className="h-6 w-6 text-green-500" />}
+                label="Share via WhatsApp"
+                onClick={() => {
+                  // WhatsApp sharing logic
+                }}
+              />
+              <ShareButton
+                icon={<FiCopy className="h-6 w-6 text-blue-500" />}
+                label="Copy to Clipboard"
+                onClick={() => {
+                  // Copy logic
+                }}
+              />
+            </div>
           </div>
         </div>
-      )} */}
+      )}
 
-{/* {userr?.role === 'admin' && (
-            <button
-              className="add mb-5"
-              onClick={() => {
-                resetForm();
-                setShowModal(true);
-              }}
-            >
-              Add Bank Details
-            </button>
-          )} */}
-          {/* {bankInfo && bankInfo.length > 0 ? (
-
- <div className="table-div ">
-          <table className="min-w-full text-center ">
-            <thead className=" ">
-              <tr className="tr1" >  
-                {userr?.role === 'admin' && <th className="text-center">Items {bankInfo?.length}</th>}
-                <th >Bank Name</th>
-                <th >A/C Holder Name</th>
-                <th >Account</th>
-                <th >Branch</th>
-                <th >District</th>
-                <th >Card</th>
-                <th className="text-center">Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              {bankInfo
-              .map((work, index) => (
-                 <tr 
-                 key={work._id}
-                 className={`tr2`}
-               >
-                {
-                  userr?.role === 'admin' && <td className="text-center"> 
-              <div className='flex justify-center items-center gap-1'>
-              <button
-                     className=" delete"
-                     onClick={() => handleDelete(work._id)}
-                  >
-                   <span >
-                    <FaMinusSquare  />
-                    </span>
-                  </button> 
-                  <button
-                       className="f-start edit"
-                       onClick={() => handleEdit(work)}
-                     >
-                      <FaEdit /> 
-
-                   </button>
-              </div>
-              </td>
-                }
-                     
-                      
-                  <td>
-
-                   
-                     <div className='flex justify-start items-center gap-2'>
-                     
-                    
-                    <img className='h-12 w-12 rounded-full' src={work?.imageUrl} alt="" />
-                    <span>
-                   {work?.bankName}
-                    </span>
-                     </div>
-                  </td>
-                  <td>
-                  <span>
- {work.name
-   ?.split(' ') 
-   .slice(0, 4) 
-   .join(' ') 
-   + (work.name?.split(' ').length > 4 ? '...' : '') 
- }
-</span>
-                  </td>
-
-                  <td>
-  {work?.account}
-</td>
-
-                  <td >
-                  {work?.branch}   <img src={work?.image} alt="" />
-                  </td>
-                  <td>
-                  {work?.district}
-                  </td>
-            
-                  <td>
-                  {work?.card}
-                  </td>
-                  <td>
-                  <div className="text-center  bank-buttons">
-
-  <button
-    className={` py-2 px-4 rounded hover:bg-green-600`}
-    onClick={() => copyBankInfoToClipboard(work)}
-  >
-    {copiedBankId === work._id ? 'Copied' : <FaRegCopy />}
-  </button>
-</div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+      {/* Toast Notification */}
+      {showToast && (
+        <div className="fixed bottom-4 right-4 z-50 flex items-center gap-3 rounded-lg bg-white p-4 shadow-lg">
+          <FiCheckCircle className="h-6 w-6 text-green-500" />
+          <span className="font-medium text-gray-900">Copied to clipboard!</span>
         </div>
-          
-          ) : (
-            <div>No bank information found.</div>
-          )} */}
-        {/* </div>
-      </div> */}
+      )}
     </div>
   );
 };
+
+const InfoRow = ({ label, value }) => (
+  <div className="flex justify-between">
+    <span className="text-sm text-gray-500">{label}</span>
+    <span className="max-w-[60%] truncate text-sm font-medium text-gray-900">
+      {value}
+    </span>
+  </div>
+);
+
+const ShareButton = ({ icon, label, onClick }) => (
+  <button
+    onClick={onClick}
+    className="flex w-full items-center gap-4 rounded-xl p-4 transition-colors hover:bg-gray-50"
+  >
+    <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-gray-100">
+      {icon}
+    </span>
+    <span className="font-medium text-gray-900">{label}</span>
+  </button>
+);
 
 export default BankInfo;

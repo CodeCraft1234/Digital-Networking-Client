@@ -9,15 +9,16 @@ import useAdsPayment from "../../Hook/useAdsPayment";
 import useAdsAccountCenter from "../../Hook/useAdsAccountCenter";
 import { FaEdit, FaMinusSquare } from "react-icons/fa";
 import AllClients from "./AllClients";
-import useOnlyClientEmail from "../../Hook/useOnlyClientEmail";
 import useAllEmployee from "../../Hook/useAllEmployee";
+import { MdTune } from "react-icons/md";
+import { Link } from "react-router-dom";
 
 const AllUsers = () => {
   const { user } = useContext(AuthContext);
   const [employees, setEmployees] = useState([]);
   const [allEmployees,refetch]=useAllEmployee()
 
-  
+
   const initialTab = localStorage.getItem("activeTabs") || "all";
   const [activeTab, setActiveTab] = useState(initialTab);
 
@@ -123,8 +124,8 @@ const AllUsers = () => {
   
       {activeTab === 'clientPay' && <EmployeeClientPay email={user?.email} />}
 
-      <div   className="side-space">
-      <div  className="f-start  ">
+      <div className="lg:block hidden">
+      <div  className="f-start">
       <div style={{ color: 'var(--text-color2)' }} className="f-start cursor-pointer gap-3 mb-5">
   <a
     className={`tab-button ${activeTab === 'all' ? 'active' : ''}`}
@@ -176,16 +177,157 @@ const AllUsers = () => {
   </a>
 </div>
 
+      </div>
+      </div>
+
+      <div className="text-xs text-gray-700 mb-5 lg:hidden">
+                    
+                    
+                    <div className="fixed top-0 left-0 right-0 z-50">
+                      {/* Pink Top Bar */}
+                      <div className="bg-[#f3a62b]  text-white flex items-center justify-between px-4 py-3 shadow-md">
+                        <p></p>
+                        <h1 className="text-lg text-center font-bold">মাসিক স্পিন্ড</h1>
+                        <div className="relative">
+                          <img
+                            src="https://i.ibb.co.com/20gdNM8h/Digital-Network-White-1.png"
+                            alt="Icon"
+                            className="w-6 h-6"
+                          />
+                          <div className="absolute -top-1 -right-1 w-2 h-2 bg-white rounded-full"></div>
+                        </div>
+                      </div>
+                    
+                      {/* White Tabs + Search Section */}
+                      <div className="bg-white shadow-md pt-2">
+                        {/* Tabs */}
+                    
+                        <div className="flex justify-around items-center relative">
+  {/* সমস্ত (All) */}
+  <button
+    onClick={() => changeTab('all')}
+    className={`relative py-3 text-sm font-sans ${activeTab === 'all' ? 'text-pink-600 font-bold' : 'text-gray-500'}`}
+  >
+    সব
+    {activeTab === 'all' && (
+      <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-pink-600"></div>
+    )}
+  </button>
+
+  {/* অ্যাডমিন (Admin) */}
+  <button
+    onClick={() => changeTab('admin')}
+    className={`relative py-3 text-sm font-sans ${activeTab === 'admin' ? 'text-pink-600 font-bold' : 'text-gray-500'}`}
+  >
+    অ্যাডমিন
+    {activeTab === 'admin' && (
+      <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-pink-600"></div>
+    )}
+  </button>
+
+  {/* মার্কেটার (Marketer) */}
+  <button
+    onClick={() => changeTab('employee')}
+    className={`relative py-3 text-sm font-sans ${activeTab === 'employee' ? 'text-pink-600 font-bold' : 'text-gray-500'}`}
+  >
+    মার্কেটার
+    {activeTab === 'employee' && (
+      <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-pink-600"></div>
+    )}
+  </button>
+
+  {/* গ্রাফিক ডিজাইনার (Graphic Designer) */}
+  <button
+    onClick={() => changeTab('graphicDesigner')}
+    className={`relative py-3 text-sm font-sans ${activeTab === 'graphicDesigner' ? 'text-pink-600 font-bold' : 'text-gray-500'}`}
+  >
+    গ্রাফিক
+    {activeTab === 'graphicDesigner' && (
+      <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-pink-600"></div>
+    )}
+  </button>
+
+  {/* ওয়েব ডেভেলপার (Web Developer) */}
+  <button
+    onClick={() => changeTab('webDeveloper')}
+    className={`relative py-3 text-sm font-sans ${activeTab === 'webDeveloper' ? 'text-pink-600 font-bold' : 'text-gray-500'}`}
+  >
+    ডেভেলপার
+    {activeTab === 'webDeveloper' && (
+      <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-pink-600"></div>
+    )}
+  </button>
 </div>
+
+      
+            
+                      </div>
+                    </div>
+                    
+                    
+                        </div>
+
+                        <div className="bg-white font-sans py-20 lg:max-w-2xl lg:hidden mx-auto text-sm">
+  {employees?.map((user) => (
+    <div
+      key={user._id}
+      className="px-4 py-3 border-b hover:bg-gray-50 transition-all"
+    >
+      <div className="flex items-center justify-between gap-4">
+        {/* Left Content */}
+        <div className="flex items-center gap-3">
+          {/* User Image */}
+          <img
+            className="h-10 w-10 rounded-full object-cover border"
+            src={user.photo}
+            alt={user.name}
+          />
+
+          {/* User Info */}
+          <div>
+            <p className="text-base font-semibold text-gray-900 hover:text-blue-700 transition-colors">
+              {user?.name}
+            </p>
+            <p className="text-sm text-gray-600">{user.contactNumber}</p>
+          </div>
+        </div>
+
+        {/* Right Content */}
+        <div className="text-right space-y-1">
+          <p className="text-sm font-medium text-red-700">{user.email}</p>
+          <select
+            className="border border-gray-300 rounded-md px-2 py-1 text-sm focus:outline-none bg-white text-black focus:ring-1 focus:ring-blue-500"
+            value={user.role}
+            onChange={(e) => handleRoleChange(user._id, e.target.value)}
+          >
+            <option value="admin">Admin</option>
+            <option value="employee">Digital Marketer</option>
+            <option value="webDeveloper">Web Developer</option>
+            <option value="graphicDesigner">Graphic Designer</option>
+            <option value="UI/UXDesigner">UI/UX Designer</option>
+            <option value="contributor">Contributor</option>
+            <option value="client">Client</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  ))}
+</div>
+
+      
         {
-          activeTab === 'allClient' ? <AllClients></AllClients> :  <div  className="table-div">
+          activeTab === 'allClient' ? <AllClients></AllClients> :
+          <div  className="table-div lg:block hidden" >
           <table className="min-w-full text-center ">
             <thead className=" ">
-              <tr className="tr1">
+          <tr className="tr1">
                   <th className=" text-center">{employees.length} Users</th>
                 <th >Name</th>
                 <th >Mobile</th>
                 <th >Email</th>
+                {activeTab === 'employee' && (
+                  <th >L.week Orders</th>
+                )}
                 {activeTab === 'employee' && (
                   <th >Client</th>
                 )}
@@ -304,10 +446,15 @@ const AllUsers = () => {
 
                   {activeTab === 'employee' && (
                        <td>  
+                       {user.lastWeekClient}
+                      </td>
+                     )}
+                  {activeTab === 'employee' && (
+                       <td>  
                        {user.clients}
                       </td>
                      )}
-
+                 
                   <td className="text-center">
                     <select
                       className="select2"
@@ -336,6 +483,9 @@ const AllUsers = () => {
         Total :
       </td>
       <td colSpan={1}>
+  {employees.reduce((acc, employee) => acc + parseFloat(employee.lastWeekClient || 0), 0)}
+</td>
+      <td colSpan={1}>
   {employees.reduce((acc, employee) => acc + parseFloat(employee.clients || 0), 0)}
 </td>
 
@@ -344,10 +494,6 @@ const AllUsers = () => {
     </tr>
   </tfoot>
 )}
-
-
-
-
 
 {activeTab === 'contributor' && (
   <tfoot >
@@ -378,11 +524,11 @@ const AllUsers = () => {
 )}
 
           </table>
-        </div>
+       
+          </div>
+       
         }
        
-
-      </div>
     </div>
   );
 };

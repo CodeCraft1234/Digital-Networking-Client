@@ -9,6 +9,8 @@ import useUserr from '../../Hook/useUser';
 import { Helmet } from 'react-helmet-async';
 import useAllEmployee from '../../Hook/useAllEmployee';
 import useMyUserSpend from '../../Hook/useMyUserSpend';
+import useRates from '../../Hook/useRates';
+import { Link } from 'react-router-dom';
 
 const GoogleMonthlySpend = ({data}) => {
   const { user } = useContext(AuthContext);
@@ -32,9 +34,6 @@ const GoogleMonthlySpend = ({data}) => {
 
   const [sortEmployee, setSortEmployee] = useState(initialTab);
   const [myUserSpend,refetch]=useMyUserSpend(sortEmployee)
-
-  console.log(myUserSpend);
-  
   
   const changeTab = (tab) => {
     setSortEmployee(tab);
@@ -135,6 +134,11 @@ const GoogleMonthlySpend = ({data}) => {
     });
   };
 
+  const { rates } = useRates();
+
+
+
+
   return (
     <div>
 
@@ -145,7 +149,7 @@ const GoogleMonthlySpend = ({data}) => {
   <link rel="canonical" href="https://www.example.com/" />
 </Helmet>
       
-      <div className='px-5 py-5 rounded-md' style={{ backgroundColor: 'var(--bg-color3)', color: 'var(--text-color)',border: 'var(--border)'}}>
+      <div className='hidden lg:block' >
       <div className="lg:flex lg:justify-end items-center gap-3 mb-5">
 
       <div className="w-full lg:w-auto flex justify-start gap-3">
@@ -199,22 +203,22 @@ const GoogleMonthlySpend = ({data}) => {
         </div>
 
         <div>
-        <select
-    style={{ backgroundColor: 'var(--bg-color2)', border: 'var(--border)', color: 'var(--text-color2)' }}
-    className="px-4 py-2 border rounded bg-white text-black border-black"
-    onChange={(e) => setSortYear(e.target.value)}
-    value={sortYear || ""}
-  >
-    <option value="">Select Year</option>
-    {Array.from(new Set(sortedAccounts?.map(account => new Date(account.date).getFullYear())))
-      .sort((a, b) => b - a) // Sorting in descending order, adjust as needed
-      .map(year => (
-        <option key={year} value={year}>
-          {year}
-        </option>
-      ))}
-  </select>
+
+  <select
+ style={{ backgroundColor: 'var(--bg-color2)', border: 'var(--border)', color: 'var(--text-color2)' }}
+ className="px-4 py-2 border rounded bg-white text-black border-black"
+ onChange={(e) => setSortYear(e.target.value)}
+ value={sortYear || ""}
+>
+  <option value="all">Select Year</option> {/* Default option */}
+  {Array.from({ length: new Date().getFullYear() - 2024 + 1 }, (_, i) => 2024 + i).map((year) => (
+    <option key={year} value={year}>
+      {year}
+    </option>
+  ))}
+</select>
          </div>
+
 
       </div>
 
@@ -234,10 +238,14 @@ const GoogleMonthlySpend = ({data}) => {
           <tbody >
             {sortedAccounts?.filter(f => f.role === `${data || 'contributorSpend'}`)
 .map((account, index) => (
-              <tr 
-              key={account._id}
-              className={`tr2`}
-            >
+  <tr 
+  key={account.id}
+  className={`${
+    index % 2 === 0
+      ? "bg-white text-left text-black border-b border-opacity-20"
+      : "bg-gray-100  text-left text-black border-b border-opacity-20"
+  }`}
+>
               <td  className="text-center">
               {
                 userr?.role === 'admin' ? 
@@ -292,10 +300,10 @@ const GoogleMonthlySpend = ({data}) => {
                 {
                   data === 'pageSpend' ? <td>
                 <span className="amount-taka">৳ </span>
-                  {new Intl.NumberFormat('en-IN').format(Math.round(account.totalSpentt * 130))}
+                  {new Intl.NumberFormat('en-IN').format(Math.round(account.totalSpentt * rates?.pageRate || 0))}
                                </td> : <td>
                                <span className="amount-taka">৳ </span>
-  {new Intl.NumberFormat('en-IN').format(Math.round(account.totalSpentt * 142))}
+  {new Intl.NumberFormat('en-IN').format(Math.round(account.totalSpentt * rates?.googleRate || 0))}
                </td>
                 }
               </tr>
@@ -315,12 +323,12 @@ const GoogleMonthlySpend = ({data}) => {
                   data === 'pageSpend' ?    <td>
                <span className="amount-taka">৳ </span>
                   {new Intl.NumberFormat('en-IN').format(
-                    Math.round(sortedAccounts?.filter(f=>f.role === data).reduce((sum, acc) => sum + acc.totalSpentt, 0) * 130)
+                    Math.round(sortedAccounts?.filter(f=>f.role === data).reduce((sum, acc) => sum + acc.totalSpentt, 0) * rates?.pageRate || 0)
                   )}
                     </td> :    <td>
                     <span className="amount-taka">৳ </span>
   {new Intl.NumberFormat('en-IN').format(
-    Math.round(sortedAccounts?.filter(f=>f.role === data).reduce((sum, acc) => sum + acc.totalSpentt, 0) * 142)
+    Math.round(sortedAccounts?.filter(f=>f.role === data).reduce((sum, acc) => sum + acc.totalSpentt, 0) * rates?.googleRate || 0)
   )}
     </td>
 
@@ -332,6 +340,100 @@ const GoogleMonthlySpend = ({data}) => {
         </table>
       </div>
       </div>
+
+      <div className="bg-white font-sans py-40 h-full  lg:max-w-2xl lg:hidden mx-auto text-sm">
+      
+            {sortedAccounts?.filter(f => f.role === `${data || 'contributorSpend'}`)
+                  ?.map((payment) => (
+              <div key={payment._id} className="px-3 py-2 sm:px-4 sm:py-3 border-b hover:bg-gray-50 transition-colors">
+                <div className="flex items-start justify-between gap-2 sm:gap-3">
+                  {/* Left Content */}
+                  <div className="flex-1">
+                    <div className="flex items-start justify-start text-start gap-2 sm:gap-3">
+                      {/* Image */}
+                      <div className="flex-shrink-0">
+                        <img
+                          className="h-7 w-7 sm:h-8 sm:w-8 rounded-full object-cover"
+                          src={allEmployees.find(u => u.email === payment.employeeEmail).photo}
+                          alt=""
+                        />
+                      </div>
+      
+                      {/* Names */}
+                      <div className="flex flex-col text-start justify-start items-start">
+                        <div className="flex justify-start text-start items-center gap-1">
+                          <Link
+
+                            to={`/client/${payment?.clientEmail}`}
+                            className="text-black font-bold text-sm sm:text-base hover:text-blue-800 transition-colors"
+                          >
+                            {allEmployees.find(f => f.email === payment.employeeEmail)?.name}
+                          </Link>
+                         
+                        </div>
+                        <p
+                         
+                            className="text-black text-xs sm:text-base hover:text-blue-800 transition-colors"
+                          >
+                            {payment.accountName}
+                          </p>
+                        <div className="flex justify-start text-start items-center gap-1">
+                          <p className="text-[10px] sm:text-xs text-gray-500">
+                          {new Date(payment.date).toLocaleString('default', { month: 'long', year: 'numeric' })}
+                          </p>
+                        </div>
+                        
+                      </div>
+                    </div>
+      
+                 
+                  </div>
+      
+                  {/* Right Content */}
+                  <div className="text-right">
+                    {/* Amount and Date */}
+                    <div>
+                      <h3 className="font-semibold text-emerald-600 text-sm sm:text-base">
+                        Spend:
+                      <span className="amount-doller">$ </span>
+        {new Intl.NumberFormat('en-IN', {
+          maximumFractionDigits: 2,
+          minimumFractionDigits: 2,
+        }).format(payment.totalSpentt)}
+                      </h3>
+                      
+                    </div>
+      
+                    {
+                        data === 'pageSpend' ? <p>
+                       <span className="amount-taka">৳ </span>
+                        {new Intl.NumberFormat('en-IN').format(Math.round(payment.totalSpentt * 130))}
+                                     </p> : <p>
+                                     <span className="amount-taka">৳ </span>
+        {new Intl.NumberFormat('en-IN').format(Math.round(payment.totalSpentt * rates?.metaRate || 0))}
+                     </p>
+                      }
+      
+      <div className="flex justify-start text-start items-center gap-1">
+                          <p className="text-[10px] sm:text-xs text-gray-500">
+                          {new Date(payment.date).toLocaleString("en-GB", {
+                          hour: "2-digit",
+                          minute: "2-digit",
+                          hour12: true,
+                          day: "2-digit",
+                          month: "2-digit",
+                          year: "2-digit",
+                        })}
+                          </p>
+                        </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+      
+      
+      
+          </div>
 
        {modalData2 && (
       <dialog className="modal" open>

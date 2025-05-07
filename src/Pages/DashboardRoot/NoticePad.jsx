@@ -63,7 +63,7 @@ const NoticePad = () => {
   };
 
   return (
-    <div className="min-w-full w-full  p-5 lg:w-auto">
+    <div className="min-w-full w-full lg:w-auto">
         <div className="grid text-black w-full lg:grid-cols-2 gap-5 p-4">
 
         <Helmet>

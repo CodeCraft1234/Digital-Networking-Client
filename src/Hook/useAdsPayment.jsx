@@ -10,7 +10,6 @@ const useAdsPayment = () => {
       return res.data;
     },
   });
-  console.log(adsPayment);
   return [adsPayment, refetch];
 };
 

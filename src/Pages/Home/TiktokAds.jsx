@@ -148,7 +148,7 @@ const handleTotalBillChange = (e) => {
             <div >
 
 
-      <div className="side-space">
+      <div className="my-5 lg:block hidden">
         
       <div className="f-between  mb-4 ">
 
@@ -217,24 +217,19 @@ const handleTotalBillChange = (e) => {
 </select>
 
 
-  <select
+<select
   className="select2"
   value={selectedYear}
   onChange={(e) => setSelectedYear(e.target.value)}
 >
-  <option value="">Select Year</option> {/* Default option */}
-  {[...new Set(
-    myclients
-      ?.flatMap((client) => client.pageService || [])
-      ?.map((item) => new Date(item.date).getFullYear())
-  )]
-    .sort((a, b) => a - b) // Sort years in ascending order
-    .map((year) => (
-      <option key={year} value={year}>
-        {year}
-      </option>
-    ))}
+  <option value="all">Select Year</option> {/* Default option */}
+  {Array.from({ length: new Date().getFullYear() - 2024 + 1 }, (_, i) => 2024 + i).map((year) => (
+    <option key={year} value={year}>
+      {year}
+    </option>
+  ))}
 </select>
+
 
 
   <select
@@ -267,25 +262,25 @@ const handleTotalBillChange = (e) => {
             <thead className=" ">
               <tr className="tr1" >  
                 <th className="text-center">{datas?.length}</th>
-                {
-                  userr?.role === 'admin' &&  
-                  <th > Employee Name</th>
-                }
-                <th >Client Name</th>
+                <th className="text-start flex justify-start ">Client Name</th>
                 <th >Item Name</th>
                 <th >Coins</th>
                 <th >Total Bill</th>
                 <th >Date</th>
-                <th className="text-center">Action</th>
+              
               </tr>
             </thead>
             <tbody>
               {datas
               ?.map((work, index) => (
-                 <tr 
-                 key={work._id}
-                 className={`tr2`}
-               >
+                <tr 
+                key={work.id}
+                className={`${
+                  index % 2 === 0
+                    ? "bg-white text-left text-black border-b border-opacity-20"
+                    : "bg-gray-100  text-left text-black border-b border-opacity-20"
+                }`}
+              >
 
                  
 
@@ -294,21 +289,23 @@ const handleTotalBillChange = (e) => {
                   
                 
 
-                  {
-            userr?.role === 'admin' &&    <td>  <Link
+               <td>  <Link
        
             to={`/client/${work.id}`}
           >
-              <div className='flex justify-start items-center gap-2'>
-              <img className='h-10 w-10 rounded-full object-cover' src={allEmployees.find(f => f.email === work.employeeEmail)?.photo} alt="" />
-              <h1> {allEmployees.find(f => f.email === work.employeeEmail)?.name || 'N/A'}</h1>
+            <div className='flex justify-start items-center gap-2'>
+              <img className='h-10 w-10 rounded-full object-cover' src={allEmployees.find(f => f.email === work.email)?.photo} alt="" />
+             <p className="text-start ">
+             <p className="text-lg flex justify-start items-center gap-1 ">{work.clientName}</p>
+             <h1> {allEmployees?.find(f => f.email === work.email)?.name || 'N/A'}</h1>
+             </p>
               </div>
               </Link>
           </td>
-          }
+          
 
 
-                  <td><Link className="hover:font-bold" to={`/client/${work.id}`}>{work.clientName}</Link></td>
+               
                   
                   <td>
 
@@ -335,127 +332,16 @@ const handleTotalBillChange = (e) => {
                   <td>
                   {new Date(work?.date).toLocaleDateString("en-GB")}
                   </td>
-                  {
-                      user &&
-                <td  className="text-center">
-                  <div className="f-center">
-                        <button
-                           className=" delete"
-                          onClick={() => handledelete( work.ids ,work.id)}
-                        >
-                         <span >
-                          <FaMinusSquare  />
-                          </span>
-                          
-                        </button>
-                        <button
-                        className=" edit"
-                        onClick={() =>
-                          document.getElementById(`modal_${work.ids}`).showModal()
-                          }
-                      >
-                       <FaEdit /> 
-                       
-                      </button>
-                      </div>
-              
-                      <dialog id={`modal_${work.ids}`} className="modal">
-               <div className="modal-box bg-white text-black">
-               <form onSubmit={(e) => handleUpdate(e, work.ids, work.id)}>
-
-               <div className="mb-4">
-                <label htmlFor="date" className="block mb-1">
-                  Date
-                </label>
-                <input
-                  id="date"
-                  name="date"
-                  type="date"
-                  placeholder="type...."
-                  required
-                  defaultValue={work.date}
-                  className="input2"
-                />
-              </div>
-
-    <div className="mb-4">
-      <label className="block text-left text-gray-700">Item Name</label>
-      <input
-        type="text"
-        name="itemName"
-        defaultValue={work.itemName}
-        className="input2"
-      />
-    </div>
-
-
-
-
-
-    <div className="grid lg:grid-cols-2 gap-3">
-          <div className="">
-            <label htmlFor="coin" className="block text-start mb-1 ml-1">
-              Coin 
-            </label>
-            <input
-  step="0.01"
-  id="coin"
-  name="coin"
-  type="number"
-  placeholder="type...."
-  className="input2"
-  min="350" 
-  defaultValue={coin || work.coin}
-  onChange={handleCoinChange}
-/>
-
-          </div>
-          <div className="">
-            <label htmlFor="totalBill" className="block text-start mb-1 ml-1">
-              Total Bill
-            </label>
-            <input
-              step="0.01"
-              id="totalBill"
-              name="totalBill"
-              type="number"
-              placeholder="type...."
-              className="input2"
-              defaultValue={totalBills || work.totalBill}
-              onChange={handleTotalBillChange} // Allow manual editing
-            />
-          </div>
-        </div>
-
-
-  <div className="grid grid-cols-2 gap-3 mt-6">
-    <button
-      type="button"
-      className="close"
-      onClick={() =>
-        document.getElementById(`modal_${work.ids}`).close()
-      }
-    >
-      Close
-    </button>
-    <button type="submit" className="add">
-      Update
-    </button>
-  </div>
-</form>
-
-               </div>
-                                    </dialog>  </td>
-               }
+                 
                 </tr>
               ))}
               <tr className="font-bold tr1">
                 <td></td>
                 {
             userr?.role === 'admin' ? 
-            <td className="text-right" colSpan="3">
+            <td className="text-right" colSpan="2">
                   Total:
-                </td> : <td className="text-right" colSpan="2">
+                </td> : <td className="text-right" colSpan="1">
                   Total:
                 </td>
             }
@@ -469,7 +355,7 @@ const handleTotalBillChange = (e) => {
                   {datas?.reduce((acc, payment) => acc + parseFloat(payment?.totalBill || 0), 0).toFixed(0) || 0}
                 </td>
                 <td></td>
-                <td></td>
+              
                 
               
  
@@ -478,6 +364,111 @@ const handleTotalBillChange = (e) => {
           </table>
         </div>
         </div>
+
+ <div className="bg-white font-sans pt-20 pb-20  mt-8 lg:max-w-2xl lg:hidden mx-auto text-sm">
+       
+       
+       
+       
+       
+             {datas?.map((payment) => (
+               <div key={payment._id} className="px-3 py-2 sm:px-4 sm:py-3 border-b hover:bg-gray-50 transition-colors">
+                 <div className="flex items-start justify-between gap-2 sm:gap-3">
+                   {/* Left Content */}
+                   <div className="flex-1">
+                     <div className="flex items-start justify-start text-start gap-2 sm:gap-3">
+                       {/* Image */}
+                       <div className="flex-shrink-0">
+                         <img
+                           className="h-7 w-7 sm:h-8 sm:w-8 rounded-full object-cover"
+                           src={allEmployees.find(f => f.email === payment.email)?.photo}
+                           alt=""
+                         />
+       
+       <label className="status-label mt-3">
+                         <input
+                           type="checkbox"
+                           className="sr-only"
+                           checked={(payment?.status || "Approved") !== "pending"}
+                           onChange={() => {
+                             const currentStatus = payment?.status || "Approved";
+                             const newStatus = currentStatus !== "pending" ? "pending" : "Approved";
+                             handleUpdate2(payment.ids, payment.id, newStatus);
+                           }}
+                         />
+                         <div className={`status-switch ${(payment?.status || "Approved") !== "pending" ? "active" : "inactive"}`}>
+                           <span className={`status-switch-thumb ${(payment?.status || "Approved") !== "pending" ? "active" : ""}`}></span>
+                         </div>
+                       </label>
+                       </div>
+       
+                       {/* Names */}
+                       <div className="flex flex-col text-start justify-start items-start">
+                       <div className="flex justify-start text-start items-center gap-1">
+                           <Link
+                             to={`/client/${payment?.clientEmail}`}
+                             className="text-black text-sm sm:text-base hover:text-blue-800 transition-colors"
+                           >
+                             {allEmployees?.find(f => f.email === payment.email)?.name || 'N/A'}
+                           </Link>
+                         </div>
+                         <div className="flex justify-start text-start items-center gap-1">
+                           <Link
+                             to={`/client/${payment?.clientEmail}`}
+                             className="text-[14px] sm:text-xs text-gray-500"
+                           >
+                             {payment?.clientName}
+                           </Link>
+                         </div>
+                         <div className="flex justify-start text-start items-center gap-1">
+                           <p
+                            
+                             className="text-[14px] sm:text-xs text-gray-500"
+                           >
+                             {payment.campaignName}
+                           </p>
+                         </div>
+                         
+                         <p className="text-[10px] sm:text-xs text-gray-500">
+                         {new Date(payment.date)?.toLocaleString("en-GB", {
+                           hour: "2-digit",
+                           minute: "2-digit",
+                           hour12: true,
+                           day: "2-digit",
+                           month: "2-digit",
+                           year: "2-digit",
+                         })}
+                       </p>
+                       </div>
+                     </div>
+       
+                   </div>
+       
+                   {/* Right Content */}
+                   <div className="text-right">
+              
+                     <p className="text-gray-800">
+              <span className="font-medium text-gray-600">Coin:</span>{" "}
+              <span className="text-red-600 font-bold"> {payment?.coin?.toLocaleString()}</span>
+            </p>
+   
+                     <p className="text-gray-800">
+              <span className="font-medium text-gray-600">Bill:</span>{" "}
+              <span className="text-red-600 font-bold">৳ {payment.totalBill?.toLocaleString()}</span>
+            </p>
+                     <div>
+                     
+                       
+                     </div>
+       
+                   </div>
+                 </div>
+               </div>
+             ))}
+       
+
+           </div>
+
       </div>
         </div>
     );

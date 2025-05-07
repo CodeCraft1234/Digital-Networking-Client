@@ -13,7 +13,6 @@ const Home = () => {
     const { user } = useContext(AuthContext);
     const {userr3}=useUserr3(user?.email)
     const [clientUser, setClientUser] = useState(null);
-    console.log(userr3);
 
     useEffect(() => {
       const storedClientUser = localStorage.getItem("clientUser");

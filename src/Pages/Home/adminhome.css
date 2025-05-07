@@ -1,0 +1,29 @@
+/* tailwind.config.css or global.css */
+.hide-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .hide-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  
+  /* Optional for card design */
+  .card-style {
+    @apply bg-white shadow-md rounded-xl p-4 w-[270px] min-w-[270px];
+  }
+  .icon-home {
+    @apply text-3xl text-blue-600 mb-2;
+  }
+  .amount-home {
+    @apply font-bold text-gray-800;
+  }
+  .amount-taka, .amount-doller {
+    @apply text-green-600;
+  }
+  .card-body-home {
+    @apply flex flex-col;
+  }
+  .info-home p {
+    @apply text-sm mb-1;
+  }
+  

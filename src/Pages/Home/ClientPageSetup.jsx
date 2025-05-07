@@ -69,6 +69,7 @@ const ClientPageSetup = () => {
       e.preventDefault();
       const itemName = e.target.itemName.value;
       const clientEmail = param?.email;
+      const clientPhone = param?.clientPhone;
       const pageName = e.target.pageName.value;
       const totalBill = e.target.totalBill.value;
       const pageUrl = e.target.pageUrl.value;
@@ -93,6 +94,7 @@ const ClientPageSetup = () => {
         id: ids,
         ids: parseFloat(idu),
         clientEmail,
+        clientPhone,
         pageName,
         status,
         pageUrl,
@@ -110,7 +112,7 @@ const ClientPageSetup = () => {
         photo: user?.photoURL,
       };
   
-      AxiosPublic.post("/clients/pageService", { // Correct endpoint
+      AxiosPublic.post("/clients/pageService", { 
         id: ids,
         pageService,
       })
@@ -197,7 +199,7 @@ const ClientPageSetup = () => {
 
           
 
-      <div  className="  side-space ">
+      <div  className="   ">
         
   <div>
 
@@ -398,7 +400,7 @@ const ClientPageSetup = () => {
                       
                   
                   </td>
-                  <td style={{  border: 'var(--border)'}} className="p-3 hover:text-blue-700 hover:font-bold border-r-2 border-gray-200 text-left">
+                  <td  >
                   
                   <Link to={work?.pageUrl || '#'}>
   {work?.pageName
@@ -571,7 +573,7 @@ const ClientPageSetup = () => {
                 ) : (
                   <>
                 
-
+                  <td></td>
                  
                   </>
                 )}

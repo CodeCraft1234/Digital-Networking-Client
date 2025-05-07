@@ -1,61 +1,30 @@
-import { Link, NavLink } from "react-router-dom";
-import { FaHistory, FaPaypal} from "react-icons/fa";
+import { NavLink } from "react-router-dom";
+import { FaHistory} from "react-icons/fa";
 import { RxDashboard } from "react-icons/rx";
 import { MdAccountCircle, MdCampaign, MdHomeRepairService, MdOutlinePayments, MdOutlineSummarize } from "react-icons/md";
-import { useContext } from "react";
-import { FaPeopleGroup } from "react-icons/fa6";
-import { AuthContext } from "../../Security/AuthProvider";
+import { FaNoteSticky, FaPeopleGroup } from "react-icons/fa6";
 import { CiBank } from "react-icons/ci";
-import { SiGoogleads, SiMeta } from "react-icons/si";
-import { RiPagesFill } from "react-icons/ri";
-import { TbHeartRateMonitor } from "react-icons/tb";
 import { IoMdCash } from "react-icons/io";
 
-const BalanceCard = ({ title, amount }) => {
-  return (
-    <div
-    className="balance-card items-center rounded-2xl p-5 text-center shadow-xl transition-transform transform hover:scale-105"
-    style={{ backgroundColor: 'var(--bg-color)', color: 'var(--text-color)', border: 'var(--border)' }}
-  >
-    <p className="text-lg lg:text-2xl font-bold my-2">
-      <span className="text-lg lg:text-2xl font-extrabold">৳</span>
-      {amount}
-    </p>
-    <h1 className="text-xl font-bold pb-2 text-center">{title}</h1>
-  </div>
-  
-  );
-};
 
 const EmployeeDashboard = () => {
-  const { user } = useContext(AuthContext);
 
   const getActiveStyle = (isActive) => (
     isActive
-      ? { backgroundColor: 'var(--bg-color)', color: 'var(--text-color)' }
+      ? { backgroundColor: '#0B3A84', color: 'white' }
       : {}
   );
-  const changeTab = (tab) => {
-    localStorage.setItem("activeTabClientProfile", tab); 
-  };
+
 
   return (
-    <div className=" w-[225px] bg-gray-900 text-white -mt-3 -ml-2 pr-2 min-h-screen">
+    <div  className="w-[205px]  text-white bg-gray-800 pt-10 -ml-2 pr-2 min-h-screen">
       <div className="">
-        <div className="flex  items-center justify-center py-4">
-          <Link to={"/"}>
-            <img
-              className="w-24"
-              src="https://i.ibb.co/rvH9Bz0/Logo-01.png"
-              alt="Logo"
-            />
-          </Link>
-        </div>
+
         <ul className="space-y-1">
         
           <NavLink
             to="/"
-            className="text-white hover:bg-[#f89320] hover:text-black py-2 px-4 rounded-lg flex items-center"
+            className="text-white hover:bg-[#0B3A84]  py-2 px-4 rounded-lg flex items-center"
             style={({ isActive }) => getActiveStyle(isActive)}
           >
             <RxDashboard className="w-6 h-6 mr-2" />
@@ -64,7 +33,7 @@ const EmployeeDashboard = () => {
 
           <NavLink
             to={`/adsAccount`}
-            className="text-white hover:bg-[#f89320] hover:text-black py-2 px-4 rounded-lg flex items-center"
+            className="text-white hover:bg-[#0B3A84]  py-2 px-4 rounded-lg flex items-center"
             style={({ isActive }) => getActiveStyle(isActive)}
           >
             <MdAccountCircle className="w-6 h-6 mr-2" />
@@ -72,7 +41,7 @@ const EmployeeDashboard = () => {
           </NavLink>
           <NavLink
                   to="/clients"
-                  className="text-white hover:bg-[#f89320] hover:text-black py-2 px-4 rounded-lg flex items-center"
+                  className="text-white hover:bg-[#0B3A84]  py-2 px-4 rounded-lg flex items-center"
                   style={({ isActive }) => getActiveStyle(isActive)}
                 >
                   <FaPeopleGroup className="w-6 h-6 mr-2" />
@@ -80,7 +49,7 @@ const EmployeeDashboard = () => {
                 </NavLink>
                 <NavLink
             to="/campaigns"
-            className="text-white hover:bg-[#f89320] hover:text-black py-2 px-4 rounded-lg flex items-center text-lg"
+            className="text-white hover:bg-[#0B3A84]  py-2 px-4 rounded-lg flex items-center text-lg"
             style={({ isActive }) => getActiveStyle(isActive)}
           >
             <MdCampaign className="w-6 h-6 mr-2" />
@@ -89,7 +58,7 @@ const EmployeeDashboard = () => {
 
              <NavLink
                       to="/services"
-                      className="text-white hover:bg-[#f89320] hover:text-black py-2 px-4 rounded-lg flex items-center text-lg"
+                      className="text-white hover:bg-[#0B3A84]  py-2 px-4 rounded-lg flex items-center text-lg"
                       style={({ isActive }) => getActiveStyle(isActive)}
                     >
                       <MdHomeRepairService className="w-6 h-6 mr-2" />
@@ -98,46 +67,55 @@ const EmployeeDashboard = () => {
        
           <NavLink
             to={`/allPayments`}
-            className="text-white hover:bg-[#f89320] hover:text-black py-2 px-4 rounded-lg flex items-center"
+            className="text-white hover:bg-[#0B3A84]  py-2 px-4 rounded-lg flex items-center"
             style={({ isActive }) => getActiveStyle(isActive)}
           >
             <MdOutlinePayments className="w-6 h-6 mr-2" />
-           My Payment
+           Payment
           </NavLink>
           <NavLink
             to={`/summery`}
-            className="text-white hover:bg-[#f89320] hover:text-black py-2 px-4 rounded-lg flex items-center"
+            className="text-white hover:bg-[#0B3A84]  py-2 px-4 rounded-lg flex items-center"
             style={({ isActive }) => getActiveStyle(isActive)}
           >
             <MdOutlineSummarize className="w-6 h-6 mr-2" />
-           My Summery
+           Summery
           </NavLink>
 
           <NavLink
             to={`/monthlySpend`}
-            className="text-white hover:bg-[#f89320] hover:text-black py-2 px-4 rounded-lg flex items-center"
+            className="text-white hover:bg-[#0B3A84]  py-2 px-4 rounded-lg flex items-center"
             style={({ isActive }) => getActiveStyle(isActive)}
           >
             <FaHistory className="w-6 h-6 mr-2" />
-            Monthly Spend
+            Spend
           </NavLink>
           <NavLink
             to={`/salary`}
-            className="text-white hover:bg-[#f89320] hover:text-black py-2 px-4 rounded-lg flex items-center"
+            className="text-white hover:bg-[#0B3A84]  py-2 px-4 rounded-lg flex items-center"
             style={({ isActive }) => getActiveStyle(isActive)}
           >
             <IoMdCash className="w-6 h-6 mr-2" />
-            My Salary
+            Salary
           </NavLink>
 
           <NavLink
             to={`/bankInfo`}
-            className="text-white hover:bg-[#f89320] hover:text-black py-2 px-4 rounded-lg flex items-center"
+            className="text-white hover:bg-[#0B3A84]  py-2 px-4 rounded-lg flex items-center"
             style={({ isActive }) => getActiveStyle(isActive)}
           >
            <CiBank   className="w-6 h-6 mr-2" />
            Bank Info
           </NavLink>
+
+            <NavLink
+                      to={`/invoice`}
+                      className="text-white hover:bg-[#0B3A84]  py-2 px-4 rounded-lg flex items-center text-lg"
+                      style={({ isActive }) => getActiveStyle(isActive)}
+                    >
+                     <FaNoteSticky   className="w-6 h-6 mr-2" />
+                     Invoice
+                    </NavLink>
          
         </ul>
       </div>

@@ -172,11 +172,11 @@ const ClientTiktokAds = () => {
        
     return (
         <div>
-            <div className="mt-5">
+            <div className="mt-5 lg:block hidden">
 
           
 
-      <div  className="  side-space ">
+      <div  className="   ">
         
   <div>
 
@@ -190,107 +190,7 @@ const ClientTiktokAds = () => {
     </button>
     }
    
-    <dialog id="my_modal_2" className="modal overflow-hidden">
-      <div className="modal-box bg-white">
-        <section className="dark:text-gray-100">
-          <Form
-            onSubmit={handleaddblog}
-            className=" w-full  p-1 mx-auto space-y-5 rounded-md  text-black font-bold"
-          >
-            <div>
-              <h1 className="text-2xl mb-4 text-center font-bold text-black">
-                Add TikTok Item
-              </h1>
-              <div className="mb-4">
-                <label htmlFor="date" className="block mb-1">
-                  Date
-                </label>
-                <input
-                  id="date"
-                  name="date"
-                  type="date"
-                  placeholder="type...."
-                  required
-                  defaultValue={formattedDate}
-                  className="input2"
-                />
-              </div>
-
-           
-            <div >
-                <label htmlFor="name" className="block mb-1 ml-1">
-                  Item Name
-                </label>
-                <input
-                  id="name"
-                  name="itemName"
-                  type="text"
-                  placeholder="type...."
-                  required
-                  className="input2"
-                />
-            </div>
-
-
-          
-            <div className="grid lg:grid-cols-2 gap-3">
-          <div className="mt-5">
-            <label htmlFor="coin" className="block mb-1 ml-1">
-              Coin (350 Coin to Unlimited)
-            </label>
-            <input
-              step="0.01"
-              id="coin"
-              name="coin"
-              type="number"
-              placeholder="type...."
-              className="input2"
-              value={coin}
-              onChange={handleCoinChange}
-            />
-          </div>
-          <div className="mt-5">
-            <label htmlFor="totalBill" className="block mb-1 ml-1">
-              Total Bill
-            </label>
-            <input
-              step="0.01"
-              id="totalBill"
-              name="totalBill"
-              type="number"
-              placeholder="type...."
-              className="input2"
-              value={totalBills}
-              onChange={handleTotalBillChange} // Allow manual editing
-            />
-          </div>
-        </div>
-
-        
-            
-
-            </div>
-
-            <div className="grid grid-cols-2 gap-3 mt-4">
-            <button
-                type="button"
-                className="close"
-                onClick={() => document.getElementById("my_modal_2").close()}
-              >
-                Close
-              </button>
-              <button
-                type="submit"
-                className="add"
-              >
-                Submit
-              </button>
-              
-            </div>
-          </Form>
-        </section>
-      </div>
-    </dialog>
+    
   </div>
 
   <div  className="table-div mt-5" >
@@ -492,6 +392,244 @@ const ClientTiktokAds = () => {
         </div>
 
       </div>
+
+
+      <div className="bg-white font-sans pt-40 mb-16  lg:mt-0 lg:max-w-2xl lg:hidden mx-auto text-sm">
+      <button
+     className="py-1 px-3 mx-2 mb-2 bg-green-600 text-white"
+      onClick={() => document.getElementById("my_modal_2").showModal()}
+    >
+      Add TikTok Item
+    </button>
+     {findClients?.campaings?.filter(f=>f.role === 'tiktokAds')?.map((payment) => (
+       <div key={payment._id} className="px-3 py-2 sm:px-4 sm:py-3 border-b hover:bg-gray-50 transition-colors">
+         <div className="flex items-start justify-between gap-2 sm:gap-3">
+           {/* Left Content */}
+           <div className="flex-1">
+             <div className="flex items-start justify-start text-start gap-2 sm:gap-3">
+               {/* Image */}
+               <div className="flex-shrink-0">
+            
+
+           
+               </div>
+
+               {/* Names */}
+               <div className="flex flex-col text-start justify-start items-start">
+               <div className="flex justify-start text-start items-center gap-1">
+                 
+                 </div>
+                 <div className="flex justify-start text-start items-center gap-1">
+                   <Link
+                     to={`/client/${payment?.clientEmail}`}
+                     className="text-[14px] sm:text-xs text-gray-500"
+                   >
+                     {payment?.clientName}
+                   </Link>
+                 </div>
+                
+                 <div className="flex justify-start text-start items-center gap-1">
+                   <Link
+                     to={`/client/${payment?.clientEmail}`}
+                     className="text-[14px] sm:text-xs text-gray-500"
+                   >
+                      {payment.adsAccount}
+                   </Link>
+                 </div>
+                 <p>
+                       <label className="status-label">
+                       <input
+                         type="checkbox"
+                         className="sr-only"
+                         checked={(payment?.status || "Approved") !== "pending"}
+                         onChange={() => {
+                           const currentStatus = payment?.status || "Approved";
+                           const newStatus = currentStatus !== "pending" ? "pending" : "Approved";
+                           handleUpdate2(payment.ids, payment.id, newStatus);
+                         }}
+                       />
+                       <div className={`status-switch ${(payment?.status || "Approved") !== "pending" ? "active" : "inactive"}`}>
+                         <span className={`status-switch-thumb ${(payment?.status || "Approved") !== "pending" ? "active" : ""}`}></span>
+                       </div>
+                     </label>
+</p>
+                
+            
+               </div>
+             </div>
+           </div>
+
+           {/* Right Content */}
+
+           <div className="text-right">
+             <div>
+             
+             <p>
+<span className="font-medium">Spend:</span>{" "}
+<span className="amount-taka">$</span>{" "}
+{payment.tSpent}
+</p>
+             <p>
+<span className="font-medium">Bill:</span>{" "}
+<span className="amount-taka">৳</span>{" "}
+{parseInt(payment.tSpent * payment.dollerRate)}
+</p>
+
+               <p className="text-[10px] sm:text-xs text-gray-500">
+                 {new Date(payment.date).toLocaleString("en-GB", {
+                   hour: "2-digit",
+                   minute: "2-digit",
+                   hour12: true,
+                   day: "2-digit",
+                   month: "2-digit",
+                   year: "2-digit",
+                 })}
+               </p>
+             </div>
+
+             <div className="flex items-center justify-end space-x-2 mt-2">
+               {(() => {
+                 const logo = [
+                   { method: "bkashMarchent", src: "https://i.ibb.co/520Py6s/bkash-1.png" },
+                   { method: "bkashPersonal", src: "https://i.ibb.co/520Py6s/bkash-1.png" },
+                   { method: "rocketPersonal", src: "https://i.ibb.co/QkTM4M3/rocket.png" },
+                   { method: "nagadPersonal", src: "https://i.ibb.co/JQBQBcF/nagad-marchant.png" },
+                   { method: "nagadMarchent", src: "https://i.ibb.co/JQBQBcF/nagad-marchant.png" },
+                   { method: "DBBLBank", src: "https://i.ibb.co/nnN8KW0/DBBL.png", width: "w-24 sm:w-28", height: "h-7 sm:h-8" },
+                   { method: "IBBLBank", src: "https://i.ibb.co/pnS6nt4/IBBLBank.png", width: "w-24 sm:w-28", height: "h-7 sm:h-8" },
+                   { method: "bank", src: "https://i.ibb.co/PZc0P4w/brac-bank-seeklogo.png", width: "w-10 sm:w-12", height: "h-8 sm:h-10" },
+                 ].find((item) => item.method === payment?.paymentMethod);
+
+                 if (!logo) return null;
+
+                 return (
+                   <>
+                     <img
+                       src={logo.src}
+                       alt={payment?.paymentMethod}
+                       className={`${logo.width || "w-12"} ${logo.height || "h-6"} object-contain`}
+                     />
+                     <button
+                       onClick={() => setModalData2(payment)}
+                       className="text-emerald-600 hover:text-emerald-800 transition"
+                       title="বিস্তারিত দেখুন"
+                     >
+                       <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 bg-gray-100 text-black p-1 rounded-full" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                         <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                       </svg>
+                     </button>
+                   </>
+                 );
+               })()}
+             </div>
+           </div>
+         </div>
+       </div>
+     ))}
+
+   </div>
+
+   <dialog id="my_modal_2" className="modal overflow-hidden">
+      <div className="modal-box bg-white">
+        <section className="dark:text-gray-100">
+          <Form
+            onSubmit={handleaddblog}
+            className=" w-full  p-1 mx-auto space-y-5 rounded-md  text-black font-bold"
+          >
+            <div>
+              <h1 className="text-2xl mb-4 text-center font-bold text-black">
+                Add TikTok Item
+              </h1>
+              <div className="mb-4">
+                <label htmlFor="date" className="block mb-1">
+                  Date
+                </label>
+                <input
+                  id="date"
+                  name="date"
+                  type="date"
+                  placeholder="type...."
+                  required
+                  defaultValue={formattedDate}
+                  className="input2"
+                />
+              </div>
+
+           
+            <div >
+                <label htmlFor="name" className="block mb-1 ml-1">
+                  Item Name
+                </label>
+                <input
+                  id="name"
+                  name="itemName"
+                  type="text"
+                  placeholder="type...."
+                  required
+                  className="input2"
+                />
+            </div>
+
+
+          
+            <div className="grid lg:grid-cols-2 gap-3">
+          <div className="mt-5">
+            <label htmlFor="coin" className="block mb-1 ml-1">
+              Coin (350 Coin to Unlimited)
+            </label>
+            <input
+              step="0.01"
+              id="coin"
+              name="coin"
+              type="number"
+              placeholder="type...."
+              className="input2"
+              value={coin}
+              onChange={handleCoinChange}
+            />
+          </div>
+          <div className="mt-5">
+            <label htmlFor="totalBill" className="block mb-1 ml-1">
+              Total Bill
+            </label>
+            <input
+              step="0.01"
+              id="totalBill"
+              name="totalBill"
+              type="number"
+              placeholder="type...."
+              className="input2"
+              value={totalBills}
+              onChange={handleTotalBillChange} // Allow manual editing
+            />
+          </div>
+        </div>
+
+        
+            
+
+            </div>
+
+            <div className="grid grid-cols-2 gap-3 mt-4">
+            <button
+                type="button"
+                className="close"
+                onClick={() => document.getElementById("my_modal_2").close()}
+              >
+                Close
+              </button>
+              <button
+                type="submit"
+                className="add"
+              >
+                Submit
+              </button>
+              
+            </div>
+          </Form>
+        </section>
+      </div>
+    </dialog>
         </div>
     );
 };

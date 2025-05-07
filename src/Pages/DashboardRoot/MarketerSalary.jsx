@@ -8,7 +8,6 @@ import useMySalaryPayments from '../../Hook/useMySalaryPayment';
 import useAllEmployee from '../../Hook/useAllEmployee';
 import { AuthContext } from '../../Security/AuthProvider';
 import UseAxiosPublic from '../../Axios/UseAxiosPublic';
-import useUserr2 from '../../Hook/useUser2';
 import SummaryCard from '../Home/SummeryCard';
 
 const months = [
@@ -21,16 +20,18 @@ const MarketerSalary = () => {
   const { userr } = useUserr(user?.email);
   const [allEmployees] = useAllEmployee([]);
   const [employeeData, setEmployeeData] = useState([]);
-
+  
   const initialTab = userr?.role === "admin"
-    ? localStorage.getItem(`acti355${user?.email}`) || "all"
-    : localStorage.getItem(`acti355${user?.email}`) || user?.email;
-
+  ? localStorage.getItem(`acti355${user?.email}`) || "all"
+  : localStorage.getItem(`acti355${user?.email}`) || user?.email;
+  
   const [selectedEmployee, setSelectedEmployee] = useState(initialTab);
+  
+  const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
+  const [usersSellery] = useUsersSellery(selectedEmployee,selectedYear);
+  const [MySalaryPayment, refetch] = useMySalaryPayments(selectedEmployee,'employee');
 
-  const [usersSellery] = useUsersSellery(selectedEmployee);
-  const [MySalaryPayment, refetch] = useMySalaryPayments(selectedEmployee);
-  const { userr2 } = useUserr2(selectedEmployee);
+  console.log(MySalaryPayment) ; 
 
   const AxiosPublic = UseAxiosPublic();
   const today = new Date();
@@ -41,6 +42,8 @@ const MarketerSalary = () => {
     localStorage.setItem(`acti355${user?.email}`, tab);
   };
 
+  console.log(MySalaryPayment,);
+
   useEffect(() => {
     if (!usersSellery || !MySalaryPayment || !Array.isArray(months)) return;
   
@@ -50,9 +53,14 @@ const MarketerSalary = () => {
         : usersSellery?.monthlySpent || [];
   
       return months.map((month) => {
-        const monthlySpentData = allMonthlySpent.filter(
-          (spent) => new Date(spent.date).toLocaleString("default", { month: "long" }) === month
-        );
+        const monthlySpentData = allMonthlySpent.filter((spent) => {
+          const spentDate = new Date(spent.date);
+          return (
+            (selectedYear === 'all' || 
+             spentDate.getFullYear() === parseInt(selectedYear)) &&
+            spentDate.toLocaleString("default", { month: "long" }) === month
+          );
+        });
   
         // Deduplicate by accountName and take the most recent entry
         const uniqueMonthlySpent = monthlySpentData.reduce((acc, current) => {
@@ -72,15 +80,22 @@ const MarketerSalary = () => {
             ?.filter((f) => f.role === "metaSpend" || f.role === "googleSpend")
             .reduce((acc, spent) => acc + spent.totalSpentt, 0) || 0;
   
-        const selleryData = MySalaryPayment.filter(
-          (sell) => new Date(sell.date).toLocaleString("default", { month: "long" }) === month
-        );
+        const selleryData = MySalaryPayment.filter((sell) => {
+          const sellDate = new Date(sell.date);
+          return (
+            (selectedYear === 'all' || 
+             sellDate.getFullYear() === parseInt(selectedYear)) &&
+            sellDate.toLocaleString("default", { month: "long" }) === month
+          );
+        });
   
         const totalSellery = selleryData.reduce((acc, sell) => acc + parseFloat(sell.payAmount) || 0, 0);
         const totalBonus = selleryData.reduce((acc, sell) => acc + parseFloat(sell.bonus) || 0, 0);
+
+        console.log(totalSellery);
   
         return {
-          month,
+          month: selectedYear === 'all' ? `${month} (All Years)` : month,
           totalSpent,
           totalSellery,
           totalBonus,
@@ -88,11 +103,11 @@ const MarketerSalary = () => {
           totalSelleryPaid: totalSpent * 7 - totalSellery,
           selleryData,
         };
-      }).filter((data) => !isNaN(data.totalSpent)); // Filter out months with NaN data
+      }).filter((data) => !isNaN(data.totalSpent));
     };
   
     setEmployeeData(processMonthlyData());
-  }, [usersSellery, MySalaryPayment, months]);
+  }, [usersSellery, MySalaryPayment, selectedYear, months]); // Changed dependency to selectedYear
   
   // Updated formatValue function to ensure whole numbers
   const formatValue = (value) =>
@@ -148,6 +163,8 @@ const MarketerSalary = () => {
         <link rel="canonical" href="https://www.example.com/" />
       </Helmet>
 
+      <div className='lg:block hidden'>
+
       {/* Summary Cards */}
       <div className="grid rounded-lg grid-cols-2 md:grid-cols-2 lg:grid-cols-4 text-black sm:grid-cols-2 gap-5 justify-around">
   <SummaryCard 
@@ -170,8 +187,8 @@ const MarketerSalary = () => {
 
 
       {/* Salary Payment Modal */}
-      <div className="side-space mt-5">
-        <div className="f-between mb-4">
+
+        <div className="f-between my-5">
         <div>
 {
         userr?.role === 'admin' &&      <div className="f-start">
@@ -317,11 +334,23 @@ const MarketerSalary = () => {
               ) : (
              <></>
                )}
+<select
+  className="select2"
+  value={selectedYear}
+  onChange={(e) => setSelectedYear(e.target.value)}
+>
+
+  {Array.from({ length: new Date().getFullYear() - 2024 + 1 }, (_, i) => 2024 + i).map((year) => (
+    <option key={year} value={year}>
+      {year}
+    </option>
+  ))}
+</select>
           </div>
         </div>
 
         {/* Employee Data Table */}
-        <div className="table-div">
+        <div className="table-div mb-5">
   <table className="min-w-full text-center">
     <thead>
       <tr className="tr1">
@@ -334,7 +363,14 @@ const MarketerSalary = () => {
     </thead>
     <tbody>
       {employeeData.map((data, index) => (
-        <tr key={index} className="tr2">
+         <tr 
+         key={data.id}
+         className={`${
+           index % 2 === 0
+             ? "bg-white text-left text-black border-b border-opacity-20"
+             : "bg-gray-100  text-left text-black border-b border-opacity-20"
+         }`}
+       >
           <td>{data.month}</td>
           <td><span className="amount-doller">$ </span> {formatValue(data.totalSpent.toFixed(0))}</td>
           <td><span className="amount-taka">৳ </span> {formatValue((data.totalSpent * 7).toFixed(0))}</td>
@@ -355,8 +391,10 @@ const MarketerSalary = () => {
   </table>
 </div>
 
+
+     </div>
       </div>
-    </div>
+
   );
 };
 

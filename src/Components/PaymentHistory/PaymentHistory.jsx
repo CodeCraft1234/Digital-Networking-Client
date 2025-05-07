@@ -32,7 +32,7 @@ const PaymentHistory = () => {
     };
 
     AxiosPublic.patch(
-      `https://hishab-2025-pi.vercel.app/payments/${selectedPayment.id}`,
+      `https://hishab-202555.vercel.app/payments/${selectedPayment.id}`,
       updatedPayment
     ).then((res) => {
       setPayments((prev) =>

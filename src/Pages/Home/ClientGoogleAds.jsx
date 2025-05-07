@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../../Security/AuthProvider";
-import { Form, useParams } from "react-router-dom";
+import { Form, Link, useParams } from "react-router-dom";
 import UseAxiosPublic from "../../Axios/UseAxiosPublic";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -204,7 +204,7 @@ const data2 = isNaN(data1) ? initialTab : data1; // Use isNaN() to check if data
 
     return (
         <div>
-            <div>
+            <div className="lg:block hidden">
 
             <div  className="grid grid-cols-2 mt-5  rounded-lg md:grid-cols-2 lg:grid-cols-4 text-black sm:grid-cols-2 gap-3 lg:gap-3 justify-around ">
         <SummaryCard title="Total Spend" value={findClients?.campaings?.reduce((acc, payment) => acc + parseFloat(payment?.tSpent || 0), 0).toFixed(2)} />
@@ -260,146 +260,7 @@ const data2 = isNaN(data1) ? initialTab : data1; // Use isNaN() to check if data
     </button>
     }
    
-    <dialog id="my_modal_2" className="modal overflow-hidden">
-      <div className="modal-box bg-white">
-        <section className="dark:text-gray-100">
-          <Form
-            onSubmit={handleaddblog}
-            className=" w-full  p-1 mx-auto space-y-5 rounded-md  text-black font-bold"
-          >
-            <div>
-              <h1 className="text-2xl mb-4 text-center font-bold text-black">
-                Add a Campaign
-              </h1>
-              <div className="mb-4">
-                <label htmlFor="date" className="block mb-1">
-                  Date
-                </label>
-                <input
-                  id="date"
-                  name="date"
-                  type="date"
-                  placeholder="type...."
-                  required
-                  defaultValue={formattedDate}
-                  className="w-full border border-gray-600 text-black bg-green-300 rounded p-2 mt-1"
-                />
-              </div>
 
-            <div className="grid lg:grid-cols-2 gap-3 items-center">
-            <div className="mb-4">
-                <label htmlFor="name" className="block mb-1 ml-1">
-                  Campaign Name
-                </label>
-                <input
-                  id="name"
-                  name="campaignName"
-                  type="text"
-                  placeholder="type...."
-                  required
-                  className="w-full border border-gray-600 text-black bg-white rounded p-2 mt-1"
-                />
-              </div>
-              <div className="mb-4">
-                <label className="block text-black">Ads Account</label>
-                <select
-                required
-                  name="adsAccount"
-                  className="w-full border border-gray-600 text-black bg-white rounded p-2 mt-2"
-                >
-                  <option className="text-black" value="">
-                    All Ads Account
-                  </option>
-                  {adsAccounts.map((ads) => (
-                    <option key={ads._id} value={ads?.accountName}>
-                      {ads?.accountName}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-2">
-            <div className="mb-4">
-                <label htmlFor="pageName" className="block mb-1 ml-1">
-                  Page Name
-                </label>
-                <input
-                  id="pageName"
-                  name="pageName"
-                  type="text"
-                  placeholder="type...."
-                  required
-                  className="w-full border border-gray-600 text-black bg-white rounded p-2 mt-1"
-                />
-              </div>
-              <div className="mb-4">
-                <label htmlFor="name" className="block mb-1 ml-1">
-                Page Url <span className="text-red-600">(Optional)</span>
-                </label>
-                <input
-                  id="name"
-                  name="pageUrl"
-                  type="text"
-                  placeholder="type...."
-                  className="w-full border border-gray-600 text-black bg-white rounded p-2 mt-1"
-                />
-              </div>
-            </div>
-                <div className="flex items-center gap-3">
-               
-              <div>
-                <label htmlFor="totalBudged" className="block mb-1 ml-1">
-                  Total Budged
-                </label>
-                <input
-                  step="0.01"
-                  id="totalBudged"
-                  name="totalBudged"
-                  type="number"
-                  placeholder="type...."
-                  required
-                  className="w-full border border-gray-600 text-black bg-white rounded p-2 mt-1"
-                />
-              </div>
-              <div>
-                <label htmlFor="dollerRate" className="block mb-1 ml-1">
-                  Doller Rate
-                </label>
-                <input
-                  step="0.01"
-                  id="dollerRate"
-                  name="dollerRate"
-                  type="number"
-                  placeholder="type dollerRate"
-                  defaultValue={142}
-                  required
-                  className="w-full border border-gray-600 text-black bg-white rounded p-2 mt-1"
-                />
-              </div>
-                </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-3 mt-4">
-            <button
-                type="button"
-                className="p-2 hover:bg-red-700 rounded-lg bg-red-600 text-white text-center"
-                onClick={() => document.getElementById("my_modal_2").close()}
-              >
-                Close
-              </button>
-              <button
-                type="submit"
-                className="font-avenir px-3 py-2 hover:bg-indigo-700 bg-[#05a0db] rounded-lg text-white text-center"
-              >
-                Submit
-              </button>
-              
-            </div>
-          </Form>
-        </section>
-      </div>
-    </dialog>
   </div>
 
   <div  className="table-div " >
@@ -664,6 +525,283 @@ Update
         </div>
 
       </div>
+
+                 <div className="bg-white font-sans pt-40 mb-16  lg:mt-0 lg:max-w-2xl lg:hidden mx-auto text-sm">
+                 <button
+        className="py-1 px-3 mx-2 mb-2 bg-green-600 text-white"
+      onClick={() => document.getElementById("my_modal_2").showModal()}
+    >
+      Add Campaign
+    </button>
+                     {findClients?.campaings?.filter(f=>f.role === 'googleAds')?.map((payment) => (
+                       <div key={payment._id} className="px-3 py-2 sm:px-4 sm:py-3 border-b hover:bg-gray-50 transition-colors">
+                         <div className="flex items-start justify-between gap-2 sm:gap-3">
+                           {/* Left Content */}
+                           <div className="flex-1">
+                             <div className="flex items-start justify-start text-start gap-2 sm:gap-3">
+                               {/* Image */}
+                               <div className="flex-shrink-0">
+                            
+                
+                           
+                               </div>
+                
+                               {/* Names */}
+                               <div className="flex flex-col text-start justify-start items-start">
+                               <div className="flex justify-start text-start items-center gap-1">
+                                 
+                                 </div>
+                                 <div className="flex justify-start text-start items-center gap-1">
+                                   <Link
+                                     to={`/client/${payment?.clientEmail}`}
+                                     className="text-[14px] sm:text-xs text-gray-500"
+                                   >
+                                     {payment?.clientName}
+                                   </Link>
+                                 </div>
+                                
+                                 <div className="flex justify-start text-start items-center gap-1">
+                                   <Link
+                                     to={`/client/${payment?.clientEmail}`}
+                                     className="text-[14px] sm:text-xs text-gray-500"
+                                   >
+                                      {payment.adsAccount}
+                                   </Link>
+                                 </div>
+                                 <p>
+                                       <label className="status-label">
+                                       <input
+                                         type="checkbox"
+                                         className="sr-only"
+                                         checked={(payment?.status || "Approved") !== "pending"}
+                                         onChange={() => {
+                                           const currentStatus = payment?.status || "Approved";
+                                           const newStatus = currentStatus !== "pending" ? "pending" : "Approved";
+                                           handleUpdate2(payment.ids, payment.id, newStatus);
+                                         }}
+                                       />
+                                       <div className={`status-switch ${(payment?.status || "Approved") !== "pending" ? "active" : "inactive"}`}>
+                                         <span className={`status-switch-thumb ${(payment?.status || "Approved") !== "pending" ? "active" : ""}`}></span>
+                                       </div>
+                                     </label>
+                </p>
+                                
+                            
+                               </div>
+                             </div>
+                           </div>
+                
+                           {/* Right Content */}
+                
+                           <div className="text-right">
+                             <div>
+                             
+                             <p>
+                <span className="font-medium">Spend:</span>{" "}
+                <span className="amount-taka">$</span>{" "}
+                {payment.tSpent}
+                </p>
+                             <p>
+                <span className="font-medium">Bill:</span>{" "}
+                <span className="amount-taka">৳</span>{" "}
+                {parseInt(payment.tSpent * payment.dollerRate)}
+                </p>
+                
+                               <p className="text-[10px] sm:text-xs text-gray-500">
+                                 {new Date(payment.date).toLocaleString("en-GB", {
+                                   hour: "2-digit",
+                                   minute: "2-digit",
+                                   hour12: true,
+                                   day: "2-digit",
+                                   month: "2-digit",
+                                   year: "2-digit",
+                                 })}
+                               </p>
+                             </div>
+                
+                             <div className="flex items-center justify-end space-x-2 mt-2">
+                               {(() => {
+                                 const logo = [
+                                   { method: "bkashMarchent", src: "https://i.ibb.co/520Py6s/bkash-1.png" },
+                                   { method: "bkashPersonal", src: "https://i.ibb.co/520Py6s/bkash-1.png" },
+                                   { method: "rocketPersonal", src: "https://i.ibb.co/QkTM4M3/rocket.png" },
+                                   { method: "nagadPersonal", src: "https://i.ibb.co/JQBQBcF/nagad-marchant.png" },
+                                   { method: "nagadMarchent", src: "https://i.ibb.co/JQBQBcF/nagad-marchant.png" },
+                                   { method: "DBBLBank", src: "https://i.ibb.co/nnN8KW0/DBBL.png", width: "w-24 sm:w-28", height: "h-7 sm:h-8" },
+                                   { method: "IBBLBank", src: "https://i.ibb.co/pnS6nt4/IBBLBank.png", width: "w-24 sm:w-28", height: "h-7 sm:h-8" },
+                                   { method: "bank", src: "https://i.ibb.co/PZc0P4w/brac-bank-seeklogo.png", width: "w-10 sm:w-12", height: "h-8 sm:h-10" },
+                                 ].find((item) => item.method === payment?.paymentMethod);
+                
+                                 if (!logo) return null;
+                
+                                 return (
+                                   <>
+                                     <img
+                                       src={logo.src}
+                                       alt={payment?.paymentMethod}
+                                       className={`${logo.width || "w-12"} ${logo.height || "h-6"} object-contain`}
+                                     />
+                                     <button
+                                       onClick={() => setModalData2(payment)}
+                                       className="text-emerald-600 hover:text-emerald-800 transition"
+                                       title="বিস্তারিত দেখুন"
+                                     >
+                                       <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 bg-gray-100 text-black p-1 rounded-full" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                         <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                                       </svg>
+                                     </button>
+                                   </>
+                                 );
+                               })()}
+                             </div>
+                           </div>
+                         </div>
+                       </div>
+                     ))}
+                
+                   </div>
+
+                   <dialog id="my_modal_2" className="modal overflow-hidden">
+      <div className="modal-box bg-white">
+        <section className="dark:text-gray-100">
+          <Form
+            onSubmit={handleaddblog}
+            className=" w-full  p-1 mx-auto space-y-5 rounded-md  text-black font-bold"
+          >
+            <div>
+              <h1 className="text-2xl mb-4 text-center font-bold text-black">
+                Add a Campaign
+              </h1>
+              <div className="mb-4">
+                <label htmlFor="date" className="block mb-1">
+                  Date
+                </label>
+                <input
+                  id="date"
+                  name="date"
+                  type="date"
+                  placeholder="type...."
+                  required
+                  defaultValue={formattedDate}
+                  className="w-full border border-gray-600 text-black bg-green-300 rounded p-2 mt-1"
+                />
+              </div>
+
+            <div className="grid lg:grid-cols-2 gap-3 items-center">
+            <div className="mb-4">
+                <label htmlFor="name" className="block mb-1 ml-1">
+                  Campaign Name
+                </label>
+                <input
+                  id="name"
+                  name="campaignName"
+                  type="text"
+                  placeholder="type...."
+                  required
+                  className="w-full border border-gray-600 text-black bg-white rounded p-2 mt-1"
+                />
+              </div>
+              <div className="mb-4">
+                <label className="block text-black">Ads Account</label>
+                <select
+                required
+                  name="adsAccount"
+                  className="w-full border border-gray-600 text-black bg-white rounded p-2 mt-2"
+                >
+                  <option className="text-black" value="">
+                    All Ads Account
+                  </option>
+                  {adsAccounts.map((ads) => (
+                    <option key={ads._id} value={ads?.accountName}>
+                      {ads?.accountName}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2">
+            <div className="mb-4">
+                <label htmlFor="pageName" className="block mb-1 ml-1">
+                  Page Name
+                </label>
+                <input
+                  id="pageName"
+                  name="pageName"
+                  type="text"
+                  placeholder="type...."
+                  required
+                  className="w-full border border-gray-600 text-black bg-white rounded p-2 mt-1"
+                />
+              </div>
+              <div className="mb-4">
+                <label htmlFor="name" className="block mb-1 ml-1">
+                Page Url <span className="text-red-600">(Optional)</span>
+                </label>
+                <input
+                  id="name"
+                  name="pageUrl"
+                  type="text"
+                  placeholder="type...."
+                  className="w-full border border-gray-600 text-black bg-white rounded p-2 mt-1"
+                />
+              </div>
+            </div>
+                <div className="flex items-center gap-3">
+               
+              <div>
+                <label htmlFor="totalBudged" className="block mb-1 ml-1">
+                  Total Budged
+                </label>
+                <input
+                  step="0.01"
+                  id="totalBudged"
+                  name="totalBudged"
+                  type="number"
+                  placeholder="type...."
+                  required
+                  className="w-full border border-gray-600 text-black bg-white rounded p-2 mt-1"
+                />
+              </div>
+              <div>
+                <label htmlFor="dollerRate" className="block mb-1 ml-1">
+                  Doller Rate
+                </label>
+                <input
+                  step="0.01"
+                  id="dollerRate"
+                  name="dollerRate"
+                  type="number"
+                  placeholder="type dollerRate"
+                  defaultValue={142}
+                  required
+                  className="w-full border border-gray-600 text-black bg-white rounded p-2 mt-1"
+                />
+              </div>
+                </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-3 mt-4">
+            <button
+                type="button"
+                className="p-2 hover:bg-red-700 rounded-lg bg-red-600 text-white text-center"
+                onClick={() => document.getElementById("my_modal_2").close()}
+              >
+                Close
+              </button>
+              <button
+                type="submit"
+                className="font-avenir px-3 py-2 hover:bg-indigo-700 bg-[#05a0db] rounded-lg text-white text-center"
+              >
+                Submit
+              </button>
+              
+            </div>
+          </Form>
+        </section>
+      </div>
+    </dialog>
+
         </div>
     );
 };
